@@ -1,0 +1,12 @@
+{
+    "scopes": [
+        "billing",
+        "cart",
+        "checkout",
+        "common",
+        "order",
+        "payment",
+        "shipping",
+        "shopper"
+    ]
+}

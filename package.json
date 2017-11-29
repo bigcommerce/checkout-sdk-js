@@ -1,0 +1,60 @@
+{
+  "name": "checkout-sdk-js",
+  "version": "0.0.0",
+  "description": "BigCommerce storefront checkout JavaScript SDK",
+  "main": "lib/index.js",
+  "files": [
+    "dist/",
+    "lib/"
+  ],
+  "engines": {
+    "node": "^6.10.0",
+    "yarn": "^0.27.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bigcommerce/checkout-sdk-js.git"
+  },
+  "author": "BigCommerce",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bigcommerce/checkout-sdk-js/issues"
+  },
+  "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
+  "scripts": {
+    "prebuild": "yarn lint && yarn test && yarn clean",
+    "build": "yarn compile && yarn bundle",
+    "bundle": "webpack --config webpack.config.js",
+    "bundle:watch": "yarn bundle -- --watch",
+    "compile": "tsc --outDir lib",
+    "compile:watch": "yarn compile -- --watch",
+    "clean": "rm -rf dist lib",
+    "lint": "eslint src --config eslintrc.json",
+    "prerelease": "git fetch --tags && yarn validate-dependencies && yarn validate-commits && yarn build",
+    "release": "git add dist lib && standard-version -a",
+    "test": "jest --config jest-config.js",
+    "test:coverage": "yarn test -- --coverage",
+    "test:series": "yarn test -- --runInBand",
+    "test:watch": "yarn test -- --watch",
+    "travis": "yarn lint && yarn test:series --  --coverage",
+    "validate-commits": "validate-commits",
+    "validate-dependencies": "yarn install --check-files --frozen-lockfile"
+  },
+  "dependencies": {
+    "tslib": "^1.8.0"
+  },
+  "devDependencies": {
+    "eslint": "2.8.0",
+    "eslint-config-airbnb": "6.0.2",
+    "eslint-plugin-react": "4.1.0",
+    "jest": "^21.2.1",
+    "standard-version": "^4.2.0",
+    "ts-jest": "^21.2.3",
+    "ts-loader": "^3.2.0",
+    "typescript": "^2.6.2",
+    "typescript-eslint-parser": "^9.0.1",
+    "uglifyjs-webpack-plugin": "^1.1.1",
+    "validate-commits": "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.1.0",
+    "webpack": "^3.8.1"
+  }
+}

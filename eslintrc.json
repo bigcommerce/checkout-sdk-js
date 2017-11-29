@@ -1,0 +1,33 @@
+{
+    "parser": "typescript-eslint-parser",
+    "env": {
+        "browser": true,
+        "es6": true,
+        "jest": true
+    },
+    "extends": "airbnb/base",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "rules": {
+        "consistent-return": "off",
+        "indent": [2, 4],
+        "max-len": [0],
+        "no-console": "off",
+        "no-param-reassign": [2, { "props": false }],
+        "no-throw-literal": [0],
+        "no-shadow": "off",
+        "no-unused-expressions": "off",
+        "no-use-before-define": [2, "nofunc"],
+        "quote-props": [2, "consistent-as-needed"],
+        "valid-jsdoc": [
+            2,
+            {
+                "requireParamDescription": false,
+                "requireReturnDescription": false
+            }
+        ]
+    }
+}
