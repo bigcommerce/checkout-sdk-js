@@ -16,7 +16,6 @@
     "url": "git://github.com/bigcommerce/checkout-sdk-js.git"
   },
   "author": "BigCommerce",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/bigcommerce/checkout-sdk-js/issues"
   },
