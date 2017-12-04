@@ -11,6 +11,8 @@ module.exports = {
 
     output: {
         filename: '[name].js',
+        library: "checkoutKit",
+        libraryTarget: "umd",
         path: path.resolve(__dirname, 'dist'),
     },
 
