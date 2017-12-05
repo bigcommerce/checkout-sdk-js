@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "allowJs": true,
-        "allowSyntheticDefaultImports": true,
         "declaration": false,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
