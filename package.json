@@ -1,7 +1,7 @@
 {
   "name": "checkout-sdk",
   "version": "0.0.0",
-  "description": "BigCommerce storefront checkout JavaScript SDK",
+  "description": "BigCommerce Checkout JavaScript SDK",
   "main": "lib/index.js",
   "files": [
     "dist/",
