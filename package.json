@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "files": [
     "dist/",
+    "docs/",
     "lib/"
   ],
   "engines": {
@@ -41,6 +42,15 @@
     "validate-dependencies": "yarn install --check-files --frozen-lockfile"
   },
   "dependencies": {
+    "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.9.0",
+    "es6-promise": "^4.1.1",
+    "form-poster": "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1",
+    "is-promise": "^2.1.0",
+    "js-cookie": "^2.1.4",
+    "lodash": "^4.17.4",
+    "messageformat": "0.3.0",
+    "query-string": "^5.0.0",
+    "rxjs": "5.4.2",
     "tslib": "^1.8.0"
   },
   "devDependencies": {
