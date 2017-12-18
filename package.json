@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.9.0",
-    "es6-promise": "^4.1.1",
     "form-poster": "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1",
     "is-promise": "^2.1.0",
     "js-cookie": "^2.1.4",
