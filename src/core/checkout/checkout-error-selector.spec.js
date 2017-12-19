@@ -58,18 +58,18 @@ describe('CheckoutErrorSelector', () => {
         errorResponse = getErrorResponseBody();
     });
 
-    describe('#getLoadQuoteError()', () => {
+    describe('#getLoadCheckoutError()', () => {
         it('returns error if there is an error when loading quote', () => {
             jest.spyOn(quote, 'getLoadError').mockReturnValue(errorResponse);
 
-            expect(errors.getLoadQuoteError()).toEqual(errorResponse);
+            expect(errors.getLoadCheckoutError()).toEqual(errorResponse);
             expect(quote.getLoadError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when loading quote', () => {
             jest.spyOn(quote, 'getLoadError').mockReturnValue();
 
-            expect(errors.getLoadQuoteError()).toEqual(undefined);
+            expect(errors.getLoadCheckoutError()).toEqual(undefined);
             expect(quote.getLoadError).toHaveBeenCalled();
         });
     });

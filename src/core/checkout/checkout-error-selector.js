@@ -45,7 +45,7 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getError() {
-        return this.getLoadQuoteError() ||
+        return this.getLoadCheckoutError() ||
             this.getSubmitOrderError() ||
             this.getFinalizeOrderError() ||
             this.getLoadOrderError() ||
@@ -70,7 +70,7 @@ export default class CheckoutErrorSelector {
     /**
      * @return {?ErrorResponse}
      */
-    getLoadQuoteError() {
+    getLoadCheckoutError() {
         return this._quote.getLoadError();
     }
 
