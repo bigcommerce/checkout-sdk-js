@@ -1,0 +1,1 @@
+{"version":3,"file":"gift-certificate.mock.js","sourceRoot":"","sources":["../../../src/core/coupon/gift-certificate.mock.js"],"names":[],"mappings":";;AAAA,iDAA6C;AAE7C;IACI,MAAM,CAAC;QACH,IAAI,EAAE;YACF,IAAI,EAAE,oBAAO,EAAE;SAClB;QACD,IAAI,EAAE,EAAE;KACX,CAAC;AACN,CAAC;AAPD,wEAOC"}
