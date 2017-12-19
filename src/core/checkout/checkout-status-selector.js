@@ -46,7 +46,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isPending() {
-        return this.isLoadingQuote() ||
+        return this.isLoadingCheckout() ||
             this.isSubmittingOrder() ||
             this.isFinalizingOrder() ||
             this.isLoadingOrder() ||
@@ -71,7 +71,7 @@ export default class CheckoutStatusSelector {
     /**
      * @return {boolean}
      */
-    isLoadingQuote() {
+    isLoadingCheckout() {
         return this._quote.isLoading();
     }
 
