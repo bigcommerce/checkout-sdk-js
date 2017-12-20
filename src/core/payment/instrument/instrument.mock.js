@@ -69,3 +69,9 @@ export function getInstrumentsResponseBody() {
         meta: {},
     };
 }
+export function deleteInstrumentResponseBody() {
+    return {
+        data: {},
+        meta: {},
+    };
+}

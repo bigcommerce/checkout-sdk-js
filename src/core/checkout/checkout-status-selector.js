@@ -218,4 +218,12 @@ export default class CheckoutStatusSelector {
     isLoadingInstruments() {
         return this._instrument.isLoading();
     }
+
+    /**
+     * @param {string} [instrumentId]
+     * @return {boolean}
+     */
+    isDeletingInstrument(instrumentId) {
+        return this._instrument.isDeleting(instrumentId);
+    }
 }

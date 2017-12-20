@@ -6,6 +6,7 @@ import InstrumentActionCreator from './instrument-action-creator';
 import {
     getShopperTokenResponseBody,
     getInstrumentsResponseBody,
+    deleteInstrumentResponseBody,
 } from './instrument.mock';
 
 describe('InstrumentActionCreator', () => {
@@ -13,16 +14,19 @@ describe('InstrumentActionCreator', () => {
     let checkoutClient;
     let getShopperTokenResponse;
     let getInstrumentsResponse;
+    let deleteInstrumentResponse;
     let errorResponse;
 
     beforeEach(() => {
         errorResponse = getErrorResponse(getErrorResponseBody());
         getShopperTokenResponse = getResponse(getShopperTokenResponseBody());
         getInstrumentsResponse = getResponse(getInstrumentsResponseBody());
+        deleteInstrumentResponse = getResponse(deleteInstrumentResponseBody());
 
         checkoutClient = {
             getShopperToken: jest.fn(() => Promise.resolve(getShopperTokenResponse)),
             getInstruments: jest.fn(() => Promise.resolve(getInstrumentsResponse)),
+            deleteInstrument: jest.fn(() => Promise.resolve(deleteInstrumentResponse)),
         };
 
         instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
@@ -60,6 +64,62 @@ describe('InstrumentActionCreator', () => {
                     expect(actions).toEqual([
                         { type: actionTypes.LOAD_INSTRUMENTS_REQUESTED },
                         { type: actionTypes.LOAD_INSTRUMENTS_FAILED, payload: errorResponse, error: true },
+                    ]);
+                });
+        });
+    });
+
+    describe('#deleteInstrument()', () => {
+        let storeId;
+        let shopperId;
+        let instrumentId;
+
+        beforeEach(() => {
+            storeId = '1';
+            shopperId = '2';
+            instrumentId = '123';
+        });
+
+        it('delete an instrument', async () => {
+            await instrumentActionCreator.deleteInstrument(storeId, shopperId, instrumentId).toPromise();
+
+            expect(checkoutClient.getShopperToken).toHaveBeenCalledWith(storeId, shopperId);
+            expect(checkoutClient.deleteInstrument).toHaveBeenCalledWith(
+                storeId,
+                shopperId,
+                instrumentId,
+                getShopperTokenResponse.body.data.token
+            );
+        });
+
+        it('emits actions if able to delete an instrument', (done) => {
+            instrumentActionCreator.deleteInstrument(storeId, shopperId, instrumentId)
+                .toArray()
+                .subscribe((actions) => {
+                    done();
+
+                    expect(actions).toEqual([
+                        { type: actionTypes.DELETE_INSTRUMENT_REQUESTED, meta: { instrumentId } },
+                        { type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED, meta: { instrumentId }, payload: getInstrumentsResponse.body.data },
+                    ]);
+                });
+        });
+
+        it('emits error actions if unable to delete an instrument', (done) => {
+            checkoutClient.deleteInstrument.mockReturnValue(Promise.reject(errorResponse));
+
+            const errorHandler = jest.fn((action) => Observable.of(action));
+
+            instrumentActionCreator.deleteInstrument(storeId, shopperId, instrumentId)
+                .catch(errorHandler)
+                .toArray()
+                .subscribe((actions) => {
+                    done();
+
+                    expect(errorHandler).toHaveBeenCalled();
+                    expect(actions).toEqual([
+                        { type: actionTypes.DELETE_INSTRUMENT_REQUESTED, meta: { instrumentId } },
+                        { type: actionTypes.DELETE_INSTRUMENT_FAILED, meta: { instrumentId }, payload: errorResponse, error: true },
                     ]);
                 });
         });

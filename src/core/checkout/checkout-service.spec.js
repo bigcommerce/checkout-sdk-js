@@ -21,7 +21,7 @@ import { getGiftCertificateResponseBody } from '../coupon/gift-certificate.mock'
 import { getAppConfig } from '../config/configs.mock.js';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
-import { getShopperTokenResponseBody, getInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
+import { getShopperTokenResponseBody, getInstrumentsResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../../http-request/responses.mock';
@@ -119,6 +119,10 @@ describe('CheckoutService', () => {
 
             getInstruments: jest.fn(() =>
                 Promise.resolve(getResponse(getInstrumentsResponseBody()))
+            ),
+
+            deleteInstrument: jest.fn(() =>
+                Promise.resolve(getResponse(deleteInstrumentResponseBody()))
             ),
         };
 
@@ -513,6 +517,21 @@ describe('CheckoutService', () => {
 
             expect(checkoutClient.getInstruments)
                 .toHaveBeenCalledWith(storeId, customerId, authToken);
+        });
+    });
+
+    describe('#deleteInstrument()', () => {
+        it('deletes an instrument', async () => {
+            const { storeId } = getAppConfig();
+            const { customerId } = getGuestCustomer();
+            const instrumentId = '456';
+            const authToken = '123123123';
+
+            await checkoutService.signInCustomer();
+            await checkoutService.deleteInstrument(instrumentId);
+
+            expect(checkoutClient.deleteInstrument)
+                .toHaveBeenCalledWith(storeId, customerId, instrumentId, authToken);
         });
     });
 });

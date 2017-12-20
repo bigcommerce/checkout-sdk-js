@@ -46,6 +46,27 @@ export default class InstrumentRequestSender {
         });
     }
 
+
+    /**
+     * @param {string} storeId
+     * @param {string} shopperId
+     * @param {string} authToken
+     * @return {Promise<void>}
+     */
+    deleteInstrument(storeId, shopperId, authToken) {
+        const payload = { storeId, shopperId, authToken };
+
+        return new Promise((resolve, reject) => {
+            this._client.deleteShopperInstrument(payload, (error, response) => {
+                if (error) {
+                    reject(this._transformResponse(error));
+                } else {
+                    resolve(this._transformResponse(response));
+                }
+            });
+        });
+    }
+
     /**
      * @private
      * @param {Object} response

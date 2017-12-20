@@ -372,4 +372,18 @@ export default class CheckoutService {
 
         return this._store.dispatch(action);
     }
+
+    /**
+     * @param {string} instrumentId
+     * @return {Promise<CheckoutSelectors>}
+     */
+    deleteInstrument(instrumentId) {
+        const { checkout } = this._store.getState();
+        const { storeId } = checkout.getConfig();
+        const { customerId } = checkout.getCustomer();
+
+        const action = this._instrumentActionCreator.deleteInstrument(storeId, customerId, instrumentId);
+
+        return this._store.dispatch(action);
+    }
 }

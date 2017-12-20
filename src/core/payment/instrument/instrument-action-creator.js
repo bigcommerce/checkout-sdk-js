@@ -33,4 +33,28 @@ export default class InstrumentActionCreator {
                 });
         });
     }
+
+    /**
+     * @param {string} storeId
+     * @param {string} shopperId
+     * @param {string} instrumentId
+     * @return {Observable<Action>}
+     */
+    deleteInstrument(storeId, shopperId, instrumentId) {
+        return Observable.create((observer) => {
+            observer.next(createAction(actionTypes.DELETE_INSTRUMENT_REQUESTED, undefined, { instrumentId }));
+
+            this._instrumentRequestSender.getShopperToken(storeId, shopperId)
+                .then(({ body: { data } = {} }) =>
+                    this._instrumentRequestSender.deleteInstrument(storeId, shopperId, instrumentId, data.token)
+                )
+                .then(() => {
+                    observer.next(createAction(actionTypes.DELETE_INSTRUMENT_SUCCEEDED, undefined, { instrumentId }));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(actionTypes.DELETE_INSTRUMENT_FAILED, response, { instrumentId }));
+                });
+        });
+    }
 }

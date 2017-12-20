@@ -218,4 +218,12 @@ export default class CheckoutErrorSelector {
     getLoadInstrumentsError() {
         return this._instrument.getLoadError();
     }
+
+    /**
+     * @param {string} [instrumentId]
+     * @return {?ErrorResponse}
+     */
+    getDeleteInstrumentError(instrumentId) {
+        return this._instrument.getDeleteError(instrumentId);
+    }
 }

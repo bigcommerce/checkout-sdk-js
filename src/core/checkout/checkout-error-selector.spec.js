@@ -365,4 +365,20 @@ describe('CheckoutErrorSelector', () => {
             expect(instrument.getLoadError).toHaveBeenCalled();
         });
     });
+
+    describe('#getDeleteInstrumentError()', () => {
+        it('returns error if there is an error when deleting instruments', () => {
+            jest.spyOn(instrument, 'getDeleteError').mockReturnValue(errorResponse);
+
+            expect(errors.getDeleteInstrumentError('123')).toEqual(errorResponse);
+            expect(instrument.getDeleteError).toHaveBeenCalledWith('123');
+        });
+
+        it('returns undefined if there is NO error when deleting instruments', () => {
+            jest.spyOn(instrument, 'getDeleteError').mockReturnValue();
+
+            expect(errors.getDeleteInstrumentError('123')).toEqual(undefined);
+            expect(instrument.getDeleteError).toHaveBeenCalledWith('123');
+        });
+    });
 });

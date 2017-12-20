@@ -13,6 +13,7 @@ describe('InstrumentMethodRequestSender', () => {
         client = {
             getShopperToken: jest.fn((payload, callback) => callback()),
             getShopperInstruments: jest.fn((payload, callback) => callback()),
+            deleteShopperInstrument: jest.fn((payload, callback) => callback()),
         };
 
         instrumentRequestSender = new InstrumentRequestSender(client);
@@ -83,6 +84,45 @@ describe('InstrumentMethodRequestSender', () => {
 
             try {
                 await instrumentRequestSender.getInstruments();
+            } catch (error) {
+                expect(error).toEqual({
+                    body: getErrorInstrumentResponseBody(),
+                    headers: {},
+                    status: 400,
+                    statusText: 'Bad Request',
+                });
+            }
+        });
+    });
+
+    describe('#deleteInstrument()', () => {
+        it('deletes an instrument if request is successful', async () => {
+            client.deleteShopperInstrument = jest.fn((payload, callback) => callback(null, {
+                data: {},
+                status: 200,
+                statusText: 'OK',
+            }));
+
+            const response = await instrumentRequestSender.deleteInstrument();
+
+            expect(response).toEqual({
+                headers: {},
+                body: {},
+                status: 200,
+                statusText: 'OK',
+            });
+            expect(client.deleteShopperInstrument).toHaveBeenCalled();
+        });
+
+        it('returns error response if request is unsuccessful', async () => {
+            client.deleteShopperInstrument = jest.fn((payload, callback) => callback({
+                data: getErrorInstrumentResponseBody(),
+                status: 400,
+                statusText: 'Bad Request',
+            }));
+
+            try {
+                await instrumentRequestSender.deleteInstrument();
             } catch (error) {
                 expect(error).toEqual({
                     body: getErrorInstrumentResponseBody(),
