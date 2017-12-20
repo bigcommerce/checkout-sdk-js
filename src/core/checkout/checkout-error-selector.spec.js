@@ -366,6 +366,22 @@ describe('CheckoutErrorSelector', () => {
         });
     });
 
+    describe('#getVaultInstrumentError()', () => {
+        it('returns error if there is an error when vaulting instruments', () => {
+            jest.spyOn(instrument, 'getVaultError').mockReturnValue(errorResponse);
+
+            expect(errors.getVaultInstrumentError()).toEqual(errorResponse);
+            expect(instrument.getVaultError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is NO error when vaulting instruments', () => {
+            jest.spyOn(instrument, 'getVaultError').mockReturnValue();
+
+            expect(errors.getVaultInstrumentError()).toEqual(undefined);
+            expect(instrument.getVaultError).toHaveBeenCalled();
+        });
+    });
+
     describe('#getDeleteInstrumentError()', () => {
         it('returns error if there is an error when deleting instruments', () => {
             jest.spyOn(instrument, 'getDeleteError').mockReturnValue(errorResponse);

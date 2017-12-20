@@ -27,6 +27,9 @@ function dataReducer(data = [], action) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
         return action.payload.vaulted_instruments || [];
 
+    case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
+        return [...data, action.payload.vaulted_instrument];
+
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
         return data.filter(instrument =>
             instrument.bigpay_token !== action.payload.instrumentId
@@ -49,6 +52,10 @@ function errorsReducer(errors = {}, action) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
         return { ...errors, loadError: undefined };
 
+    case actionTypes.VAULT_INSTRUMENT_REQUESTED:
+    case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
+        return { ...errors, vaultError: undefined };
+
     case actionTypes.DELETE_INSTRUMENT_REQUESTED:
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
         return {
@@ -59,6 +66,9 @@ function errorsReducer(errors = {}, action) {
 
     case actionTypes.LOAD_INSTRUMENTS_FAILED:
         return { ...errors, loadError: action.payload };
+
+    case actionTypes.VAULT_INSTRUMENT_FAILED:
+        return { ...errors, vaultError: action.payload };
 
     case actionTypes.DELETE_INSTRUMENT_FAILED:
         return {
@@ -83,6 +93,9 @@ function statusesReducer(statuses = {}, action) {
     case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
         return { ...statuses, isLoading: true };
 
+    case actionTypes.VAULT_INSTRUMENT_REQUESTED:
+        return { ...statuses, isVaulting: true };
+
     case actionTypes.DELETE_INSTRUMENT_REQUESTED:
         return {
             ...statuses,
@@ -93,6 +106,10 @@ function statusesReducer(statuses = {}, action) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
     case actionTypes.LOAD_INSTRUMENTS_FAILED:
         return { ...statuses, isLoading: false };
+
+    case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
+    case actionTypes.VAULT_INSTRUMENT_FAILED:
+        return { ...statuses, isVaulting: false };
 
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
     case actionTypes.DELETE_INSTRUMENT_FAILED:

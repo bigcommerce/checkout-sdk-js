@@ -21,7 +21,7 @@ import { getGiftCertificateResponseBody } from '../coupon/gift-certificate.mock'
 import { getAppConfig } from '../config/configs.mock.js';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
-import { getShopperTokenResponseBody, getInstrumentsResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
+import { getShopperTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../../http-request/responses.mock';
@@ -119,6 +119,10 @@ describe('CheckoutService', () => {
 
             getInstruments: jest.fn(() =>
                 Promise.resolve(getResponse(getInstrumentsResponseBody()))
+            ),
+
+            vaultInstrument: jest.fn(() =>
+                Promise.resolve(getResponse(vaultInstrumentResponseBody()))
             ),
 
             deleteInstrument: jest.fn(() =>
@@ -517,6 +521,21 @@ describe('CheckoutService', () => {
 
             expect(checkoutClient.getInstruments)
                 .toHaveBeenCalledWith(storeId, customerId, authToken);
+        });
+    });
+
+    describe('#vaultInstrument()', () => {
+        it('vaults an instrument', async () => {
+            const { storeId } = getAppConfig();
+            const { customerId } = getGuestCustomer();
+            const instrument = vaultInstrumentRequestBody();
+            const authToken = '123123123';
+
+            await checkoutService.signInCustomer();
+            await checkoutService.vaultInstrument(instrument);
+
+            expect(checkoutClient.vaultInstrument)
+                .toHaveBeenCalledWith(storeId, customerId, authToken, instrument);
         });
     });
 

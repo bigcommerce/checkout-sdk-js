@@ -68,7 +68,10 @@ export default class CheckoutStatusSelector {
             this.isApplyingCoupon() ||
             this.isRemovingCoupon() ||
             this.isApplyingGiftCertificate() ||
-            this.isRemovingGiftCertificate();
+            this.isRemovingGiftCertificate() ||
+            this.isLoadingInstruments() ||
+            this.isVaultingInstrument() ||
+            this.isDeletingInstrument();
     }
 
     /**
@@ -217,6 +220,14 @@ export default class CheckoutStatusSelector {
      */
     isLoadingInstruments() {
         return this._instrument.isLoading();
+    }
+
+
+    /**
+    * @return {boolean}
+    */
+    isVaultingInstrument() {
+        return this._instrument.isVaulting();
     }
 
     /**

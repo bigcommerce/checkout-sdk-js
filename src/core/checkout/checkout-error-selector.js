@@ -68,7 +68,10 @@ export default class CheckoutErrorSelector {
             this.getApplyCouponError() ||
             this.getRemoveCouponError() ||
             this.getApplyGiftCertificateError() ||
-            this.getRemoveGiftCertificateError();
+            this.getRemoveGiftCertificateError() ||
+            this.getLoadInstrumentsError() ||
+            this.getDeleteInstrumentError() ||
+            this.getVaultInstrumentError();
     }
 
     /**
@@ -217,6 +220,13 @@ export default class CheckoutErrorSelector {
      */
     getLoadInstrumentsError() {
         return this._instrument.getLoadError();
+    }
+
+    /**
+     * @return {?ErrorResponse}
+     */
+    getVaultInstrumentError() {
+        return this._instrument.getVaultError();
     }
 
     /**

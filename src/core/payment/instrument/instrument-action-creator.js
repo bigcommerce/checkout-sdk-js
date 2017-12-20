@@ -37,6 +37,30 @@ export default class InstrumentActionCreator {
     /**
      * @param {string} storeId
      * @param {string} shopperId
+     * @param {InstrumentRequestBody} instrument
+     * @return {Observable<Action>}
+     */
+    vaultInstrument(storeId, shopperId, instrument) {
+        return Observable.create((observer) => {
+            observer.next(createAction(actionTypes.VAULT_INSTRUMENT_REQUESTED));
+
+            this._instrumentRequestSender.getShopperToken(storeId, shopperId)
+                .then(({ body: { data } = {} }) =>
+                    this._instrumentRequestSender.vaultInstrument(storeId, shopperId, data.token, instrument)
+                )
+                .then(({ body: { data } = {} }) => {
+                    observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, data));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(actionTypes.VAULT_INSTRUMENT_FAILED, response));
+                });
+        });
+    }
+
+    /**
+     * @param {string} storeId
+     * @param {string} shopperId
      * @param {string} instrumentId
      * @return {Observable<Action>}
      */

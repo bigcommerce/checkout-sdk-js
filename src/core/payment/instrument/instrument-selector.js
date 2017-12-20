@@ -20,6 +20,13 @@ export default class InstrumentSelector {
     }
 
     /**
+     * @return {?ErrorResponse}
+     */
+    getVaultError() {
+        return this._errors && this._errors.vaultError;
+    }
+
+    /**
      * @param {string} [instrumentId]
      * @return {?ErrorResponse}
      */
@@ -30,11 +37,19 @@ export default class InstrumentSelector {
 
         return this._errors.deleteError;
     }
+
     /**
      * @return {boolean}
      */
     isLoading() {
         return !!(this._statuses && this._statuses.isLoading);
+    }
+
+    /**
+     * @return {boolean}
+     */
+    isVaulting() {
+        return !!(this._statuses && this._statuses.isVaulting);
     }
 
     /**

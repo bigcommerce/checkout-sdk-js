@@ -6,6 +6,7 @@ import InstrumentActionCreator from './instrument-action-creator';
 import {
     getShopperTokenResponseBody,
     getInstrumentsResponseBody,
+    vaultInstrumentResponseBody,
     deleteInstrumentResponseBody,
 } from './instrument.mock';
 
@@ -14,6 +15,7 @@ describe('InstrumentActionCreator', () => {
     let checkoutClient;
     let getShopperTokenResponse;
     let getInstrumentsResponse;
+    let vaultInstrumentResponse;
     let deleteInstrumentResponse;
     let errorResponse;
 
@@ -21,11 +23,13 @@ describe('InstrumentActionCreator', () => {
         errorResponse = getErrorResponse(getErrorResponseBody());
         getShopperTokenResponse = getResponse(getShopperTokenResponseBody());
         getInstrumentsResponse = getResponse(getInstrumentsResponseBody());
+        vaultInstrumentResponse = getResponse(vaultInstrumentResponseBody());
         deleteInstrumentResponse = getResponse(deleteInstrumentResponseBody());
 
         checkoutClient = {
             getShopperToken: jest.fn(() => Promise.resolve(getShopperTokenResponse)),
             getInstruments: jest.fn(() => Promise.resolve(getInstrumentsResponse)),
+            vaultInstrument: jest.fn(() => Promise.resolve(vaultInstrumentResponse)),
             deleteInstrument: jest.fn(() => Promise.resolve(deleteInstrumentResponse)),
         };
 
@@ -64,6 +68,43 @@ describe('InstrumentActionCreator', () => {
                     expect(actions).toEqual([
                         { type: actionTypes.LOAD_INSTRUMENTS_REQUESTED },
                         { type: actionTypes.LOAD_INSTRUMENTS_FAILED, payload: errorResponse, error: true },
+                    ]);
+                });
+        });
+    });
+
+    describe('#vaultInstrument()', () => {
+        it('post a new instrument', async () => {
+            await instrumentActionCreator.vaultInstrument().toPromise();
+
+            expect(checkoutClient.getShopperToken).toHaveBeenCalled();
+            expect(checkoutClient.vaultInstrument).toHaveBeenCalled();
+        });
+
+        it('emits actions if able to post instrument', () => {
+            instrumentActionCreator.vaultInstrument()
+                .toArray()
+                .subscribe((actions) => {
+                    expect(actions).toEqual([
+                        { type: actionTypes.VAULT_INSTRUMENT_REQUESTED },
+                        { type: actionTypes.VAULT_INSTRUMENT_SUCCEEDED, payload: getInstrumentsResponse.body.data },
+                    ]);
+                });
+        });
+
+        it('emits error actions if unable to post instrument', () => {
+            checkoutClient.vaultInstrument.mockReturnValue(Promise.reject(errorResponse));
+
+            const errorHandler = jest.fn((action) => Observable.of(action));
+
+            instrumentActionCreator.vaultInstrument()
+                .catch(errorHandler)
+                .toArray()
+                .subscribe((actions) => {
+                    expect(errorHandler).toHaveBeenCalled();
+                    expect(actions).toEqual([
+                        { type: actionTypes.VAULT_INSTRUMENT_REQUESTED },
+                        { type: actionTypes.VAULT_INSTRUMENT_FAILED, payload: errorResponse, error: true },
                     ]);
                 });
         });

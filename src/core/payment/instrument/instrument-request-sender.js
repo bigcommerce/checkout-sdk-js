@@ -46,6 +46,31 @@ export default class InstrumentRequestSender {
         });
     }
 
+    /**
+     * @param {string} storeId
+     * @param {string} shopperId
+     * @param {string} authToken
+     * @param {InstrumentRequestBody} instrument
+     * @return {Promise<Response<InstrumentResponseBody>>}
+     */
+    vaultInstrument(storeId, shopperId, authToken, instrument) {
+        const payload = {
+            storeId,
+            shopperId,
+            authToken,
+            instrument,
+        };
+
+        return new Promise((resolve, reject) => {
+            this._client.postShopperInstrument(payload, (error, response) => {
+                if (error) {
+                    reject(this._transformResponse(error));
+                } else {
+                    resolve(this._transformResponse(response));
+                }
+            });
+        });
+    }
 
     /**
      * @param {string} storeId

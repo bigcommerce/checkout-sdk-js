@@ -1,6 +1,7 @@
 import {
     getShopperTokenResponseBody,
     getInstrumentsResponseBody,
+    vaultInstrumentResponseBody,
     getErrorInstrumentResponseBody,
 } from './instrument.mock';
 import InstrumentRequestSender from './instrument-request-sender';
@@ -13,6 +14,7 @@ describe('InstrumentMethodRequestSender', () => {
         client = {
             getShopperToken: jest.fn((payload, callback) => callback()),
             getShopperInstruments: jest.fn((payload, callback) => callback()),
+            postShopperInstrument: jest.fn((payload, callback) => callback()),
             deleteShopperInstrument: jest.fn((payload, callback) => callback()),
         };
 
@@ -84,6 +86,44 @@ describe('InstrumentMethodRequestSender', () => {
 
             try {
                 await instrumentRequestSender.getInstruments();
+            } catch (error) {
+                expect(error).toEqual({
+                    body: getErrorInstrumentResponseBody(),
+                    headers: {},
+                    status: 400,
+                    statusText: 'Bad Request',
+                });
+            }
+        });
+    });
+
+    describe('#vaultInstrument()', () => {
+        it('returns an instrument if submission is successful', async () => {
+            client.postShopperInstrument = jest.fn((payload, callback) => callback(null, {
+                data: vaultInstrumentResponseBody(),
+                status: 200,
+                statusText: 'OK',
+            }));
+
+            const response = await instrumentRequestSender.vaultInstrument();
+
+            expect(response).toEqual({
+                headers: {},
+                body: vaultInstrumentResponseBody(),
+                status: 200,
+                statusText: 'OK',
+            });
+        });
+
+        it('returns error response if submission is unsuccessful', async () => {
+            client.postShopperInstrument = jest.fn((payload, callback) => callback({
+                data: getErrorInstrumentResponseBody(),
+                status: 400,
+                statusText: 'Bad Request',
+            }));
+
+            try {
+                await instrumentRequestSender.vaultInstrument();
             } catch (error) {
                 expect(error).toEqual({
                     body: getErrorInstrumentResponseBody(),

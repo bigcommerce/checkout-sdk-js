@@ -374,6 +374,20 @@ export default class CheckoutService {
     }
 
     /**
+     * @param {InstrumentRequestBody} instrument
+     * @return {Promise<CheckoutSelectors>}
+     */
+    vaultInstrument(instrument) {
+        const { checkout } = this._store.getState();
+        const { storeId } = checkout.getConfig();
+        const { customerId } = checkout.getCustomer();
+
+        const action = this._instrumentActionCreator.vaultInstrument(storeId, customerId, instrument);
+
+        return this._store.dispatch(action);
+    }
+
+    /**
      * @param {string} instrumentId
      * @return {Promise<CheckoutSelectors>}
      */
