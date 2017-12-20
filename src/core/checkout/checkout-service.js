@@ -9,6 +9,7 @@ export default class CheckoutService {
      * @param {CouponActionCreator} couponActionCreator
      * @param {CustomerActionCreator} customerActionCreator
      * @param {GiftCertificateActionCreator} giftCertificateActionCreator
+     * @param {InstrumentActionCreator} instrumentActionCreator
      * @param {OrderActionCreator} orderActionCreator
      * @param {PaymentMethodActionCreator} paymentMethodActionCreator
      * @param {QuoteActionCreator} quoteActionCreator
@@ -25,6 +26,7 @@ export default class CheckoutService {
         couponActionCreator,
         customerActionCreator,
         giftCertificateActionCreator,
+        instrumentActionCreator,
         orderActionCreator,
         paymentMethodActionCreator,
         quoteActionCreator,
@@ -40,6 +42,7 @@ export default class CheckoutService {
         this._couponActionCreator = couponActionCreator;
         this._customerActionCreator = customerActionCreator;
         this._giftCertificateActionCreator = giftCertificateActionCreator;
+        this._instrumentActionCreator = instrumentActionCreator;
         this._orderActionCreator = orderActionCreator;
         this._paymentMethodActionCreator = paymentMethodActionCreator;
         this._quoteActionCreator = quoteActionCreator;
@@ -353,6 +356,19 @@ export default class CheckoutService {
      */
     removeGiftCertificate(code, options = {}) {
         const action = this._giftCertificateActionCreator.removeGiftCertificate(code, options);
+
+        return this._store.dispatch(action);
+    }
+
+    /**
+     * @return {Promise<CheckoutSelectors>}
+     */
+    loadInstruments() {
+        const { checkout } = this._store.getState();
+        const { storeId } = checkout.getConfig();
+        const { customerId } = checkout.getCustomer();
+
+        const action = this._instrumentActionCreator.loadInstruments(storeId, customerId);
 
         return this._store.dispatch(action);
     }

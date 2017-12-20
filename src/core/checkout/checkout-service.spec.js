@@ -7,6 +7,7 @@ import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { CustomerActionCreator } from '../customer';
 import { OrderActionCreator } from '../order';
 import { PaymentMethodActionCreator } from '../payment';
+import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { ShippingAddressActionCreator, ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
 import { createTimeout } from '../../http-request';
@@ -15,10 +16,12 @@ import { getCartResponseBody } from '../cart/carts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { getCouponResponseBody } from '../coupon/coupon.mock';
 import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } from '../order/orders.mock';
-import { getCustomerResponseBody } from '../customer/customers.mock';
+import { getCustomerResponseBody, getGuestCustomer } from '../customer/customers.mock';
 import { getGiftCertificateResponseBody } from '../coupon/gift-certificate.mock';
+import { getAppConfig } from '../config/configs.mock.js';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
+import { getShopperTokenResponseBody, getInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../../http-request/responses.mock';
@@ -109,9 +112,19 @@ describe('CheckoutService', () => {
             removeGiftCertificate: jest.fn(() =>
                 Promise.resolve(getResponse(getGiftCertificateResponseBody()))
             ),
+
+            getShopperToken: jest.fn(() =>
+                Promise.resolve(getResponse(getShopperTokenResponseBody()))
+            ),
+
+            getInstruments: jest.fn(() =>
+                Promise.resolve(getResponse(getInstrumentsResponseBody()))
+            ),
         };
 
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            config: { data: getAppConfig() },
+        });
 
         paymentStrategy = {
             execute: jest.fn(() => Promise.resolve(store.getState())),
@@ -133,6 +146,7 @@ describe('CheckoutService', () => {
             new CouponActionCreator(checkoutClient),
             new CustomerActionCreator(checkoutClient),
             new GiftCertificateActionCreator(checkoutClient),
+            new InstrumentActionCreator(checkoutClient),
             new OrderActionCreator(checkoutClient),
             new PaymentMethodActionCreator(checkoutClient),
             new QuoteActionCreator(checkoutClient),
@@ -485,6 +499,20 @@ describe('CheckoutService', () => {
 
             expect(checkoutClient.removeGiftCertificate)
                 .toHaveBeenCalledWith(code, options);
+        });
+    });
+
+    describe('#loadInstruments()', () => {
+        it('loads instruments', async () => {
+            const { storeId } = getAppConfig();
+            const { customerId } = getGuestCustomer();
+            const authToken = '123123123';
+
+            await checkoutService.signInCustomer();
+            await checkoutService.loadInstruments();
+
+            expect(checkoutClient.getInstruments)
+                .toHaveBeenCalledWith(storeId, customerId, authToken);
         });
     });
 });

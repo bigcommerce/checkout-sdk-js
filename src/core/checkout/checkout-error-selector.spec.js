@@ -5,6 +5,7 @@ import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector } from '../customer';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
+import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
 import { getErrorResponseBody } from '../common/error/errors.mock';
@@ -17,6 +18,7 @@ describe('CheckoutErrorSelector', () => {
     let coupon;
     let customer;
     let giftCertificate;
+    let instrument;
     let errorResponse;
     let errors;
     let order;
@@ -33,6 +35,7 @@ describe('CheckoutErrorSelector', () => {
         coupon = new CouponSelector();
         customer = new CustomerSelector();
         giftCertificate = new GiftCertificateSelector();
+        instrument = new InstrumentSelector();
         order = new OrderSelector();
         paymentMethods = new PaymentMethodSelector();
         quote = new QuoteSelector();
@@ -47,6 +50,7 @@ describe('CheckoutErrorSelector', () => {
             coupon,
             customer,
             giftCertificate,
+            instrument,
             order,
             paymentMethods,
             quote,
@@ -343,6 +347,22 @@ describe('CheckoutErrorSelector', () => {
 
             expect(errors.getRemoveCouponError()).toEqual(undefined);
             expect(coupon.getRemoveError).toHaveBeenCalled();
+        });
+    });
+
+    describe('#getLoadInstrumentsError()', () => {
+        it('returns error if there is an error when loading instruments', () => {
+            jest.spyOn(instrument, 'getLoadError').mockReturnValue(errorResponse);
+
+            expect(errors.getLoadInstrumentsError()).toEqual(errorResponse);
+            expect(instrument.getLoadError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is NO error when loading instruments', () => {
+            jest.spyOn(instrument, 'getLoadError').mockReturnValue();
+
+            expect(errors.getLoadInstrumentsError()).toEqual(undefined);
+            expect(instrument.getLoadError).toHaveBeenCalled();
         });
     });
 });

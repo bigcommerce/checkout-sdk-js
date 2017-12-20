@@ -6,6 +6,7 @@ export default class CheckoutSelector {
      * @param {ConfigSelector} config
      * @param {CountrySelector} countries
      * @param {CustomerSelector} customer
+     * @param {InstrumentSelector} instrument
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
@@ -19,6 +20,7 @@ export default class CheckoutSelector {
         config,
         countries,
         customer,
+        instrument,
         order,
         paymentMethods,
         quote,
@@ -31,6 +33,7 @@ export default class CheckoutSelector {
         this._config = config;
         this._countries = countries;
         this._customer = customer;
+        this._instrument = instrument;
         this._order = order;
         this._paymentMethods = paymentMethods;
         this._quote = quote;
@@ -166,5 +169,14 @@ export default class CheckoutSelector {
      */
     isPaymentDataSubmitted(methodId, gatewayId) {
         return this._order.isPaymentDataSubmitted(this.getPaymentMethod(methodId, gatewayId));
+    }
+
+    /**
+     * @param {string} storeId
+     * @param {string} shopperId
+     * @return {Instrument[]}
+     */
+    getInstruments(storeId, shopperId) {
+        return this._instrument.getInstruments(storeId, shopperId);
     }
 }

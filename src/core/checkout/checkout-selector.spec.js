@@ -3,6 +3,7 @@ import { CartSelector } from '../cart' ;
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CustomerSelector } from '../customer';
+import { InstrumentSelector } from '../payment/instrument';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
 import { QuoteSelector } from '../quote';
@@ -12,6 +13,7 @@ import { getCompleteOrderState } from '../order/orders.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCountriesState } from '../geography/countries.mock';
 import { getCustomerState } from '../customer/customers.mock';
+import { getInstrumentState } from '../payment/instrument/instrument.mock';
 import { getBraintree, getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
@@ -29,6 +31,7 @@ describe('CheckoutSelector', () => {
             config: getConfigState(),
             countries: getCountriesState(),
             customer: getCustomerState(),
+            instrument: getInstrumentState(),
             order: getCompleteOrderState(),
             paymentMethods: getPaymentMethodsState(),
             quote: getQuoteState(),
@@ -44,6 +47,7 @@ describe('CheckoutSelector', () => {
             new ConfigSelector(state.config),
             new CountrySelector(state.countries),
             new CustomerSelector(state.customer),
+            new InstrumentSelector(state.instrument),
             orderSelector,
             new PaymentMethodSelector(state.paymentMethods),
             new QuoteSelector(state.quote),
@@ -108,6 +112,10 @@ describe('CheckoutSelector', () => {
 
     it('returns shipping address', () => {
         expect(selector.getShippingAddress()).toEqual(state.quote.data.shippingAddress);
+    });
+
+    it('returns instruments', () => {
+        expect(selector.getInstruments()).toEqual(state.instruments.data);
     });
 
     it('returns flag indicating if payment is submitted', () => {

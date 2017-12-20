@@ -6,6 +6,8 @@ export default class CheckoutErrorSelector {
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
+     * @param {GiftCertificateSelector} giftCertificate
+     * @param {InstrumentSelector} instrument
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
@@ -20,6 +22,7 @@ export default class CheckoutErrorSelector {
         coupon,
         customer,
         giftCertificate,
+        instrument,
         order,
         paymentMethods,
         quote,
@@ -33,6 +36,7 @@ export default class CheckoutErrorSelector {
         this._coupon = coupon;
         this._customer = customer;
         this._giftCertificate = giftCertificate;
+        this._instrument = instrument;
         this._order = order;
         this._paymentMethods = paymentMethods;
         this._quote = quote;
@@ -206,5 +210,12 @@ export default class CheckoutErrorSelector {
      */
     getRemoveGiftCertificateError() {
         return this._giftCertificate.getRemoveError();
+    }
+
+    /**
+     * @return {?ErrorResponse}
+     */
+    getLoadInstrumentsError() {
+        return this._instrument.getLoadError();
     }
 }

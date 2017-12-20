@@ -5,6 +5,7 @@ import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector } from '../customer';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
+import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
 import CheckoutStatusSelector from './checkout-status-selector';
@@ -16,6 +17,7 @@ describe('CheckoutStatusSelector', () => {
     let coupon;
     let customer;
     let giftCertificate;
+    let instrument;
     let order;
     let paymentMethods;
     let quote;
@@ -33,6 +35,7 @@ describe('CheckoutStatusSelector', () => {
         giftCertificate = new GiftCertificateSelector();
         order = new OrderSelector();
         paymentMethods = new PaymentMethodSelector();
+        instrument = new InstrumentSelector();
         quote = new QuoteSelector();
         shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
@@ -45,6 +48,7 @@ describe('CheckoutStatusSelector', () => {
             coupon,
             customer,
             giftCertificate,
+            instrument,
             order,
             paymentMethods,
             quote,
@@ -371,6 +375,22 @@ describe('CheckoutStatusSelector', () => {
 
             expect(statuses.isRemovingGiftCertificate()).toEqual(false);
             expect(giftCertificate.isRemoving).toHaveBeenCalled();
+        });
+    });
+
+    describe('#isLoadingInstruments()', () => {
+        it('returns true if loading instruments', () => {
+            jest.spyOn(instrument, 'isLoading').mockReturnValue(true);
+
+            expect(statuses.isLoadingInstruments()).toEqual(true);
+            expect(instrument.isLoading).toHaveBeenCalled();
+        });
+
+        it('returns false if not loading instruments', () => {
+            jest.spyOn(instrument, 'isLoading').mockReturnValue(false);
+
+            expect(statuses.isLoadingInstruments()).toEqual(false);
+            expect(instrument.isLoading).toHaveBeenCalled();
         });
     });
 });
