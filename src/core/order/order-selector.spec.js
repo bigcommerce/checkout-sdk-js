@@ -161,11 +161,11 @@ describe('OrderSelector', () => {
         });
     });
 
-    describe('#isPaymentRequired()', () => {
+    describe('#isPaymentDataRequired()', () => {
         it('returns true if payment is required', () => {
             orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
 
-            expect(orderSelector.isPaymentRequired()).toEqual(true);
+            expect(orderSelector.isPaymentDataRequired()).toEqual(true);
         });
 
         it('returns false if store credit exceeds grand total', () => {
@@ -173,7 +173,7 @@ describe('OrderSelector', () => {
                 data: { storeCredit: 100000000000 },
             }), state.cart);
 
-            expect(orderSelector.isPaymentRequired(true)).toEqual(false);
+            expect(orderSelector.isPaymentDataRequired(true)).toEqual(false);
         });
 
         it('returns true if store credit exceeds grand total but not using store credit', () => {
@@ -181,7 +181,7 @@ describe('OrderSelector', () => {
                 data: { storeCredit: 100000000000 },
             }), state.cart);
 
-            expect(orderSelector.isPaymentRequired(false)).toEqual(true);
+            expect(orderSelector.isPaymentDataRequired(false)).toEqual(true);
         });
     });
 
