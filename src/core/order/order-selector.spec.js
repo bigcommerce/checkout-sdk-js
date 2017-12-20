@@ -2,8 +2,10 @@ import { merge } from 'lodash';
 import { getCartState } from '../cart/carts.mock';
 import { getCustomerState } from '../customer/customers.mock';
 import { getSubmittedOrder, getSubmittedOrderState } from './orders.mock';
+import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getPaymentState } from '../payment/payments.mock';
 import { getErrorResponseBody } from '../common/error/errors.mock';
+import * as paymentStatusTypes from '../payment/payment-status-types';
 import OrderSelector from './order-selector';
 
 describe('OrderSelector', () => {
@@ -180,6 +182,38 @@ describe('OrderSelector', () => {
             }), state.cart);
 
             expect(orderSelector.isPaymentRequired(false)).toEqual(true);
+        });
+    });
+
+    describe('#isPaymentDataSubmitted()', () => {
+        it('returns true if payment is tokenized', () => {
+            const paymentMethod = { ...getPaymentMethod(), nonce: '8903d867-6f7b-475c-8ab2-0b47ec6e000d' };
+
+            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+
+            expect(orderSelector.isPaymentDataSubmitted(paymentMethod)).toEqual(true);
+        });
+
+        it('returns true if payment is acknowledged', () => {
+            orderSelector = new OrderSelector(merge({}, state.order, {
+                data: { payment: { status: paymentStatusTypes.ACKNOWLEDGE } },
+            }), state.payment, state.customer, state.cart);
+
+            expect(orderSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(true);
+        });
+
+        it('returns true if payment is finalized', () => {
+            orderSelector = new OrderSelector(merge({}, state.order, {
+                data: { payment: { status: paymentStatusTypes.FINALIZE } },
+            }), state.payment, state.customer, state.cart);
+
+            expect(orderSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(true);
+        });
+
+        it('returns false if payment is not tokenized, acknowledged or finalized', () => {
+            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+
+            expect(orderSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(false);
         });
     });
 });

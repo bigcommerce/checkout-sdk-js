@@ -177,6 +177,7 @@ interface CheckoutStatusSelector {
     isRemovingCartItem(itemId: string): boolean; // TODO: Not implemented
 
     // Payment
+    isPaymentDataSubmitted(methodId: string, gatewayId?: string): boolean;
     isLoadingPaymentMethods(): boolean;
     isLoadingPaymentMethod(methodId: string): boolean;
     isInitializingPaymentMethod(methodId: string): boolean; // TODO: Not implemented
