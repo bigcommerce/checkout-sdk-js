@@ -4,7 +4,7 @@ import * as actionTypes from './instrument-action-types';
 
 export default class InstrumentActionCreator {
     /**
-     * @contructor
+     * @constructor
      * @param {InstrumentRequestSender} instrumentRequestSender
      */
     constructor(instrumentRequestSender) {

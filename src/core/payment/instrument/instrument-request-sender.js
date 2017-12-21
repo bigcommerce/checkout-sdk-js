@@ -1,6 +1,6 @@
 export default class InstrumentRequestSender {
     /**
-     * @contructor
+     * @constructor
      * @param {BigpayClient} client
      */
     constructor(client) {

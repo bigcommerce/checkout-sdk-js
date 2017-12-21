@@ -1,6 +1,6 @@
 export default class PaymentRequestSender {
     /**
-     * @contructor
+     * @constructor
      * @param {BigpayClient} client
      */
     constructor(client) {
