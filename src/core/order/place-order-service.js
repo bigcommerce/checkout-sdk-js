@@ -1,4 +1,5 @@
 import { omit, pick } from 'lodash';
+import * as paymentStatusTypes from '../payment/payment-status-types';
 
 export default class PlaceOrderService {
     /**
@@ -47,9 +48,7 @@ export default class PlaceOrderService {
      * @return {Promise<CheckoutSelectors>}
      */
     submitPayment(payment, useStoreCredit = false, options) {
-        const { checkout } = this._store.getState();
-
-        if (!checkout.isPaymentDataRequired(useStoreCredit)) {
+        if (!this._shouldSubmitPayment(useStoreCredit)) {
             return Promise.resolve(this._store.getState());
         }
 
@@ -70,15 +69,29 @@ export default class PlaceOrderService {
      * @return {Promise<CheckoutSelectors>}
      */
     initializeOffsitePayment(payment, useStoreCredit = false, options) {
-        const { checkout } = this._store.getState();
-
-        if (!checkout.isPaymentDataRequired(useStoreCredit)) {
+        if (!this._shouldSubmitPayment(useStoreCredit)) {
             return Promise.resolve(this._store.getState());
         }
 
         const payload = this._getPaymentRequestBody(payment);
 
         return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payload, options));
+    }
+
+    /**
+     * @private
+     * @param {boolean} useStoreCredit
+     * @return {boolean}
+     */
+    _shouldSubmitPayment(useStoreCredit) {
+        const { checkout } = this._store.getState();
+        const { payment = {} } = checkout.getOrder();
+
+        return (
+            checkout.isPaymentDataRequired(useStoreCredit) &&
+            payment.status !== paymentStatusTypes.ACKNOWLEDGE &&
+            payment.status !== paymentStatusTypes.FINALIZE
+        );
     }
 
     /**
