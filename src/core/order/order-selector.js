@@ -1,4 +1,5 @@
 import { pick } from 'lodash';
+import * as paymentStatusTypes from '../payment/payment-status-types';
 
 export default class OrderSelector {
     /**
@@ -40,11 +41,23 @@ export default class OrderSelector {
      * @param {boolean} useStoreCredit
      * @return {boolean}
      */
-    isPaymentRequired(useStoreCredit) {
+    isPaymentDataRequired(useStoreCredit) {
         const grandTotal = this._cart.data.grandTotal && this._cart.data.grandTotal.amount || 0;
         const storeCredit = this._customer.data.storeCredit || 0;
 
         return (useStoreCredit ? grandTotal - storeCredit : grandTotal) > 0;
+    }
+
+    /**
+     * @param {PaymentMethod} paymentMethod
+     * @return {boolean}
+     */
+    isPaymentDataSubmitted(paymentMethod = {}) {
+        const { payment = {} } = this.getOrder();
+
+        return !!paymentMethod.nonce ||
+            payment.status === paymentStatusTypes.ACKNOWLEDGE ||
+            payment.status === paymentStatusTypes.FINALIZE;
     }
 
     /**

@@ -155,7 +155,16 @@ export default class CheckoutSelector {
      * @param {boolean} useStoreCredit
      * @return {boolean}
      */
-    isPaymentRequired(useStoreCredit) {
-        return this._order.isPaymentRequired(useStoreCredit);
+    isPaymentDataRequired(useStoreCredit) {
+        return this._order.isPaymentDataRequired(useStoreCredit);
+    }
+
+    /**
+     * @param {string} methodId
+     * @param {string} [gatewayId]
+     * @return {boolean}
+     */
+    isPaymentDataSubmitted(methodId, gatewayId) {
+        return this._order.isPaymentDataSubmitted(this.getPaymentMethod(methodId, gatewayId));
     }
 }

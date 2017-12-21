@@ -2,8 +2,10 @@ import { merge } from 'lodash';
 import { getCartState } from '../cart/carts.mock';
 import { getCustomerState } from '../customer/customers.mock';
 import { getSubmittedOrder, getSubmittedOrderState } from './orders.mock';
+import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getPaymentState } from '../payment/payments.mock';
 import { getErrorResponseBody } from '../common/error/errors.mock';
+import * as paymentStatusTypes from '../payment/payment-status-types';
 import OrderSelector from './order-selector';
 
 describe('OrderSelector', () => {
@@ -159,11 +161,11 @@ describe('OrderSelector', () => {
         });
     });
 
-    describe('#isPaymentRequired()', () => {
+    describe('#isPaymentDataRequired()', () => {
         it('returns true if payment is required', () => {
             orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
 
-            expect(orderSelector.isPaymentRequired()).toEqual(true);
+            expect(orderSelector.isPaymentDataRequired()).toEqual(true);
         });
 
         it('returns false if store credit exceeds grand total', () => {
@@ -171,7 +173,7 @@ describe('OrderSelector', () => {
                 data: { storeCredit: 100000000000 },
             }), state.cart);
 
-            expect(orderSelector.isPaymentRequired(true)).toEqual(false);
+            expect(orderSelector.isPaymentDataRequired(true)).toEqual(false);
         });
 
         it('returns true if store credit exceeds grand total but not using store credit', () => {
@@ -179,7 +181,39 @@ describe('OrderSelector', () => {
                 data: { storeCredit: 100000000000 },
             }), state.cart);
 
-            expect(orderSelector.isPaymentRequired(false)).toEqual(true);
+            expect(orderSelector.isPaymentDataRequired(false)).toEqual(true);
+        });
+    });
+
+    describe('#isPaymentDataSubmitted()', () => {
+        it('returns true if payment is tokenized', () => {
+            const paymentMethod = { ...getPaymentMethod(), nonce: '8903d867-6f7b-475c-8ab2-0b47ec6e000d' };
+
+            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+
+            expect(orderSelector.isPaymentDataSubmitted(paymentMethod)).toEqual(true);
+        });
+
+        it('returns true if payment is acknowledged', () => {
+            orderSelector = new OrderSelector(merge({}, state.order, {
+                data: { payment: { status: paymentStatusTypes.ACKNOWLEDGE } },
+            }), state.payment, state.customer, state.cart);
+
+            expect(orderSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(true);
+        });
+
+        it('returns true if payment is finalized', () => {
+            orderSelector = new OrderSelector(merge({}, state.order, {
+                data: { payment: { status: paymentStatusTypes.FINALIZE } },
+            }), state.payment, state.customer, state.cart);
+
+            expect(orderSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(true);
+        });
+
+        it('returns false if payment is not tokenized, acknowledged or finalized', () => {
+            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+
+            expect(orderSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(false);
         });
     });
 });

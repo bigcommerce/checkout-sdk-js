@@ -19,6 +19,7 @@ import { getShippingOptionsState } from '../shipping/shipping-options.mock';
 import CheckoutSelector from './checkout-selector';
 
 describe('CheckoutSelector', () => {
+    let orderSelector;
     let selector;
     let state;
 
@@ -35,13 +36,15 @@ describe('CheckoutSelector', () => {
             shippingCountries: getShippingCountriesState(),
         };
 
+        orderSelector = new OrderSelector(state.order);
+
         selector = new CheckoutSelector(
             new BillingAddressSelector(state.quote),
             new CartSelector(state.cart),
             new ConfigSelector(state.config),
             new CountrySelector(state.countries),
             new CustomerSelector(state.customer),
-            new OrderSelector(state.order),
+            orderSelector,
             new PaymentMethodSelector(state.paymentMethods),
             new QuoteSelector(state.quote),
             new ShippingAddressSelector(state.quote),
@@ -105,5 +108,12 @@ describe('CheckoutSelector', () => {
 
     it('returns shipping address', () => {
         expect(selector.getShippingAddress()).toEqual(state.quote.data.shippingAddress);
+    });
+
+    it('returns flag indicating if payment is submitted', () => {
+        jest.spyOn(orderSelector, 'isPaymentDataSubmitted');
+
+        expect(selector.isPaymentDataSubmitted('braintree')).toEqual(true);
+        expect(orderSelector.isPaymentDataSubmitted).toHaveBeenCalledWith(getBraintree());
     });
 });

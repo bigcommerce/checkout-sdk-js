@@ -49,7 +49,7 @@ export default class PlaceOrderService {
     submitPayment(payment, useStoreCredit = false, options) {
         const { checkout } = this._store.getState();
 
-        if (!checkout.isPaymentRequired(useStoreCredit)) {
+        if (!checkout.isPaymentDataRequired(useStoreCredit)) {
             return Promise.resolve(this._store.getState());
         }
 
@@ -72,7 +72,7 @@ export default class PlaceOrderService {
     initializeOffsitePayment(payment, useStoreCredit = false, options) {
         const { checkout } = this._store.getState();
 
-        if (!checkout.isPaymentRequired(useStoreCredit)) {
+        if (!checkout.isPaymentDataRequired(useStoreCredit)) {
             return Promise.resolve(this._store.getState());
         }
 
