@@ -18,7 +18,7 @@ describe('CheckoutErrorSelector', () => {
     let coupon;
     let customer;
     let giftCertificate;
-    let instrument;
+    let instruments;
     let errorResponse;
     let errors;
     let order;
@@ -35,7 +35,7 @@ describe('CheckoutErrorSelector', () => {
         coupon = new CouponSelector();
         customer = new CustomerSelector();
         giftCertificate = new GiftCertificateSelector();
-        instrument = new InstrumentSelector();
+        instruments = new InstrumentSelector();
         order = new OrderSelector();
         paymentMethods = new PaymentMethodSelector();
         quote = new QuoteSelector();
@@ -50,7 +50,7 @@ describe('CheckoutErrorSelector', () => {
             coupon,
             customer,
             giftCertificate,
-            instrument,
+            instruments,
             order,
             paymentMethods,
             quote,
@@ -352,49 +352,49 @@ describe('CheckoutErrorSelector', () => {
 
     describe('#getLoadInstrumentsError()', () => {
         it('returns error if there is an error when loading instruments', () => {
-            jest.spyOn(instrument, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(instruments, 'getLoadError').mockReturnValue(errorResponse);
 
             expect(errors.getLoadInstrumentsError()).toEqual(errorResponse);
-            expect(instrument.getLoadError).toHaveBeenCalled();
+            expect(instruments.getLoadError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is NO error when loading instruments', () => {
-            jest.spyOn(instrument, 'getLoadError').mockReturnValue();
+            jest.spyOn(instruments, 'getLoadError').mockReturnValue();
 
             expect(errors.getLoadInstrumentsError()).toEqual(undefined);
-            expect(instrument.getLoadError).toHaveBeenCalled();
+            expect(instruments.getLoadError).toHaveBeenCalled();
         });
     });
 
     describe('#getVaultInstrumentError()', () => {
         it('returns error if there is an error when vaulting instruments', () => {
-            jest.spyOn(instrument, 'getVaultError').mockReturnValue(errorResponse);
+            jest.spyOn(instruments, 'getVaultError').mockReturnValue(errorResponse);
 
             expect(errors.getVaultInstrumentError()).toEqual(errorResponse);
-            expect(instrument.getVaultError).toHaveBeenCalled();
+            expect(instruments.getVaultError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is NO error when vaulting instruments', () => {
-            jest.spyOn(instrument, 'getVaultError').mockReturnValue();
+            jest.spyOn(instruments, 'getVaultError').mockReturnValue();
 
             expect(errors.getVaultInstrumentError()).toEqual(undefined);
-            expect(instrument.getVaultError).toHaveBeenCalled();
+            expect(instruments.getVaultError).toHaveBeenCalled();
         });
     });
 
     describe('#getDeleteInstrumentError()', () => {
         it('returns error if there is an error when deleting instruments', () => {
-            jest.spyOn(instrument, 'getDeleteError').mockReturnValue(errorResponse);
+            jest.spyOn(instruments, 'getDeleteError').mockReturnValue(errorResponse);
 
             expect(errors.getDeleteInstrumentError('123')).toEqual(errorResponse);
-            expect(instrument.getDeleteError).toHaveBeenCalledWith('123');
+            expect(instruments.getDeleteError).toHaveBeenCalledWith('123');
         });
 
         it('returns undefined if there is NO error when deleting instruments', () => {
-            jest.spyOn(instrument, 'getDeleteError').mockReturnValue();
+            jest.spyOn(instruments, 'getDeleteError').mockReturnValue();
 
             expect(errors.getDeleteInstrumentError('123')).toEqual(undefined);
-            expect(instrument.getDeleteError).toHaveBeenCalledWith('123');
+            expect(instruments.getDeleteError).toHaveBeenCalledWith('123');
         });
     });
 });

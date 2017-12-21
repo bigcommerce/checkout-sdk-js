@@ -6,6 +6,7 @@
  * @property {CouponState} coupons
  * @property {CustomerState} customer
  * @property {GiftCertificateState} giftCertificates
+ * @property {InstrumentState} instruments
  * @property {OrderState} order
  * @property {PaymentState} payment
  * @property {PaymentMethodsState} paymentMethods

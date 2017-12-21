@@ -7,7 +7,7 @@ export default class CheckoutErrorSelector {
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
      * @param {GiftCertificateSelector} giftCertificate
-     * @param {InstrumentSelector} instrument
+     * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
@@ -22,7 +22,7 @@ export default class CheckoutErrorSelector {
         coupon,
         customer,
         giftCertificate,
-        instrument,
+        instruments,
         order,
         paymentMethods,
         quote,
@@ -36,7 +36,7 @@ export default class CheckoutErrorSelector {
         this._coupon = coupon;
         this._customer = customer;
         this._giftCertificate = giftCertificate;
-        this._instrument = instrument;
+        this._instruments = instruments;
         this._order = order;
         this._paymentMethods = paymentMethods;
         this._quote = quote;
@@ -219,14 +219,14 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getLoadInstrumentsError() {
-        return this._instrument.getLoadError();
+        return this._instruments.getLoadError();
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getVaultInstrumentError() {
-        return this._instrument.getVaultError();
+        return this._instruments.getVaultError();
     }
 
     /**
@@ -234,6 +234,6 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getDeleteInstrumentError(instrumentId) {
-        return this._instrument.getDeleteError(instrumentId);
+        return this._instruments.getDeleteError(instrumentId);
     }
 }

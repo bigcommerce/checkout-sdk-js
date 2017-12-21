@@ -17,7 +17,7 @@ describe('CheckoutStatusSelector', () => {
     let coupon;
     let customer;
     let giftCertificate;
-    let instrument;
+    let instruments;
     let order;
     let paymentMethods;
     let quote;
@@ -35,7 +35,7 @@ describe('CheckoutStatusSelector', () => {
         giftCertificate = new GiftCertificateSelector();
         order = new OrderSelector();
         paymentMethods = new PaymentMethodSelector();
-        instrument = new InstrumentSelector();
+        instruments = new InstrumentSelector();
         quote = new QuoteSelector();
         shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
@@ -48,7 +48,7 @@ describe('CheckoutStatusSelector', () => {
             coupon,
             customer,
             giftCertificate,
-            instrument,
+            instruments,
             order,
             paymentMethods,
             quote,
@@ -380,49 +380,49 @@ describe('CheckoutStatusSelector', () => {
 
     describe('#isLoadingInstruments()', () => {
         it('returns true if loading instruments', () => {
-            jest.spyOn(instrument, 'isLoading').mockReturnValue(true);
+            jest.spyOn(instruments, 'isLoading').mockReturnValue(true);
 
             expect(statuses.isLoadingInstruments()).toEqual(true);
-            expect(instrument.isLoading).toHaveBeenCalled();
+            expect(instruments.isLoading).toHaveBeenCalled();
         });
 
         it('returns false if not loading instruments', () => {
-            jest.spyOn(instrument, 'isLoading').mockReturnValue(false);
+            jest.spyOn(instruments, 'isLoading').mockReturnValue(false);
 
             expect(statuses.isLoadingInstruments()).toEqual(false);
-            expect(instrument.isLoading).toHaveBeenCalled();
+            expect(instruments.isLoading).toHaveBeenCalled();
         });
     });
 
     describe('#isVaultingInstrument()', () => {
         it('returns true if vaulting instrument', () => {
-            jest.spyOn(instrument, 'isVaulting').mockReturnValue(true);
+            jest.spyOn(instruments, 'isVaulting').mockReturnValue(true);
 
             expect(statuses.isVaultingInstrument()).toEqual(true);
-            expect(instrument.isVaulting).toHaveBeenCalled();
+            expect(instruments.isVaulting).toHaveBeenCalled();
         });
 
         it('returns false if not vaulting instrument', () => {
-            jest.spyOn(instrument, 'isVaulting').mockReturnValue(false);
+            jest.spyOn(instruments, 'isVaulting').mockReturnValue(false);
 
             expect(statuses.isVaultingInstrument()).toEqual(false);
-            expect(instrument.isVaulting).toHaveBeenCalled();
+            expect(instruments.isVaulting).toHaveBeenCalled();
         });
     });
 
     describe('#isDeletingInstrument()', () => {
         it('returns true if deleting instrument', () => {
-            jest.spyOn(instrument, 'isDeleting').mockReturnValue(true);
+            jest.spyOn(instruments, 'isDeleting').mockReturnValue(true);
 
             expect(statuses.isDeletingInstrument('123')).toEqual(true);
-            expect(instrument.isDeleting).toHaveBeenCalledWith('123');
+            expect(instruments.isDeleting).toHaveBeenCalledWith('123');
         });
 
         it('returns false if not deleting instrument', () => {
-            jest.spyOn(instrument, 'isDeleting').mockReturnValue(false);
+            jest.spyOn(instruments, 'isDeleting').mockReturnValue(false);
 
             expect(statuses.isDeletingInstrument('123')).toEqual(false);
-            expect(instrument.isDeleting).toHaveBeenCalledWith('123');
+            expect(instruments.isDeleting).toHaveBeenCalledWith('123');
         });
     });
 });

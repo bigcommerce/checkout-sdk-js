@@ -91,7 +91,7 @@ export function getErrorInstrumentResponseBody() {
     };
 }
 
-export function getInstrumentState() {
+export function getInstrumentsState() {
     return {
         data: getInstruments(),
         meta: {},

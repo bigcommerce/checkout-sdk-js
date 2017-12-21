@@ -1,6 +1,6 @@
 import InstrumentSelector from './instrument-selector';
 import { getErrorResponseBody } from '../../common/error/errors.mock';
-import { getInstrumentState } from './instrument.mock';
+import { getInstrumentsState } from './instrument.mock';
 
 describe('InstrumentSelector', () => {
     let instrumentSelector;
@@ -8,15 +8,15 @@ describe('InstrumentSelector', () => {
 
     beforeEach(() => {
         state = {
-            instrument: getInstrumentState(),
+            instruments: getInstrumentsState(),
         };
     });
 
     describe('#getInstruments()', () => {
         it('returns a list of instruments', () => {
-            instrumentSelector = new InstrumentSelector(state.instrument);
+            instrumentSelector = new InstrumentSelector(state.instruments);
 
-            expect(instrumentSelector.getInstruments()).toEqual(state.instrument.data);
+            expect(instrumentSelector.getInstruments()).toEqual(state.instruments.data);
         });
 
         it('returns an empty array if there are no instruments', () => {
@@ -31,7 +31,7 @@ describe('InstrumentSelector', () => {
             const loadError = getErrorResponseBody();
 
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 errors: { loadError },
             });
 
@@ -39,7 +39,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('does not return error if able to load', () => {
-            instrumentSelector = new InstrumentSelector(state.instrument);
+            instrumentSelector = new InstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getLoadError()).toBeUndefined();
         });
@@ -50,7 +50,7 @@ describe('InstrumentSelector', () => {
             const vaultError = getErrorResponseBody();
 
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 errors: { vaultError },
             });
 
@@ -58,7 +58,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('does not return error if able to vault', () => {
-            instrumentSelector = new InstrumentSelector(state.instrument);
+            instrumentSelector = new InstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getVaultError()).toBeUndefined();
         });
@@ -76,7 +76,7 @@ describe('InstrumentSelector', () => {
             const deleteError = getErrorResponseBody();
 
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 errors: { deleteError, failedInstrument: mockInstrumentId },
             });
 
@@ -84,7 +84,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('does not return error if able to delete', () => {
-            instrumentSelector = new InstrumentSelector(state.instrument);
+            instrumentSelector = new InstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getDeleteError(mockInstrumentId)).toBeUndefined();
         });
@@ -93,7 +93,7 @@ describe('InstrumentSelector', () => {
             const deleteError = getErrorResponseBody();
 
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 errors: { deleteError, failedInstrument: mockInstrumentId },
             });
 
@@ -104,7 +104,7 @@ describe('InstrumentSelector', () => {
             const deleteError = getErrorResponseBody();
 
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 errors: { deleteError, failedInstrument: mockInstrumentId },
             });
 
@@ -115,7 +115,7 @@ describe('InstrumentSelector', () => {
     describe('#isLoading()', () => {
         it('returns true if loading instruments', () => {
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 statuses: { isLoading: true },
             });
 
@@ -123,7 +123,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns false if not loading instruments', () => {
-            instrumentSelector = new InstrumentSelector(state.instrument);
+            instrumentSelector = new InstrumentSelector(state.instruments);
 
             expect(instrumentSelector.isLoading()).toEqual(false);
         });
@@ -132,7 +132,7 @@ describe('InstrumentSelector', () => {
     describe('#isVaulting()', () => {
         it('returns true if deleting an instrument', () => {
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 statuses: { isVaulting: true },
             });
 
@@ -140,7 +140,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns false if not deleting an instrument', () => {
-            instrumentSelector = new InstrumentSelector(state.instrument);
+            instrumentSelector = new InstrumentSelector(state.instruments);
 
             expect(instrumentSelector.isVaulting()).toEqual(false);
         });
@@ -155,7 +155,7 @@ describe('InstrumentSelector', () => {
 
         it('returns true if deleting an instrument', () => {
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 statuses: { isDeleting: true, deletingInstrument: mockInstrumentId },
             });
 
@@ -164,7 +164,7 @@ describe('InstrumentSelector', () => {
 
         it('returns false if not deleting an instrument', () => {
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 statuses: { isDeleting: false, deletingInstrument: undefined },
             });
 
@@ -173,7 +173,7 @@ describe('InstrumentSelector', () => {
 
         it('returns false if not deleting specific instrument', () => {
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 statuses: { isDeleting: true, deletingInstrument: '321' },
             });
 
@@ -182,7 +182,7 @@ describe('InstrumentSelector', () => {
 
         it('returns any deleting status if instrument id is not passed', () => {
             instrumentSelector = new InstrumentSelector({
-                ...state.instrument,
+                ...state.instruments,
                 statuses: { isDeleting: true, deletingInstrument: mockInstrumentId },
             });
 

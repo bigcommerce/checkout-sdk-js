@@ -13,7 +13,7 @@ import { getCompleteOrderState } from '../order/orders.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCountriesState } from '../geography/countries.mock';
 import { getCustomerState } from '../customer/customers.mock';
-import { getInstrumentState } from '../payment/instrument/instrument.mock';
+import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { getBraintree, getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
@@ -31,7 +31,7 @@ describe('CheckoutSelector', () => {
             config: getConfigState(),
             countries: getCountriesState(),
             customer: getCustomerState(),
-            instrument: getInstrumentState(),
+            instruments: getInstrumentsState(),
             order: getCompleteOrderState(),
             paymentMethods: getPaymentMethodsState(),
             quote: getQuoteState(),
@@ -47,7 +47,7 @@ describe('CheckoutSelector', () => {
             new ConfigSelector(state.config),
             new CountrySelector(state.countries),
             new CustomerSelector(state.customer),
-            new InstrumentSelector(state.instrument),
+            new InstrumentSelector(state.instruments),
             orderSelector,
             new PaymentMethodSelector(state.paymentMethods),
             new QuoteSelector(state.quote),

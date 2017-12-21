@@ -7,7 +7,7 @@ export default class CheckoutStatusSelector {
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
      * @param {GiftCertificateSelector} giftCertificate
-     * @param {InstrumentSelector} instrument
+     * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
@@ -22,7 +22,7 @@ export default class CheckoutStatusSelector {
         coupon,
         customer,
         giftCertificate,
-        instrument,
+        instruments,
         order,
         paymentMethods,
         quote,
@@ -36,7 +36,7 @@ export default class CheckoutStatusSelector {
         this._coupon = coupon;
         this._customer = customer;
         this._giftCertificate = giftCertificate;
-        this._instrument = instrument;
+        this._instruments = instruments;
         this._order = order;
         this._paymentMethods = paymentMethods;
         this._quote = quote;
@@ -219,7 +219,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isLoadingInstruments() {
-        return this._instrument.isLoading();
+        return this._instruments.isLoading();
     }
 
 
@@ -227,7 +227,7 @@ export default class CheckoutStatusSelector {
     * @return {boolean}
     */
     isVaultingInstrument() {
-        return this._instrument.isVaulting();
+        return this._instruments.isVaulting();
     }
 
     /**
@@ -235,6 +235,6 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isDeletingInstrument(instrumentId) {
-        return this._instrument.isDeleting(instrumentId);
+        return this._instruments.isDeleting(instrumentId);
     }
 }

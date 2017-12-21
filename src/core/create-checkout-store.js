@@ -30,7 +30,7 @@ function createCheckoutReducers() {
         coupons: couponReducer,
         customer: customerReducer,
         giftCertificates: giftCertificateReducer,
-        instrument: instrumentReducer,
+        instruments: instrumentReducer,
         order: orderReducer,
         payment: paymentReducer,
         paymentMethods: paymentMethodReducer,
@@ -53,7 +53,7 @@ function createCheckoutSelectors(state) {
     const coupon = new CouponSelector(state.coupons);
     const customer = new CustomerSelector(state.customer);
     const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
-    const instrument = new InstrumentSelector(state.instrument);
+    const instruments = new InstrumentSelector(state.instruments);
     const order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
     const quote = new QuoteSelector(state.quote);
@@ -67,7 +67,7 @@ function createCheckoutSelectors(state) {
         config,
         countries,
         customer,
-        instrument,
+        instruments,
         order,
         paymentMethods,
         quote,
@@ -83,7 +83,7 @@ function createCheckoutSelectors(state) {
         coupon,
         customer,
         giftCertificate,
-        instrument,
+        instruments,
         order,
         paymentMethods,
         quote,
@@ -99,7 +99,7 @@ function createCheckoutSelectors(state) {
         coupon,
         customer,
         giftCertificate,
-        instrument,
+        instruments,
         order,
         paymentMethods,
         quote,

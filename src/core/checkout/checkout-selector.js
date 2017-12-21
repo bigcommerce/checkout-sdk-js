@@ -6,7 +6,7 @@ export default class CheckoutSelector {
      * @param {ConfigSelector} config
      * @param {CountrySelector} countries
      * @param {CustomerSelector} customer
-     * @param {InstrumentSelector} instrument
+     * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
@@ -20,7 +20,7 @@ export default class CheckoutSelector {
         config,
         countries,
         customer,
-        instrument,
+        instruments,
         order,
         paymentMethods,
         quote,
@@ -33,7 +33,7 @@ export default class CheckoutSelector {
         this._config = config;
         this._countries = countries;
         this._customer = customer;
-        this._instrument = instrument;
+        this._instruments = instruments;
         this._order = order;
         this._paymentMethods = paymentMethods;
         this._quote = quote;
@@ -177,6 +177,6 @@ export default class CheckoutSelector {
      * @return {Instrument[]}
      */
     getInstruments(storeId, shopperId) {
-        return this._instrument.getInstruments(storeId, shopperId);
+        return this._instruments.getInstruments(storeId, shopperId);
     }
 }
