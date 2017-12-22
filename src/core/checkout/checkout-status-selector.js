@@ -7,6 +7,7 @@ export default class CheckoutStatusSelector {
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
      * @param {GiftCertificateSelector} giftCertificate
+     * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
@@ -21,6 +22,7 @@ export default class CheckoutStatusSelector {
         coupon,
         customer,
         giftCertificate,
+        instruments,
         order,
         paymentMethods,
         quote,
@@ -34,6 +36,7 @@ export default class CheckoutStatusSelector {
         this._coupon = coupon;
         this._customer = customer;
         this._giftCertificate = giftCertificate;
+        this._instruments = instruments;
         this._order = order;
         this._paymentMethods = paymentMethods;
         this._quote = quote;
@@ -65,7 +68,10 @@ export default class CheckoutStatusSelector {
             this.isApplyingCoupon() ||
             this.isRemovingCoupon() ||
             this.isApplyingGiftCertificate() ||
-            this.isRemovingGiftCertificate();
+            this.isRemovingGiftCertificate() ||
+            this.isLoadingInstruments() ||
+            this.isVaultingInstrument() ||
+            this.isDeletingInstrument();
     }
 
     /**
@@ -207,5 +213,28 @@ export default class CheckoutStatusSelector {
      */
     isRemovingGiftCertificate() {
         return this._giftCertificate.isRemoving();
+    }
+
+    /**
+     * @return {boolean}
+     */
+    isLoadingInstruments() {
+        return this._instruments.isLoading();
+    }
+
+
+    /**
+    * @return {boolean}
+    */
+    isVaultingInstrument() {
+        return this._instruments.isVaulting();
+    }
+
+    /**
+     * @param {string} [instrumentId]
+     * @return {boolean}
+     */
+    isDeletingInstrument(instrumentId) {
+        return this._instruments.isDeleting(instrumentId);
     }
 }

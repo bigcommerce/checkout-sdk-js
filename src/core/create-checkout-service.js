@@ -7,6 +7,7 @@ import { CouponActionCreator, GiftCertificateActionCreator } from './coupon';
 import { CustomerActionCreator } from './customer';
 import { PlaceOrderService, OrderActionCreator } from './order';
 import { PaymentActionCreator, PaymentMethodActionCreator, PaymentRequestSender } from './payment';
+import { InstrumentActionCreator, InstrumentRequestSender } from './payment/instrument';
 import { QuoteActionCreator } from './quote';
 import { ShippingAddressActionCreator, ShippingCountryActionCreator, ShippingOptionActionCreator } from './shipping';
 import createCheckoutClient from './create-checkout-client';
@@ -26,6 +27,7 @@ export default function createCheckoutService(options = {}) {
     const paymentClient = createPaymentClient({ host: options.config && options.config.bigpayBaseUrl });
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender);
+    const instrumentRequestSender = new InstrumentRequestSender(paymentClient);
     const orderActionCreator = new OrderActionCreator(client);
     const placeOrderService = new PlaceOrderService(store, orderActionCreator, paymentActionCreator);
 
@@ -38,6 +40,7 @@ export default function createCheckoutService(options = {}) {
         new CouponActionCreator(client),
         new CustomerActionCreator(client),
         new GiftCertificateActionCreator(client),
+        new InstrumentActionCreator(instrumentRequestSender),
         orderActionCreator,
         new PaymentMethodActionCreator(client),
         new QuoteActionCreator(client),
