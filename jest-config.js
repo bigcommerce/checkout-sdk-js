@@ -10,7 +10,7 @@ module.exports = {
         'jsx',
         'json',
     ],
-    testRegex: '.*\\.spec.(js|ts)$',
+    testRegex: 'src/.*\\.spec.(js|ts)$',
     setupTestFrameworkScriptFile: '<rootDir>/jest-setup.js',
     collectCoverageFrom: [
         'src/**/*.{js,ts}',
