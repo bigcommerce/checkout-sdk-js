@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -35,7 +36,7 @@ export default class DataStore {
 
         this._dispatchQueue$
             .scan((state, action) => reducer(state, action), initialState)
-            .distinctUntilChanged()
+            .distinctUntilChanged(isEqual)
             .map(stateTransformer)
             .subscribe(this._state$);
 
@@ -82,7 +83,7 @@ export default class DataStore {
 
         if (filters.length > 0) {
             state$ = state$.distinctUntilChanged((stateA, stateB) =>
-                filters.every((filter) => filter(stateA) === filter(stateB))
+                filters.every((filter) => isEqual(filter(stateA), filter(stateB)))
             );
         }
 
