@@ -174,6 +174,20 @@ describe('DataStore', () => {
             expect(subscriber.mock.calls.length).toEqual(1);
         });
 
+        it('does not notify subscribers if current state has changed in reference but not value', () => {
+            const store = new DataStore(
+                (state) => ({ ...state }),
+                { foobar: 'foobar' }
+            );
+
+            const subscriber = jest.fn();
+
+            store.subscribe(subscriber);
+            store.dispatch({ type: 'ACTION' });
+
+            expect(subscriber.mock.calls.length).toEqual(1);
+        });
+
         it('notifies subscribers with the tranformed state', () => {
             const initialState = { foobar: 'foobar' };
             const store = new DataStore(
@@ -387,6 +401,19 @@ describe('DataStore', () => {
             store.dispatch({ type: 'INCREMENT' });
 
             expect(store.getState()).toEqual({ foobar: 'foobar x2' });
+        });
+
+        it('does not return different reference if values are equal after reduction', () => {
+            const store = new DataStore(
+                (state) => ({ ...state }),
+                { foobar: 'foobar' }
+            );
+
+            const oldState = store.getState();
+
+            store.dispatch({ type: 'ACTION' });
+
+            expect(store.getState()).toBe(oldState);
         });
 
         it('applies the state transformer before returning the current state', () => {
