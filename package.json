@@ -42,6 +42,7 @@
     "validate-dependencies": "yarn install --check-files --frozen-lockfile"
   },
   "dependencies": {
+    "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#0.1.0",
     "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.9.0",
     "form-poster": "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1",
     "is-promise": "^2.1.0",
