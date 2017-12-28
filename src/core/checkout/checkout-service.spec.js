@@ -1,3 +1,4 @@
+import { createTimeout } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 import { BillingAddressActionCreator } from '../billing';
@@ -10,7 +11,6 @@ import { PaymentMethodActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { ShippingAddressActionCreator, ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
-import { createTimeout } from '../../http-request';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/billing-address.mock';
 import { getCartResponseBody } from '../cart/carts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -24,7 +24,7 @@ import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPayment
 import { getShopperTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
-import { getResponse } from '../../http-request/responses.mock';
+import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from '../create-checkout-store';
 import CheckoutService from './checkout-service';
 

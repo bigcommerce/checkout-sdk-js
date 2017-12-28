@@ -1,4 +1,4 @@
-import { createTimeout } from '../../http-request';
+import { createTimeout } from '@bigcommerce/request-sender';
 import { getShippingAddress } from './shipping-address.mock';
 import ShippingAddressRequestSender from './shipping-address-request-sender';
 

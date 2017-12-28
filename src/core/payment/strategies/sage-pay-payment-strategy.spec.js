@@ -1,7 +1,7 @@
 import { merge, omit } from 'lodash';
 import { getErrorPaymentResponseBody } from '../payments.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
-import { getResponse } from '../../../http-request/responses.mock';
+import { getResponse } from '../../common/http-request/responses.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import createCheckoutStore from '../../create-checkout-store';
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';

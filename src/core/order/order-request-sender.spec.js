@@ -1,6 +1,6 @@
+import { createTimeout } from '@bigcommerce/request-sender';
 import { getCompleteOrderResponseBody } from './orders.mock';
-import { getResponse } from '../../http-request/responses.mock';
-import { createTimeout } from '../../http-request';
+import { getResponse } from '../common/http-request/responses.mock';
 import OrderRequestSender from './order-request-sender';
 
 describe('OrderRequestSender', () => {

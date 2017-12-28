@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { getQuoteResponseBody } from './quotes.mock';
 import { getErrorResponseBody } from '../common/error/errors.mock';
-import { getErrorResponse, getResponse } from '../../http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './quote-action-types';
 import QuoteActionCreator from './quote-action-creator';
 

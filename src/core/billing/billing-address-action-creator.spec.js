@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { getErrorResponse, getResponse } from '../../http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getErrorResponseBody } from '../common/error/errors.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from './billing-address.mock';
 import * as actionTypes from './billing-address-action-types';

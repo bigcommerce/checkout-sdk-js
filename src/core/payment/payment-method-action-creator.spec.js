@@ -1,8 +1,8 @@
+import { createTimeout } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
-import { createTimeout } from '../../http-request';
 import { getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from './payment-methods.mock';
 import { getErrorResponseBody } from '../common/error/errors.mock';
-import { getErrorResponse, getResponse } from '../../http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './payment-method-action-types';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 

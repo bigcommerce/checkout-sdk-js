@@ -1,5 +1,5 @@
-import { createTimeout } from '../../http-request';
-import { getResponse } from '../../http-request/responses.mock';
+import { createTimeout } from '@bigcommerce/request-sender';
+import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/billing-address.mock';
 import { getCart, getCartResponseBody } from '../cart/carts.mock';
 import { getCompleteOrder } from '../order/orders.mock';

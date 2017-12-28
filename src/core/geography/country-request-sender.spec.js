@@ -1,6 +1,6 @@
-import { createTimeout } from '../../http-request';
+import { createTimeout } from '@bigcommerce/request-sender';
 import { getCountriesResponseBody } from './countries.mock';
-import { getResponse } from '../../http-request/responses.mock';
+import { getResponse } from '../common/http-request/responses.mock';
 import CountryRequestSender from './country-request-sender';
 
 describe('CountryRequestSender', () => {

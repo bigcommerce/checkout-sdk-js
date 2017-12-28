@@ -1,8 +1,7 @@
-import CouponRequestSender from './coupon-request-sender';
-
-import { createTimeout } from '../../http-request';
+import { createTimeout } from '@bigcommerce/request-sender';
 import { getCouponResponseBody } from './coupon.mock';
-import { getResponse } from '../../http-request/responses.mock';
+import { getResponse } from '../common/http-request/responses.mock';
+import CouponRequestSender from './coupon-request-sender';
 
 describe('Coupon Request Sender', () => {
     let couponRequestSender;
