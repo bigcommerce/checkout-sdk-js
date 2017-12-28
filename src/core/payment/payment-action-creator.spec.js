@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { getPayment, getErrorPaymentResponseBody, getPaymentResponseBody } from './payments.mock';
-import { getResponse } from '../../http-request/responses.mock';
+import { getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './payment-action-types';
 import PaymentActionCreator from './payment-action-creator';
 

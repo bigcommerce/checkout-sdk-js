@@ -1,4 +1,4 @@
-import { createTimeout } from '../../http-request';
+import { createTimeout } from '@bigcommerce/request-sender';
 import { getBillingAddress } from './billing-address.mock';
 import BillingAddressRequestSender from './billing-address-request-sender';
 

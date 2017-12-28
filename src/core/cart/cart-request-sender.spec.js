@@ -1,6 +1,6 @@
-import { createTimeout } from '../../http-request';
+import { createTimeout } from '@bigcommerce/request-sender';
 import { getCartResponseBody } from './carts.mock';
-import { getResponse } from '../../http-request/responses.mock';
+import { getResponse } from '../common/http-request/responses.mock';
 import CartRequestSender from './cart-request-sender';
 
 describe('CartRequestSender', () => {

@@ -1,6 +1,6 @@
-import { createTimeout } from '../../http-request';
+import { createTimeout } from '@bigcommerce/request-sender';
 import { getPaymentMethodsResponseBody, getPaymentMethodResponseBody } from './payment-methods.mock';
-import { getResponse } from '../../http-request/responses.mock';
+import { getResponse } from '../common/http-request/responses.mock';
 import PaymentMethodRequestSender from './payment-method-request-sender';
 
 describe('PaymentMethodRequestSender', () => {

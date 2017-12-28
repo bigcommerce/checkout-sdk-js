@@ -1,6 +1,6 @@
+import { createTimeout } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { createAction } from '../../data-store';
-import { createTimeout } from '../../http-request';
 import { getCartState } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCustomerState } from '../customer/customers.mock';

@@ -1,5 +1,4 @@
-import { createRequestSender } from '../http-request';
-
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { BillingAddressRequestSender } from './billing';
 import { CartRequestSender } from './cart';
 import { CountryRequestSender } from './geography';
@@ -9,7 +8,6 @@ import { PaymentMethodRequestSender } from './payment';
 import { OrderRequestSender } from './order';
 import { QuoteRequestSender } from './quote';
 import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from './shipping';
-
 import CheckoutClient from './checkout/checkout-client';
 
 /**

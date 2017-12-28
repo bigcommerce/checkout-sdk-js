@@ -21,12 +21,3 @@ export function getErrorResponse(body, headers = {}, status = 400, statusText = 
         },
     };
 }
-
-export function getTimeoutResponse() {
-    return {
-        body: '',
-        headers: {},
-        status: 0,
-        statusText: undefined,
-    };
-}

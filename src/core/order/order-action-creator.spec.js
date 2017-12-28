@@ -8,7 +8,7 @@ import {
 import { getCart, getCartResponseBody } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getErrorResponseBody } from '../common/error/errors.mock';
-import { getErrorResponse, getResponse } from '../../http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './order-action-types';
 import createCheckoutStore from '../create-checkout-store';
 import OrderActionCreator from './order-action-creator';
