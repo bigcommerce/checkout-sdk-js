@@ -7,17 +7,15 @@ export default class PaymentMethodSelector {
      * @param {OrderState} order
      */
     constructor(paymentMethods = {}, order = {}) {
-        this._paymentMethods = paymentMethods.data;
-        this._order = order.data;
-        this._errors = paymentMethods.errors;
-        this._statuses = paymentMethods.statuses;
+        this._paymentMethods = paymentMethods;
+        this._order = order;
     }
 
     /**
      * @return {PaymentMethod[]}
      */
     getPaymentMethods() {
-        return this._paymentMethods;
+        return this._paymentMethods.data;
     }
 
     /**
@@ -26,27 +24,32 @@ export default class PaymentMethodSelector {
      * @return {?PaymentMethod}
      */
     getPaymentMethod(methodId, gatewayId) {
-        const predicate = gatewayId ? { id: methodId, gateway: gatewayId } : { id: methodId };
+        const predicate = gatewayId ?
+            { id: methodId, gateway: gatewayId } :
+            { id: methodId };
 
-        return find(this._paymentMethods, predicate);
+        return find(this._paymentMethods.data, predicate);
     }
 
     /**
      * @return {?PaymentMethod}
      */
     getSelectedPaymentMethod() {
-        if (!this._order.payment) {
+        if (!this._order.data.payment) {
             return;
         }
 
-        return this.getPaymentMethod(this._order.payment.id, this._order.payment.gateway);
+        return this.getPaymentMethod(
+            this._order.data.payment.id,
+            this._order.data.payment.gateway
+        );
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getLoadError() {
-        return this._errors && this._errors.loadError;
+        return this._paymentMethods.errors && this._paymentMethods.errors.loadError;
     }
 
     /**
@@ -54,18 +57,19 @@ export default class PaymentMethodSelector {
      * @return {?ErrorResponse}
      */
     getLoadMethodError(methodId) {
-        if (!this._errors || (methodId && this._errors.failedMethod !== methodId)) {
+        if (!this._paymentMethods.errors ||
+            (methodId && this._paymentMethods.errors.failedMethod !== methodId)) {
             return;
         }
 
-        return this._errors.loadMethodError;
+        return this._paymentMethods.errors.loadMethodError;
     }
 
     /**
      * @return {boolean}
      */
     isLoading() {
-        return !!(this._statuses && this._statuses.isLoading);
+        return !!(this._paymentMethods.statuses && this._paymentMethods.statuses.isLoading);
     }
 
     /**
@@ -73,10 +77,11 @@ export default class PaymentMethodSelector {
      * @return {boolean}
      */
     isLoadingMethod(methodId) {
-        if (!this._statuses || (methodId && this._statuses.loadingMethod !== methodId)) {
+        if (!this._paymentMethods.statuses ||
+            (methodId && this._paymentMethods.statuses.loadingMethod !== methodId)) {
             return false;
         }
 
-        return !!this._statuses.isLoadingMethod;
+        return !!this._paymentMethods.statuses.isLoadingMethod;
     }
 }
