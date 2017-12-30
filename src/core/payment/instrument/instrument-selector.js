@@ -1,29 +1,27 @@
 export default class InstrumentSelector {
     constructor(instruments = {}) {
-        this._instruments = instruments.data;
-        this._errors = instruments.errors;
-        this._statuses = instruments.statuses;
+        this._instruments = instruments;
     }
 
     /**
      * @return {Array<Instrument>}
      */
     getInstruments() {
-        return this._instruments;
+        return this._instruments.data;
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getLoadError() {
-        return this._errors && this._errors.loadError;
+        return this._instruments.errors && this._instruments.errors.loadError;
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getVaultError() {
-        return this._errors && this._errors.vaultError;
+        return this._instruments.errors && this._instruments.errors.vaultError;
     }
 
     /**
@@ -31,25 +29,25 @@ export default class InstrumentSelector {
      * @return {?ErrorResponse}
      */
     getDeleteError(instrumentId) {
-        if (!this._errors || (instrumentId && this._errors.failedInstrument !== instrumentId)) {
+        if (!this._instruments.errors || (instrumentId && this._instruments.errors.failedInstrument !== instrumentId)) {
             return;
         }
 
-        return this._errors.deleteError;
+        return this._instruments.errors.deleteError;
     }
 
     /**
      * @return {boolean}
      */
     isLoading() {
-        return !!(this._statuses && this._statuses.isLoading);
+        return !!(this._instruments.statuses && this._instruments.statuses.isLoading);
     }
 
     /**
      * @return {boolean}
      */
     isVaulting() {
-        return !!(this._statuses && this._statuses.isVaulting);
+        return !!(this._instruments.statuses && this._instruments.statuses.isVaulting);
     }
 
     /**
@@ -57,10 +55,10 @@ export default class InstrumentSelector {
      * @return {boolean}
      */
     isDeleting(instrumentId) {
-        if (!this._statuses || (instrumentId && this._statuses.deletingInstrument !== instrumentId)) {
+        if (!this._instruments.statuses || (instrumentId && this._instruments.statuses.deletingInstrument !== instrumentId)) {
             return false;
         }
 
-        return !!this._statuses.isDeleting;
+        return !!this._instruments.statuses.isDeleting;
     }
 }
