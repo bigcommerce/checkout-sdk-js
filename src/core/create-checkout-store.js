@@ -75,7 +75,8 @@ function createCheckoutSelectors(state, cacheFactory) {
         quote,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        cacheFactory
     );
 
     const errors = new CheckoutErrorSelector(

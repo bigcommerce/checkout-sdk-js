@@ -56,7 +56,8 @@ describe('CheckoutSelector', () => {
             new QuoteSelector(state.quote),
             new ShippingAddressSelector(state.quote),
             new ShippingCountrySelector(state.shippingCountries),
-            new ShippingOptionSelector(state.shippingOptions)
+            new ShippingOptionSelector(state.shippingOptions),
+            cacheFactory
         );
     });
 
@@ -67,6 +68,12 @@ describe('CheckoutSelector', () => {
             ...state.quote.meta.request,
             ...state.order.meta,
         });
+    });
+
+    it('returns same checkout meta unless changed', () => {
+        const meta = selector.getCheckoutMeta();
+
+        expect(selector.getCheckoutMeta()).toBe(meta);
     });
 
     it('returns order', () => {
