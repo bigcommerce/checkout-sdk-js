@@ -4,51 +4,48 @@ export default class CartSelector {
      * @param {CartState} cart
      */
     constructor(cart = {}) {
-        this._cart = cart.data;
-        this._cartMeta = cart.meta;
-        this._errors = cart.errors;
-        this._statuses = cart.statuses;
+        this._cart = cart;
     }
 
     /**
      * @return {Cart}
      */
     getCart() {
-        return this._cart;
+        return this._cart.data;
     }
 
     /**
      * @return {boolean}
      */
     isValid() {
-        return !!this._cartMeta.isValid;
+        return !!this._cart.meta.isValid;
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getLoadError() {
-        return this._errors && this._errors.loadError;
+        return this._cart.errors && this._cart.errors.loadError;
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getVerifyError() {
-        return this._errors && this._errors.verifyError;
+        return this._cart.errors && this._cart.errors.verifyError;
     }
 
     /**
      * @return {boolean}
      */
     isLoading() {
-        return !!(this._statuses && this._statuses.isLoading);
+        return !!(this._cart.statuses && this._cart.statuses.isLoading);
     }
 
     /**
      * @return {boolean}
      */
     isVerifying() {
-        return !!(this._statuses && this._statuses.isVerifying);
+        return !!(this._cart.statuses && this._cart.statuses.isVerifying);
     }
 }
