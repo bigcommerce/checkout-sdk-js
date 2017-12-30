@@ -1,3 +1,4 @@
+import { CacheFactory } from './common/cache';
 import { cartReducer, CartSelector } from './cart';
 import { CheckoutErrorSelector, CheckoutSelector, CheckoutStatusSelector } from './checkout';
 import { configReducer, ConfigSelector } from './config';
@@ -43,9 +44,10 @@ function createCheckoutReducers() {
 /**
  * @private
  * @param {CheckoutState} state
+ * @param {CacheFactory} cacheFactory
  * @return {CheckoutSelectors}
  */
-function createCheckoutSelectors(state) {
+function createCheckoutSelectors(state, cacheFactory) {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
     const config = new ConfigSelector(state.config);
@@ -54,7 +56,7 @@ function createCheckoutSelectors(state) {
     const customer = new CustomerSelector(state.customer);
     const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
-    const order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+    const order = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
     const quote = new QuoteSelector(state.quote);
     const shippingAddress = new ShippingAddressSelector(state.quote);
@@ -120,9 +122,11 @@ function createCheckoutSelectors(state) {
  * @return {DataStore}
  */
 export default function createCheckoutStore(initialState = {}) {
+    const cacheFactory = new CacheFactory();
+
     return createDataStore(
         createCheckoutReducers(),
         initialState,
-        createCheckoutSelectors
+        (state) => createCheckoutSelectors(state, cacheFactory)
     );
 }

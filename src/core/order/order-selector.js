@@ -8,12 +8,14 @@ export default class OrderSelector {
      * @param {PaymentState} payment
      * @param {CustomerState} customer
      * @param {CartState} cart
+     * @param {CacheFactory} cacheFactory
      */
-    constructor(order = {}, payment = {}, customer = {}, cart = {}) {
+    constructor(order = {}, payment = {}, customer = {}, cart = {}, cacheFactory) {
         this._order = order;
         this._payment = payment;
         this._customer = customer;
         this._cart = cart;
+        this._cacheFactory = cacheFactory;
     }
 
     /**
@@ -27,7 +29,9 @@ export default class OrderSelector {
      * @return {Object}
      */
     getOrderMeta() {
-        return pick(this._order.meta, 'deviceFingerprint');
+        return this._cacheFactory.get('getOrderMeta')
+            .retain((meta) => pick(meta, 'deviceFingerprint'))
+            .retrieve(this._order.meta);
     }
 
     /**

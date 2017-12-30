@@ -8,6 +8,7 @@ import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
 import { QuoteSelector } from '../quote';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
+import { CacheFactory } from '../common/cache';
 import { getCartState } from '../cart/carts.mock';
 import { getCompleteOrderState } from '../order/orders.mock';
 import { getConfigState } from '../config/configs.mock';
@@ -21,6 +22,7 @@ import { getShippingOptionsState } from '../shipping/shipping-options.mock';
 import CheckoutSelector from './checkout-selector';
 
 describe('CheckoutSelector', () => {
+    let cacheFactory;
     let orderSelector;
     let selector;
     let state;
@@ -39,7 +41,8 @@ describe('CheckoutSelector', () => {
             shippingCountries: getShippingCountriesState(),
         };
 
-        orderSelector = new OrderSelector(state.order);
+        cacheFactory = new CacheFactory();
+        orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
 
         selector = new CheckoutSelector(
             new BillingAddressSelector(state.quote),
