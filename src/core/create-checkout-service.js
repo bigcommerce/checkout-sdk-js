@@ -23,7 +23,7 @@ import createPaymentStrategyRegistry from './create-payment-strategy-registry';
  */
 export default function createCheckoutService(options = {}) {
     const client = options.client || createCheckoutClient({ locale: options.locale });
-    const store = createCheckoutStore(createInitialState({ config: options.config }));
+    const store = createCheckoutStore(createInitialState({ config: options.config }), { shouldWarnMutation: options.shouldWarnMutation });
     const paymentClient = createPaymentClient({ host: options.config && options.config.bigpayBaseUrl });
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender);

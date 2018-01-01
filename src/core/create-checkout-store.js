@@ -120,14 +120,16 @@ function createCheckoutSelectors(state, cacheFactory) {
 
 /**
  * @param {Object} [initialState={}]
+ * @param {Object} [options={}]
  * @return {DataStore}
  */
-export default function createCheckoutStore(initialState = {}) {
+export default function createCheckoutStore(initialState = {}, options = {}) {
     const cacheFactory = new CacheFactory();
 
     return createDataStore(
         createCheckoutReducers(),
         initialState,
-        (state) => createCheckoutSelectors(state, cacheFactory)
+        (state) => createCheckoutSelectors(state, cacheFactory),
+        options
     );
 }
