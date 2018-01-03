@@ -316,8 +316,8 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             try {
                 await strategy.finalize();
-            } catch ({ errors }) {
-                expect(errors.getFinalizeOrderError()).toBeUndefined();
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
                 expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
             }
         });
@@ -325,8 +325,8 @@ describe('PaypalExpressPaymentStrategy', () => {
         it('does not finalize order if order is not finalized or acknowledged', async () => {
             try {
                 await strategy.finalize();
-            } catch ({ errors }) {
-                expect(errors.getFinalizeOrderError()).toBeUndefined();
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
                 expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
             }
         });

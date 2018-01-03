@@ -289,7 +289,7 @@ describe('CheckoutService', () => {
             try {
                 await checkoutService.finalizeOrderIfNeeded();
             } catch (error) {
-                expect(error).toBeDefined();
+                expect(error).toBeInstanceOf(Error);
             }
         });
     });

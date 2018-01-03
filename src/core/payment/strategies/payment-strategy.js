@@ -27,7 +27,7 @@ export default class PaymentStrategy {
      * @return {Promise<CheckoutSelectors>}
      */
     finalize() {
-        return Promise.reject(this._store.getState());
+        return Promise.reject(new Error('Not required'));
     }
 
     /**
