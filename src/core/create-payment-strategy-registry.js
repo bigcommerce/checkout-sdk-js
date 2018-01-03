@@ -5,6 +5,7 @@ import {
     OfflinePaymentStrategy,
     OffsitePaymentStrategy,
     PaypalExpressPaymentStrategy,
+    PaypalProPaymentStrategy,
     SagePayPaymentStrategy,
 } from './payment/strategies';
 import { PaymentStrategyRegistry } from './payment';
@@ -24,6 +25,7 @@ export default function createPaymentStrategyRegistry(store, placeOrderService) 
     registry.addStrategy('legacy', new LegacyPaymentStrategy(store, placeOrderService));
     registry.addStrategy('offline', new OfflinePaymentStrategy(store, placeOrderService));
     registry.addStrategy('offsite', new OffsitePaymentStrategy(store, placeOrderService));
+    registry.addStrategy('paypal', new PaypalProPaymentStrategy(store, placeOrderService));
     registry.addStrategy('paypalexpress', new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader));
     registry.addStrategy('paypalexpresscredit', new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader));
     registry.addStrategy('sagepay', new SagePayPaymentStrategy(store, placeOrderService, createFormPoster()));
