@@ -1,5 +1,4 @@
 import { omit, pick } from 'lodash';
-import * as paymentStatusTypes from '../payment/payment-status-types';
 
 export default class PlaceOrderService {
     /**
@@ -85,13 +84,8 @@ export default class PlaceOrderService {
      */
     _shouldSubmitPayment(useStoreCredit) {
         const { checkout } = this._store.getState();
-        const { payment = {} } = checkout.getOrder();
 
-        return (
-            checkout.isPaymentDataRequired(useStoreCredit) &&
-            payment.status !== paymentStatusTypes.ACKNOWLEDGE &&
-            payment.status !== paymentStatusTypes.FINALIZE
-        );
+        return checkout.isPaymentDataRequired(useStoreCredit);
     }
 
     /**

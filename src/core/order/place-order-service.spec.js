@@ -4,13 +4,12 @@ import { createAction } from '../../data-store';
 import { getCartState } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCustomerState } from '../customer/customers.mock';
-import { getCompleteOrder, getIncompleteOrder, getOrderRequestBody } from './orders.mock';
+import { getCompleteOrder, getOrderRequestBody } from './orders.mock';
 import { getPayment, getPaymentRequestBody } from '../payment/payments.mock';
 import { getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import { getShippingOptionsState } from '../shipping/shipping-options.mock';
 import { getSubmittedOrderState } from '../order/orders.mock';
-import * as paymentStatusTypes from '../payment/payment-status-types';
 import createCheckoutStore from '../create-checkout-store';
 import PlaceOrderService from './place-order-service';
 
@@ -180,38 +179,6 @@ describe('PlaceOrderService', () => {
             await placeOrderService.submitPayment(getPayment(), true);
 
             expect(checkout.isPaymentDataRequired).toHaveBeenCalledWith(true);
-            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
-        });
-
-        it('does not submit payment data if payment is acknowledged', async () => {
-            const { checkout } = store.getState();
-
-            jest.spyOn(checkout, 'isPaymentDataRequired').mockReturnValue(true);
-            jest.spyOn(checkout, 'getOrder').mockReturnValue({
-                ...getIncompleteOrder(),
-                payment: {
-                    status: paymentStatusTypes.ACKNOWLEDGE,
-                },
-            });
-
-            await placeOrderService.submitPayment(getPayment(), true);
-
-            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
-        });
-
-        it('does not submit payment data if payment is finalized', async () => {
-            const { checkout } = store.getState();
-
-            jest.spyOn(checkout, 'isPaymentDataRequired').mockReturnValue(true);
-            jest.spyOn(checkout, 'getOrder').mockReturnValue({
-                ...getIncompleteOrder(),
-                payment: {
-                    status: paymentStatusTypes.FINALIZE,
-                },
-            });
-
-            await placeOrderService.submitPayment(getPayment(), true);
-
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
         });
     });
