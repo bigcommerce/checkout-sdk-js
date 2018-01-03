@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 export default class CheckoutService {
     /**
      * @constructor
@@ -142,7 +144,7 @@ export default class CheckoutService {
         const method = checkout.getPaymentMethod(payment.name, payment.gateway);
 
         if (!method) {
-            throw new Error(`Unable to submit order because payment method ${payment.name} is either not available or not loaded`);
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 
         return this._paymentStrategyRegistry.getStrategyByMethod(method).execute(payload, options);
@@ -166,11 +168,20 @@ export default class CheckoutService {
      */
     finalizeOrderIfNeeded(options) {
         const { checkout } = this._store.getState();
-        const { payment = {} } = checkout.getOrder();
-        const method = checkout.getPaymentMethod(payment.id, payment.gateway, options);
+        const order = checkout.getOrder();
+
+        if (isEmpty(order)) {
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+        }
+
+        if (!order.payment || !order.payment.id) {
+            return Promise.reject(this._store.getState());
+        }
+
+        const method = checkout.getPaymentMethod(order.payment.id, order.payment.gateway);
 
         if (!method) {
-            return Promise.reject(this._store.getState());
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 
         return this._paymentStrategyRegistry.getStrategyByMethod(method).finalize(options);
@@ -208,7 +219,7 @@ export default class CheckoutService {
         const method = checkout.getPaymentMethod(methodId, gatewayId);
 
         if (!method) {
-            throw new Error(`Unable to initialize method because ${methodId} is either not available or not loaded`);
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 
         return this._paymentStrategyRegistry.getStrategyByMethod(method).initialize(options);
@@ -224,7 +235,7 @@ export default class CheckoutService {
         const method = checkout.getPaymentMethod(methodId, gatewayId);
 
         if (!method) {
-            throw new Error(`Unable to deinitialize method because ${methodId} is either not available or not loaded`);
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 
         return this._paymentStrategyRegistry.getStrategyByMethod(method).deinitialize();
@@ -365,6 +376,11 @@ export default class CheckoutService {
      */
     loadInstruments() {
         const { checkout } = this._store.getState();
+
+        if (isEmpty(checkout.getConfig()) || isEmpty(checkout.getCustomer())) {
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+        }
+
         const { storeId } = checkout.getConfig();
         const { customerId } = checkout.getCustomer();
 
@@ -379,6 +395,11 @@ export default class CheckoutService {
      */
     vaultInstrument(instrument) {
         const { checkout } = this._store.getState();
+
+        if (isEmpty(checkout.getConfig()) || isEmpty(checkout.getCustomer())) {
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+        }
+
         const { storeId } = checkout.getConfig();
         const { customerId } = checkout.getCustomer();
 
@@ -393,6 +414,11 @@ export default class CheckoutService {
      */
     deleteInstrument(instrumentId) {
         const { checkout } = this._store.getState();
+
+        if (isEmpty(checkout.getConfig()) || isEmpty(checkout.getCustomer())) {
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+        }
+
         const { storeId } = checkout.getConfig();
         const { customerId } = checkout.getCustomer();
 
