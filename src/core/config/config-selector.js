@@ -4,13 +4,13 @@ export default class ConfigSelector {
      * @param {ConfigState} config
      */
     constructor(config = {}) {
-        this._config = config.data;
+        this._config = config;
     }
 
     /**
      * @return {Config}
      */
     getConfig() {
-        return this._config;
+        return this._config.data;
     }
 }

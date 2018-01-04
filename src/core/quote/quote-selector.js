@@ -4,37 +4,34 @@ export default class QuoteSelector {
      * @param {QuoteState} quote
      */
     constructor(quote = {}) {
-        this._quote = quote.data;
-        this._quoteMeta = quote.meta;
-        this._errors = quote.errors;
-        this._statuses = quote.statuses;
+        this._quote = quote;
     }
 
     /**
      * @return {Quote}
      */
     getQuote() {
-        return this._quote;
+        return this._quote.data;
     }
 
     /**
      * @return {QuoteMeta}
      */
     getQuoteMeta() {
-        return this._quoteMeta;
+        return this._quote.meta;
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getLoadError() {
-        return this._errors && this._errors.loadError;
+        return this._quote.errors && this._quote.errors.loadError;
     }
 
     /**
      * @return {boolean}
      */
     isLoading() {
-        return !!(this._statuses && this._statuses.isLoading);
+        return !!(this._quote.statuses && this._quote.statuses.isLoading);
     }
 }

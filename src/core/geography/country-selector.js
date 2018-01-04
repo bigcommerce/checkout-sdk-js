@@ -4,29 +4,27 @@ export default class CountrySelector {
      * @param {CountriesState} countries
      */
     constructor(countries = {}) {
-        this._countries = countries.data;
-        this._errors = countries.errors;
-        this._statuses = countries.statuses;
+        this._countries = countries;
     }
 
     /**
      * @return {Country[]}
      */
     getCountries() {
-        return this._countries;
+        return this._countries.data;
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getLoadError() {
-        return this._errors && this._errors.loadError;
+        return this._countries.errors && this._countries.errors.loadError;
     }
 
     /**
      * @return {boolean}
      */
     isLoading() {
-        return !!(this._statuses && this._statuses.isLoading);
+        return !!(this._countries.statuses && this._countries.statuses.isLoading);
     }
 }
