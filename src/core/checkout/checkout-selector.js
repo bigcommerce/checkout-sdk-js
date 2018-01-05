@@ -13,6 +13,7 @@ export default class CheckoutSelector {
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
+     * @param {CacheFactory} cacheFactory
      */
     constructor(
         billingAddress,
@@ -26,7 +27,8 @@ export default class CheckoutSelector {
         quote,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        cacheFactory
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
@@ -40,18 +42,26 @@ export default class CheckoutSelector {
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
+        this._cacheFactory = cacheFactory;
     }
 
     /**
      * @return {CheckoutMeta}
      */
     getCheckoutMeta() {
-        return {
-            ...this._order.getOrderMeta(),
-            ...this._quote.getQuoteMeta().request,
-            isCartVerified: this._cart.isValid(),
-            paymentAuthToken: this._order.getPaymentAuthToken(),
-        };
+        return this._cacheFactory.get('getCheckoutMeta')
+            .retain((orderMeta, quoteMeta, isCartVerified, paymentAuthToken) => ({
+                ...orderMeta,
+                ...quoteMeta.request,
+                isCartVerified,
+                paymentAuthToken,
+            }))
+            .retrieve(
+                this._order.getOrderMeta(),
+                this._quote.getQuoteMeta(),
+                this._cart.isValid(),
+                this._order.getPaymentAuthToken()
+            );
     }
 
     /**
