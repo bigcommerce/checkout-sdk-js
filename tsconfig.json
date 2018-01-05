@@ -6,6 +6,7 @@
         "forceConsistentCasingInFileNames": true,
         "importHelpers": true,
         "moduleResolution": "node",
+        "removeComments": true,
         "skipLibCheck": true,
         "sourceMap": true,
         "strict": true,
