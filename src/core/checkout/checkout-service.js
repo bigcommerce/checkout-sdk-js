@@ -1,4 +1,5 @@
 import { MissingDataError } from '../common/error/errors';
+import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 export default class CheckoutService {
     /**
@@ -171,11 +172,11 @@ export default class CheckoutService {
         const order = checkout.getOrder();
 
         if (!order) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         if (!order.payment || !order.payment.id) {
-            return Promise.reject(new Error('Skipping order finalization as it is not required'));
+            return Promise.reject(new OrderFinalizationNotRequiredError());
         }
 
         const method = checkout.getPaymentMethod(order.payment.id, order.payment.gateway);

@@ -12,6 +12,7 @@ import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { ShippingAddressActionCreator, ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
 import { MissingDataError } from '../common/error/errors';
+import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/billing-address.mock';
 import { getCartResponseBody } from '../cart/carts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -290,7 +291,7 @@ describe('CheckoutService', () => {
             try {
                 await checkoutService.finalizeOrderIfNeeded();
             } catch (error) {
-                expect(error).toBeInstanceOf(Error);
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
             }
         });
     });

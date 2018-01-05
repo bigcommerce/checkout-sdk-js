@@ -1,3 +1,6 @@
+import { NotImplementedError } from '../../common/error/errors';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
+
 /**
  * @abstract
  */
@@ -19,7 +22,7 @@ export default class PaymentStrategy {
      * @return {Promise<CheckoutSelectors>}
      */
     execute() {
-        throw new Error('Not implemented');
+        throw new NotImplementedError();
     }
 
     /**
@@ -27,7 +30,7 @@ export default class PaymentStrategy {
      * @return {Promise<CheckoutSelectors>}
      */
     finalize() {
-        return Promise.reject(new Error('Not required'));
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     /**
