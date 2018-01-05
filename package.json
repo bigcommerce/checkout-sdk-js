@@ -26,6 +26,7 @@
     "build": "yarn compile && yarn bundle",
     "prebundle": "rm -rf dist",
     "bundle": "webpack --config webpack.config.js",
+    "bundle:analyze": "yarn bundle -- --profile --json > webpack-stats.json && webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip",
     "bundle:watch": "yarn bundle -- --watch",
     "precompile": "rm -rf lib",
     "compile": "tsc --outDir lib",
@@ -63,6 +64,7 @@
     "typescript-eslint-parser": "^9.0.1",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "validate-commits": "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.1.0",
-    "webpack": "^3.8.1"
+    "webpack": "^3.8.1",
+    "webpack-bundle-analyzer": "^2.9.1"
   }
 }
