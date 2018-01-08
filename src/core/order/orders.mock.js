@@ -13,7 +13,7 @@ export function getIncompleteOrder() {
     return {
         orderId: null,
         token: null,
-        payment: [],
+        payment: {},
         socialData: null,
         status: 'ORDER_STATUS_INCOMPLETE',
         customerCreated: false,

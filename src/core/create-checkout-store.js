@@ -3,6 +3,7 @@ import { cartReducer, CartSelector } from './cart';
 import { CheckoutErrorSelector, CheckoutSelector, CheckoutStatusSelector } from './checkout';
 import { configReducer, ConfigSelector } from './config';
 import { countryReducer, CountrySelector } from './geography';
+import { createFreezeProxy } from './common/utility';
 import { createDataStore } from '../data-store';
 import { customerReducer, CustomerSelector } from './customer';
 import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from './coupon';
@@ -45,9 +46,11 @@ function createCheckoutReducers() {
  * @private
  * @param {CheckoutState} state
  * @param {CacheFactory} cacheFactory
+ * @param {Object} [options={}]
+ * @param {boolean} [options.shouldWarnMutation=true]
  * @return {CheckoutSelectors}
  */
-function createCheckoutSelectors(state, cacheFactory) {
+function createCheckoutSelectors(state, cacheFactory, options) {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
     const config = new ConfigSelector(state.config);
@@ -112,22 +115,24 @@ function createCheckoutSelectors(state, cacheFactory) {
     );
 
     return {
-        checkout,
-        errors,
-        statuses,
+        checkout: options.shouldWarnMutation ? createFreezeProxy(checkout) : checkout,
+        errors: options.shouldWarnMutation ? createFreezeProxy(errors) : errors,
+        statuses: options.shouldWarnMutation ? createFreezeProxy(statuses) : statuses,
     };
 }
 
 /**
  * @param {Object} [initialState={}]
+ * @param {Object} [options={}]
  * @return {DataStore}
  */
-export default function createCheckoutStore(initialState = {}) {
+export default function createCheckoutStore(initialState = {}, options = {}) {
     const cacheFactory = new CacheFactory();
 
     return createDataStore(
         createCheckoutReducers(),
         initialState,
-        (state) => createCheckoutSelectors(state, cacheFactory)
+        (state) => createCheckoutSelectors(state, cacheFactory, options),
+        options
     );
 }

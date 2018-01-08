@@ -2,6 +2,7 @@ import { isEqual } from 'lodash';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import deepFreeze from './deep-freeze';
 import noopStateTransformer from './noop-state-transformer';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/of';
@@ -23,10 +24,13 @@ export default class DataStore {
      * @param {Reducer} reducer
      * @param {State} [initialState={}]
      * @param {function(state: State): TransformedState} [stateTransformer=noopStateTransformer]
+     * @param {Object} [options={}]
+     * @param {boolean} [options.shouldWarnMutation=true]
      * @return {void}
      * @template State, TransformedState
      */
-    constructor(reducer, initialState = {}, stateTransformer = noopStateTransformer) {
+    constructor(reducer, initialState = {}, stateTransformer = noopStateTransformer, options = {}) {
+        this._options = { shouldWarnMutation: true, ...options };
         this._state$ = new BehaviorSubject(initialState);
         this._notification$ = new Subject();
         this._dispatchers = {};
@@ -37,6 +41,7 @@ export default class DataStore {
         this._dispatchQueue$
             .scan((state, action) => reducer(state, action), initialState)
             .distinctUntilChanged(isEqual)
+            .map((state) => this._options.shouldWarnMutation === false ? state : deepFreeze(state))
             .map(stateTransformer)
             .subscribe(this._state$);
 

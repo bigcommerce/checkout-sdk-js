@@ -435,5 +435,19 @@ describe('DataStore', () => {
                 transformed: true,
             });
         });
+
+        it('warns if mutating returned state', () => {
+            const store = new DataStore((state) => state, { name: 'Foo' });
+            const state = store.getState();
+
+            expect(() => { state.name = 'Bar'; }).toThrow();
+        });
+
+        it('does not warn if mutating state returned from mutable store', () => {
+            const store = new DataStore((state) => state, { name: 'Foo' }, undefined, { shouldWarnMutation: false });
+            const state = store.getState();
+
+            expect(() => { state.name = 'Bar'; }).not.toThrow();
+        });
     });
 });
