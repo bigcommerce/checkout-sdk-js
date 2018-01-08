@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#0.1.0",
-    "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.9.0",
+    "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.9.1",
     "form-poster": "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1",
     "lodash": "^4.17.4",
     "memoizee": "^0.4.11",
