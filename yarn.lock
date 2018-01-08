@@ -472,9 +472,9 @@ big.js@^3.1.3:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-3.2.0.tgz#a5fc298b81b9e0dca2e458824784b65c52ba588e"
 
-"bigpay-client@git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.9.0":
-  version "2.9.0"
-  resolved "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#038f316ab8db11e47ac862145788da68d68d77af"
+"bigpay-client@git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.9.1":
+  version "2.9.1"
+  resolved "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#513a3ea6657259ce215a39513944c3159a5afc89"
   dependencies:
     deep-assign "^2.0.0"
     form-poster "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1"
