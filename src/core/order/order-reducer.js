@@ -20,11 +20,30 @@ export default function orderReducer(state = {}, action) {
 
 /**
  * @private
- * @param {Object} meta
+ * @param {?Order} data
  * @param {Action} action
- * @return {Object}
+ * @return {?Order}
  */
-function metaReducer(meta = {}, action) {
+function dataReducer(data, action) {
+    switch (action.type) {
+    case orderActionTypes.LOAD_ORDER_SUCCEEDED:
+    case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
+    case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
+    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
+        return action.payload ? { ...data, ...action.payload.order } : data;
+
+    default:
+        return data;
+    }
+}
+
+/**
+ * @private
+ * @param {?Object} meta
+ * @param {Action} action
+ * @return {?Object}
+ */
+function metaReducer(meta, action) {
     switch (action.type) {
     case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
         return { ...meta, ...action.meta };
@@ -99,24 +118,5 @@ function statusesReducer(statuses = {}, action) {
 
     default:
         return statuses;
-    }
-}
-
-/**
- * @private
- * @param {Customer} data
- * @param {Action} action
- * @return {Customer}
- */
-function dataReducer(data = {}, action) {
-    switch (action.type) {
-    case orderActionTypes.LOAD_ORDER_SUCCEEDED:
-    case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
-    case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-        return action.payload ? { ...data, ...action.payload.order } : data;
-
-    default:
-        return data;
     }
 }

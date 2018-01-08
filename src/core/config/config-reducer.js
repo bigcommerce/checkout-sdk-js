@@ -14,9 +14,9 @@ export default function configReducer(state = {}, action) {
 
 /**
  * @private
- * @param {Config} data
- * @return {Customer}
+ * @param {?Config} data
+ * @return {?Config}
  */
-function dataReducer(data = {}) {
+function dataReducer(data) {
     return data;
 }

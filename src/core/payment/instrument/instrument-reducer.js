@@ -18,20 +18,20 @@ export default function instrumentReducer(state = {}, action) {
 
 /**
  * @private
- * @param {Instruments[]} data
+ * @param {?Instruments[]} data
  * @param {Action} action
- * @return {Instruments[]}
+ * @return {?Instruments[]}
  */
-function dataReducer(data = [], action) {
+function dataReducer(data, action) {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
         return action.payload.vaulted_instruments || [];
 
     case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
-        return [...data, action.payload.vaulted_instrument];
+        return [...(data || []), action.payload.vaulted_instrument];
 
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
-        return data.filter(instrument =>
+        return (data || []).filter(instrument =>
             instrument.bigpay_token !== action.payload.instrumentId
         );
 

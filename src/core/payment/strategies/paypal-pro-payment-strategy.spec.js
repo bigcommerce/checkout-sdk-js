@@ -18,6 +18,8 @@ describe('PaypalProPaymentStrategy', () => {
         store = createCheckoutStore();
 
         strategy = new PaypalProPaymentStrategy(store, placeOrderService);
+
+        jest.spyOn(store.getState().checkout, 'getOrder').mockReturnValue(getIncompleteOrder());
     });
 
     it('submits order without payment data', async () => {
