@@ -22,10 +22,14 @@ export default class ShippingOptionSelector {
      * @return {?ShippingOption}
      */
     getSelectedShippingOption() {
-        const { shippingAddress, shippingOption: optionId } = this._quote.data;
-        const shippingOptions = shippingAddress ? this.getShippingOptions()[shippingAddress.id] : undefined;
+        const { shippingAddress, shippingOption: optionId } = this._quote.data || {};
+        const shippingOptions = this.getShippingOptions();
 
-        return find(shippingOptions, { id: optionId });
+        if (!shippingAddress || !shippingOptions) {
+            return;
+        }
+
+        return find(shippingOptions[shippingAddress.id], { id: optionId });
     }
 
     /**

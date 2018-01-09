@@ -18,7 +18,7 @@ export default class CartSelector {
      * @return {boolean}
      */
     isValid() {
-        return !!this._cart.meta.isValid;
+        return !!(this._cart.meta && this._cart.meta.isValid);
     }
 
     /**

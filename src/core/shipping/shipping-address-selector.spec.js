@@ -18,6 +18,12 @@ describe('ShippingAddressSelector', () => {
 
             expect(shippingAddressSelector.getShippingAddress()).toEqual(state.quote.data.shippingAddress);
         });
+
+        it('returns undefined if quote is not available', () => {
+            shippingAddressSelector = new ShippingAddressSelector({ ...state.quote, data: undefined });
+
+            expect(shippingAddressSelector.getShippingAddress()).toEqual();
+        });
     });
 
     describe('#getUpdateError()', () => {

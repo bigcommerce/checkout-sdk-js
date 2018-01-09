@@ -46,8 +46,8 @@ export default class OrderSelector {
      * @return {boolean}
      */
     isPaymentDataRequired(useStoreCredit) {
-        const grandTotal = this._cart.data.grandTotal && this._cart.data.grandTotal.amount || 0;
-        const storeCredit = this._customer.data.storeCredit || 0;
+        const grandTotal = this._cart.data && this._cart.data.grandTotal && this._cart.data.grandTotal.amount || 0;
+        const storeCredit = this._customer.data && this._customer.data.storeCredit || 0;
 
         return (useStoreCredit ? grandTotal - storeCredit : grandTotal) > 0;
     }
@@ -57,7 +57,7 @@ export default class OrderSelector {
      * @return {boolean}
      */
     isPaymentDataSubmitted(paymentMethod = {}) {
-        const { payment = {} } = this.getOrder();
+        const { payment = {} } = this.getOrder() || {};
 
         return !!paymentMethod.nonce ||
             payment.status === paymentStatusTypes.ACKNOWLEDGE ||

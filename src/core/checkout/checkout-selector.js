@@ -52,7 +52,7 @@ export default class CheckoutSelector {
         return this._cacheFactory.get('getCheckoutMeta')
             .retain((orderMeta, quoteMeta, isCartVerified, paymentAuthToken) => ({
                 ...orderMeta,
-                ...quoteMeta.request,
+                ...(quoteMeta && quoteMeta.request),
                 isCartVerified,
                 paymentAuthToken,
             }))

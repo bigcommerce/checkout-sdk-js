@@ -11,22 +11,20 @@ export default class BillingAddressSelector {
      * @return {Address}
      */
     getBillingAddress() {
-        return this._quote.data.billingAddress;
+        return this._quote.data && this._quote.data.billingAddress;
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getUpdateError() {
-        return this._quote.errors &&
-            this._quote.errors.updateBillingAddressError;
+        return this._quote.errors && this._quote.errors.updateBillingAddressError;
     }
 
     /**
      * @return {boolean}
      */
     isUpdating() {
-        return !!(this._quote.statuses &&
-            this._quote.statuses.isUpdatingBillingAddress);
+        return !!(this._quote.statuses && this._quote.statuses.isUpdatingBillingAddress);
     }
 }
