@@ -1,5 +1,5 @@
 import { getGuestCustomer } from './customers.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import CustomerSelector from './customer-selector';
 
 describe('CustomerSelector', () => {
@@ -24,7 +24,7 @@ describe('CustomerSelector', () => {
 
     describe('#getSignInError()', () => {
         it('returns error if unable to sign in', () => {
-            const signInError = getErrorResponseBody();
+            const signInError = getErrorResponse();
 
             customerSelector = new CustomerSelector({
                 ...state.customer,
@@ -43,7 +43,7 @@ describe('CustomerSelector', () => {
 
     describe('#getSignOutError()', () => {
         it('returns error if unable to sign out', () => {
-            const signOutError = getErrorResponseBody();
+            const signOutError = getErrorResponse();
 
             customerSelector = new CustomerSelector({
                 ...state.customer,

@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { getQuoteResponseBody } from './quotes.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './quote-action-types';
 import QuoteActionCreator from './quote-action-creator';
@@ -13,7 +12,7 @@ describe('QuoteActionCreator', () => {
 
     beforeEach(() => {
         response = getResponse(getQuoteResponseBody());
-        errorResponse = getErrorResponse(getErrorResponseBody());
+        errorResponse = getErrorResponse();
 
         checkoutClient = {
             loadCheckout: jest.fn(() => Promise.resolve(response)),

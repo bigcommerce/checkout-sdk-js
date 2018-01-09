@@ -1,5 +1,5 @@
 import { getPaymentResponseBody } from './payments.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './payment-action-types';
 import paymentReducer from './payment-reducer';
 
@@ -35,7 +35,7 @@ describe('paymentReducer', () => {
     it('returns new data if payment is not submitted successfully', () => {
         const action = {
             type: actionTypes.SUBMIT_PAYMENT_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
             error: true,
         };
 

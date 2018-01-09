@@ -1,5 +1,5 @@
 import { getInstruments, getInstrumentsResponseBody, vaultInstrumentResponseBody } from './instrument.mock';
-import { getErrorResponseBody } from '../../common/error/errors.mock';
+import { getErrorResponse } from '../../common/http-request/responses.mock';
 import instrumentReducer from './instrument-reducer';
 import * as actionTypes from './instrument-action-types';
 
@@ -48,7 +48,7 @@ describe('instrumentReducer()', () => {
     it('returns new state when instruments cannot be loaded', () => {
         const action = {
             type: actionTypes.LOAD_INSTRUMENTS_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
@@ -88,7 +88,7 @@ describe('instrumentReducer()', () => {
     it('returns new state when instruments cannot be vaulted', () => {
         const action = {
             type: actionTypes.VAULT_INSTRUMENT_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
@@ -140,7 +140,7 @@ describe('instrumentReducer()', () => {
         const action = {
             type: actionTypes.DELETE_INSTRUMENT_FAILED,
             meta: { instrumentId: '123' },
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({

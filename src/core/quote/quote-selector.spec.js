@@ -1,5 +1,5 @@
 import { getQuote, getQuoteMeta } from './quotes.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import QuoteSelector from './quote-selector';
 
 describe('QuoteSelector', () => {
@@ -37,7 +37,7 @@ describe('QuoteSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponseBody();
+            const loadError = getErrorResponse();
 
             quoteSelector = new QuoteSelector({
                 ...state.quote,

@@ -1,5 +1,5 @@
 import { getCountries } from './countries.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import CountrySelector from './country-selector';
 
 describe('CountrySelector', () => {
@@ -34,7 +34,7 @@ describe('CountrySelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponseBody();
+            const loadError = getErrorResponse();
 
             countrySelector = new CountrySelector({
                 ...state.countries,

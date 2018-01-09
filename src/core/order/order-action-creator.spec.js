@@ -7,7 +7,6 @@ import {
 } from './orders.mock';
 import { getCart, getCartResponseBody } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './order-action-types';
 import createCheckoutStore from '../create-checkout-store';
@@ -32,7 +31,7 @@ describe('OrderActionCreator', () => {
 
         beforeEach(() => {
             response = getResponse(getCompleteOrderResponseBody());
-            errorResponse = getErrorResponse(getErrorResponseBody());
+            errorResponse = getErrorResponse();
 
             checkoutClient = {
                 loadOrder: jest.fn(() => Promise.resolve(response)),
@@ -78,7 +77,7 @@ describe('OrderActionCreator', () => {
         beforeEach(() => {
             loadResponse = getResponse(getCompleteOrderResponseBody());
             submitResponse = getResponse(getSubmitOrderResponseBody(), getSubmitOrderResponseHeaders());
-            errorResponse = getErrorResponse(getErrorResponseBody());
+            errorResponse = getErrorResponse();
 
             checkoutClient = {
                 loadCart: jest.fn(() => Promise.resolve(getResponse(getCartResponseBody()))),
@@ -146,7 +145,7 @@ describe('OrderActionCreator', () => {
 
         beforeEach(() => {
             response = getResponse(getCompleteOrderResponseBody());
-            errorResponse = getErrorResponse(getErrorResponseBody());
+            errorResponse = getErrorResponse();
 
             checkoutClient = {
                 finalizeOrder: jest.fn(() => Promise.resolve(response)),

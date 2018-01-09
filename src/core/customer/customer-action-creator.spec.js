@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { getCustomerResponseBody } from './customers.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './customer-action-types';
 import CustomerActionCreator from './customer-action-creator';
@@ -13,7 +12,7 @@ describe('CustomerActionCreator', () => {
 
     beforeEach(() => {
         response = getResponse(getCustomerResponseBody());
-        errorResponse = getErrorResponse(getErrorResponseBody());
+        errorResponse = getErrorResponse();
 
         checkoutClient = {
             signInCustomer: jest.fn(() => Promise.resolve(response)),

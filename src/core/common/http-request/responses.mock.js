@@ -10,7 +10,7 @@ export function getResponse(body, headers = {}, status = 200, statusText = 'OK')
     };
 }
 
-export function getErrorResponse(body, headers = {}, status = 400, statusText = 'Bad Request') {
+export function getErrorResponse(body = getErrorResponseBody(), headers = {}, status = 400, statusText = 'Bad Request') {
     return {
         body,
         status,
@@ -19,5 +19,15 @@ export function getErrorResponse(body, headers = {}, status = 400, statusText = 
             'content-type': 'application/json',
             ...headers,
         },
+    };
+}
+
+export function getErrorResponseBody(error) {
+    return {
+        detail: 'Something went wrong',
+        errors: ['Bad Request'],
+        status: 400,
+        title: 'Error',
+        ...error,
     };
 }

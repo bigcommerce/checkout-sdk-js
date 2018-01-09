@@ -1,5 +1,5 @@
 import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './orders.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import * as orderActionTypes from './order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
@@ -50,7 +50,7 @@ describe('orderReducer()', () => {
     });
 
     it('returns new data if it is not fetched successfully', () => {
-        const response = getErrorResponseBody();
+        const response = getErrorResponse();
         const action = {
             type: orderActionTypes.LOAD_ORDER_FAILED,
             payload: response.data,
@@ -95,7 +95,7 @@ describe('orderReducer()', () => {
     });
 
     it('returns new data if it is not submitted successfully', () => {
-        const response = getErrorResponseBody();
+        const response = getErrorResponse();
         const action = {
             type: orderActionTypes.SUBMIT_ORDER_FAILED,
             payload: response.data,
@@ -132,7 +132,7 @@ describe('orderReducer()', () => {
     });
 
     it('returns new data if it is not finalized successfully', () => {
-        const response = getErrorResponseBody();
+        const response = getErrorResponse();
         const action = {
             type: orderActionTypes.FINALIZE_ORDER_FAILED,
             payload: response.data,

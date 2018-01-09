@@ -1,4 +1,4 @@
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import ShippingAddressSelector from './shipping-address-selector';
 
@@ -22,7 +22,7 @@ describe('ShippingAddressSelector', () => {
 
     describe('#getUpdateError()', () => {
         it('returns error if unable to update', () => {
-            const updateShippingAddressError = getErrorResponseBody();
+            const updateShippingAddressError = getErrorResponse();
 
             shippingAddressSelector = new ShippingAddressSelector({
                 ...state.quote,

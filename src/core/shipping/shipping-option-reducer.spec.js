@@ -1,5 +1,5 @@
 import { getCustomerResponseBody } from '../customer/customers.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getShippingAddressResponseBody } from './shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
@@ -79,7 +79,7 @@ describe('shippingOptionReducer()', () => {
     it('returns an error state if shipping options can not be fetched', () => {
         const action = {
             type: shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -113,7 +113,7 @@ describe('shippingOptionReducer()', () => {
     it('returns an error state if shipping option selection fails', () => {
         const action = {
             type: shippingOptionActionTypes.SELECT_SHIPPING_OPTION_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({

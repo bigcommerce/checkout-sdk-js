@@ -1,5 +1,5 @@
 import { merge } from 'lodash';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getFlatRateOption, getShippingOptionsState } from './shipping-options.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import ShippingOptionSelector from './shipping-option-selector';
@@ -43,7 +43,7 @@ describe('ShippingOptionSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponseBody();
+            const loadError = getErrorResponse();
 
             shippingOptionSelector = new ShippingOptionSelector({
                 ...state.shippingOptions,
@@ -62,7 +62,7 @@ describe('ShippingOptionSelector', () => {
 
     describe('#getSelectError()', () => {
         it('returns error if unable to select', () => {
-            const selectError = getErrorResponseBody();
+            const selectError = getErrorResponse();
 
             shippingOptionSelector = new ShippingOptionSelector({
                 ...state.shippingOptions,

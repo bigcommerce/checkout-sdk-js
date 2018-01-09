@@ -5,7 +5,7 @@ import { getCustomerState } from '../customer/customers.mock';
 import { getSubmittedOrder, getSubmittedOrderState } from './orders.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getPaymentState } from '../payment/payments.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as paymentStatusTypes from '../payment/payment-status-types';
 import OrderSelector from './order-selector';
 
@@ -63,7 +63,7 @@ describe('OrderSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponseBody();
+            const loadError = getErrorResponse();
 
             orderSelector = new OrderSelector({
                 ...state.order,
@@ -82,7 +82,7 @@ describe('OrderSelector', () => {
 
     describe('#getSubmitError()', () => {
         it('returns error if unable to submit order', () => {
-            const submitError = getErrorResponseBody();
+            const submitError = getErrorResponse();
 
             orderSelector = new OrderSelector({
                 ...state.order,
@@ -93,7 +93,7 @@ describe('OrderSelector', () => {
         });
 
         it('returns error if unable to submit payment', () => {
-            const submitError = getErrorResponseBody();
+            const submitError = getErrorResponse();
 
             orderSelector = new OrderSelector(state.order, {
                 ...state.payment,
@@ -112,7 +112,7 @@ describe('OrderSelector', () => {
 
     describe('#getFinalizeError()', () => {
         it('returns error if unable to finalize', () => {
-            const finalizeError = getErrorResponseBody();
+            const finalizeError = getErrorResponse();
 
             orderSelector = new OrderSelector({
                 ...state.order,
