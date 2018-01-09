@@ -2,7 +2,6 @@ import { createTimeout } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
 import * as actionTypes from './shipping-option-action-types';
 import ShippingOptionActionCreator from './shipping-option-action-creator';
 
@@ -14,7 +13,7 @@ describe('ShippingOptionActionCreator', () => {
 
     beforeEach(() => {
         response = getResponse({ data: getShippingOptions() });
-        errorResponse = getErrorResponse(getErrorResponseBody());
+        errorResponse = getErrorResponse();
 
         checkoutClient = {
             loadShippingOptions: jest.fn(() => Promise.resolve(response)),

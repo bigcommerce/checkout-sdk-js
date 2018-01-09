@@ -1,5 +1,5 @@
 import { getCart } from './carts.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import CartSelector from './cart-selector';
 
 describe('CartSelector', () => {

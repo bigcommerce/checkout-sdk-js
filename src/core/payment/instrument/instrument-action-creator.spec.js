@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
-import { getErrorResponseBody } from '../../common/error/errors.mock';
 import * as actionTypes from './instrument-action-types';
 import InstrumentActionCreator from './instrument-action-creator';
 import {
@@ -20,7 +19,7 @@ describe('InstrumentActionCreator', () => {
     let errorResponse;
 
     beforeEach(() => {
-        errorResponse = getErrorResponse(getErrorResponseBody());
+        errorResponse = getErrorResponse();
         getShopperTokenResponse = getResponse(getShopperTokenResponseBody());
         getInstrumentsResponse = getResponse(getInstrumentsResponseBody());
         vaultInstrumentResponse = getResponse(vaultInstrumentResponseBody());

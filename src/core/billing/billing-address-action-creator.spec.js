@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from './billing-address.mock';
 import * as actionTypes from './billing-address-action-types';
 import BillingAddressActionCreator from './billing-address-action-creator';
@@ -14,7 +13,7 @@ describe('BillingAddressActionCreator', () => {
 
     beforeEach(() => {
         response = getResponse(getBillingAddressResponseBody());
-        errorResponse = getErrorResponse(getErrorResponseBody());
+        errorResponse = getErrorResponse();
 
         checkoutClient = {
             updateBillingAddress: jest.fn(() => Promise.resolve(response)),

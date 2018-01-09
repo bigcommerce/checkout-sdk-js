@@ -1,5 +1,5 @@
 import { getCountries } from './countries.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import countryReducer from './country-reducer';
 import * as actionTypes from './country-action-types';
 

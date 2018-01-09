@@ -1,6 +1,6 @@
 import { getCustomerResponseBody } from './customers.mock';
 import { getCompleteOrderResponseBody } from '../order/orders.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as orderActionTypes from '../order/order-action-types';

@@ -1,4 +1,4 @@
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import CouponSelector from './coupon-selector';
 
 describe('CouponSelector', () => {

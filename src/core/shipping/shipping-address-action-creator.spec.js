@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from './shipping-address.mock';
 import * as actionTypes from './shipping-address-action-types';
 import ShippingAddressActionCreator from './shipping-address-action-creator';
@@ -14,7 +13,7 @@ describe('ShippingAddressActionCreator', () => {
 
     beforeEach(() => {
         response = getResponse(getShippingAddressResponseBody());
-        errorResponse = getErrorResponse(getErrorResponseBody());
+        errorResponse = getErrorResponse();
 
         checkoutClient = {
             updateShippingAddress: jest.fn(() => Promise.resolve(response)),

@@ -1,5 +1,5 @@
 import { getPaymentResponseBody } from './payments.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import * as actionTypes from './payment-action-types';
 import paymentReducer from './payment-reducer';
 

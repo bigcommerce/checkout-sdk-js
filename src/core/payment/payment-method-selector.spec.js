@@ -1,7 +1,7 @@
 import { find, merge } from 'lodash';
 import { getAdyenAmex, getBraintree, getPaymentMethodsState } from './payment-methods.mock';
 import { getSubmittedOrderState } from '../order/orders.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import PaymentMethodSelector from './payment-method-selector';
 
 describe('PaymentMethodSelector', () => {

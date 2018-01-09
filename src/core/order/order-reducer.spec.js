@@ -1,5 +1,5 @@
 import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './orders.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import * as orderActionTypes from './order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';

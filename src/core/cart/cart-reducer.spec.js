@@ -1,7 +1,7 @@
 import { getBillingAddressResponseBody } from '../billing/billing-address.mock';
 import { getCart, getCartResponseBody } from './carts.mock';
 import { getCustomerResponseBody } from '../customer/customers.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';

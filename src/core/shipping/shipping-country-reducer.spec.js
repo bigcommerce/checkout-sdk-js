@@ -1,5 +1,5 @@
 import { getCountries } from '../geography/countries.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import shippingCountryReducer from './shipping-country-reducer';
 import * as actionTypes from './shipping-country-action-types';
 

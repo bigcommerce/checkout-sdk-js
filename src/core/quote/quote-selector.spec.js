@@ -1,5 +1,5 @@
 import { getQuote, getQuoteMeta } from './quotes.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import QuoteSelector from './quote-selector';
 
 describe('QuoteSelector', () => {

@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { getCountries } from './countries.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './country-action-types';
 import CountryActionCreator from './country-action-creator';
@@ -13,7 +12,7 @@ describe('CountryActionCreator', () => {
 
     beforeEach(() => {
         response = getResponse({ data: getCountries() });
-        errorResponse = getErrorResponse(getErrorResponseBody());
+        errorResponse = getErrorResponse();
 
         checkoutClient = {
             loadCountries: jest.fn(() => Promise.resolve(response)),

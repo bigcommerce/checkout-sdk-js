@@ -1,5 +1,5 @@
 import { getCouponResponseBody } from './coupon.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import * as couponActionTypes from '../coupon/coupon-action-types';
 import couponReducer from './coupon-reducer';
 

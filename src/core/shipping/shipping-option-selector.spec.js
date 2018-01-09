@@ -1,5 +1,5 @@
 import { merge } from 'lodash';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import { getFlatRateOption, getShippingOptionsState } from './shipping-options.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import ShippingOptionSelector from './shipping-option-selector';

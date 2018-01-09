@@ -5,7 +5,7 @@ import { getCustomerState } from '../customer/customers.mock';
 import { getSubmittedOrder, getSubmittedOrderState } from './orders.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getPaymentState } from '../payment/payments.mock';
-import { getErrorResponseBody } from '../common/error/errors.mock';
+import { getErrorResponseBody } from '../common/http-request/responses.mock';
 import * as paymentStatusTypes from '../payment/payment-status-types';
 import OrderSelector from './order-selector';
 
