@@ -1,5 +1,5 @@
 import InstrumentSelector from './instrument-selector';
-import { getErrorResponseBody } from '../../common/http-request/responses.mock';
+import { getErrorResponse } from '../../common/http-request/responses.mock';
 import { getInstrumentsState } from './instrument.mock';
 
 describe('InstrumentSelector', () => {
@@ -28,7 +28,7 @@ describe('InstrumentSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponseBody();
+            const loadError = getErrorResponse();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,
@@ -47,7 +47,7 @@ describe('InstrumentSelector', () => {
 
     describe('#getVaultError()', () => {
         it('returns error if unable to vault', () => {
-            const vaultError = getErrorResponseBody();
+            const vaultError = getErrorResponse();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,
@@ -73,7 +73,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns error if unable to delete', () => {
-            const deleteError = getErrorResponseBody();
+            const deleteError = getErrorResponse();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,
@@ -90,7 +90,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('does not return error if unable to delete irrelevant instrument', () => {
-            const deleteError = getErrorResponseBody();
+            const deleteError = getErrorResponse();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,
@@ -101,7 +101,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns any error if instrument id is not passed', () => {
-            const deleteError = getErrorResponseBody();
+            const deleteError = getErrorResponse();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,

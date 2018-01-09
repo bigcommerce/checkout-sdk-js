@@ -1,4 +1,4 @@
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getShippingCountries } from './shipping-countries.mock';
 import ShippingCountrySelector from './shipping-country-selector';
 
@@ -33,7 +33,7 @@ describe('ShippingCountrySelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponseBody();
+            const loadError = getErrorResponse();
 
             shippingCountrySelector = new ShippingCountrySelector({
                 ...state.shippingCountries,

@@ -1,5 +1,5 @@
 import { getCountries } from '../geography/countries.mock';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import shippingCountryReducer from './shipping-country-reducer';
 import * as actionTypes from './shipping-country-action-types';
 
@@ -42,7 +42,7 @@ describe('shippingCountryReducer()', () => {
     it('returns a new state when countries cannot be fetched', () => {
         const action = {
             type: actionTypes.LOAD_SHIPPING_COUNTRIES_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(shippingCountryReducer(initialState, action)).toEqual({

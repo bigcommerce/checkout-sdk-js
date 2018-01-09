@@ -1,4 +1,4 @@
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import CouponSelector from './coupon-selector';
 
 describe('CouponSelector', () => {
@@ -11,7 +11,7 @@ describe('CouponSelector', () => {
 
     describe('#getApplyError()', () => {
         it('returns error if unable to apply', () => {
-            const applyCouponError = getErrorResponseBody();
+            const applyCouponError = getErrorResponse();
 
             couponSelector = new CouponSelector({
                 ...state.quote,
@@ -47,7 +47,7 @@ describe('CouponSelector', () => {
 
     describe('#getRemoveError()', () => {
         it('returns error if unable to remove', () => {
-            const removeCouponError = getErrorResponseBody();
+            const removeCouponError = getErrorResponse();
 
             couponSelector = new CouponSelector({
                 ...state.quote,

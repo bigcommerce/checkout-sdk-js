@@ -1,5 +1,5 @@
 import { getGiftCertificateResponseBody } from './gift-certificate.mock';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import giftCertificateReducer from './gift-certificate-reducer';
 
@@ -41,11 +41,11 @@ describe('giftCertificateReducer()', () => {
     it('returns an error state if gift certificate failed to be applied', () => {
         const action = {
             type: giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { applyGiftCertificateError: getErrorResponseBody() },
+            errors: { applyGiftCertificateError: getErrorResponse() },
             statuses: { isApplyingGiftCertificate: false },
         }));
     });
@@ -53,11 +53,11 @@ describe('giftCertificateReducer()', () => {
     it('returns an error state if gift certificate failed to be removed', () => {
         const action = {
             type: giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { removeGiftCertificateError: getErrorResponseBody() },
+            errors: { removeGiftCertificateError: getErrorResponse() },
             statuses: { isRemovingGiftCertificate: false },
         }));
     });

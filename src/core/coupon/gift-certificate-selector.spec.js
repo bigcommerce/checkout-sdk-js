@@ -1,4 +1,4 @@
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import GiftCertificateSelector from './gift-certificate-selector';
 
 describe('GiftCertificateSelector', () => {
@@ -11,7 +11,7 @@ describe('GiftCertificateSelector', () => {
 
     describe('#getApplyError()', () => {
         it('returns error if unable to apply', () => {
-            const applyGiftCertificateError = getErrorResponseBody();
+            const applyGiftCertificateError = getErrorResponse();
 
             giftCertificateSelector = new GiftCertificateSelector({
                 ...state.quote,
@@ -47,7 +47,7 @@ describe('GiftCertificateSelector', () => {
 
     describe('#getRemoveError()', () => {
         it('returns error if unable to remove', () => {
-            const removeGiftCertificateError = getErrorResponseBody();
+            const removeGiftCertificateError = getErrorResponse();
 
             giftCertificateSelector = new GiftCertificateSelector({
                 ...state.quote,

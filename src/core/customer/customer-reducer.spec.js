@@ -1,6 +1,6 @@
 import { getCustomerResponseBody } from './customers.mock';
 import { getCompleteOrderResponseBody } from '../order/orders.mock';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as orderActionTypes from '../order/order-action-types';
@@ -92,12 +92,12 @@ describe('customerReducer()', () => {
     it('returns new customer data if customer has failed to sign in', () => {
         const action = {
             type: customerActionTypes.SIGN_IN_CUSTOMER_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
             data: {},
-            errors: { signInError: getErrorResponseBody() },
+            errors: { signInError: getErrorResponse() },
             statuses: { isSigningIn: false },
         }));
     });
@@ -129,11 +129,11 @@ describe('customerReducer()', () => {
     it('returns new customer data if customer has failed to sign out', () => {
         const action = {
             type: customerActionTypes.SIGN_OUT_CUSTOMER_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { signOutError: getErrorResponseBody() },
+            errors: { signOutError: getErrorResponse() },
             statuses: { isSigningOut: false },
         }));
     });

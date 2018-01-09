@@ -1,6 +1,6 @@
 import { getBillingAddressResponseBody } from '../billing/billing-address.mock';
 import { getCustomerResponseBody } from '../customer/customers.mock';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuote, getQuoteResponseBody } from './quotes.mock';
 import { getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
@@ -61,7 +61,7 @@ describe('quoteReducer()', () => {
     it('returns new data if quote is not fetched successfully', () => {
         const action = {
             type: quoteActionTypes.LOAD_QUOTE_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -136,7 +136,7 @@ describe('quoteReducer()', () => {
             };
 
             initialState.errors = {
-                updateShippingAddressError: getErrorResponseBody(),
+                updateShippingAddressError: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -161,7 +161,7 @@ describe('quoteReducer()', () => {
         it('sets updating flag to false when update succeeds', () => {
             const action = {
                 type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-                payload: getErrorResponseBody(),
+                payload: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -175,7 +175,7 @@ describe('quoteReducer()', () => {
             };
 
             initialState.errors = {
-                updateShippingAddressError: getErrorResponseBody(),
+                updateShippingAddressError: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -188,7 +188,7 @@ describe('quoteReducer()', () => {
         it('saves the error when update fails', () => {
             const action = {
                 type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_FAILED,
-                payload: getErrorResponseBody(),
+                payload: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -199,7 +199,7 @@ describe('quoteReducer()', () => {
         it('sets the updating flag to false when update fails', () => {
             const action = {
                 type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_FAILED,
-                payload: getErrorResponseBody(),
+                payload: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -225,7 +225,7 @@ describe('quoteReducer()', () => {
             };
 
             initialState.errors = {
-                updateBillingAddressError: getErrorResponseBody(),
+                updateBillingAddressError: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -250,7 +250,7 @@ describe('quoteReducer()', () => {
         it('sets updating flag to false if succeeded', () => {
             const action = {
                 type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED,
-                payload: getErrorResponseBody(),
+                payload: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -264,7 +264,7 @@ describe('quoteReducer()', () => {
             };
 
             initialState.errors = {
-                updateBillingAddressError: getErrorResponseBody(),
+                updateBillingAddressError: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -277,7 +277,7 @@ describe('quoteReducer()', () => {
         it('saves the error when update fails', () => {
             const action = {
                 type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED,
-                payload: getErrorResponseBody(),
+                payload: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -288,7 +288,7 @@ describe('quoteReducer()', () => {
         it('sets the updating flag to false when update fails', () => {
             const action = {
                 type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED,
-                payload: getErrorResponseBody(),
+                payload: getErrorResponse(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({

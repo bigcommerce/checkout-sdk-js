@@ -1,7 +1,7 @@
 import { find, merge } from 'lodash';
 import { getAdyenAmex, getBraintree, getPaymentMethodsState } from './payment-methods.mock';
 import { getSubmittedOrderState } from '../order/orders.mock';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import PaymentMethodSelector from './payment-method-selector';
 
 describe('PaymentMethodSelector', () => {
@@ -80,7 +80,7 @@ describe('PaymentMethodSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponseBody();
+            const loadError = getErrorResponse();
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
@@ -99,7 +99,7 @@ describe('PaymentMethodSelector', () => {
 
     describe('#getLoadMethodError()', () => {
         it('returns error if unable to load', () => {
-            const loadMethodError = getErrorResponseBody();
+            const loadMethodError = getErrorResponse();
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
@@ -116,7 +116,7 @@ describe('PaymentMethodSelector', () => {
         });
 
         it('does not returns error if unable to load irrelevant method', () => {
-            const loadMethodError = getErrorResponseBody();
+            const loadMethodError = getErrorResponse();
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
@@ -127,7 +127,7 @@ describe('PaymentMethodSelector', () => {
         });
 
         it('returns any error if method id is not passed', () => {
-            const loadMethodError = getErrorResponseBody();
+            const loadMethodError = getErrorResponse();
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,

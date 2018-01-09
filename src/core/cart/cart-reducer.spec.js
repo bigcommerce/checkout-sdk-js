@@ -1,7 +1,7 @@
 import { getBillingAddressResponseBody } from '../billing/billing-address.mock';
 import { getCart, getCartResponseBody } from './carts.mock';
 import { getCustomerResponseBody } from '../customer/customers.mock';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
@@ -161,7 +161,7 @@ describe('cartReducer()', () => {
     });
 
     it('returns new data if cart is not fetched successfully', () => {
-        const response = getErrorResponseBody();
+        const response = getErrorResponse();
         const action = {
             type: cartActionTypes.LOAD_CART_FAILED,
             payload: response.data,

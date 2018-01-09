@@ -1,5 +1,5 @@
 import { getCouponResponseBody } from './coupon.mock';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as couponActionTypes from '../coupon/coupon-action-types';
 import couponReducer from './coupon-reducer';
 
@@ -39,11 +39,11 @@ describe('couponReducer()', () => {
     it('returns an error state if coupon failed to be applied', () => {
         const action = {
             type: couponActionTypes.APPLY_COUPON_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { applyCouponError: getErrorResponseBody() },
+            errors: { applyCouponError: getErrorResponse() },
             statuses: { isApplyingCoupon: false },
         }));
     });
@@ -51,11 +51,11 @@ describe('couponReducer()', () => {
     it('returns an error state if coupon failed to be removed', () => {
         const action = {
             type: couponActionTypes.REMOVE_COUPON_FAILED,
-            payload: getErrorResponseBody(),
+            payload: getErrorResponse(),
         };
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { removeCouponError: getErrorResponseBody() },
+            errors: { removeCouponError: getErrorResponse() },
             statuses: { isRemovingCoupon: false },
         }));
     });

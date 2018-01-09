@@ -1,5 +1,5 @@
 import { getCart } from './carts.mock';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import CartSelector from './cart-selector';
 
 describe('CartSelector', () => {
@@ -25,7 +25,7 @@ describe('CartSelector', () => {
 
     describe('#getVerifyError()', () => {
         it('returns error if unable to verify', () => {
-            const verifyError = getErrorResponseBody();
+            const verifyError = getErrorResponse();
 
             cartSelector = new CartSelector({
                 ...state.cart,
@@ -44,7 +44,7 @@ describe('CartSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponseBody();
+            const loadError = getErrorResponse();
 
             cartSelector = new CartSelector({
                 ...state.cart,

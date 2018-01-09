@@ -8,7 +8,7 @@ import { PaymentMethodSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import CheckoutErrorSelector from './checkout-error-selector';
 
 describe('CheckoutErrorSelector', () => {
@@ -59,7 +59,7 @@ describe('CheckoutErrorSelector', () => {
             shippingOptions
         );
 
-        errorResponse = getErrorResponseBody();
+        errorResponse = getErrorResponse();
     });
 
     describe('#getLoadCheckoutError()', () => {

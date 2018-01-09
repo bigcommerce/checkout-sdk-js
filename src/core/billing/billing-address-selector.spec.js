@@ -1,4 +1,4 @@
-import { getErrorResponseBody } from '../common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import BillingAddressSelector from './billing-address-selector';
 
@@ -22,7 +22,7 @@ describe('BillingAddressSelector', () => {
 
     describe('#getUpdateError()', () => {
         it('returns error if unable to update', () => {
-            const updateBillingAddressError = getErrorResponseBody();
+            const updateBillingAddressError = getErrorResponse();
 
             billingAddressSelector = new BillingAddressSelector({
                 ...state.quote,
