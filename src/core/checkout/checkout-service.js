@@ -1,3 +1,5 @@
+import { MissingDataError } from '../common/error/errors';
+
 export default class CheckoutService {
     /**
      * @constructor
@@ -142,7 +144,7 @@ export default class CheckoutService {
         const method = checkout.getPaymentMethod(payment.name, payment.gateway);
 
         if (!method) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         return this._paymentStrategyRegistry.getStrategyByMethod(method).execute(payload, options);
@@ -179,7 +181,7 @@ export default class CheckoutService {
         const method = checkout.getPaymentMethod(order.payment.id, order.payment.gateway);
 
         if (!method) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         return this._paymentStrategyRegistry.getStrategyByMethod(method).finalize(options);
@@ -217,7 +219,7 @@ export default class CheckoutService {
         const method = checkout.getPaymentMethod(methodId, gatewayId);
 
         if (!method) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         return this._paymentStrategyRegistry.getStrategyByMethod(method).initialize(options);
@@ -233,7 +235,7 @@ export default class CheckoutService {
         const method = checkout.getPaymentMethod(methodId, gatewayId);
 
         if (!method) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         return this._paymentStrategyRegistry.getStrategyByMethod(method).deinitialize();
@@ -376,7 +378,7 @@ export default class CheckoutService {
         const { checkout } = this._store.getState();
 
         if (!checkout.getConfig() || !checkout.getCustomer()) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         const { storeId } = checkout.getConfig();
@@ -395,7 +397,7 @@ export default class CheckoutService {
         const { checkout } = this._store.getState();
 
         if (!checkout.getConfig() || !checkout.getCustomer()) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         const { storeId } = checkout.getConfig();
@@ -414,7 +416,7 @@ export default class CheckoutService {
         const { checkout } = this._store.getState();
 
         if (!checkout.getConfig() || !checkout.getCustomer()) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         const { storeId } = checkout.getConfig();

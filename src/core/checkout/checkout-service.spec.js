@@ -11,6 +11,7 @@ import { PaymentMethodActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { ShippingAddressActionCreator, ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
+import { MissingDataError } from '../common/error/errors';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/billing-address.mock';
 import { getCartResponseBody } from '../cart/carts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -226,8 +227,8 @@ describe('CheckoutService', () => {
             expect(paymentStrategy.execute).toHaveBeenCalledWith(getOrderRequestBody(), options);
         });
 
-        it('throws error if payment method is not found or loaded', async () => {
-            expect(() => checkoutService.submitOrder(getOrderRequestBody())).toThrow();
+        it('throws error if payment method is not found or loaded', () => {
+            expect(() => checkoutService.submitOrder(getOrderRequestBody())).toThrow(MissingDataError);
         });
     });
 
@@ -370,7 +371,7 @@ describe('CheckoutService', () => {
         });
 
         it('throws error if payment method has not been loaded', () => {
-            expect(() => checkoutService.initializePaymentMethod('braintree')).toThrow();
+            expect(() => checkoutService.initializePaymentMethod('braintree')).toThrow(MissingDataError);
         });
     });
 
@@ -390,7 +391,7 @@ describe('CheckoutService', () => {
         });
 
         it('throws error if payment method has not been loaded', () => {
-            expect(() => checkoutService.deinitializePaymentMethod('braintree')).toThrow();
+            expect(() => checkoutService.deinitializePaymentMethod('braintree')).toThrow(MissingDataError);
         });
     });
 
@@ -543,7 +544,7 @@ describe('CheckoutService', () => {
         });
 
         it('throws error if customer data is missing', () => {
-            expect(() => checkoutService.loadInstruments()).toThrow();
+            expect(() => checkoutService.loadInstruments()).toThrow(MissingDataError);
         });
     });
 
@@ -564,7 +565,7 @@ describe('CheckoutService', () => {
         it('throws error if customer data is missing', () => {
             const instrument = vaultInstrumentRequestBody();
 
-            expect(() => checkoutService.vaultInstrument(instrument)).toThrow();
+            expect(() => checkoutService.vaultInstrument(instrument)).toThrow(MissingDataError);
         });
     });
 
@@ -583,7 +584,7 @@ describe('CheckoutService', () => {
         });
 
         it('throws error if customer data is missing', () => {
-            expect(() => checkoutService.deleteInstrument(456)).toThrow();
+            expect(() => checkoutService.deleteInstrument(456)).toThrow(MissingDataError);
         });
     });
 });
