@@ -3,9 +3,11 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import deepFreeze from './deep-freeze';
+import noopActionTransformer from './noop-action-transformer';
 import noopStateTransformer from './noop-state-transformer';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/concatMap';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -26,11 +28,17 @@ export default class DataStore {
      * @param {Object} [options={}]
      * @param {boolean} [options.shouldWarnMutation=true]
      * @param {function(state: State): TransformedState} [options.stateTransformer=noopStateTransformer]
+     * @param {function(action: Observable<Action<T>>): Observable<Action<T>>} [options.actionTransformer=noopActionTransformer]
      * @return {void}
      * @template State, TransformedState
      */
     constructor(reducer, initialState = {}, options = {}) {
-        this._options = { shouldWarnMutation: true, stateTransformer: noopStateTransformer, ...options };
+        this._options = {
+            shouldWarnMutation: true,
+            stateTransformer: noopStateTransformer,
+            actionTransformer: noopActionTransformer,
+            ...options,
+        };
         this._state$ = new BehaviorSubject(initialState);
         this._notification$ = new Subject();
         this._dispatchers = {};
@@ -49,7 +57,7 @@ export default class DataStore {
     }
 
     /**
-     * @param {Action<T>} action
+     * @param {Action<T>|Observable<Action<T>>} action
      * @param {Object} [options]
      * @return {Promise<TransformedState>}
      * @template T
@@ -59,9 +67,7 @@ export default class DataStore {
             return this._dispatchObservableAction(action, options);
         }
 
-        this._dispatchAction(action);
-
-        return action.error ? Promise.reject(this.getState()) : Promise.resolve(this.getState());
+        return this._dispatchAction(action);
     }
 
     /**
@@ -107,7 +113,7 @@ export default class DataStore {
      * @template T
      */
     _dispatchAction(action) {
-        this._getDispatcher().next(Observable.of(action));
+        return this._dispatchObservableAction(action.error ? Observable.throw(action) : Observable.of(action));
     }
 
     /**
@@ -123,7 +129,7 @@ export default class DataStore {
             let error;
 
             this._getDispatcher(options.queueId).next(
-                action$
+                this._options.actionTransformer(action$)
                     .catch((value) => {
                         error = value;
 

@@ -144,6 +144,37 @@ describe('DataStore', () => {
 
             expect(reducer).not.toHaveBeenCalled();
         });
+
+        it('dispatches actions with transformer applied', () => {
+            const actionTransformer = jest.fn((action$) =>
+                action$.map((action) => ({ ...action, payload: 'foo' }))
+            );
+            const reducer = jest.fn((state) => state);
+            const store = new DataStore(reducer, {}, { actionTransformer });
+
+            store.dispatch({ type: 'ACTION' });
+
+            expect(actionTransformer).toHaveBeenCalled();
+            expect(reducer).toHaveBeenCalledWith(expect.anything(), { type: 'ACTION', payload: 'foo' });
+        });
+
+        it('dispatches failed actions with transformer applied', async () => {
+            const actionTransformer = jest.fn((action$) =>
+                action$.catch((action) => {
+                    throw { ...action, payload: 'foo' };
+                })
+            );
+            const reducer = jest.fn((state) => state);
+            const store = new DataStore(reducer, {}, { actionTransformer });
+
+            try {
+                await store.dispatch({ type: 'ACTION', error: true });
+            } catch (error) {
+                expect(actionTransformer).toHaveBeenCalled();
+                expect(reducer).toHaveBeenCalledWith(expect.anything(), { type: 'ACTION', error: true, payload: 'foo' });
+                expect(error).toEqual(store.getState());
+            }
+        });
     });
 
     describe('#subscribe()', () => {
