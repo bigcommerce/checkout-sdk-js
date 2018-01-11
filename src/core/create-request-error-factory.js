@@ -1,5 +1,6 @@
 import { RequestErrorFactory } from './common/error';
 import { UnrecoverableError } from './common/error/errors';
+import { PaymentMethodInvalidError } from './payment/errors';
 
 /**
  * @return {RequestErrorFactory}
@@ -26,6 +27,9 @@ export default function createRequestErrorFactory() {
     unrecoverableErrorTypes.forEach((type) => {
         factory.register(type, (...args) => new UnrecoverableError(...args));
     });
+
+    factory.register('invalid_payment_provider', (...args) => new PaymentMethodInvalidError(...args));
+    factory.register('payment_config_not_found', (...args) => new PaymentMethodInvalidError(...args));
 
     return factory;
 }

@@ -19,6 +19,8 @@ import {
     shippingCountryReducer,
     shippingOptionReducer,
 } from './shipping';
+import createActionTransformer from './create-action-transformer';
+import createRequestErrorFactory from './create-request-error-factory';
 
 /**
  * @private
@@ -128,13 +130,12 @@ function createCheckoutSelectors(state, cacheFactory, options) {
  */
 export default function createCheckoutStore(initialState = {}, options = {}) {
     const cacheFactory = new CacheFactory();
+    const actionTransformer = createActionTransformer(createRequestErrorFactory());
+    const stateTransformer = (state) => createCheckoutSelectors(state, cacheFactory, options);
 
     return createDataStore(
         createCheckoutReducers(),
         initialState,
-        {
-            stateTransformer: (state) => createCheckoutSelectors(state, cacheFactory, options),
-            ...options,
-        }
+        { actionTransformer, stateTransformer, ...options }
     );
 }
