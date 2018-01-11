@@ -193,7 +193,9 @@ describe('DataStore', () => {
             const store = new DataStore(
                 (state, action) => action.type === 'CAPITALIZE' ? { foobar: 'FOOBAR' } : state,
                 initialState,
-                (state) => ({ ...state, transformed: true })
+                {
+                    stateTransformer: (state) => ({ ...state, transformed: true }),
+                }
             );
             const subscriber = jest.fn();
 
@@ -420,7 +422,9 @@ describe('DataStore', () => {
             const store = new DataStore(
                 (state, action) => action.type === 'INCREMENT' ? { foobar: 'foobar x2' } : state,
                 { foobar: 'foobar' },
-                (state) => ({ ...state, transformed: true })
+                {
+                    stateTransformer: (state) => ({ ...state, transformed: true }),
+                }
             );
 
             expect(store.getState()).toEqual({
@@ -444,7 +448,7 @@ describe('DataStore', () => {
         });
 
         it('does not warn if mutating state returned from mutable store', () => {
-            const store = new DataStore((state) => state, { name: 'Foo' }, undefined, { shouldWarnMutation: false });
+            const store = new DataStore((state) => state, { name: 'Foo' }, { shouldWarnMutation: false });
             const state = store.getState();
 
             expect(() => { state.name = 'Bar'; }).not.toThrow();

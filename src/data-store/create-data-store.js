@@ -4,14 +4,13 @@ import DataStore from './data-store';
 /**
  * @param {Reducer|Object<string, Reducer>} reducer
  * @param {Object} [initialState]
- * @param {Function} [stateTransformer]
  * @param {Object} [options]
  * @return {DataStore}
  */
-export default function createDataStore(reducer, initialState, stateTransformer, options) {
+export default function createDataStore(reducer, initialState, options) {
     if (typeof reducer === 'function') {
-        return new DataStore(reducer, initialState, stateTransformer, options);
+        return new DataStore(reducer, initialState, options);
     }
 
-    return new DataStore(combineReducers(reducer), initialState, stateTransformer, options);
+    return new DataStore(combineReducers(reducer), initialState, options);
 }

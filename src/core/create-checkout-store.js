@@ -132,7 +132,9 @@ export default function createCheckoutStore(initialState = {}, options = {}) {
     return createDataStore(
         createCheckoutReducers(),
         initialState,
-        (state) => createCheckoutSelectors(state, cacheFactory, options),
-        options
+        {
+            stateTransformer: (state) => createCheckoutSelectors(state, cacheFactory, options),
+            ...options,
+        }
     );
 }

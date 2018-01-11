@@ -23,14 +23,14 @@ export default class DataStore {
     /**
      * @param {Reducer} reducer
      * @param {State} [initialState={}]
-     * @param {function(state: State): TransformedState} [stateTransformer=noopStateTransformer]
      * @param {Object} [options={}]
      * @param {boolean} [options.shouldWarnMutation=true]
+     * @param {function(state: State): TransformedState} [options.stateTransformer=noopStateTransformer]
      * @return {void}
      * @template State, TransformedState
      */
-    constructor(reducer, initialState = {}, stateTransformer = noopStateTransformer, options = {}) {
-        this._options = { shouldWarnMutation: true, ...options };
+    constructor(reducer, initialState = {}, options = {}) {
+        this._options = { shouldWarnMutation: true, stateTransformer: noopStateTransformer, ...options };
         this._state$ = new BehaviorSubject(initialState);
         this._notification$ = new Subject();
         this._dispatchers = {};
@@ -42,7 +42,7 @@ export default class DataStore {
             .scan((state, action) => reducer(state, action), initialState)
             .distinctUntilChanged(isEqual)
             .map((state) => this._options.shouldWarnMutation === false ? state : deepFreeze(state))
-            .map(stateTransformer)
+            .map((state) => this._options.stateTransformer(state))
             .subscribe(this._state$);
 
         this.dispatch({ type: 'INIT' });
