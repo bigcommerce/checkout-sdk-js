@@ -144,6 +144,37 @@ describe('DataStore', () => {
 
             expect(reducer).not.toHaveBeenCalled();
         });
+
+        it('dispatches actions with transformer applied', () => {
+            const actionTransformer = jest.fn((action$) =>
+                action$.map((action) => ({ ...action, payload: 'foo' }))
+            );
+            const reducer = jest.fn((state) => state);
+            const store = new DataStore(reducer, {}, { actionTransformer });
+
+            store.dispatch({ type: 'ACTION' });
+
+            expect(actionTransformer).toHaveBeenCalled();
+            expect(reducer).toHaveBeenCalledWith(expect.anything(), { type: 'ACTION', payload: 'foo' });
+        });
+
+        it('dispatches failed actions with transformer applied', async () => {
+            const actionTransformer = jest.fn((action$) =>
+                action$.catch((action) => {
+                    throw { ...action, payload: 'foo' };
+                })
+            );
+            const reducer = jest.fn((state) => state);
+            const store = new DataStore(reducer, {}, { actionTransformer });
+
+            try {
+                await store.dispatch({ type: 'ACTION', error: true });
+            } catch (error) {
+                expect(actionTransformer).toHaveBeenCalled();
+                expect(reducer).toHaveBeenCalledWith(expect.anything(), { type: 'ACTION', error: true, payload: 'foo' });
+                expect(error).toEqual(store.getState());
+            }
+        });
     });
 
     describe('#subscribe()', () => {
@@ -193,7 +224,9 @@ describe('DataStore', () => {
             const store = new DataStore(
                 (state, action) => action.type === 'CAPITALIZE' ? { foobar: 'FOOBAR' } : state,
                 initialState,
-                (state) => ({ ...state, transformed: true })
+                {
+                    stateTransformer: (state) => ({ ...state, transformed: true }),
+                }
             );
             const subscriber = jest.fn();
 
@@ -420,7 +453,9 @@ describe('DataStore', () => {
             const store = new DataStore(
                 (state, action) => action.type === 'INCREMENT' ? { foobar: 'foobar x2' } : state,
                 { foobar: 'foobar' },
-                (state) => ({ ...state, transformed: true })
+                {
+                    stateTransformer: (state) => ({ ...state, transformed: true }),
+                }
             );
 
             expect(store.getState()).toEqual({
@@ -444,7 +479,7 @@ describe('DataStore', () => {
         });
 
         it('does not warn if mutating state returned from mutable store', () => {
-            const store = new DataStore((state) => state, { name: 'Foo' }, undefined, { shouldWarnMutation: false });
+            const store = new DataStore((state) => state, { name: 'Foo' }, { shouldWarnMutation: false });
             const state = store.getState();
 
             expect(() => { state.name = 'Bar'; }).not.toThrow();

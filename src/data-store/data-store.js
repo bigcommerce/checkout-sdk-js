@@ -3,9 +3,11 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import deepFreeze from './deep-freeze';
+import noopActionTransformer from './noop-action-transformer';
 import noopStateTransformer from './noop-state-transformer';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/concatMap';
 import 'rxjs/add/operator/distinctUntilChanged';
@@ -23,14 +25,20 @@ export default class DataStore {
     /**
      * @param {Reducer} reducer
      * @param {State} [initialState={}]
-     * @param {function(state: State): TransformedState} [stateTransformer=noopStateTransformer]
      * @param {Object} [options={}]
      * @param {boolean} [options.shouldWarnMutation=true]
+     * @param {function(state: State): TransformedState} [options.stateTransformer=noopStateTransformer]
+     * @param {function(action: Observable<Action<T>>): Observable<Action<T>>} [options.actionTransformer=noopActionTransformer]
      * @return {void}
      * @template State, TransformedState
      */
-    constructor(reducer, initialState = {}, stateTransformer = noopStateTransformer, options = {}) {
-        this._options = { shouldWarnMutation: true, ...options };
+    constructor(reducer, initialState = {}, options = {}) {
+        this._options = {
+            shouldWarnMutation: true,
+            stateTransformer: noopStateTransformer,
+            actionTransformer: noopActionTransformer,
+            ...options,
+        };
         this._state$ = new BehaviorSubject(initialState);
         this._notification$ = new Subject();
         this._dispatchers = {};
@@ -42,14 +50,14 @@ export default class DataStore {
             .scan((state, action) => reducer(state, action), initialState)
             .distinctUntilChanged(isEqual)
             .map((state) => this._options.shouldWarnMutation === false ? state : deepFreeze(state))
-            .map(stateTransformer)
+            .map((state) => this._options.stateTransformer(state))
             .subscribe(this._state$);
 
         this.dispatch({ type: 'INIT' });
     }
 
     /**
-     * @param {Action<T>} action
+     * @param {Action<T>|Observable<Action<T>>} action
      * @param {Object} [options]
      * @return {Promise<TransformedState>}
      * @template T
@@ -59,9 +67,7 @@ export default class DataStore {
             return this._dispatchObservableAction(action, options);
         }
 
-        this._dispatchAction(action);
-
-        return action.error ? Promise.reject(this.getState()) : Promise.resolve(this.getState());
+        return this._dispatchAction(action);
     }
 
     /**
@@ -107,7 +113,7 @@ export default class DataStore {
      * @template T
      */
     _dispatchAction(action) {
-        this._getDispatcher().next(Observable.of(action));
+        return this._dispatchObservableAction(action.error ? Observable.throw(action) : Observable.of(action));
     }
 
     /**
@@ -123,7 +129,7 @@ export default class DataStore {
             let error;
 
             this._getDispatcher(options.queueId).next(
-                action$
+                this._options.actionTransformer(action$)
                     .catch((value) => {
                         error = value;
 
