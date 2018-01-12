@@ -81,6 +81,12 @@ describe('PlaceOrderService', () => {
 
             expect(output).toEqual(store.getState());
         });
+
+        it('throws error if cart data is missing', () => {
+            jest.spyOn(store.getState().checkout, 'getCart').mockReturnValue();
+
+            expect(() => placeOrderService.submitOrder(getOrderRequestBody())).toThrow();
+        });
     });
 
     describe('#finalizeOrder()', () => {
@@ -181,6 +187,12 @@ describe('PlaceOrderService', () => {
             expect(checkout.isPaymentDataRequired).toHaveBeenCalledWith(true);
             expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
         });
+
+        it('throws error if cart data is missing', () => {
+            jest.spyOn(store.getState().checkout, 'getCart').mockReturnValue();
+
+            expect(() => placeOrderService.submitPayment(getPayment())).toThrow();
+        });
     });
 
     describe('#initializeOffsitePayment()', () => {
@@ -210,6 +222,12 @@ describe('PlaceOrderService', () => {
 
             expect(checkout.isPaymentDataRequired).toHaveBeenCalledWith(true);
             expect(paymentActionCreator.initializeOffsitePayment).not.toHaveBeenCalled();
+        });
+
+        it('throws error if cart data is missing', () => {
+            jest.spyOn(store.getState().checkout, 'getCart').mockReturnValue();
+
+            expect(() => placeOrderService.initializeOffsitePayment(getPayment())).toThrow();
         });
     });
 });

@@ -1,4 +1,4 @@
-import { omit, pick } from 'lodash';
+import { isEmpty, omit, pick } from 'lodash';
 
 export default class PlaceOrderService {
     /**
@@ -22,9 +22,15 @@ export default class PlaceOrderService {
      */
     submitOrder(payload, shouldVerifyCart = false, options) {
         const { checkout } = this._store.getState();
+        const cart = checkout.getCart();
+
+        if (isEmpty(cart)) {
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+        }
+
         const action = this._orderActionCreator.submitOrder(
             payload,
-            shouldVerifyCart ? checkout.getCart() : undefined,
+            shouldVerifyCart ? cart : undefined,
             options
         );
 
@@ -96,31 +102,43 @@ export default class PlaceOrderService {
     _getPaymentRequestBody(payment) {
         const { checkout } = this._store.getState();
         const deviceSessionId = payment.paymentData && payment.paymentData.deviceSessionId || checkout.getCheckoutMeta().deviceSessionId;
+        const checkoutMeta = checkout.getCheckoutMeta();
+        const billingAddress = checkout.getBillingAddress();
+        const cart = checkout.getCart();
+        const customer = checkout.getCustomer();
+        const order = checkout.getOrder();
+        const paymentMethod = checkout.getPaymentMethod(payment.name, payment.gateway);
+        const shippingAddress = checkout.getShippingAddress();
+        const shippingOption = checkout.getSelectedShippingOption();
+        const config = checkout.getConfig();
+
+        if (isEmpty(checkoutMeta) || isEmpty(billingAddress) || isEmpty(cart) || isEmpty(customer) || isEmpty(order) ||
+            isEmpty(paymentMethod) || isEmpty(shippingAddress) || isEmpty(shippingOption) || isEmpty(config)) {
+            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+        }
 
         return {
-            authToken: checkout.getCheckoutMeta().paymentAuthToken,
-            billingAddress: checkout.getBillingAddress(),
-            cart: checkout.getCart(),
-            customer: checkout.getCustomer(),
-            order: checkout.getOrder(),
-            orderMeta: pick(checkout.getCheckoutMeta(), [
-                'deviceFingerprint',
-            ]),
+            billingAddress,
+            cart,
+            customer,
+            order,
+            paymentMethod,
+            shippingAddress,
+            shippingOption,
+            authToken: checkoutMeta.paymentAuthToken,
+            orderMeta: pick(checkoutMeta, ['deviceFingerprint']),
             payment: omit(payment.paymentData, ['deviceSessionId']),
-            paymentMethod: checkout.getPaymentMethod(payment.name, payment.gateway),
             quoteMeta: {
                 request: {
-                    ...pick(checkout.getCheckoutMeta(), [
+                    ...pick(checkoutMeta, [
                         'geoCountryCode',
                         'sessionHash',
                     ]),
                     deviceSessionId,
                 },
             },
-            shippingAddress: checkout.getShippingAddress(),
-            shippingOption: checkout.getSelectedShippingOption(),
             source: payment.source || 'bcapp-checkout-uco',
-            store: pick(checkout.getConfig(), [
+            store: pick(config, [
                 'storeHash',
                 'storeId',
                 'storeLanguage',

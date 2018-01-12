@@ -266,11 +266,30 @@ describe('CheckoutService', () => {
             expect(paymentStrategy.finalize).toHaveBeenCalledWith(options);
         });
 
-        it('returns a rejected promise if payment is not yet initialized', async () => {
+        it('throws error if payment data is not available', async () => {
+            await checkoutService.loadCheckout();
+
+            expect(() => checkoutService.finalizeOrderIfNeeded()).toThrow();
+        });
+
+        it('throws error if checkout data is not available', () => {
+            expect(() => checkoutService.finalizeOrderIfNeeded()).toThrow();
+        });
+
+        it('returns rejected promise if order does not require finalization', async () => {
+            jest.spyOn(checkoutClient, 'loadCheckout').mockReturnValue(
+                Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
+                    data: { order: { ...getSubmittedOrder(), payment: null } },
+                })))
+            );
+
+            await checkoutService.loadCheckout();
+            await checkoutService.loadPaymentMethods();
+
             try {
                 await checkoutService.finalizeOrderIfNeeded();
             } catch (error) {
-                expect(error).toEqual(checkoutService.getState());
+                expect(error).toBeDefined();
             }
         });
     });
@@ -522,6 +541,10 @@ describe('CheckoutService', () => {
             expect(checkoutClient.getInstruments)
                 .toHaveBeenCalledWith(storeId, customerId, authToken);
         });
+
+        it('throws error if customer data is missing', () => {
+            expect(() => checkoutService.loadInstruments()).toThrow();
+        });
     });
 
     describe('#vaultInstrument()', () => {
@@ -537,6 +560,12 @@ describe('CheckoutService', () => {
             expect(checkoutClient.vaultInstrument)
                 .toHaveBeenCalledWith(storeId, customerId, authToken, instrument);
         });
+
+        it('throws error if customer data is missing', () => {
+            const instrument = vaultInstrumentRequestBody();
+
+            expect(() => checkoutService.vaultInstrument(instrument)).toThrow();
+        });
     });
 
     describe('#deleteInstrument()', () => {
@@ -551,6 +580,10 @@ describe('CheckoutService', () => {
 
             expect(checkoutClient.deleteInstrument)
                 .toHaveBeenCalledWith(storeId, customerId, instrumentId, authToken);
+        });
+
+        it('throws error if customer data is missing', () => {
+            expect(() => checkoutService.deleteInstrument(456)).toThrow();
         });
     });
 });
