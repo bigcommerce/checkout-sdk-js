@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
-import { RequestError, UnrecoverableError } from './errors';
-import { getErrorResponse } from '../http-request/responses.mock';
+import { RequestError, UnrecoverableError, TimeoutError } from './errors';
+import { getErrorResponse, getTimeoutResponse } from '../http-request/responses.mock';
 import RequestErrorFactory from './request-error-factory';
 
 describe('RequestErrorFactory', () => {
@@ -35,5 +35,11 @@ describe('RequestErrorFactory', () => {
         const factory = new RequestErrorFactory();
 
         expect(factory.createError(getErrorResponse())).toBeInstanceOf(RequestError);
+    });
+
+    it('creates `TimeoutError` if XHR is aborted', () => {
+        const factory = new RequestErrorFactory();
+
+        expect(factory.createError(getTimeoutResponse())).toBeInstanceOf(TimeoutError);
     });
 });

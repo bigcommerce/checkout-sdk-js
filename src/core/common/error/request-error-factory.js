@@ -1,5 +1,5 @@
 import { last } from 'lodash';
-import { RequestError } from './errors';
+import { RequestError, TimeoutError } from './errors';
 
 export default class RequestErrorFactory {
     /**
@@ -9,6 +9,7 @@ export default class RequestErrorFactory {
         this._factoryMethods = {};
 
         this.register('default', (...args) => new RequestError(...args));
+        this.register('timeout', (...args) => new TimeoutError(...args));
     }
 
     /**
@@ -37,6 +38,10 @@ export default class RequestErrorFactory {
      * @return {string}
      */
     _getType(response) {
+        if (response.status === 0) {
+            return 'timeout';
+        }
+
         const { body = {} } = response;
 
         if (typeof body.type === 'string') {
