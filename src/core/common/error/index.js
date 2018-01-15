@@ -1,1 +1,1 @@
-export { default as createClientError } from './create-client-error';
+export { default as RequestErrorFactory } from './request-error-factory';

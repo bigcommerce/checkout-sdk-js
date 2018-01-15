@@ -1,6 +1,7 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { createAction } from '../../data-store';
+import { MissingDataError } from '../common/error/errors';
 import { getCartState } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCustomerState } from '../customer/customers.mock';
@@ -85,7 +86,7 @@ describe('PlaceOrderService', () => {
         it('throws error if cart data is missing', () => {
             jest.spyOn(store.getState().checkout, 'getCart').mockReturnValue();
 
-            expect(() => placeOrderService.submitOrder(getOrderRequestBody())).toThrow();
+            expect(() => placeOrderService.submitOrder(getOrderRequestBody())).toThrow(MissingDataError);
         });
     });
 
@@ -191,7 +192,7 @@ describe('PlaceOrderService', () => {
         it('throws error if cart data is missing', () => {
             jest.spyOn(store.getState().checkout, 'getCart').mockReturnValue();
 
-            expect(() => placeOrderService.submitPayment(getPayment())).toThrow();
+            expect(() => placeOrderService.submitPayment(getPayment())).toThrow(MissingDataError);
         });
     });
 
@@ -227,7 +228,7 @@ describe('PlaceOrderService', () => {
         it('throws error if cart data is missing', () => {
             jest.spyOn(store.getState().checkout, 'getCart').mockReturnValue();
 
-            expect(() => placeOrderService.initializeOffsitePayment(getPayment())).toThrow();
+            expect(() => placeOrderService.initializeOffsitePayment(getPayment())).toThrow(MissingDataError);
         });
     });
 });

@@ -1,4 +1,5 @@
 import PaymentStrategy from './payment-strategy';
+import { PaymentMethodUninitializedError } from '../errors';
 import * as paymentStatusTypes from '../payment-status-types';
 
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
@@ -71,7 +72,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         }
 
         if (!this._paypalSdk) {
-            throw new Error('Unable to submit payment as payment method is not initialized');
+            throw new PaymentMethodUninitializedError(payload.payment.name);
         }
 
         this._paypalSdk.checkout.initXO();

@@ -1,4 +1,5 @@
 import { some } from 'lodash';
+import { PaymentMethodNotRegistrableError, PaymentMethodUnsupportedError } from './errors';
 import * as paymentMethodTypes from './payment-method-types';
 
 export default class PaymentStrategyRegistry {
@@ -20,7 +21,7 @@ export default class PaymentStrategyRegistry {
      */
     addStrategy(name, strategy) {
         if (this._strategies[name]) {
-            throw new Error(`"${name}" payment strategy is already registered`);
+            throw new PaymentMethodNotRegistrableError(name);
         }
 
         this._strategies[name] = strategy;
@@ -33,7 +34,7 @@ export default class PaymentStrategyRegistry {
      */
     getStrategy(name) {
         if (!this._strategies[name]) {
-            throw new Error(`"${name}" payment strategy could not be found`);
+            throw new PaymentMethodUnsupportedError(name);
         }
 
         return this._strategies[name];
@@ -47,6 +48,10 @@ export default class PaymentStrategyRegistry {
         try {
             return this.getStrategy(paymentMethod.id);
         } catch (error) {
+            if (!error instanceof PaymentMethodUnsupportedError) {
+                throw error;
+            }
+
             if (paymentMethod.type === paymentMethodTypes.OFFLINE) {
                 return this.getStrategy('offline');
             }

@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable';
 import { CartComparator } from '../cart';
+import { CartChangedError } from '../cart/errors';
 import { createAction, createErrorAction } from '../../data-store';
-import { createClientError } from '../common/error';
 import * as actionTypes from './order-action-types';
 
 export default class OrderActionCreator {
@@ -91,6 +91,6 @@ export default class OrderActionCreator {
             .then(({ body: { data } = {} }) =>
                 this._cartComparator.isEqual(existingCart, data.cart) ? true : Promise.reject(false)
             )
-            .catch(() => Promise.reject(createClientError('changed_cart')));
+            .catch(() => Promise.reject(new CartChangedError()));
     }
 }

@@ -19,6 +19,25 @@ import {
     shippingCountryReducer,
     shippingOptionReducer,
 } from './shipping';
+import createActionTransformer from './create-action-transformer';
+import createRequestErrorFactory from './create-request-error-factory';
+
+/**
+ * @param {Object} [initialState={}]
+ * @param {Object} [options={}]
+ * @return {DataStore}
+ */
+export default function createCheckoutStore(initialState = {}, options = {}) {
+    const cacheFactory = new CacheFactory();
+    const actionTransformer = createActionTransformer(createRequestErrorFactory());
+    const stateTransformer = (state) => createCheckoutSelectors(state, cacheFactory, options);
+
+    return createDataStore(
+        createCheckoutReducers(),
+        initialState,
+        { actionTransformer, stateTransformer, ...options }
+    );
+}
 
 /**
  * @private
@@ -119,22 +138,4 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         errors: options.shouldWarnMutation ? createFreezeProxy(errors) : errors,
         statuses: options.shouldWarnMutation ? createFreezeProxy(statuses) : statuses,
     };
-}
-
-/**
- * @param {Object} [initialState={}]
- * @param {Object} [options={}]
- * @return {DataStore}
- */
-export default function createCheckoutStore(initialState = {}, options = {}) {
-    const cacheFactory = new CacheFactory();
-
-    return createDataStore(
-        createCheckoutReducers(),
-        initialState,
-        {
-            stateTransformer: (state) => createCheckoutSelectors(state, cacheFactory, options),
-            ...options,
-        }
-    );
 }

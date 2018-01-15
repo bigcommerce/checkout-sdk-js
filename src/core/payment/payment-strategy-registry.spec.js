@@ -1,4 +1,5 @@
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import { PaymentMethodNotRegistrableError, PaymentMethodUnsupportedError } from './errors';
 import { getAdyenAmex, getAuthorizenet, getBankDeposit, getBraintree, getCybersource } from './payment-methods.mock';
 
 describe('PaymentStrategyRegistry', () => {
@@ -51,12 +52,12 @@ describe('PaymentStrategyRegistry', () => {
         });
 
         it('throws error if payment strategy is not found', () => {
-            expect(() => registry.getStrategy('abc')).toThrow();
+            expect(() => registry.getStrategy('abc')).toThrow(PaymentMethodUnsupportedError);
         });
 
         it('throws error if payment strategy is already registered with same name', () => {
             expect(() => registry.addStrategy('creditcard', new CreditCardPaymentStrategy())).not.toThrow();
-            expect(() => registry.addStrategy('creditcard', new CreditCardPaymentStrategy())).toThrow();
+            expect(() => registry.addStrategy('creditcard', new CreditCardPaymentStrategy())).toThrow(PaymentMethodNotRegistrableError);
         });
     });
 

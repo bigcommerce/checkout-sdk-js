@@ -134,7 +134,7 @@ describe('OrderActionCreator', () => {
                 await orderActionCreator.submitOrder(getOrderRequestBody(), { ...getCart(), currency: 'JPY' }).toPromise();
             } catch (action) {
                 expect(checkoutClient.submitOrder).not.toHaveBeenCalled();
-                expect(action.payload.body.type).toEqual('changed_cart');
+                expect(action.payload.type).toEqual('cart_changed');
             }
         });
     });

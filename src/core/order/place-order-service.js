@@ -1,4 +1,5 @@
 import { omit, pick } from 'lodash';
+import { MissingDataError } from '../common/error/errors';
 
 export default class PlaceOrderService {
     /**
@@ -25,7 +26,7 @@ export default class PlaceOrderService {
         const cart = checkout.getCart();
 
         if (!cart) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         const action = this._orderActionCreator.submitOrder(
@@ -114,7 +115,7 @@ export default class PlaceOrderService {
 
         if (!checkoutMeta || !billingAddress || !cart || !customer || !order ||
             !paymentMethod || !shippingAddress || !shippingOption || !config) {
-            throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
+            throw new MissingDataError();
         }
 
         return {

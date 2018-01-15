@@ -31,3 +31,12 @@ export function getErrorResponseBody(error) {
         ...error,
     };
 }
+
+export function getTimeoutResponse() {
+    return {
+        body: '',
+        headers: {},
+        status: 0,
+        statusText: undefined,
+    };
+}

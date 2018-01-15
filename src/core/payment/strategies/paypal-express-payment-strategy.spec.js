@@ -1,4 +1,5 @@
 import { merge } from 'lodash';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
 import { getPaypalExpress } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
@@ -317,7 +318,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             try {
                 await strategy.finalize();
             } catch (error) {
-                expect(error).toBeInstanceOf(Error);
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
                 expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
             }
         });
@@ -326,7 +327,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             try {
                 await strategy.finalize();
             } catch (error) {
-                expect(error).toBeInstanceOf(Error);
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
                 expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
             }
         });
