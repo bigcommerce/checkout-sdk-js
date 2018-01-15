@@ -35,7 +35,7 @@ export default class PaymentMethodSelector {
      * @return {?PaymentMethod}
      */
     getSelectedPaymentMethod() {
-        if (!this._order.data.payment) {
+        if (!this._order.data || !this._order.data.payment) {
             return;
         }
 

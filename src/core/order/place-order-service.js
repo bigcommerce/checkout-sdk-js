@@ -1,4 +1,4 @@
-import { isEmpty, omit, pick } from 'lodash';
+import { omit, pick } from 'lodash';
 
 export default class PlaceOrderService {
     /**
@@ -24,7 +24,7 @@ export default class PlaceOrderService {
         const { checkout } = this._store.getState();
         const cart = checkout.getCart();
 
-        if (isEmpty(cart)) {
+        if (!cart) {
             throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 
@@ -112,8 +112,8 @@ export default class PlaceOrderService {
         const shippingOption = checkout.getSelectedShippingOption();
         const config = checkout.getConfig();
 
-        if (isEmpty(checkoutMeta) || isEmpty(billingAddress) || isEmpty(cart) || isEmpty(customer) || isEmpty(order) ||
-            isEmpty(paymentMethod) || isEmpty(shippingAddress) || isEmpty(shippingOption) || isEmpty(config)) {
+        if (!checkoutMeta || !billingAddress || !cart || !customer || !order ||
+            !paymentMethod || !shippingAddress || !shippingOption || !config) {
             throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 

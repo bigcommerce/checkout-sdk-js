@@ -18,6 +18,12 @@ describe('BillingAddressSelector', () => {
 
             expect(billingAddressSelector.getBillingAddress()).toEqual(state.quote.data.billingAddress);
         });
+
+        it('returns undefined if quote is not available', () => {
+            billingAddressSelector = new BillingAddressSelector({ ...state.quote, data: undefined });
+
+            expect(billingAddressSelector.getBillingAddress()).toEqual();
+        });
     });
 
     describe('#getUpdateError()', () => {

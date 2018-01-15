@@ -1,5 +1,3 @@
-import { isEmpty } from 'lodash';
-
 export default class CheckoutService {
     /**
      * @constructor
@@ -170,7 +168,7 @@ export default class CheckoutService {
         const { checkout } = this._store.getState();
         const order = checkout.getOrder();
 
-        if (isEmpty(order)) {
+        if (!order) {
             throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 
@@ -377,7 +375,7 @@ export default class CheckoutService {
     loadInstruments() {
         const { checkout } = this._store.getState();
 
-        if (isEmpty(checkout.getConfig()) || isEmpty(checkout.getCustomer())) {
+        if (!checkout.getConfig() || !checkout.getCustomer()) {
             throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 
@@ -396,7 +394,7 @@ export default class CheckoutService {
     vaultInstrument(instrument) {
         const { checkout } = this._store.getState();
 
-        if (isEmpty(checkout.getConfig()) || isEmpty(checkout.getCustomer())) {
+        if (!checkout.getConfig() || !checkout.getCustomer()) {
             throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 
@@ -415,7 +413,7 @@ export default class CheckoutService {
     deleteInstrument(instrumentId) {
         const { checkout } = this._store.getState();
 
-        if (isEmpty(checkout.getConfig()) || isEmpty(checkout.getCustomer())) {
+        if (!checkout.getConfig() || !checkout.getCustomer()) {
             throw new Error('Unable to call this method because the data required for the call is not available. Please refer to the documentation to see what you need to do in order to obtain the required data.');
         }
 

@@ -23,11 +23,11 @@ export default function quoteReducer(state = {}, action) {
 
 /**
  * @private
- * @param {Quote} data
+ * @param {?Quote} data
  * @param {Action} action
- * @return {Quote}
+ * @return {?Quote}
  */
-function dataReducer(data = {}, action) {
+function dataReducer(data, action) {
     switch (action.type) {
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
@@ -45,11 +45,11 @@ function dataReducer(data = {}, action) {
 
 /**
  * @private
- * @param {Object} meta
+ * @param {?Object} meta
  * @param {Action} action
- * @return {Object}
+ * @return {?Object}
  */
-function metaReducer(meta = {}, action) {
+function metaReducer(meta, action) {
     switch (action.type) {
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.meta ? { ...meta, ...action.meta } : meta;

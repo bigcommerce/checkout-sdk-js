@@ -11,22 +11,20 @@ export default class ShippingAddressSelector {
      * @return {Address}
      */
     getShippingAddress() {
-        return this._quote.data.shippingAddress;
+        return this._quote.data && this._quote.data.shippingAddress;
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getUpdateError() {
-        return this._quote.errors &&
-            this._quote.errors.updateShippingAddressError;
+        return this._quote.errors && this._quote.errors.updateShippingAddressError;
     }
 
     /**
      * @return {boolean}
      */
     isUpdating() {
-        return !!(this._quote.statuses &&
-            this._quote.statuses.isUpdatingShippingAddress);
+        return !!(this._quote.statuses && this._quote.statuses.isUpdatingShippingAddress);
     }
 }

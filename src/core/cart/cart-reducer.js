@@ -26,11 +26,11 @@ export default function cartReducer(state = {}, action) {
 
 /**
  * @private
- * @param {Customer} data
+ * @param {?Cart} data
  * @param {Action} action
- * @return {Customer}
+ * @return {?Cart}
  */
-function dataReducer(data = {}, action) {
+function dataReducer(data, action) {
     switch (action.type) {
     case cartActionTypes.CART_UPDATED:
         return action.payload ? { ...data, ...action.payload } : data;
@@ -56,11 +56,11 @@ function dataReducer(data = {}, action) {
 
 /**
  * @private
- * @param {Object} meta
+ * @param {?CartMeta} meta
  * @param {Action} action
- * @return {Object}
+ * @return {?CartMeta}
  */
-function metaReducer(meta = {}, action) {
+function metaReducer(meta, action) {
     switch (action.type) {
     case cartActionTypes.VERIFY_CART_SUCCEEDED:
         return { ...meta, isValid: action.payload };

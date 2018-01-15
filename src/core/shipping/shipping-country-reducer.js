@@ -7,7 +7,7 @@ import { combineReducers } from '../../data-store';
  * @param {Action} action
  * @return {Country[]}
  */
-function dataReducer(data = [], action) {
+function dataReducer(data, action) {
     switch (action.type) {
     case actionTypes.LOAD_SHIPPING_COUNTRIES_SUCCEEDED:
         return action.payload || [];

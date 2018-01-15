@@ -21,11 +21,11 @@ export default function shippingOptionReducer(state = {}, action) {
 
 /**
  * @private
- * @param {ShippingOptionList} data
+ * @param {?ShippingOptionList} data
  * @param {Action} action
- * @return {ShippingOptionList}
+ * @return {?ShippingOptionList}
  */
-function dataReducer(data = {}, action) {
+function dataReducer(data, action) {
     switch (action.type) {
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:

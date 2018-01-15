@@ -20,11 +20,11 @@ export default function customerReducer(state = {}, action) {
 
 /**
  * @private
- * @param {Customer} data
+ * @param {?Customer} data
  * @param {Action} action
- * @return {Customer}
+ * @return {?Customer}
  */
-function dataReducer(data = {}, action) {
+function dataReducer(data, action) {
     switch (action.type) {
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:

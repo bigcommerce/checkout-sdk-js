@@ -72,7 +72,6 @@ describe('customerReducer()', () => {
         };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: {},
             statuses: { isSigningIn: true },
         }));
     });
@@ -96,7 +95,6 @@ describe('customerReducer()', () => {
         };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: {},
             errors: { signInError: getErrorResponse() },
             statuses: { isSigningIn: false },
         }));
@@ -108,7 +106,6 @@ describe('customerReducer()', () => {
         };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: {},
             statuses: { isSigningOut: true },
         }));
     });

@@ -2,12 +2,27 @@ import * as actionTypes from './country-action-types';
 import { combineReducers } from '../../data-store';
 
 /**
- * @private
- * @param {Country[]} data
+ * @param {CountriesState} state
  * @param {Action} action
- * @return {Country[]}
+ * @return {CountriesState}
  */
-function dataReducer(data = [], action) {
+export default function countryReducer(state = {}, action) {
+    const reducer = combineReducers({
+        data: dataReducer,
+        errors: errorsReducer,
+        statuses: statusesReducer,
+    });
+
+    return reducer(state, action);
+}
+
+/**
+ * @private
+ * @param {?Country[]} data
+ * @param {Action} action
+ * @return {?Country[]}
+ */
+function dataReducer(data, action) {
     switch (action.type) {
     case actionTypes.LOAD_COUNTRIES_SUCCEEDED:
         return action.payload || [];
@@ -55,19 +70,4 @@ function statusesReducer(statuses = {}, action) {
     default:
         return statuses;
     }
-}
-
-/**
- * @param {CountriesState} state
- * @param {Action} action
- * @return {CountriesState}
- */
-export default function countryReducer(state = {}, action) {
-    const reducer = combineReducers({
-        data: dataReducer,
-        errors: errorsReducer,
-        statuses: statusesReducer,
-    });
-
-    return reducer(state, action);
 }

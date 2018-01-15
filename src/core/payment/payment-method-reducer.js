@@ -19,14 +19,14 @@ export default function paymentMethodReducer(state = {}, action) {
 
 /**
  * @private
- * @param {PaymentMethod[]} data
+ * @param {?PaymentMethod[]} data
  * @param {Action} action
- * @return {PaymentMethod[]}
+ * @return {?PaymentMethod[]}
  */
-function dataReducer(data = [], action) {
+function dataReducer(data, action) {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
-        return mergeOrPush(data, action.payload.paymentMethod, {
+        return mergeOrPush(data || [], action.payload.paymentMethod, {
             id: action.payload.paymentMethod.id,
             gateway: action.payload.paymentMethod.gateway,
         });
