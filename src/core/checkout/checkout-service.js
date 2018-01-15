@@ -175,7 +175,7 @@ export default class CheckoutService {
         }
 
         if (!order.payment || !order.payment.id) {
-            return Promise.reject(this._store.getState());
+            return Promise.reject(new Error('Skipping order finalization as it is not required'));
         }
 
         const method = checkout.getPaymentMethod(order.payment.id, order.payment.gateway);

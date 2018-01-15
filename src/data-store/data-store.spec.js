@@ -29,6 +29,17 @@ describe('DataStore', () => {
             expect(reducer).toHaveBeenCalledWith(state, { type: 'ACTION_2' });
         });
 
+        it('dispatches error actions and rejects with payload', async () => {
+            const store = new DataStore(state => state);
+            const action = { error: true, payload: 'foobar' };
+
+            try {
+                await store.dispatch(action);
+            } catch (error) {
+                expect(error).toEqual(action.payload);
+            }
+        });
+
         it('dispatches observable actions and resolves promise with current state', async () => {
             const store = new DataStore((state, action) => {
                 if (action.type === 'APPEND') {
@@ -45,13 +56,29 @@ describe('DataStore', () => {
             ))).toEqual({ message: 'foobar!!!' });
         });
 
-        it('dispatches observable actions and rejects promise with current state', async () => {
+        it('dispatches observable actions and rejects with payload', async () => {
             const store = new DataStore(state => state, { message: 'foobar' });
+            const action = { type: 'APPEND_ERROR', payload: new Error('Unknown error') };
 
             try {
-                await store.dispatch(Observable.throw({ type: 'APPEND_ERROR' }));
+                await store.dispatch(Observable.throw(action));
             } catch (error) {
-                expect(error).toEqual({ message: 'foobar' });
+                expect(error).toEqual(action.payload);
+            }
+        });
+
+        it('dispatches observable actions and rejects with error', async () => {
+            const store = new DataStore(state => state, { message: 'foobar' });
+            const error = new Error('Unknown error');
+
+            try {
+                await store.dispatch(Observable.create((observer) => {
+                    observer.next({ type: 'APPEND', payload: 'foo' });
+
+                    throw error;
+                }));
+            } catch (error) {
+                expect(error).toEqual(error);
             }
         });
 
@@ -172,7 +199,7 @@ describe('DataStore', () => {
             } catch (error) {
                 expect(actionTransformer).toHaveBeenCalled();
                 expect(reducer).toHaveBeenCalledWith(expect.anything(), { type: 'ACTION', error: true, payload: 'foo' });
-                expect(error).toEqual(store.getState());
+                expect(error).toEqual('foo');
             }
         });
     });

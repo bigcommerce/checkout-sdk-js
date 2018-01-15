@@ -136,10 +136,18 @@ export default class DataStore {
                         return Observable.of(value);
                     })
                     .do({
-                        next: (value) => { action = value; },
-                        complete: () => error || action.error ?
-                            reject(this.getState()) :
-                            resolve(this.getState()),
+                        next: (value) => {
+                            action = value;
+                        },
+                        complete: () => {
+                            if (error) {
+                                reject(error instanceof Error ? error : error.payload);
+                            } else if (action.error) {
+                                reject(action.payload);
+                            } else {
+                                resolve(this.getState());
+                            }
+                        },
                     })
             );
         });
