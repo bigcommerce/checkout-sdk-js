@@ -5,12 +5,13 @@ import * as paymentStatusTypes from '../payment-status-types';
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     /**
      * @constructor
+     * @param {PaymentMethod} paymentMethod
      * @param {ReadableDataStore} store
      * @param {PlaceOrderService} placeOrderService
      * @param {ScriptLoader} scriptLoader
      */
-    constructor(store, placeOrderService, scriptLoader) {
-        super(store, placeOrderService);
+    constructor(paymentMethod, store, placeOrderService, scriptLoader) {
+        super(paymentMethod, store, placeOrderService);
 
         this._scriptLoader = scriptLoader;
         this._paypalSdk = null;
@@ -28,8 +29,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             .then(() => {
                 this._paypalSdk = window.paypal;
 
-                const { checkout } = this._store.getState();
-                const { merchantId, testMode } = checkout.getPaymentMethod('paypalexpress').config;
+                const { merchantId, testMode } = this._paymentMethod.config;
                 const environment = testMode ? 'sandbox' : 'production';
 
                 this._paypalSdk.checkout.setup(merchantId, {
@@ -122,10 +122,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
      * @return {boolean}
      */
     _isInContextEnabled() {
-        const { checkout } = this._store.getState();
-        const { merchantId } = checkout.getPaymentMethod('paypalexpress').config;
-
-        return !!merchantId;
+        return !!this._paymentMethod.config.merchantId;
     }
 
     /**

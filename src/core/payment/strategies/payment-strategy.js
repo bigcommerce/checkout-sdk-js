@@ -7,10 +7,12 @@ import { OrderFinalizationNotRequiredError } from '../../order/errors';
 export default class PaymentStrategy {
     /**
      * @constructor
+     * @param {PaymentMethod} paymentMethod
      * @param {ReadableDataStore} store
      * @param {PlaceOrderService} placeOrderService
      */
-    constructor(store, placeOrderService) {
+    constructor(paymentMethod, store, placeOrderService) {
+        this._paymentMethod = paymentMethod;
         this._store = store;
         this._placeOrderService = placeOrderService;
     }

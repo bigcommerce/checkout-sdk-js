@@ -1,5 +1,6 @@
 import { omit } from 'lodash';
 import { getOrderRequestBody } from '../../order/orders.mock';
+import { getPaymentMethod } from '../payment-methods.mock';
 import createCheckoutStore from '../../create-checkout-store';
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 
@@ -16,7 +17,7 @@ describe('CreditCardPaymentStrategy', () => {
 
         store = createCheckoutStore();
 
-        strategy = new CreditCardPaymentStrategy(store, placeOrderService);
+        strategy = new CreditCardPaymentStrategy(getPaymentMethod(), store, placeOrderService);
     });
 
     it('submits order without payment data', async () => {
