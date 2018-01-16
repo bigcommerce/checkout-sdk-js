@@ -148,7 +148,7 @@ export default class CheckoutService {
             throw new MissingDataError();
         }
 
-        return this._paymentStrategyRegistry.getStrategyByMethod(method).execute(payload, options);
+        return this._paymentStrategyRegistry.getStrategy(method).execute(payload, options);
     }
 
     /**
@@ -185,7 +185,7 @@ export default class CheckoutService {
             throw new MissingDataError();
         }
 
-        return this._paymentStrategyRegistry.getStrategyByMethod(method).finalize(options);
+        return this._paymentStrategyRegistry.getStrategy(method).finalize(options);
     }
 
     /**
@@ -223,7 +223,7 @@ export default class CheckoutService {
             throw new MissingDataError();
         }
 
-        return this._paymentStrategyRegistry.getStrategyByMethod(method).initialize(options);
+        return this._paymentStrategyRegistry.getStrategy(method).initialize(options);
     }
 
     /**
@@ -239,7 +239,7 @@ export default class CheckoutService {
             throw new MissingDataError();
         }
 
-        return this._paymentStrategyRegistry.getStrategyByMethod(method).deinitialize();
+        return this._paymentStrategyRegistry.getStrategy(method).deinitialize();
     }
 
     /**

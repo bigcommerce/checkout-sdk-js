@@ -21,14 +21,14 @@ export default function createPaymentStrategyRegistry(store, placeOrderService) 
     const registry = new PaymentStrategyRegistry(checkout.getConfig());
     const scriptLoader = createScriptLoader();
 
-    registry.addStrategy('creditcard', new CreditCardPaymentStrategy(store, placeOrderService));
-    registry.addStrategy('legacy', new LegacyPaymentStrategy(store, placeOrderService));
-    registry.addStrategy('offline', new OfflinePaymentStrategy(store, placeOrderService));
-    registry.addStrategy('offsite', new OffsitePaymentStrategy(store, placeOrderService));
-    registry.addStrategy('paypal', new PaypalProPaymentStrategy(store, placeOrderService));
-    registry.addStrategy('paypalexpress', new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader));
-    registry.addStrategy('paypalexpresscredit', new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader));
-    registry.addStrategy('sagepay', new SagePayPaymentStrategy(store, placeOrderService, createFormPoster()));
+    registry.register('creditcard', () => new CreditCardPaymentStrategy(store, placeOrderService));
+    registry.register('legacy', () => new LegacyPaymentStrategy(store, placeOrderService));
+    registry.register('offline', () => new OfflinePaymentStrategy(store, placeOrderService));
+    registry.register('offsite', () => new OffsitePaymentStrategy(store, placeOrderService));
+    registry.register('paypal', () => new PaypalProPaymentStrategy(store, placeOrderService));
+    registry.register('paypalexpress', () => new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader));
+    registry.register('paypalexpresscredit', () => new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader));
+    registry.register('sagepay', () => new SagePayPaymentStrategy(store, placeOrderService, createFormPoster()));
 
     return registry;
 }
