@@ -23,7 +23,7 @@ import { getGiftCertificateResponseBody } from '../coupon/gift-certificate.mock'
 import { getAppConfig } from '../config/configs.mock.js';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
-import { getShopperTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
+import { getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -115,8 +115,8 @@ describe('CheckoutService', () => {
                 Promise.resolve(getResponse(getGiftCertificateResponseBody()))
             ),
 
-            getShopperToken: jest.fn(() =>
-                Promise.resolve(getResponse(getShopperTokenResponseBody()))
+            getVaultAccessToken: jest.fn(() =>
+                Promise.resolve(getResponse(getVaultAccessTokenResponseBody()))
             ),
 
             getInstruments: jest.fn(() =>

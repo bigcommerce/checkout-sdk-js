@@ -98,10 +98,11 @@ export function getInstrumentsState() {
     };
 }
 
-export function getShopperTokenResponseBody() {
+export function getVaultAccessTokenResponseBody() {
     return {
         data: {
             token: '123123123',
+            expires_at: '1515998098',
         },
         meta: {},
     };

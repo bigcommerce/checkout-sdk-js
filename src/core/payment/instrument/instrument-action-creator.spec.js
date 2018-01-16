@@ -3,7 +3,7 @@ import { getErrorResponse, getResponse } from '../../common/http-request/respons
 import * as actionTypes from './instrument-action-types';
 import InstrumentActionCreator from './instrument-action-creator';
 import {
-    getShopperTokenResponseBody,
+    getVaultAccessTokenResponseBody,
     getInstrumentsResponseBody,
     vaultInstrumentResponseBody,
     deleteInstrumentResponseBody,
@@ -12,7 +12,7 @@ import {
 describe('InstrumentActionCreator', () => {
     let instrumentActionCreator;
     let checkoutClient;
-    let getShopperTokenResponse;
+    let getVaultAccessTokenResponse;
     let getInstrumentsResponse;
     let vaultInstrumentResponse;
     let deleteInstrumentResponse;
@@ -20,13 +20,13 @@ describe('InstrumentActionCreator', () => {
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
-        getShopperTokenResponse = getResponse(getShopperTokenResponseBody());
+        getVaultAccessTokenResponse = getResponse(getVaultAccessTokenResponseBody());
         getInstrumentsResponse = getResponse(getInstrumentsResponseBody());
         vaultInstrumentResponse = getResponse(vaultInstrumentResponseBody());
         deleteInstrumentResponse = getResponse(deleteInstrumentResponseBody());
 
         checkoutClient = {
-            getShopperToken: jest.fn(() => Promise.resolve(getShopperTokenResponse)),
+            getVaultAccessToken: jest.fn(() => Promise.resolve(getVaultAccessTokenResponse)),
             getInstruments: jest.fn(() => Promise.resolve(getInstrumentsResponse)),
             vaultInstrument: jest.fn(() => Promise.resolve(vaultInstrumentResponse)),
             deleteInstrument: jest.fn(() => Promise.resolve(deleteInstrumentResponse)),
@@ -39,7 +39,7 @@ describe('InstrumentActionCreator', () => {
         it('sends a request to get a list of instruments', async () => {
             await instrumentActionCreator.loadInstruments().toPromise();
 
-            expect(checkoutClient.getShopperToken).toHaveBeenCalled();
+            expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
             expect(checkoutClient.getInstruments).toHaveBeenCalled();
         });
 
@@ -76,7 +76,7 @@ describe('InstrumentActionCreator', () => {
         it('post a new instrument', async () => {
             await instrumentActionCreator.vaultInstrument().toPromise();
 
-            expect(checkoutClient.getShopperToken).toHaveBeenCalled();
+            expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
             expect(checkoutClient.vaultInstrument).toHaveBeenCalled();
         });
 
@@ -123,12 +123,12 @@ describe('InstrumentActionCreator', () => {
         it('delete an instrument', async () => {
             await instrumentActionCreator.deleteInstrument(storeId, shopperId, instrumentId).toPromise();
 
-            expect(checkoutClient.getShopperToken).toHaveBeenCalledWith(storeId, shopperId);
+            expect(checkoutClient.getVaultAccessToken).toHaveBeenCalledWith(storeId, shopperId);
             expect(checkoutClient.deleteInstrument).toHaveBeenCalledWith(
                 storeId,
                 shopperId,
                 instrumentId,
-                getShopperTokenResponse.body.data.token
+                getVaultAccessTokenResponse.body.data.token
             );
         });
 

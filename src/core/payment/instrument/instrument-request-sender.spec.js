@@ -1,5 +1,5 @@
 import {
-    getShopperTokenResponseBody,
+    getVaultAccessTokenResponseBody,
     getInstrumentsResponseBody,
     vaultInstrumentResponseBody,
     getErrorInstrumentResponseBody,
@@ -12,7 +12,7 @@ describe('InstrumentMethodRequestSender', () => {
 
     beforeEach(() => {
         client = {
-            getShopperToken: jest.fn((payload, callback) => callback()),
+            getVaultAccessToken: jest.fn((payload, callback) => callback()),
             getShopperInstruments: jest.fn((payload, callback) => callback()),
             postShopperInstrument: jest.fn((payload, callback) => callback()),
             deleteShopperInstrument: jest.fn((payload, callback) => callback()),
@@ -21,33 +21,33 @@ describe('InstrumentMethodRequestSender', () => {
         instrumentRequestSender = new InstrumentRequestSender(client);
     });
 
-    describe('#getShopperToken()', () => {
-        it('returns a shopperToken if request is successful', async () => {
-            client.getShopperToken = jest.fn((payload, callback) => callback(null, {
-                data: getShopperTokenResponseBody(),
+    describe('#getVaultAccessToken()', () => {
+        it('returns a vault access token if request is successful', async () => {
+            client.getVaultAccessToken = jest.fn((payload, callback) => callback(null, {
+                data: getVaultAccessTokenResponseBody(),
                 status: 200,
                 statusText: 'OK',
             }));
 
-            const response = await instrumentRequestSender.getShopperToken();
+            const response = await instrumentRequestSender.getVaultAccessToken();
 
             expect(response).toEqual({
                 headers: {},
-                body: getShopperTokenResponseBody(),
+                body: getVaultAccessTokenResponseBody(),
                 status: 200,
                 statusText: 'OK',
             });
         });
 
         it('returns error response if request is unsuccessful', async () => {
-            client.getShopperToken = jest.fn((payload, callback) => callback({
+            client.getVaultAccessToken = jest.fn((payload, callback) => callback({
                 data: getErrorInstrumentResponseBody(),
                 status: 400,
                 statusText: 'Bad Request',
             }));
 
             try {
-                await instrumentRequestSender.getShopperToken();
+                await instrumentRequestSender.getVaultAccessToken();
             } catch (error) {
                 expect(error).toEqual({
                     body: getErrorInstrumentResponseBody(),

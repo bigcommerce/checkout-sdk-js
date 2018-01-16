@@ -20,7 +20,7 @@ export default class InstrumentActionCreator {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_REQUESTED));
 
-            this._instrumentRequestSender.getShopperToken(storeId, shopperId)
+            this._instrumentRequestSender.getVaultAccessToken(storeId, shopperId)
                 .then(({ body: { data } = {} }) =>
                     this._instrumentRequestSender.getInstruments(storeId, shopperId, data.token)
                 )
@@ -44,7 +44,7 @@ export default class InstrumentActionCreator {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.VAULT_INSTRUMENT_REQUESTED));
 
-            this._instrumentRequestSender.getShopperToken(storeId, shopperId)
+            this._instrumentRequestSender.getVaultAccessToken(storeId, shopperId)
                 .then(({ body: { data } = {} }) =>
                     this._instrumentRequestSender.vaultInstrument(storeId, shopperId, data.token, instrument)
                 )
@@ -68,7 +68,7 @@ export default class InstrumentActionCreator {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.DELETE_INSTRUMENT_REQUESTED, undefined, { instrumentId }));
 
-            this._instrumentRequestSender.getShopperToken(storeId, shopperId)
+            this._instrumentRequestSender.getVaultAccessToken(storeId, shopperId)
                 .then(({ body: { data } = {} }) =>
                     this._instrumentRequestSender.deleteInstrument(storeId, shopperId, instrumentId, data.token)
                 )

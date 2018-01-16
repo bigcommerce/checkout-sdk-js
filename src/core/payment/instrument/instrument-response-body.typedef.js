@@ -5,7 +5,7 @@
  */
 
  /**
-  * @typedef {Object} ShopperTokenResponseBody
+  * @typedef {Object} VaultAccessTokenResponseBody
   * @property {string} token
   * @property {InstrumentError[]} errors
   */

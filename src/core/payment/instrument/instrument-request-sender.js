@@ -10,13 +10,13 @@ export default class InstrumentRequestSender {
     /**
      * @param {string} storeId
      * @param {string} shopperId
-     * @return {Promise<Response<ShopperTokenResponseBody>>}
+     * @return {Promise<Response<VaultAccessTokenResponseBody>>}
      */
-    getShopperToken(storeId, shopperId) {
+    getVaultAccessToken(storeId, shopperId) {
         return new Promise((resolve, reject) => {
             const payload = { storeId, shopperId };
 
-            this._client.getShopperToken(payload, (error, response) => {
+            this._client.getVaultAccessToken(payload, (error, response) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {
