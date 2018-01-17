@@ -27,7 +27,15 @@ function joinErrors(errors) {
         return;
     }
 
-    return errors.map(error =>
-        typeof error === 'object' ? error.message : error
-    ).join(' ');
+    return errors.reduce((result, error) => {
+        if (typeof error === 'string' && error) {
+            return [...result, error];
+        }
+
+        if (error && error.message) {
+            return [...result, error.message];
+        }
+
+        return result;
+    }, []).join(' ');
 }

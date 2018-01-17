@@ -28,6 +28,20 @@ describe('RequestError', () => {
         expect(error.message).toEqual('Invalid CVV. Invalid account.');
     });
 
+    it('does not concatenate error messages if they are blank', () => {
+        const error = new RequestError(getErrorResponse({
+            ...getErrorResponseBody(),
+            errors: [
+                null,
+                { code: 'invalid_cvv', message: null },
+                { code: 'invalid_number', message: '' },
+                { code: 'invalid_account', message: 'Invalid account.' },
+            ],
+        }));
+
+        expect(error.message).toEqual('Invalid account.');
+    });
+
     it('sets error message with detail contained in response', () => {
         const response = getErrorResponse({
             ...getErrorResponseBody(),
