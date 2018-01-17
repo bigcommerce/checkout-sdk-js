@@ -53,10 +53,7 @@ describe('SagePayPaymentStrategy', () => {
     });
 
     it('posts 3ds data to Sage if 3ds is enabled', async () => {
-        const state = store.getState();
-
-        jest.spyOn(placeOrderService, 'submitPayment').mockReturnValue(Promise.reject(state));
-        jest.spyOn(state.errors, 'getSubmitOrderError').mockReturnValue(getResponse({
+        const error = getResponse({
             ...getErrorPaymentResponseBody(),
             errors: [
                 { code: 'three_d_secure_required' },
@@ -68,7 +65,9 @@ describe('SagePayPaymentStrategy', () => {
                 merchant_data: 'merchant_data',
             },
             status: 'error',
-        }));
+        });
+
+        jest.spyOn(placeOrderService, 'submitPayment').mockReturnValue(Promise.reject(error));
 
         strategy.execute(getOrderRequestBody());
 
