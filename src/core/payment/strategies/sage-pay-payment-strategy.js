@@ -23,11 +23,11 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
             .then(() =>
                 this._placeOrderService.submitPayment(payload.payment, payload.useStoreCredit, options)
             )
-            .catch((state) => {
-                const { body } = state.errors.getSubmitOrderError();
+            .catch((error) => {
+                const { body } = error;
 
                 if (!some(body.errors, { code: 'three_d_secure_required' })) {
-                    return Promise.reject(state);
+                    return Promise.reject(error);
                 }
 
                 return new Promise(() => {
