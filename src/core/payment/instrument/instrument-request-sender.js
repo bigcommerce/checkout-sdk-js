@@ -2,28 +2,21 @@ export default class InstrumentRequestSender {
     /**
      * @constructor
      * @param {BigpayClient} client
+     * @param {RequestSender} requestSender
      */
-    constructor(client) {
+    constructor(client, requestSender) {
         this._client = client;
+        this._requestSender = requestSender;
     }
 
     /**
-     * @param {string} storeId
-     * @param {string} shopperId
+     * @param {RequestOptions} [options]
      * @return {Promise<Response<VaultAccessTokenResponseBody>>}
      */
-    getVaultAccessToken(storeId, shopperId) {
-        return new Promise((resolve, reject) => {
-            const payload = { storeId, shopperId };
+    getVaultAccessToken({ timeout } = {}) {
+        const url = '/internalapi/v1/checkout/payments/vault-access-token';
 
-            this._client.getVaultAccessToken(payload, (error, response) => {
-                if (error) {
-                    reject(this._transformResponse(error));
-                } else {
-                    resolve(this._transformResponse(response));
-                }
-            });
-        });
+        return this._requestSender.get(url, { timeout });
     }
 
     /**
@@ -49,11 +42,11 @@ export default class InstrumentRequestSender {
     /**
      * @param {string} storeId
      * @param {string} shopperId
-     * @param {string} authToken
      * @param {InstrumentRequestBody} instrument
+     * @param {string} authToken
      * @return {Promise<Response<InstrumentResponseBody>>}
      */
-    vaultInstrument(storeId, shopperId, authToken, instrument) {
+    vaultInstrument(storeId, shopperId, instrument, authToken) {
         const payload = {
             storeId,
             shopperId,
@@ -76,10 +69,11 @@ export default class InstrumentRequestSender {
      * @param {string} storeId
      * @param {string} shopperId
      * @param {string} authToken
+     * @param {string} instrumentId
      * @return {Promise<void>}
      */
-    deleteInstrument(storeId, shopperId, authToken) {
-        const payload = { storeId, shopperId, authToken };
+    deleteInstrument(storeId, shopperId, authToken, instrumentId) {
+        const payload = { storeId, shopperId, authToken, instrumentId };
 
         return new Promise((resolve, reject) => {
             this._client.deleteShopperInstrument(payload, (error, response) => {

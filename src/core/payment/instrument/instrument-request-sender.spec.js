@@ -1,16 +1,23 @@
+import { createTimeout } from '@bigcommerce/request-sender';
+import { getResponse } from '../../common/http-request/responses.mock';
 import {
-    getVaultAccessTokenResponseBody,
-    getInstrumentsResponseBody,
-    vaultInstrumentResponseBody,
     getErrorInstrumentResponseBody,
+    getInstrumentsResponseBody,
+    getVaultAccessTokenResponseBody,
+    vaultInstrumentResponseBody,
 } from './instrument.mock';
 import InstrumentRequestSender from './instrument-request-sender';
 
 describe('InstrumentMethodRequestSender', () => {
-    let instrumentRequestSender;
     let client;
+    let instrumentRequestSender;
+    let requestSender;
 
     beforeEach(() => {
+        requestSender = {
+            get: jest.fn(() => Promise.resolve()),
+        };
+
         client = {
             getVaultAccessToken: jest.fn((payload, callback) => callback()),
             getShopperInstruments: jest.fn((payload, callback) => callback()),
@@ -18,44 +25,31 @@ describe('InstrumentMethodRequestSender', () => {
             deleteShopperInstrument: jest.fn((payload, callback) => callback()),
         };
 
-        instrumentRequestSender = new InstrumentRequestSender(client);
+        instrumentRequestSender = new InstrumentRequestSender(client, requestSender);
     });
 
     describe('#getVaultAccessToken()', () => {
-        it('returns a vault access token if request is successful', async () => {
-            client.getVaultAccessToken = jest.fn((payload, callback) => callback(null, {
-                data: getVaultAccessTokenResponseBody(),
-                status: 200,
-                statusText: 'OK',
-            }));
+        let response;
 
-            const response = await instrumentRequestSender.getVaultAccessToken();
+        beforeEach(() => {
+            response = getResponse(getVaultAccessTokenResponseBody());
 
-            expect(response).toEqual({
-                headers: {},
-                body: getVaultAccessTokenResponseBody(),
-                status: 200,
-                statusText: 'OK',
-            });
+            requestSender.get.mockReturnValue(Promise.resolve(response));
         });
 
-        it('returns error response if request is unsuccessful', async () => {
-            client.getVaultAccessToken = jest.fn((payload, callback) => callback({
-                data: getErrorInstrumentResponseBody(),
-                status: 400,
-                statusText: 'Bad Request',
-            }));
+        it('loads vault access token', async () => {
+            const output = await instrumentRequestSender.getVaultAccessToken();
 
-            try {
-                await instrumentRequestSender.getVaultAccessToken();
-            } catch (error) {
-                expect(error).toEqual({
-                    body: getErrorInstrumentResponseBody(),
-                    headers: {},
-                    status: 400,
-                    statusText: 'Bad Request',
-                });
-            }
+            expect(output).toEqual(response);
+            expect(requestSender.get).toHaveBeenCalledWith(expect.any(String), { timeout: undefined });
+        });
+
+        it('loads vault access token with timeout', async () => {
+            const options = { timeout: createTimeout() };
+            const output = await instrumentRequestSender.getVaultAccessToken(options);
+
+            expect(output).toEqual(response);
+            expect(requestSender.get).toHaveBeenCalledWith(expect.any(String), options);
         });
     });
 

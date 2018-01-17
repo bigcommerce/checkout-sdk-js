@@ -50,9 +50,10 @@ export default class CheckoutSelector {
      */
     getCheckoutMeta() {
         return this._cacheFactory.get('getCheckoutMeta')
-            .retain((orderMeta, quoteMeta, isCartVerified, paymentAuthToken) => ({
+            .retain((orderMeta, quoteMeta, isCartVerified, paymentAuthToken, instrumentsMeta) => ({
                 ...orderMeta,
                 ...(quoteMeta && quoteMeta.request),
+                ...instrumentsMeta,
                 isCartVerified,
                 paymentAuthToken,
             }))
@@ -60,7 +61,8 @@ export default class CheckoutSelector {
                 this._order.getOrderMeta(),
                 this._quote.getQuoteMeta(),
                 this._cart.isValid(),
-                this._order.getPaymentAuthToken()
+                this._order.getPaymentAuthToken(),
+                this._instruments.getInstrumentsMeta()
             );
     }
 

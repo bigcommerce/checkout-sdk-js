@@ -1,4 +1,4 @@
-import { getInstruments, getInstrumentsResponseBody, vaultInstrumentResponseBody } from './instrument.mock';
+import { getInstruments, getInstrumentsResponseBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from './instrument.mock';
 import { getErrorResponse } from '../../common/http-request/responses.mock';
 import instrumentReducer from './instrument-reducer';
 import * as actionTypes from './instrument-action-types';
@@ -34,12 +34,14 @@ describe('instrumentReducer()', () => {
         const response = getInstrumentsResponseBody();
         const action = {
             type: actionTypes.LOAD_INSTRUMENTS_SUCCEEDED,
+            meta: response.meta,
             payload: response.data,
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
             data: action.payload.vaulted_instruments,
+            meta: response.meta,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });
@@ -74,12 +76,14 @@ describe('instrumentReducer()', () => {
         const response = vaultInstrumentResponseBody();
         const action = {
             type: actionTypes.VAULT_INSTRUMENT_SUCCEEDED,
+            meta: response.meta,
             payload: response.data,
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
             data: expect.arrayContaining([action.payload.vaulted_instrument]),
+            meta: response.meta,
             errors: { vaultError: undefined },
             statuses: { isVaulting: false },
         });
@@ -115,11 +119,13 @@ describe('instrumentReducer()', () => {
     });
 
     it('returns new state when instruments are deleted', () => {
+        const response = deleteInstrumentResponseBody();
         const initialInstruments = getInstruments();
         initialState.data = initialInstruments;
 
         const action = {
             type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED,
+            meta: response.meta,
             payload: {
                 instrumentId: initialInstruments[0].bigpay_token,
             },
@@ -128,6 +134,7 @@ describe('instrumentReducer()', () => {
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
             data: [initialInstruments[1]],
+            meta: response.meta,
             errors: { deleteError: undefined },
             statuses: {
                 isDeleting: false,

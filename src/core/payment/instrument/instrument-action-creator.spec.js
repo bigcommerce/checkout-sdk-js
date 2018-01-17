@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { addMinutes } from '../../common/date-time';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import * as actionTypes from './instrument-action-types';
 import InstrumentActionCreator from './instrument-action-creator';
@@ -17,6 +18,10 @@ describe('InstrumentActionCreator', () => {
     let vaultInstrumentResponse;
     let deleteInstrumentResponse;
     let errorResponse;
+    let storeId;
+    let shopperId;
+    let instrumentId;
+    let vaultAccessToken;
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
@@ -33,14 +38,29 @@ describe('InstrumentActionCreator', () => {
         };
 
         instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
+
+        storeId = '1';
+        shopperId = '2';
+        instrumentId = '123';
+        vaultAccessToken = getVaultAccessTokenResponse.body.data.token;
     });
 
     describe('#getInstruments()', () => {
         it('sends a request to get a list of instruments', async () => {
-            await instrumentActionCreator.loadInstruments().toPromise();
+            await instrumentActionCreator.loadInstruments(storeId, shopperId).toPromise();
 
             expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
-            expect(checkoutClient.getInstruments).toHaveBeenCalled();
+            expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, shopperId, vaultAccessToken);
+        });
+
+        it('does not send a request to get a list of instruments if valid token is supplied', async () => {
+            await instrumentActionCreator.loadInstruments(storeId, shopperId, {
+                vaultAccessToken: '321',
+                vaultAccessExpiry: addMinutes(new Date(), 5),
+            }).toPromise();
+
+            expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
+            expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, shopperId, '321');
         });
 
         it('emits actions if able to load instruments', () => {
@@ -74,10 +94,30 @@ describe('InstrumentActionCreator', () => {
 
     describe('#vaultInstrument()', () => {
         it('post a new instrument', async () => {
-            await instrumentActionCreator.vaultInstrument().toPromise();
+            await instrumentActionCreator.vaultInstrument(storeId, shopperId, null, {}).toPromise();
 
             expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
-            expect(checkoutClient.vaultInstrument).toHaveBeenCalled();
+            expect(checkoutClient.vaultInstrument).toHaveBeenCalledWith(
+                storeId,
+                shopperId,
+                vaultAccessToken,
+                expect.any(Object)
+            );
+        });
+
+        it('does not send a request to get a list of instruments if valid token is supplied', async () => {
+            await instrumentActionCreator.vaultInstrument(storeId, shopperId, {
+                vaultAccessToken: '321',
+                vaultAccessExpiry: addMinutes(new Date(), 5),
+            }, {}).toPromise();
+
+            expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
+            expect(checkoutClient.vaultInstrument).toHaveBeenCalledWith(
+                storeId,
+                shopperId,
+                '321',
+                expect.any(Object)
+            );
         });
 
         it('emits actions if able to post instrument', () => {
@@ -110,30 +150,35 @@ describe('InstrumentActionCreator', () => {
     });
 
     describe('#deleteInstrument()', () => {
-        let storeId;
-        let shopperId;
-        let instrumentId;
+        it('deletes an instrument', async () => {
+            await instrumentActionCreator.deleteInstrument(storeId, shopperId, vaultAccessToken, instrumentId).toPromise();
 
-        beforeEach(() => {
-            storeId = '1';
-            shopperId = '2';
-            instrumentId = '123';
-        });
-
-        it('delete an instrument', async () => {
-            await instrumentActionCreator.deleteInstrument(storeId, shopperId, instrumentId).toPromise();
-
-            expect(checkoutClient.getVaultAccessToken).toHaveBeenCalledWith(storeId, shopperId);
+            expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
             expect(checkoutClient.deleteInstrument).toHaveBeenCalledWith(
                 storeId,
                 shopperId,
+                vaultAccessToken,
                 instrumentId,
-                getVaultAccessTokenResponse.body.data.token
+            );
+        });
+
+        it('does not send a request to get a list of instruments if valid token is supplied', async () => {
+            await instrumentActionCreator.deleteInstrument(storeId, shopperId, {
+                vaultAccessToken: '321',
+                vaultAccessExpiry: addMinutes(new Date(), 5),
+            }, instrumentId).toPromise();
+
+            expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
+            expect(checkoutClient.deleteInstrument).toHaveBeenCalledWith(
+                storeId,
+                shopperId,
+                '321',
+                instrumentId
             );
         });
 
         it('emits actions if able to delete an instrument', (done) => {
-            instrumentActionCreator.deleteInstrument(storeId, shopperId, instrumentId)
+            instrumentActionCreator.deleteInstrument(storeId, shopperId, vaultAccessToken, instrumentId)
                 .toArray()
                 .subscribe((actions) => {
                     done();
@@ -150,7 +195,7 @@ describe('InstrumentActionCreator', () => {
 
             const errorHandler = jest.fn((action) => Observable.of(action));
 
-            instrumentActionCreator.deleteInstrument(storeId, shopperId, instrumentId)
+            instrumentActionCreator.deleteInstrument(storeId, shopperId, vaultAccessToken, instrumentId)
                 .catch(errorHandler)
                 .toArray()
                 .subscribe((actions) => {

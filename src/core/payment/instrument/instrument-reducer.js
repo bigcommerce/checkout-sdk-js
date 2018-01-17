@@ -10,6 +10,7 @@ export default function instrumentReducer(state = {}, action) {
     const reducer = combineReducers({
         data: dataReducer,
         errors: errorsReducer,
+        meta: metaReducer,
         statuses: statusesReducer,
     });
 
@@ -37,6 +38,24 @@ function dataReducer(data, action) {
 
     default:
         return data;
+    }
+}
+
+/**
+ * @private
+ * @param {?Object} meta
+ * @param {Action} action
+ * @return {?Object}
+ */
+function metaReducer(meta, action) {
+    switch (action.type) {
+    case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
+    case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
+    case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
+        return { ...meta, ...action.meta };
+
+    default:
+        return meta;
     }
 }
 

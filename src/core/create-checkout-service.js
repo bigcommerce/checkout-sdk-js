@@ -1,3 +1,4 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { BillingAddressActionCreator } from './billing';
 import { CartActionCreator } from './cart';
@@ -22,12 +23,13 @@ import createPaymentStrategyRegistry from './create-payment-strategy-registry';
  * @return {CheckoutService}
  */
 export default function createCheckoutService(options = {}) {
+    const requestSender = createRequestSender();
     const client = options.client || createCheckoutClient({ locale: options.locale });
     const store = createCheckoutStore(createInitialState({ config: options.config }), { shouldWarnMutation: options.shouldWarnMutation });
     const paymentClient = createPaymentClient({ host: options.config && options.config.bigpayBaseUrl });
     const paymentRequestSender = new PaymentRequestSender(paymentClient);
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender);
-    const instrumentRequestSender = new InstrumentRequestSender(paymentClient);
+    const instrumentRequestSender = new InstrumentRequestSender(paymentClient, requestSender);
     const orderActionCreator = new OrderActionCreator(client);
     const placeOrderService = new PlaceOrderService(store, orderActionCreator, paymentActionCreator);
 

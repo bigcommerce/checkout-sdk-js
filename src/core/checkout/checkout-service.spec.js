@@ -23,7 +23,7 @@ import { getGiftCertificateResponseBody } from '../coupon/gift-certificate.mock'
 import { getAppConfig } from '../config/configs.mock.js';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
-import { getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
+import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -535,13 +535,13 @@ describe('CheckoutService', () => {
         it('loads instruments', async () => {
             const { storeId } = getAppConfig();
             const { customerId } = getGuestCustomer();
-            const authToken = '123123123';
+            const { vaultAccessToken } = getInstrumentsMeta();
 
             await checkoutService.signInCustomer();
             await checkoutService.loadInstruments();
 
             expect(checkoutClient.getInstruments)
-                .toHaveBeenCalledWith(storeId, customerId, authToken);
+                .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken);
         });
 
         it('throws error if customer data is missing', () => {
@@ -553,14 +553,14 @@ describe('CheckoutService', () => {
         it('vaults an instrument', async () => {
             const { storeId } = getAppConfig();
             const { customerId } = getGuestCustomer();
+            const { vaultAccessToken } = getInstrumentsMeta();
             const instrument = vaultInstrumentRequestBody();
-            const authToken = '123123123';
 
             await checkoutService.signInCustomer();
             await checkoutService.vaultInstrument(instrument);
 
             expect(checkoutClient.vaultInstrument)
-                .toHaveBeenCalledWith(storeId, customerId, authToken, instrument);
+                .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken, instrument);
         });
 
         it('throws error if customer data is missing', () => {
@@ -574,14 +574,14 @@ describe('CheckoutService', () => {
         it('deletes an instrument', async () => {
             const { storeId } = getAppConfig();
             const { customerId } = getGuestCustomer();
+            const { vaultAccessToken } = getInstrumentsMeta();
             const instrumentId = '456';
-            const authToken = '123123123';
 
             await checkoutService.signInCustomer();
             await checkoutService.deleteInstrument(instrumentId);
 
             expect(checkoutClient.deleteInstrument)
-                .toHaveBeenCalledWith(storeId, customerId, instrumentId, authToken);
+                .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken, instrumentId);
         });
 
         it('throws error if customer data is missing', () => {
