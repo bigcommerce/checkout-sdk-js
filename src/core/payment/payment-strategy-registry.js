@@ -1,4 +1,4 @@
-import { some } from 'lodash';
+import { compact, some } from 'lodash';
 import { PaymentMethodNotRegistrableError, PaymentMethodUnsupportedError } from './errors';
 import * as paymentMethodTypes from './payment-method-types';
 
@@ -9,63 +9,89 @@ export default class PaymentStrategyRegistry {
      * @param {string[]} [config.clientSidePaymentProviders]
      */
     constructor(config = {}) {
+        this._factories = {};
         this._strategies = {};
         this._clientSidePaymentProviders = config.clientSidePaymentProviders;
     }
 
     /**
      * @param {string} name
-     * @param {PaymentStrategy} strategy
+     * @return {function(method: PaymentMethod): PaymentStrategy}
      * @return {void}
-     * @throws {Error}
+     * @throws {PaymentMethodNotRegistrableError}
      */
-    addStrategy(name, strategy) {
-        if (this._strategies[name]) {
+    register(name, factory) {
+        if (this._factories[name]) {
             throw new PaymentMethodNotRegistrableError(name);
         }
 
-        this._strategies[name] = strategy;
-    }
-
-    /**
-     * @param {string} name
-     * @return {PaymentStrategy}
-     * @throws {Error}
-     */
-    getStrategy(name) {
-        if (!this._strategies[name]) {
-            throw new PaymentMethodUnsupportedError(name);
-        }
-
-        return this._strategies[name];
+        this._factories[name] = factory;
     }
 
     /**
      * @param {PaymentMethod} paymentMethod
      * @return {PaymentStrategy}
      */
-    getStrategyByMethod(paymentMethod) {
-        try {
-            return this.getStrategy(paymentMethod.id);
-        } catch (error) {
-            if (!error instanceof PaymentMethodUnsupportedError) {
-                throw error;
-            }
+    getStrategy(paymentMethod) {
+        const key = this._getKey(paymentMethod);
 
-            if (paymentMethod.type === paymentMethodTypes.OFFLINE) {
-                return this.getStrategy('offline');
-            }
-
-            if (!this._isClientSidePaymentSupported(paymentMethod)) {
-                return this.getStrategy('legacy');
-            }
-
-            if (paymentMethod.type === paymentMethodTypes.HOSTED) {
-                return this.getStrategy('offsite');
-            }
-
-            return this.getStrategy('creditcard');
+        if (!this._strategies[key]) {
+            this._strategies[key] = this._createStrategy(paymentMethod);
         }
+
+        return this._strategies[key];
+    }
+
+    /**
+     * @private
+     * @param {PaymentMethod} paymentMethod
+     * @return {PaymentStrategy}
+     * @throws {PaymentMethodUnsupportedError}
+     */
+    _createStrategy(paymentMethod) {
+        const factory = this._getFactory(paymentMethod);
+
+        if (!factory) {
+            throw new PaymentMethodUnsupportedError(paymentMethod.id);
+        }
+
+        return factory(paymentMethod);
+    }
+
+    /**
+     * @private
+     * @param {PaymentMethod} paymentMethod
+     * @return {function(method: PaymentMethod): PaymentStrategy}
+     */
+    _getFactory(paymentMethod) {
+        const key = this._getKey(paymentMethod);
+
+        if (this._factories[key]) {
+            return this._factories[key];
+        }
+
+        if (paymentMethod.type === paymentMethodTypes.OFFLINE) {
+            return this._factories.offline;
+        }
+
+        if (this._isLegacyMethod(paymentMethod)) {
+            return this._factories.legacy;
+        }
+
+        if (paymentMethod.type === paymentMethodTypes.HOSTED) {
+            return this._factories.offsite;
+        }
+
+        return this._factories.creditcard;
+    }
+
+    /**
+     * @private
+     * @param {PaymentMethod} paymentMethod
+     * @return {string}
+     */
+    _getKey(paymentMethod) {
+        return compact([paymentMethod.gateway, paymentMethod.id]).join('_');
     }
 
     /**
@@ -73,12 +99,12 @@ export default class PaymentStrategyRegistry {
      * @param {PaymentMethod} paymentMethod
      * @return {boolean}
      */
-    _isClientSidePaymentSupported(paymentMethod) {
+    _isLegacyMethod(paymentMethod) {
         if (!this._clientSidePaymentProviders || paymentMethod.gateway === 'adyen') {
-            return true;
+            return false;
         }
 
-        return some(this._clientSidePaymentProviders, (id) =>
+        return !some(this._clientSidePaymentProviders, (id) =>
             paymentMethod.id === id || paymentMethod.gateway === id
         );
     }

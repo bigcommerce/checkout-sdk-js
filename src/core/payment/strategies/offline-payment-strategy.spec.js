@@ -1,4 +1,5 @@
 import { getOrderRequestBody } from '../../order/orders.mock';
+import { getPaymentMethod } from '../payment-methods.mock';
 import createCheckoutStore from '../../create-checkout-store';
 import OfflinePaymentStrategy from './offline-payment-strategy';
 
@@ -13,7 +14,7 @@ describe('OfflinePaymentStrategy', () => {
             submitOrder: jest.fn(() => Promise.resolve(store.getState())),
             initializeOffsitePayment: jest.fn(() => Promise.resolve(store.getState())),
         };
-        strategy = new OfflinePaymentStrategy(store, placeOrderService);
+        strategy = new OfflinePaymentStrategy(getPaymentMethod(), store, placeOrderService);
     });
 
     it('submits order without payment data', async () => {

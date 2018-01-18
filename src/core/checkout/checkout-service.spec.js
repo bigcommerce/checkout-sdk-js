@@ -144,7 +144,7 @@ describe('CheckoutService', () => {
         };
 
         paymentStrategyRegistry = {
-            getStrategyByMethod: jest.fn(() => paymentStrategy),
+            getStrategy: jest.fn(() => paymentStrategy),
         };
 
         checkoutService = new CheckoutService(
@@ -209,7 +209,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.submitOrder(getOrderRequestBody());
 
-            expect(paymentStrategyRegistry.getStrategyByMethod).toHaveBeenCalledWith(getAuthorizenet());
+            expect(paymentStrategyRegistry.getStrategy).toHaveBeenCalledWith(getAuthorizenet());
         });
 
         it('executes payment strategy', async () => {
@@ -247,7 +247,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.finalizeOrderIfNeeded();
 
-            expect(paymentStrategyRegistry.getStrategyByMethod).toHaveBeenCalledWith(getAuthorizenet());
+            expect(paymentStrategyRegistry.getStrategy).toHaveBeenCalledWith(getAuthorizenet());
         });
 
         it('finalizes order', async () => {
@@ -361,7 +361,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.initializePaymentMethod('braintree');
 
-            expect(paymentStrategyRegistry.getStrategyByMethod).toHaveBeenCalledWith(getBraintree());
+            expect(paymentStrategyRegistry.getStrategy).toHaveBeenCalledWith(getBraintree());
         });
 
         it('initializes payment strategy', async () => {
@@ -381,7 +381,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.deinitializePaymentMethod('braintree');
 
-            expect(paymentStrategyRegistry.getStrategyByMethod).toHaveBeenCalledWith(getBraintree());
+            expect(paymentStrategyRegistry.getStrategy).toHaveBeenCalledWith(getBraintree());
         });
 
         it('deinitializes payment strategy', async () => {

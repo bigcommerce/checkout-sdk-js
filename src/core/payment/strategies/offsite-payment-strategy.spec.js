@@ -1,4 +1,5 @@
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
+import { getPaymentMethod } from '../payment-methods.mock';
 import { merge, omit } from 'lodash';
 import * as paymentStatusTypes from '../payment-status-types';
 import createCheckoutStore from '../../create-checkout-store';
@@ -17,7 +18,7 @@ describe('OffsitePaymentStrategy', () => {
             initializeOffsitePayment: jest.fn(() => Promise.resolve(store.getState())),
         };
 
-        strategy = new OffsitePaymentStrategy(store, placeOrderService);
+        strategy = new OffsitePaymentStrategy(getPaymentMethod(), store, placeOrderService);
     });
 
     it('submits order without payment data', async () => {

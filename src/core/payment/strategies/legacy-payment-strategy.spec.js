@@ -1,4 +1,5 @@
 import { getOrderRequestBody } from '../../order/orders.mock';
+import { getPaymentMethod } from '../payment-methods.mock';
 import createCheckoutStore from '../../create-checkout-store';
 import LegacyPaymentStrategy from './legacy-payment-strategy';
 
@@ -14,7 +15,7 @@ describe('LegacyPaymentStrategy', () => {
             submitPayment: jest.fn(() => Promise.resolve(store.getState())),
         };
 
-        strategy = new LegacyPaymentStrategy(store, placeOrderService);
+        strategy = new LegacyPaymentStrategy(getPaymentMethod(), store, placeOrderService);
     });
 
     it('submits order with payment data', async () => {
