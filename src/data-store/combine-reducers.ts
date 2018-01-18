@@ -1,18 +1,23 @@
-/**
- * @param {Object<string, Reducer>} reducers
- * @return {Reducer}
- */
-export default function combineReducers(reducers) {
+import Action from './action';
+import Reducer from './reducer';
+
+export default function combineReducers<TState, TAction extends Action>(
+    reducers: ReducerMap<TState, TAction>
+): Reducer<TState, TAction> {
     return (state, action) =>
-        Object.keys(reducers).reduce((result, key) => {
-            const reducer = reducers[key];
-            const currentState = state ? state[key] : undefined;
+        Object.keys(reducers).reduce((result: TState, key) => {
+            const reducer = reducers[key as keyof TState];
+            const currentState = state ? state[key as keyof TState] : undefined;
             const newState = reducer(currentState, action);
 
             if (currentState === newState && result) {
                 return result;
             }
 
-            return { ...result, [key]: newState };
+            return Object.assign({}, result, { [key]: newState });
         }, state);
 }
+
+export type ReducerMap<TState, TAction extends Action> = {
+    [Key in keyof TState]: Reducer<TState[Key], TAction>;
+};

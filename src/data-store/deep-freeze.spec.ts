@@ -2,7 +2,8 @@ import deepFreeze from './deep-freeze';
 
 describe('deepFreeze()', () => {
     it('throws error if mutating object', () => {
-        const object = deepFreeze({ message: 'Foobar' });
+        // Cast as `any` to bypass `Readonly` constraint.
+        const object = deepFreeze({ message: 'Foobar' }) as any;
 
         expect(() => { object.message = 'Hello'; }).toThrow();
         expect(() => { object.newMessage = 'Hello'; }).toThrow();
@@ -16,7 +17,8 @@ describe('deepFreeze()', () => {
     });
 
     it('throws error if mutating array', () => {
-        const array = deepFreeze(['Foobar']);
+        // Cast as `any` to bypass `ReadonlyArray` constraint.
+        const array = deepFreeze(['Foobar']) as any;
 
         expect(() => { array[0] = 'Hello'; }).toThrow();
         expect(() => { array.push('Hello'); }).toThrow();
@@ -35,5 +37,18 @@ describe('deepFreeze()', () => {
 
         expect(() => { object.child.message = 'Hello'; }).toThrow();
         expect(() => { collection[0].message = 'Hello'; }).toThrow();
+    });
+
+    it('does not freeze primitive values', () => {
+        const value = 'Foobar';
+
+        expect(deepFreeze(value)).toBe(value);
+    });
+
+    it('does not freeze complex types', () => {
+        class Foobar {}
+        const object = new Foobar();
+
+        expect(deepFreeze(object)).toBe(object);
     });
 });

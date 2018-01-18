@@ -1,13 +1,13 @@
-import combineReducers from './combine-reducers';
-import DataStore from './data-store';
+import Action from './action';
+import combineReducers, { ReducerMap } from './combine-reducers';
+import DataStore, { DataStoreOptions } from './data-store';
+import Reducer from './reducer';
 
-/**
- * @param {Reducer|Object<string, Reducer>} reducer
- * @param {Object} [initialState]
- * @param {Object} [options]
- * @return {DataStore}
- */
-export default function createDataStore(reducer, initialState, options) {
+export default function createDataStore<TState, TAction extends Action, TTransformedState = TState>(
+    reducer: Reducer<Partial<TState>, TAction> | ReducerMap<Partial<TState>, TAction>,
+    initialState: Partial<TState>,
+    options: DataStoreOptions<TState, TAction, TTransformedState>
+): DataStore<TState, TAction, TTransformedState> {
     if (typeof reducer === 'function') {
         return new DataStore(reducer, initialState, options);
     }

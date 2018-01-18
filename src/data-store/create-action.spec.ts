@@ -15,7 +15,7 @@ describe('createAction()', () => {
         expect(action).toEqual({ type: 'ACTION' });
     });
 
-    it('throws an error if `type` is not provided', () => {
-        expect(() => createAction()).toThrow();
+    it('throws an error if `type` is not provided or empty', () => {
+        expect(() => createAction('')).toThrow();
     });
 });
