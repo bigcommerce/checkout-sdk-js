@@ -7,6 +7,7 @@ import { getConfigState } from '../config/configs.mock';
 import { getCustomerState } from '../customer/customers.mock';
 import { getCompleteOrder, getOrderRequestBody } from './orders.mock';
 import { getPayment, getPaymentRequestBody } from '../payment/payments.mock';
+import { getInstrumentsState, getInstrumentsMeta } from '../payment/instrument/instrument.mock';
 import { getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import { getShippingOptionsState } from '../shipping/shipping-options.mock';
@@ -36,6 +37,7 @@ describe('PlaceOrderService', () => {
             cart: getCartState(),
             config: getConfigState(),
             customer: getCustomerState(),
+            instruments: getInstrumentsState(),
             order: getSubmittedOrderState(),
             quote: getQuoteState(),
             paymentMethods: getPaymentMethodsState(),
@@ -147,6 +149,26 @@ describe('PlaceOrderService', () => {
                         },
                     }
                 )),
+                undefined
+            );
+            expect(store.dispatch).toHaveBeenCalledWith(createAction('SUBMIT_PAYMENT'));
+        });
+
+        it('dispatches submit payment action with vault access token if an instrument is provided', async () => {
+            jest.spyOn(store, 'dispatch');
+
+            const mockInstrumentId = getInstrumentsMeta().vaultAccessToken;
+            const mockPaymentAuthToken = getPaymentRequestBody().authToken;
+
+            await placeOrderService.submitPayment(merge(
+                getPayment(),
+                { paymentData: { instrumentId: mockInstrumentId } },
+            ));
+
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    authToken: `${mockPaymentAuthToken}, VAT ${mockInstrumentId}`,
+                }),
                 undefined
             );
             expect(store.dispatch).toHaveBeenCalledWith(createAction('SUBMIT_PAYMENT'));
