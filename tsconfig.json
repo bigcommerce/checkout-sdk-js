@@ -5,6 +5,12 @@
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "importHelpers": true,
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "es6",
+            "scripthost",
+        ],
         "moduleResolution": "node",
         "removeComments": true,
         "skipLibCheck": true,

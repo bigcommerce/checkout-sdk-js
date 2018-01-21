@@ -1,7 +1,7 @@
 import composeReducers from './compose-reducers';
 
 describe('composeReducers()', () => {
-    const fooReducer = (state, action) => {
+    const fooReducer = (state = '', action) => {
         switch (action.type) {
         case 'FOO':
             return 'foo';
@@ -14,7 +14,7 @@ describe('composeReducers()', () => {
         }
     };
 
-    const barReducer = (state, action) => {
+    const barReducer = (state = '', action) => {
         switch (action.type) {
         case 'BAR':
             return 'bar';

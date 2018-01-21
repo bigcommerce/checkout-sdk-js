@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import Action from './action';
 import DataStore from './data-store';
 
 describe('DataStore', () => {
@@ -31,7 +32,7 @@ describe('DataStore', () => {
 
         it('dispatches error actions and rejects with payload', async () => {
             const store = new DataStore(state => state);
-            const action = { error: true, payload: 'foobar' };
+            const action = { type: 'FOOBAR', error: true, payload: 'foobar' };
 
             try {
                 await store.dispatch(action);
@@ -52,7 +53,7 @@ describe('DataStore', () => {
             expect(await store.dispatch(Observable.of(
                 { type: 'APPEND', payload: 'foo' },
                 { type: 'APPEND', payload: 'bar' },
-                { type: 'APPEND', payload: '!!!' },
+                { type: 'APPEND', payload: '!!!' }
             ))).toEqual({ message: 'foobar!!!' });
         });
 
@@ -156,8 +157,8 @@ describe('DataStore', () => {
             const store = new DataStore(reducer);
 
             reducer.mockClear();
-            store.dispatch({});
-            store.dispatch({ payload: 'foobar' });
+            store.dispatch({ type: '' });
+            store.dispatch({ type: '', payload: 'foobar' });
 
             expect(reducer).not.toHaveBeenCalled();
         });
@@ -167,7 +168,7 @@ describe('DataStore', () => {
             const store = new DataStore(reducer);
 
             reducer.mockClear();
-            store.dispatch(Observable.of({}, { payload: 'foobar' }));
+            store.dispatch(Observable.of({ type: '', payload: 'foo' }, { type: '', payload: 'bar' }));
 
             expect(reducer).not.toHaveBeenCalled();
         });
@@ -290,7 +291,7 @@ describe('DataStore', () => {
                 default:
                     return state;
                 }
-            });
+            }, { foo: '', bar: '' });
             const subscriber = jest.fn();
 
             store.subscribe(subscriber, (state) => state.foo);
@@ -323,7 +324,7 @@ describe('DataStore', () => {
                 default:
                     return state;
                 }
-            });
+            }, { foo: '', bar: '', foobar: '' });
             const subscriber = jest.fn();
 
             store.subscribe(
