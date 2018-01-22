@@ -5,9 +5,10 @@
  */
 
  /**
-  * @typedef {Object} ShopperTokenResponseBody
+  * @typedef {Object} VaultAccessTokenResponseBody
   * @property {string} token
-  * @property {InstrumentError[]} errors
+  * @property {number} expires_at
+  * @property {Array<{ code: string, message: string }>} errors
   */
 
  /**

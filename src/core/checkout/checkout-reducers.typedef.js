@@ -6,6 +6,7 @@
  * @property {Reducer<CouponState>} coupon
  * @property {Reducer<CustomerState>} customer
  * @property {Reducer<GiftCertificateState>} giftCertificate
+ * @property {Reducer<InstrumentState>} instruments
  * @property {Reducer<OrderState>} order
  * @property {Reducer<QuoteState>} quote
  * @property {Reducer<ShippingCountriesState>} shippingCountries

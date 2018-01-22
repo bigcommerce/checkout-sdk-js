@@ -11,6 +11,13 @@ export default class InstrumentSelector {
     }
 
     /**
+     * @return {Object}
+     */
+    getInstrumentsMeta() {
+        return this._instruments.meta;
+    }
+
+    /**
      * @return {?ErrorResponse}
      */
     getLoadError() {

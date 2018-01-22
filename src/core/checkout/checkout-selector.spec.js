@@ -66,6 +66,7 @@ describe('CheckoutSelector', () => {
             isCartVerified: false,
             paymentAuthToken: undefined,
             ...state.quote.meta.request,
+            ...state.instruments.meta,
             ...state.order.meta,
         });
     });

@@ -118,6 +118,10 @@ export default class PlaceOrderService {
             throw new MissingDataError();
         }
 
+        const authToken = payment.paymentData && payment.paymentData.instrumentId
+            ? `${checkoutMeta.paymentAuthToken}, VAT ${checkoutMeta.vaultAccessToken}`
+            : checkoutMeta.paymentAuthToken;
+
         return {
             billingAddress,
             cart,
@@ -126,7 +130,7 @@ export default class PlaceOrderService {
             paymentMethod,
             shippingAddress,
             shippingOption,
-            authToken: checkoutMeta.paymentAuthToken,
+            authToken,
             orderMeta: pick(checkoutMeta, ['deviceFingerprint']),
             payment: omit(payment.paymentData, ['deviceSessionId']),
             quoteMeta: {

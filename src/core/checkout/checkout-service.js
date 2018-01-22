@@ -376,16 +376,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     loadInstruments() {
-        const { checkout } = this._store.getState();
+        const { storeId, customerId, token } = this._getInstrumentState();
 
-        if (!checkout.getConfig() || !checkout.getCustomer()) {
-            throw new MissingDataError();
-        }
-
-        const { storeId } = checkout.getConfig();
-        const { customerId } = checkout.getCustomer();
-
-        const action = this._instrumentActionCreator.loadInstruments(storeId, customerId);
+        const action = this._instrumentActionCreator.loadInstruments(
+            storeId,
+            customerId,
+            token
+        );
 
         return this._store.dispatch(action);
     }
@@ -395,16 +392,14 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     vaultInstrument(instrument) {
-        const { checkout } = this._store.getState();
+        const { storeId, customerId, token } = this._getInstrumentState();
 
-        if (!checkout.getConfig() || !checkout.getCustomer()) {
-            throw new MissingDataError();
-        }
-
-        const { storeId } = checkout.getConfig();
-        const { customerId } = checkout.getCustomer();
-
-        const action = this._instrumentActionCreator.vaultInstrument(storeId, customerId, instrument);
+        const action = this._instrumentActionCreator.vaultInstrument(
+            storeId,
+            customerId,
+            token,
+            instrument
+        );
 
         return this._store.dispatch(action);
     }
@@ -414,17 +409,40 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     deleteInstrument(instrumentId) {
+        const { storeId, customerId, token } = this._getInstrumentState();
+
+        const action = this._instrumentActionCreator.deleteInstrument(
+            storeId,
+            customerId,
+            token,
+            instrumentId
+        );
+
+        return this._store.dispatch(action);
+    }
+
+    /**
+     * @private
+     * @return {Object}
+     */
+    _getInstrumentState() {
         const { checkout } = this._store.getState();
 
-        if (!checkout.getConfig() || !checkout.getCustomer()) {
+        if (!checkout.getConfig() || !checkout.getCustomer() || !checkout.getCheckoutMeta()) {
             throw new MissingDataError();
         }
 
-        const { storeId } = checkout.getConfig();
         const { customerId } = checkout.getCustomer();
+        const { storeId } = checkout.getConfig();
+        const { vaultAccessToken, vaultAccessExpiry } = checkout.getCheckoutMeta();
 
-        const action = this._instrumentActionCreator.deleteInstrument(storeId, customerId, instrumentId);
-
-        return this._store.dispatch(action);
+        return {
+            customerId,
+            storeId,
+            token: {
+                vaultAccessToken,
+                vaultAccessExpiry,
+            },
+        };
     }
 }

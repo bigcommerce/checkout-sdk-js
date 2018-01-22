@@ -1,6 +1,6 @@
 import InstrumentSelector from './instrument-selector';
 import { getErrorResponse } from '../../common/http-request/responses.mock';
-import { getInstrumentsState } from './instrument.mock';
+import { getInstrumentsState, getInstrumentsMeta } from './instrument.mock';
 
 describe('InstrumentSelector', () => {
     let instrumentSelector;
@@ -23,6 +23,34 @@ describe('InstrumentSelector', () => {
             instrumentSelector = new InstrumentSelector({ data: [] });
 
             expect(instrumentSelector.getInstruments()).toEqual([]);
+        });
+    });
+
+    describe('#getInstrumentsMeta()', () => {
+        it('returns instrument meta', () => {
+            instrumentSelector = new InstrumentSelector(state.instruments);
+
+            expect(instrumentSelector.getInstrumentsMeta()).toEqual(getInstrumentsMeta());
+        });
+
+        it('returns same instrument meta unless state changes', () => {
+            instrumentSelector = new InstrumentSelector(state.instruments);
+
+            const meta = instrumentSelector.getInstrumentsMeta();
+
+            instrumentSelector = new InstrumentSelector(state.instruments);
+
+            expect(instrumentSelector.getInstrumentsMeta()).toBe(meta);
+
+            instrumentSelector = new InstrumentSelector({
+                ...state.instruments,
+                meta: {
+                    vaultAccessToken: '321efg',
+                    vaultAccessExpiry: 1516097730499,
+                },
+            });
+
+            expect(instrumentSelector.getInstrumentsMeta()).not.toBe(meta);
         });
     });
 

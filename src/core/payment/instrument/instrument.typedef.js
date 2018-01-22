@@ -9,3 +9,9 @@
  * @property {string} brand
  * @property {boolean} default_instrument
  */
+
+ /**
+  * @typedef {Object} VaultAccessToken
+  * @property {string} vaultAccessToken
+  * @property {number} vaultAccessExpiry
+  */

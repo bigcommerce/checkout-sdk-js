@@ -1,3 +1,10 @@
+export function getInstrumentsMeta() {
+    return {
+        vaultAccessToken: 'f4k3v4ul74cc3sst0k3n',
+        vaultAccessExpiry: 1516097476098,
+    };
+}
+
 export function getInstrument() {
     return {
         bigpay_token: '123',
@@ -94,14 +101,17 @@ export function getErrorInstrumentResponseBody() {
 export function getInstrumentsState() {
     return {
         data: getInstruments(),
-        meta: {},
+        meta: {
+            ...getInstrumentsMeta(),
+        },
     };
 }
 
-export function getShopperTokenResponseBody() {
+export function getVaultAccessTokenResponseBody() {
     return {
         data: {
-            token: '123123123',
+            token: 'f4k3v4ul74cc3sst0k3n',
+            expires_at: 1516097476098,
         },
         meta: {},
     };
@@ -112,7 +122,9 @@ export function getInstrumentsResponseBody() {
         data: {
             vaulted_instruments: getInstruments(),
         },
-        meta: {},
+        meta: {
+            ...getInstrumentsMeta(),
+        },
     };
 }
 
@@ -121,13 +133,17 @@ export function vaultInstrumentResponseBody() {
         data: {
             vaulted_instrument: getInstrument(),
         },
-        meta: {},
+        meta: {
+            ...getInstrumentsMeta(),
+        },
     };
 }
 
 export function deleteInstrumentResponseBody() {
     return {
         data: {},
-        meta: {},
+        meta: {
+            ...getInstrumentsMeta(),
+        },
     };
 }
