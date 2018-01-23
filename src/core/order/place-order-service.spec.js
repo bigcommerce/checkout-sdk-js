@@ -167,7 +167,7 @@ describe('PlaceOrderService', () => {
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    authToken: `${mockPaymentAuthToken}, VAT ${mockInstrumentId}`,
+                    authToken: `${mockPaymentAuthToken}, ${mockInstrumentId}`,
                 }),
                 undefined
             );
