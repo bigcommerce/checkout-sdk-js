@@ -119,7 +119,7 @@ export default class PlaceOrderService {
         }
 
         const authToken = payment.paymentData && payment.paymentData.instrumentId
-            ? `${checkoutMeta.paymentAuthToken}, VAT ${checkoutMeta.vaultAccessToken}`
+            ? `${checkoutMeta.paymentAuthToken}, ${checkoutMeta.vaultAccessToken}`
             : checkoutMeta.paymentAuthToken;
 
         return {

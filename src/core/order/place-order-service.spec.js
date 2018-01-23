@@ -157,17 +157,17 @@ describe('PlaceOrderService', () => {
         it('dispatches submit payment action with vault access token if an instrument is provided', async () => {
             jest.spyOn(store, 'dispatch');
 
-            const mockInstrumentId = getInstrumentsMeta().vaultAccessToken;
-            const mockPaymentAuthToken = getPaymentRequestBody().authToken;
+            const instrumentId = getInstrumentsMeta().vaultAccessToken;
+            const paymentAuthToken = getPaymentRequestBody().authToken;
 
             await placeOrderService.submitPayment(merge(
                 getPayment(),
-                { paymentData: { instrumentId: mockInstrumentId } },
+                { paymentData: { instrumentId } },
             ));
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    authToken: `${mockPaymentAuthToken}, VAT ${mockInstrumentId}`,
+                    authToken: `${paymentAuthToken}, ${instrumentId}`,
                 }),
                 undefined
             );
