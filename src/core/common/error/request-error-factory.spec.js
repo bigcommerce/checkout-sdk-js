@@ -39,7 +39,9 @@ describe('RequestErrorFactory', () => {
 
     it('creates `TimeoutError` if XHR is aborted', () => {
         const factory = new RequestErrorFactory();
+        const error = factory.createError(getTimeoutResponse());
 
-        expect(factory.createError(getTimeoutResponse())).toBeInstanceOf(TimeoutError);
+        expect(error).toBeInstanceOf(TimeoutError);
+        expect(error.status).toEqual(0);
     });
 });
