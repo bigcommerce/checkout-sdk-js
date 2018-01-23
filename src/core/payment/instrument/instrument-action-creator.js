@@ -25,8 +25,8 @@ export default class InstrumentActionCreator {
             this._getValidAccessToken(accessToken)
                 .then(currentToken =>
                     this._instrumentRequestSender.getInstruments(storeId, shopperId, currentToken.vaultAccessToken)
-                        .then(({ body: { data } = {} }) => {
-                            observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, data, currentToken));
+                        .then(({ body } = {}) => {
+                            observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, body, currentToken));
                             observer.complete();
                         })
                 )
@@ -50,8 +50,8 @@ export default class InstrumentActionCreator {
             this._getValidAccessToken(accessToken)
                 .then(currentToken =>
                     this._instrumentRequestSender.vaultInstrument(storeId, shopperId, currentToken.vaultAccessToken, instrument)
-                        .then(({ body: { data } = {} }) => {
-                            observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, data, currentToken));
+                        .then(({ body } = {}) => {
+                            observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, body, currentToken));
                             observer.complete();
                         })
                 )
