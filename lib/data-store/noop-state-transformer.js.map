@@ -1,1 +1,1 @@
-{"version":3,"file":"noop-state-transformer.js","sourceRoot":"","sources":["../../src/data-store/noop-state-transformer.js"],"names":[],"mappings":";;AAKA,8BAA6C,KAAK;IAC9C,MAAM,CAAC,KAAK,CAAC;AACjB,CAAC;AAFD,uCAEC"}
+{"version":3,"file":"noop-state-transformer.js","sourceRoot":"","sources":["../../src/data-store/noop-state-transformer.ts"],"names":[],"mappings":";;AAAA,8BACI,KAAa;IAEb,MAAM,CAAC,KAAiC,CAAC;AAC7C,CAAC;AAJD,uCAIC"}
