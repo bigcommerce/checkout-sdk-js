@@ -113,11 +113,6 @@ export default class PlaceOrderService {
         const shippingOption = checkout.getSelectedShippingOption();
         const config = checkout.getConfig();
 
-        if (!checkoutMeta || !billingAddress || !cart || !customer || !order ||
-            !paymentMethod || !shippingAddress || !shippingOption || !config) {
-            throw new MissingDataError();
-        }
-
         const authToken = payment.paymentData && payment.paymentData.instrumentId
             ? `${checkoutMeta.paymentAuthToken}, ${checkoutMeta.vaultAccessToken}`
             : checkoutMeta.paymentAuthToken;
