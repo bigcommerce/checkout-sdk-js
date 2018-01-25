@@ -1,3 +1,5 @@
+import { setPrototypeOf } from '../../utility';
+
 export default class StandardError extends Error {
     /**
      * @constructor
@@ -6,7 +8,7 @@ export default class StandardError extends Error {
     constructor(message) {
         super(message || 'An unexpected error has occurred.');
 
-        Object.setPrototypeOf(this, new.target.prototype);
+        setPrototypeOf(this, new.target.prototype);
 
         if (typeof Error.captureStackTrace === 'function') {
             Error.captureStackTrace(this, new.target);
