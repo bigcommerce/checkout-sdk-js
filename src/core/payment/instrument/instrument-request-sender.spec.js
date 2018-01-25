@@ -1,6 +1,7 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { getResponse } from '../../common/http-request/responses.mock';
 import {
+    deleteInstrumentResponseBody,
     getErrorInstrumentResponseBody,
     getInstrumentsResponseBody,
     getVaultAccessTokenResponseBody,
@@ -102,8 +103,8 @@ describe('InstrumentMethodRequestSender', () => {
             const response = await instrumentRequestSender.vaultInstrument();
 
             expect(response).toEqual({
-                headers: {},
                 body: vaultInstrumentResponseBody(),
+                headers: {},
                 status: 200,
                 statusText: 'OK',
             });
@@ -132,7 +133,7 @@ describe('InstrumentMethodRequestSender', () => {
     describe('#deleteInstrument()', () => {
         it('deletes an instrument if request is successful', async () => {
             client.deleteShopperInstrument = jest.fn((payload, callback) => callback(null, {
-                data: {},
+                data: deleteInstrumentResponseBody(),
                 status: 200,
                 statusText: 'OK',
             }));
@@ -141,7 +142,7 @@ describe('InstrumentMethodRequestSender', () => {
 
             expect(response).toEqual({
                 headers: {},
-                body: {},
+                body: deleteInstrumentResponseBody(),
                 status: 200,
                 statusText: 'OK',
             });

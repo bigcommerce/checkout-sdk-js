@@ -101,9 +101,7 @@ export function getErrorInstrumentResponseBody() {
 export function getInstrumentsState() {
     return {
         data: getInstruments(),
-        meta: {
-            ...getInstrumentsMeta(),
-        },
+        meta: getInstrumentsMeta(),
     };
 }
 
@@ -119,31 +117,17 @@ export function getVaultAccessTokenResponseBody() {
 
 export function getInstrumentsResponseBody() {
     return {
-        data: {
-            vaulted_instruments: getInstruments(),
-        },
-        meta: {
-            ...getInstrumentsMeta(),
-        },
+        vaulted_instruments: getInstruments(),
     };
 }
 
 export function vaultInstrumentResponseBody() {
     return {
-        data: {
-            vaulted_instrument: getInstrument(),
-        },
-        meta: {
-            ...getInstrumentsMeta(),
-        },
+        vaulted_instrument: getInstrument(),
     };
 }
 
 export function deleteInstrumentResponseBody() {
     return {
-        data: {},
-        meta: {
-            ...getInstrumentsMeta(),
-        },
     };
 }

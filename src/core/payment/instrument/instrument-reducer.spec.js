@@ -1,4 +1,4 @@
-import { getInstruments, getInstrumentsResponseBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from './instrument.mock';
+import { getInstruments, getInstrumentsMeta, getInstrumentsResponseBody, vaultInstrumentResponseBody } from './instrument.mock';
 import { getErrorResponse } from '../../common/http-request/responses.mock';
 import instrumentReducer from './instrument-reducer';
 import * as actionTypes from './instrument-action-types';
@@ -31,17 +31,16 @@ describe('instrumentReducer()', () => {
     });
 
     it('returns new state when instruments are loaded', () => {
-        const response = getInstrumentsResponseBody();
         const action = {
             type: actionTypes.LOAD_INSTRUMENTS_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
+            meta: getInstrumentsMeta(),
+            payload: getInstrumentsResponseBody(),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
             data: action.payload.vaulted_instruments,
-            meta: response.meta,
+            meta: action.meta,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });
@@ -73,17 +72,16 @@ describe('instrumentReducer()', () => {
     });
 
     it('returns new state when instruments are vaulted', () => {
-        const response = vaultInstrumentResponseBody();
         const action = {
             type: actionTypes.VAULT_INSTRUMENT_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
+            meta: getInstrumentsMeta(),
+            payload: vaultInstrumentResponseBody(),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
             data: expect.arrayContaining([action.payload.vaulted_instrument]),
-            meta: response.meta,
+            meta: action.meta,
             errors: { vaultError: undefined },
             statuses: { isVaulting: false },
         });
@@ -119,13 +117,12 @@ describe('instrumentReducer()', () => {
     });
 
     it('returns new state when instruments are deleted', () => {
-        const response = deleteInstrumentResponseBody();
         const initialInstruments = getInstruments();
         initialState.data = initialInstruments;
 
         const action = {
             type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED,
-            meta: response.meta,
+            meta: getInstrumentsMeta(),
             payload: {
                 instrumentId: initialInstruments[0].bigpay_token,
             },
@@ -134,7 +131,7 @@ describe('instrumentReducer()', () => {
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
             data: [initialInstruments[1]],
-            meta: response.meta,
+            meta: action.meta,
             errors: { deleteError: undefined },
             statuses: {
                 isDeleting: false,
