@@ -78,8 +78,8 @@ describe('DataStore', () => {
 
                     throw error;
                 }));
-            } catch (error) {
-                expect(error).toEqual(error);
+            } catch (caught) {
+                expect(caught).toEqual(error);
             }
         });
 
@@ -120,8 +120,8 @@ describe('DataStore', () => {
             ]);
 
             expect(reducer.mock.calls).toEqual([
-                [expect.anything(), { type: 'FOOBAR_ACTION' }],
-                [expect.anything(), { type: 'FOOBAR_ACTION_2' }],
+                [expect.anything(), { type: 'FOOBAR_ACTION', meta: { queueId: 'foobar' } }],
+                [expect.anything(), { type: 'FOOBAR_ACTION_2', meta: { queueId: 'foobar' } }],
                 [expect.anything(), { type: 'ACTION' }],
                 [expect.anything(), { type: 'ACTION_2' }],
                 [expect.anything(), { type: 'ACTION_3', error: true }],
@@ -419,6 +419,71 @@ describe('DataStore', () => {
             store.dispatch({ type: 'ACTION' });
 
             expect(subscriber).not.toHaveBeenCalledWith(initialState);
+        });
+
+        it('catches reducer error and keeps subscription alive', async () => {
+            const subscriber = jest.fn();
+            const store = new DataStore(
+                (state, action) => {
+                    if (action.type === 'INCREMENT') {
+                        return { count: state.count + 1 };
+                    } else if (action.type === 'DECREMENT') {
+                        throw new Error('Reducer error');
+                    }
+
+                    return state;
+                },
+                { count: 1 }
+            );
+
+            store.subscribe(subscriber);
+            expect.assertions(3);
+
+            await store.dispatch(Observable.of({ type: 'DECREMENT' }))
+                .catch((error) => expect(error).toBeInstanceOf(Error));
+
+            await store.dispatch(Observable.of({ type: 'INCREMENT' }));
+
+            expect(subscriber).toHaveBeenCalledTimes(2);
+            expect(subscriber).toHaveBeenLastCalledWith({ count: 2 });
+        });
+
+        it('catches state transformation error and keeps subscription alive', async () => {
+            const subscriber = jest.fn();
+            const store = new DataStore(
+                (state, action) => {
+                    if (action.type === 'INCREMENT') {
+                        return { count: state.count + 1 };
+                    }
+
+                    if (action.type === 'DECREMENT') {
+                        return { count: state.count - 1 };
+                    }
+
+                    return state;
+                },
+                { count: 1 },
+                {
+                    stateTransformer: (state) => {
+                        if (state.count === 2) {
+                            throw new Error('Transformation error');
+                        }
+
+                        return state;
+                    },
+                }
+            );
+
+            store.subscribe(subscriber);
+            expect.assertions(3);
+
+            await store.dispatch(Observable.of({ type: 'INCREMENT' }))
+                .catch((error) => expect(error).toBeInstanceOf(Error));
+
+            await store.dispatch(Observable.of({ type: 'DECREMENT' }));
+
+            expect(subscriber).toHaveBeenCalledTimes(2);
+            expect(subscriber).toHaveBeenCalledWith({ count: 0 });
         });
     });
 
