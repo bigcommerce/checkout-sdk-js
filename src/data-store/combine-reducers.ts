@@ -1,3 +1,4 @@
+import { assign } from 'lodash';
 import Action from './action';
 import Reducer from './reducer';
 
@@ -14,7 +15,7 @@ export default function combineReducers<TState, TAction extends Action>(
                 return result;
             }
 
-            return Object.assign({}, result, { [key]: newState });
+            return assign({}, result, { [key]: newState });
         }, state);
 }
 
