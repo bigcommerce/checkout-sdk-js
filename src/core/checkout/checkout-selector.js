@@ -90,7 +90,7 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @return {Order}
+     * @return {Quote}
      */
     getQuote() {
         return this._quote.getQuote();
@@ -200,11 +200,9 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @param {string} storeId
-     * @param {string} shopperId
      * @return {Instrument[]}
      */
-    getInstruments(storeId, shopperId) {
-        return this._instruments.getInstruments(storeId, shopperId);
+    getInstruments() {
+        return this._instruments.getInstruments();
     }
 }
