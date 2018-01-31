@@ -3,6 +3,7 @@ export default class CheckoutClient {
      * @constructor
      * @param {BillingAddressRequestSender} billingAddressRequestSender
      * @param {CartRequestSender} cartRequestSender
+     * @param {ConfigRequestSender} configRequestSender
      * @param {CountryRequestSender} countryRequestSender
      * @param {CouponRequestSender} couponRequestSender
      * @param {CustomerRequestSender} customerRequestSender
@@ -17,6 +18,7 @@ export default class CheckoutClient {
     constructor(
         billingAddressRequestSender,
         cartRequestSender,
+        configRequestSender,
         countryRequestSender,
         couponRequestSender,
         customerRequestSender,
@@ -30,6 +32,7 @@ export default class CheckoutClient {
     ) {
         this._billingAddressRequestSender = billingAddressRequestSender;
         this._cartRequestSender = cartRequestSender;
+        this._configRequestSender = configRequestSender;
         this._countryRequestSender = countryRequestSender;
         this._couponRequestSender = couponRequestSender;
         this._customerRequestSender = customerRequestSender;
@@ -205,5 +208,14 @@ export default class CheckoutClient {
      */
     removeGiftCertificate(code, options) {
         return this._giftCertificateRequestSender.removeGiftCertificate(code, options);
+    }
+
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<Response<Config>>}
+     */
+    loadConfig(options) {
+        return this._configRequestSender.loadConfig(options);
     }
 }
