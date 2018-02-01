@@ -102,17 +102,6 @@ export default class CheckoutService {
 
     /**
      * @deprecated
-     * @param {Cart} cart
-     * @return {Promise<CheckoutSelectors>}
-     */
-    updateCart(cart) {
-        const action = this._cartActionCreator.updateCart(cart);
-
-        return this._store.dispatch(action);
-    }
-
-    /**
-     * @deprecated
      * @param {RequestOptions} [options]
      * @return {Promise<CheckoutSelectors>}
      */
