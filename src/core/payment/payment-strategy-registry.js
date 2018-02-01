@@ -1,4 +1,4 @@
-import { compact, some } from 'lodash';
+import { some } from 'lodash';
 import { PaymentMethodNotRegistrableError, PaymentMethodUnsupportedError } from './errors';
 import * as paymentMethodTypes from './payment-method-types';
 
@@ -91,7 +91,7 @@ export default class PaymentStrategyRegistry {
      * @return {string}
      */
     _getKey(paymentMethod) {
-        return compact([paymentMethod.gateway, paymentMethod.id]).join('_');
+        return paymentMethod.gateway || paymentMethod.id;
     }
 
     /**
