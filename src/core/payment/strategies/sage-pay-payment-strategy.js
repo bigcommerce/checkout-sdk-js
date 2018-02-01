@@ -52,6 +52,6 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
             return this._placeOrderService.finalizeOrder(orderId, options);
         }
 
-        return Promise.resolve(this._store.getState());
+        return super.finalize();
     }
 }
