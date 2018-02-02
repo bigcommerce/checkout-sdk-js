@@ -3,6 +3,7 @@ import { CartSelector } from '../cart' ;
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CustomerSelector } from '../customer';
+import { FormSelector } from '../form';
 import { InstrumentSelector } from '../payment/instrument';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
@@ -53,6 +54,7 @@ describe('CheckoutSelector', () => {
             new ConfigSelector(state.config),
             new CountrySelector(state.countries),
             new CustomerSelector(state.customer),
+            new FormSelector(state.config),
             new InstrumentSelector(state.instruments),
             orderSelector,
             new PaymentMethodSelector(state.paymentMethods),
@@ -142,5 +144,13 @@ describe('CheckoutSelector', () => {
 
         expect(selector.isPaymentDataSubmitted('braintree')).toEqual(true);
         expect(orderSelector.isPaymentDataSubmitted).toHaveBeenCalledWith(getBraintree());
+    });
+
+    it('returns shipping address fields', () => {
+        expect(selector.getShippingAddressFields()).toEqual(state.config.data.storeConfig.formFields.shippingAddressFields);
+    });
+
+    it('returns billing address fields', () => {
+        expect(selector.getBillingAddressFields()).toEqual(state.config.data.storeConfig.formFields.billingAddressFields);
     });
 });

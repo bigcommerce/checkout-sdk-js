@@ -22,6 +22,7 @@ import {
 } from './shipping';
 import createActionTransformer from './create-action-transformer';
 import createRequestErrorFactory from './create-request-error-factory';
+import { FormSelector } from './form';
 
 /**
  * @param {Object} [initialState={}]
@@ -78,6 +79,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const countries = new CountrySelector(state.countries);
     const coupon = new CouponSelector(state.coupons);
     const customer = new CustomerSelector(state.customer);
+    const form = new FormSelector(state.config);
     const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
     const order = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
@@ -94,6 +96,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         config,
         countries,
         customer,
+        form,
         instruments,
         order,
         paymentMethods,
