@@ -3,6 +3,7 @@ import { getErrorPaymentResponseBody } from '../payments.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
 import { getPaymentMethod } from '../payment-methods.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
 import createCheckoutStore from '../../create-checkout-store';
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
@@ -113,9 +114,12 @@ describe('SagePayPaymentStrategy', () => {
 
         jest.spyOn(checkout, 'getOrder').mockReturnValue(getIncompleteOrder());
 
-        await strategy.finalize();
-
-        expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+        }
     });
 
     it('does not finalize order if order is not finalized', async () => {
@@ -127,8 +131,11 @@ describe('SagePayPaymentStrategy', () => {
             },
         }));
 
-        await strategy.finalize();
-
-        expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+        }
     });
 });

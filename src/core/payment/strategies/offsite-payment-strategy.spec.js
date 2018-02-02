@@ -1,6 +1,7 @@
+import { merge, omit } from 'lodash';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
 import { getPaymentMethod } from '../payment-methods.mock';
-import { merge, omit } from 'lodash';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
 import createCheckoutStore from '../../create-checkout-store';
 import OffsitePaymentStrategy from './offsite-payment-strategy';
@@ -85,9 +86,12 @@ describe('OffsitePaymentStrategy', () => {
 
         jest.spyOn(checkout, 'getOrder').mockReturnValue(getIncompleteOrder());
 
-        await strategy.finalize();
-
-        expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+        }
     });
 
     it('does not finalize order if order is not finalized or acknowledged', async () => {
@@ -99,9 +103,12 @@ describe('OffsitePaymentStrategy', () => {
             },
         }));
 
-        await strategy.finalize();
-
-        expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+        }
     });
 
     it('returns checkout state', async () => {
