@@ -1,6 +1,9 @@
-export { default as createDataStore } from './create-data-store';
-export { default as createAction } from './create-action';
-export { default as createErrorAction } from './create-error-action';
+export { default as DataStore } from './data-store';
+export { default as DispatchableDataStore } from './dispatchable-data-store';
+export { default as ReadableDataStore } from './readable-data-store';
 export { default as combineReducers } from './combine-reducers';
 export { default as composeReducers } from './compose-reducers';
+export { default as createAction } from './create-action';
+export { default as createDataStore } from './create-data-store';
+export { default as createErrorAction } from './create-error-action';
 export { default as deepFreeze } from './deep-freeze';

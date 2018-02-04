@@ -22,7 +22,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/scan';
 
-export default class DataStore<TState, TAction extends Action, TTransformedState = TState> implements ReadableDataStore<TTransformedState>, DispatchableDataStore<TTransformedState, TAction> {
+export default class DataStore<TState, TAction extends Action = Action, TTransformedState = TState> implements ReadableDataStore<TTransformedState>, DispatchableDataStore<TTransformedState, TAction> {
     private _reducer: Reducer<Partial<TState>, TAction>;
     private _options: DataStoreOptions<TState, TAction, TTransformedState>;
     private _notification$: Subject<TTransformedState>;
