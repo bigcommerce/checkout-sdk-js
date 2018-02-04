@@ -1,0 +1,36 @@
+import { InvalidArgumentError } from '../error/errors';
+import Registry from './registry';
+
+describe('Registry', () => {
+    it('returns registered instance', () => {
+        const registry = new Registry<{ name: string }>();
+
+        registry.register('foo', () => ({ name: 'Foo' }));
+        registry.register('bar', () => ({ name: 'Bar' }));
+
+        expect(registry.get('foo')).toEqual({ name: 'Foo' });
+        expect(registry.get('bar')).toEqual({ name: 'Bar' });
+    });
+
+    it('returns cached instance', () => {
+        const registry = new Registry();
+
+        registry.register('foo', () => ({ name: 'Foo' }));
+
+        expect(registry.get('foo')).toBe(registry.get('foo'));
+    });
+
+    it('throws error if not able to return instance', () => {
+        const registry = new Registry();
+
+        expect(() => registry.get('foo')).toThrow(InvalidArgumentError);
+    });
+
+    it('throws error if already registered', () => {
+        const registry = new Registry();
+
+        registry.register('foo', () => ({ name: 'Foo' }));
+
+        expect(() => registry.register('foo', () => ({ name: 'Foo' }))).toThrow(InvalidArgumentError);
+    });
+});
