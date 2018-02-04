@@ -1,23 +1,22 @@
 import ScriptLoader from './script-loader';
 
 describe('ScriptLoader', () => {
-    let document;
-    let loader;
-    let script;
+    let loader: ScriptLoader;
+    let script: HTMLScriptElement;
 
     beforeEach(() => {
-        script = {};
+        script = document.createElement('script');
 
-        document = {
-            createElement: jest.fn(() => script),
-            body: {
-                appendChild: jest.fn((element) =>
-                    element.onreadystatechange(new Event('readystatechange'))
-                ),
-            },
-        };
+        jest.spyOn(document, 'createElement').mockImplementation(() => script);
+        jest.spyOn(document.body, 'appendChild').mockImplementation((element) =>
+            element.onreadystatechange(new Event('readystatechange'))
+        );
 
         loader = new ScriptLoader(document);
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
     });
 
     it('attaches script tag to document', async () => {
