@@ -1,5 +1,6 @@
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
+import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector } from '../customer';
@@ -13,6 +14,7 @@ import CheckoutStatusSelector from './checkout-status-selector';
 describe('CheckoutStatusSelector', () => {
     let billingAddress;
     let cart;
+    let config;
     let countries;
     let coupon;
     let customer;
@@ -29,6 +31,7 @@ describe('CheckoutStatusSelector', () => {
     beforeEach(() => {
         billingAddress = new BillingAddressSelector();
         cart = new CartSelector();
+        config = new ConfigSelector();
         countries = new CountrySelector();
         coupon = new CouponSelector();
         customer = new CustomerSelector();
@@ -44,6 +47,7 @@ describe('CheckoutStatusSelector', () => {
         statuses = new CheckoutStatusSelector(
             billingAddress,
             cart,
+            config,
             countries,
             coupon,
             customer,
@@ -423,6 +427,22 @@ describe('CheckoutStatusSelector', () => {
 
             expect(statuses.isDeletingInstrument('123')).toEqual(false);
             expect(instruments.isDeleting).toHaveBeenCalledWith('123');
+        });
+    });
+
+    describe('#isLoadingConfig()', () => {
+        it('returns true if loading config', () => {
+            jest.spyOn(config, 'isLoading').mockReturnValue(true);
+
+            expect(statuses.isLoadingConfig()).toEqual(true);
+            expect(config.isLoading).toHaveBeenCalledWith();
+        });
+
+        it('returns false if not loading config', () => {
+            jest.spyOn(config, 'isLoading').mockReturnValue(false);
+
+            expect(statuses.isLoadingConfig()).toEqual(false);
+            expect(config.isLoading).toHaveBeenCalled();
         });
     });
 });

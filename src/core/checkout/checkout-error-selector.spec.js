@@ -1,5 +1,6 @@
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
+import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector } from '../customer';
@@ -14,6 +15,7 @@ import CheckoutErrorSelector from './checkout-error-selector';
 describe('CheckoutErrorSelector', () => {
     let billingAddress;
     let cart;
+    let config;
     let countries;
     let coupon;
     let customer;
@@ -31,6 +33,7 @@ describe('CheckoutErrorSelector', () => {
     beforeEach(() => {
         billingAddress = new BillingAddressSelector();
         cart = new CartSelector();
+        config = new ConfigSelector();
         countries = new CountrySelector();
         coupon = new CouponSelector();
         customer = new CustomerSelector();
@@ -46,6 +49,7 @@ describe('CheckoutErrorSelector', () => {
         errors = new CheckoutErrorSelector(
             billingAddress,
             cart,
+            config,
             countries,
             coupon,
             customer,
@@ -395,6 +399,22 @@ describe('CheckoutErrorSelector', () => {
 
             expect(errors.getDeleteInstrumentError('123')).toEqual(undefined);
             expect(instruments.getDeleteError).toHaveBeenCalledWith('123');
+        });
+    });
+
+    describe('#getLoadConfigError()', () => {
+        it('returns error if there is an error when loading config', () => {
+            jest.spyOn(config, 'getLoadError').mockReturnValue(errorResponse);
+
+            expect(errors.getLoadConfigError()).toEqual(errorResponse);
+            expect(config.getLoadError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is NO error when loading config', () => {
+            jest.spyOn(config, 'getLoadError').mockReturnValue();
+
+            expect(errors.getLoadConfigError()).toEqual(undefined);
+            expect(config.getLoadError).toHaveBeenCalled();
         });
     });
 });

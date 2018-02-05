@@ -3,6 +3,7 @@ export default class CheckoutErrorSelector {
      * @constructor
      * @param {BillingAddressSelector} billingAddress
      * @param {CartSelector} cart
+     * @param {ConfigSelector} config
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
@@ -18,6 +19,7 @@ export default class CheckoutErrorSelector {
     constructor(
         billingAddress,
         cart,
+        config,
         countries,
         coupon,
         customer,
@@ -32,6 +34,7 @@ export default class CheckoutErrorSelector {
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
+        this._config = config;
         this._countries = countries;
         this._coupon = coupon;
         this._customer = customer;
@@ -71,7 +74,8 @@ export default class CheckoutErrorSelector {
             this.getRemoveGiftCertificateError() ||
             this.getLoadInstrumentsError() ||
             this.getDeleteInstrumentError() ||
-            this.getVaultInstrumentError();
+            this.getVaultInstrumentError() ||
+            this.getLoadConfigError();
     }
 
     /**
@@ -235,5 +239,12 @@ export default class CheckoutErrorSelector {
      */
     getDeleteInstrumentError(instrumentId) {
         return this._instruments.getDeleteError(instrumentId);
+    }
+
+    /**
+     * @return {?ErrorResponse}
+     */
+    getLoadConfigError() {
+        return this._config.getLoadError();
     }
 }
