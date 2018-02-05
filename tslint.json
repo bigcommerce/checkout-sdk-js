@@ -7,6 +7,7 @@
         "max-line-length": false,
         "member-access": [true, "no-public"],
         "no-empty": false,
+        "no-reference": false,
         "no-shadowed-variable": false,
         "object-literal-sort-keys": false,
         "ordered-imports": false,
