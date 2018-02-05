@@ -90,16 +90,4 @@ describe('CartActionCreator', () => {
                 });
         });
     });
-
-    describe('#updateCart()', () => {
-        it('returns action updating cart', () => {
-            const { data } = getCartResponseBody();
-            const action = cartActionCreator.updateCart(data);
-
-            expect(action).toEqual({
-                type: actionTypes.CART_UPDATED,
-                payload: data,
-            });
-        });
-    });
 });

@@ -54,15 +54,4 @@ export default class CartActionCreator {
                 });
         });
     }
-
-    /**
-     * @deprecated
-     * This method only exists for the purpose of refactoring. We can remove this
-     * once we remove CartService#setCart.
-     * @param {Cart} cart
-     * @return {Action}
-     */
-    updateCart(cart) {
-        return createAction(actionTypes.CART_UPDATED, cart);
-    }
 }
