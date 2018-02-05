@@ -1,0 +1,57 @@
+import { Observable } from 'rxjs/Observable';
+import { CheckoutStore } from '../checkout';
+import { createAction } from '../../data-store';
+import { getFlatRateOption } from './shipping-options.mock';
+import { getShippingAddress } from './shipping-address.mock';
+import * as addressActionTypes from './shipping-address-action-types';
+import * as optionActionTypes from './shipping-option-action-types';
+import ShippingAddressActionCreator from './shipping-address-action-creator';
+import ShippingOptionActionCreator from './shipping-option-action-creator';
+import UpdateShippingService from './update-shipping-service';
+import createCheckoutClient from '../create-checkout-client';
+import createCheckoutStore from '../create-checkout-store';
+
+describe('UpdateShippingService', () => {
+    let addressActionCreator: ShippingAddressActionCreator;
+    let optionActionCreator: ShippingOptionActionCreator;
+    let store: CheckoutStore;
+
+    beforeEach(() => {
+        addressActionCreator = new ShippingAddressActionCreator(createCheckoutClient());
+        optionActionCreator = new ShippingOptionActionCreator(createCheckoutClient());
+        store = createCheckoutStore();
+    });
+
+    it('dispatches action to update shipping address', async () => {
+        const service = new UpdateShippingService(store, addressActionCreator, optionActionCreator);
+        const address = getShippingAddress();
+        const options = {};
+        const action = Observable.of(createAction(addressActionTypes.UPDATE_SHIPPING_ADDRESS_REQUESTED));
+
+        jest.spyOn(addressActionCreator, 'updateAddress').mockReturnValue(action);
+        jest.spyOn(store, 'dispatch');
+
+        const output = await service.updateAddress(address, options);
+
+        expect(addressActionCreator.updateAddress).toHaveBeenCalledWith(address, options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
+        expect(output).toEqual(store.getState());
+    });
+
+    it('dispatches action to select shipping option', async () => {
+        const service = new UpdateShippingService(store, addressActionCreator, optionActionCreator);
+        const address = getShippingAddress();
+        const shippingOption = getFlatRateOption();
+        const options = {};
+        const action = Observable.of(createAction(optionActionTypes.SELECT_SHIPPING_OPTION_REQUESTED));
+
+        jest.spyOn(optionActionCreator, 'selectShippingOption').mockReturnValue(action);
+        jest.spyOn(store, 'dispatch');
+
+        const output = await service.selectOption(address.id, shippingOption.id, options);
+
+        expect(optionActionCreator.selectShippingOption).toHaveBeenCalledWith(address.id, shippingOption.id, options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
+        expect(output).toEqual(store.getState());
+    });
+});
