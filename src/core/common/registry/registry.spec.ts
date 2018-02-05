@@ -20,6 +20,22 @@ describe('Registry', () => {
         expect(registry.get('foo')).toBe(registry.get('foo'));
     });
 
+    it('returns default strategy if none found', () => {
+        const registry = new Registry();
+
+        registry.register('default', () => ({ name: 'bar' }));
+
+        expect(registry.get('foo')).toEqual({ name: 'bar' });
+    });
+
+    it('returns default strategy if key not provided', () => {
+        const registry = new Registry();
+
+        registry.register('default', () => ({ name: 'bar' }));
+
+        expect(registry.get()).toEqual({ name: 'bar' });
+    });
+
     it('throws error if not able to return instance', () => {
         const registry = new Registry();
 
