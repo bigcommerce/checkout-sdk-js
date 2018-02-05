@@ -20,5 +20,5 @@ export default function combineReducers<TState, TAction extends Action>(
 }
 
 export type ReducerMap<TState, TAction extends Action> = {
-    [Key in keyof TState]: Reducer<TState[Key], TAction>;
+    [Key in keyof TState]: Reducer<TState[Key] | undefined, TAction>;
 };

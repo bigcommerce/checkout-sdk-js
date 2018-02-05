@@ -34,7 +34,7 @@ export default class DataStore<TState, TAction extends Action, TTransformedState
     constructor(
         reducer: Reducer<Partial<TState>, TAction>,
         initialState: Partial<TState> = {},
-        options?: DataStoreOptions<TState, TAction, TTransformedState>
+        options?: Partial<DataStoreOptions<TState, TAction, TTransformedState>>
     ) {
         this._reducer = reducer;
         this._options = {
@@ -191,9 +191,9 @@ export default class DataStore<TState, TAction extends Action, TTransformedState
 }
 
 export interface DataStoreOptions<TState, TAction, TTransformedState> {
-    shouldWarnMutation?: boolean;
-    actionTransformer?: (action: Observable<TAction>) => Observable<TAction>;
-    stateTransformer?: (state: Partial<TState>) => TTransformedState;
+    shouldWarnMutation: boolean;
+    actionTransformer: (action: Observable<TAction>) => Observable<TAction>;
+    stateTransformer: (state: Partial<TState>) => TTransformedState;
 }
 
 interface StateTuple<TState, TTransformedState> {
