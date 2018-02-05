@@ -3,6 +3,7 @@ import { createClient as createPaymentClient } from 'bigpay-client';
 import { BillingAddressActionCreator } from './billing';
 import { CartActionCreator } from './cart';
 import { CheckoutService } from './checkout';
+import { ConfigActionCreator } from './config';
 import { CountryActionCreator } from './geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from './coupon';
 import { CustomerActionCreator } from './customer';
@@ -36,6 +37,7 @@ export default function createCheckoutService(options = {}) {
         createShippingStrategyRegistry(store, client),
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
+        new ConfigActionCreator(client),
         new CountryActionCreator(client),
         new CouponActionCreator(client),
         new CustomerActionCreator(client),
