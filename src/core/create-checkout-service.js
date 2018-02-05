@@ -6,13 +6,14 @@ import { CheckoutService } from './checkout';
 import { CountryActionCreator } from './geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from './coupon';
 import { CustomerActionCreator } from './customer';
-import { PlaceOrderService, OrderActionCreator } from './order';
-import { PaymentActionCreator, PaymentMethodActionCreator, PaymentRequestSender } from './payment';
+import { OrderActionCreator } from './order';
+import { PaymentMethodActionCreator } from './payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from './payment/instrument';
 import { QuoteActionCreator } from './quote';
 import { ShippingAddressActionCreator, ShippingCountryActionCreator, ShippingOptionActionCreator } from './shipping';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
+import createPlaceOrderService from './create-place-order-service';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 
 /**
@@ -23,19 +24,14 @@ import createPaymentStrategyRegistry from './create-payment-strategy-registry';
  * @return {CheckoutService}
  */
 export default function createCheckoutService(options = {}) {
-    const requestSender = createRequestSender();
     const client = options.client || createCheckoutClient({ locale: options.locale });
     const store = createCheckoutStore(createInitialState({ config: options.config }), { shouldWarnMutation: options.shouldWarnMutation });
     const paymentClient = createPaymentClient({ host: options.config && options.config.bigpayBaseUrl });
-    const paymentRequestSender = new PaymentRequestSender(paymentClient);
-    const paymentActionCreator = new PaymentActionCreator(paymentRequestSender);
-    const instrumentRequestSender = new InstrumentRequestSender(paymentClient, requestSender);
-    const orderActionCreator = new OrderActionCreator(client);
-    const placeOrderService = new PlaceOrderService(store, orderActionCreator, paymentActionCreator);
+    const instrumentRequestSender = new InstrumentRequestSender(paymentClient, createRequestSender());
 
     return new CheckoutService(
         store,
-        createPaymentStrategyRegistry(store, placeOrderService),
+        createPaymentStrategyRegistry(store, createPlaceOrderService(store, client, paymentClient)),
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
         new CountryActionCreator(client),
@@ -43,7 +39,7 @@ export default function createCheckoutService(options = {}) {
         new CustomerActionCreator(client),
         new GiftCertificateActionCreator(client),
         new InstrumentActionCreator(instrumentRequestSender),
-        orderActionCreator,
+        new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
         new QuoteActionCreator(client),
         new ShippingAddressActionCreator(client),
