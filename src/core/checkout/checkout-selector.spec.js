@@ -7,6 +7,7 @@ import { InstrumentSelector } from '../payment/instrument';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
 import { QuoteSelector } from '../quote';
+import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
 import { CacheFactory } from '../common/cache';
 import { getCartState } from '../cart/carts.mock';
@@ -17,6 +18,7 @@ import { getCustomerState } from '../customer/customers.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { getBraintree, getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/quotes.mock';
+import { getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
 import { getShippingOptionsState } from '../shipping/shipping-options.mock';
 import CheckoutSelector from './checkout-selector';
@@ -37,6 +39,7 @@ describe('CheckoutSelector', () => {
             order: getCompleteOrderState(),
             paymentMethods: getPaymentMethodsState(),
             quote: getQuoteState(),
+            remoteCheckout: getRemoteCheckoutState(),
             shippingOptions: getShippingOptionsState(),
             shippingCountries: getShippingCountriesState(),
         };
@@ -54,6 +57,7 @@ describe('CheckoutSelector', () => {
             orderSelector,
             new PaymentMethodSelector(state.paymentMethods),
             new QuoteSelector(state.quote),
+            new RemoteCheckoutSelector(state.remoteCheckout),
             new ShippingAddressSelector(state.quote),
             new ShippingCountrySelector(state.shippingCountries),
             new ShippingOptionSelector(state.shippingOptions),
@@ -65,6 +69,10 @@ describe('CheckoutSelector', () => {
         expect(selector.getCheckoutMeta()).toEqual({
             isCartVerified: false,
             paymentAuthToken: undefined,
+            remoteCheckout: {
+                ...state.remoteCheckout.meta,
+                ...state.remoteCheckout.data,
+            },
             ...state.quote.meta.request,
             ...state.instruments.meta,
             ...state.order.meta,
