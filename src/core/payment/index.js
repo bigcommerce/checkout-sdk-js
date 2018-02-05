@@ -1,4 +1,7 @@
+export { default as Payment } from './payment';
 export { default as PaymentActionCreator } from './payment-action-creator';
+export { default as PaymentMethod } from './payment-method';
+export { default as PaymentMethodConfig } from './payment-method-config';
 export { default as PaymentMethodActionCreator } from './payment-method-action-creator';
 export { default as paymentMethodReducer } from './payment-method-reducer';
 export { default as PaymentMethodRequestSender } from './payment-method-request-sender';
