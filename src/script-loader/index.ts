@@ -1,8 +1,5 @@
 import ScriptLoader from './script-loader';
 
-/**
- * @return {ScriptLoader}
- */
-export function createScriptLoader() {
+export function createScriptLoader(): ScriptLoader {
     return new ScriptLoader(document);
 }

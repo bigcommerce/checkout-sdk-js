@@ -1,19 +1,11 @@
 export default class ScriptLoader {
-    /**
-     * @constructor
-     * @param {Document} document
-     */
-    constructor(document) {
-        this._document = document;
-    }
+    constructor(
+        private _document: Document
+    ) {}
 
-    /**
-     * @param {string} src
-     * @return {Promise<Event>}
-     */
-    loadScript(src) {
+    loadScript(src: string): Promise<Event> {
         return new Promise((resolve, reject) => {
-            const script = this._document.createElement('script');
+            const script = this._document.createElement('script') as LegacyHTMLScriptElement;
 
             script.onload = (event) => resolve(event);
             script.onreadystatechange = (event) => resolve(event);
@@ -24,4 +16,9 @@ export default class ScriptLoader {
             this._document.body.appendChild(script);
         });
     }
+}
+
+interface LegacyHTMLScriptElement extends HTMLScriptElement {
+    // `onreadystatechange` is needed to support legacy IE
+    onreadystatechange: (this: HTMLElement, event: Event) => any;
 }
