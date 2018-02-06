@@ -23,7 +23,7 @@ import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } 
 import { getCustomerResponseBody, getGuestCustomer } from '../customer/customers.mock';
 import { getGiftCertificateResponseBody } from '../coupon/gift-certificate.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
-import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
+import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody, getPaymentMethod } from '../payment/payment-methods.mock';
 import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
@@ -505,6 +505,112 @@ describe('CheckoutService', () => {
             const { checkout } = await checkoutService.loadShippingOptions();
 
             expect(checkout.getShippingOptions()).toEqual(getShippingOptionResponseBody().data.shippingOptions);
+        });
+    });
+
+    describe('#initializeShipping()', () => {
+        let customer;
+        let remoteCustomer;
+        let paymentMethod;
+        let state;
+
+        beforeEach(() => {
+            customer = getGuestCustomer();
+            paymentMethod = getPaymentMethod();
+            remoteCustomer = { ...getGuestCustomer(), remote: { provider: paymentMethod.id } };
+            state = {
+                checkout: {
+                    getCustomer: () => customer,
+                    getPaymentMethod: () => paymentMethod,
+                },
+            };
+
+            jest.spyOn(shippingStrategyRegistry, 'get');
+
+            jest.spyOn(store, 'getState')
+                .mockReturnValue(state);
+
+            jest.spyOn(checkoutClient, 'loadPaymentMethod')
+                .mockReturnValue(Promise.resolve(getResponse(getPaymentMethodResponseBody())));
+        });
+
+        it('finds shipping strategy', async () => {
+            jest.spyOn(state.checkout, 'getCustomer')
+                .mockReturnValue(remoteCustomer);
+
+            await checkoutService.initializeShipping();
+
+            expect(shippingStrategyRegistry.get).toHaveBeenCalledWith(remoteCustomer.remote.provider);
+        });
+
+        it('initializes remote shipping strategy with remote payment method', async () => {
+            const strategy = shippingStrategyRegistry.get(remoteCustomer.remote.provider);
+
+            jest.spyOn(strategy, 'initialize');
+
+            jest.spyOn(state.checkout, 'getCustomer')
+                .mockReturnValue(remoteCustomer);
+
+            await checkoutService.initializeShipping();
+
+            expect(checkoutClient.loadPaymentMethod).toHaveBeenCalledWith(remoteCustomer.remote.provider, undefined);
+            expect(strategy.initialize).toHaveBeenCalledWith({ paymentMethod });
+        });
+
+        it('initializes default shipping strategy if remote payment is not enabled', async () => {
+            const strategy = shippingStrategyRegistry.get();
+            const options = {};
+
+            jest.spyOn(strategy, 'initialize');
+
+            await checkoutService.initializeShipping(options);
+
+            expect(strategy.initialize).toHaveBeenCalledWith(options);
+        });
+
+        it('returns current state', async () => {
+            const output = await checkoutService.initializeShipping();
+
+            expect(output).toEqual(store.getState());
+        });
+    });
+
+    describe('#deinitializeShipping()', () => {
+        let customer;
+
+        beforeEach(() => {
+            customer = { ...getGuestCustomer(), remote: { provider: getPaymentMethod().id } };
+
+            jest.spyOn(shippingStrategyRegistry, 'get');
+
+            jest.spyOn(store, 'getState')
+                .mockReturnValue({
+                    checkout: {
+                        getCustomer: () => customer,
+                    },
+                });
+        });
+
+        it('finds shipping strategy', async () => {
+            await checkoutService.deinitializeShipping();
+
+            expect(shippingStrategyRegistry.get).toHaveBeenCalledWith(customer.remote.provider);
+        });
+
+        it('deinitializes shipping strategy', async () => {
+            const strategy = shippingStrategyRegistry.get(customer.remote.provider);
+
+            jest.spyOn(strategy, 'deinitialize');
+
+            await checkoutService.deinitializeShipping();
+
+            expect(strategy.deinitialize).toHaveBeenCalled();
+        });
+
+        it('returns current state', async () => {
+            const output = await checkoutService.deinitializeShipping();
+
+            expect(output).toEqual(store.getState());
         });
     });
 
