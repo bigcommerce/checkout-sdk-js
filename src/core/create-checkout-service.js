@@ -10,11 +10,12 @@ import { OrderActionCreator } from './order';
 import { PaymentMethodActionCreator } from './payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from './payment/instrument';
 import { QuoteActionCreator } from './quote';
-import { ShippingAddressActionCreator, ShippingCountryActionCreator, ShippingOptionActionCreator } from './shipping';
+import { ShippingCountryActionCreator, ShippingOptionActionCreator } from './shipping';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 import createPlaceOrderService from './create-place-order-service';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
+import createShippingStrategyRegistry from './create-shipping-strategy-registry';
 
 /**
  * @param {Object} [options]
@@ -32,6 +33,7 @@ export default function createCheckoutService(options = {}) {
     return new CheckoutService(
         store,
         createPaymentStrategyRegistry(store, createPlaceOrderService(store, client, paymentClient)),
+        createShippingStrategyRegistry(store, client),
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
         new CountryActionCreator(client),
@@ -42,7 +44,6 @@ export default function createCheckoutService(options = {}) {
         new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
         new QuoteActionCreator(client),
-        new ShippingAddressActionCreator(client),
         new ShippingCountryActionCreator(client),
         new ShippingOptionActionCreator(client)
     );
