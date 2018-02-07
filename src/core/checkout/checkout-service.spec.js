@@ -29,12 +29,14 @@ import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from '../create-checkout-store';
+import createCustomerStrategyRegistry from '../create-customer-strategy-registry';
 import createShippingStrategyRegistry from '../create-shipping-strategy-registry';
 import CheckoutService from './checkout-service';
 
 describe('CheckoutService', () => {
     let checkoutClient;
     let checkoutService;
+    let customerStrategyRegistry;
     let paymentStrategy;
     let paymentStrategyRegistry;
     let shippingStrategyRegistry;
@@ -156,8 +158,11 @@ describe('CheckoutService', () => {
 
         shippingStrategyRegistry = createShippingStrategyRegistry(store, checkoutClient);
 
+        customerStrategyRegistry = createCustomerStrategyRegistry(store, checkoutClient);
+
         checkoutService = new CheckoutService(
             store,
+            customerStrategyRegistry,
             paymentStrategyRegistry,
             shippingStrategyRegistry,
             new BillingAddressActionCreator(checkoutClient),
@@ -483,7 +488,104 @@ describe('CheckoutService', () => {
         });
     });
 
+    describe('#initializeCustomer()', () => {
+        it('finds customer strategy by id', async () => {
+            const options = { methodId: getPaymentMethod().id };
+
+            jest.spyOn(customerStrategyRegistry, 'get');
+
+            await checkoutService.initializeCustomer(options);
+
+            expect(customerStrategyRegistry.get).toHaveBeenCalledWith(options.methodId);
+        });
+
+        it('initializes remote customer strategy with remote payment method', async () => {
+            const paymentMethod = getPaymentMethod();
+            const strategy = customerStrategyRegistry.get(paymentMethod.id);
+
+            jest.spyOn(strategy, 'initialize');
+            jest.spyOn(checkoutClient, 'loadPaymentMethod')
+                .mockReturnValue(Promise.resolve(getResponse(getPaymentMethodResponseBody())));
+
+            await checkoutService.initializeCustomer({ methodId: paymentMethod.id });
+
+            expect(checkoutClient.loadPaymentMethod).toHaveBeenCalledWith(paymentMethod.id, undefined);
+            expect(strategy.initialize).toHaveBeenCalledWith(expect.objectContaining({ paymentMethod }));
+        });
+
+        it('initializes default shipping strategy if remote payment is not enabled', async () => {
+            const strategy = customerStrategyRegistry.get('default');
+            const options = {};
+
+            jest.spyOn(strategy, 'initialize');
+
+            await checkoutService.initializeCustomer(options);
+
+            expect(strategy.initialize).toHaveBeenCalledWith(options);
+        });
+
+        it('returns current state', async () => {
+            const output = await checkoutService.initializeCustomer();
+
+            expect(output).toEqual(store.getState());
+        });
+    });
+
+    describe('#deinitializeCustomer()', () => {
+        it('finds and uses customer strategy by id', async () => {
+            const methodId = 'amazon';
+            const strategy = customerStrategyRegistry.get(methodId);
+
+            jest.spyOn(customerStrategyRegistry, 'get');
+            jest.spyOn(strategy, 'deinitialize');
+
+            await checkoutService.deinitializeCustomer({ methodId });
+
+            expect(customerStrategyRegistry.get).toHaveBeenCalledWith(methodId);
+            expect(strategy.deinitialize).toHaveBeenCalled();
+        });
+
+        it('uses default customer strategy by default', async () => {
+            const strategy = customerStrategyRegistry.get('default');
+
+            jest.spyOn(strategy, 'deinitialize');
+
+            await checkoutService.deinitializeCustomer();
+
+            expect(strategy.deinitialize).toHaveBeenCalled();
+        });
+
+        it('returns current state', async () => {
+            const output = await checkoutService.deinitializeCustomer();
+
+            expect(output).toEqual(store.getState());
+        });
+    });
+
     describe('#signInCustomer()', () => {
+        it('finds customer strategy by id', async () => {
+            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+            const options = { methodId: getPaymentMethod().id };
+
+            jest.spyOn(customerStrategyRegistry, 'get');
+
+            await checkoutService.signInCustomer(credentials, options);
+
+            expect(customerStrategyRegistry.get).toHaveBeenCalledWith(options.methodId);
+        });
+
+        it('uses default customer strategy by default', async () => {
+            const strategy = customerStrategyRegistry.get('default');
+            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+            const options = {};
+
+            jest.spyOn(strategy, 'signIn');
+
+            await checkoutService.signInCustomer(credentials, options);
+
+            expect(strategy.signIn).toHaveBeenCalledWith(credentials, options);
+        });
+
         it('signs in customer', async () => {
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
             const { checkout } = await checkoutService.signInCustomer(credentials);
@@ -493,6 +595,27 @@ describe('CheckoutService', () => {
     });
 
     describe('#signOutCustomer()', () => {
+        it('finds customer strategy by id', async () => {
+            const options = { methodId: getPaymentMethod().id };
+
+            jest.spyOn(customerStrategyRegistry, 'get');
+
+            await checkoutService.signOutCustomer(options);
+
+            expect(customerStrategyRegistry.get).toHaveBeenCalledWith(options.methodId);
+        });
+
+        it('uses default customer strategy by default', async () => {
+            const strategy = customerStrategyRegistry.get('default');
+            const options = {};
+
+            jest.spyOn(strategy, 'signOut');
+
+            await checkoutService.signOutCustomer(options);
+
+            expect(strategy.signOut).toHaveBeenCalledWith(options);
+        });
+
         it('signs in customer', async () => {
             const { checkout } = await checkoutService.signOutCustomer();
 
