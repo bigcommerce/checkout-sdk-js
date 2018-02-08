@@ -10,6 +10,7 @@ export default class CheckoutSelector {
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
+     * @param {RemoteCheckoutSelector} remoteCheckout
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
@@ -25,6 +26,7 @@ export default class CheckoutSelector {
         order,
         paymentMethods,
         quote,
+        remoteCheckout,
         shippingAddress,
         shippingCountries,
         shippingOptions,
@@ -39,6 +41,7 @@ export default class CheckoutSelector {
         this._order = order;
         this._paymentMethods = paymentMethods;
         this._quote = quote;
+        this._remoteCheckout = remoteCheckout;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
@@ -50,19 +53,32 @@ export default class CheckoutSelector {
      */
     getCheckoutMeta() {
         return this._cacheFactory.get('getCheckoutMeta')
-            .retain((orderMeta, quoteMeta, isCartVerified, paymentAuthToken, instrumentsMeta) => ({
+            .retain((orderMeta,
+                quoteMeta,
+                isCartVerified,
+                paymentAuthToken,
+                instrumentsMeta,
+                remoteCheckout,
+                remoteCheckoutMeta
+            ) => ({
                 ...orderMeta,
                 ...(quoteMeta && quoteMeta.request),
                 ...instrumentsMeta,
                 isCartVerified,
                 paymentAuthToken,
+                remoteCheckout: {
+                    ...remoteCheckout,
+                    ...remoteCheckoutMeta,
+                },
             }))
             .retrieve(
                 this._order.getOrderMeta(),
                 this._quote.getQuoteMeta(),
                 this._cart.isValid(),
                 this._order.getPaymentAuthToken(),
-                this._instruments.getInstrumentsMeta()
+                this._instruments.getInstrumentsMeta(),
+                this._remoteCheckout.getCheckout(),
+                this._remoteCheckout.getCheckoutMeta()
             );
     }
 

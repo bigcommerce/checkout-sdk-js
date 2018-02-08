@@ -9,6 +9,7 @@ import { customerReducer, CustomerSelector } from './customer';
 import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from './coupon';
 import { orderReducer, OrderSelector } from './order';
 import { paymentReducer, paymentMethodReducer, PaymentMethodSelector } from './payment';
+import { remoteCheckoutReducer, RemoteCheckoutSelector } from './remote-checkout';
 import { instrumentReducer, InstrumentSelector } from './payment/instrument';
 import { quoteReducer, QuoteSelector } from './quote';
 import { BillingAddressSelector } from './billing';
@@ -56,6 +57,7 @@ function createCheckoutReducers() {
         payment: paymentReducer,
         paymentMethods: paymentMethodReducer,
         quote: quoteReducer,
+        remoteCheckout: remoteCheckoutReducer,
         shippingCountries: shippingCountryReducer,
         shippingOptions: shippingOptionReducer,
     };
@@ -81,6 +83,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const order = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
     const quote = new QuoteSelector(state.quote);
+    const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingAddress = new ShippingAddressSelector(state.quote);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
@@ -95,6 +98,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         order,
         paymentMethods,
         quote,
+        remoteCheckout,
         shippingAddress,
         shippingCountries,
         shippingOptions,
