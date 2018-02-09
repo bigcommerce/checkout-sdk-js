@@ -166,6 +166,39 @@ describe('remoteCheckoutReducer', () => {
             }));
     });
 
+    it('returns state with error if failed to sign out', () => {
+        const response = getErrorResponse();
+        const action = {
+            type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_FAILED,
+            payload: response,
+        };
+
+        expect(remoteCheckoutReducer({}, action))
+            .toEqual(expect.objectContaining({
+                errors: {
+                    signOutError: response,
+                },
+                statuses: {
+                    isSigningOut: false,
+                },
+            }));
+    });
+
+    it('returns state with loading flag if waiting to sign out', () => {
+        const response = getErrorResponse();
+        const action = {
+            type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED,
+            payload: response,
+        };
+
+        expect(remoteCheckoutReducer({}, action))
+            .toEqual(expect.objectContaining({
+                statuses: {
+                    isSigningOut: true,
+                },
+            }));
+    });
+
     it('returns state with meta data', () => {
         const action = {
             type: actionTypes.SET_REMOTE_CHECKOUT_META,

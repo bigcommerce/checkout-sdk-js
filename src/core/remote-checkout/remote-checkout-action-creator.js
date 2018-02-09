@@ -81,6 +81,26 @@ export default class RemoteCheckoutActionCreator {
 
     /**
      * @param {string} methodName
+     * @param {RequestOptions} [options]
+     * @return {Observable<Action>}
+     */
+    signOut(methodName, options) {
+        return Observable.create((observer) => {
+            observer.next(createAction(actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED));
+
+            this._remoteCheckoutRequestSender.signOut(methodName, options)
+                .then(() => {
+                    observer.next(createAction(actionTypes.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(actionTypes.SIGN_OUT_REMOTE_CUSTOMER_FAILED, response));
+                });
+        });
+    }
+
+    /**
+     * @param {string} methodName
      * @param {RemoteCheckoutMeta} meta
      * @return {Action}
      */

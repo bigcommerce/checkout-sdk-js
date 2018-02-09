@@ -1,7 +1,8 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { CheckoutClient, CheckoutSelectors, CheckoutStore } from './checkout';
-import { DataStore } from '../data-store';
 import { CustomerActionCreator, SignInCustomerService } from './customer';
+import { DataStore } from '../data-store';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from './remote-checkout';
 
 export default function createSignInCustomerService(
     store: CheckoutStore,
@@ -9,6 +10,9 @@ export default function createSignInCustomerService(
 ): SignInCustomerService {
     return new SignInCustomerService(
         store,
-        new CustomerActionCreator(client)
+        new CustomerActionCreator(client),
+        new RemoteCheckoutActionCreator(
+            new RemoteCheckoutRequestSender(createRequestSender())
+        )
     );
 }

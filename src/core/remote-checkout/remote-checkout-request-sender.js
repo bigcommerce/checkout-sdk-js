@@ -45,4 +45,35 @@ export default class RemoteCheckoutRequestSender {
 
         return this._requestSender.get(url, { params, timeout });
     }
+
+    /**
+     * @param {string} methodName
+     * @param {RequestOptions} [options]
+     * @return {Promise<Response<void>>}
+     */
+    signOut(methodName, { timeout } = {}) {
+        const url = `/remote-checkout/${methodName}/signout`;
+
+        return this._requestSender.get(url, { timeout });
+    }
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<Response<{ token: string }>>}
+     */
+    generateToken({ timeout } = {}) {
+        const url = '/remote-checkout-token';
+
+        return this._requestSender.get(url, { timeout });
+    }
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<Response<void>>}
+     */
+    trackAuthorizationEvent({ timeout } = {}) {
+        const url = '/remote-checkout/events/shopper-checkout-service-provider-authorization-requested';
+
+        return this._requestSender.get(url, { timeout });
+    }
 }

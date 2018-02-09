@@ -53,3 +53,9 @@ export function getRemotePaymentResponseBody(): any {
         payment: true,
     };
 }
+
+export function getRemoteTokenResponseBody(): any {
+    return {
+        token: 'cb5eda6a-ab78-4bf1-b849-4a0ab0b0c5a0',
+    };
+}
