@@ -6,6 +6,7 @@ export default class CheckoutService {
      * @constructor
      * @param {DataStore} store
      * @param {PaymentStrategyRegistry} paymentStrategyRegistry
+     * @param {Registry<ShippingStrategy>} shippingStrategyRegistry
      * @param {BillingAddressActionCreator} billingAddressActionCreator
      * @param {CartActionCreator} cartActionCreator
      * @param {CountryActionCreator} countryActionCreator
@@ -16,13 +17,13 @@ export default class CheckoutService {
      * @param {OrderActionCreator} orderActionCreator
      * @param {PaymentMethodActionCreator} paymentMethodActionCreator
      * @param {QuoteActionCreator} quoteActionCreator
-     * @param {ShippingAddressActionCreator} shippingAddressActionCreator
      * @param {ShippingCountryActionCreator} shippingCountryActionCreator
      * @param {ShippingOptionActionCreator} shippingOptionActionCreator
      */
     constructor(
         store,
         paymentStrategyRegistry,
+        shippingStrategyRegistry,
         billingAddressActionCreator,
         cartActionCreator,
         countryActionCreator,
@@ -33,12 +34,12 @@ export default class CheckoutService {
         orderActionCreator,
         paymentMethodActionCreator,
         quoteActionCreator,
-        shippingAddressActionCreator,
         shippingCountryActionCreator,
         shippingOptionActionCreator
     ) {
         this._store = store;
         this._paymentStrategyRegistry = paymentStrategyRegistry;
+        this._shippingStrategyRegistry = shippingStrategyRegistry;
         this._billingAddressActionCreator = billingAddressActionCreator;
         this._cartActionCreator = cartActionCreator;
         this._countryActionCreator = countryActionCreator;
@@ -49,7 +50,6 @@ export default class CheckoutService {
         this._orderActionCreator = orderActionCreator;
         this._paymentMethodActionCreator = paymentMethodActionCreator;
         this._quoteActionCreator = quoteActionCreator;
-        this._shippingAddressActionCreator = shippingAddressActionCreator;
         this._shippingCountryActionCreator = shippingCountryActionCreator;
         this._shippingOptionActionCreator = shippingOptionActionCreator;
     }
@@ -289,9 +289,11 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     selectShippingOption(addressId, shippingOptionId, options) {
-        const action = this._shippingOptionActionCreator.selectShippingOption(addressId, shippingOptionId, options);
+        const { checkout } = this._store.getState();
+        const { remote = {} } = checkout.getCustomer() || {};
 
-        return this._store.dispatch(action);
+        return this._shippingStrategyRegistry.get(remote.provider)
+            .selectOption(addressId, shippingOptionId, options);
     }
 
     /**
@@ -300,9 +302,11 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     updateShippingAddress(address, options) {
-        const action = this._shippingAddressActionCreator.updateAddress(address, options);
+        const { checkout } = this._store.getState();
+        const { remote = {} } = checkout.getCustomer() || {};
 
-        return this._store.dispatch(action);
+        return this._shippingStrategyRegistry.get(remote.provider)
+            .updateAddress(address, options);
     }
 
     /**

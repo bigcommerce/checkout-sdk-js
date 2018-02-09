@@ -11,3 +11,5 @@ export { default as ShippingOptionActionCreator } from './shipping-option-action
 export { default as ShippingOptionRequestSender } from './shipping-option-request-sender';
 export { default as ShippingOptionSelector } from './shipping-option-selector';
 export { default as shippingOptionReducer } from './shipping-option-reducer';
+
+export { default as UpdateShippingService } from './update-shipping-service';

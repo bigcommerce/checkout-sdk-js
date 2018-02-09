@@ -10,7 +10,7 @@ import { OrderActionCreator } from '../order';
 import { PaymentMethodActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import { ShippingAddressActionCreator, ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
+import { ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
 import { MissingDataError } from '../common/error/errors';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/billing-address.mock';
@@ -28,6 +28,7 @@ import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from '../create-checkout-store';
+import createShippingStrategyRegistry from '../create-shipping-strategy-registry';
 import CheckoutService from './checkout-service';
 
 describe('CheckoutService', () => {
@@ -35,6 +36,7 @@ describe('CheckoutService', () => {
     let checkoutService;
     let paymentStrategy;
     let paymentStrategyRegistry;
+    let shippingStrategyRegistry;
     let store;
 
     beforeEach(() => {
@@ -147,9 +149,12 @@ describe('CheckoutService', () => {
             getStrategy: jest.fn(() => paymentStrategy),
         };
 
+        shippingStrategyRegistry = createShippingStrategyRegistry(store, checkoutClient);
+
         checkoutService = new CheckoutService(
             store,
             paymentStrategyRegistry,
+            shippingStrategyRegistry,
             new BillingAddressActionCreator(checkoutClient),
             new CartActionCreator(checkoutClient),
             new CountryActionCreator(checkoutClient),
@@ -160,7 +165,6 @@ describe('CheckoutService', () => {
             new OrderActionCreator(checkoutClient),
             new PaymentMethodActionCreator(checkoutClient),
             new QuoteActionCreator(checkoutClient),
-            new ShippingAddressActionCreator(checkoutClient),
             new ShippingCountryActionCreator(checkoutClient),
             new ShippingOptionActionCreator(checkoutClient)
         );
