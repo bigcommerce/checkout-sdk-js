@@ -107,7 +107,7 @@ export default class RemoteCheckoutService {
 
     /**
      * @param {string} methodId
-     * @param {string} meta
+     * @param {any} meta
      * @return {Promise<CheckoutSelectors>}
      */
     setCheckoutMeta(methodId, meta) {

@@ -180,6 +180,33 @@ export function getBankDeposit() {
     };
 }
 
+export function getAmazonPay() {
+    return {
+        id: 'amazon',
+        gateway: null,
+        logoUrl: '',
+        method: 'widget',
+        supportedCards: [],
+        config: {
+            displayName: 'AmazonPay',
+            cardCode: null,
+            helpText: null,
+            enablePaypal: null,
+            merchantId: 'A3F5ZS4DL0H261',
+            is3dsEnabled: null,
+            testMode: false,
+            isVisaCheckoutEnabled: null,
+        },
+        type: 'PAYMENT_TYPE_API',
+        nonce: null,
+        initializationData: {
+            region: 'US',
+        },
+        clientToken: null,
+        returnUrl: null,
+    };
+}
+
 export function getPaymentMethod() {
     return getAuthorizenet();
 }
