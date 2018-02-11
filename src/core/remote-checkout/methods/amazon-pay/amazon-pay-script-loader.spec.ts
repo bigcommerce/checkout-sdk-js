@@ -18,7 +18,7 @@ describe('AmazonPayScriptLoader', () => {
         amazonPayScriptLoader.loadWidget(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            `https://static-na.payments-amazon.com/OffAmazonPayments/us/Widgets.js?sellerId=${method.config.merchantId}`
+            `https://static-na.payments-amazon.com/OffAmazonPayments/us/js/Widgets.js?sellerId=${method.config.merchantId}`
         );
     });
 
@@ -28,7 +28,7 @@ describe('AmazonPayScriptLoader', () => {
         amazonPayScriptLoader.loadWidget(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            `https://static-na.payments-amazon.com/OffAmazonPayments/eu/Widgets.js?sellerId=${method.config.merchantId}`
+            `https://static-na.payments-amazon.com/OffAmazonPayments/eu/lpa/js/Widgets.js?sellerId=${method.config.merchantId}`
         );
     });
 
@@ -38,7 +38,7 @@ describe('AmazonPayScriptLoader', () => {
         amazonPayScriptLoader.loadWidget(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            `https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/Widgets.js?sellerId=${method.config.merchantId}`
+            `https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/js/Widgets.js?sellerId=${method.config.merchantId}`
         );
     });
 });

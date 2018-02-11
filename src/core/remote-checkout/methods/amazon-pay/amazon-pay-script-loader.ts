@@ -14,8 +14,9 @@ export default class AmazonPayScriptLoader {
 
         const url = 'https://static-na.payments-amazon.com/OffAmazonPayments/' +
             `${region.toLowerCase()}/` +
-            `${testMode ? 'sandbox/' : ''}` +
-            `Widgets.js?sellerId=${merchantId}`;
+            (testMode ? 'sandbox/' : '') +
+            (region.toLowerCase() !== 'us' ? 'lpa/' : '') +
+            `js/Widgets.js?sellerId=${merchantId}`;
 
         return this._scriptLoader.loadScript(url);
     }
