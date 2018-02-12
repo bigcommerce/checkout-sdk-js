@@ -14,7 +14,7 @@ describe('remoteCheckoutReducer', () => {
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 data: {
-                    billingAddress: response.body.address,
+                    billingAddress: response.body.billing.address,
                 },
                 errors: {
                     initializeBillingError: undefined,
@@ -68,7 +68,7 @@ describe('remoteCheckoutReducer', () => {
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 data: {
-                    shippingAddress: response.body.address,
+                    shippingAddress: response.body.shipping.address,
                 },
                 errors: {
                     initializeShippingError: undefined,

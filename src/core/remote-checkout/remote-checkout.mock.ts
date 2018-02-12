@@ -34,13 +34,17 @@ export function getRemoteCheckoutMeta(): RemoteCheckoutMeta {
 
 export function getRemoteBillingResponseBody(): any {
     return {
-        address: getBillingAddress(),
+        billing: {
+            address: getBillingAddress(),
+        },
     };
 }
 
 export function getRemoteShippingResponseBody(): any {
     return {
-        address: getShippingAddress(),
+        shipping: {
+            address: getShippingAddress(),
+        },
     };
 }
 
