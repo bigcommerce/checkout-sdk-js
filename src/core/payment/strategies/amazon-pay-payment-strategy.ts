@@ -1,4 +1,4 @@
-/// <reference path="../../remote-checkout/methods/amazon-pay/amazon-pay-widgets.d.ts" />
+/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 
 import { noop, omit } from 'lodash';
 import { Address } from '../../address';
@@ -13,7 +13,7 @@ import AmazonPayScriptLoader from '../../remote-checkout/methods/amazon-pay/amaz
 
 export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     private _unsubscribe: (() => void) | undefined;
-    private _wallet: Widgets.Wallet | undefined;
+    private _wallet: OffAmazonPayments.Widgets.Wallet | undefined;
 
     constructor(
         paymentMethod: PaymentMethod,
@@ -61,11 +61,11 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             }, options));
     }
 
-    private _createWallet(options: InitializeWidgetOptions): Widgets.Wallet {
+    private _createWallet(options: InitializeWidgetOptions): OffAmazonPayments.Widgets.Wallet {
         const { container, onError = noop, onPaymentSelect = noop } = options;
         const { merchantId } = this._paymentMethod.config;
 
-        const widget = new Widgets.Wallet({
+        const widget = new OffAmazonPayments.Widgets.Wallet({
             design: { designMode: 'responsive' },
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
             sellerId: merchantId!,
@@ -82,7 +82,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return widget;
     }
 
-    private _handlePaymentSelect(orderReference: Widgets.OrderReference, callback: (address: Address) => void): void {
+    private _handlePaymentSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: Address) => void): void {
         const { id } = this._paymentMethod;
         const { checkout } = this._store.getState();
         const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
@@ -107,7 +107,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         });
     }
 
-    private _handleError(error: Widgets.WidgetError, callback: (error: Error) => void): void {
+    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
         if (!error) {
             return;
         }

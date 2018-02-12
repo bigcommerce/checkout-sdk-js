@@ -28,8 +28,8 @@ describe('AmazonPayPaymentStrategy', () => {
     let paymentMethod: PaymentMethod;
     let placeOrderService: PlaceOrderService;
 
-    class Wallet implements Widgets.Wallet {
-        constructor(public options: Widgets.WalletOptions) { }
+    class Wallet implements OffAmazonPayments.Widgets.Wallet {
+        constructor(public options: OffAmazonPayments.Widgets.WalletOptions) { }
 
         bind(id: string) {
             const element = document.getElementById(id);
