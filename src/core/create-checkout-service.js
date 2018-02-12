@@ -15,6 +15,7 @@ import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 import createPlaceOrderService from './create-place-order-service';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
+import createRemoteCheckoutService from './create-remote-checkout-service';
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
 
 /**
@@ -32,7 +33,11 @@ export default function createCheckoutService(options = {}) {
 
     return new CheckoutService(
         store,
-        createPaymentStrategyRegistry(store, createPlaceOrderService(store, client, paymentClient)),
+        createPaymentStrategyRegistry(
+            store,
+            createPlaceOrderService(store, client, paymentClient),
+            createRemoteCheckoutService(store, client)
+        ),
         createShippingStrategyRegistry(store, client),
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
