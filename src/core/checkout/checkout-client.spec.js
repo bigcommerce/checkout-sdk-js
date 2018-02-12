@@ -1,4 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
+import { getAppConfig } from '../config/configs.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/billing-address.mock';
 import { getCart, getCartResponseBody } from '../cart/carts.mock';
@@ -15,6 +16,7 @@ describe('CheckoutClient', () => {
     let client;
     let billingAddressRequestSender;
     let cartRequestSender;
+    let configRequestSender;
     let countryRequestSender;
     let couponRequestSender;
     let customerRequestSender;
@@ -33,6 +35,10 @@ describe('CheckoutClient', () => {
 
         cartRequestSender = {
             loadCart: jest.fn(() => Promise.resolve(getResponse(getCart()))),
+        };
+
+        configRequestSender = {
+            loadConfig: jest.fn(() => Promise.resolve(getResponse(getAppConfig()))),
         };
 
         countryRequestSender = {
@@ -91,6 +97,7 @@ describe('CheckoutClient', () => {
         client = new CheckoutClient(
             billingAddressRequestSender,
             cartRequestSender,
+            configRequestSender,
             countryRequestSender,
             couponRequestSender,
             customerRequestSender,
@@ -403,6 +410,15 @@ describe('CheckoutClient', () => {
             expect(output).toEqual(getCartResponseBody());
             expect(giftCertificateRequestSender.removeGiftCertificate)
                 .toHaveBeenCalledWith('giftCertificate1234', undefined);
+        });
+    });
+
+    describe('#loadConfig()', () => {
+        it('loads app config', async () => {
+            const output = await client.loadConfig();
+
+            expect(output).toEqual(getResponse(getAppConfig()));
+            expect(configRequestSender.loadConfig).toHaveBeenCalled();
         });
     });
 });

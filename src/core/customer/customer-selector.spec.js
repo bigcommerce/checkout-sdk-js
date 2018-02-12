@@ -35,7 +35,7 @@ describe('CustomerSelector', () => {
         });
 
         it('does not returns error if able to sign in', () => {
-            customerSelector = new CustomerSelector(state.order);
+            customerSelector = new CustomerSelector(state.customer);
 
             expect(customerSelector.getSignInError()).toBeUndefined();
         });
@@ -54,7 +54,7 @@ describe('CustomerSelector', () => {
         });
 
         it('does not returns error if able to sign out', () => {
-            customerSelector = new CustomerSelector(state.order);
+            customerSelector = new CustomerSelector(state.customer);
 
             expect(customerSelector.getSignOutError()).toBeUndefined();
         });
@@ -71,7 +71,7 @@ describe('CustomerSelector', () => {
         });
 
         it('returns false if not signing in', () => {
-            customerSelector = new CustomerSelector(state.order);
+            customerSelector = new CustomerSelector(state.customer);
 
             expect(customerSelector.isSigningIn()).toEqual(false);
         });
@@ -88,7 +88,7 @@ describe('CustomerSelector', () => {
         });
 
         it('returns false if not signing out', () => {
-            customerSelector = new CustomerSelector(state.order);
+            customerSelector = new CustomerSelector(state.customer);
 
             expect(customerSelector.isSigningOut()).toEqual(false);
         });

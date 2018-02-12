@@ -108,6 +108,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const errors = new CheckoutErrorSelector(
         billingAddress,
         cart,
+        config,
         countries,
         coupon,
         customer,
@@ -124,6 +125,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const statuses = new CheckoutStatusSelector(
         billingAddress,
         cart,
+        config,
         countries,
         coupon,
         customer,

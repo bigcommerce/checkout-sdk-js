@@ -3,6 +3,7 @@ export default class CheckoutStatusSelector {
      * @constructor
      * @param {BillingAddressSelector} billingAddress
      * @param {CartSelector} cart
+     * @param {ConfigSelector} config
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
@@ -18,6 +19,7 @@ export default class CheckoutStatusSelector {
     constructor(
         billingAddress,
         cart,
+        config,
         countries,
         coupon,
         customer,
@@ -32,6 +34,7 @@ export default class CheckoutStatusSelector {
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
+        this._config = config;
         this._countries = countries;
         this._coupon = coupon;
         this._customer = customer;
@@ -71,7 +74,8 @@ export default class CheckoutStatusSelector {
             this.isRemovingGiftCertificate() ||
             this.isLoadingInstruments() ||
             this.isVaultingInstrument() ||
-            this.isDeletingInstrument();
+            this.isDeletingInstrument() ||
+            this.isLoadingConfig();
     }
 
     /**
@@ -236,5 +240,9 @@ export default class CheckoutStatusSelector {
      */
     isDeletingInstrument(instrumentId) {
         return this._instruments.isDeleting(instrumentId);
+    }
+
+    isLoadingConfig() {
+        return this._config.isLoading();
     }
 }
