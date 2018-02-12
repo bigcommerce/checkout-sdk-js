@@ -256,6 +256,22 @@ export default class CheckoutService {
     }
 
     /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    loadBillingAddressFields(options) {
+        return this.loadBillingCountries(options);
+    }
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    loadShippingAddressFields(options) {
+        return this.loadShippingCountries(options);
+    }
+
+    /**
      * @param {CustomerCredentials} credentials
      * @param {RequestOptions} [options]
      * @return {Promise<CheckoutSelectors>}

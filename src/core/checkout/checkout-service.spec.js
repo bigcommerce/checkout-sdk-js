@@ -213,6 +213,34 @@ describe('CheckoutService', () => {
         });
     });
 
+    describe('#loadShippingAddressFields()', () => {
+        it('loads config data', async () => {
+            const { checkout } = await checkoutService.loadCheckout();
+
+            expect(checkout.getShippingAddressFields()).toEqual(getAppConfig().storeConfig.formFields.shippingAddressFields);
+        });
+
+        it('loads extra countries data', async () => {
+            const { checkout } = await checkoutService.loadShippingAddressFields();
+
+            expect(checkout.getShippingCountries()).toEqual(getCountriesResponseBody().data);
+        });
+    });
+
+    describe('#loadBillingAddressFields()', () => {
+        it('loads config data', async () => {
+            const { checkout } = await checkoutService.loadCheckout();
+
+            expect(checkout.getBillingAddressFields()).toEqual(getAppConfig().storeConfig.formFields.billingAddressFields);
+        });
+
+        it('loads extra countries data', async () => {
+            const { checkout } = await checkoutService.loadBillingAddressFields();
+
+            expect(checkout.getBillingCountries()).toEqual(getCountriesResponseBody().data);
+        });
+    });
+
     describe('#verifyCart()', () => {
         it('verifies cart data', async () => {
             await checkoutService.loadCheckout();
