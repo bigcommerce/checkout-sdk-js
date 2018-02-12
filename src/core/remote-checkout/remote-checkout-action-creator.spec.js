@@ -31,7 +31,7 @@ describe('RemoteCheckoutActionCreator', () => {
         expect(requestSender.initializeBilling).toHaveBeenCalledWith('amazon', params, options);
         expect(actions).toEqual([
             { type: actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED },
-            { type: actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED, payload: response.body.data },
+            { type: actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED, payload: response.body },
         ]);
     });
 
@@ -71,7 +71,7 @@ describe('RemoteCheckoutActionCreator', () => {
         expect(requestSender.initializeShipping).toHaveBeenCalledWith('amazon', params, options);
         expect(actions).toEqual([
             { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED },
-            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, payload: response.body.data },
+            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, payload: response.body },
         ]);
     });
 
@@ -111,7 +111,7 @@ describe('RemoteCheckoutActionCreator', () => {
         expect(requestSender.initializePayment).toHaveBeenCalledWith('amazon', params, options);
         expect(actions).toEqual([
             { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED },
-            { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED, payload: response.body.data },
+            { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED, payload: response.body },
         ]);
     });
 

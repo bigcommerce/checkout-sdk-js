@@ -34,27 +34,18 @@ export function getRemoteCheckoutMeta(): RemoteCheckoutMeta {
 
 export function getRemoteBillingResponseBody(): any {
     return {
-        data: {
-            address: getBillingAddress(),
-        },
-        meta: {},
+        address: getBillingAddress(),
     };
 }
 
 export function getRemoteShippingResponseBody(): any {
     return {
-        data: {
-            address: getShippingAddress(),
-        },
-        meta: {},
+        address: getShippingAddress(),
     };
 }
 
 export function getRemotePaymentResponseBody(): any {
     return {
-        data: {
-            payment: true,
-        },
-        meta: {},
+        payment: true,
     };
 }
