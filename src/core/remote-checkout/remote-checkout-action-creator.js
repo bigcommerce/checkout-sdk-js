@@ -23,8 +23,8 @@ export default class RemoteCheckoutActionCreator {
             observer.next(createAction(actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED));
 
             this._remoteCheckoutRequestSender.initializeBilling(methodName, params, options)
-                .then(({ body: { data } = {} }) => {
-                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED, data));
+                .then(({ body = {} }) => {
+                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch(response => {
@@ -45,8 +45,8 @@ export default class RemoteCheckoutActionCreator {
             observer.next(createAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED));
 
             this._remoteCheckoutRequestSender.initializeShipping(methodName, params, options)
-                .then(({ body: { data } = {} }) => {
-                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, data));
+                .then(({ body = {} }) => {
+                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch(response => {
@@ -69,8 +69,8 @@ export default class RemoteCheckoutActionCreator {
             observer.next(createAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED));
 
             this._remoteCheckoutRequestSender.initializePayment(methodName, params, options)
-                .then(({ body: { data } = {} }) => {
-                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED, data));
+                .then(({ body = {} }) => {
+                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch(response => {

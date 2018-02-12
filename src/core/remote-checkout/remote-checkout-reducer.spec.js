@@ -8,13 +8,13 @@ describe('remoteCheckoutReducer', () => {
         const response = getResponse(getRemoteBillingResponseBody());
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED,
-            payload: response.body.data,
+            payload: response.body,
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 data: {
-                    billingAddress: response.body.data.address,
+                    billingAddress: response.body.address,
                 },
                 errors: {
                     initializeBillingError: undefined,
@@ -62,13 +62,13 @@ describe('remoteCheckoutReducer', () => {
         const response = getResponse(getRemoteShippingResponseBody());
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED,
-            payload: response.body.data,
+            payload: response.body,
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 data: {
-                    shippingAddress: response.body.data.address,
+                    shippingAddress: response.body.address,
                 },
                 errors: {
                     initializeShippingError: undefined,
@@ -116,13 +116,13 @@ describe('remoteCheckoutReducer', () => {
         const response = getResponse(getRemotePaymentResponseBody());
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED,
-            payload: response.body.data,
+            payload: response.body,
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 data: {
-                    isPaymentInitialized: response.body.data.payment,
+                    isPaymentInitialized: response.body.payment,
                 },
                 errors: {
                     initializePaymentError: undefined,
