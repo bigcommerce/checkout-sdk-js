@@ -37,6 +37,7 @@ export function getUnitedStates() {
         code: 'US',
         name: 'United States',
         hasPostalCodes: true,
+        subdivisions: [],
     };
 }
 
@@ -45,5 +46,6 @@ export function getJapan() {
         code: 'JP',
         name: 'Japan',
         hasPostalCodes: false,
+        subdivisions: [],
     };
 }
