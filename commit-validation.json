@@ -4,6 +4,7 @@
         "cart",
         "checkout",
         "common",
+        "forms",
         "order",
         "payment",
         "shipping",

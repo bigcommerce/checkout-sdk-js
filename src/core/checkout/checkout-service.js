@@ -9,6 +9,7 @@ export default class CheckoutService {
      * @param {Registry<ShippingStrategy>} shippingStrategyRegistry
      * @param {BillingAddressActionCreator} billingAddressActionCreator
      * @param {CartActionCreator} cartActionCreator
+     * @param {ConfigActionCreator} configActionCreator
      * @param {CountryActionCreator} countryActionCreator
      * @param {CouponActionCreator} couponActionCreator
      * @param {CustomerActionCreator} customerActionCreator
@@ -26,6 +27,7 @@ export default class CheckoutService {
         shippingStrategyRegistry,
         billingAddressActionCreator,
         cartActionCreator,
+        configActionCreator,
         countryActionCreator,
         couponActionCreator,
         customerActionCreator,
@@ -42,6 +44,7 @@ export default class CheckoutService {
         this._shippingStrategyRegistry = shippingStrategyRegistry;
         this._billingAddressActionCreator = billingAddressActionCreator;
         this._cartActionCreator = cartActionCreator;
+        this._configActionCreator = configActionCreator;
         this._countryActionCreator = countryActionCreator;
         this._couponActionCreator = couponActionCreator;
         this._customerActionCreator = customerActionCreator;
@@ -85,9 +88,10 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     loadCheckout(options) {
-        const action = this._quoteActionCreator.loadQuote(options);
-
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._configActionCreator.loadConfig(options), { queueId: 'config' }),
+        ]).then(() => this._store.getState());
     }
 
     /**
@@ -249,6 +253,22 @@ export default class CheckoutService {
         const action = this._shippingCountryActionCreator.loadCountries(options);
 
         return this._store.dispatch(action, { queueId: 'shippingCountries' });
+    }
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    loadBillingAddressFields(options) {
+        return this.loadBillingCountries(options);
+    }
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    loadShippingAddressFields(options) {
+        return this.loadShippingCountries(options);
     }
 
     /**

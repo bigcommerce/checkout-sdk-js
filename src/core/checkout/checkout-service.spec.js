@@ -3,6 +3,7 @@ import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
+import { ConfigActionCreator } from '../config';
 import { CountryActionCreator } from '../geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { CustomerActionCreator } from '../customer';
@@ -13,6 +14,7 @@ import { QuoteActionCreator } from '../quote';
 import { ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
 import { MissingDataError } from '../common/error/errors';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
+import { getAppConfig } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/billing-address.mock';
 import { getCartResponseBody } from '../cart/carts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -20,7 +22,6 @@ import { getCouponResponseBody } from '../coupon/coupon.mock';
 import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } from '../order/orders.mock';
 import { getCustomerResponseBody, getGuestCustomer } from '../customer/customers.mock';
 import { getGiftCertificateResponseBody } from '../coupon/gift-certificate.mock';
-import { getAppConfig } from '../config/configs.mock.js';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
 import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
@@ -43,6 +44,10 @@ describe('CheckoutService', () => {
         checkoutClient = {
             loadCart: jest.fn(() =>
                 Promise.resolve(getResponse(getCartResponseBody()))
+            ),
+
+            loadConfig: jest.fn(() =>
+                Promise.resolve(getResponse(getAppConfig()))
             ),
 
             loadCountries: jest.fn(() =>
@@ -157,6 +162,7 @@ describe('CheckoutService', () => {
             shippingStrategyRegistry,
             new BillingAddressActionCreator(checkoutClient),
             new CartActionCreator(checkoutClient),
+            new ConfigActionCreator(checkoutClient),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(checkoutClient),
             new CustomerActionCreator(checkoutClient),
@@ -186,7 +192,52 @@ describe('CheckoutService', () => {
         it('loads quote data', async () => {
             const { checkout } = await checkoutService.loadCheckout();
 
+            expect(checkoutClient.loadCheckout).toHaveBeenCalled();
             expect(checkout.getQuote()).toEqual(getQuoteResponseBody().data.quote);
+        });
+
+        it('loads config data', async () => {
+            const { checkout } = await checkoutService.loadCheckout();
+
+            expect(checkoutClient.loadConfig).toHaveBeenCalled();
+            expect(checkout.getConfig()).toEqual(getAppConfig());
+        });
+
+        it('dispatches load config action with queue id', async () => {
+            jest.spyOn(store, 'dispatch');
+
+            await checkoutService.loadCheckout();
+
+            expect(store.dispatch).toHaveBeenCalledTimes(2);
+            expect(store.dispatch).toHaveBeenCalledWith(expect.any(Observable), { queueId: 'config' });
+        });
+    });
+
+    describe('#loadShippingAddressFields()', () => {
+        it('loads config data', async () => {
+            const { checkout } = await checkoutService.loadCheckout();
+
+            expect(checkout.getShippingAddressFields()).toEqual(getAppConfig().storeConfig.formFields.shippingAddressFields);
+        });
+
+        it('loads extra countries data', async () => {
+            const { checkout } = await checkoutService.loadShippingAddressFields();
+
+            expect(checkout.getShippingCountries()).toEqual(getCountriesResponseBody().data);
+        });
+    });
+
+    describe('#loadBillingAddressFields()', () => {
+        it('loads config data', async () => {
+            const { checkout } = await checkoutService.loadCheckout();
+
+            expect(checkout.getBillingAddressFields()).toEqual(getAppConfig().storeConfig.formFields.billingAddressFields);
+        });
+
+        it('loads extra countries data', async () => {
+            const { checkout } = await checkoutService.loadBillingAddressFields();
+
+            expect(checkout.getBillingCountries()).toEqual(getCountriesResponseBody().data);
         });
     });
 
