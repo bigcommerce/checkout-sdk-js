@@ -40,7 +40,6 @@
     "test:coverage": "yarn test -- --coverage",
     "test:series": "yarn test -- --runInBand",
     "test:watch": "yarn test -- --watch",
-    "travis": "yarn lint && yarn test:series --  --coverage",
     "validate-commits": "validate-commits",
     "validate-dependencies": "yarn install --check-files --frozen-lockfile"
   },
