@@ -13,6 +13,7 @@ export default class CheckoutStatusSelector {
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
      * @param {RemoteCheckoutSelector} remoteCheckout
+     * @param {ShippingSelector} shipping
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
@@ -30,6 +31,7 @@ export default class CheckoutStatusSelector {
         paymentMethods,
         quote,
         remoteCheckout,
+        shipping,
         shippingAddress,
         shippingCountries,
         shippingOptions
@@ -46,6 +48,7 @@ export default class CheckoutStatusSelector {
         this._paymentMethods = paymentMethods;
         this._quote = quote;
         this._remoteCheckout = remoteCheckout;
+        this._shipping = shipping;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
@@ -205,10 +208,11 @@ export default class CheckoutStatusSelector {
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isInitializingShipping() {
-        return this._remoteCheckout.isInitializingShipping();
+    isInitializingShipping(methodId) {
+        return this._shipping.isInitializing(methodId) || this._remoteCheckout.isInitializingShipping(methodId);
     }
 
     /**

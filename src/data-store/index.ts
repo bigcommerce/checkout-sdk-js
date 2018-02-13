@@ -1,3 +1,4 @@
+export { default as Action } from './action';
 export { default as DataStore } from './data-store';
 export { default as DispatchableDataStore } from './dispatchable-data-store';
 export { default as ReadableDataStore } from './readable-data-store';

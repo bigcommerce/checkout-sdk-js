@@ -70,8 +70,8 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(requestSender.initializeShipping).toHaveBeenCalledWith('amazon', params, options);
         expect(actions).toEqual([
-            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED },
-            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, payload: response.body },
+            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED, meta: { methodId: 'amazon' } },
+            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, payload: response.body, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -87,11 +87,11 @@ describe('RemoteCheckoutActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED },
+                { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED, meta: { methodId: 'amazon' } },
             ]);
         } catch (error) {
             expect(error).toEqual(
-                { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED, error: true, payload: response }
+                { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED, error: true, payload: response, meta: { methodId: 'amazon' } }
             );
         }
     });

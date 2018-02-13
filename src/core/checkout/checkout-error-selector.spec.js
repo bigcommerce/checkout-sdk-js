@@ -12,6 +12,7 @@ import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CheckoutErrorSelector from './checkout-error-selector';
+import ShippingSelector from '../shipping/shipping-selector';
 
 describe('CheckoutErrorSelector', () => {
     let billingAddress;
@@ -28,6 +29,7 @@ describe('CheckoutErrorSelector', () => {
     let paymentMethods;
     let quote;
     let remoteCheckout;
+    let shipping;
     let shippingAddress;
     let shippingCountries;
     let shippingOptions;
@@ -45,6 +47,7 @@ describe('CheckoutErrorSelector', () => {
         paymentMethods = new PaymentMethodSelector();
         quote = new QuoteSelector();
         remoteCheckout = new RemoteCheckoutSelector();
+        shipping = new ShippingSelector();
         shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
         shippingOptions = new ShippingOptionSelector();
@@ -62,6 +65,7 @@ describe('CheckoutErrorSelector', () => {
             paymentMethods,
             quote,
             remoteCheckout,
+            shipping,
             shippingAddress,
             shippingCountries,
             shippingOptions
@@ -349,6 +353,32 @@ describe('CheckoutErrorSelector', () => {
 
             expect(errors.getUpdateShippingAddressError()).toEqual(undefined);
             expect(shippingAddress.getUpdateError).toHaveBeenCalled();
+        });
+    });
+
+    describe('#getInitializePaymentMethodError()', () => {
+        it('returns error if unable to initialize shipping', () => {
+            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue();
+            jest.spyOn(shipping, 'getInitializeError').mockReturnValue(errorResponse);
+
+            expect(errors.getInitializeShippingError('foobar')).toEqual(errorResponse);
+            expect(shipping.getInitializeError).toHaveBeenCalledWith('foobar');
+        });
+
+        it('returns error if unable to initialize remote shipping', () => {
+            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue(errorResponse);
+            jest.spyOn(shipping, 'getInitializeError').mockReturnValue();
+
+            expect(errors.getInitializeShippingError('foobar')).toEqual(errorResponse);
+            expect(remoteCheckout.getInitializeShippingError).toHaveBeenCalledWith('foobar');
+        });
+
+        it('returns undefined if able to initialize shipping', () => {
+            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue();
+            jest.spyOn(shipping, 'getInitializeError').mockReturnValue();
+
+            expect(errors.getInitializeShippingError('foobar')).toEqual(undefined);
+            expect(shipping.getInitializeError).toHaveBeenCalledWith('foobar');
         });
     });
 

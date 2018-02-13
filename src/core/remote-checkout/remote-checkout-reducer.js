@@ -72,10 +72,18 @@ function errorsReducer(errors = {}, action) {
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED:
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED:
-        return { ...errors, initializeShippingError: undefined };
+        return {
+            ...errors,
+            failedShippingMethod: undefined,
+            initializeShippingError: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED:
-        return { ...errors, initializeShippingError: action.payload };
+        return {
+            ...errors,
+            failedShippingMethod: action.meta && action.meta.methodId,
+            initializeShippingError: action.payload,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED:
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
@@ -120,11 +128,19 @@ function statusesReducer(statuses = {}, action) {
         return { ...statuses, isInitializingBilling: false };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED:
-        return { ...statuses, isInitializingShipping: true };
+        return {
+            ...statuses,
+            isInitializingShipping: true,
+            loadingShippingMethod: action.meta && action.meta.methodId,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED:
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED:
-        return { ...statuses, isInitializingShipping: false };
+        return {
+            ...statuses,
+            isInitializingShipping: false,
+            loadingShippingMethod: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED:
         return {

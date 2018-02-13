@@ -13,6 +13,7 @@ export default class CheckoutErrorSelector {
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
      * @param {RemoteCheckout} remoteCheckout
+     * @param {ShippingSelector} shipping
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
@@ -30,6 +31,7 @@ export default class CheckoutErrorSelector {
         paymentMethods,
         quote,
         remoteCheckout,
+        shipping,
         shippingAddress,
         shippingCountries,
         shippingOptions
@@ -46,6 +48,7 @@ export default class CheckoutErrorSelector {
         this._paymentMethods = paymentMethods;
         this._quote = quote;
         this._remoteCheckout = remoteCheckout;
+        this._shipping = shipping;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
@@ -72,6 +75,7 @@ export default class CheckoutErrorSelector {
             this.getSignOutError() ||
             this.getUpdateBillingAddressError() ||
             this.getUpdateShippingAddressError() ||
+            this.getInitializeShippingError() ||
             this.getApplyCouponError() ||
             this.getRemoveCouponError() ||
             this.getApplyGiftCertificateError() ||
@@ -201,6 +205,14 @@ export default class CheckoutErrorSelector {
      */
     getUpdateShippingAddressError() {
         return this._shippingAddress.getUpdateError();
+    }
+
+    /**
+     * @param {string} methodId
+     * @return {?ErrorResponse}
+     */
+    getInitializeShippingError(methodId) {
+        return this._shipping.getInitializeError(methodId) || this._remoteCheckout.getInitializeShippingError(methodId);
     }
 
     /**

@@ -34,23 +34,23 @@ export default class RemoteCheckoutActionCreator {
     }
 
     /**
-     * @param {string} methodName
+     * @param {string} methodId
      * @param {Object} params
      * @param {string} [params.referenceId]
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */
-    initializeShipping(methodName, params, options) {
+    initializeShipping(methodId, params, options) {
         return Observable.create((observer) => {
-            observer.next(createAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED));
+            observer.next(createAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED, undefined, { methodId }));
 
-            this._remoteCheckoutRequestSender.initializeShipping(methodName, params, options)
+            this._remoteCheckoutRequestSender.initializeShipping(methodId, params, options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, body));
+                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, body, { methodId }));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED, response));
+                    observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED, response, { methodId }));
                 });
         });
     }

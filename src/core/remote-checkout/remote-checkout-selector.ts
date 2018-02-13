@@ -19,7 +19,11 @@ export default class RemoteCheckoutSelector {
         return this._remoteCheckout.errors.initializeBillingError;
     }
 
-    getInitializeShippingError(): any {
+    getInitializeShippingError(methodId?: string): any {
+        if (methodId && this._remoteCheckout.errors.failedShippingMethod !== methodId) {
+            return false;
+        }
+
         return this._remoteCheckout.errors.initializeShippingError;
     }
 

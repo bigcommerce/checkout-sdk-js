@@ -6,6 +6,7 @@ export default interface RemoteCheckoutState {
     meta?: RemoteCheckoutMeta;
     errors: {
         failedPaymentMethod?: string;
+        failedShippingMethod?: string;
         initializeBillingError?: any;
         initializeShippingError?: any;
         initializePaymentError?: any;
@@ -13,6 +14,7 @@ export default interface RemoteCheckoutState {
     };
     statuses: {
         loadingPaymentMethod?: string;
+        loadingShippingMethod?: string;
         isInitializingBilling?: boolean;
         isInitializingShipping?: boolean;
         isInitializingPayment?: boolean;
