@@ -14,19 +14,20 @@ import { CacheFactory } from '../common/cache';
 import { getCartState } from '../cart/carts.mock';
 import { getCompleteOrderState } from '../order/orders.mock';
 import { getConfigState } from '../config/configs.mock';
-import { getCountriesState } from '../geography/countries.mock';
+import { getCountries, getCountriesState } from '../geography/countries.mock';
 import { getCustomerState } from '../customer/customers.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { getBraintree, getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import { getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
-import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
+import { getShippingCountries, getShippingCountriesState } from '../shipping/shipping-countries.mock';
 import { getShippingOptionsState } from '../shipping/shipping-options.mock';
 import CheckoutSelector from './checkout-selector';
 
 describe('CheckoutSelector', () => {
     let cacheFactory;
     let orderSelector;
+    let formSelector;
     let selector;
     let state;
 
@@ -47,6 +48,7 @@ describe('CheckoutSelector', () => {
 
         cacheFactory = new CacheFactory();
         orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
+        formSelector = new FormSelector(state.config);
 
         selector = new CheckoutSelector(
             new BillingAddressSelector(state.quote),
@@ -54,7 +56,7 @@ describe('CheckoutSelector', () => {
             new ConfigSelector(state.config),
             new CountrySelector(state.countries),
             new CustomerSelector(state.customer),
-            new FormSelector(state.config),
+            formSelector,
             new InstrumentSelector(state.instruments),
             orderSelector,
             new PaymentMethodSelector(state.paymentMethods),
@@ -147,10 +149,16 @@ describe('CheckoutSelector', () => {
     });
 
     it('returns shipping address fields', () => {
-        expect(selector.getShippingAddressFields()).toEqual(state.config.data.storeConfig.formFields.shippingAddressFields);
+        jest.spyOn(formSelector, 'getShippingAddressFields').mockImplementation(() => {});
+        selector.getShippingAddressFields('AU');
+        expect(formSelector.getShippingAddressFields)
+            .toHaveBeenCalledWith(getShippingCountries(), 'AU');
     });
 
     it('returns billing address fields', () => {
-        expect(selector.getBillingAddressFields()).toEqual(state.config.data.storeConfig.formFields.billingAddressFields);
+        jest.spyOn(formSelector, 'getBillingAddressFields').mockImplementation(() => {});
+        selector.getBillingAddressFields('US');
+        expect(formSelector.getBillingAddressFields)
+            .toHaveBeenCalledWith(getCountries(), 'US');
     });
 });

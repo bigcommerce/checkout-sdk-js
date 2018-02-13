@@ -212,14 +212,14 @@ export default class CheckoutSelector {
     /**
      * @return {Field[]}
      */
-    getBillingAddressFields() {
-        return this._form.getBillingAddressFields();
+    getBillingAddressFields(countryCode) {
+        return this._form.getBillingAddressFields(this.getBillingCountries(), countryCode);
     }
 
     /**
      * @return {Field[]}
      */
-    getShippingAddressFields() {
-        return this._form.getShippingAddressFields();
+    getShippingAddressFields(countryCode) {
+        return this._form.getShippingAddressFields(this.getShippingCountries(), countryCode);
     }
 }

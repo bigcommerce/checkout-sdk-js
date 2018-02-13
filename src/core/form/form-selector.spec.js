@@ -1,8 +1,11 @@
+import { find, map } from 'lodash';
 import { getAppConfig } from '../config/configs.mock';
 import FormSelector from './form-selector';
+import { getCountries } from '../geography/countries.mock';
+import { getShippingCountries } from '../shipping/shipping-countries.mock';
+import { getFormFields } from './form.mocks';
 
 describe('FormSelector', () => {
-    let formSelector;
     let state;
 
     beforeEach(() => {
@@ -14,20 +17,155 @@ describe('FormSelector', () => {
     });
 
     describe('#getShippingAddressFields()', () => {
-        it('returns the shipping address form fields', () => {
-            formSelector = new FormSelector(state.config);
+        let formSelector;
+        let countries;
 
-            expect(formSelector.getShippingAddressFields())
-                .toEqual(state.config.data.storeConfig.formFields.shippingAddressFields);
+        beforeEach(() => {
+            formSelector = new FormSelector(state.config);
+            countries = getShippingCountries();
+        });
+
+        it('returns the shipping address form fields', () => {
+            const expected = getFormFields();
+            const result = formSelector.getShippingAddressFields();
+
+            expect(map(result, 'id')).toEqual(map(expected, 'id'));
+        });
+
+        it('includes the countries as options for the country field', () => {
+            const forms = formSelector.getShippingAddressFields(countries);
+            const country = find(forms, { name: 'countryCode' });
+
+            expect(country.fieldType).toBe('dropdown');
+            expect(country.options.items).toEqual([
+                { value: 'AU', label: 'Australia' },
+                { value: 'JP', label: 'Japan' },
+            ]);
+        });
+
+        it('sets the default country to the selected one', () => {
+            const forms = formSelector.getShippingAddressFields(countries, 'JP');
+            const country = find(forms, { name: 'countryCode' });
+
+            expect(country.default).toEqual('JP');
+        });
+
+        it('includes the provinces for the selected country', () => {
+            const forms = formSelector.getShippingAddressFields(countries, 'AU');
+            const province = find(forms, { name: 'provinceCode' });
+
+            expect(province.required).toBe(true);
+            expect(province.fieldType).toBe('dropdown');
+            expect(province.options.items).toEqual([
+                { value: 'NSW', label: 'New South Wales' },
+            ]);
+        });
+
+        it('does not make provinces required if we do not have them in the countries list', () => {
+            const forms = formSelector.getShippingAddressFields(countries, 'JP');
+            const province = find(forms, { name: 'province' });
+
+            expect(province.required).toBe(false);
+            expect(province.fieldType).not.toBe('dropdown');
+        });
+
+        it('makes postcode required for countries that require it', () => {
+            const forms = formSelector.getShippingAddressFields(countries, 'AU');
+            const postCode = find(forms, { name: 'postCode' });
+
+            expect(postCode.required).toBe(true);
+        });
+
+        it('makes postcode NOT required for countries that DO NOT require it', () => {
+            const forms = formSelector.getShippingAddressFields(countries, 'JP');
+            const postCode = find(forms, { name: 'postCode' });
+
+            expect(postCode.required).toBe(false);
+        });
+
+        it('makes phone number NOT required', () => {
+            const forms = formSelector.getShippingAddressFields(countries, 'JP');
+            const phone = find(forms, { name: 'phone' });
+
+            expect(find(getFormFields(), { name: 'phone' }).required).toBe(true);
+            expect(phone.required).toBe(false);
         });
     });
 
     describe('#getBillingAddressFields()', () => {
-        it('returns the billing address form fields', () => {
-            formSelector = new FormSelector(state.config);
+        let formSelector;
+        let countries;
 
-            expect(formSelector.getBillingAddressFields())
-                .toEqual(state.config.data.storeConfig.formFields.billingAddressFields);
+        beforeEach(() => {
+            formSelector = new FormSelector(state.config);
+            countries = getCountries();
+        });
+
+        it('returns the billing address form fields', () => {
+            const expected = getFormFields();
+            const result = formSelector.getBillingAddressFields();
+
+            expect(map(result, 'id')).toEqual(map(expected, 'id'));
+        });
+
+        it('includes the countries as options for the country field', () => {
+            const forms = formSelector.getBillingAddressFields(countries);
+            const country = find(forms, { name: 'countryCode' });
+
+            expect(country.fieldType).toBe('dropdown');
+            expect(country.options.items).toEqual([
+                { value: 'AU', label: 'Australia' },
+                { value: 'US', label: 'United States' },
+                { value: 'JP', label: 'Japan' },
+            ]);
+        });
+
+        it('sets the default country to the selected one', () => {
+            const forms = formSelector.getBillingAddressFields(countries, 'US');
+            const country = find(forms, { name: 'countryCode' });
+
+            expect(country.default).toEqual('US');
+        });
+
+        it('includes the provinces for the selected country', () => {
+            const forms = formSelector.getBillingAddressFields(countries, 'AU');
+            const province = find(forms, { name: 'provinceCode' });
+
+            expect(province.required).toBe(true);
+            expect(province.fieldType).toBe('dropdown');
+            expect(province.options.items).toEqual([
+                { value: 'NSW', label: 'New South Wales' },
+                { value: 'VIC', label: 'Victoria' },
+            ]);
+        });
+
+        it('does not make provinces required if we do not have them in the countries list', () => {
+            const forms = formSelector.getBillingAddressFields(countries, 'US');
+            const province = find(forms, { name: 'province' });
+
+            expect(province.required).toBe(false);
+            expect(province.fieldType).not.toBe('dropdown');
+        });
+
+        it('makes postcode required for countries that require it', () => {
+            const forms = formSelector.getBillingAddressFields(countries, 'AU');
+            const postCode = find(forms, { name: 'postCode' });
+
+            expect(postCode.required).toBe(true);
+        });
+
+        it('makes postcode NOT required for countries that DO NOT require it', () => {
+            const forms = formSelector.getBillingAddressFields(countries, 'JP');
+            const postCode = find(forms, { name: 'postCode' });
+
+            expect(postCode.required).toBe(false);
+        });
+
+        it('does not modify the required value for phone number', () => {
+            const forms = formSelector.getBillingAddressFields(countries, 'JP');
+            const phone = find(forms, { name: 'phone' });
+
+            expect(phone.required).toBe(true);
         });
     });
 });

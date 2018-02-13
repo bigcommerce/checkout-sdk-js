@@ -1,3 +1,5 @@
+import { getFormFields } from '../form/form.mocks';
+
 export function getLegacyAppConfig() {
     return {
         bigpayBaseUrl: 'https://bigpay.integration.zone',
@@ -123,8 +125,8 @@ export function getAppConfig() {
                 thousandsSeparator: ',',
             },
             formFields: {
-                shippingAddressFields: [],
-                billingAddressFields: [],
+                shippingAddressFields: getFormFields(),
+                billingAddressFields: getFormFields(),
             },
             links: {
                 cartLink: 'https://store-k1drp8k8.bcapp.dev/cart.php',
