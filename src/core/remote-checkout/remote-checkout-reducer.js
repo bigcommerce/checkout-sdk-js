@@ -79,10 +79,18 @@ function errorsReducer(errors = {}, action) {
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED:
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
-        return { ...errors, initializePaymentError: undefined };
+        return {
+            ...errors,
+            failedPaymentMethod: undefined,
+            initializePaymentError: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED:
-        return { ...errors, initializePaymentError: action.payload };
+        return {
+            ...errors,
+            failedPaymentMethod: action.meta && action.meta.methodId,
+            initializePaymentError: action.payload,
+        };
 
     case actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED:
     case actionTypes.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED:
@@ -119,11 +127,19 @@ function statusesReducer(statuses = {}, action) {
         return { ...statuses, isInitializingShipping: false };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED:
-        return { ...statuses, isInitializingPayment: true };
+        return {
+            ...statuses,
+            isInitializingPayment: true,
+            loadingPaymentMethod: action.meta && action.meta.methodId,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED:
-        return { ...statuses, isInitializingPayment: false };
+        return {
+            ...statuses,
+            isInitializingPayment: false,
+            loadingPaymentMethod: undefined,
+        };
 
     case actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED:
         return { ...statuses, isSigningOut: true };

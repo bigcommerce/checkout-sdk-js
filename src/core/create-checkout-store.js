@@ -137,6 +137,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         order,
         paymentMethods,
         quote,
+        remoteCheckout,
         shippingAddress,
         shippingCountries,
         shippingOptions

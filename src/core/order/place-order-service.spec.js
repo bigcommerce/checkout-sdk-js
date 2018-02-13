@@ -17,6 +17,7 @@ import PlaceOrderService from './place-order-service';
 describe('PlaceOrderService', () => {
     let orderActionCreator;
     let paymentActionCreator;
+    let paymentMethodActionCreator;
     let placeOrderService;
     let store;
 
@@ -32,6 +33,10 @@ describe('PlaceOrderService', () => {
             submitPayment: jest.fn(() => createAction('SUBMIT_PAYMENT')),
         };
 
+        paymentMethodActionCreator = {
+            initializePaymentMethod: jest.fn(() => createAction('INITALIZE_PAYMENT_METHOD')),
+        };
+
         store = createCheckoutStore({
             cart: getCartState(),
             config: getConfigState(),
@@ -43,7 +48,7 @@ describe('PlaceOrderService', () => {
             shippingOptions: getShippingOptionsState(),
         });
 
-        placeOrderService = new PlaceOrderService(store, orderActionCreator, paymentActionCreator);
+        placeOrderService = new PlaceOrderService(store, orderActionCreator, paymentActionCreator, paymentMethodActionCreator);
     });
 
     describe('#submitOrder()', () => {

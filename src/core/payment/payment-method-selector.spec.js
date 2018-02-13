@@ -103,7 +103,7 @@ describe('PaymentMethodSelector', () => {
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                errors: { loadMethodError, failedMethod: 'braintree' },
+                errors: { loadMethodError, loadMethod: 'braintree' },
             }, state.order);
 
             expect(paymentMethodSelector.getLoadMethodError('braintree')).toEqual(loadMethodError);
@@ -120,7 +120,7 @@ describe('PaymentMethodSelector', () => {
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                errors: { loadMethodError, failedMethod: 'authorizenet' },
+                errors: { loadMethodError, loadMethod: 'authorizenet' },
             }, state.order);
 
             expect(paymentMethodSelector.getLoadMethodError('braintree')).toBeUndefined();
@@ -131,10 +131,51 @@ describe('PaymentMethodSelector', () => {
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                errors: { loadMethodError, failedMethod: 'braintree' },
+                errors: { loadMethodError, loadMethod: 'braintree' },
             }, state.order);
 
             expect(paymentMethodSelector.getLoadMethodError()).toEqual(loadMethodError);
+        });
+    });
+
+    describe('#getInitializeError()', () => {
+        it('returns error if unable to initialize', () => {
+            const initializeError = getErrorResponse();
+
+            paymentMethodSelector = new PaymentMethodSelector({
+                ...state.paymentMethods,
+                errors: { initializeError, initializeMethod: 'braintree' },
+            }, state.order);
+
+            expect(paymentMethodSelector.getInitializeError('braintree')).toEqual(initializeError);
+        });
+
+        it('does not returns error if able to initialize', () => {
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+
+            expect(paymentMethodSelector.getInitializeError('braintree')).toBeUndefined();
+        });
+
+        it('does not returns error if unable to initialize irrelevant method', () => {
+            const initializeError = getErrorResponse();
+
+            paymentMethodSelector = new PaymentMethodSelector({
+                ...state.paymentMethods,
+                errors: { initializeError, initializeMethod: 'authorizenet' },
+            }, state.order);
+
+            expect(paymentMethodSelector.getInitializeError('braintree')).toBeUndefined();
+        });
+
+        it('returns any error if method id is not passed', () => {
+            const initializeError = getErrorResponse();
+
+            paymentMethodSelector = new PaymentMethodSelector({
+                ...state.paymentMethods,
+                errors: { initializeError, initializeMethod: 'braintree' },
+            }, state.order);
+
+            expect(paymentMethodSelector.getInitializeError()).toEqual(initializeError);
         });
     });
 
@@ -190,6 +231,44 @@ describe('PaymentMethodSelector', () => {
             }, state.order);
 
             expect(paymentMethodSelector.isLoadingMethod()).toEqual(true);
+        });
+    });
+
+    describe('#isInitializingMethod()', () => {
+        it('returns true if loading payment method', () => {
+            paymentMethodSelector = new PaymentMethodSelector({
+                ...state.paymentMethods,
+                statuses: { isInitializing: true, initializingMethod: 'braintree' },
+            }, state.order);
+
+            expect(paymentMethodSelector.isInitializingMethod('braintree')).toEqual(true);
+        });
+
+        it('returns false if not loading payment method', () => {
+            paymentMethodSelector = new PaymentMethodSelector({
+                ...state.paymentMethods,
+                statuses: { isInitializing: false, initializingMethod: undefined },
+            }, state.order);
+
+            expect(paymentMethodSelector.isInitializingMethod('braintree')).toEqual(false);
+        });
+
+        it('returns false if not loading specific payment method', () => {
+            paymentMethodSelector = new PaymentMethodSelector({
+                ...state.paymentMethods,
+                statuses: { isInitializing: true, initializingMethod: 'authorizenet' },
+            }, state.order);
+
+            expect(paymentMethodSelector.isInitializingMethod('braintree')).toEqual(false);
+        });
+
+        it('returns any loading status if method id is not passed', () => {
+            paymentMethodSelector = new PaymentMethodSelector({
+                ...state.paymentMethods,
+                statuses: { isInitializing: true, initializingMethod: 'braintree' },
+            }, state.order);
+
+            expect(paymentMethodSelector.isInitializingMethod()).toEqual(true);
         });
     });
 });

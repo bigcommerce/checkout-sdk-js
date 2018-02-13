@@ -27,6 +27,7 @@ declare namespace OffAmazonPayments.Widgets {
             designMode: string;
         };
         onError: (error: WidgetError) => void;
+        onReady: (orderReference: OrderReference) => void;
         onPaymentSelect: (orderReference: OrderReference) => void;
     }
 

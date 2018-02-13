@@ -37,6 +37,10 @@ describe('AmazonPayPaymentStrategy', () => {
     class Wallet implements OffAmazonPayments.Widgets.Wallet {
         constructor(public options: OffAmazonPayments.Widgets.WalletOptions) {
             walletSpy(options);
+
+            options.onReady({
+                getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
+            });
         }
 
         bind(id: string) {
@@ -115,6 +119,15 @@ describe('AmazonPayPaymentStrategy', () => {
 
         expect(remoteCheckoutService.initializePayment)
             .toHaveBeenCalledWith(paymentMethod.id, getCheckoutMeta().remoteCheckout.amazon);
+    });
+
+    it('resolves with current state if initialization is complete', async () => {
+        jest.spyOn(placeOrderService, 'initializePaymentMethod');
+
+        const output = await strategy.initialize({ container: 'wallet' });
+
+        expect(output).toEqual(store.getState());
+        expect(placeOrderService.initializePaymentMethod).toHaveBeenCalledWith(paymentMethod.id, expect.any(Function));
     });
 
     it('synchronizes address when selecting new payment method', async () => {

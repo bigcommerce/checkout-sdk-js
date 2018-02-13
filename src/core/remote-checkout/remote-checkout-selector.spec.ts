@@ -133,7 +133,7 @@ describe('RemoteCheckoutSelector', () => {
         expect(selector.isInitializingShipping()).toEqual(false);
     });
 
-    it('returns true if initializing payment', () => {
+    it('returns true if initializing any payment method', () => {
         const remoteCheckout = {
             ...getRemoteCheckoutState(),
             statuses: { isInitializingPayment: true },
@@ -143,11 +143,22 @@ describe('RemoteCheckoutSelector', () => {
         expect(selector.isInitializingPayment()).toEqual(true);
     });
 
-    it('returns false if not initializing payment', () => {
+    it('returns false if not initializing any payment method', () => {
         const remoteCheckout = getRemoteCheckoutState();
         const selector = new RemoteCheckoutSelector(remoteCheckout);
 
         expect(selector.isInitializingPayment()).toEqual(false);
+    });
+
+    it('returns true if initializing payment method', () => {
+        const remoteCheckout = {
+            ...getRemoteCheckoutState(),
+            statuses: { isInitializingPayment: true, loadingPaymentMethod: 'foo' },
+        };
+        const selector = new RemoteCheckoutSelector(remoteCheckout);
+
+        expect(selector.isInitializingPayment('foo')).toEqual(true);
+        expect(selector.isInitializingPayment('bar')).toEqual(false);
     });
 
     it('returns true if signing out', () => {

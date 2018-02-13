@@ -8,6 +8,7 @@ import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
+import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
 import CheckoutStatusSelector from './checkout-status-selector';
 
@@ -23,6 +24,7 @@ describe('CheckoutStatusSelector', () => {
     let order;
     let paymentMethods;
     let quote;
+    let remoteCheckout;
     let shippingAddress;
     let shippingCountries;
     let shippingOption;
@@ -40,6 +42,7 @@ describe('CheckoutStatusSelector', () => {
         paymentMethods = new PaymentMethodSelector();
         instruments = new InstrumentSelector();
         quote = new QuoteSelector();
+        remoteCheckout = new RemoteCheckoutSelector();
         shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
         shippingOption = new ShippingOptionSelector();
@@ -56,6 +59,7 @@ describe('CheckoutStatusSelector', () => {
             order,
             paymentMethods,
             quote,
+            remoteCheckout,
             shippingAddress,
             shippingCountries,
             shippingOption
@@ -219,6 +223,29 @@ describe('CheckoutStatusSelector', () => {
 
             expect(statuses.isLoadingPaymentMethod('braintree')).toEqual(false);
             expect(paymentMethods.isLoadingMethod).toHaveBeenCalledWith('braintree');
+        });
+    });
+
+    describe('#isInitializingPaymentMethod()', () => {
+        it('returns true if initializing payment', () => {
+            jest.spyOn(paymentMethods, 'isInitializingMethod').mockReturnValue(true);
+
+            expect(statuses.isInitializingPaymentMethod('foobar')).toEqual(true);
+            expect(paymentMethods.isInitializingMethod).toHaveBeenCalledWith('foobar');
+        });
+
+        it('returns true if initializing remote payment', () => {
+            jest.spyOn(remoteCheckout, 'isInitializingPayment').mockReturnValue(true);
+
+            expect(statuses.isInitializingPaymentMethod()).toEqual(true);
+            expect(remoteCheckout.isInitializingPayment).toHaveBeenCalled();
+        });
+
+        it('returns false if not initializing remote payment', () => {
+            jest.spyOn(remoteCheckout, 'isInitializingPayment').mockReturnValue(false);
+
+            expect(statuses.isInitializingPaymentMethod()).toEqual(false);
+            expect(remoteCheckout.isInitializingPayment).toHaveBeenCalled();
         });
     });
 

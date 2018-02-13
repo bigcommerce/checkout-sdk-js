@@ -110,4 +110,37 @@ describe('PaymentMethodActionCreator', () => {
                 });
         });
     });
+
+    describe('#initializePaymentMethod()', () => {
+        it('calls initializer and notifies progress', async () => {
+            const initializer = jest.fn(() => Promise.resolve(true));
+            const actions = await paymentMethodActionCreator.initializePaymentMethod('foobar', initializer)
+                .toArray()
+                .toPromise();
+
+            expect(initializer).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: actionTypes.INITIALIZE_PAYMENT_METHOD_REQUESTED, meta: { methodId: 'foobar' } },
+                { type: actionTypes.INITIALIZE_PAYMENT_METHOD_SUCCEEDED, payload: true, meta: { methodId: 'foobar' } },
+            ]);
+        });
+
+        it('emits error if initializer fails to complete', async () => {
+            const initializer = jest.fn(() => Promise.reject(false));
+
+            try {
+                const actions = await paymentMethodActionCreator.initializePaymentMethod('foobar', initializer)
+                    .toArray()
+                    .toPromise();
+
+                expect(actions).toEqual([
+                    { type: actionTypes.INITIALIZE_PAYMENT_METHOD_REQUESTED, meta: { methodId: 'foobar' } },
+                ]);
+            } catch (error) {
+                expect(error).toEqual(
+                    { type: actionTypes.INITIALIZE_PAYMENT_METHOD_FAILED, error: true, payload: false, meta: { methodId: 'foobar' } }
+                );
+            }
+        });
+    });
 });

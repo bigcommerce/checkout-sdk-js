@@ -58,15 +58,30 @@ function errorsReducer(errors = {}, action) {
     case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
         return {
             ...errors,
+            loadMethod: undefined,
             loadMethodError: undefined,
-            failedMethod: undefined,
         };
 
     case actionTypes.LOAD_PAYMENT_METHOD_FAILED:
         return {
             ...errors,
+            loadMethod: action.meta.methodId,
             loadMethodError: action.payload,
-            failedMethod: action.meta.methodId,
+        };
+
+    case actionTypes.INITIALIZE_PAYMENT_METHOD_REQUESTED:
+    case actionTypes.INITIALIZE_PAYMENT_METHOD_SUCCEEDED:
+        return {
+            ...errors,
+            initializeMethod: undefined,
+            initializeError: undefined,
+        };
+
+    case actionTypes.INITIALIZE_PAYMENT_METHOD_FAILED:
+        return {
+            ...errors,
+            initializeMethod: action.meta.methodId,
+            initializeError: action.payload,
         };
 
     default:
@@ -102,6 +117,21 @@ function statusesReducer(statuses = {}, action) {
             ...statuses,
             isLoadingMethod: false,
             loadingMethod: undefined,
+        };
+
+    case actionTypes.INITIALIZE_PAYMENT_METHOD_REQUESTED:
+        return {
+            ...statuses,
+            initializingMethod: action.meta && action.meta.methodId,
+            isInitializing: true,
+        };
+
+    case actionTypes.INITIALIZE_PAYMENT_METHOD_SUCCEEDED:
+    case actionTypes.INITIALIZE_PAYMENT_METHOD_FAILED:
+        return {
+            ...statuses,
+            initializingMethod: undefined,
+            isInitializing: false,
         };
 
     default:

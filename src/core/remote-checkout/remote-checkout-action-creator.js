@@ -56,7 +56,7 @@ export default class RemoteCheckoutActionCreator {
     }
 
     /**
-     * @param {string} methodName
+     * @param {string} methodId
      * @param {Object} params
      * @param {string} [params.referenceId]
      * @param {boolean} [params.useStoreCredit]
@@ -64,17 +64,17 @@ export default class RemoteCheckoutActionCreator {
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */
-    initializePayment(methodName, params, options) {
+    initializePayment(methodId, params, options) {
         return Observable.create((observer) => {
-            observer.next(createAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED));
+            observer.next(createAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED, undefined, { methodId }));
 
-            this._remoteCheckoutRequestSender.initializePayment(methodName, params, options)
+            this._remoteCheckoutRequestSender.initializePayment(methodId, params, options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED, body));
+                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED, body, { methodId }));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED, response));
+                    observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED, response, { methodId }));
                 });
         });
     }

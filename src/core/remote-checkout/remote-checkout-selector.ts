@@ -23,7 +23,11 @@ export default class RemoteCheckoutSelector {
         return this._remoteCheckout.errors.initializeShippingError;
     }
 
-    getInitializePaymentError(): any {
+    getInitializePaymentError(methodId?: string): any {
+        if (methodId && this._remoteCheckout.errors.failedPaymentMethod !== methodId) {
+            return false;
+        }
+
         return this._remoteCheckout.errors.initializePaymentError;
     }
 
@@ -39,7 +43,11 @@ export default class RemoteCheckoutSelector {
         return !!this._remoteCheckout.statuses.isInitializingShipping;
     }
 
-    isInitializingPayment(): boolean {
+    isInitializingPayment(methodId?: string): boolean {
+        if (methodId && this._remoteCheckout.statuses.loadingPaymentMethod !== methodId) {
+            return false;
+        }
+
         return !!this._remoteCheckout.statuses.isInitializingPayment;
     }
 
