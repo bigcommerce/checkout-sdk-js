@@ -1,6 +1,6 @@
 export default interface Payment {
     name: string;
-    paymentData: CreditCard | TokenizedCreditCard;
+    paymentData?: CreditCard | TokenizedCreditCard;
     gateway?: string;
     source?: string;
 }
