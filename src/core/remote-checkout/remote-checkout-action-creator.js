@@ -18,17 +18,17 @@ export default class RemoteCheckoutActionCreator {
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */
-    initializeBilling(methodName, params, options) {
+    initializeBilling(methodId, params, options) {
         return Observable.create((observer) => {
-            observer.next(createAction(actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED));
+            observer.next(createAction(actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED, undefined, { methodId }));
 
-            this._remoteCheckoutRequestSender.initializeBilling(methodName, params, options)
+            this._remoteCheckoutRequestSender.initializeBilling(methodId, params, options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED, body));
+                    observer.next(createAction(actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED, body, { methodId }));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_BILLING_FAILED, response));
+                    observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_BILLING_FAILED, response, { methodId }));
                 });
         });
     }

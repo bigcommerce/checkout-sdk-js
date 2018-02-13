@@ -15,7 +15,11 @@ export default class RemoteCheckoutSelector {
         return this._remoteCheckout.meta;
     }
 
-    getInitializeBillingError(): any {
+    getInitializeBillingError(methodId?: string): any {
+        if (methodId && this._remoteCheckout.errors.failedBillingMethod !== methodId) {
+            return false;
+        }
+
         return this._remoteCheckout.errors.initializeBillingError;
     }
 
@@ -39,7 +43,11 @@ export default class RemoteCheckoutSelector {
         return this._remoteCheckout.errors.signOutError;
     }
 
-    isInitializingBilling(): boolean {
+    isInitializingBilling(methodId?: string): boolean {
+        if (methodId && this._remoteCheckout.statuses.loadingBillingMethod !== methodId) {
+            return false;
+        }
+
         return !!this._remoteCheckout.statuses.isInitializingBilling;
     }
 

@@ -9,6 +9,7 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED,
             payload: response.body,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
@@ -17,9 +18,11 @@ describe('remoteCheckoutReducer', () => {
                     billingAddress: response.body.billing.address,
                 },
                 errors: {
+                    failedBillingMethod: undefined,
                     initializeBillingError: undefined,
                 },
                 statuses: {
+                    loadingBillingMethod: undefined,
                     isInitializingBilling: false,
                 },
             }));
@@ -30,15 +33,18 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_BILLING_FAILED,
             payload: response,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 errors: {
+                    failedBillingMethod: 'amazon',
                     initializeBillingError: response,
                 },
                 statuses: {
                     isInitializingBilling: false,
+                    loadingBillingMethod: undefined,
                 },
             }));
     });
@@ -48,12 +54,14 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED,
             payload: response,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 statuses: {
                     isInitializingBilling: true,
+                    loadingBillingMethod: 'amazon',
                 },
             }));
     });

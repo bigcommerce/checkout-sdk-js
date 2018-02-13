@@ -65,10 +65,18 @@ function errorsReducer(errors = {}, action) {
     switch (action.type) {
     case actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED:
     case actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED:
-        return { ...errors, initializeBillingError: undefined };
+        return {
+            ...errors,
+            failedBillingMethod: undefined,
+            initializeBillingError: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_BILLING_FAILED:
-        return { ...errors, initializeBillingError: action.payload };
+        return {
+            ...errors,
+            failedBillingMethod: action.meta && action.meta.methodId,
+            initializeBillingError: action.payload,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED:
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED:
@@ -121,11 +129,19 @@ function errorsReducer(errors = {}, action) {
 function statusesReducer(statuses = {}, action) {
     switch (action.type) {
     case actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED:
-        return { ...statuses, isInitializingBilling: true };
+        return {
+            ...statuses,
+            isInitializingBilling: true,
+            loadingBillingMethod: action.meta && action.meta.methodId,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED:
     case actionTypes.INITIALIZE_REMOTE_BILLING_FAILED:
-        return { ...statuses, isInitializingBilling: false };
+        return {
+            ...statuses,
+            isInitializingBilling: false,
+            loadingBillingMethod: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED:
         return {
