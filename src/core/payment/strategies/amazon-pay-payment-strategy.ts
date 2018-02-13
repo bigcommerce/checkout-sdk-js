@@ -25,11 +25,13 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         super(paymentMethod, store, placeOrderService);
     }
 
-    initialize(options: any): Promise<CheckoutSelectors> {
+    initialize(options: InitializeWidgetOptions): Promise<CheckoutSelectors> {
+        (window as any).onAmazonPaymentsReady = () => {
+            this._wallet = this._createWallet(options);
+        };
+
         return this._scriptLoader.loadWidget(this._paymentMethod)
             .then(() => {
-                this._wallet = this._createWallet(options);
-
                 this._unsubscribe = this._store.subscribe(
                     this._handleGrandTotalChange.bind(this),
                     ({ checkout }) => checkout.getCart() && checkout.getCart().grandTotal

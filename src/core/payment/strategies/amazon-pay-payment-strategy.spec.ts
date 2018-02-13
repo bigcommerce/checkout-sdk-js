@@ -67,7 +67,8 @@ describe('AmazonPayPaymentStrategy', () => {
         document.body.appendChild(container);
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation(() => {
-            (window as any).Widgets = { Wallet };
+            (window as any).OffAmazonPayments = { Widgets: { Wallet } };
+            (window as any).onAmazonPaymentsReady();
 
             return Promise.resolve();
         });
@@ -89,19 +90,13 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('loads widget script', async () => {
-        await strategy.initialize({
-            container: 'wallet',
-            paymentMethod,
-        });
+        await strategy.initialize({ container: 'wallet' });
 
         expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod);
     });
 
     it('initializes payment when selecting new payment method', async () => {
-        await strategy.initialize({
-            container: 'wallet',
-            paymentMethod,
-        });
+        await strategy.initialize({ container: 'wallet' });
 
         document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
 
@@ -110,10 +105,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('synchronizes address when selecting new payment method', async () => {
-        await strategy.initialize({
-            container: 'wallet',
-            paymentMethod,
-        });
+        await strategy.initialize({ container: 'wallet' });
 
         document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
 
@@ -127,14 +119,9 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('passes error to callback when wallet widget encounters error', async () => {
         const onError = jest.fn();
-
-        await strategy.initialize({
-            container: 'wallet',
-            onError,
-            paymentMethod,
-        });
-
         const element = document.getElementById('wallet');
+
+        await strategy.initialize({ container: 'wallet', onError });
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
         expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutSessionError));
@@ -144,11 +131,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('reinitializes payment method when cart total changes', async () => {
-        await strategy.initialize({
-            container: 'wallet',
-            paymentMethod,
-        });
-
+        await strategy.initialize({ container: 'wallet' });
         await store.dispatch(new CartActionCreator(client).loadCart());
 
         expect(remoteCheckoutService.initializePayment)
@@ -159,12 +142,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('does not reinitialize payment method if cart total remains the same', async () => {
         await store.dispatch(new CartActionCreator(client).loadCart());
-
-        await strategy.initialize({
-            container: 'wallet',
-            paymentMethod,
-        });
-
+        await strategy.initialize({ container: 'wallet' });
         await store.dispatch(new CartActionCreator(client).loadCart());
 
         expect(remoteCheckoutService.initializePayment).toHaveBeenCalledTimes(1);
