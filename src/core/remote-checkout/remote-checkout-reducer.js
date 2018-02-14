@@ -26,10 +26,10 @@ export default function remoteCheckoutReducer(state = {}, action) {
 function dataReducer(data, action) {
     switch (action.type) {
     case actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED:
-        return { ...data, billingAddress: action.payload.address };
+        return action.payload.billing ? { ...data, billingAddress: action.payload.billing.address } : data;
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED:
-        return { ...data, shippingAddress: action.payload.address };
+        return action.payload.shipping ? { ...data, shippingAddress: action.payload.shipping.address } : data;
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
         return { ...data, isPaymentInitialized: action.payload.payment };

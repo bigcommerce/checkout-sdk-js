@@ -73,7 +73,7 @@ export default class RemoteCheckoutService {
             .then(({ checkout }) => {
                 const { remoteCheckout: { billingAddress } = {} } = checkout.getCheckoutMeta();
 
-                if (isAddressEqual(billingAddress, checkout.getBillingAddress())) {
+                if (isAddressEqual(billingAddress, checkout.getBillingAddress()) || !billingAddress) {
                     return this._store.getState();
                 }
 
@@ -95,7 +95,7 @@ export default class RemoteCheckoutService {
             .then(({ checkout }) => {
                 const { remoteCheckout: { shippingAddress } = {} } = checkout.getCheckoutMeta();
 
-                if (isAddressEqual(shippingAddress, checkout.getShippingAddress())) {
+                if (isAddressEqual(shippingAddress, checkout.getShippingAddress()) || !shippingAddress) {
                     return this._store.getState();
                 }
 

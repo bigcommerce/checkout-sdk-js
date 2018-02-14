@@ -303,6 +303,36 @@ export default class CheckoutService {
     }
 
     /**
+     * @param {Object} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    initializeShipping(options) {
+        const { remote = {} } = this._store.getState().checkout.getCustomer() || {};
+
+        if (remote.provider) {
+            return this.loadPaymentMethod(remote.provider)
+                .then(() => {
+                    const paymentMethod = this._store.getState().checkout.getPaymentMethod(remote.provider);
+
+                    return this._shippingStrategyRegistry.get(remote.provider)
+                        .initialize({ ...options, paymentMethod });
+                });
+        }
+
+        return this._shippingStrategyRegistry.get().initialize(options);
+    }
+
+    /**
+     * @param {Object} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    deinitializeShipping(options) {
+        const { remote = {} } = this._store.getState().checkout.getCustomer() || {};
+
+        return this._shippingStrategyRegistry.get(remote.provider).deinitialize(options);
+    }
+
+    /**
      * @param {string} addressId
      * @param {string} shippingOptionId
      * @param {RequestOptions} [options]

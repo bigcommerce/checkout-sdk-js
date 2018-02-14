@@ -147,6 +147,23 @@ describe('RemoteCheckoutService', () => {
             expect(store.dispatch).toHaveBeenCalledWith(initializeAction$);
             expect(store.dispatch).not.toHaveBeenCalledWith(updateAction$);
         });
+
+        it('does not synchronize billing addresses if remote address is unavailable', async () => {
+            jest.spyOn(store, 'getState')
+                .mockReturnValue({
+                    checkout: {
+                        getCheckoutMeta: () => ({
+                            remoteCheckout: {},
+                        }),
+                        getBillingAddress: () => getBillingAddress(),
+                    },
+                });
+
+            await service.synchronizeBillingAddress('amazon');
+
+            expect(store.dispatch).toHaveBeenCalledWith(initializeAction$);
+            expect(store.dispatch).not.toHaveBeenCalledWith(updateAction$);
+        });
     });
 
     describe('#synchronizeShippingAddress()', () => {
@@ -197,6 +214,23 @@ describe('RemoteCheckoutService', () => {
                             remoteCheckout: {
                                 shippingAddress: getShippingAddress(),
                             },
+                        }),
+                        getShippingAddress: () => getShippingAddress(),
+                    },
+                });
+
+            await service.synchronizeShippingAddress('amazon');
+
+            expect(store.dispatch).toHaveBeenCalledWith(initializeAction$);
+            expect(store.dispatch).not.toHaveBeenCalledWith(updateAction$);
+        });
+
+        it('does not synchronize shipping addresses if remote address is unavailable', async () => {
+            jest.spyOn(store, 'getState')
+                .mockReturnValue({
+                    checkout: {
+                        getCheckoutMeta: () => ({
+                            remoteCheckout: {},
                         }),
                         getShippingAddress: () => getShippingAddress(),
                     },
