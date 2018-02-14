@@ -1,4 +1,4 @@
-declare namespace Widgets {
+declare namespace OffAmazonPayments.Widgets {
     class AddressBook {
         constructor(options: AddressBookOptions);
         bind(container: string): void;
