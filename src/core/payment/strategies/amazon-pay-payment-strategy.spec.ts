@@ -1,17 +1,19 @@
+import { omit } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CartActionCreator } from '../../cart';
-import { CheckoutStore } from '../../checkout';
+import { CheckoutClient, CheckoutStore } from '../../checkout';
 import { PlaceOrderService } from '../../order';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { RemoteCheckoutService } from '../../remote-checkout';
+import { RequestError } from '../../common/error/errors';
 import { createScriptLoader } from '../../../script-loader';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getCart, getCartResponseBody } from '../../cart/carts.mock';
 import { getCheckoutMeta } from '../../checkout/checkout.mock';
-import { getResponse } from '../../common/http-request/responses.mock';
+import { getOrderRequestBody } from '../../order/orders.mock';
+import { getResponse, getErrorResponse, getErrorResponseBody } from '../../common/http-request/responses.mock';
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
-import CheckoutClient from '../../checkout/checkout-client';
 import PaymentMethod from '../payment-method';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
@@ -27,9 +29,12 @@ describe('AmazonPayPaymentStrategy', () => {
     let remoteCheckoutService: RemoteCheckoutService;
     let paymentMethod: PaymentMethod;
     let placeOrderService: PlaceOrderService;
+    let walletSpy: jest.Mock;
 
     class Wallet implements OffAmazonPayments.Widgets.Wallet {
-        constructor(public options: OffAmazonPayments.Widgets.WalletOptions) { }
+        constructor(public options: OffAmazonPayments.Widgets.WalletOptions) {
+            walletSpy(options);
+        }
 
         bind(id: string) {
             const element = document.getElementById(id);
@@ -62,6 +67,7 @@ describe('AmazonPayPaymentStrategy', () => {
             remoteCheckoutService,
             scriptLoader
         );
+        walletSpy = jest.fn();
 
         container.setAttribute('id', 'wallet');
         document.body.appendChild(container);
@@ -80,6 +86,9 @@ describe('AmazonPayPaymentStrategy', () => {
             .mockReturnValue(Promise.resolve(store.getState()));
 
         jest.spyOn(remoteCheckoutService, 'synchronizeBillingAddress')
+            .mockReturnValue(Promise.resolve(store.getState()));
+
+        jest.spyOn(placeOrderService, 'submitOrder')
             .mockReturnValue(Promise.resolve(store.getState()));
 
         remoteCheckoutService.setCheckoutMeta('amazon', getCheckoutMeta().remoteCheckout.amazon);
@@ -146,5 +155,54 @@ describe('AmazonPayPaymentStrategy', () => {
         await store.dispatch(new CartActionCreator(client).loadCart());
 
         expect(remoteCheckoutService.initializePayment).toHaveBeenCalledTimes(1);
+    });
+
+    it('reinitializes payment method before submitting order', async () => {
+        const payload = getOrderRequestBody();
+        const options = {};
+
+        await strategy.initialize({ container: 'wallet' });
+        await strategy.execute(payload, options);
+
+        expect(remoteCheckoutService.initializePayment)
+            .toHaveBeenCalledWith('amazon', getCheckoutMeta().remoteCheckout.amazon);
+
+        expect(placeOrderService.submitOrder)
+            .toHaveBeenCalledWith({
+                ...payload,
+                payment: omit(payload.payment, 'paymentData'),
+            }, options);
+    });
+
+    it('refreshes wallet when there is provider widget error', async () => {
+        jest.spyOn(placeOrderService, 'submitOrder')
+            .mockReturnValue(Promise.reject(
+                new RequestError(getErrorResponse({ type: 'provider_widget_error' }))
+            ));
+
+        await strategy.initialize({ container: 'wallet' });
+
+        walletSpy.mockReset();
+
+        try {
+            await strategy.execute(getOrderRequestBody());
+        } catch (error) {
+            expect(walletSpy).toHaveBeenCalled();
+        }
+    });
+
+    it('returns error response if order submission fails', async () => {
+        const expected = new RequestError(getErrorResponse());
+
+        jest.spyOn(placeOrderService, 'submitOrder')
+            .mockReturnValue(Promise.reject(expected));
+
+        await strategy.initialize({ container: 'wallet' });
+
+        try {
+            await strategy.execute(getOrderRequestBody());
+        } catch (error) {
+            expect(error).toEqual(expected);
+        }
     });
 });
