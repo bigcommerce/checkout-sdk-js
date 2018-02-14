@@ -4,7 +4,7 @@ import { ReadableDataStore } from '../../../data-store';
 import UpdateShippingService from '../update-shipping-service';
 
 export default abstract class ShippingStrategy {
-    protected _isInitialized: boolean;
+    protected _isInitialized = false;
 
     constructor(
         protected _store: ReadableDataStore<CheckoutSelectors>,

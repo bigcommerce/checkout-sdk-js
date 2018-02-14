@@ -65,7 +65,7 @@
     "ts-jest": "^21.2.3",
     "ts-loader": "^3.2.0",
     "tslint": "^5.9.1",
-    "typescript": "^2.6.2",
+    "typescript": "^2.7.1",
     "typescript-eslint-parser": "^9.0.1",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "validate-commits": "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.1.0",
