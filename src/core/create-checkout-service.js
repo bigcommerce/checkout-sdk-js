@@ -14,6 +14,7 @@ import { QuoteActionCreator } from './quote';
 import { ShippingCountryActionCreator, ShippingOptionActionCreator } from './shipping';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
+import createCustomerStrategyRegistry from './create-customer-strategy-registry';
 import createPlaceOrderService from './create-place-order-service';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import createRemoteCheckoutService from './create-remote-checkout-service';
@@ -34,6 +35,7 @@ export default function createCheckoutService(options = {}) {
 
     return new CheckoutService(
         store,
+        createCustomerStrategyRegistry(store, client),
         createPaymentStrategyRegistry(
             store,
             createPlaceOrderService(store, client, paymentClient),

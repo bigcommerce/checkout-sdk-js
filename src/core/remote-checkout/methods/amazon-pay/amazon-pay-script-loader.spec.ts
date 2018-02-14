@@ -4,12 +4,33 @@ import AmazonPayScriptLoader from './amazon-pay-script-loader';
 import ScriptLoader from '../../../../script-loader/script-loader';
 
 describe('AmazonPayScriptLoader', () => {
-    const scriptLoader = new ScriptLoader(document);
-    const amazonPayScriptLoader = new AmazonPayScriptLoader(scriptLoader);
+    let amazonPayScriptLoader: AmazonPayScriptLoader;
+    let scriptLoader: ScriptLoader;
+    let setClientIdSpy: jest.Mock;
+    let setUseCookieSpy: jest.Mock;
+
+    class Login implements amazon.Login {
+        static setClientId(clientId: string): void {
+            setClientIdSpy(clientId);
+        }
+
+        static setUseCookie(useCookie: boolean): void {
+            setUseCookieSpy(useCookie);
+        }
+    }
 
     beforeEach(() => {
+        scriptLoader = new ScriptLoader(document);
+        amazonPayScriptLoader = new AmazonPayScriptLoader(scriptLoader);
+        setClientIdSpy = jest.fn();
+        setUseCookieSpy = jest.fn();
+
         jest.spyOn(scriptLoader, 'loadScript')
-            .mockReturnValue(Promise.resolve(new Event('load')));
+            .mockImplementation(() => {
+                (window as any).amazon = { Login };
+
+                Promise.resolve(new Event('load'));
+            });
     });
 
     it('loads widget script', () => {
@@ -40,5 +61,19 @@ describe('AmazonPayScriptLoader', () => {
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
             `https://static-na.payments-amazon.com/OffAmazonPayments/us/sandbox/js/Widgets.js?sellerId=${method.config.merchantId}`
         );
+    });
+
+    it('configures widget SDK', () => {
+        const method = getAmazonPay();
+        const global: any = window;
+
+        amazonPayScriptLoader.loadWidget(method);
+
+        expect(global.onAmazonLoginReady).not.toBeUndefined();
+
+        global.onAmazonLoginReady();
+
+        expect(setClientIdSpy).toHaveBeenCalledWith(method.initializationData.clientId);
+        expect(setUseCookieSpy).toHaveBeenCalledWith(true);
     });
 });

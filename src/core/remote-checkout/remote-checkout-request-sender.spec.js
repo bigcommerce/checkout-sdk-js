@@ -1,5 +1,5 @@
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
-import { getRemoteBillingResponseBody, getRemoteShippingResponseBody, getRemotePaymentResponseBody } from './remote-checkout.mock';
+import { getRemoteBillingResponseBody, getRemoteShippingResponseBody, getRemotePaymentResponseBody, getRemoteTokenResponseBody } from './remote-checkout.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import RemoteCheckoutRequestSender from './remote-checkout-request-sender';
 
@@ -49,5 +49,41 @@ describe('RemoteCheckoutRequestSender', () => {
 
         expect(output).toEqual(response);
         expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/amazon/payment', { ...options, params });
+    });
+
+    it('sends request to sign out from remote checkout provider', async () => {
+        const response = getResponse();
+        const options = { timeout: createTimeout() };
+
+        jest.spyOn(requestSender, 'get').mockReturnValue(response);
+
+        const output = await remoteCheckoutRequestSender.signOut('amazon', options);
+
+        expect(output).toEqual(response);
+        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/amazon/signout', options);
+    });
+
+    it('sends request to generate token', async () => {
+        const response = getResponse(getRemoteTokenResponseBody());
+        const options = { timeout: createTimeout() };
+
+        jest.spyOn(requestSender, 'get').mockReturnValue(response);
+
+        const output = await remoteCheckoutRequestSender.generateToken(options);
+
+        expect(output).toEqual(response);
+        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout-token', options);
+    });
+
+    it('sends request to track authorization event', async () => {
+        const response = getResponse();
+        const options = { timeout: createTimeout() };
+
+        jest.spyOn(requestSender, 'get').mockReturnValue(response);
+
+        const output = await remoteCheckoutRequestSender.trackAuthorizationEvent(options);
+
+        expect(output).toEqual(response);
+        expect(requestSender.get).toHaveBeenCalledWith('/remote-checkout/events/shopper-checkout-service-provider-authorization-requested', options);
     });
 });

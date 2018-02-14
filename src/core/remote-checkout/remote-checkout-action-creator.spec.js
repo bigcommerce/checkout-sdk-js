@@ -136,6 +136,45 @@ describe('RemoteCheckoutActionCreator', () => {
         }
     });
 
+    it('signs out and emits actions to notify progress', async () => {
+        const response = getResponse();
+        const options = { timeout: createTimeout() };
+
+        jest.spyOn(requestSender, 'signOut')
+            .mockReturnValue(Promise.resolve(response));
+
+        const actions = await actionCreator.signOut('amazon', options)
+            .toArray()
+            .toPromise();
+
+        expect(requestSender.signOut).toHaveBeenCalledWith('amazon', options);
+        expect(actions).toEqual([
+            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED },
+            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED },
+        ]);
+    });
+
+    it('emits error action if unable to sign out', async () => {
+        const response = getErrorResponse();
+
+        jest.spyOn(requestSender, 'signOut')
+            .mockReturnValue(Promise.reject(response));
+
+        try {
+            const actions = await actionCreator.signOut('amazon')
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED },
+            ]);
+        } catch (error) {
+            expect(error).toEqual(
+                { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_FAILED, error: true, payload: response }
+            );
+        }
+    });
+
     it('returns action to set meta for provider', () => {
         const meta = { referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' };
 

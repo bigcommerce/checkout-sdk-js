@@ -75,6 +75,23 @@ describe('RemoteCheckoutSelector', () => {
         expect(selector.getInitializePaymentError()).toEqual(getErrorResponse());
     });
 
+    it('returns undefined if there is no sign out error', () => {
+        const remoteCheckout = getRemoteCheckoutState();
+        const selector = new RemoteCheckoutSelector(remoteCheckout);
+
+        expect(selector.getSignOutError()).toBeUndefined();
+    });
+
+    it('returns sign out error', () => {
+        const remoteCheckout = {
+            ...getRemoteCheckoutState(),
+            errors: { signOutError: getErrorResponse() },
+        };
+        const selector = new RemoteCheckoutSelector(remoteCheckout);
+
+        expect(selector.getSignOutError()).toEqual(getErrorResponse());
+    });
+
     it('returns undefined if there is no payment initialization error', () => {
         const remoteCheckout = getRemoteCheckoutState();
         const selector = new RemoteCheckoutSelector(remoteCheckout);
@@ -131,5 +148,22 @@ describe('RemoteCheckoutSelector', () => {
         const selector = new RemoteCheckoutSelector(remoteCheckout);
 
         expect(selector.isInitializingPayment()).toEqual(false);
+    });
+
+    it('returns true if signing out', () => {
+        const remoteCheckout = {
+            ...getRemoteCheckoutState(),
+            statuses: { isSigningOut: true },
+        };
+        const selector = new RemoteCheckoutSelector(remoteCheckout);
+
+        expect(selector.isSigningOut()).toEqual(true);
+    });
+
+    it('returns false if not signing out', () => {
+        const remoteCheckout = getRemoteCheckoutState();
+        const selector = new RemoteCheckoutSelector(remoteCheckout);
+
+        expect(selector.isSigningOut()).toEqual(false);
     });
 });

@@ -8,10 +8,12 @@ export default interface RemoteCheckoutState {
         initializeBillingError?: any;
         initializeShippingError?: any;
         initializePaymentError?: any;
+        signOutError?: any;
     };
     statuses: {
         isInitializingBilling?: boolean;
         isInitializingShipping?: boolean;
         isInitializingPayment?: boolean;
+        isSigningOut?: boolean;
     };
 }

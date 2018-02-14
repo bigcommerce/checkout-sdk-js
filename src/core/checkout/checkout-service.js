@@ -5,6 +5,7 @@ export default class CheckoutService {
     /**
      * @constructor
      * @param {DataStore} store
+     * @param {Registry<CustomerStrategy>} customerStrategyRegistry
      * @param {PaymentStrategyRegistry} paymentStrategyRegistry
      * @param {Registry<ShippingStrategy>} shippingStrategyRegistry
      * @param {BillingAddressActionCreator} billingAddressActionCreator
@@ -23,6 +24,7 @@ export default class CheckoutService {
      */
     constructor(
         store,
+        customerStrategyRegistry,
         paymentStrategyRegistry,
         shippingStrategyRegistry,
         billingAddressActionCreator,
@@ -40,6 +42,7 @@ export default class CheckoutService {
         shippingOptionActionCreator
     ) {
         this._store = store;
+        this._customerStrategyRegistry = customerStrategyRegistry;
         this._paymentStrategyRegistry = paymentStrategyRegistry;
         this._shippingStrategyRegistry = shippingStrategyRegistry;
         this._billingAddressActionCreator = billingAddressActionCreator;
@@ -274,22 +277,50 @@ export default class CheckoutService {
     /**
      * @param {CustomerCredentials} credentials
      * @param {RequestOptions} [options]
+     * @param {any} [options]
      * @return {Promise<CheckoutSelectors>}
      */
-    signInCustomer(credentials, options) {
-        const action = this._customerActionCreator.signInCustomer(credentials, options);
+    initializeCustomer(options = {}) {
+        const { methodId } = options;
+        const strategy = this._customerStrategyRegistry.get(methodId);
 
-        return this._store.dispatch(action);
+        if (methodId) {
+            return this.loadPaymentMethod(methodId)
+                .then(({ checkout }) => strategy.initialize({
+                    ...options,
+                    paymentMethod: checkout.getPaymentMethod(methodId),
+                }));
+        }
+
+        return strategy.initialize(options);
+    }
+
+    /**
+     * @param {any} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    deinitializeCustomer(options = {}) {
+        return this._customerStrategyRegistry.get(options.methodId)
+            .deinitialize(options);
+    }
+
+    /**
+     * @param {CustomerCredentials} credentials
+     * @param {RequestOptions} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    signInCustomer(credentials, options = {}) {
+        return this._customerStrategyRegistry.get(options.methodId)
+            .signIn(credentials, options);
     }
 
     /**
      * @param {RequestOptions} [options]
      * @return {Promise<CheckoutSelectors>}
      */
-    signOutCustomer(options) {
-        const action = this._customerActionCreator.signOutCustomer(options);
-
-        return this._store.dispatch(action);
+    signOutCustomer(options = {}) {
+        return this._customerStrategyRegistry.get(options.methodId)
+            .signOut(options);
     }
 
     /**

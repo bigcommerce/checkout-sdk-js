@@ -27,6 +27,10 @@ export default class RemoteCheckoutSelector {
         return this._remoteCheckout.errors.initializePaymentError;
     }
 
+    getSignOutError(): any {
+        return this._remoteCheckout.errors.signOutError;
+    }
+
     isInitializingBilling(): boolean {
         return !!this._remoteCheckout.statuses.isInitializingBilling;
     }
@@ -37,5 +41,9 @@ export default class RemoteCheckoutSelector {
 
     isInitializingPayment(): boolean {
         return !!this._remoteCheckout.statuses.isInitializingPayment;
+    }
+
+    isSigningOut(): boolean {
+        return !!this._remoteCheckout.statuses.isSigningOut;
     }
 }
