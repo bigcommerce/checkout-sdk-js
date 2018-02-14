@@ -1,3 +1,6 @@
+/// <reference path="../../remote-checkout/methods/amazon-pay/amazon-login.d.ts" />
+/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
+
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutStore } from '../../checkout';
@@ -17,6 +20,7 @@ describe('AmazonPayCustomerStrategy', () => {
     let authorizeSpy: jest.Mock;
     let buttonConstructorSpy: jest.Mock;
     let container: HTMLDivElement;
+    let hostWindow: OffAmazonPayments.HostWindow & amazon.HostWindow;
     let paymentMethod: PaymentMethod;
     let requestSender: RemoteCheckoutRequestSender;
     let scriptLoader: AmazonPayScriptLoader;
@@ -51,6 +55,7 @@ describe('AmazonPayCustomerStrategy', () => {
         authorizeSpy = jest.fn();
         buttonConstructorSpy = jest.fn();
         container = document.createElement('div');
+        hostWindow = window;
         paymentMethod = getAmazonPay();
         requestSender = new RemoteCheckoutRequestSender(createRequestSender());
         store = createCheckoutStore();
@@ -62,9 +67,9 @@ describe('AmazonPayCustomerStrategy', () => {
         document.body.appendChild(container);
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation(() => {
-            (window as any).OffAmazonPayments = { Button };
-            (window as any).amazon = { Login };
-            (window as any).onAmazonPaymentsReady();
+            hostWindow.OffAmazonPayments = { Button };
+            hostWindow.amazon = { Login };
+            hostWindow.onAmazonPaymentsReady();
 
             return Promise.resolve();
         });

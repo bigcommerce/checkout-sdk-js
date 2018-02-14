@@ -1,3 +1,5 @@
+/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
+
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutSelectors } from '../../checkout';
 import { createScriptLoader } from '../../../script-loader';
@@ -18,6 +20,7 @@ import createRemoteCheckoutService from '../../create-remote-checkout-service';
 describe('AmazonPayShippingStrategy', () => {
     let addressBookSpy: jest.Mock;
     let container: HTMLDivElement;
+    let hostWindow: OffAmazonPayments.HostWindow;
     let updateShippingService: UpdateShippingService;
     let store: DataStore<CheckoutSelectors>;
     let scriptLoader: AmazonPayScriptLoader;
@@ -54,6 +57,7 @@ describe('AmazonPayShippingStrategy', () => {
     beforeEach(() => {
         addressBookSpy = jest.fn();
         container = document.createElement('div');
+        hostWindow = window;
         store = createCheckoutStore();
         remoteCheckoutService = createRemoteCheckoutService(store, createCheckoutClient());
         updateShippingService = createUpdateShippingService(store, createCheckoutClient());
@@ -63,8 +67,8 @@ describe('AmazonPayShippingStrategy', () => {
         document.body.appendChild(container);
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation(() => {
-            (window as any).OffAmazonPayments = { Widgets: { AddressBook } };
-            (window as any).onAmazonPaymentsReady();
+            hostWindow.OffAmazonPayments = { Widgets: { AddressBook } };
+            hostWindow.onAmazonPaymentsReady();
 
             return Promise.resolve();
         });

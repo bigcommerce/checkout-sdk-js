@@ -15,6 +15,7 @@ import UpdateShippingService from '../update-shipping-service';
 export default class AmazonPayShippingStrategy extends ShippingStrategy {
     private _addressBook: OffAmazonPayments.Widgets.AddressBook | undefined;
     private _paymentMethod: PaymentMethod | undefined;
+    private _window: OffAmazonPayments.HostWindow;
 
     constructor(
         store: ReadableDataStore<CheckoutSelectors>,
@@ -23,6 +24,8 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store, updateShippingService);
+
+        this._window = window;
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
@@ -32,7 +35,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
         this._paymentMethod = options.paymentMethod;
 
-        (window as any).onAmazonPaymentsReady = () => {
+        this._window.onAmazonPaymentsReady = () => {
             this._addressBook = this._createAddressBook(options);
         };
 

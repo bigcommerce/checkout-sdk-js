@@ -10,4 +10,9 @@ declare namespace amazon {
         scope: string;
         state: string;
     }
+
+    interface HostWindow extends Window {
+        amazon?: amazon;
+        onAmazonLoginReady?: () => void;
+    }
 }
