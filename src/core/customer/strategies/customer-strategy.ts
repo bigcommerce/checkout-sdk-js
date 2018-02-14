@@ -4,7 +4,7 @@ import CustomerCredentials from '../customer-credentials';
 import SignInCustomerService from '../sign-in-customer-service';
 
 export default abstract class CustomerStrategy {
-    protected _isInitialized: boolean;
+    protected _isInitialized = false;
 
     constructor(
         protected _store: ReadableDataStore<CheckoutSelectors>,
