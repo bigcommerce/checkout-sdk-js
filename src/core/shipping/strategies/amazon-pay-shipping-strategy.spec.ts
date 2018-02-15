@@ -22,6 +22,7 @@ describe('AmazonPayShippingStrategy', () => {
     let container: HTMLDivElement;
     let hostWindow: OffAmazonPayments.HostWindow;
     let updateShippingService: UpdateShippingService;
+    let orderReference: OffAmazonPayments.Widgets.OrderReference;
     let store: CheckoutStore;
     let scriptLoader: AmazonPayScriptLoader;
     let remoteCheckoutService: RemoteCheckoutService;
@@ -30,18 +31,14 @@ describe('AmazonPayShippingStrategy', () => {
         constructor(public options: OffAmazonPayments.Widgets.AddressBookOptions) {
             addressBookSpy(options);
 
-            options.onReady({
-                getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
-            });
+            options.onReady(orderReference);
         }
 
         bind(id: string) {
             const element = document.getElementById(id);
 
             element.addEventListener('addressSelect', () => {
-                this.options.onAddressSelect({
-                    getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
-                });
+                this.options.onAddressSelect(orderReference);
             });
 
             element.addEventListener('error', (event: CustomEvent) => {
@@ -51,9 +48,7 @@ describe('AmazonPayShippingStrategy', () => {
             });
 
             element.addEventListener('orderReferenceCreate', () => {
-                this.options.onOrderReferenceCreate({
-                    getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
-                });
+                this.options.onOrderReferenceCreate(orderReference);
             });
         }
     }
@@ -66,6 +61,11 @@ describe('AmazonPayShippingStrategy', () => {
         remoteCheckoutService = createRemoteCheckoutService(store, createCheckoutClient());
         updateShippingService = createUpdateShippingService(store, createCheckoutClient());
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
+
+        orderReference = {
+            getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
+            getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
+        };
 
         container.setAttribute('id', 'addressBook');
         document.body.appendChild(container);

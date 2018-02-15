@@ -26,6 +26,7 @@ describe('AmazonPayPaymentStrategy', () => {
     let client: CheckoutClient;
     let container: HTMLDivElement;
     let hostWindow: OffAmazonPayments.HostWindow;
+    let orderReference: OffAmazonPayments.Widgets.OrderReference;
     let scriptLoader: AmazonPayScriptLoader;
     let store: CheckoutStore;
     let strategy: AmazonPayPaymentStrategy;
@@ -38,18 +39,14 @@ describe('AmazonPayPaymentStrategy', () => {
         constructor(public options: OffAmazonPayments.Widgets.WalletOptions) {
             walletSpy(options);
 
-            options.onReady({
-                getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
-            });
+            options.onReady(orderReference);
         }
 
         bind(id: string) {
             const element = document.getElementById(id);
 
             element.addEventListener('paymentSelect', () => {
-                this.options.onPaymentSelect({
-                    getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
-                });
+                this.options.onPaymentSelect(orderReference);
             });
 
             element.addEventListener('error', (event: CustomEvent) => {
@@ -76,6 +73,11 @@ describe('AmazonPayPaymentStrategy', () => {
         );
         walletSpy = jest.fn();
         hostWindow = window;
+
+        orderReference = {
+            getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
+            getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
+        };
 
         container.setAttribute('id', 'wallet');
         document.body.appendChild(container);

@@ -111,7 +111,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return widget;
     }
 
-    private _handleAddressSelect(agreement: OffAmazonPayments.Widgets.BillingAgreement, callback: (address: Address) => void): void {
+    private _handleAddressSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: Address) => void): void {
         if (!this._paymentMethod) {
             return;
         }
