@@ -14,6 +14,7 @@ import SignInCustomerService from '../sign-in-customer-service';
 export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     private _paymentMethod: PaymentMethod | undefined;
     private _signInButton: OffAmazonPayments.Button | undefined;
+    private _window: OffAmazonPayments.HostWindow;
 
     constructor(
         store: ReadableDataStore<CheckoutSelectors>,
@@ -22,6 +23,8 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store, signInCustomerService);
+
+        this._window = window;
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
@@ -31,7 +34,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
         this._paymentMethod = options.paymentMethod;
 
-        (window as any).onAmazonPaymentsReady = () => {
+        this._window.onAmazonPaymentsReady = () => {
             this._signInButton = this._createSignInButton(options);
         };
 

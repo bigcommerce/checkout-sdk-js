@@ -16,6 +16,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     private _unsubscribe: (() => void) | undefined;
     private _wallet: OffAmazonPayments.Widgets.Wallet | undefined;
     private _walletOptions: InitializeWidgetOptions | undefined;
+    private _window: OffAmazonPayments.HostWindow;
 
     constructor(
         paymentMethod: PaymentMethod,
@@ -25,12 +26,14 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(paymentMethod, store, placeOrderService);
+
+        this._window = window;
     }
 
     initialize(options: InitializeWidgetOptions): Promise<CheckoutSelectors> {
         this._walletOptions = options;
 
-        (window as any).onAmazonPaymentsReady = () => {
+        this._window.onAmazonPaymentsReady = () => {
             this._wallet = this._createWallet(options);
         };
 

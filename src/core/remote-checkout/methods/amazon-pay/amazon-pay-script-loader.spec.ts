@@ -1,3 +1,5 @@
+/// <reference path="./amazon-login.d.ts" />
+
 import { merge } from 'lodash';
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
@@ -5,6 +7,7 @@ import ScriptLoader from '../../../../script-loader/script-loader';
 
 describe('AmazonPayScriptLoader', () => {
     let amazonPayScriptLoader: AmazonPayScriptLoader;
+    let hostWindow: amazon.HostWindow;
     let scriptLoader: ScriptLoader;
     let setClientIdSpy: jest.Mock;
     let setUseCookieSpy: jest.Mock;
@@ -24,10 +27,11 @@ describe('AmazonPayScriptLoader', () => {
         amazonPayScriptLoader = new AmazonPayScriptLoader(scriptLoader);
         setClientIdSpy = jest.fn();
         setUseCookieSpy = jest.fn();
+        hostWindow = window;
 
         jest.spyOn(scriptLoader, 'loadScript')
             .mockImplementation(() => {
-                (window as any).amazon = { Login };
+                hostWindow.amazon = { Login };
 
                 Promise.resolve(new Event('load'));
             });

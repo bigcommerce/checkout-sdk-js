@@ -1,3 +1,5 @@
+/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
+
 import { omit } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
@@ -23,6 +25,7 @@ import createRemoteCheckoutService from '../../create-remote-checkout-service';
 describe('AmazonPayPaymentStrategy', () => {
     let client: CheckoutClient;
     let container: HTMLDivElement;
+    let hostWindow: OffAmazonPayments.HostWindow;
     let scriptLoader: AmazonPayScriptLoader;
     let store: CheckoutStore;
     let strategy: AmazonPayPaymentStrategy;
@@ -68,13 +71,14 @@ describe('AmazonPayPaymentStrategy', () => {
             scriptLoader
         );
         walletSpy = jest.fn();
+        hostWindow = window;
 
         container.setAttribute('id', 'wallet');
         document.body.appendChild(container);
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation(() => {
-            (window as any).OffAmazonPayments = { Widgets: { Wallet } };
-            (window as any).onAmazonPaymentsReady();
+            hostWindow.OffAmazonPayments = { Widgets: { Wallet } };
+            hostWindow.onAmazonPaymentsReady();
 
             return Promise.resolve();
         });

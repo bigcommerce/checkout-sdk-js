@@ -15,4 +15,9 @@ declare namespace OffAmazonPayments {
     interface ButtonError extends Error {
         getErrorCode(): string;
     }
+
+    interface HostWindow extends Window {
+        onAmazonPaymentsReady?: () => void;
+        OffAmazonPayments?: OffAmazonPayments;
+    }
 }

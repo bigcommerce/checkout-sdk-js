@@ -4,9 +4,13 @@ import { PaymentMethod } from '../../../payment';
 import ScriptLoader from '../../../../script-loader/script-loader';
 
 export default class AmazonPayScriptLoader {
+    private _window: amazon.HostWindow;
+
     constructor(
         private _scriptLoader: ScriptLoader
-    ) {}
+    ) {
+        this._window = window;
+    }
 
     loadWidget(method: PaymentMethod): Promise<Event> {
         const {
@@ -26,13 +30,11 @@ export default class AmazonPayScriptLoader {
     }
 
     private _configureWidget(method: PaymentMethod): void {
-        const global: any = window;
-
-        if (global.onAmazonLoginReady) {
+        if (this._window.onAmazonLoginReady) {
             return;
         }
 
-        global.onAmazonLoginReady = () => {
+        this._window.onAmazonLoginReady = () => {
             amazon.Login.setClientId(method.initializationData.clientId);
             amazon.Login.setUseCookie(true);
         };
