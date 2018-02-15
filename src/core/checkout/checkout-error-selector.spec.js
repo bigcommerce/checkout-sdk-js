@@ -292,6 +292,22 @@ describe('CheckoutErrorSelector', () => {
         });
     });
 
+    describe('#getInitializeCustomerError()', () => {
+        it('returns error if unable to initialize customer', () => {
+            jest.spyOn(customer, 'getInitializeError').mockReturnValue(errorResponse);
+
+            expect(errors.getInitializeCustomerError()).toEqual(errorResponse);
+            expect(customer.getInitializeError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if able to initialize customer', () => {
+            jest.spyOn(customer, 'getInitializeError').mockReturnValue();
+
+            expect(errors.getInitializeCustomerError()).toEqual(undefined);
+            expect(customer.getInitializeError).toHaveBeenCalled();
+        });
+    });
+
     describe('#getLoadShippingOptionsError()', () => {
         it('returns error if there is an error when loading the shipping options', () => {
             jest.spyOn(shippingOptions, 'getLoadError').mockReturnValue(errorResponse);

@@ -4,7 +4,9 @@
  * @property {Object} errors
  * @property {?ErrorResponse} errors.signInError
  * @property {?ErrorResponse} errors.signOutError
+ * @property {?ErrorResponse} errors.initializeError
  * @property {Object} statuses
- * @property {?boolean} isSigningIn
- * @property {?boolean} isSigningOut
+ * @property {?boolean} statuses.isSigningIn
+ * @property {?boolean} statuses.isSigningOut
+ * @property {?boolean} statuses.isInitializing
  */

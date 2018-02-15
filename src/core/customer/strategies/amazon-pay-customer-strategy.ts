@@ -1,11 +1,13 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/amazon-login.d.ts" />
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
+import { noop } from 'lodash';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutSelectors } from '../../checkout';
 import { NotInitializedError, NotImplementedError } from '../../common/error/errors';
 import { PaymentMethod } from '../../payment';
 import { ReadableDataStore } from '../../../data-store';
+import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
 import { RemoteCheckoutRequestSender } from '../../remote-checkout';
 import CustomerCredentials from '../customer-credentials';
 import CustomerStrategy from './customer-strategy';
@@ -32,13 +34,29 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             return super.initialize(options);
         }
 
-        this._paymentMethod = options.paymentMethod;
+        return this._signInCustomerService
+            .initializeCustomer(options.paymentMethod.id, () =>
+                new Promise((resolve, reject) => {
+                    const { onError = noop } = options;
 
-        this._window.onAmazonPaymentsReady = () => {
-            this._signInButton = this._createSignInButton(options);
-        };
+                    this._paymentMethod = options.paymentMethod;
 
-        return this._scriptLoader.loadWidget(this._paymentMethod)
+                    this._window.onAmazonPaymentsReady = () => {
+                        this._signInButton = this._createSignInButton({
+                            ...options as InitializeWidgetOptions,
+                            onError: (error) => {
+                                onError(error);
+                                reject(error);
+                            },
+                        });
+
+                        resolve();
+                    };
+
+                    this._scriptLoader.loadWidget(this._paymentMethod)
+                        .catch(reject);
+                })
+            )
             .then(() => super.initialize(options));
     }
 
@@ -69,18 +87,24 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
     private _createSignInButton(options: InitializeWidgetOptions): OffAmazonPayments.Button {
         const { config, initializationData } = this._paymentMethod!;
+        const { onError = noop } = options;
 
         return new OffAmazonPayments.Button(options.container, config.merchantId!, {
             color: options.color || 'Gold',
             size: options.size || 'small',
             type: 'PwA',
             useAmazonAddressBook: true,
-            authorization: () => this._authorizeClient(initializationData),
+            authorization: () => {
+                this._handleAuthorization(initializationData);
+            },
+            onError: (error) => {
+                this._handleError(error, onError);
+            },
         });
     }
 
-    private _authorizeClient(options: AuthorizationOptions): Promise<void> {
-        return this._requestSender.generateToken()
+    private _handleAuthorization(options: AuthorizationOptions): void {
+        this._requestSender.generateToken()
             .then(({ body }) => {
                 amazon.Login.authorize({
                     popup: false,
@@ -90,6 +114,14 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
                 this._requestSender.trackAuthorizationEvent();
             });
+    }
+
+    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
+        if (!error) {
+            return;
+        }
+
+        callback(new RemoteCheckoutCustomerError(error));
     }
 }
 

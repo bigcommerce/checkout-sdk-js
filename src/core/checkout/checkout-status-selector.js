@@ -73,6 +73,7 @@ export default class CheckoutStatusSelector {
             this.isSelectingShippingOption() ||
             this.isSigningIn() ||
             this.isSigningOut() ||
+            this.isInitializingCustomer() ||
             this.isUpdatingBillingAddress() ||
             this.isUpdatingShippingAddress() ||
             this.isInitializingShipping() ||
@@ -177,6 +178,14 @@ export default class CheckoutStatusSelector {
      */
     isSigningOut() {
         return this._customer.isSigningOut();
+    }
+
+    /**
+     * @param {?string} methodId
+     * @return {boolean}
+     */
+    isInitializingCustomer(methodId) {
+        return this._customer.isInitializing(methodId);
     }
 
     /**

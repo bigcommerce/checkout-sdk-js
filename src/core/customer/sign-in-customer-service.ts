@@ -27,4 +27,10 @@ export default class SignInCustomerService {
             this._remoteCheckoutActionCreator.signOut(methodName, options)
         );
     }
+
+    initializeCustomer(methodId: string, initializer: () => Promise<any>): Promise<CheckoutSelectors> {
+        return this._store.dispatch(
+            this._customerActionCreator.initializeCustomer(methodId, initializer)
+        );
+    }
 }

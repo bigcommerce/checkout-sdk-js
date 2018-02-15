@@ -284,6 +284,22 @@ describe('CheckoutStatusSelector', () => {
         });
     });
 
+    describe('#isInitializingCustomer()', () => {
+        it('returns true if initializing', () => {
+            jest.spyOn(customer, 'isInitializing').mockReturnValue(true);
+
+            expect(statuses.isInitializingCustomer('foobar')).toEqual(true);
+            expect(customer.isInitializing).toHaveBeenCalledWith('foobar');
+        });
+
+        it('returns false if not initializing', () => {
+            jest.spyOn(customer, 'isInitializing').mockReturnValue(false);
+
+            expect(statuses.isInitializingCustomer('foobar')).toEqual(false);
+            expect(customer.isInitializing).toHaveBeenCalledWith('foobar');
+        });
+    });
+
     describe('#isLoadingShippingOptions()', () => {
         it('returns true if loading shipping options', () => {
             jest.spyOn(shippingOption, 'isLoading').mockReturnValue(true);

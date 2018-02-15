@@ -61,6 +61,21 @@ function errorsReducer(errors = {}, action) {
     case customerActionTypes.SIGN_OUT_CUSTOMER_FAILED:
         return { ...errors, signOutError: action.payload };
 
+    case customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED:
+    case customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED:
+        return {
+            ...errors,
+            initializeError: undefined,
+            initializeMethod: undefined,
+        };
+
+    case customerActionTypes.INITIALIZE_CUSTOMER_FAILED:
+        return {
+            ...errors,
+            initializeError: action.payload,
+            initializeMethod: action.meta && action.meta.methodId,
+        };
+
     default:
         return errors;
     }
@@ -87,6 +102,21 @@ function statusesReducer(statuses = {}, action) {
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_FAILED:
         return { ...statuses, isSigningOut: false };
+
+    case customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED:
+        return {
+            ...statuses,
+            initializingMethod: action.meta && action.meta.methodId,
+            isInitializing: true,
+        };
+
+    case customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED:
+    case customerActionTypes.INITIALIZE_CUSTOMER_FAILED:
+        return {
+            ...statuses,
+            initializingMethod: undefined,
+            isInitializing: false,
+        };
 
     default:
         return statuses;

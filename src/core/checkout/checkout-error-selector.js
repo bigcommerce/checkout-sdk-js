@@ -73,6 +73,7 @@ export default class CheckoutErrorSelector {
             this.getSelectShippingOptionError() ||
             this.getSignInError() ||
             this.getSignOutError() ||
+            this.getInitializeCustomerError() ||
             this.getUpdateBillingAddressError() ||
             this.getUpdateShippingAddressError() ||
             this.getInitializeShippingError() ||
@@ -177,6 +178,14 @@ export default class CheckoutErrorSelector {
      */
     getSignOutError() {
         return this._customer.getSignOutError();
+    }
+
+    /**
+     * @param {string} methodId
+     * @return {?ErrorResponse}
+     */
+    getInitializeCustomerError(methodId) {
+        return this._customer.getInitializeError(methodId);
     }
 
     /**
