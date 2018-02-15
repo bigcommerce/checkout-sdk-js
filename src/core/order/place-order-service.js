@@ -7,11 +7,13 @@ export default class PlaceOrderService {
      * @param {DataStore} store
      * @param {OrderActionCreator} orderActionCreator
      * @param {PaymentActionCreator} paymentActionCreator
+     * @param {PaymentMethodActionCreator} paymentMethodActionCreator
      */
-    constructor(store, orderActionCreator, paymentActionCreator) {
+    constructor(store, orderActionCreator, paymentActionCreator, paymentMethodActionCreator) {
         this._store = store;
         this._orderActionCreator = orderActionCreator;
         this._paymentActionCreator = paymentActionCreator;
+        this._paymentMethodActionCreator = paymentMethodActionCreator;
     }
 
     /**
@@ -85,6 +87,18 @@ export default class PlaceOrderService {
     }
 
     /**
+     * Loads a payment method from the API.
+     * @param {string} methodId
+     * @param {RequestOptions} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    loadPaymentMethod(methodId, options) {
+        const action = this._paymentMethodActionCreator.loadPaymentMethod(methodId, options);
+
+        return this._store.dispatch(action, { queueId: 'paymentMethods' });
+    }
+
+    /**
      * @private
      * @param {boolean} useStoreCredit
      * @return {boolean}
@@ -122,7 +136,7 @@ export default class PlaceOrderService {
             cart,
             customer,
             order,
-            paymentMethod,
+            paymentMethod: this._getRequestPaymentMethod(paymentMethod),
             shippingAddress,
             shippingOption,
             authToken,
@@ -145,5 +159,17 @@ export default class PlaceOrderService {
                 'storeName',
             ]),
         };
+    }
+
+    /**
+     * Convenience method to transform a payment method into the format expected by the API.
+     * @private
+     * @param {PaymentMethod} paymentMethod
+     * @return {PaymentMethod}
+     */
+    _getRequestPaymentMethod(paymentMethod) {
+        return (paymentMethod.method === 'multi-option' && !paymentMethod.gateway) ?
+            { ...paymentMethod, gateway: paymentMethod.id } :
+            paymentMethod;
     }
 }

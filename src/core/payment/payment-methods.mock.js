@@ -180,6 +180,31 @@ export function getBankDeposit() {
     };
 }
 
+export function getAfterpay() {
+    return {
+        id: 'PAY_BY_INSTALLMENT',
+        gateway: 'afterpay',
+        logoUrl: '',
+        method: 'multi-option',
+        supportedCards: [],
+        config: {
+            displayName: 'Pay over time',
+            cardCode: null,
+            helpText: null,
+            enablePaypal: null,
+            merchantId: '33133',
+            is3dsEnabled: null,
+            testMode: false,
+            isVisaCheckoutEnabled: null,
+        },
+        type: 'PAYMENT_TYPE_API',
+        nonce: null,
+        initializationData: null,
+        clientToken: null,
+        returnUrl: null,
+    };
+}
+
 export function getAmazonPay() {
     return {
         id: 'amazon',

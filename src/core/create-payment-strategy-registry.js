@@ -1,5 +1,6 @@
 import { createFormPoster } from 'form-poster';
 import {
+    AfterpayPaymentStrategy,
     CreditCardPaymentStrategy,
     LegacyPaymentStrategy,
     OfflinePaymentStrategy,
@@ -10,17 +11,27 @@ import {
 } from './payment/strategies';
 import { PaymentStrategyRegistry } from './payment';
 import { createScriptLoader } from '../script-loader';
+import { createAfterpayScriptLoader } from './remote-checkout/methods/afterpay';
+import createPlaceOrderService from './create-place-order-service';
+import createRemoteCheckoutService from './create-remote-checkout-service';
 
 /**
+ * Creates a Payment Strategy Registry and registers available payment strategies.
  * @param {DataStore} store
- * @param {PlaceOrderService} placeOrderService
+ * @param {CheckoutClient} client
+ * @param {Client} paymentClient
  * @return {PaymentStrategyRegistry}
  */
-export default function createPaymentStrategyRegistry(store, placeOrderService) {
+export default function createPaymentStrategyRegistry(store, client, paymentClient) {
     const { checkout } = store.getState();
     const registry = new PaymentStrategyRegistry(checkout.getConfig());
-    const scriptLoader = createScriptLoader();
 
+    const placeOrderService = createPlaceOrderService(store, client, paymentClient);
+    const remoteCheckoutService = createRemoteCheckoutService(store, client);
+    const scriptLoader = createScriptLoader();
+    const afterpayScriptLoader = createAfterpayScriptLoader();
+
+    registry.register('afterpay', (method) => new AfterpayPaymentStrategy(method, store, placeOrderService, remoteCheckoutService, afterpayScriptLoader));
     registry.register('creditcard', (method) => new CreditCardPaymentStrategy(method, store, placeOrderService));
     registry.register('legacy', (method) => new LegacyPaymentStrategy(method, store, placeOrderService));
     registry.register('offline', (method) => new OfflinePaymentStrategy(method, store, placeOrderService));
