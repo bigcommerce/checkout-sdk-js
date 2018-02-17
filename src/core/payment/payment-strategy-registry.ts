@@ -1,70 +1,45 @@
 import { some } from 'lodash';
-import { PaymentMethodNotRegistrableError, PaymentMethodUnsupportedError } from './errors';
+import { Registry } from '../common/registry';
 import * as paymentMethodTypes from './payment-method-types';
 import PaymentMethod from './payment-method';
 import PaymentStrategy from './strategies/payment-strategy';
 
-export default class PaymentStrategyRegistry {
-    private _factories: { [key: string]: Factory } = {};
-    private _strategies: { [key: string]: PaymentStrategy } = {};
+export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
     private _clientSidePaymentProviders?: string[];
 
-    constructor(config: RegistryOptions = {}) {
-        this._clientSidePaymentProviders = config.clientSidePaymentProviders;
+    constructor(options: RegistryOptions = {}) {
+        super();
+
+        this._clientSidePaymentProviders = options.clientSidePaymentProviders;
     }
 
-    register(name: string, factory: Factory) {
-        if (this._factories[name]) {
-            throw new PaymentMethodNotRegistrableError(name);
-        }
+    getByMethod(paymentMethod: PaymentMethod): PaymentStrategy {
+        const token = this._getToken(paymentMethod);
+        const cacheToken = paymentMethod.gateway || paymentMethod.id;
 
-        this._factories[name] = factory;
+        return this.get(token, cacheToken);
     }
 
-    getStrategy(paymentMethod: PaymentMethod): PaymentStrategy {
-        const key = this._getKey(paymentMethod);
+    private _getToken(paymentMethod: PaymentMethod): string {
+        const methodId = paymentMethod.gateway || paymentMethod.id;
 
-        if (!this._strategies[key]) {
-            this._strategies[key] = this._createStrategy(paymentMethod);
-        }
-
-        return this._strategies[key];
-    }
-
-    private _createStrategy(paymentMethod: PaymentMethod): PaymentStrategy {
-        const factory = this._getFactory(paymentMethod);
-
-        if (!factory) {
-            throw new PaymentMethodUnsupportedError(paymentMethod.id);
-        }
-
-        return factory(paymentMethod);
-    }
-
-    private _getFactory(paymentMethod: PaymentMethod): Factory {
-        const key = this._getKey(paymentMethod);
-
-        if (this._factories[key]) {
-            return this._factories[key];
+        if (this.hasFactory(methodId)) {
+            return methodId;
         }
 
         if (paymentMethod.type === paymentMethodTypes.OFFLINE) {
-            return this._factories.offline;
+            return 'offline';
         }
 
         if (this._isLegacyMethod(paymentMethod)) {
-            return this._factories.legacy;
+            return 'legacy';
         }
 
         if (paymentMethod.type === paymentMethodTypes.HOSTED) {
-            return this._factories.offsite;
+            return 'offsite';
         }
 
-        return this._factories.creditcard;
-    }
-
-    private _getKey(paymentMethod: PaymentMethod): string {
-        return paymentMethod.gateway || paymentMethod.id;
+        return 'creditcard';
     }
 
     private _isLegacyMethod(paymentMethod: PaymentMethod): boolean {
@@ -77,8 +52,6 @@ export default class PaymentStrategyRegistry {
         );
     }
 }
-
-type Factory = (method: PaymentMethod) => PaymentStrategy;
 
 interface RegistryOptions {
     clientSidePaymentProviders?: string[];

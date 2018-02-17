@@ -20,19 +20,27 @@ export default class Registry<T> {
     }
 
     register(token: string, factory: Factory<T>): void {
-        if (this._factories[token]) {
-            throw new InvalidArgumentError();
+        if (this.hasFactory(token)) {
+            throw new InvalidArgumentError(`'${token}' is already registered.`);
         }
 
         this._factories[token] = factory;
     }
 
+    hasFactory(token: string): boolean {
+        return !!this._factories[token];
+    }
+
+    hasInstance(token: string): boolean {
+        return !!this._instances[token];
+    }
+
     private _getInstance(token: string, cacheToken: string): T {
-        if (!this._instances[token]) {
+        if (!this.hasInstance(cacheToken)) {
             const factory = this._factories[token];
 
             if (!factory) {
-                throw new InvalidArgumentError();
+                throw new InvalidArgumentError(`'${token}' is not registered.`);
             }
 
             this._instances[cacheToken] = factory();

@@ -1,44 +1,46 @@
 /// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
 
 import { omit } from 'lodash';
-import PaymentStrategy from './payment-strategy';
-import PaymentMethod from '../payment-method';
+import { CheckoutSelectors } from '../../checkout';
 import { RemoteCheckoutService } from '../../remote-checkout';
 import { ReadableDataStore } from '../../../data-store';
-import { CheckoutSelectors } from '../../checkout';
+import { NotInitializedError } from '../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { PaymentMethodUninitializedError, PaymentMethodMissingDataError } from '../errors';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
+import PaymentMethod from '../payment-method';
+import PaymentStrategy, { InitializeOptions } from './payment-strategy';
 
-/** Class that provides utility methods for checking out using Afterpay SDK */
 export default class AfterpayPaymentStrategy extends PaymentStrategy {
     private _afterpaySdk?: Afterpay.Sdk;
 
     constructor(
-        paymentMethod: PaymentMethod,
         store: ReadableDataStore<CheckoutSelectors>,
         placeOrderService: PlaceOrderService,
         private _remoteCheckoutService: RemoteCheckoutService,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {
-        super(paymentMethod, store, placeOrderService);
+        super(store, placeOrderService);
     }
 
-    /**
-     * @inheritDoc
-     */
-    initialize(options: any): Promise<CheckoutSelectors> {
-        return this._afterpayScriptLoader.load(this._paymentMethod)
+    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+        if (this._isInitialized) {
+            return super.initialize(options);
+        }
+
+        return this._afterpayScriptLoader.load(options.paymentMethod)
             .then((afterpaySdk) => {
                 this._afterpaySdk = afterpaySdk;
+
                 return super.initialize(options);
             });
     }
 
-    /**
-     * @inheritDoc
-     */
     deinitialize(options: any): Promise<CheckoutSelectors> {
+        if (!this._isInitialized) {
+            return super.deinitialize(options);
+        }
+
         if (this._afterpaySdk) {
             this._afterpaySdk = undefined;
         }
@@ -46,10 +48,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         return super.deinitialize(options);
     }
 
-    /**
-     * @inheritDoc
-     */
-    execute(payload: OrderRequestBody, options: any): Promise<any> {
+    execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
         const paymentId = payload.payment.gateway;
         const useStoreCredit = !!payload.useStoreCredit;
 
@@ -61,16 +60,17 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
             .then((resp: any) => this._displayModal(resp.checkout.getPaymentMethod(paymentId).clientToken))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
-            .then(() => this._resolveBeforeUnload());
+            .then(() => this._resolveBeforeUnload())
+            .then(() => this._store.getState());
     }
 
-    /**
-     * @inheritDoc
-     */
     finalize(options: any): Promise<CheckoutSelectors> {
+        const { checkout } = this._store.getState();
+        const order = checkout.getOrder();
+
         const payload = {
             payment: {
-                name: this._paymentMethod.id,
+                name: order.payment.id,
                 paymentData: { nonce: options.nonce },
             },
         };
@@ -82,21 +82,17 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     }
 
     /**
-     * Displays an Afterpay modal box.
      * @param token the token returned by afterpay API
      */
     private _displayModal(token: string): void {
         if (!this._afterpaySdk || !token) {
-            throw new PaymentMethodUninitializedError(this._paymentMethod.gateway!);
+            throw new PaymentMethodUninitializedError('afterpay');
         }
 
         this._afterpaySdk.init();
         this._afterpaySdk.display({ token });
     }
 
-    /**
-     * Returns a promise that resolves when the window unloads.
-     */
     private _resolveBeforeUnload(): Promise<void> {
         return new Promise((resolve) => {
             const handleUnload = () => {

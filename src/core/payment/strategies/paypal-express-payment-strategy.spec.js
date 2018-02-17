@@ -59,7 +59,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
         });
 
-        strategy = new PaypalExpressPaymentStrategy(paymentMethod, store, placeOrderService, scriptLoader);
+        strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader);
     });
 
     afterEach(() => {
@@ -69,13 +69,13 @@ describe('PaypalExpressPaymentStrategy', () => {
     describe('#initialize()', () => {
         describe('if in-context checkout is enabled', () => {
             it('loads Paypal SDK', async () => {
-                await strategy.initialize();
+                await strategy.initialize({ paymentMethod });
 
                 expect(scriptLoader.loadScript).toHaveBeenCalledWith('//www.paypalobjects.com/api/checkout.min.js');
             });
 
             it('initializes Paypal SDK', async () => {
-                await strategy.initialize();
+                await strategy.initialize({ paymentMethod });
 
                 expect(paypalSdk.checkout.setup).toHaveBeenCalledWith(paymentMethod.config.merchantId, {
                     button: 'paypal-button',
@@ -84,7 +84,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('returns checkout state', async () => {
-                const output = await strategy.initialize();
+                const output = await strategy.initialize({ paymentMethod });
 
                 expect(output).toEqual(store.getState());
             });
@@ -96,19 +96,19 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('does not load Paypal SDK', async () => {
-                await strategy.initialize();
+                await strategy.initialize({ paymentMethod });
 
                 expect(scriptLoader.loadScript).not.toHaveBeenCalled();
             });
 
             it('does not initialize Paypal SDK', async () => {
-                await strategy.initialize();
+                await strategy.initialize({ paymentMethod });
 
                 expect(paypalSdk.checkout.setup).not.toHaveBeenCalled();
             });
 
             it('returns checkout state', async () => {
-                const output = await strategy.initialize();
+                const output = await strategy.initialize({ paymentMethod });
 
                 expect(output).toEqual(store.getState());
             });
@@ -136,7 +136,7 @@ describe('PaypalExpressPaymentStrategy', () => {
 
         describe('if in-context checkout is enabled', () => {
             beforeEach(async () => {
-                await strategy.initialize();
+                await strategy.initialize({ paymentMethod });
             });
 
             it('opens in-context modal', async () => {
@@ -202,7 +202,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             beforeEach(async () => {
                 paymentMethod.config.merchantId = null;
 
-                await strategy.initialize();
+                await strategy.initialize({ paymentMethod });
             });
 
             it('does not open in-context modal', async () => {
@@ -264,7 +264,7 @@ describe('PaypalExpressPaymentStrategy', () => {
     describe('#finalize()', () => {
         let order;
 
-        beforeEach(() => {
+        beforeEach(async () => {
             order = merge({}, getSubmittedOrder(), {
                 payment: {
                     id: 'paypalexpress',
@@ -273,6 +273,8 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             jest.spyOn(store.getState().checkout, 'getOrder').mockReturnValue(order);
+
+            await strategy.initialize({ paymentMethod });
         });
 
         it('finalizes order if order is created and payment is acknowledged', async () => {
@@ -315,7 +317,7 @@ describe('PaypalExpressPaymentStrategy', () => {
     describe('#deinitialize()', () => {
         describe('if in-context checkout is enabled', () => {
             it('ends paypal flow', async () => {
-                await strategy.initialize();
+                await strategy.initialize({ paymentMethod });
                 await strategy.deinitialize();
 
                 expect(paypalSdk.checkout.closeFlow).toHaveBeenCalled();
@@ -338,7 +340,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('does not end paypal flow', async () => {
-                await strategy.initialize();
+                await strategy.initialize({ paymentMethod });
                 await strategy.deinitialize();
 
                 expect(paypalSdk.checkout.closeFlow).not.toHaveBeenCalled();

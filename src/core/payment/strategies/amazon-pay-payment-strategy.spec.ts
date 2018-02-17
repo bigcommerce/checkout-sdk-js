@@ -65,7 +65,7 @@ describe('AmazonPayPaymentStrategy', () => {
         remoteCheckoutService = createRemoteCheckoutService(store, client);
         paymentMethod = getAmazonPay();
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
-        strategy = new AmazonPayPaymentStrategy(paymentMethod,
+        strategy = new AmazonPayPaymentStrategy(
             store,
             placeOrderService,
             remoteCheckoutService,
@@ -109,13 +109,13 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('loads widget script', async () => {
-        await strategy.initialize({ container: 'wallet' });
+        await strategy.initialize({ container: 'wallet', paymentMethod });
 
         expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod);
     });
 
     it('initializes payment when selecting new payment method', async () => {
-        await strategy.initialize({ container: 'wallet' });
+        await strategy.initialize({ container: 'wallet', paymentMethod });
 
         document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
 
@@ -126,14 +126,14 @@ describe('AmazonPayPaymentStrategy', () => {
     it('resolves with current state if initialization is complete', async () => {
         jest.spyOn(placeOrderService, 'initializePaymentMethod');
 
-        const output = await strategy.initialize({ container: 'wallet' });
+        const output = await strategy.initialize({ container: 'wallet', paymentMethod });
 
         expect(output).toEqual(store.getState());
         expect(placeOrderService.initializePaymentMethod).toHaveBeenCalledWith(paymentMethod.id, expect.any(Function));
     });
 
     it('synchronizes address when selecting new payment method', async () => {
-        await strategy.initialize({ container: 'wallet' });
+        await strategy.initialize({ container: 'wallet', paymentMethod });
 
         document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
 
@@ -149,7 +149,7 @@ describe('AmazonPayPaymentStrategy', () => {
         const onError = jest.fn();
         const element = document.getElementById('wallet');
 
-        await strategy.initialize({ container: 'wallet', onError });
+        await strategy.initialize({ container: 'wallet', paymentMethod, onError });
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
         expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutSessionError));
@@ -159,7 +159,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('reinitializes payment method when cart total changes', async () => {
-        await strategy.initialize({ container: 'wallet' });
+        await strategy.initialize({ container: 'wallet', paymentMethod });
         await store.dispatch(new CartActionCreator(client).loadCart());
 
         expect(remoteCheckoutService.initializePayment)
@@ -170,7 +170,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('does not reinitialize payment method if cart total remains the same', async () => {
         await store.dispatch(new CartActionCreator(client).loadCart());
-        await strategy.initialize({ container: 'wallet' });
+        await strategy.initialize({ container: 'wallet', paymentMethod });
         await store.dispatch(new CartActionCreator(client).loadCart());
 
         expect(remoteCheckoutService.initializePayment).toHaveBeenCalledTimes(1);
@@ -180,7 +180,7 @@ describe('AmazonPayPaymentStrategy', () => {
         const payload = getOrderRequestBody();
         const options = {};
 
-        await strategy.initialize({ container: 'wallet' });
+        await strategy.initialize({ container: 'wallet', paymentMethod });
         await strategy.execute(payload, options);
 
         expect(remoteCheckoutService.initializePayment)
@@ -199,7 +199,7 @@ describe('AmazonPayPaymentStrategy', () => {
                 new RequestError(getErrorResponse({ type: 'provider_widget_error' }))
             ));
 
-        await strategy.initialize({ container: 'wallet' });
+        await strategy.initialize({ container: 'wallet', paymentMethod });
 
         walletSpy.mockReset();
 
@@ -216,7 +216,7 @@ describe('AmazonPayPaymentStrategy', () => {
         jest.spyOn(placeOrderService, 'submitOrder')
             .mockReturnValue(Promise.reject(expected));
 
-        await strategy.initialize({ container: 'wallet' });
+        await strategy.initialize({ container: 'wallet', paymentMethod });
 
         try {
             await strategy.execute(getOrderRequestBody());

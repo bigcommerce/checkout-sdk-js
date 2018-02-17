@@ -1,7 +1,6 @@
 import { merge, omit } from 'lodash';
 import { getErrorPaymentResponseBody } from '../payments.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
-import { getPaymentMethod } from '../payment-methods.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
@@ -27,7 +26,7 @@ describe('SagePayPaymentStrategy', () => {
 
         store = createCheckoutStore();
 
-        strategy = new SagePayPaymentStrategy(getPaymentMethod(), store, placeOrderService, formPoster);
+        strategy = new SagePayPaymentStrategy(store, placeOrderService, formPoster);
     });
 
     it('submits order without payment data', async () => {

@@ -153,7 +153,7 @@ describe('CheckoutService', () => {
         };
 
         paymentStrategyRegistry = {
-            getStrategy: jest.fn(() => paymentStrategy),
+            getByMethod: jest.fn(() => paymentStrategy),
         };
 
         shippingStrategyRegistry = createShippingStrategyRegistry(store, checkoutClient);
@@ -269,7 +269,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.submitOrder(getOrderRequestBody());
 
-            expect(paymentStrategyRegistry.getStrategy).toHaveBeenCalledWith(getAuthorizenet());
+            expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getAuthorizenet());
         });
 
         it('executes payment strategy', async () => {
@@ -307,7 +307,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.finalizeOrderIfNeeded();
 
-            expect(paymentStrategyRegistry.getStrategy).toHaveBeenCalledWith(getAuthorizenet());
+            expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getAuthorizenet());
         });
 
         it('finalizes order', async () => {
@@ -421,14 +421,16 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.initializePaymentMethod('braintree');
 
-            expect(paymentStrategyRegistry.getStrategy).toHaveBeenCalledWith(getBraintree());
+            expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getBraintree());
         });
 
         it('initializes payment strategy', async () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.initializePaymentMethod('braintree');
 
-            expect(paymentStrategy.initialize).toHaveBeenCalled();
+            expect(paymentStrategy.initialize).toHaveBeenCalledWith({
+                paymentMethod: getBraintree(),
+            });
         });
 
         it('throws error if payment method has not been loaded', () => {
@@ -441,7 +443,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.deinitializePaymentMethod('braintree');
 
-            expect(paymentStrategyRegistry.getStrategy).toHaveBeenCalledWith(getBraintree());
+            expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getBraintree());
         });
 
         it('deinitializes payment strategy', async () => {

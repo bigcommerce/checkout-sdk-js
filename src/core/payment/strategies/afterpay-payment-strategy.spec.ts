@@ -1,23 +1,22 @@
 import { merge } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
-import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import { CartActionCreator } from '../../cart';
 import { CheckoutStore } from '../../checkout';
-import { PlaceOrderService } from '../../order';
+import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { RemoteCheckoutService } from '../../remote-checkout';
 import { createScriptLoader } from '../../../script-loader';
 import { getAfterpay } from '../../payment/payment-methods.mock';
-import { getOrderRequestBody } from '../../order/orders.mock';
+import { getIncompleteOrder, getOrderRequestBody } from '../../order/orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
+import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import CheckoutClient from '../../checkout/checkout-client';
 import PaymentMethod from '../payment-method';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
 import createPlaceOrderService from '../../create-place-order-service';
 import createRemoteCheckoutService from '../../create-remote-checkout-service';
-import { OrderRequestBody, PlaceOrderService } from '../../order';
 
 describe('AfterpayPaymentStrategy', () => {
     let client: CheckoutClient;
@@ -28,8 +27,9 @@ describe('AfterpayPaymentStrategy', () => {
     let paymentMethod: PaymentMethod;
     let placeOrderService: PlaceOrderService;
     let payload: OrderRequestBody;
-    let clientToken: string = 'foo';
-    let afterpaySdk = {
+
+    const clientToken: string = 'foo';
+    const afterpaySdk = {
         init: () => {},
         display: () => {},
     };
@@ -41,7 +41,7 @@ describe('AfterpayPaymentStrategy', () => {
         remoteCheckoutService = createRemoteCheckoutService(store, client);
         paymentMethod = getAfterpay();
         scriptLoader = new AfterpayScriptLoader(createScriptLoader());
-        strategy = new AfterpayPaymentStrategy(paymentMethod,
+        strategy = new AfterpayPaymentStrategy(
             store,
             placeOrderService,
             remoteCheckoutService,
@@ -87,14 +87,16 @@ describe('AfterpayPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         it('loads script when initializing strategy', async () => {
-            await strategy.initialize();
+            await strategy.initialize({ paymentMethod });
+
             expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod);
         });
     });
 
     describe('#execute()', () => {
         beforeEach(async () => {
-            await strategy.initialize();
+            await strategy.initialize({ paymentMethod });
+
             strategy.execute(payload);
 
             setTimeout(() => {
@@ -118,7 +120,17 @@ describe('AfterpayPaymentStrategy', () => {
         const nonce = 'bar';
 
         it('submits the order and the payment', async () => {
+            jest.spyOn(store.getState().checkout, 'getOrder')
+                .mockReturnValue({
+                    ...getIncompleteOrder(),
+                    payment: {
+                        id: paymentMethod.id,
+                    },
+                });
+
+            await strategy.initialize({ paymentMethod });
             await strategy.finalize({ nonce });
+
             expect(placeOrderService.submitOrder).toHaveBeenCalled();
             expect(placeOrderService.submitPayment).toHaveBeenCalledWith({
                 name: paymentMethod.id,

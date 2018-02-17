@@ -1,6 +1,5 @@
 import { omit } from 'lodash';
 import { getOrderRequestBody, getIncompleteOrder } from '../../order/orders.mock';
-import { getPaymentMethod } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import createCheckoutStore from '../../create-checkout-store';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
@@ -18,7 +17,7 @@ describe('PaypalProPaymentStrategy', () => {
 
         store = createCheckoutStore();
 
-        strategy = new PaypalProPaymentStrategy(getPaymentMethod(), store, placeOrderService);
+        strategy = new PaypalProPaymentStrategy(store, placeOrderService);
 
         jest.spyOn(store.getState().checkout, 'getOrder').mockReturnValue(getIncompleteOrder());
     });

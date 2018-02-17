@@ -144,7 +144,7 @@ export default class CheckoutService {
             throw new MissingDataError();
         }
 
-        return this._paymentStrategyRegistry.getStrategy(method).execute(payload, options);
+        return this._paymentStrategyRegistry.getByMethod(method).execute(payload, options);
     }
 
     /**
@@ -181,7 +181,7 @@ export default class CheckoutService {
             throw new MissingDataError();
         }
 
-        return this._paymentStrategyRegistry.getStrategy(method).finalize(options);
+        return this._paymentStrategyRegistry.getByMethod(method).finalize(options);
     }
 
     /**
@@ -213,13 +213,17 @@ export default class CheckoutService {
      */
     initializePaymentMethod(methodId, gatewayId, options) {
         const { checkout } = this._store.getState();
-        const method = checkout.getPaymentMethod(methodId, gatewayId);
+        const paymentMethod = checkout.getPaymentMethod(methodId, gatewayId);
 
-        if (!method) {
+        if (!paymentMethod) {
             throw new MissingDataError();
         }
 
-        return this._paymentStrategyRegistry.getStrategy(method).initialize(options);
+        return this._paymentStrategyRegistry.getByMethod(paymentMethod)
+            .initialize({
+                ...options,
+                paymentMethod,
+            });
     }
 
     /**
@@ -235,7 +239,7 @@ export default class CheckoutService {
             throw new MissingDataError();
         }
 
-        return this._paymentStrategyRegistry.getStrategy(method).deinitialize();
+        return this._paymentStrategyRegistry.getByMethod(method).deinitialize();
     }
 
     /**
