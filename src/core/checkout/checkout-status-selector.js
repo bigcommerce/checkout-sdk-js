@@ -177,7 +177,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isSigningOut() {
-        return this._customer.isSigningOut();
+        return this._customer.isSigningOut() || this._remoteCheckout.isSigningOut();
     }
 
     /**
