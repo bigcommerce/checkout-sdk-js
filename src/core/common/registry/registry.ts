@@ -11,11 +11,11 @@ export default class Registry<T> {
         this._options = { defaultToken: 'default', ...options };
     }
 
-    get(token: string = this._options.defaultToken): T {
+    get(token: string = this._options.defaultToken, cacheToken: string = token): T {
         try {
-            return this._getInstance(token);
+            return this._getInstance(token, cacheToken);
         } catch (error) {
-            return this._getInstance(this._options.defaultToken);
+            return this._getInstance(this._options.defaultToken, cacheToken);
         }
     }
 
@@ -27,7 +27,7 @@ export default class Registry<T> {
         this._factories[token] = factory;
     }
 
-    private _getInstance(token: string): T {
+    private _getInstance(token: string, cacheToken: string): T {
         if (!this._instances[token]) {
             const factory = this._factories[token];
 
@@ -35,10 +35,10 @@ export default class Registry<T> {
                 throw new InvalidArgumentError();
             }
 
-            this._instances[token] = factory();
+            this._instances[cacheToken] = factory();
         }
 
-        return this._instances[token];
+        return this._instances[cacheToken];
     }
 }
 

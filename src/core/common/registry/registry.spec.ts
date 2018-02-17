@@ -20,6 +20,18 @@ describe('Registry', () => {
         expect(registry.get('foo')).toBe(registry.get('foo'));
     });
 
+    it('returns unique cached instances', () => {
+        const registry = new Registry();
+
+        registry.register('foo', () => ({ name: 'Foo' }));
+
+        const instanceA = registry.get('foo', 'A');
+        const instanceB = registry.get('foo', 'B');
+
+        expect(instanceA).not.toBe(instanceB);
+        expect(instanceA).toEqual(instanceB);
+    });
+
     it('returns default strategy if none found', () => {
         const registry = new Registry();
 
