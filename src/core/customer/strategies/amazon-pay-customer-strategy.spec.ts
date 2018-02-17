@@ -8,6 +8,7 @@ import { PaymentMethod } from '../../payment';
 import { RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { createScriptLoader } from '../../../script-loader';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
+import { getGuestCustomer } from '../customers.mock';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
@@ -161,13 +162,27 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('signs out from remote checkout provider', async () => {
+        jest.spyOn(store.getState().checkout, 'getCustomer')
+            .mockReturnValue({
+                ...getGuestCustomer(),
+                remote: { provider: 'amazon' },
+            });
+
         jest.spyOn(signInCustomerService, 'remoteSignOut')
             .mockReturnValue(Promise.resolve(store.getState()));
 
-        await strategy.initialize({ container: 'login', paymentMethod });
         await strategy.signOut();
 
-        expect(signInCustomerService.remoteSignOut).toHaveBeenCalledWith(paymentMethod.id, undefined);
+        expect(signInCustomerService.remoteSignOut).toHaveBeenCalledWith('amazon', undefined);
+    });
+
+    it('does nothing if already signed out from remote checkout provider', async () => {
+        jest.spyOn(signInCustomerService, 'remoteSignOut')
+            .mockReturnValue(Promise.resolve(store.getState()));
+
+        await strategy.signOut();
+
+        expect(signInCustomerService.remoteSignOut).not.toHaveBeenCalled();
     });
 
     it('throws error if trying to sign in programmatically', async () => {

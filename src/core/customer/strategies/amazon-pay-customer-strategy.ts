@@ -78,11 +78,14 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     }
 
     signOut(options?: any): Promise<CheckoutSelectors> {
-        if (!this._isInitialized) {
-            throw new NotInitializedError();
+        const { checkout } = this._store.getState();
+        const { remote = {} } = checkout.getCustomer() || {};
+
+        if (!remote.provider) {
+            return Promise.resolve(this._store.getState());
         }
 
-        return this._signInCustomerService.remoteSignOut(this._paymentMethod!.id, options);
+        return this._signInCustomerService.remoteSignOut(remote.provider, options);
     }
 
     private _createSignInButton(options: InitializeWidgetOptions): OffAmazonPayments.Button {
