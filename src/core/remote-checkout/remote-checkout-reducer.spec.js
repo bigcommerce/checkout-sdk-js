@@ -9,6 +9,7 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED,
             payload: response.body,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
@@ -17,9 +18,11 @@ describe('remoteCheckoutReducer', () => {
                     billingAddress: response.body.billing.address,
                 },
                 errors: {
+                    failedBillingMethod: undefined,
                     initializeBillingError: undefined,
                 },
                 statuses: {
+                    loadingBillingMethod: undefined,
                     isInitializingBilling: false,
                 },
             }));
@@ -30,15 +33,18 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_BILLING_FAILED,
             payload: response,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 errors: {
+                    failedBillingMethod: 'amazon',
                     initializeBillingError: response,
                 },
                 statuses: {
                     isInitializingBilling: false,
+                    loadingBillingMethod: undefined,
                 },
             }));
     });
@@ -48,12 +54,14 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED,
             payload: response,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 statuses: {
                     isInitializingBilling: true,
+                    loadingBillingMethod: 'amazon',
                 },
             }));
     });
@@ -63,6 +71,7 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED,
             payload: response.body,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
@@ -71,10 +80,12 @@ describe('remoteCheckoutReducer', () => {
                     shippingAddress: response.body.shipping.address,
                 },
                 errors: {
+                    failedShippingMethod: undefined,
                     initializeShippingError: undefined,
                 },
                 statuses: {
                     isInitializingShipping: false,
+                    loadingShippingMethod: undefined,
                 },
             }));
     });
@@ -84,15 +95,18 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED,
             payload: response,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 errors: {
+                    failedShippingMethod: 'amazon',
                     initializeShippingError: response,
                 },
                 statuses: {
                     isInitializingShipping: false,
+                    loadingShippingMethod: undefined,
                 },
             }));
     });
@@ -102,12 +116,14 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED,
             payload: response,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 statuses: {
                     isInitializingShipping: true,
+                    loadingShippingMethod: 'amazon',
                 },
             }));
     });
@@ -117,6 +133,7 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED,
             payload: response.body,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
@@ -125,10 +142,12 @@ describe('remoteCheckoutReducer', () => {
                     isPaymentInitialized: response.body.payment,
                 },
                 errors: {
+                    failedPaymentMethod: undefined,
                     initializePaymentError: undefined,
                 },
                 statuses: {
                     isInitializingPayment: false,
+                    loadingPaymentMethod: undefined,
                 },
             }));
     });
@@ -138,15 +157,18 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED,
             payload: response,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 errors: {
+                    failedPaymentMethod: 'amazon',
                     initializePaymentError: response,
                 },
                 statuses: {
                     isInitializingPayment: false,
+                    loadingPaymentMethod: undefined,
                 },
             }));
     });
@@ -156,12 +178,14 @@ describe('remoteCheckoutReducer', () => {
         const action = {
             type: actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED,
             payload: response,
+            meta: { methodId: 'amazon' },
         };
 
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 statuses: {
                     isInitializingPayment: true,
+                    loadingPaymentMethod: 'amazon',
                 },
             }));
     });

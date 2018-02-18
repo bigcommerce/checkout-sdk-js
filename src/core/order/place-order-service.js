@@ -87,6 +87,17 @@ export default class PlaceOrderService {
     }
 
     /**
+     * @param {string} methodId
+     * @param {function(): Promise<any>} initializer
+     * @return {Promise<CheckoutSelectors>}
+     */
+    initializePaymentMethod(methodId, initializer) {
+        return this._store.dispatch(
+            this._paymentMethodActionCreator.initializePaymentMethod(methodId, initializer)
+        );
+    }
+
+    /**
      * Loads a payment method from the API.
      * @param {string} methodId
      * @param {RequestOptions} [options]

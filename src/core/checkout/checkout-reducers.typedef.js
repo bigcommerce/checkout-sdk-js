@@ -9,6 +9,7 @@
  * @property {Reducer<InstrumentState>} instruments
  * @property {Reducer<OrderState>} order
  * @property {Reducer<QuoteState>} quote
+ * @property {Reducer<ShippingState>} shipping
  * @property {Reducer<ShippingCountriesState>} shippingCountries
  * @property {Reducer<ShippingOptionsState>} shippingOptions
  */

@@ -29,6 +29,18 @@ export default class CustomerSelector {
     }
 
     /**
+     * @param {?string} methodId
+     * @return {?ErrorResponse}
+     */
+    getInitializeError(methodId) {
+        if (methodId && this._customer.errors.initializeMethod !== methodId) {
+            return;
+        }
+
+        return this._customer.errors.initializeError;
+    }
+
+    /**
      * @return {boolean}
      */
     isSigningIn() {
@@ -40,5 +52,17 @@ export default class CustomerSelector {
      */
     isSigningOut() {
         return !!(this._customer.statuses && this._customer.statuses.isSigningOut);
+    }
+
+    /**
+     * @param {?string} methodId
+     * @return {boolean}
+     */
+    isInitializing(methodId) {
+        if (methodId && this._customer.statuses.initializingMethod !== methodId) {
+            return false;
+        }
+
+        return !!this._customer.statuses.isInitializing;
     }
 }

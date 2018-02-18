@@ -33,11 +33,29 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     initialize(options: InitializeWidgetOptions): Promise<CheckoutSelectors> {
         this._walletOptions = options;
 
-        this._window.onAmazonPaymentsReady = () => {
-            this._wallet = this._createWallet(options);
-        };
+        return this._placeOrderService
+            .initializePaymentMethod(this._paymentMethod.id, () =>
+                new Promise((resolve, reject) => {
+                    const { onError = noop, onReady = noop } = options;
 
-        return this._scriptLoader.loadWidget(this._paymentMethod)
+                    this._window.onAmazonPaymentsReady = () => {
+                        this._wallet = this._createWallet({
+                            ...options as InitializeWidgetOptions,
+                            onError: (error) => {
+                                onError(error);
+                                reject(error);
+                            },
+                            onReady: () => {
+                                onReady();
+                                resolve();
+                            },
+                        });
+                    };
+
+                    this._scriptLoader.loadWidget(this._paymentMethod)
+                        .catch(reject);
+                })
+            )
             .then(() => {
                 this._unsubscribe = this._store.subscribe(
                     this._handleGrandTotalChange.bind(this),
@@ -78,7 +96,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     }
 
     private _createWallet(options: InitializeWidgetOptions): OffAmazonPayments.Widgets.Wallet {
-        const { container, onError = noop, onPaymentSelect = noop } = options;
+        const { container, onError = noop, onPaymentSelect = noop, onReady = noop } = options;
         const { merchantId } = this._paymentMethod.config;
 
         const widget = new OffAmazonPayments.Widgets.Wallet({
@@ -91,6 +109,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             onPaymentSelect: (orderReference) => {
                 this._handlePaymentSelect(orderReference, onPaymentSelect);
             },
+            onReady: () => onReady(),
         });
 
         widget.bind(container);
@@ -155,4 +174,5 @@ export interface InitializeWidgetOptions {
     amazonOrderReferenceId?: string;
     onPaymentSelect?: (address: Address) => void;
     onError?: (error: Error) => void;
+    onReady?: () => void;
 }

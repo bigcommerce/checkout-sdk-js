@@ -65,24 +65,48 @@ function errorsReducer(errors = {}, action) {
     switch (action.type) {
     case actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED:
     case actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED:
-        return { ...errors, initializeBillingError: undefined };
+        return {
+            ...errors,
+            failedBillingMethod: undefined,
+            initializeBillingError: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_BILLING_FAILED:
-        return { ...errors, initializeBillingError: action.payload };
+        return {
+            ...errors,
+            failedBillingMethod: action.meta && action.meta.methodId,
+            initializeBillingError: action.payload,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED:
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED:
-        return { ...errors, initializeShippingError: undefined };
+        return {
+            ...errors,
+            failedShippingMethod: undefined,
+            initializeShippingError: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED:
-        return { ...errors, initializeShippingError: action.payload };
+        return {
+            ...errors,
+            failedShippingMethod: action.meta && action.meta.methodId,
+            initializeShippingError: action.payload,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED:
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
-        return { ...errors, initializePaymentError: undefined };
+        return {
+            ...errors,
+            failedPaymentMethod: undefined,
+            initializePaymentError: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED:
-        return { ...errors, initializePaymentError: action.payload };
+        return {
+            ...errors,
+            failedPaymentMethod: action.meta && action.meta.methodId,
+            initializePaymentError: action.payload,
+        };
 
     case actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED:
     case actionTypes.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED:
@@ -105,25 +129,49 @@ function errorsReducer(errors = {}, action) {
 function statusesReducer(statuses = {}, action) {
     switch (action.type) {
     case actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED:
-        return { ...statuses, isInitializingBilling: true };
+        return {
+            ...statuses,
+            isInitializingBilling: true,
+            loadingBillingMethod: action.meta && action.meta.methodId,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED:
     case actionTypes.INITIALIZE_REMOTE_BILLING_FAILED:
-        return { ...statuses, isInitializingBilling: false };
+        return {
+            ...statuses,
+            isInitializingBilling: false,
+            loadingBillingMethod: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED:
-        return { ...statuses, isInitializingShipping: true };
+        return {
+            ...statuses,
+            isInitializingShipping: true,
+            loadingShippingMethod: action.meta && action.meta.methodId,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED:
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED:
-        return { ...statuses, isInitializingShipping: false };
+        return {
+            ...statuses,
+            isInitializingShipping: false,
+            loadingShippingMethod: undefined,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED:
-        return { ...statuses, isInitializingPayment: true };
+        return {
+            ...statuses,
+            isInitializingPayment: true,
+            loadingPaymentMethod: action.meta && action.meta.methodId,
+        };
 
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
     case actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED:
-        return { ...statuses, isInitializingPayment: false };
+        return {
+            ...statuses,
+            isInitializingPayment: false,
+            loadingPaymentMethod: undefined,
+        };
 
     case actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED:
         return { ...statuses, isSigningOut: true };

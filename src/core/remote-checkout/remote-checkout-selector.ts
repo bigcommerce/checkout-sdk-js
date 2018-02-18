@@ -15,15 +15,27 @@ export default class RemoteCheckoutSelector {
         return this._remoteCheckout.meta;
     }
 
-    getInitializeBillingError(): any {
+    getInitializeBillingError(methodId?: string): any {
+        if (methodId && this._remoteCheckout.errors.failedBillingMethod !== methodId) {
+            return false;
+        }
+
         return this._remoteCheckout.errors.initializeBillingError;
     }
 
-    getInitializeShippingError(): any {
+    getInitializeShippingError(methodId?: string): any {
+        if (methodId && this._remoteCheckout.errors.failedShippingMethod !== methodId) {
+            return false;
+        }
+
         return this._remoteCheckout.errors.initializeShippingError;
     }
 
-    getInitializePaymentError(): any {
+    getInitializePaymentError(methodId?: string): any {
+        if (methodId && this._remoteCheckout.errors.failedPaymentMethod !== methodId) {
+            return false;
+        }
+
         return this._remoteCheckout.errors.initializePaymentError;
     }
 
@@ -31,7 +43,11 @@ export default class RemoteCheckoutSelector {
         return this._remoteCheckout.errors.signOutError;
     }
 
-    isInitializingBilling(): boolean {
+    isInitializingBilling(methodId?: string): boolean {
+        if (methodId && this._remoteCheckout.statuses.loadingBillingMethod !== methodId) {
+            return false;
+        }
+
         return !!this._remoteCheckout.statuses.isInitializingBilling;
     }
 
@@ -39,7 +55,11 @@ export default class RemoteCheckoutSelector {
         return !!this._remoteCheckout.statuses.isInitializingShipping;
     }
 
-    isInitializingPayment(): boolean {
+    isInitializingPayment(methodId?: string): boolean {
+        if (methodId && this._remoteCheckout.statuses.loadingPaymentMethod !== methodId) {
+            return false;
+        }
+
         return !!this._remoteCheckout.statuses.isInitializingPayment;
     }
 

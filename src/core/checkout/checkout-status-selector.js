@@ -12,6 +12,8 @@ export default class CheckoutStatusSelector {
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
+     * @param {RemoteCheckoutSelector} remoteCheckout
+     * @param {ShippingSelector} shipping
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
@@ -28,6 +30,8 @@ export default class CheckoutStatusSelector {
         order,
         paymentMethods,
         quote,
+        remoteCheckout,
+        shipping,
         shippingAddress,
         shippingCountries,
         shippingOptions
@@ -43,6 +47,8 @@ export default class CheckoutStatusSelector {
         this._order = order;
         this._paymentMethods = paymentMethods;
         this._quote = quote;
+        this._remoteCheckout = remoteCheckout;
+        this._shipping = shipping;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
@@ -62,12 +68,15 @@ export default class CheckoutStatusSelector {
             this.isLoadingShippingCountries() ||
             this.isLoadingPaymentMethods() ||
             this.isLoadingPaymentMethod() ||
+            this.isInitializingPaymentMethod() ||
             this.isLoadingShippingOptions() ||
             this.isSelectingShippingOption() ||
             this.isSigningIn() ||
             this.isSigningOut() ||
+            this.isInitializingCustomer() ||
             this.isUpdatingBillingAddress() ||
             this.isUpdatingShippingAddress() ||
+            this.isInitializingShipping() ||
             this.isApplyingCoupon() ||
             this.isRemovingCoupon() ||
             this.isApplyingGiftCertificate() ||
@@ -150,6 +159,14 @@ export default class CheckoutStatusSelector {
     }
 
     /**
+     * @param {?string} methodId
+     * @return {boolean}
+     */
+    isInitializingPaymentMethod(methodId) {
+        return this._paymentMethods.isInitializingMethod(methodId) || this._remoteCheckout.isInitializingPayment(methodId);
+    }
+
+    /**
      * @return {boolean}
      */
     isSigningIn() {
@@ -160,7 +177,15 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isSigningOut() {
-        return this._customer.isSigningOut();
+        return this._customer.isSigningOut() || this._remoteCheckout.isSigningOut();
+    }
+
+    /**
+     * @param {?string} methodId
+     * @return {boolean}
+     */
+    isInitializingCustomer(methodId) {
+        return this._customer.isInitializing(methodId);
     }
 
     /**
@@ -189,6 +214,14 @@ export default class CheckoutStatusSelector {
      */
     isUpdatingShippingAddress() {
         return this._shippingAddress.isUpdating();
+    }
+
+    /**
+     * @param {?string} methodId
+     * @return {boolean}
+     */
+    isInitializingShipping(methodId) {
+        return this._shipping.isInitializing(methodId) || this._remoteCheckout.isInitializingShipping(methodId);
     }
 
     /**
@@ -226,7 +259,6 @@ export default class CheckoutStatusSelector {
         return this._instruments.isLoading();
     }
 
-
     /**
     * @return {boolean}
     */
@@ -242,6 +274,9 @@ export default class CheckoutStatusSelector {
         return this._instruments.isDeleting(instrumentId);
     }
 
+    /**
+     * @return {boolean}
+     */
     isLoadingConfig() {
         return this._config.isLoading();
     }

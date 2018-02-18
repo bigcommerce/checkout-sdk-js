@@ -96,6 +96,7 @@ describe('AmazonPayCustomerStrategy', () => {
 
         expect(buttonConstructorSpy).toHaveBeenCalledWith('login', paymentMethod.config.merchantId, {
             authorization: expect.any(Function),
+            onError: expect.any(Function),
             color: 'Gold',
             size: 'small',
             type: 'PwA',
@@ -113,6 +114,15 @@ describe('AmazonPayCustomerStrategy', () => {
         await strategy.initialize({ container: 'login', paymentMethod });
 
         expect(buttonConstructorSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('resolves with current state after initialization', async () => {
+        jest.spyOn(signInCustomerService, 'initializeCustomer');
+
+        const output = await strategy.initialize({ container: 'login', paymentMethod });
+
+        expect(output).toEqual(store.getState());
+        expect(signInCustomerService.initializeCustomer).toHaveBeenCalledWith(paymentMethod.id, expect.any(Function));
     });
 
     it('generates request token', async () => {

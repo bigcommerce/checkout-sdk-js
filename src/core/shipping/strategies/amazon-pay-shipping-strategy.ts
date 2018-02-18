@@ -3,12 +3,12 @@
 import { noop } from 'lodash';
 import { Address } from '../../address';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import { CheckoutSelectors } from '../../checkout';
+import { ReadableDataStore } from '../../../data-store';
 import { NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod } from '../../payment';
-import { ReadableDataStore } from '../../../data-store';
 import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
 import { isAddressEqual } from '../../address';
-import CheckoutSelectors from '../../checkout/checkout-selectors';
 import ShippingStrategy from './shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
 
@@ -33,13 +33,31 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             return super.initialize(options);
         }
 
-        this._paymentMethod = options.paymentMethod;
+        return this._updateShippingService
+            .initializeShipping(options.paymentMethod.id, () =>
+                new Promise((resolve, reject) => {
+                    const { onError = noop, onReady = noop } = options;
 
-        this._window.onAmazonPaymentsReady = () => {
-            this._addressBook = this._createAddressBook(options);
-        };
+                    this._paymentMethod = options.paymentMethod;
 
-        return this._scriptLoader.loadWidget(this._paymentMethod)
+                    this._window.onAmazonPaymentsReady = () => {
+                        this._addressBook = this._createAddressBook({
+                            ...options as InitializeWidgetOptions,
+                            onError: (error) => {
+                                onError(error);
+                                reject(error);
+                            },
+                            onReady: () => {
+                                onReady();
+                                resolve();
+                            },
+                        });
+                    };
+
+                    this._scriptLoader.loadWidget(this._paymentMethod)
+                        .catch(reject);
+                })
+            )
             .then(() => super.initialize(options));
     }
 
@@ -67,7 +85,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             throw new NotInitializedError();
         }
 
-        const { container, onAddressSelect = noop, onError = noop } = options;
+        const { container, onAddressSelect = noop, onError = noop, onReady = noop } = options;
         const { merchantId } = this._paymentMethod.config;
 
         const widget = new OffAmazonPayments.Widgets.AddressBook({
@@ -85,6 +103,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             onOrderReferenceCreate: (orderReference) => {
                 this._handleOrderReferenceCreate(orderReference);
             },
+            onReady: () => onReady(),
         });
 
         widget.bind(container);
@@ -92,7 +111,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return widget;
     }
 
-    private _handleAddressSelect(orderReference: OffAmazonPayments.Widgets.BillingAgreement, callback: (address: Address) => void): void {
+    private _handleAddressSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: Address) => void): void {
         if (!this._paymentMethod) {
             return;
         }
@@ -116,7 +135,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         });
     }
 
-    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void) {
+    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
         if (!error) {
             return;
         }
@@ -139,4 +158,5 @@ export interface InitializeWidgetOptions {
     container: string;
     onAddressSelect?: (address: Address) => void;
     onError?: (error: Error) => void;
+    onReady?: () => void;
 }

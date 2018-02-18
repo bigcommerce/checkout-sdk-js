@@ -15,8 +15,9 @@ declare namespace OffAmazonPayments.Widgets {
         design: {
             designMode: string;
         };
-        onAddressSelect: (billingAgreement: BillingAgreement) => void;
+        onAddressSelect: (orderReference: OrderReference) => void;
         onError: (error: WidgetError) => void;
+        onReady: (orderReference: OrderReference) => void;
         onOrderReferenceCreate: (orderReference: OrderReference) => void;
     }
 
@@ -27,14 +28,12 @@ declare namespace OffAmazonPayments.Widgets {
             designMode: string;
         };
         onError: (error: WidgetError) => void;
+        onReady: (orderReference: OrderReference) => void;
         onPaymentSelect: (orderReference: OrderReference) => void;
     }
 
-    interface BillingAgreement {
-        getAmazonBillingAgreementId(): string;
-    }
-
     interface OrderReference {
+        getAmazonBillingAgreementId(): string;
         getAmazonOrderReferenceId(): string;
     }
 

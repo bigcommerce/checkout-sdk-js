@@ -49,4 +49,24 @@ export default class PaymentMethodActionCreator {
                 });
         });
     }
+
+    /**
+     * @param {string} methodId
+     * @param {function(): Promise<any>} initializer
+     * @return {Observable<Action>}
+     */
+    initializePaymentMethod(methodId, initializer) {
+        return Observable.create((observer) => {
+            observer.next(createAction(actionTypes.INITIALIZE_PAYMENT_METHOD_REQUESTED, undefined, { methodId }));
+
+            initializer()
+                .then((data) => {
+                    observer.next(createAction(actionTypes.INITIALIZE_PAYMENT_METHOD_SUCCEEDED, data, { methodId }));
+                    observer.complete();
+                })
+                .catch((response) => {
+                    observer.error(createErrorAction(actionTypes.INITIALIZE_PAYMENT_METHOD_FAILED, response, { methodId }));
+                });
+        });
+    }
 }

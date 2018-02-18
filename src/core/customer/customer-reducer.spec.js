@@ -134,4 +134,46 @@ describe('customerReducer()', () => {
             statuses: { isSigningOut: false },
         }));
     });
+
+    it('returns new customer data while initializing customer', () => {
+        const action = {
+            type: customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED,
+            meta: { methodId: 'foobar' },
+        };
+
+        expect(customerReducer(initialState, action).statuses).toEqual({
+            initializingMethod: 'foobar',
+            isInitializing: true,
+        });
+    });
+
+    it('returns new customer data if customer has initialized successfully', () => {
+        const action = {
+            type: customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED,
+            meta: { methodId: 'foobar' },
+        };
+
+        expect(customerReducer(initialState, action).statuses).toEqual({
+            initializingMethod: undefined,
+            isInitializing: false,
+        });
+    });
+
+    it('returns new customer data if customer has failed to initialize', () => {
+        const action = {
+            type: customerActionTypes.INITIALIZE_CUSTOMER_FAILED,
+            payload: getErrorResponse(),
+            meta: { methodId: 'foobar' },
+        };
+
+        expect(customerReducer(initialState, action).statuses).toEqual({
+            initializingMethod: undefined,
+            isInitializing: false,
+        });
+
+        expect(customerReducer(initialState, action).errors).toEqual({
+            initializeMethod: 'foobar',
+            initializeError: action.payload,
+        });
+    });
 });
