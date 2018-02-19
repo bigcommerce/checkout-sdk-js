@@ -9,6 +9,7 @@ import { RemoteCheckoutService } from '../../remote-checkout';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getCheckoutMeta } from '../../checkout/checkout.mock';
 import { getFlatRateOption } from '../shipping-options.mock';
+import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import { getShippingAddress } from '../shipping-address.mock';
 import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
@@ -57,7 +58,9 @@ describe('AmazonPayShippingStrategy', () => {
         addressBookSpy = jest.fn();
         container = document.createElement('div');
         hostWindow = window;
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            remoteCheckout: getRemoteCheckoutState(),
+        });
         remoteCheckoutService = createRemoteCheckoutService(store, createCheckoutClient());
         updateShippingService = createUpdateShippingService(store, createCheckoutClient());
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
@@ -136,9 +139,6 @@ describe('AmazonPayShippingStrategy', () => {
         jest.spyOn(remoteCheckoutService, 'synchronizeShippingAddress')
             .mockReturnValue(Promise.resolve(store.getState()));
 
-        jest.spyOn(store.getState().checkout, 'getCheckoutMeta')
-            .mockReturnValue(getCheckoutMeta());
-
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
 
         expect(remoteCheckoutService.synchronizeShippingAddress)
@@ -186,6 +186,29 @@ describe('AmazonPayShippingStrategy', () => {
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'InvalidOrderReferenceId' } }));
         expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutShippingError));
+    });
+
+    it('passes error to callback if unable to synchronize address data', async () => {
+        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const paymentMethod = getAmazonPay();
+        const onError = jest.fn();
+        const error = new Error();
+
+        await strategy.initialize({
+            container: 'addressBook',
+            onError,
+            paymentMethod,
+        });
+
+        jest.spyOn(remoteCheckoutService, 'synchronizeShippingAddress')
+            .mockReturnValue(Promise.reject(error));
+
+        document.getElementById('addressBook')
+            .dispatchEvent(new CustomEvent('addressSelect'));
+
+        await new Promise((resolve) => process.nextTick(resolve));
+
+        expect(onError).toHaveBeenCalledWith(error);
     });
 
     it('does nothing if trying to directly update address', async () => {
