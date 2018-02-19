@@ -45,8 +45,8 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
                         this._signInButton = this._createSignInButton({
                             ...options as InitializeWidgetOptions,
                             onError: (error) => {
-                                onError(error);
                                 reject(error);
+                                onError(error);
                             },
                         });
 

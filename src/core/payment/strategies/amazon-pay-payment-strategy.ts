@@ -46,12 +46,12 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                         this._wallet = this._createWallet({
                             ...options as InitializeWidgetOptions,
                             onError: (error) => {
-                                onError(error);
                                 reject(error);
+                                onError(error);
                             },
                             onReady: () => {
-                                onReady();
                                 resolve();
+                                onReady();
                             },
                         });
                     };
