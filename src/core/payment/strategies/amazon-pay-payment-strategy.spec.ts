@@ -13,6 +13,7 @@ import { createScriptLoader } from '../../../script-loader';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getCart, getCartResponseBody } from '../../cart/carts.mock';
 import { getCheckoutMeta } from '../../checkout/checkout.mock';
+import { getRemoteCustomer } from '../../customer/customers.mock';
 import { getOrderRequestBody } from '../../order/orders.mock';
 import { getResponse, getErrorResponse, getErrorResponseBody } from '../../common/http-request/responses.mock';
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
@@ -60,7 +61,11 @@ describe('AmazonPayPaymentStrategy', () => {
     beforeEach(() => {
         container = document.createElement('div');
         client = createCheckoutClient();
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            customer: {
+                data: getRemoteCustomer(),
+            },
+        });
         placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
         remoteCheckoutService = createRemoteCheckoutService(store, client);
         paymentMethod = getAmazonPay();

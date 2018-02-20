@@ -18,6 +18,20 @@ export function getGuestCustomer() {
     };
 }
 
+export function getRemoteCustomer() {
+    return {
+        ...getGuestCustomer(),
+        remote: {
+            billing: 'fixed',
+            billingMessage: 'Same as the Billing address set by you in your Amazon account.',
+            customer: 'fixed',
+            payment: 'widget',
+            provider: 'amazon',
+            shipping: 'widget',
+        },
+    };
+}
+
 export function getCustomerResponseBody() {
     return {
         data: {
