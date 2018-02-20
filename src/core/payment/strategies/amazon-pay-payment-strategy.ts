@@ -87,8 +87,9 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
+        const { useStoreCredit } = payload;
 
-        return this._remoteCheckoutService.initializePayment(payload.payment.name, { referenceId })
+        return this._remoteCheckoutService.initializePayment(payload.payment.name, { referenceId, useStoreCredit })
             .then(() => this._placeOrderService.submitOrder({
                 ...payload,
                 payment: omit(payload.payment, 'paymentData'),

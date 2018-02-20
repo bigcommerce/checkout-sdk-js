@@ -184,12 +184,13 @@ describe('AmazonPayPaymentStrategy', () => {
     it('reinitializes payment method before submitting order', async () => {
         const payload = getOrderRequestBody();
         const options = {};
+        const { referenceId } = getCheckoutMeta().remoteCheckout.amazon;
 
         await strategy.initialize({ container: 'wallet', paymentMethod });
         await strategy.execute(payload, options);
 
         expect(remoteCheckoutService.initializePayment)
-            .toHaveBeenCalledWith('amazon', getCheckoutMeta().remoteCheckout.amazon);
+            .toHaveBeenCalledWith(payload.payment.name, { referenceId, useStoreCredit: false });
 
         expect(placeOrderService.submitOrder)
             .toHaveBeenCalledWith({
