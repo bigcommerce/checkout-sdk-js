@@ -10,11 +10,11 @@ declare namespace OffAmazonPayments.Widgets {
     }
 
     interface AddressBookOptions {
-        scope: string;
-        sellerId: string;
         design: {
             designMode: string;
         };
+        scope: string;
+        sellerId: string;
         onAddressSelect: (orderReference: OrderReference) => void;
         onError: (error: WidgetError) => void;
         onReady: (orderReference: OrderReference) => void;
@@ -22,11 +22,12 @@ declare namespace OffAmazonPayments.Widgets {
     }
 
     interface WalletOptions {
-        scope: string;
-        sellerId: string;
+        amazonOrderReferenceId: string;
         design: {
             designMode: string;
         };
+        scope: string;
+        sellerId: string;
         onError: (error: WidgetError) => void;
         onReady: (orderReference: OrderReference) => void;
         onPaymentSelect: (orderReference: OrderReference) => void;

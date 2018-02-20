@@ -119,6 +119,23 @@ describe('AmazonPayPaymentStrategy', () => {
         expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod);
     });
 
+    it('creates wallet widget with required properties', async () => {
+        const { referenceId } = getCheckoutMeta().remoteCheckout.amazon;
+        const { merchantId } = paymentMethod.config;
+
+        await strategy.initialize({ container: 'wallet', paymentMethod });
+
+        expect(walletSpy).toHaveBeenCalledWith({
+            amazonOrderReferenceId: referenceId,
+            design: { designMode: 'responsive' },
+            scope: 'payments:billing_address payments:shipping_address payments:widget profile',
+            sellerId: merchantId,
+            onError: expect.any(Function),
+            onPaymentSelect: expect.any(Function),
+            onReady: expect.any(Function),
+        });
+    });
+
     it('initializes payment when selecting new payment method', async () => {
         await strategy.initialize({ container: 'wallet', paymentMethod });
 

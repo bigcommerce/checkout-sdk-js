@@ -96,7 +96,11 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             }, true, options))
             .catch((error: Error) => {
                 if (error instanceof RequestError && error.body.type === 'provider_widget_error') {
-                    this._wallet = this._refreshWallet();
+                    if (!this._walletOptions) {
+                        throw error;
+                    }
+
+                    this._wallet = this._createWallet(this._walletOptions);
                 }
 
                 return Promise.reject(error);
@@ -110,8 +114,11 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
 
         const { container, onError = noop, onPaymentSelect = noop, onReady = noop } = options;
         const { merchantId } = this._paymentMethod.config;
+        const { checkout } = this._store.getState();
+        const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
 
         const widget = new OffAmazonPayments.Widgets.Wallet({
+            amazonOrderReferenceId: referenceId,
             design: { designMode: 'responsive' },
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
             sellerId: merchantId!,
@@ -127,16 +134,6 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         widget.bind(container);
 
         return widget;
-    }
-
-    private _refreshWallet(): OffAmazonPayments.Widgets.Wallet {
-        const { checkout } = this._store.getState();
-        const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
-
-        return this._createWallet({
-            ...this._walletOptions!,
-            amazonOrderReferenceId: referenceId,
-        });
     }
 
     private _handlePaymentSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: Address) => void): void {
