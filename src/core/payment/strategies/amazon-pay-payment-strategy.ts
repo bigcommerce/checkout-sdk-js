@@ -148,8 +148,6 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         const { checkout } = this._store.getState();
         const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
 
-        callback(checkout.getBillingAddress());
-
         this._remoteCheckoutService.initializePayment(id, { referenceId })
             .then(() => this._remoteCheckoutService.synchronizeBillingAddress(id, { referenceId }))
             .then(({ checkout }: CheckoutSelectors) => callback(checkout.getBillingAddress()));
