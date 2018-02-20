@@ -74,6 +74,6 @@ export default class RemoteCheckoutRequestSender {
     trackAuthorizationEvent({ timeout } = {}) {
         const url = '/remote-checkout/events/shopper-checkout-service-provider-authorization-requested';
 
-        return this._requestSender.get(url, { timeout });
+        return this._requestSender.post(url, { timeout });
     }
 }
