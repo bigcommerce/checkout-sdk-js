@@ -93,7 +93,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             .then(() => this._placeOrderService.submitOrder({
                 ...payload,
                 payment: omit(payload.payment, 'paymentData'),
-            }, options))
+            }, true, options))
             .catch((error: Error) => {
                 if (error instanceof RequestError && error.body.type === 'provider_widget_error') {
                     this._wallet = this._refreshWallet();

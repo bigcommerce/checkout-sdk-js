@@ -196,7 +196,7 @@ describe('AmazonPayPaymentStrategy', () => {
             .toHaveBeenCalledWith({
                 ...payload,
                 payment: omit(payload.payment, 'paymentData'),
-            }, options);
+            }, true, options);
     });
 
     it('refreshes wallet when there is provider widget error', async () => {
