@@ -11,34 +11,42 @@ export default class Registry<T> {
         this._options = { defaultToken: 'default', ...options };
     }
 
-    get(token: string = this._options.defaultToken): T {
+    get(token: string = this._options.defaultToken, cacheToken: string = token): T {
         try {
-            return this._getInstance(token);
+            return this._getInstance(token, cacheToken);
         } catch (error) {
-            return this._getInstance(this._options.defaultToken);
+            return this._getInstance(this._options.defaultToken, cacheToken);
         }
     }
 
     register(token: string, factory: Factory<T>): void {
-        if (this._factories[token]) {
-            throw new InvalidArgumentError();
+        if (this.hasFactory(token)) {
+            throw new InvalidArgumentError(`'${token}' is already registered.`);
         }
 
         this._factories[token] = factory;
     }
 
-    private _getInstance(token: string): T {
-        if (!this._instances[token]) {
+    hasFactory(token: string): boolean {
+        return !!this._factories[token];
+    }
+
+    hasInstance(token: string): boolean {
+        return !!this._instances[token];
+    }
+
+    private _getInstance(token: string, cacheToken: string): T {
+        if (!this.hasInstance(cacheToken)) {
             const factory = this._factories[token];
 
             if (!factory) {
-                throw new InvalidArgumentError();
+                throw new InvalidArgumentError(`'${token}' is not registered.`);
             }
 
-            this._instances[token] = factory();
+            this._instances[cacheToken] = factory();
         }
 
-        return this._instances[token];
+        return this._instances[cacheToken];
     }
 }
 

@@ -13,8 +13,8 @@ import ShippingStrategy from './shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
 
 export default class AmazonPayShippingStrategy extends ShippingStrategy {
-    private _addressBook: OffAmazonPayments.Widgets.AddressBook | undefined;
-    private _paymentMethod: PaymentMethod | undefined;
+    private _addressBook?: OffAmazonPayments.Widgets.AddressBook;
+    private _paymentMethod?: PaymentMethod;
     private _window: OffAmazonPayments.HostWindow;
 
     constructor(
@@ -113,7 +113,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     private _handleAddressSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: Address) => void): void {
         if (!this._paymentMethod) {
-            return;
+            throw new NotInitializedError();
         }
 
         const { checkout } = this._store.getState();
@@ -127,7 +127,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     private _handleOrderReferenceCreate(orderReference: OffAmazonPayments.Widgets.OrderReference): void {
         if (!this._paymentMethod) {
-            return;
+            throw new NotInitializedError();
         }
 
         this._remoteCheckoutService.setCheckoutMeta(this._paymentMethod.id, {
@@ -136,10 +136,6 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
     }
 
     private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
-        if (!error) {
-            return;
-        }
-
         if (error.getErrorCode() === 'BuyerSessionExpired') {
             callback(new RemoteCheckoutSessionError(error));
         } else if (error.getErrorCode() === 'InvalidAccountStatus') {

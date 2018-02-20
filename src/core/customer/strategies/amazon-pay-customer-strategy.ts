@@ -14,8 +14,8 @@ import CustomerStrategy from './customer-strategy';
 import SignInCustomerService from '../sign-in-customer-service';
 
 export default class AmazonPayCustomerStrategy extends CustomerStrategy {
-    private _paymentMethod: PaymentMethod | undefined;
-    private _signInButton: OffAmazonPayments.Button | undefined;
+    private _paymentMethod?: PaymentMethod;
+    private _signInButton?: OffAmazonPayments.Button;
     private _window: OffAmazonPayments.HostWindow;
 
     constructor(
@@ -89,8 +89,12 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     }
 
     private _createSignInButton(options: InitializeWidgetOptions): OffAmazonPayments.Button {
-        const { config, initializationData } = this._paymentMethod!;
+        if (!this._paymentMethod) {
+            throw new NotInitializedError();
+        }
+
         const { onError = noop } = options;
+        const { config, initializationData } = this._paymentMethod;
 
         return new OffAmazonPayments.Button(options.container, config.merchantId!, {
             color: options.color || 'Gold',

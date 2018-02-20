@@ -1,17 +1,15 @@
 import PaymentStrategy from './payment-strategy';
-import { PaymentMethodUninitializedError } from '../errors';
 import * as paymentStatusTypes from '../payment-status-types';
 
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     /**
      * @constructor
-     * @param {PaymentMethod} paymentMethod
      * @param {ReadableDataStore} store
      * @param {PlaceOrderService} placeOrderService
      * @param {ScriptLoader} scriptLoader
      */
-    constructor(paymentMethod, store, placeOrderService, scriptLoader) {
-        super(paymentMethod, store, placeOrderService);
+    constructor(store, placeOrderService, scriptLoader) {
+        super(store, placeOrderService);
 
         this._scriptLoader = scriptLoader;
         this._paypalSdk = null;
@@ -21,7 +19,9 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
      * @inheritdoc
      */
     initialize(options) {
-        if (!this._isInContextEnabled()) {
+        this._paymentMethod = options.paymentMethod;
+
+        if (!this._isInContextEnabled() || this._isInitialized) {
             return super.initialize(options);
         }
 
@@ -45,6 +45,10 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
      * @inheritdoc
      */
     deinitialize() {
+        if (!this._isInitialized) {
+            return super.deinitialize();
+        }
+
         if (this._isInContextEnabled() && this._paypalSdk) {
             this._paypalSdk.checkout.closeFlow();
             this._paypalSdk = null;
@@ -69,10 +73,6 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
                     return this._resolveBeforeUnload(state);
                 });
-        }
-
-        if (!this._paypalSdk) {
-            throw new PaymentMethodUninitializedError(payload.payment.name);
         }
 
         this._paypalSdk.checkout.initXO();
