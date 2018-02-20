@@ -44,7 +44,7 @@
     "validate-dependencies": "yarn install --check-files --frozen-lockfile"
   },
   "dependencies": {
-    "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#0.1.0",
+    "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.0",
     "@types/jest": "^21.1.10",
     "@types/lodash": "^4.14.92",
     "@types/node": "^9.4.0",
