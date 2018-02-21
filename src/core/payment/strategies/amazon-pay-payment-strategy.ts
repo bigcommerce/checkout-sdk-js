@@ -113,12 +113,11 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             const referenceId = this._getOrderReferenceId();
             const merchantId = this._getMerchantId();
 
-            if (!referenceId || !merchantId) {
-                return reject(new NotInitializedError('Unable to create AmazonPay Wallet widget without order reference ID or merchant ID.'));
+            if (!merchantId) {
+                return reject(new NotInitializedError('Unable to create AmazonPay Wallet widget without merchant ID.'));
             }
 
-            const widget = new OffAmazonPayments.Widgets.Wallet({
-                amazonOrderReferenceId: referenceId,
+            const walletOptions: OffAmazonPayments.Widgets.WalletOptions = {
                 design: { designMode: 'responsive' },
                 scope: 'payments:billing_address payments:shipping_address payments:widget profile',
                 sellerId: merchantId,
@@ -133,7 +132,19 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                     resolve();
                     onReady();
                 },
-            });
+            };
+
+            if (referenceId) {
+                walletOptions.amazonOrderReferenceId = referenceId;
+            } else {
+                walletOptions.onOrderReferenceCreate = (orderReference) => {
+                    this._remoteCheckoutService.setCheckoutMeta(this._paymentMethod!.id, {
+                        referenceId: orderReference.getAmazonOrderReferenceId(),
+                    });
+                };
+            }
+
+            const widget = new OffAmazonPayments.Widgets.Wallet(walletOptions);
 
             widget.bind(container);
 

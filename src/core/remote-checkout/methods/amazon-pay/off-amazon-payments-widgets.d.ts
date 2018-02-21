@@ -22,7 +22,6 @@ declare namespace OffAmazonPayments.Widgets {
     }
 
     interface WalletOptions {
-        amazonOrderReferenceId: string;
         design: {
             designMode: string;
         };
@@ -31,6 +30,8 @@ declare namespace OffAmazonPayments.Widgets {
         onError: (error: WidgetError) => void;
         onReady: (orderReference: OrderReference) => void;
         onPaymentSelect: (orderReference: OrderReference) => void;
+        amazonOrderReferenceId?: string;
+        onOrderReferenceCreate?: (orderReference: OrderReference) => void;
     }
 
     interface OrderReference {

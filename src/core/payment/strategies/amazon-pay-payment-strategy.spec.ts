@@ -50,6 +50,10 @@ describe('AmazonPayPaymentStrategy', () => {
                 this.options.onPaymentSelect(orderReference);
             });
 
+            element.addEventListener('orderReferenceCreate', () => {
+                this.options.onOrderReferenceCreate(orderReference);
+            });
+
             element.addEventListener('error', (event: CustomEvent) => {
                 this.options.onError(Object.assign(new Error(), {
                     getErrorCode: () => event.detail.code,
@@ -136,6 +140,49 @@ describe('AmazonPayPaymentStrategy', () => {
         });
     });
 
+    it('creates wallet widget with new order reference id if none is provided', async () => {
+        const { merchantId } = paymentMethod.config;
+
+        strategy = new AmazonPayPaymentStrategy(
+            createCheckoutStore({ remoteCheckout: {} }),
+            placeOrderService,
+            remoteCheckoutService,
+            scriptLoader
+        );
+
+        await strategy.initialize({ container: 'wallet', paymentMethod });
+
+        expect(walletSpy).toHaveBeenCalledWith({
+            design: { designMode: 'responsive' },
+            scope: 'payments:billing_address payments:shipping_address payments:widget profile',
+            sellerId: merchantId,
+            onError: expect.any(Function),
+            onOrderReferenceCreate: expect.any(Function),
+            onPaymentSelect: expect.any(Function),
+            onReady: expect.any(Function),
+        });
+    });
+
+    it('sets order reference id when order reference gets created', async () => {
+        strategy = new AmazonPayPaymentStrategy(
+            createCheckoutStore({ remoteCheckout: {} }),
+            placeOrderService,
+            remoteCheckoutService,
+            scriptLoader
+        );
+
+        jest.spyOn(remoteCheckoutService, 'setCheckoutMeta');
+
+        await strategy.initialize({ container: 'wallet', paymentMethod });
+
+        document.getElementById('wallet').dispatchEvent(new CustomEvent('orderReferenceCreate'));
+
+        expect(remoteCheckoutService.setCheckoutMeta)
+            .toHaveBeenCalledWith(paymentMethod.id, {
+                referenceId: getCheckoutMeta().remoteCheckout.amazon.referenceId,
+            });
+    });
+
     it('resolves with current state if initialization is complete', async () => {
         jest.spyOn(placeOrderService, 'initializePaymentMethod');
 
@@ -146,16 +193,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('rejects with error if initialization fails', async () => {
-        store = createCheckoutStore({
-            remoteCheckout: {},
-        });
-
-        strategy = new AmazonPayPaymentStrategy(
-            store,
-            placeOrderService,
-            remoteCheckoutService,
-            scriptLoader
-        );
+        paymentMethod = { ...paymentMethod, config: {} };
 
         try {
             await strategy.initialize({ container: 'wallet', paymentMethod });
