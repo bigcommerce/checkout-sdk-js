@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { merge } from 'lodash';
+import { merge, map } from 'lodash';
 import { Observable } from 'rxjs';
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
@@ -21,6 +21,7 @@ import { getCountriesResponseBody } from '../geography/countries.mock';
 import { getCouponResponseBody } from '../coupon/coupon.mock';
 import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } from '../order/orders.mock';
 import { getCustomerResponseBody, getGuestCustomer } from '../customer/customers.mock';
+import { getFormFields } from '../form/form.mocks';
 import { getGiftCertificateResponseBody } from '../coupon/gift-certificate.mock';
 import { getQuoteResponseBody } from '../quote/quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody, getPaymentMethod } from '../payment/payment-methods.mock';
@@ -221,8 +222,10 @@ describe('CheckoutService', () => {
     describe('#loadShippingAddressFields()', () => {
         it('loads config data', async () => {
             const { checkout } = await checkoutService.loadCheckout();
+            const result = checkout.getShippingAddressFields();
+            const expected = getFormFields();
 
-            expect(checkout.getShippingAddressFields()).toEqual(getAppConfig().storeConfig.formFields.shippingAddressFields);
+            expect(map(result, 'id')).toEqual(map(expected, 'id'));
         });
 
         it('loads extra countries data', async () => {
@@ -235,8 +238,10 @@ describe('CheckoutService', () => {
     describe('#loadBillingAddressFields()', () => {
         it('loads config data', async () => {
             const { checkout } = await checkoutService.loadCheckout();
+            const result = checkout.getBillingAddressFields();
+            const expected = getFormFields();
 
-            expect(checkout.getBillingAddressFields()).toEqual(getAppConfig().storeConfig.formFields.billingAddressFields);
+            expect(map(result, 'id')).toEqual(map(expected, 'id'));
         });
 
         it('loads extra countries data', async () => {

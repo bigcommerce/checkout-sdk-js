@@ -3,5 +3,5 @@
  * @property {string} code
  * @property {string} name
  * @property {boolean} hasPostalCodes
- * @property {State[]} states
+ * @property {State[]} subdivisions
  */
