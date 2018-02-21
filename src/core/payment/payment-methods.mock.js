@@ -180,6 +180,32 @@ export function getBankDeposit() {
     };
 }
 
+export function getKlarna() {
+    return {
+        id: 'klarna',
+        gateway: null,
+        logoUrl: '',
+        method: 'widget',
+        supportedCards: [],
+        config: {
+            displayName: 'Pay Over Time',
+            cardCode: null,
+            helpText: 'Type any special instructions in here.',
+            enablePaypal: null,
+            merchantId: null,
+            is3dsEnabled: null,
+            testMode: false,
+            isVisaCheckoutEnabled: null,
+        },
+        type: 'PAYMENT_TYPE_API',
+        nonce: null,
+        initializationData: null,
+        clientToken: 'foo',
+        returnUrl: null,
+    };
+}
+
+
 export function getAfterpay() {
     return {
         id: 'PAY_BY_INSTALLMENT',

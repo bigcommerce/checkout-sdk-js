@@ -53,7 +53,7 @@ export default class RemoteCheckoutService {
      * @param {?string} [params.referenceId]
      * @param {?string} [params.customerMessage]
      * @param {?boolean} [params.useStoreCredit]
-     * @param {?boolean} [params.authorizationToken]
+     * @param {?string} [params.authorizationToken]
      * @param {RequestOptions} [options]
      * @return {Promise<CheckoutSelectors>}
      */
