@@ -106,7 +106,7 @@ describe('AmazonPayPaymentStrategy', () => {
         jest.spyOn(placeOrderService, 'submitOrder')
             .mockReturnValue(Promise.resolve(store.getState()));
 
-        remoteCheckoutService.setCheckoutMeta('amazon', getCheckoutMeta().remoteCheckout.amazon);
+        remoteCheckoutService.setCheckoutMeta(paymentMethod.id, getCheckoutMeta().remoteCheckout.amazon);
     });
 
     afterEach(() => {
@@ -134,15 +134,6 @@ describe('AmazonPayPaymentStrategy', () => {
             onPaymentSelect: expect.any(Function),
             onReady: expect.any(Function),
         });
-    });
-
-    it('initializes payment when selecting new payment method', async () => {
-        await strategy.initialize({ container: 'wallet', paymentMethod });
-
-        document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
-
-        expect(remoteCheckoutService.initializePayment)
-            .toHaveBeenCalledWith(paymentMethod.id, getCheckoutMeta().remoteCheckout.amazon);
     });
 
     it('resolves with current state if initialization is complete', async () => {
@@ -173,19 +164,6 @@ describe('AmazonPayPaymentStrategy', () => {
         }
     });
 
-    it('synchronizes address when selecting new payment method', async () => {
-        await strategy.initialize({ container: 'wallet', paymentMethod });
-
-        document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
-
-        await new Promise((resolve) => process.nextTick(resolve));
-
-        expect(remoteCheckoutService.initializePayment).toHaveBeenCalled();
-
-        expect(remoteCheckoutService.synchronizeBillingAddress)
-            .toHaveBeenCalledWith(paymentMethod.id, getCheckoutMeta().remoteCheckout.amazon);
-    });
-
     it('passes error to callback when wallet widget encounters error', async () => {
         const onError = jest.fn();
         const element = document.getElementById('wallet');
@@ -197,24 +175,6 @@ describe('AmazonPayPaymentStrategy', () => {
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'PeriodicAmountExceeded' } }));
         expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutPaymentError));
-    });
-
-    it('reinitializes payment method when cart total changes', async () => {
-        await strategy.initialize({ container: 'wallet', paymentMethod });
-        await store.dispatch(new CartActionCreator(client).loadCart());
-
-        expect(remoteCheckoutService.initializePayment)
-            .toHaveBeenCalledWith(paymentMethod.id, getCheckoutMeta().remoteCheckout.amazon);
-
-        expect(remoteCheckoutService.initializePayment).toHaveBeenCalledTimes(2);
-    });
-
-    it('does not reinitialize payment method if cart total remains the same', async () => {
-        await store.dispatch(new CartActionCreator(client).loadCart());
-        await strategy.initialize({ container: 'wallet', paymentMethod });
-        await store.dispatch(new CartActionCreator(client).loadCart());
-
-        expect(remoteCheckoutService.initializePayment).toHaveBeenCalledTimes(1);
     });
 
     it('reinitializes payment method before submitting order', async () => {

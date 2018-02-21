@@ -14,7 +14,6 @@ import PaymentMethod from '../payment-method';
 import PaymentStrategy from './payment-strategy';
 
 export default class AmazonPayPaymentStrategy extends PaymentStrategy {
-    private _unsubscribe?: (() => void);
     private _wallet?: OffAmazonPayments.Widgets.Wallet;
     private _walletOptions?: InitializeWidgetOptions;
     private _window: OffAmazonPayments.HostWindow;
@@ -54,14 +53,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                         .catch(reject);
                 })
             )
-            .then(() => {
-                this._unsubscribe = this._store.subscribe(
-                    this._handleGrandTotalChange.bind(this),
-                    ({ checkout }) => checkout.getCart() && checkout.getCart().grandTotal
-                );
-
-                return super.initialize(options);
-            });
+            .then(() => super.initialize(options));
     }
 
     deinitialize(options: any): Promise<CheckoutSelectors> {
@@ -69,13 +61,8 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             return super.deinitialize(options);
         }
 
-        if (this._unsubscribe) {
-            this._unsubscribe();
-        }
-
         this._wallet = undefined;
         this._walletOptions = undefined;
-        this._unsubscribe = undefined;
 
         return super.deinitialize(options);
     }
@@ -161,19 +148,8 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             throw new NotInitializedError();
         }
 
-        this._remoteCheckoutService.initializePayment(this._paymentMethod.id, { referenceId })
-            .then(() => this._remoteCheckoutService.synchronizeBillingAddress(this._paymentMethod!.id, { referenceId }))
+        this._remoteCheckoutService.synchronizeBillingAddress(this._paymentMethod.id, { referenceId })
             .then(({ checkout }: CheckoutSelectors) => callback(checkout.getBillingAddress()));
-    }
-
-    private _handleGrandTotalChange(): void {
-        const referenceId = this._getOrderReferenceId();
-
-        if (!this._paymentMethod || !referenceId) {
-            throw new NotInitializedError();
-        }
-
-        this._remoteCheckoutService.initializePayment(this._paymentMethod.id, { referenceId });
     }
 
     private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
