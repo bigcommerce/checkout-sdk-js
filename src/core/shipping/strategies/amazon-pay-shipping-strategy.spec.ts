@@ -4,6 +4,7 @@
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutStore } from '../../checkout';
 import { createScriptLoader } from '../../../script-loader';
+import { NotInitializedError } from '../../common/error/errors';
 import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
 import { RemoteCheckoutService } from '../../remote-checkout';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
@@ -125,6 +126,20 @@ describe('AmazonPayShippingStrategy', () => {
 
         expect(output).toEqual(store.getState());
         expect(updateShippingService.initializeShipping).toHaveBeenCalledWith(paymentMethod.id, expect.any(Function));
+    });
+
+    it('rejects with error if initialization fails', async () => {
+        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const paymentMethod = { ...getAmazonPay(), config: {} };
+
+        try {
+            await strategy.initialize({
+                container: 'addressBook',
+                paymentMethod,
+            });
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotInitializedError);
+        }
     });
 
     it('synchronizes checkout address when selecting new address', async () => {
