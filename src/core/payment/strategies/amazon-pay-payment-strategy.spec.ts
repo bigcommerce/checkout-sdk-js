@@ -6,9 +6,9 @@ import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay'
 import { CartActionCreator } from '../../cart';
 import { CheckoutClient, CheckoutStore } from '../../checkout';
 import { PlaceOrderService } from '../../order';
+import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { RemoteCheckoutService } from '../../remote-checkout';
-import { RequestError } from '../../common/error/errors';
 import { createScriptLoader } from '../../../script-loader';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getCart, getCartResponseBody } from '../../cart/carts.mock';
@@ -152,6 +152,25 @@ describe('AmazonPayPaymentStrategy', () => {
 
         expect(output).toEqual(store.getState());
         expect(placeOrderService.initializePaymentMethod).toHaveBeenCalledWith(paymentMethod.id, expect.any(Function));
+    });
+
+    it('rejects with error if initialization fails', async () => {
+        store = createCheckoutStore({
+            remoteCheckout: {},
+        });
+
+        strategy = new AmazonPayPaymentStrategy(
+            store,
+            placeOrderService,
+            remoteCheckoutService,
+            scriptLoader
+        );
+
+        try {
+            await strategy.initialize({ container: 'wallet', paymentMethod });
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotInitializedError);
+        }
     });
 
     it('synchronizes address when selecting new payment method', async () => {
