@@ -53,7 +53,7 @@ describe('AmazonPayScriptLoader', () => {
         amazonPayScriptLoader.loadWidget(method);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            `https://static-na.payments-amazon.com/OffAmazonPayments/eu/lpa/js/Widgets.js?sellerId=${method.config.merchantId}`
+            `https://static-eu.payments-amazon.com/OffAmazonPayments/eu/lpa/js/Widgets.js?sellerId=${method.config.merchantId}`
         );
     });
 
