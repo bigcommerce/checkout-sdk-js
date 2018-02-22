@@ -202,6 +202,14 @@ describe('AmazonPayPaymentStrategy', () => {
         }
     });
 
+    it('rejects with error if initialization fails because of invalid container', async () => {
+        try {
+            await strategy.initialize({ container: 'missingWallet', paymentMethod });
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotInitializedError);
+        }
+    });
+
     it('passes error to callback when wallet widget encounters error', async () => {
         const onError = jest.fn();
         const element = document.getElementById('wallet');

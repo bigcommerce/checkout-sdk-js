@@ -113,8 +113,8 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             const referenceId = this._getOrderReferenceId();
             const merchantId = this._getMerchantId();
 
-            if (!merchantId) {
-                return reject(new NotInitializedError('Unable to create AmazonPay Wallet widget without merchant ID.'));
+            if (!merchantId || !document.getElementById(container)) {
+                return reject(new NotInitializedError('Unable to create AmazonPay Wallet widget without valid merchant ID or container ID.'));
             }
 
             const walletOptions: OffAmazonPayments.Widgets.WalletOptions = {
