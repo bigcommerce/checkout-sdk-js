@@ -142,6 +142,17 @@ describe('AmazonPayShippingStrategy', () => {
         }
     });
 
+    it('rejects with error if initialization fails because of invalid container', async () => {
+        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const paymentMethod = getAmazonPay();
+
+        try {
+            await strategy.initialize({ container: 'missingWallet', paymentMethod });
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotInitializedError);
+        }
+    });
+
     it('synchronizes checkout address when selecting new address', async () => {
         const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
         const paymentMethod = getAmazonPay();

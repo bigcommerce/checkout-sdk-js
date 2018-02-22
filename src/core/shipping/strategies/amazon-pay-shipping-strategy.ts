@@ -81,8 +81,8 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             const { container, onAddressSelect = noop, onError = noop, onReady = noop } = options;
             const merchantId = this._paymentMethod && this._paymentMethod.config.merchantId;
 
-            if (!merchantId) {
-                return reject(new NotInitializedError('Unable to create AmazonPay AddressBook widget without merchant ID.'));
+            if (!merchantId || !document.getElementById(container)) {
+                return reject(new NotInitializedError('Unable to create AmazonPay AddressBook widget without valid merchant ID or container ID.'));
             }
 
             const widget = new OffAmazonPayments.Widgets.AddressBook({
