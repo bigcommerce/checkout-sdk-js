@@ -48,6 +48,7 @@ describe('AfterpayPaymentStrategy', () => {
             scriptLoader
         );
 
+        jest.spyOn(placeOrderService, 'verifyCart').mockImplementation(() => {});
         jest.spyOn(placeOrderService, 'loadPaymentMethod').mockImplementation(() => {
             return Promise.resolve({
                 checkout: {
@@ -106,13 +107,17 @@ describe('AfterpayPaymentStrategy', () => {
             });
         });
 
-        it('notifies store credit usage to remote checkout service', () => {
+        it('displays the afterpay modal', () => {
             expect(afterpaySdk.init).toHaveBeenCalled();
             expect(afterpaySdk.display).toHaveBeenCalledWith({ token: clientToken });
         });
 
-        it('notifies displays the afterpay modal', () => {
+        it('notifies store credit usage to remote checkout service', () => {
             expect(remoteCheckoutService.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false });
+        });
+
+        it('verifies the cart', () => {
+            expect(placeOrderService.verifyCart).toHaveBeenCalled();
         });
     });
 
@@ -126,6 +131,11 @@ describe('AfterpayPaymentStrategy', () => {
                     payment: {
                         id: paymentMethod.id,
                     },
+                });
+
+            jest.spyOn(store.getState().checkout, 'getCustomer')
+                .mockReturnValue({
+                    remote: { useStoreCredit: false }
                 });
 
             await strategy.initialize({ paymentMethod });

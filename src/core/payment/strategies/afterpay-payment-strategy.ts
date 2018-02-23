@@ -57,6 +57,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         }
 
         return this._remoteCheckoutService.initializePayment(paymentId, { useStoreCredit })
+            .then(() => this._placeOrderService.verifyCart())
             .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
             .then((resp: any) => this._displayModal(resp.checkout.getPaymentMethod(paymentId).clientToken))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
@@ -66,6 +67,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     finalize(options: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
+        const { useStoreCredit } = checkout.getCustomer().remote;
         const order = checkout.getOrder();
 
         const payload = {
@@ -75,9 +77,9 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             },
         };
 
-        return this._placeOrderService.submitOrder(omit(payload, 'payment'), true, options)
+        return this._placeOrderService.submitOrder({ useStoreCredit }, true, options)
             .then(() =>
-                this._placeOrderService.submitPayment(payload.payment, false, omit(options, 'nonce'))
+                this._placeOrderService.submitPayment(payload.payment, useStoreCredit, omit(options, 'nonce'))
             );
     }
 

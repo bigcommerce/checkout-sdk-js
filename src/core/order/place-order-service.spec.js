@@ -15,6 +15,7 @@ import createCheckoutStore from '../create-checkout-store';
 import PlaceOrderService from './place-order-service';
 
 describe('PlaceOrderService', () => {
+    let cartActionCreator;
     let orderActionCreator;
     let paymentActionCreator;
     let paymentMethodActionCreator;
@@ -37,6 +38,10 @@ describe('PlaceOrderService', () => {
             initializePaymentMethod: jest.fn(() => createAction('INITALIZE_PAYMENT_METHOD')),
         };
 
+        cartActionCreator = {
+            verifyCart: jest.fn(() => createAction('VERIFY_CART_SUCCEEDED')),
+        };
+
         store = createCheckoutStore({
             cart: getCartState(),
             config: getConfigState(),
@@ -48,7 +53,7 @@ describe('PlaceOrderService', () => {
             shippingOptions: getShippingOptionsState(),
         });
 
-        placeOrderService = new PlaceOrderService(store, orderActionCreator, paymentActionCreator, paymentMethodActionCreator);
+        placeOrderService = new PlaceOrderService(store, cartActionCreator, orderActionCreator, paymentActionCreator, paymentMethodActionCreator);
     });
 
     describe('#submitOrder()', () => {

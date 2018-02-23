@@ -5,12 +5,14 @@ export default class PlaceOrderService {
     /**
      * @constructor
      * @param {DataStore} store
+     * @param {CartActionCreator} cartActionCreator
      * @param {OrderActionCreator} orderActionCreator
      * @param {PaymentActionCreator} paymentActionCreator
      * @param {PaymentMethodActionCreator} paymentMethodActionCreator
      */
-    constructor(store, orderActionCreator, paymentActionCreator, paymentMethodActionCreator) {
+    constructor(store, cartActionCreator, orderActionCreator, paymentActionCreator, paymentMethodActionCreator) {
         this._store = store;
+        this._cartActionCreator = cartActionCreator;
         this._orderActionCreator = orderActionCreator;
         this._paymentActionCreator = paymentActionCreator;
         this._paymentMethodActionCreator = paymentMethodActionCreator;
@@ -36,6 +38,17 @@ export default class PlaceOrderService {
             shouldVerifyCart ? cart : undefined,
             options
         );
+
+        return this._store.dispatch(action);
+    }
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<CheckoutSelectors>}
+     */
+    verifyCart(options) {
+        const { checkout } = this._store.getState();
+        const action = this._cartActionCreator.verifyCart(checkout.getCart(), options);
 
         return this._store.dispatch(action);
     }
