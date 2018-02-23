@@ -1,6 +1,7 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 import { BillingAddressActionCreator } from '../billing';
+import { RemoteCheckoutSynchronizationError } from './errors';
 import { ShippingAddressActionCreator } from '../shipping';
 import { createAction } from '../../data-store';
 import { getBillingAddress } from '../billing/billing-address.mock';
@@ -153,16 +154,19 @@ describe('RemoteCheckoutService', () => {
                 .mockReturnValue({
                     checkout: {
                         getCheckoutMeta: () => ({
-                            remoteCheckout: {},
+                            remoteCheckout: { billingAddress: false },
                         }),
                         getBillingAddress: () => getBillingAddress(),
                     },
                 });
 
-            await service.synchronizeBillingAddress('amazon');
-
-            expect(store.dispatch).toHaveBeenCalledWith(initializeAction$);
-            expect(store.dispatch).not.toHaveBeenCalledWith(updateAction$);
+            try {
+                await service.synchronizeBillingAddress('amazon');
+            } catch (error) {
+                expect(store.dispatch).toHaveBeenCalledWith(initializeAction$);
+                expect(store.dispatch).not.toHaveBeenCalledWith(updateAction$);
+                expect(error).toBeInstanceOf(RemoteCheckoutSynchronizationError);
+            }
         });
     });
 
@@ -230,16 +234,19 @@ describe('RemoteCheckoutService', () => {
                 .mockReturnValue({
                     checkout: {
                         getCheckoutMeta: () => ({
-                            remoteCheckout: {},
+                            remoteCheckout: { shippingAddress: false },
                         }),
                         getShippingAddress: () => getShippingAddress(),
                     },
                 });
 
-            await service.synchronizeShippingAddress('amazon');
-
-            expect(store.dispatch).toHaveBeenCalledWith(initializeAction$);
-            expect(store.dispatch).not.toHaveBeenCalledWith(updateAction$);
+            try {
+                await service.synchronizeShippingAddress('amazon');
+            } catch (error) {
+                expect(store.dispatch).toHaveBeenCalledWith(initializeAction$);
+                expect(store.dispatch).not.toHaveBeenCalledWith(updateAction$);
+                expect(error).toBeInstanceOf(RemoteCheckoutSynchronizationError);
+            }
         });
     });
 });

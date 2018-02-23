@@ -1,4 +1,5 @@
 import { isAddressEqual } from '../address';
+import { RemoteCheckoutSynchronizationError } from './errors';
 
 export default class RemoteCheckoutService {
     /**
@@ -73,6 +74,10 @@ export default class RemoteCheckoutService {
             .then(({ checkout }) => {
                 const { remoteCheckout: { billingAddress } = {} } = checkout.getCheckoutMeta();
 
+                if (billingAddress === false) {
+                    throw new RemoteCheckoutSynchronizationError();
+                }
+
                 if (isAddressEqual(billingAddress, checkout.getBillingAddress()) || !billingAddress) {
                     return this._store.getState();
                 }
@@ -95,7 +100,11 @@ export default class RemoteCheckoutService {
             .then(({ checkout }) => {
                 const { remoteCheckout: { shippingAddress } = {} } = checkout.getCheckoutMeta();
 
-                if (isAddressEqual(shippingAddress, checkout.getShippingAddress()) || !shippingAddress) {
+                if (shippingAddress === false) {
+                    throw new RemoteCheckoutSynchronizationError(methodId);
+                }
+
+                if (isAddressEqual(shippingAddress, checkout.getShippingAddress())) {
                     return this._store.getState();
                 }
 

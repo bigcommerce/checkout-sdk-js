@@ -7,6 +7,7 @@ import { CheckoutSelectors } from '../../checkout';
 import { ReadableDataStore } from '../../../data-store';
 import { NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod } from '../../payment';
+import { RemoteCheckoutService } from '../../remote-checkout';
 import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
 import { isAddressEqual } from '../../address';
 import ShippingStrategy from './shipping-strategy';
@@ -14,13 +15,14 @@ import UpdateShippingService from '../update-shipping-service';
 
 export default class AmazonPayShippingStrategy extends ShippingStrategy {
     private _addressBook?: OffAmazonPayments.Widgets.AddressBook;
+    private _addressBookOptions?: InitializeWidgetOptions;
     private _paymentMethod?: PaymentMethod;
     private _window: OffAmazonPayments.HostWindow;
 
     constructor(
         store: ReadableDataStore<CheckoutSelectors>,
         updateShippingService: UpdateShippingService,
-        private _remoteCheckoutService: any,
+        private _remoteCheckoutService: RemoteCheckoutService,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store, updateShippingService);
@@ -33,28 +35,22 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             return super.initialize(options);
         }
 
+        this._addressBookOptions = options;
+        this._paymentMethod = options.paymentMethod;
+
         return this._updateShippingService
             .initializeShipping(options.paymentMethod.id, () =>
                 new Promise((resolve, reject) => {
-                    const { onError = noop, onReady = noop } = options;
-
-                    this._paymentMethod = options.paymentMethod;
-
                     this._window.onAmazonPaymentsReady = () => {
-                        this._addressBook = this._createAddressBook({
-                            ...options as InitializeWidgetOptions,
-                            onError: (error) => {
-                                onError(error);
-                                reject(error);
-                            },
-                            onReady: () => {
-                                onReady();
+                        this._createAddressBook(options)
+                            .then((addressBook) => {
+                                this._addressBook = addressBook;
                                 resolve();
-                            },
-                        });
+                            })
+                            .catch(reject);
                     };
 
-                    this._scriptLoader.loadWidget(this._paymentMethod)
+                    this._scriptLoader.loadWidget(options.paymentMethod)
                         .catch(reject);
                 })
             )
@@ -80,38 +76,48 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return this._updateShippingService.selectOption(addressId, optionId, options);
     }
 
-    private _createAddressBook(options: InitializeWidgetOptions): OffAmazonPayments.Widgets.AddressBook {
-        if (!this._paymentMethod) {
-            throw new NotInitializedError();
-        }
+    private _createAddressBook(options: InitializeWidgetOptions): Promise<OffAmazonPayments.Widgets.AddressBook> {
+        return new Promise((resolve, reject) => {
+            const { container, onAddressSelect = noop, onError = noop, onReady = noop } = options;
+            const merchantId = this._paymentMethod && this._paymentMethod.config.merchantId;
 
-        const { container, onAddressSelect = noop, onError = noop, onReady = noop } = options;
-        const { merchantId } = this._paymentMethod.config;
+            if (!merchantId || !document.getElementById(container)) {
+                return reject(new NotInitializedError('Unable to create AmazonPay AddressBook widget without valid merchant ID or container ID.'));
+            }
 
-        const widget = new OffAmazonPayments.Widgets.AddressBook({
-            design: {
-                designMode: 'responsive',
-            },
-            scope: 'payments:billing_address payments:shipping_address payments:widget profile',
-            sellerId: merchantId!,
-            onAddressSelect: (billingAgreement) => {
-                this._handleAddressSelect(billingAgreement, onAddressSelect);
-            },
-            onError: (error) => {
-                this._handleError(error, onError);
-            },
-            onOrderReferenceCreate: (orderReference) => {
-                this._handleOrderReferenceCreate(orderReference);
-            },
-            onReady: () => onReady(),
+            const widget = new OffAmazonPayments.Widgets.AddressBook({
+                design: {
+                    designMode: 'responsive',
+                },
+                scope: 'payments:billing_address payments:shipping_address payments:widget profile',
+                sellerId: merchantId,
+                onAddressSelect: (orderReference) => {
+                    this._handleAddressSelect(orderReference, onAddressSelect, onError);
+                },
+                onError: (error) => {
+                    reject(error);
+                    this._handleError(error, onError);
+                },
+                onOrderReferenceCreate: (orderReference) => {
+                    this._handleOrderReferenceCreate(orderReference);
+                },
+                onReady: () => {
+                    resolve();
+                    onReady();
+                },
+            });
+
+            widget.bind(container);
+
+            return widget;
         });
-
-        widget.bind(container);
-
-        return widget;
     }
 
-    private _handleAddressSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: Address) => void): void {
+    private _handleAddressSelect(
+        orderReference: OffAmazonPayments.Widgets.OrderReference,
+        callback: (address: Address) => void,
+        errorCallback: (error: Error) => void
+    ): void {
         if (!this._paymentMethod) {
             throw new NotInitializedError();
         }
@@ -120,8 +126,11 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
 
         this._remoteCheckoutService.synchronizeShippingAddress(this._paymentMethod.id, { referenceId })
-            .then(({ checkout }: any) => {
+            .then(({ checkout }: CheckoutSelectors) => {
                 callback(checkout.getShippingAddress());
+            })
+            .catch((error: Error) => {
+                errorCallback(error);
             });
     }
 
