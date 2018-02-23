@@ -11,6 +11,7 @@ import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getCheckoutMeta } from '../../checkout/checkout.mock';
 import { getFlatRateOption } from '../shipping-options.mock';
 import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
+import { getRemoteCustomer } from '../../customer/customers.mock';
 import { getShippingAddress } from '../shipping-address.mock';
 import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
@@ -60,6 +61,9 @@ describe('AmazonPayShippingStrategy', () => {
         container = document.createElement('div');
         hostWindow = window;
         store = createCheckoutStore({
+            customer: {
+                data: getRemoteCustomer(),
+            },
             remoteCheckout: getRemoteCheckoutState(),
         });
         remoteCheckoutService = createRemoteCheckoutService(store, createCheckoutClient());

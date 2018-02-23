@@ -163,7 +163,11 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isInitializingPaymentMethod(methodId) {
-        return this._paymentMethods.isInitializingMethod(methodId) || this._remoteCheckout.isInitializingPayment(methodId);
+        return (
+            this._paymentMethods.isInitializingMethod(methodId) ||
+            this._remoteCheckout.isInitializingPayment(methodId) ||
+            this._remoteCheckout.isInitializingBilling(methodId)
+        );
     }
 
     /**

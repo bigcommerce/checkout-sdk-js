@@ -18,7 +18,9 @@ export default class AmazonPayScriptLoader {
             initializationData: { region = 'us' } = {},
         } = method;
 
-        const url = 'https://static-na.payments-amazon.com/OffAmazonPayments/' +
+        const url = 'https://' +
+            (region.toLowerCase() !== 'us' ? 'static-eu.' : 'static-na.') +
+            'payments-amazon.com/OffAmazonPayments/' +
             `${region.toLowerCase()}/` +
             (testMode ? 'sandbox/' : '') +
             (region.toLowerCase() !== 'us' ? 'lpa/' : '') +
