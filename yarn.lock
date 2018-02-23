@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@bigcommerce/request-sender@git+ssh://git@github.com/bigcommerce/request-sender-js.git#0.1.0":
+"@bigcommerce/request-sender@git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.0":
   version "0.1.0"
   resolved "git+ssh://git@github.com/bigcommerce/request-sender-js.git#2169a2246a48d8cd0d8278920c710164b1862334"
   dependencies:
