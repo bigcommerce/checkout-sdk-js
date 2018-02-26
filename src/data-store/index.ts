@@ -2,6 +2,7 @@ export { default as Action } from './action';
 export { default as DataStore } from './data-store';
 export { default as DispatchableDataStore } from './dispatchable-data-store';
 export { default as ReadableDataStore } from './readable-data-store';
+export { default as ThunkAction } from './thunk-action';
 export { default as combineReducers } from './combine-reducers';
 export { default as composeReducers } from './compose-reducers';
 export { default as createAction } from './create-action';

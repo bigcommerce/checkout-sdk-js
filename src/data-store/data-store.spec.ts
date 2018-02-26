@@ -41,6 +41,24 @@ describe('DataStore', () => {
             }
         });
 
+        it('dispatches thunk actions', async () => {
+            const thunk = (store) => Observable.of({
+                type: 'UPDATE',
+                payload: `${store.getState().message}!!!`,
+            });
+
+            const store = new DataStore(
+                (state, action) => (
+                    action.type === 'UPDATE' ?
+                        { ...state, message: action.payload } :
+                        state
+                ),
+                { message: 'foobar' }
+            );
+
+            expect(await store.dispatch(thunk)).toEqual({ message: 'foobar!!!' });
+        });
+
         it('dispatches observable actions and resolves promise with current state', async () => {
             const store = new DataStore((state, action) => {
                 if (action.type === 'APPEND') {
