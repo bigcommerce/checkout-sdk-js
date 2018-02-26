@@ -4,7 +4,7 @@
 
 Checkout JS SDK provides you with the tools you need to build your own checkout solution for a BigCommerce store.
 
-The SDK has a convenient application interface for starting and completing a checkout flow. Behind the scene, it handles all the necessary interactions with our Storefront APIs and other third-party SDKs. So you can focus on creating a UI that is unique to your business.
+The SDK has a convenient application interface for starting and completing a checkout flow. Behind the interface, it handles all the necessary interactions with our Storefront APIs and other third-party SDKs. So you can focus on creating a UI that is unique to your business.
 
 
 ## Install
@@ -49,27 +49,26 @@ service.loadCheckout();
 
 ### Subscribe to data changes
 
-To subscribe to changes to the current checkout and render the latest data:
+To subscribe to changes to the current state:
 
 ```js
 service.subscribe(({ checkout, errors, statuses }) => {
-    // Log the current checkout
     console.log(checkout.getCheckout());
-
-    // Log an error object if unable to load checkout
     console.log(errors.getLoadCheckoutError());
-
-    // Log `true` if in the process of loading checkout
     console.log(statuses.isLoadingCheckout());
 });
 ```
 
-To get the cached state once it is hydrated:
+The subscriber gets triggered every time there is a state change. So you can use it to render the latest data in the view.
+
+You can also get the current state outside of a subscriber:
 
 ```js
-const { checkout } = service.getState();
+const { checkout, errors, statuses } = service.getState();
 
 console.log(checkout.getCheckout());
+console.log(errors.getLoadCheckoutError());
+console.log(statuses.isLoadingCheckout());
 ```
 
 ### Sign in shopper
