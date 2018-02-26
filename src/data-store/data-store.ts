@@ -9,6 +9,7 @@ import noopActionTransformer from './noop-action-transformer';
 import noopStateTransformer from './noop-state-transformer';
 import ReadableDataStore, { Filter, Subscriber, Unsubscriber } from './readable-data-store';
 import Reducer from './reducer';
+import ThunkAction from './thunk-action';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
@@ -64,11 +65,15 @@ export default class DataStore<TState, TAction extends Action = Action, TTransfo
     }
 
     dispatch<TDispatchAction extends TAction>(
-        action: TDispatchAction | Observable<TDispatchAction>,
+        action: TDispatchAction | Observable<TDispatchAction> | ThunkAction<TDispatchAction, TTransformedState>,
         options?: DispatchOptions
     ): Promise<TTransformedState> {
         if (action instanceof Observable) {
             return this._dispatchObservableAction(action, options);
+        }
+
+        if (typeof action === 'function') {
+            return this._dispatchThunkAction(action, options);
         }
 
         return this._dispatchAction(action);
@@ -169,6 +174,13 @@ export default class DataStore<TState, TAction extends Action = Action, TTransfo
                     })
             );
         });
+    }
+
+    private _dispatchThunkAction<TDispatchAction extends TAction>(
+        thunkAction: ThunkAction<TDispatchAction, TTransformedState>,
+        options: DispatchOptions = {}
+    ): Promise<TTransformedState> {
+        return this._dispatchObservableAction(thunkAction(this));
     }
 
     private _getDispatcher(queueId: string = 'default'): Dispatcher<TAction> {
