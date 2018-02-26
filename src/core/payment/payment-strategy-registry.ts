@@ -53,6 +53,6 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
     }
 }
 
-interface RegistryOptions {
+export interface RegistryOptions {
     clientSidePaymentProviders?: string[];
 }
