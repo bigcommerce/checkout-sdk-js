@@ -1,3 +1,4 @@
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { CartActionCreator } from '../../cart';
@@ -5,7 +6,6 @@ import { CheckoutStore } from '../../checkout';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { RemoteCheckoutService } from '../../remote-checkout';
-import { createScriptLoader } from '../../../script-loader';
 import { getAfterpay } from '../../payment/payment-methods.mock';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';

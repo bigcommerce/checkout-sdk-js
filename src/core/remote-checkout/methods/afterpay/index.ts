@@ -1,4 +1,4 @@
-import { createScriptLoader } from '../../../../script-loader';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import AfterpayScriptLoader from './afterpay-script-loader';
 
 export default AfterpayScriptLoader;

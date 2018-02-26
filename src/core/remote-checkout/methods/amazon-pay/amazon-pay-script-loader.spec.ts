@@ -1,9 +1,9 @@
 /// <reference path="./amazon-login.d.ts" />
 
+import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
-import ScriptLoader from '../../../../script-loader/script-loader';
 
 describe('AmazonPayScriptLoader', () => {
     let amazonPayScriptLoader: AmazonPayScriptLoader;
@@ -23,7 +23,7 @@ describe('AmazonPayScriptLoader', () => {
     }
 
     beforeEach(() => {
-        scriptLoader = new ScriptLoader(document);
+        scriptLoader = createScriptLoader();
         amazonPayScriptLoader = new AmazonPayScriptLoader(scriptLoader);
         setClientIdSpy = jest.fn();
         setUseCookieSpy = jest.fn();

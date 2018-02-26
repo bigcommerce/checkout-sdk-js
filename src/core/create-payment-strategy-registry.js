@@ -1,4 +1,5 @@
 import { createFormPoster } from 'form-poster';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
@@ -12,7 +13,6 @@ import {
 } from './payment/strategies';
 import { AmazonPayScriptLoader } from './remote-checkout/methods/amazon-pay';
 import { PaymentStrategyRegistry } from './payment';
-import { createScriptLoader } from '../script-loader';
 import { createAfterpayScriptLoader } from './remote-checkout/methods/afterpay';
 import createPlaceOrderService from './create-place-order-service';
 import createRemoteCheckoutService from './create-remote-checkout-service';

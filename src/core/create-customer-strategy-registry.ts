@@ -1,4 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { AmazonPayScriptLoader } from './remote-checkout/methods/amazon-pay';
 import { AmazonPayCustomerStrategy, DefaultCustomerStrategy, CustomerStrategy } from './customer/strategies';
 import { CheckoutClient, CheckoutStore } from './checkout';
@@ -6,7 +7,6 @@ import { PaymentMethod } from './payment';
 import { Registry } from './common/registry';
 import { RemoteCheckoutRequestSender } from './remote-checkout';
 import { SignInCustomerService } from './customer';
-import { createScriptLoader } from './../script-loader';
 import createSignInCustomerService from './create-sign-in-customer-service';
 
 export default function createCustomerStrategyRegistry(
