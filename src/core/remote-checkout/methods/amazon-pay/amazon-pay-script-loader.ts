@@ -1,7 +1,7 @@
 /// <reference path="./amazon-login.d.ts" />
 
+import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethod } from '../../../payment';
-import ScriptLoader from '../../../../script-loader/script-loader';
 
 export default class AmazonPayScriptLoader {
     private _window: amazon.HostWindow;

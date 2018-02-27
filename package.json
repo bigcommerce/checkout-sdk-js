@@ -45,9 +45,8 @@
   },
   "dependencies": {
     "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.0",
-    "@types/jest": "^21.1.10",
+    "@bigcommerce/script-loader": "git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.0",
     "@types/lodash": "^4.14.92",
-    "@types/node": "^9.4.0",
     "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.10.0",
     "form-poster": "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1",
     "lodash": "^4.17.4",
@@ -57,6 +56,8 @@
     "tslib": "^1.8.0"
   },
   "devDependencies": {
+    "@types/jest": "^21.1.10",
+    "@types/node": "^6.0.101",
     "eslint": "2.8.0",
     "eslint-config-airbnb": "6.0.2",
     "eslint-plugin-react": "4.1.0",

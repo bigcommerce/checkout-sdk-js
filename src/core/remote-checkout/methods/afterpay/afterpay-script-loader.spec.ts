@@ -1,10 +1,10 @@
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { getAfterpay } from '../../../payment/payment-methods.mock';
 import AfterpayScriptLoader from './afterpay-script-loader';
-import ScriptLoader from '../../../../script-loader/script-loader';
 
 describe('AfterpayScriptLoader', () => {
-    const scriptLoader = new ScriptLoader(document);
+    const scriptLoader = createScriptLoader();
     const afterpayScriptLoader = new AfterpayScriptLoader(scriptLoader);
 
     beforeEach(() => {

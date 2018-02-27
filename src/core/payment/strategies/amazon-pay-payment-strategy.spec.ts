@@ -1,5 +1,6 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
@@ -9,7 +10,6 @@ import { PlaceOrderService } from '../../order';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { RemoteCheckoutService } from '../../remote-checkout';
-import { createScriptLoader } from '../../../script-loader';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getCart, getCartResponseBody } from '../../cart/carts.mock';
 import { getCheckoutMeta } from '../../checkout/checkout.mock';

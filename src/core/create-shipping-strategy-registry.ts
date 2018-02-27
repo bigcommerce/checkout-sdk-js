@@ -1,9 +1,9 @@
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { AmazonPayScriptLoader } from './remote-checkout/methods/amazon-pay';
 import { AmazonPayShippingStrategy, DefaultShippingStrategy, ShippingStrategy } from './shipping/strategies';
 import { CheckoutClient, CheckoutStore } from './checkout';
 import { Registry } from './common/registry';
 import { UpdateShippingService } from './shipping';
-import { createScriptLoader } from './../script-loader';
 import createUpdateShippingService from './create-update-shipping-service';
 import createRemoteCheckoutService from './create-remote-checkout-service';
 

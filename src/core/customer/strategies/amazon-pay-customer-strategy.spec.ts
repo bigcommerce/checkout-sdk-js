@@ -2,11 +2,11 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutStore } from '../../checkout';
 import { PaymentMethod } from '../../payment';
 import { RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { createScriptLoader } from '../../../script-loader';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getGuestCustomer } from '../customers.mock';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';

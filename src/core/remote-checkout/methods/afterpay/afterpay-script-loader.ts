@@ -1,16 +1,13 @@
 /// <reference path="./afterpay-sdk.d.ts" />
 
+import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethod } from '../../../payment';
-import ScriptLoader from '../../../../script-loader/script-loader';
 
 const SCRIPT_PROD = '//www.secure-afterpay.com.au/afterpay-async.js';
 const SCRIPT_SANDBOX = '//www-sandbox.secure-afterpay.com.au/afterpay-async.js';
 
 /** Class responsible for loading the Afterpay SDK */
 export default class AfterpayScriptLoader {
-    /**
-     * @param _scriptLoader 
-     */
     constructor(
         private _scriptLoader: ScriptLoader
     ) {}

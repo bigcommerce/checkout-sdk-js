@@ -1,9 +1,9 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutStore } from '../../checkout';
-import { createScriptLoader } from '../../../script-loader';
 import { NotInitializedError } from '../../common/error/errors';
 import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
 import { RemoteCheckoutService } from '../../remote-checkout';
