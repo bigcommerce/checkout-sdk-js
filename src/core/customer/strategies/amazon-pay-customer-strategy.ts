@@ -136,7 +136,7 @@ export interface InitializeOptions extends InitializeWidgetOptions {
     paymentMethod: PaymentMethod;
 }
 
-interface InitializeWidgetOptions {
+export interface InitializeWidgetOptions {
     container: string;
     color?: string;
     size?: string;

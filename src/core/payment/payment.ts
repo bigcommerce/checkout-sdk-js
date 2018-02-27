@@ -5,7 +5,7 @@ export default interface Payment {
     source?: string;
 }
 
-interface CreditCard {
+export interface CreditCard {
     ccExpiry: {
         month: number,
         year: number,
@@ -18,7 +18,7 @@ interface CreditCard {
     shouldSaveInstrument?: boolean;
 }
 
-interface TokenizedCreditCard {
+export interface TokenizedCreditCard {
     nonce: string;
     deviceSessionId?: string;
 }
