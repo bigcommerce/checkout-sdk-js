@@ -53,22 +53,25 @@ To subscribe to changes to the current state:
 
 ```js
 service.subscribe(({ checkout, errors, statuses }) => {
+    // Return the current checkout
     console.log(checkout.getCheckout());
+
+    // Return an error object if unable to load checkout
     console.log(errors.getLoadCheckoutError());
+
+    // Return `true` if in the process of loading checkout
     console.log(statuses.isLoadingCheckout());
 });
 ```
 
 The subscriber gets triggered every time there is a state change. So you can use it to render the latest data in the view.
 
-You can also get the current state outside of a subscriber:
+Once data is loaded, you can also get it outside of a subscriber:
 
 ```js
-const { checkout, errors, statuses } = service.getState();
+const { checkout } = service.getState();
 
 console.log(checkout.getCheckout());
-console.log(errors.getLoadCheckoutError());
-console.log(statuses.isLoadingCheckout());
 ```
 
 ### Sign in shopper
