@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { createErrorAction } from '../data-store';
+import { createErrorAction } from '@bigcommerce/data-store';
 import { getErrorResponse } from './common/http-request/responses.mock';
 import createActionTransformer from './create-action-transformer';
 import createRequestErrorFactory from './create-request-error-factory';

@@ -1,4 +1,4 @@
-import { createAction, createErrorAction } from '../../data-store';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import * as actionTypes from './shipping-action-types';
 import shippingReducer from './shipping-reducer';
 import ShippingActionCreator from './shipping-action-creator';

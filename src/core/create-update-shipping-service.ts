@@ -1,6 +1,6 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { DataStore } from '@bigcommerce/data-store';
 import { CheckoutClient, CheckoutSelectors } from './checkout';
-import { DataStore } from '../data-store';
 import { UpdateShippingService, ShippingActionCreator, ShippingAddressActionCreator, ShippingOptionActionCreator } from './shipping';
 
 export default function createUpdateShippingService(

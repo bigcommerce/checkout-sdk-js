@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { createAction } from '@bigcommerce/data-store';
 import { CheckoutStore } from '../checkout';
-import { createAction } from '../../data-store';
 import { getFlatRateOption } from './shipping-options.mock';
 import { getShippingAddress } from './shipping-address.mock';
 import * as addressActionTypes from './shipping-address-action-types';

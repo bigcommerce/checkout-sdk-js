@@ -1,5 +1,5 @@
+import { combineReducers } from '@bigcommerce/data-store';
 import * as actionTypes from './remote-checkout-action-types';
-import { combineReducers } from '../../data-store';
 
 /**
  * @param {RemoteCheckoutState} state

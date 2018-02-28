@@ -1,3 +1,4 @@
+import { combineReducers } from '@bigcommerce/data-store';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import * as cartActionTypes from '../cart/cart-action-types';
 import * as couponActionTypes from '../coupon/coupon-action-types';
@@ -6,7 +7,6 @@ import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-t
 import * as quoteActionTypes from '../quote/quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
-import { combineReducers } from '../../data-store';
 
 /**
  * @param {CartState} state

@@ -1,9 +1,9 @@
 /// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
 
 import { omit } from 'lodash';
+import { ReadableDataStore } from '@bigcommerce/data-store';
 import { CheckoutSelectors } from '../../checkout';
 import { RemoteCheckoutService } from '../../remote-checkout';
-import { ReadableDataStore } from '../../../data-store';
 import { NotInitializedError } from '../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { PaymentMethodUninitializedError, PaymentMethodMissingDataError } from '../errors';

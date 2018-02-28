@@ -1,6 +1,6 @@
+import { ReadableDataStore } from '@bigcommerce/data-store';
 import { Address } from '../../address';
 import { CheckoutSelectors } from '../../checkout';
-import { ReadableDataStore } from '../../../data-store';
 import UpdateShippingService from '../update-shipping-service';
 
 export default abstract class ShippingStrategy {

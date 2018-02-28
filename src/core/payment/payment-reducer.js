@@ -1,5 +1,5 @@
+import { combineReducers } from '@bigcommerce/data-store';
 import * as actionTypes from './payment-action-types';
-import { combineReducers } from '../../data-store';
 
 /**
  * @param {PaymentState} state
