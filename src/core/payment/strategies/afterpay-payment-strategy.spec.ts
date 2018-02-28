@@ -113,7 +113,7 @@ describe('AfterpayPaymentStrategy', () => {
         });
 
         it('notifies store credit usage to remote checkout service', () => {
-            expect(remoteCheckoutService.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false });
+            expect(remoteCheckoutService.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false, customerMessage: '' });
         });
 
         it('verifies the cart', () => {
@@ -135,13 +135,17 @@ describe('AfterpayPaymentStrategy', () => {
 
             jest.spyOn(store.getState().checkout, 'getCustomer')
                 .mockReturnValue({
-                    remote: { useStoreCredit: false }
+                    remote: { useStoreCredit: false, customerMessage: 'foo' }
                 });
 
             await strategy.initialize({ paymentMethod });
             await strategy.finalize({ nonce });
 
-            expect(placeOrderService.submitOrder).toHaveBeenCalled();
+            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(
+                { useStoreCredit: false, customerMessage: 'foo' },
+                true,
+                { nonce }
+            );
             expect(placeOrderService.submitPayment).toHaveBeenCalledWith({
                 name: paymentMethod.id,
                 paymentData: { nonce },
