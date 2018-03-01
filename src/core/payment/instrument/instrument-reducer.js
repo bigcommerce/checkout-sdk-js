@@ -1,5 +1,5 @@
+import { combineReducers } from '@bigcommerce/data-store';
 import * as actionTypes from './instrument-action-types';
-import { combineReducers } from '../../../data-store';
 
 /**
  * @param {InstrumentState} state

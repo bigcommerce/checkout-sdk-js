@@ -1,6 +1,6 @@
+import { combineReducers } from '@bigcommerce/data-store';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
-import { combineReducers } from '../../data-store';
 
 /**
  * @param {OrderState} state

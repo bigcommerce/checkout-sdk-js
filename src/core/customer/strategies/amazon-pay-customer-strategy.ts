@@ -2,11 +2,11 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
 import { noop } from 'lodash';
+import { ReadableDataStore } from '@bigcommerce/data-store';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutSelectors } from '../../checkout';
 import { NotInitializedError, NotImplementedError } from '../../common/error/errors';
 import { PaymentMethod } from '../../payment';
-import { ReadableDataStore } from '../../../data-store';
 import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
 import { RemoteCheckoutRequestSender } from '../../remote-checkout';
 import CustomerCredentials from '../customer-credentials';

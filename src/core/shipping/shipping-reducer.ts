@@ -1,4 +1,4 @@
-import { Action, combineReducers } from '../../data-store';
+import { Action, combineReducers } from '@bigcommerce/data-store';
 import * as actionTypes from './shipping-action-types';
 import ShippingState, { ShippingErrorsState, ShippingStatusesState } from './shipping-state';
 

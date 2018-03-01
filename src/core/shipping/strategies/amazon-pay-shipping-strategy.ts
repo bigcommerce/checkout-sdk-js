@@ -1,10 +1,10 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 
 import { noop } from 'lodash';
+import { ReadableDataStore } from '@bigcommerce/data-store';
 import { Address } from '../../address';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutSelectors } from '../../checkout';
-import { ReadableDataStore } from '../../../data-store';
 import { NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod } from '../../payment';
 import { RemoteCheckoutService } from '../../remote-checkout';

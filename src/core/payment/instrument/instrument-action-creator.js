@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/Observable';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { addMinutes, isFuture } from '../../common/date-time';
-import { createAction, createErrorAction } from '../../../data-store';
 import * as actionTypes from './instrument-action-types';
 
 export default class InstrumentActionCreator {

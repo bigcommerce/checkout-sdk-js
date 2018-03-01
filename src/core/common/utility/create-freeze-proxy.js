@@ -1,4 +1,4 @@
-import { deepFreeze } from '../../../data-store';
+import { deepFreeze } from '@bigcommerce/data-store';
 
 /**
  * @param {T} target

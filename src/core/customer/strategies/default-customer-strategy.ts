@@ -1,5 +1,5 @@
 import { CheckoutSelectors } from '../../checkout';
-import { ReadableDataStore } from '../../../data-store';
+import { ReadableDataStore } from '@bigcommerce/data-store';
 import CustomerCredentials from '../customer-credentials';
 import CustomerStrategy from './customer-strategy';
 import SignInCustomerService from '../sign-in-customer-service';

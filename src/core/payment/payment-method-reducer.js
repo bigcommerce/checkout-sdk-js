@@ -1,6 +1,6 @@
-import * as actionTypes from './payment-method-action-types';
-import { combineReducers } from '../../data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 import { mergeOrPush } from '../common/utility';
+import * as actionTypes from './payment-method-action-types';
 
 /**
  * @param {PaymentMethodsState} state

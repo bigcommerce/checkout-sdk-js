@@ -1,8 +1,8 @@
+import { combineReducers } from '@bigcommerce/data-store';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
-import { combineReducers } from '../../data-store';
 
 /**
  * @param {ShippingOptionsState} state

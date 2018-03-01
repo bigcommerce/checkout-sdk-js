@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs/Observable';
-import { createAction, createErrorAction } from '../../data-store';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import * as actionTypes from './customer-action-types';
 
 export default class CustomerActionCreator {

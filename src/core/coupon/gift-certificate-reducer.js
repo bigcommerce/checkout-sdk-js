@@ -1,5 +1,5 @@
+import { combineReducers } from '@bigcommerce/data-store';
 import * as giftCertificateActionTypes from './gift-certificate-action-types';
-import { combineReducers } from '../../data-store';
 
 /**
  * @param {GiftCertificateState} state

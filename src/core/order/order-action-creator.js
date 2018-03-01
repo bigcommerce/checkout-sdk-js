@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { CartComparator } from '../cart';
 import { CartChangedError } from '../cart/errors';
-import { createAction, createErrorAction } from '../../data-store';
 import * as actionTypes from './order-action-types';
 
 export default class OrderActionCreator {

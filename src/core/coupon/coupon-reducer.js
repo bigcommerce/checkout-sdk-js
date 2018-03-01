@@ -1,5 +1,5 @@
+import { combineReducers } from '@bigcommerce/data-store';
 import * as couponActionTypes from './coupon-action-types';
-import { combineReducers } from '../../data-store';
 
 /**
  * @param {CouponState} state

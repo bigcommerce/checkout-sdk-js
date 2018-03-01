@@ -1,8 +1,7 @@
 import { Observable } from 'rxjs';
-import { createErrorAction } from '../data-store';
+import { createErrorAction, DataStore } from '@bigcommerce/data-store';
 import { getErrorResponse } from './common/http-request/responses.mock';
 import createCheckoutStore from './create-checkout-store';
-import DataStore from '../data-store/data-store';
 
 describe('createCheckoutStore()', () => {
     it('returns an instance of CheckoutStore', () => {

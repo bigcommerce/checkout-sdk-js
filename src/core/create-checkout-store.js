@@ -1,10 +1,10 @@
+import { createDataStore } from '@bigcommerce/data-store';
 import { CacheFactory } from './common/cache';
 import { cartReducer, CartSelector } from './cart';
 import { CheckoutErrorSelector, CheckoutSelector, CheckoutStatusSelector } from './checkout';
 import { configReducer, ConfigSelector } from './config';
 import { countryReducer, CountrySelector } from './geography';
 import { createFreezeProxy } from './common/utility';
-import { createDataStore } from '../data-store';
 import { customerReducer, CustomerSelector } from './customer';
 import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from './coupon';
 import { orderReducer, OrderSelector } from './order';

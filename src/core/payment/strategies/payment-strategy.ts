@@ -1,7 +1,7 @@
+import { ReadableDataStore } from '@bigcommerce/data-store';
 import { CheckoutSelectors } from '../../checkout';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { OrderRequestBody } from '../../order';
-import { ReadableDataStore } from '../../../data-store';
 import PaymentMethod from '../payment-method';
 
 export default abstract class PaymentStrategy {

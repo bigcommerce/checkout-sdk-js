@@ -1,4 +1,4 @@
-import { combineReducers } from '../../data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 import * as configActionType from './config-action-types';
 
 /**

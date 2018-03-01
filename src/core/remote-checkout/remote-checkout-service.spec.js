@@ -1,9 +1,9 @@
+import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 import { BillingAddressActionCreator } from '../billing';
 import { RemoteCheckoutSynchronizationError } from './errors';
 import { ShippingAddressActionCreator } from '../shipping';
-import { createAction } from '../../data-store';
 import { getBillingAddress } from '../billing/billing-address.mock';
 import { getShippingAddress } from '../shipping/shipping-address.mock';
 import * as actionTypes from './remote-checkout-action-types';

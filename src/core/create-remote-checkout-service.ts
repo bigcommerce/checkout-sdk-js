@@ -1,8 +1,8 @@
 /// <reference path="./common/http-request/request-sender.d.ts" />
 
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { DataStore } from '@bigcommerce/data-store';
 import { CheckoutClient, CheckoutSelectors } from './checkout';
-import { DataStore } from '../data-store';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender, RemoteCheckoutService } from './remote-checkout';
 import { ShippingAddressActionCreator } from './shipping';
 import { BillingAddressActionCreator } from './billing';
