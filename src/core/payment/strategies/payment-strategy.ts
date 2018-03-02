@@ -13,9 +13,9 @@ export default abstract class PaymentStrategy {
         protected _placeOrderService: any
     ) {}
 
-    abstract execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors>;
+    abstract execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors>;
 
-    finalize(options: any): Promise<CheckoutSelectors> {
+    finalize(options?: any): Promise<CheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
@@ -26,7 +26,7 @@ export default abstract class PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    deinitialize(options: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: any): Promise<CheckoutSelectors> {
         this._isInitialized = false;
         this._paymentMethod = undefined;
 

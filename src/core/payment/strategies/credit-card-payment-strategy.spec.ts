@@ -1,22 +1,34 @@
 import { omit } from 'lodash';
+import { createClient as createPaymentClient } from 'bigpay-client';
+import { CheckoutStore } from '../../checkout';
 import { getOrderRequestBody } from '../../order/orders.mock';
+import { PlaceOrderService } from '../../order';
+import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
+import createPlaceOrderService from '../../create-place-order-service';
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 
 describe('CreditCardPaymentStrategy', () => {
-    let placeOrderService;
-    let store;
-    let strategy;
+    let placeOrderService: PlaceOrderService;
+    let store: CheckoutStore;
+    let strategy: CreditCardPaymentStrategy;
 
     beforeEach(() => {
-        placeOrderService = {
-            submitOrder: jest.fn(() => Promise.resolve(store.getState())),
-            submitPayment: jest.fn(() => Promise.resolve(store.getState())),
-        };
-
         store = createCheckoutStore();
 
+        placeOrderService = createPlaceOrderService(
+            store,
+            createCheckoutClient(),
+            createPaymentClient()
+        );
+
         strategy = new CreditCardPaymentStrategy(store, placeOrderService);
+
+        jest.spyOn(placeOrderService, 'submitOrder')
+            .mockReturnValue(Promise.resolve(store.getState()));
+
+        jest.spyOn(placeOrderService, 'submitPayment')
+            .mockReturnValue(Promise.resolve(store.getState()));
     });
 
     it('submits order without payment data', async () => {
