@@ -6,7 +6,7 @@ import { createClient as createPaymentClient } from 'bigpay-client';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CartActionCreator } from '../../cart';
 import { CheckoutClient, CheckoutStore } from '../../checkout';
-import { PlaceOrderService } from '../../order';
+import { createPlaceOrderService, PlaceOrderService } from '../../order';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
@@ -20,7 +20,6 @@ import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
 import PaymentMethod from '../payment-method';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
-import createPlaceOrderService from '../../create-place-order-service';
 
 describe('AmazonPayPaymentStrategy', () => {
     let client: CheckoutClient;

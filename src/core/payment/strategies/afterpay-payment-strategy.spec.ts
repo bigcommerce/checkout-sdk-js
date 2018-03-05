@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { CartActionCreator } from '../../cart';
 import { CheckoutStore } from '../../checkout';
-import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
 import { getAfterpay } from '../../payment/payment-methods.mock';
@@ -15,7 +15,6 @@ import CheckoutClient from '../../checkout/checkout-client';
 import PaymentMethod from '../payment-method';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
-import createPlaceOrderService from '../../create-place-order-service';
 
 describe('AfterpayPaymentStrategy', () => {
     let client: CheckoutClient;

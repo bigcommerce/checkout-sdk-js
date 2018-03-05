@@ -2,10 +2,9 @@ import { omit } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { CheckoutStore } from '../../checkout';
 import { getOrderRequestBody } from '../../order/orders.mock';
-import { PlaceOrderService } from '../../order';
+import { createPlaceOrderService, PlaceOrderService } from '../../order';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
-import createPlaceOrderService from '../../create-place-order-service';
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 
 describe('CreditCardPaymentStrategy', () => {
