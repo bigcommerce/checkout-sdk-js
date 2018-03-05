@@ -1,15 +1,13 @@
 import { Observable } from 'rxjs';
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { CheckoutStore } from '../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../checkout';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import * as actionTypes from './customer-action-types';
 import * as remoteCheckoutActionTypes from '../remote-checkout/remote-checkout-action-types';
 import CustomerActionCreator from './customer-action-creator';
 import CustomerCredentials from './customer-credentials';
 import SignInCustomerService from './sign-in-customer-service';
-import createCheckoutClient from '../create-checkout-client';
-import createCheckoutStore from '../create-checkout-store';
 
 describe('SignInCustomerService', () => {
     let customerActionCreator: CustomerActionCreator;

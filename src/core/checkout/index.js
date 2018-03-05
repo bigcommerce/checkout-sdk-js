@@ -5,3 +5,7 @@ export { default as CheckoutSelectors } from './checkout-selectors';
 export { default as CheckoutService } from './checkout-service';
 export { default as CheckoutStatusSelector } from './checkout-status-selector';
 export { default as CheckoutStore } from './checkout-store';
+
+export { default as createCheckoutClient } from './create-checkout-client';
+export { default as createCheckoutService } from './create-checkout-service';
+export { default as createCheckoutStore } from './create-checkout-store';

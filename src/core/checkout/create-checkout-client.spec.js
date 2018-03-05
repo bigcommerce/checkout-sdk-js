@@ -1,4 +1,4 @@
-import { CheckoutClient } from './checkout';
+import CheckoutClient from './checkout-client';
 import createCheckoutClient from './create-checkout-client';
 
 describe('createCheckoutClient()', () => {

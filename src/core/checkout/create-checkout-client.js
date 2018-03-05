@@ -1,15 +1,15 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { BillingAddressRequestSender } from './billing';
-import { CartRequestSender } from './cart';
-import { CountryRequestSender } from './geography';
-import { CouponRequestSender, GiftCertificateRequestSender } from './coupon';
-import { CustomerRequestSender } from './customer';
-import { PaymentMethodRequestSender } from './payment';
-import { OrderRequestSender } from './order';
-import { QuoteRequestSender } from './quote';
-import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from './shipping';
-import CheckoutClient from './checkout/checkout-client';
-import ConfigRequestSender from './config/config-request-sender';
+import { BillingAddressRequestSender } from '../billing';
+import { CartRequestSender } from '../cart';
+import { ConfigRequestSender } from '../config';
+import { CountryRequestSender } from '../geography';
+import { CouponRequestSender, GiftCertificateRequestSender } from '../coupon';
+import { CustomerRequestSender } from '../customer';
+import { PaymentMethodRequestSender } from '../payment';
+import { OrderRequestSender } from '../order';
+import { QuoteRequestSender } from '../quote';
+import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
+import CheckoutClient from './checkout-client';
 
 /**
  * @param {Object} [config={}]

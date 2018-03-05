@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { createAction } from '@bigcommerce/data-store';
-import { CheckoutStore } from '../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../checkout';
 import { getFlatRateOption } from './shipping-options.mock';
 import { getShippingAddress } from './shipping-address.mock';
 import * as addressActionTypes from './shipping-address-action-types';
@@ -9,8 +9,6 @@ import ShippingActionCreator from './shipping-action-creator';
 import ShippingAddressActionCreator from './shipping-address-action-creator';
 import ShippingOptionActionCreator from './shipping-option-action-creator';
 import UpdateShippingService from './update-shipping-service';
-import createCheckoutClient from '../create-checkout-client';
-import createCheckoutStore from '../create-checkout-store';
 
 describe('UpdateShippingService', () => {
     let addressActionCreator: ShippingAddressActionCreator;

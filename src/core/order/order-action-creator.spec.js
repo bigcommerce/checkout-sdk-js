@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { createCheckoutStore } from '../checkout';
 import {
     getCompleteOrderResponseBody,
     getOrderRequestBody,
@@ -9,7 +10,6 @@ import { getCart, getCartResponseBody } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './order-action-types';
-import createCheckoutStore from '../create-checkout-store';
 import OrderActionCreator from './order-action-creator';
 
 describe('OrderActionCreator', () => {

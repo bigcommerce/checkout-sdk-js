@@ -1,8 +1,6 @@
-import { CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import DefaultCustomerStrategy from './default-customer-strategy';
 import SignInCustomerService from '../sign-in-customer-service';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
 import createSignInCustomerService from '../../customer/create-sign-in-customer-service';
 
 describe('DefaultCustomerStrategy', () => {

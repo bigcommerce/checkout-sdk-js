@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { createErrorAction, DataStore } from '@bigcommerce/data-store';
-import { getErrorResponse } from './common/http-request/responses.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from './create-checkout-store';
 
 describe('createCheckoutStore()', () => {

@@ -5,7 +5,7 @@ import { omit } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CartActionCreator } from '../../cart';
-import { CheckoutClient, CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { createPlaceOrderService, PlaceOrderService } from '../../order';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
@@ -18,8 +18,6 @@ import { getOrderRequestBody } from '../../order/orders.mock';
 import { getResponse, getErrorResponse, getErrorResponseBody } from '../../common/http-request/responses.mock';
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
 import PaymentMethod from '../payment-method';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
 
 describe('AmazonPayPaymentStrategy', () => {
     let client: CheckoutClient;

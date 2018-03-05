@@ -29,7 +29,7 @@ import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getInstrumentsResp
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
-import createCheckoutStore from '../create-checkout-store';
+import createCheckoutStore from './create-checkout-store';
 import CheckoutService from './checkout-service';
 
 describe('CheckoutService', () => {

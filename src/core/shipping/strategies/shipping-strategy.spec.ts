@@ -1,8 +1,6 @@
 import { DataStore } from '@bigcommerce/data-store';
 import { Address } from '../../address';
-import { CheckoutSelectors } from '../../checkout';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
+import { createCheckoutClient, createCheckoutStore, CheckoutSelectors } from '../../checkout';
 import createUpdateShippingService from '../../shipping/create-update-shipping-service';
 import ShippingStrategy from './shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';

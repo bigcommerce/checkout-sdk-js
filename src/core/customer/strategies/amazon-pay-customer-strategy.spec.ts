@@ -4,7 +4,7 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import { CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import { PaymentMethod } from '../../payment';
 import { RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
@@ -13,8 +13,6 @@ import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkou
 import { getResponse } from '../../common/http-request/responses.mock';
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
 import SignInCustomerService from '../sign-in-customer-service';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
 import createSignInCustomerService from '../../customer/create-sign-in-customer-service';
 
 describe('AmazonPayCustomerStrategy', () => {

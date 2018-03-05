@@ -2,7 +2,7 @@ import { merge } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { CartActionCreator } from '../../cart';
-import { CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
 import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
@@ -11,10 +11,7 @@ import { getKlarna } from '../../payment/payment-methods.mock';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
-import CheckoutClient from '../../checkout/checkout-client';
 import PaymentMethod from '../payment-method';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
 
 describe('KlarnaPaymentStrategy', () => {
     let client: CheckoutClient;

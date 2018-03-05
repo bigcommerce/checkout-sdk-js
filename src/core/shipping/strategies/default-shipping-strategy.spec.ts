@@ -1,9 +1,7 @@
 import { DataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutSelectors } from '../../checkout';
 import { getFlatRateOption } from '../shipping-options.mock';
 import { getShippingAddress } from '../shipping-address.mock';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
 import createUpdateShippingService from '../../shipping/create-update-shipping-service';
 import DefaultShippingStrategy from './default-shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
