@@ -3,7 +3,7 @@ import DefaultCustomerStrategy from './default-customer-strategy';
 import SignInCustomerService from '../sign-in-customer-service';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
-import createSignInCustomerService from '../../create-sign-in-customer-service';
+import createSignInCustomerService from '../../customer/create-sign-in-customer-service';
 
 describe('DefaultCustomerStrategy', () => {
     let store: CheckoutStore;

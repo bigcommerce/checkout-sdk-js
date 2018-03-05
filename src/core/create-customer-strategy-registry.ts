@@ -7,7 +7,7 @@ import { PaymentMethod } from './payment';
 import { Registry } from './common/registry';
 import { RemoteCheckoutRequestSender } from './remote-checkout';
 import { SignInCustomerService } from './customer';
-import createSignInCustomerService from './create-sign-in-customer-service';
+import createSignInCustomerService from './customer/create-sign-in-customer-service';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
