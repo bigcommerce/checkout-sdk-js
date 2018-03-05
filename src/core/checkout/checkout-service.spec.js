@@ -11,7 +11,7 @@ import { OrderActionCreator } from '../order';
 import { PaymentMethodActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import { ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
+import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
 import { MissingDataError } from '../common/error/errors';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getAppConfig } from '../config/configs.mock';
@@ -31,7 +31,6 @@ import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock
 import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from '../create-checkout-store';
 import createCustomerStrategyRegistry from '../create-customer-strategy-registry';
-import createShippingStrategyRegistry from '../create-shipping-strategy-registry';
 import CheckoutService from './checkout-service';
 
 describe('CheckoutService', () => {
