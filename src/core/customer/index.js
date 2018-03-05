@@ -1,3 +1,4 @@
+export { default as createCustomerStrategyRegistry } from './create-customer-strategy-registry';
 export { default as createSignInCustomerService } from './create-sign-in-customer-service';
 export { default as customerReducer } from './customer-reducer';
 export { default as CustomerActionCreator } from './customer-action-creator';

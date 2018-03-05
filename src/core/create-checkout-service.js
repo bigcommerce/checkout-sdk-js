@@ -6,7 +6,7 @@ import { CheckoutService } from './checkout';
 import { ConfigActionCreator } from './config';
 import { CountryActionCreator } from './geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from './coupon';
-import { CustomerActionCreator } from './customer';
+import { createCustomerStrategyRegistry, CustomerActionCreator } from './customer';
 import { OrderActionCreator } from './order';
 import { PaymentMethodActionCreator } from './payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from './payment/instrument';
@@ -14,7 +14,6 @@ import { QuoteActionCreator } from './quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator } from './shipping';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
-import createCustomerStrategyRegistry from './create-customer-strategy-registry';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 
 /**

@@ -6,7 +6,7 @@ import { CartActionCreator } from '../cart';
 import { ConfigActionCreator } from '../config';
 import { CountryActionCreator } from '../geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerActionCreator } from '../customer';
 import { OrderActionCreator } from '../order';
 import { PaymentMethodActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
@@ -30,7 +30,6 @@ import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/
 import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from '../create-checkout-store';
-import createCustomerStrategyRegistry from '../create-customer-strategy-registry';
 import CheckoutService from './checkout-service';
 
 describe('CheckoutService', () => {
