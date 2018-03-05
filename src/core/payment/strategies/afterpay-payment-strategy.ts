@@ -51,12 +51,13 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
         const paymentId = payload.payment.gateway;
         const useStoreCredit = !!payload.useStoreCredit;
+        const customerMessage = payload.customerMessage ? payload.customerMessage : '';
 
         if (!paymentId) {
             throw new PaymentMethodMissingDataError('gateway');
         }
 
-        return this._remoteCheckoutService.initializePayment(paymentId, { useStoreCredit })
+        return this._remoteCheckoutService.initializePayment(paymentId, { useStoreCredit, customerMessage })
             .then(() => this._placeOrderService.verifyCart())
             .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
             .then((resp: any) => this._displayModal(resp.checkout.getPaymentMethod(paymentId).clientToken))
@@ -67,7 +68,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     finalize(options: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { useStoreCredit } = checkout.getCustomer().remote;
+        const { useStoreCredit, customerMessage } = checkout.getCustomer().remote;
         const order = checkout.getOrder();
 
         const payload = {
@@ -77,7 +78,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             },
         };
 
-        return this._placeOrderService.submitOrder({ useStoreCredit }, true, options)
+        return this._placeOrderService.submitOrder({ useStoreCredit, customerMessage }, true, options)
             .then(() =>
                 this._placeOrderService.submitPayment(payload.payment, useStoreCredit, omit(options, 'nonce'))
             );
