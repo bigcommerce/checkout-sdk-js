@@ -1,3 +1,4 @@
+export { default as createPaymentStrategyRegistry } from './create-payment-strategy-registry';
 export { default as Payment } from './payment';
 export { default as PaymentActionCreator } from './payment-action-creator';
 export { default as PaymentMethod } from './payment-method';
