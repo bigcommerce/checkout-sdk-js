@@ -5,7 +5,7 @@ import KlarnaScriptLoader from './klarna-script-loader';
 describe('KlarnaScriptLoader', () => {
     const scriptLoader = createScriptLoader();
     const klarnaScriptLoader = new KlarnaScriptLoader(scriptLoader);
-    
+
     beforeEach(() => {
         jest.spyOn(scriptLoader, 'loadScript').mockReturnValue(Promise.resolve(true));
     });

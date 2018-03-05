@@ -5,7 +5,7 @@ import { CartActionCreator } from '../../cart';
 import { CheckoutStore } from '../../checkout';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
-import { RemoteCheckoutService } from '../../remote-checkout';
+import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
 import { getAfterpay } from '../../payment/payment-methods.mock';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
@@ -16,7 +16,6 @@ import PaymentMethod from '../payment-method';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
 import createPlaceOrderService from '../../create-place-order-service';
-import createRemoteCheckoutService from '../../create-remote-checkout-service';
 
 describe('AfterpayPaymentStrategy', () => {
     let client: CheckoutClient;

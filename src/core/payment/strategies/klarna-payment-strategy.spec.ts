@@ -4,19 +4,18 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { CartActionCreator } from '../../cart';
 import { CheckoutStore } from '../../checkout';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
-import { RemoteCheckoutService } from '../../remote-checkout';
+import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
 import { getKlarna } from '../../payment/payment-methods.mock';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
-import KlarnaScriptLoader from '../../remote-checkout/methods/klarna';
 import CheckoutClient from '../../checkout/checkout-client';
 import PaymentMethod from '../payment-method';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
 import createPlaceOrderService from '../../create-place-order-service';
-import createRemoteCheckoutService from '../../create-remote-checkout-service';
 
 describe('KlarnaPaymentStrategy', () => {
     let client: CheckoutClient;

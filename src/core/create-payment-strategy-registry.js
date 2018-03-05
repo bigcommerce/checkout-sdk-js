@@ -13,11 +13,11 @@ import {
     SagePayPaymentStrategy,
 } from './payment/strategies';
 import { AmazonPayScriptLoader } from './remote-checkout/methods/amazon-pay';
+import { KlarnaScriptLoader } from './remote-checkout/methods/klarna';
 import { PaymentStrategyRegistry } from './payment';
 import { createAfterpayScriptLoader } from './remote-checkout/methods/afterpay';
+import { createRemoteCheckoutService } from './remote-checkout';
 import createPlaceOrderService from './create-place-order-service';
-import createRemoteCheckoutService from './create-remote-checkout-service';
-import KlarnaScriptLoader from './remote-checkout/methods/klarna';
 
 /**
  * Creates a Payment Strategy Registry and registers available payment strategies.

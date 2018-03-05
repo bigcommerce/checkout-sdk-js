@@ -3,11 +3,11 @@
 import { omit } from 'lodash';
 import { ReadableDataStore } from '@bigcommerce/data-store';
 import { CheckoutSelectors } from '../../checkout';
-import KlarnaScriptLoader from '../../remote-checkout/methods/klarna';
+import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { RemoteCheckoutService } from '../../remote-checkout';
 import PaymentMethod from '../payment-method';
 import PaymentStrategy from './payment-strategy';
-import { RemoteCheckoutService } from '../../remote-checkout';
 
 export default class KlarnaPaymentStrategy extends PaymentStrategy {
     private _klarnaSdk?: Klarna.Sdk;
