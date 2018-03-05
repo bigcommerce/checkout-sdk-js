@@ -17,7 +17,7 @@ import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
-import createUpdateShippingService from '../../create-update-shipping-service';
+import createUpdateShippingService from '../../shipping/create-update-shipping-service';
 import createRemoteCheckoutService from '../../create-remote-checkout-service';
 
 describe('AmazonPayShippingStrategy', () => {

@@ -4,7 +4,7 @@ import { AmazonPayShippingStrategy, DefaultShippingStrategy, ShippingStrategy } 
 import { CheckoutClient, CheckoutStore } from './checkout';
 import { Registry } from './common/registry';
 import { UpdateShippingService } from './shipping';
-import createUpdateShippingService from './create-update-shipping-service';
+import createUpdateShippingService from './shipping/create-update-shipping-service';
 import createRemoteCheckoutService from './create-remote-checkout-service';
 
 export default function createShippingStrategyRegistry(

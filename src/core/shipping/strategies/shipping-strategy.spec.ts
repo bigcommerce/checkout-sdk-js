@@ -3,7 +3,7 @@ import { Address } from '../../address';
 import { CheckoutSelectors } from '../../checkout';
 import createCheckoutClient from '../../create-checkout-client';
 import createCheckoutStore from '../../create-checkout-store';
-import createUpdateShippingService from '../../create-update-shipping-service';
+import createUpdateShippingService from '../../shipping/create-update-shipping-service';
 import ShippingStrategy from './shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
 
