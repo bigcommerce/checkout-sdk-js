@@ -1,5 +1,5 @@
 import { createLogger } from './common/log';
-import { LanguageService } from './locale';
+import LanguageService from './locale/language-service';
 
 /**
  * @param {LanguageConfig} [config={}]
