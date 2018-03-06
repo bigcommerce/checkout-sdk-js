@@ -30,7 +30,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                     ({ checkout }) => checkout.getCart() && checkout.getCart().grandTotal
                 );
 
-                return this._loadWidget(options)
+                return this._loadWidget(options);
             })
             .then(() => super.initialize(options));
     }
@@ -79,7 +79,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                 if (!res.approved) {
                     reject(res);
                 } else {
-                    resolve(res)
+                    resolve(res);
                 }
             });
         });

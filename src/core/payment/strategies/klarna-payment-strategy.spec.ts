@@ -115,7 +115,7 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         it('submits authorization token', async () => {
-            const authorizationToken = 'bar'
+            const authorizationToken = 'bar';
             jest.spyOn(strategy, '_authorize')
                 .mockImplementation(() => Promise.resolve({ authorization_token: authorizationToken }));
 
