@@ -53,7 +53,7 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
     );
 
     registry.register('klarna', () =>
-        new KlarnaPaymentStrategy(store, placeOrderService, klarnaScriptLoader)
+        new KlarnaPaymentStrategy(store, placeOrderService, remoteCheckoutService, klarnaScriptLoader)
     );
 
     registry.register('legacy', () =>
