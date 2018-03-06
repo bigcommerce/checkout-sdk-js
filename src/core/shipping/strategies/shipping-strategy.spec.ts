@@ -1,16 +1,23 @@
 import { DataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
-import createUpdateShippingService from '../../create-update-shipping-service';
-import ShippingStrategy from './default-shipping-strategy';
+import { Address } from '../../address';
+import { createCheckoutClient, createCheckoutStore, CheckoutSelectors } from '../../checkout';
+import createUpdateShippingService from '../../shipping/create-update-shipping-service';
+import ShippingStrategy from './shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
 
 describe('ShippingStrategy', () => {
     let store: DataStore<CheckoutSelectors>;
     let updateShippingService: UpdateShippingService;
 
-    class FoobarShippingStrategy extends ShippingStrategy {}
+    class FoobarShippingStrategy extends ShippingStrategy {
+        updateAddress(address: Address, options?: any): Promise<CheckoutSelectors> {
+            return Promise.resolve(store.getState());
+        }
+
+        selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
+            return Promise.resolve(store.getState());
+        }
+    }
 
     beforeEach(() => {
         store = createCheckoutStore();
@@ -29,11 +36,5 @@ describe('ShippingStrategy', () => {
         const state = await strategy.deinitialize();
 
         expect(state).toEqual(store.getState());
-    });
-
-    it('throws error', async () => {
-        const strategy = new FoobarShippingStrategy(store, updateShippingService);
-
-        expect(() => strategy.updateAddress(getShippingAddress())).toThrow();
     });
 });

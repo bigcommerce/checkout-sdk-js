@@ -1,9 +1,9 @@
 import { merge } from 'lodash';
+import { createCheckoutStore } from '../../checkout';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
 import { getPaypalExpress } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
-import createCheckoutStore from '../../create-checkout-store';
 import PaypalExpressPaymentStrategy from './paypal-express-payment-strategy';
 
 describe('PaypalExpressPaymentStrategy', () => {

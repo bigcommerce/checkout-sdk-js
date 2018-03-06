@@ -1,5 +1,5 @@
 import createRequestErrorFactory from './create-request-error-factory';
-import { RequestErrorFactory } from './common/error';
+import RequestErrorFactory from './request-error-factory';
 
 describe('createRequestErrorFactory()', () => {
     it('returns an instance of RequestErrorFactory', () => {

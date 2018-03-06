@@ -1,4 +1,4 @@
-import { CheckoutService } from './checkout';
+import CheckoutService from './checkout-service';
 import createCheckoutService from './create-checkout-service';
 
 describe('createCheckoutService()', () => {

@@ -2,10 +2,10 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { createClient as createPaymentClient } from 'bigpay-client';
 import { CartActionCreator } from '../../cart';
-import { CheckoutStore } from '../../checkout';
-import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
+import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
-import { RemoteCheckoutService } from '../../remote-checkout';
+import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
 import { getAfterpay } from '../../payment/payment-methods.mock';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
@@ -13,10 +13,6 @@ import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import CheckoutClient from '../../checkout/checkout-client';
 import PaymentMethod from '../payment-method';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
-import createPlaceOrderService from '../../create-place-order-service';
-import createRemoteCheckoutService from '../../create-remote-checkout-service';
 
 describe('AfterpayPaymentStrategy', () => {
     let client: CheckoutClient;

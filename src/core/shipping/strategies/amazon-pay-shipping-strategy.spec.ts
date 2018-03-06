@@ -3,10 +3,10 @@
 
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import { CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import { NotInitializedError } from '../../common/error/errors';
 import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
-import { RemoteCheckoutService } from '../../remote-checkout';
+import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getCheckoutMeta } from '../../checkout/checkout.mock';
 import { getFlatRateOption } from '../shipping-options.mock';
@@ -15,10 +15,7 @@ import { getRemoteCustomer } from '../../customer/customers.mock';
 import { getShippingAddress } from '../shipping-address.mock';
 import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
 import UpdateShippingService from '../update-shipping-service';
-import createCheckoutClient from '../../create-checkout-client';
-import createCheckoutStore from '../../create-checkout-store';
-import createUpdateShippingService from '../../create-update-shipping-service';
-import createRemoteCheckoutService from '../../create-remote-checkout-service';
+import createUpdateShippingService from '../../shipping/create-update-shipping-service';
 
 describe('AmazonPayShippingStrategy', () => {
     let addressBookSpy: jest.Mock;

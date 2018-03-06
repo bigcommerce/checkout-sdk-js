@@ -1,11 +1,13 @@
-/// <reference path="./common/http-request/request-sender.d.ts" />
+/// <reference path="../common/http-request/request-sender.d.ts" />
 
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { DataStore } from '@bigcommerce/data-store';
-import { CheckoutClient, CheckoutSelectors } from './checkout';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender, RemoteCheckoutService } from './remote-checkout';
-import { ShippingAddressActionCreator } from './shipping';
-import { BillingAddressActionCreator } from './billing';
+import { CheckoutClient, CheckoutSelectors } from '../checkout';
+import { ShippingAddressActionCreator } from '../shipping';
+import { BillingAddressActionCreator } from '../billing';
+import RemoteCheckoutActionCreator from './remote-checkout-action-creator';
+import RemoteCheckoutRequestSender from './remote-checkout-request-sender';
+import RemoteCheckoutService from './remote-checkout-service';
 
 export default function createRemoteCheckoutService(
     store: DataStore<CheckoutSelectors>,

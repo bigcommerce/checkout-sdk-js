@@ -1,6 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createTimeout } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
+import { createCheckoutStore } from '../checkout';
 import { getCartState } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCustomerState } from '../customer/customers.mock';
@@ -11,7 +12,6 @@ import { getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/quotes.mock';
 import { getShippingOptionsState } from '../shipping/shipping-options.mock';
 import { getSubmittedOrderState } from '../order/orders.mock';
-import createCheckoutStore from '../create-checkout-store';
 import PlaceOrderService from './place-order-service';
 
 describe('PlaceOrderService', () => {

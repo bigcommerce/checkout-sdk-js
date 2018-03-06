@@ -1,10 +1,10 @@
 import { merge, omit } from 'lodash';
+import { createCheckoutStore } from '../../checkout';
 import { getErrorPaymentResponseBody } from '../payments.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
-import createCheckoutStore from '../../create-checkout-store';
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
 
 describe('SagePayPaymentStrategy', () => {

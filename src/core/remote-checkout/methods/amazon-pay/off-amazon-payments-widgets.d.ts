@@ -4,6 +4,7 @@ declare namespace OffAmazonPayments.Widgets {
         bind(container: string): void;
     }
 
+    // tslint:disable-next-line:max-classes-per-file
     class Wallet {
         constructor(options: WalletOptions);
         bind(container: string): void;

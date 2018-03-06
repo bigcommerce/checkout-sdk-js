@@ -1,5 +1,5 @@
+import { createCheckoutStore } from '../../checkout';
 import { getOrderRequestBody } from '../../order/orders.mock';
-import createCheckoutStore from '../../create-checkout-store';
 import OfflinePaymentStrategy from './offline-payment-strategy';
 
 describe('OfflinePaymentStrategy', () => {

@@ -1,3 +1,6 @@
+export { default as createShippingStrategyRegistry } from './create-shipping-strategy-registry';
+export { default as createUpdateShippingService } from './create-update-shipping-service';
+
 export { default as ShippingAddressActionCreator } from './shipping-address-action-creator';
 export { default as ShippingAddressRequestSender } from './shipping-address-request-sender';
 export { default as ShippingAddressSelector } from './shipping-address-selector';

@@ -3,11 +3,11 @@
 import { omit } from 'lodash';
 import { ReadableDataStore } from '@bigcommerce/data-store';
 import { CheckoutSelectors } from '../../checkout';
-import KlarnaScriptLoader from '../../remote-checkout/methods/klarna';
+import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { RemoteCheckoutService } from '../../remote-checkout';
 import PaymentMethod from '../payment-method';
 import PaymentStrategy from './payment-strategy';
-import { RemoteCheckoutService } from '../../remote-checkout';
 
 export default class KlarnaPaymentStrategy extends PaymentStrategy {
     private _klarnaSdk?: Klarna.Sdk;
@@ -30,7 +30,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                     ({ checkout }) => checkout.getCart() && checkout.getCart().grandTotal
                 );
 
-                return this._loadWidget(options)
+                return this._loadWidget(options);
             })
             .then(() => super.initialize(options));
     }
@@ -79,7 +79,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                 if (!res.approved) {
                     reject(res);
                 } else {
-                    resolve(res)
+                    resolve(res);
                 }
             });
         });

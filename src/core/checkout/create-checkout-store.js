@@ -1,18 +1,20 @@
 import { createDataStore } from '@bigcommerce/data-store';
-import { CacheFactory } from './common/cache';
-import { cartReducer, CartSelector } from './cart';
-import { CheckoutErrorSelector, CheckoutSelector, CheckoutStatusSelector } from './checkout';
-import { configReducer, ConfigSelector } from './config';
-import { countryReducer, CountrySelector } from './geography';
-import { createFreezeProxy } from './common/utility';
-import { customerReducer, CustomerSelector } from './customer';
-import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from './coupon';
-import { orderReducer, OrderSelector } from './order';
-import { paymentReducer, paymentMethodReducer, PaymentMethodSelector } from './payment';
-import { remoteCheckoutReducer, RemoteCheckoutSelector } from './remote-checkout';
-import { instrumentReducer, InstrumentSelector } from './payment/instrument';
-import { quoteReducer, QuoteSelector } from './quote';
-import { BillingAddressSelector } from './billing';
+import { CacheFactory } from '../common/cache';
+import { cartReducer, CartSelector } from '../cart';
+import { CheckoutErrorSelector, CheckoutSelector, CheckoutStatusSelector } from '../checkout';
+import { configReducer, ConfigSelector } from '../config';
+import { countryReducer, CountrySelector } from '../geography';
+import { createFreezeProxy } from '../common/utility';
+import { createRequestErrorFactory } from '../common/error';
+import { customerReducer, CustomerSelector } from '../customer';
+import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from '../coupon';
+import { FormSelector } from '../form';
+import { orderReducer, OrderSelector } from '../order';
+import { paymentReducer, paymentMethodReducer, PaymentMethodSelector } from '../payment';
+import { remoteCheckoutReducer, RemoteCheckoutSelector } from '../remote-checkout';
+import { instrumentReducer, InstrumentSelector } from '../payment/instrument';
+import { quoteReducer, QuoteSelector } from '../quote';
+import { BillingAddressSelector } from '../billing';
 import {
     ShippingSelector,
     ShippingAddressSelector,
@@ -21,10 +23,8 @@ import {
     shippingReducer,
     shippingCountryReducer,
     shippingOptionReducer,
-} from './shipping';
+} from '../shipping';
 import createActionTransformer from './create-action-transformer';
-import createRequestErrorFactory from './create-request-error-factory';
-import { FormSelector } from './form';
 
 /**
  * @param {Object} [initialState={}]

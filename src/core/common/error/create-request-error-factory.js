@@ -1,6 +1,6 @@
-import { RequestErrorFactory } from './common/error';
-import { UnrecoverableError } from './common/error/errors';
-import { PaymentMethodInvalidError } from './payment/errors';
+import { UnrecoverableError } from './errors';
+import { PaymentMethodInvalidError } from '../../payment/errors';
+import RequestErrorFactory from './request-error-factory';
 
 /**
  * @return {RequestErrorFactory}

@@ -1,3 +1,1 @@
-import KlarnaScriptLoader from './klarna-script-loader';
-
-export default KlarnaScriptLoader;
+export { default as KlarnaScriptLoader } from './klarna-script-loader';

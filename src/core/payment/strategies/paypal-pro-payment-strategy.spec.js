@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
+import { createCheckoutStore } from '../../checkout';
 import { getOrderRequestBody, getIncompleteOrder } from '../../order/orders.mock';
 import * as paymentStatusTypes from '../payment-status-types';
-import createCheckoutStore from '../../create-checkout-store';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 
 describe('PaypalProPaymentStrategy', () => {
