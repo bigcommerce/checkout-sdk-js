@@ -92,6 +92,19 @@ describe('AfterpayPaymentStrategy', () => {
 
             expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod);
         });
+
+        it('toggles the initialization flag', async () => {
+            const results = [];
+
+            store.subscribe(
+                ({ statuses }) => results.push(statuses.isInitializingPaymentMethod(paymentMethod.id)),
+                ({ statuses }) => statuses.isInitializingPaymentMethod(paymentMethod.id)
+            );
+
+            await strategy.initialize({ paymentMethod });
+
+            expect(results).toEqual([false, true, false]);
+        });
     });
 
     describe('#execute()', () => {
@@ -125,6 +138,8 @@ describe('AfterpayPaymentStrategy', () => {
         const nonce = 'bar';
 
         it('submits the order and the payment', async () => {
+            await strategy.initialize({ paymentMethod });
+
             jest.spyOn(store.getState().checkout, 'getOrder')
                 .mockReturnValue({
                     ...getIncompleteOrder(),
@@ -135,10 +150,9 @@ describe('AfterpayPaymentStrategy', () => {
 
             jest.spyOn(store.getState().checkout, 'getCustomer')
                 .mockReturnValue({
-                    remote: { useStoreCredit: false, customerMessage: 'foo' }
+                    remote: { useStoreCredit: false, customerMessage: 'foo' },
                 });
 
-            await strategy.initialize({ paymentMethod });
             await strategy.finalize({ nonce });
 
             expect(placeOrderService.submitOrder).toHaveBeenCalledWith(
@@ -146,6 +160,7 @@ describe('AfterpayPaymentStrategy', () => {
                 true,
                 { nonce }
             );
+
             expect(placeOrderService.submitPayment).toHaveBeenCalledWith({
                 name: paymentMethod.id,
                 paymentData: { nonce },

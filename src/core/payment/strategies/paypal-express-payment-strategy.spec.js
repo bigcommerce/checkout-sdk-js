@@ -20,6 +20,9 @@ describe('PaypalExpressPaymentStrategy', () => {
             verifyCart: jest.fn(() => Promise.resolve(store.getState())),
             submitOrder: jest.fn(() => Promise.resolve(store.getState())),
             submitPayment: jest.fn(() => Promise.resolve(store.getState())),
+            initializePaymentMethod: jest.fn((id, initializer) =>
+                initializer().then(() => store.getState())
+            ),
         };
 
         paypalSdk = {
@@ -87,6 +90,13 @@ describe('PaypalExpressPaymentStrategy', () => {
                 const output = await strategy.initialize({ paymentMethod });
 
                 expect(output).toEqual(store.getState());
+            });
+
+            it('toggles the initialization flag', async () => {
+                await strategy.initialize({ paymentMethod });
+
+                expect(placeOrderService.initializePaymentMethod)
+                    .toHaveBeenCalledWith(paymentMethod.id, expect.any(Function));
             });
         });
 

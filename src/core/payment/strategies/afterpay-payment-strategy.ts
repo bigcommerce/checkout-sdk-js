@@ -28,12 +28,14 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        return this._afterpayScriptLoader.load(options.paymentMethod)
-            .then((afterpaySdk) => {
-                this._afterpaySdk = afterpaySdk;
-
-                return super.initialize(options);
-            });
+        return this._placeOrderService
+            .initializePaymentMethod(options.paymentMethod.id, () =>
+                this._afterpayScriptLoader.load(options.paymentMethod)
+                    .then((afterpaySdk) => {
+                        this._afterpaySdk = afterpaySdk;
+                    })
+            )
+            .then(() => super.initialize(options));
     }
 
     deinitialize(options: any): Promise<CheckoutSelectors> {
