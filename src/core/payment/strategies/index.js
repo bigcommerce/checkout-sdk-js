@@ -1,6 +1,7 @@
 export { default as AfterpayPaymentStrategy } from './afterpay-payment-strategy';
 export { default as AmazonPayPaymentStrategy } from './amazon-pay-payment-strategy';
 export { default as CreditCardPaymentStrategy } from './credit-card-payment-strategy';
+export { default as KlarnaPaymentStrategy } from './klarna-payment-strategy';
 export { default as LegacyPaymentStrategy } from './legacy-payment-strategy';
 export { default as OfflinePaymentStrategy } from './offline-payment-strategy';
 export { default as OffsitePaymentStrategy } from './offsite-payment-strategy';

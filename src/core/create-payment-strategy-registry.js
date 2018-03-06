@@ -4,6 +4,7 @@ import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
     CreditCardPaymentStrategy,
+    KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
     OfflinePaymentStrategy,
     OffsitePaymentStrategy,
@@ -16,6 +17,7 @@ import { PaymentStrategyRegistry } from './payment';
 import { createAfterpayScriptLoader } from './remote-checkout/methods/afterpay';
 import createPlaceOrderService from './create-place-order-service';
 import createRemoteCheckoutService from './create-remote-checkout-service';
+import KlarnaScriptLoader from './remote-checkout/methods/klarna';
 
 /**
  * Creates a Payment Strategy Registry and registers available payment strategies.
@@ -31,6 +33,7 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
     const remoteCheckoutService = createRemoteCheckoutService(store, client);
     const scriptLoader = createScriptLoader();
     const afterpayScriptLoader = createAfterpayScriptLoader();
+    const klarnaScriptLoader = new KlarnaScriptLoader(scriptLoader);
 
     registry.register('afterpay', () =>
         new AfterpayPaymentStrategy(store, placeOrderService, remoteCheckoutService, afterpayScriptLoader)
@@ -47,6 +50,10 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
 
     registry.register('creditcard', () =>
         new CreditCardPaymentStrategy(store, placeOrderService)
+    );
+
+    registry.register('klarna', () =>
+        new KlarnaPaymentStrategy(store, placeOrderService, remoteCheckoutService, klarnaScriptLoader)
     );
 
     registry.register('legacy', () =>
