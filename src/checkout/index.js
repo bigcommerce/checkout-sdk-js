@@ -1,3 +1,5 @@
+export * from './checkout-actions';
+
 export { default as Checkout } from './checkout';
 export { default as CheckoutClient } from './checkout-client';
 export { default as CheckoutErrorSelector } from './checkout-error-selector';
