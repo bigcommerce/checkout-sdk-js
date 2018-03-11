@@ -1,7 +1,7 @@
-import { Address } from '../address';
+import { InternalAddress } from '../address';
 
 export default interface RemoteCheckout {
-    billingAddress?: Address;
-    shippingAddress?: Address;
+    billingAddress?: InternalAddress;
+    shippingAddress?: InternalAddress;
     isPaymentInitialized?: boolean;
 }

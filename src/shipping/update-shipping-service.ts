@@ -1,4 +1,4 @@
-import { Address } from '../address';
+import { InternalAddress } from '../address';
 import { CheckoutStore, CheckoutSelectors } from '../checkout';
 import ShippingAddressActionCreator from './shipping-address-action-creator';
 import ShippingOptionActionCreator from './shipping-option-action-creator';
@@ -12,7 +12,7 @@ export default class UpdateShippingService {
         private _shippingActionCreator: ShippingActionCreator
     ) {}
 
-    updateAddress(address: Address, options?: any): Promise<CheckoutSelectors> {
+    updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
         return this._store.dispatch(
             this._addressActionCreator.updateAddress(address, options)
         );

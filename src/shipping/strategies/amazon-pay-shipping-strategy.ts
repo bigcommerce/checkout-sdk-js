@@ -2,7 +2,7 @@
 
 import { noop } from 'lodash';
 import { ReadableDataStore } from '@bigcommerce/data-store';
-import { Address } from '../../address';
+import { InternalAddress } from '../../address';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutSelectors } from '../../checkout';
 import { NotInitializedError } from '../../common/error/errors';
@@ -68,7 +68,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return super.deinitialize(options);
     }
 
-    updateAddress(address: Address, options?: any): Promise<CheckoutSelectors> {
+    updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
@@ -115,7 +115,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     private _handleAddressSelect(
         orderReference: OffAmazonPayments.Widgets.OrderReference,
-        callback: (address: Address) => void,
+        callback: (address: InternalAddress) => void,
         errorCallback: (error: Error) => void
     ): void {
         if (!this._paymentMethod) {
@@ -161,7 +161,7 @@ export interface InitializeOptions extends InitializeWidgetOptions {
 
 export interface InitializeWidgetOptions {
     container: string;
-    onAddressSelect?: (address: Address) => void;
+    onAddressSelect?: (address: InternalAddress) => void;
     onError?: (error: Error) => void;
     onReady?: () => void;
 }
