@@ -179,7 +179,7 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @return {Customer}
+     * @return {InternalCustomer}
      */
     getCustomer() {
         return this._customer.getCustomer();

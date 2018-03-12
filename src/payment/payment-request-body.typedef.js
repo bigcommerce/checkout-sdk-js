@@ -3,7 +3,7 @@
  * @property {string} authToken
  * @property {Address} billingAddress
  * @property {Cart} cart
- * @property {Customer} customer
+ * @property {InternalCustomer} customer
  * @property {Order} order
  * @property {Object} orderMeta
  * @property {string} orderMeta.deviceFingerprint

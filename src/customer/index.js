@@ -1,3 +1,6 @@
+export { default as InternalCustomer } from './internal-customer';
+export { default as Shopper } from './shopper';
+
 export { default as createCustomerStrategyRegistry } from './create-customer-strategy-registry';
 export { default as createSignInCustomerService } from './create-sign-in-customer-service';
 export { default as customerReducer } from './customer-reducer';
