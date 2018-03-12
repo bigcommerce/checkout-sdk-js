@@ -26,9 +26,9 @@ export default function cartReducer(state = {}, action) {
 
 /**
  * @private
- * @param {?Cart} data
+ * @param {?InternalCart} data
  * @param {Action} action
- * @return {?Cart}
+ * @return {?InternalCart}
  */
 function dataReducer(data, action) {
     switch (action.type) {

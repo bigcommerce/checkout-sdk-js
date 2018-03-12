@@ -2,8 +2,8 @@
  * @typedef {Object} PaymentRequestBody
  * @property {string} authToken
  * @property {Address} billingAddress
- * @property {Cart} cart
- * @property {Customer} customer
+ * @property {InternalCart} cart
+ * @property {InternalCustomer} customer
  * @property {Order} order
  * @property {Object} orderMeta
  * @property {string} orderMeta.deviceFingerprint
@@ -14,7 +14,7 @@
  * @property {string} quoteMeta.geoCountryCode
  * @property {string} quoteMeta.sessionHash
  * @property {Address} shippingAddress
- * @property {ShippingOption} shippingOption
+ * @property {InternalShippingOption} shippingOption
  * @property {string} source
  * @property {Object} store
  * @property {string} store.storeHash

@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} CustomerResponseBody
- * @property {Cart} cart
- * @property {Customer} customer
- * @property {Quote} quote
- * @property {ShippingOptionList} shippingOptions
+ * @property {InternalCart} cart
+ * @property {InternalCustomer} customer
+ * @property {InternalQuote} quote
+ * @property {InternalShippingOptionList} shippingOptions
  */

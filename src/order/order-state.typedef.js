@@ -1,6 +1,6 @@
 /**
  * @typedef {Object} OrderState
- * @property {?Order} data
+ * @property {?InternalOrder} data
  * @property {?OrderMeta} meta
  * @property {Object} errors
  * @property {?ErrorResponse} errors.loadError

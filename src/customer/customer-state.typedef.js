@@ -1,6 +1,6 @@
 /**
  * @typedef {Object} CustomerState
- * @property {Customer} data
+ * @property {InternalCustomer} data
  * @property {Object} errors
  * @property {?ErrorResponse} errors.signInError
  * @property {?ErrorResponse} errors.signOutError

@@ -1,15 +1,15 @@
 import { isEqual } from 'lodash';
 import { omitPrivate } from '../common/utility';
-import Address from './address';
+import InternalAddress from './internal-address';
 
-export default function isAddressEqual(addressA: Address, addressB: Address): boolean {
+export default function isAddressEqual(addressA: InternalAddress, addressB: InternalAddress): boolean {
     return isEqual(normalize(addressA), normalize(addressB));
 }
 
-function normalize(address: Address): Partial<Address> {
+function normalize(address: InternalAddress): Partial<InternalAddress> {
     const ignoredKeys = ['id', 'provinceCode'];
 
-    return (Object.keys(omitPrivate(address) || {}) as Array<keyof Address>)
+    return (Object.keys(omitPrivate(address) || {}) as Array<keyof InternalAddress>)
         .reduce(
             (result, key) => ignoredKeys.indexOf(key) === -1 && address[key] ?
                 { ...result, [key]: address[key] } :

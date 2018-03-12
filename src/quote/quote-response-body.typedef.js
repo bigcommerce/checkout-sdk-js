@@ -1,8 +1,8 @@
 /**
  * @typedef {Object} QuoteResponseBody
- * @property {Cart} cart
- * @property {Customer} customer
+ * @property {InternalCart} cart
+ * @property {InternalCustomer} customer
  * @property {Order} order
- * @property {Quote} quote
- * @property {ShippingOptionList} shippingOptions
+ * @property {InternalQuote} quote
+ * @property {InternalShippingOptionList} shippingOptions
  */

@@ -3,16 +3,15 @@ export default interface Address {
     firstName: string;
     lastName: string;
     company: string;
-    addressLine1: string;
-    addressLine2: string;
+    street1: string;
+    street2: string;
     city: string;
-    province: string;
-    provinceCode: string;
-    postCode: string;
+    region: string;
+    regionCode: string;
     country: string;
     countryCode: string;
+    postalCode: string;
     phone: string;
-    type: string;
     customFields: Array<{
         fieldId: string;
         fieldValue: string;

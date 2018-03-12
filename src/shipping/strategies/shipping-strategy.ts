@@ -1,5 +1,5 @@
 import { ReadableDataStore } from '@bigcommerce/data-store';
-import { Address } from '../../address';
+import { InternalAddress } from '../../address';
 import { CheckoutSelectors } from '../../checkout';
 import UpdateShippingService from '../update-shipping-service';
 
@@ -11,7 +11,7 @@ export default abstract class ShippingStrategy {
         protected _updateShippingService: UpdateShippingService
     ) {}
 
-    abstract updateAddress(address: Address, options?: any): Promise<CheckoutSelectors>;
+    abstract updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors>;
 
     abstract selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors>;
 

@@ -1,5 +1,5 @@
 import { ReadableDataStore } from '@bigcommerce/data-store';
-import { Address } from '../../address';
+import { InternalAddress } from '../../address';
 import { CheckoutSelectors } from '../../checkout';
 import UpdateShippingService from '../update-shipping-service';
 import ShippingStrategy from './shipping-strategy';
@@ -12,7 +12,7 @@ export default class DefaultShippingStrategy extends ShippingStrategy {
         super(store, updateShippingService);
     }
 
-    updateAddress(address: Address, options?: any): Promise<CheckoutSelectors> {
+    updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
         return this._updateShippingService.updateAddress(address, options);
     }
 

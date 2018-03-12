@@ -8,7 +8,7 @@ export default class CustomerSelector {
     }
 
     /**
-     * @return {Customer}
+     * @return {InternalCustomer}
      */
     getCustomer() {
         return this._customer.data;

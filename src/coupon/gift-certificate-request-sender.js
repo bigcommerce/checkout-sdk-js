@@ -10,7 +10,7 @@ export default class GiftCertificateRequestSender {
     /**
      * @param {string} couponCode
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     applyGiftCertificate(couponCode, { timeout } = {}) {
         const url = '/internalapi/v1/checkout/coupon';
@@ -21,7 +21,7 @@ export default class GiftCertificateRequestSender {
     /**
      * @param {string} couponCode
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     removeGiftCertificate(couponCode, { timeout } = {}) {
         const url = `/internalapi/v1/checkout/coupon/${couponCode}`;

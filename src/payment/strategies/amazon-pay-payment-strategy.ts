@@ -2,7 +2,7 @@
 
 import { noop, omit } from 'lodash';
 import { ReadableDataStore } from '@bigcommerce/data-store';
-import { Address } from '../../address';
+import { InternalAddress } from '../../address';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CheckoutSelectors } from '../../checkout';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
@@ -152,7 +152,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         });
     }
 
-    private _handlePaymentSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: Address) => void): void {
+    private _handlePaymentSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: InternalAddress) => void): void {
         const referenceId = this._getOrderReferenceId();
 
         if (!this._paymentMethod || !referenceId) {
@@ -179,7 +179,7 @@ export interface InitializeOptions extends InitializeWidgetOptions {
 export interface InitializeWidgetOptions {
     container: string;
     amazonOrderReferenceId?: string;
-    onPaymentSelect?: (address: Address) => void;
+    onPaymentSelect?: (address: InternalAddress) => void;
     onError?: (error: Error) => void;
     onReady?: () => void;
 }

@@ -93,7 +93,7 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @return {Quote}
+     * @return {InternalQuote}
      */
     getQuote() {
         return this._quote.getQuote();
@@ -114,7 +114,7 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @return {ShippingOptionList}
+     * @return {InternalShippingOptionList}
      */
     getShippingOptions() {
         return this._shippingOptions.getShippingOptions();
@@ -172,14 +172,14 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @return {Cart}
+     * @return {InternalCart}
      */
     getCart() {
         return this._cart.getCart();
     }
 
     /**
-     * @return {Customer}
+     * @return {InternalCustomer}
      */
     getCustomer() {
         return this._customer.getCustomer();

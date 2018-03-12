@@ -36,7 +36,7 @@ export default class OrderActionCreator {
 
     /**
      * @param {OrderRequestBody} payload
-     * @param {Cart} [cart]
+     * @param {InternalCart} [cart]
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */
@@ -78,7 +78,7 @@ export default class OrderActionCreator {
 
     /**
      * @private
-     * @param {Cart} [existingCart]
+     * @param {InternalCart} [existingCart]
      * @param {RequestOptions} [options]
      * @return {Promise<boolean>}
      */
