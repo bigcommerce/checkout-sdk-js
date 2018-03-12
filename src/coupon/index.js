@@ -11,3 +11,6 @@ export { default as GiftCertificateActionCreator } from './gift-certificate-acti
 export { default as GiftCertificateRequestSender } from './gift-certificate-request-sender';
 export { default as GiftCertificateSelector } from './gift-certificate-selector';
 export { default as giftCertificateReducer } from './gift-certificate-reducer';
+
+export { default as mapToInternalCoupon } from './map-to-internal-coupon';
+export { default as mapToInternalGiftCertificate } from './map-to-internal-gift-certificate';
