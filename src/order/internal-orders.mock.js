@@ -34,7 +34,7 @@ export function getIncompleteOrderState() {
 export function getCompleteOrder() {
     return {
         ...getIncompleteOrder(),
-        id: 123,
+        id: 295,
         items: [
             {
                 id: '12e11c8f-7dce-4da3-9413-b649533f8bad',
@@ -51,6 +51,7 @@ export function getCompleteOrder() {
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
                 integerTax: 0,
+                variantId: 71,
             },
         ],
         currency: 'USD',
@@ -107,8 +108,8 @@ export function getCompleteOrder() {
             integerAmount: 80,
         },
         grandTotal: {
-            amount: 200,
-            integerAmount: 20000,
+            amount: 190,
+            integerAmount: 19000,
         },
         orderId: 295,
         payment: {

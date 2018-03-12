@@ -26,7 +26,7 @@ export function getOrder(): Order {
             giftCertificates: [],
         },
         orderAmount: 190,
-        orderId: 123,
+        orderId: 295,
         status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
     };
 }

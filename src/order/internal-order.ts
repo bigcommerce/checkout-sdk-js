@@ -6,6 +6,7 @@ export default interface InternalOrder extends InternalIncompleteOrder {
     id: number;
     items: InternalLineItem[];
     currency: string;
+    customerCanBeCreated: boolean;
     subtotal: {
         amount: number;
         integerAmount: number;
