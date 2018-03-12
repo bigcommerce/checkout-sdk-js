@@ -114,7 +114,7 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @return {ShippingOptionList}
+     * @return {InternalShippingOptionList}
      */
     getShippingOptions() {
         return this._shippingOptions.getShippingOptions();

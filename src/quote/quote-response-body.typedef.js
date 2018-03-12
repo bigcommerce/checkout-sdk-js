@@ -4,5 +4,5 @@
  * @property {InternalCustomer} customer
  * @property {Order} order
  * @property {Quote} quote
- * @property {ShippingOptionList} shippingOptions
+ * @property {InternalShippingOptionList} shippingOptions
  */

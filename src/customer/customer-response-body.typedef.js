@@ -3,5 +3,5 @@
  * @property {Cart} cart
  * @property {InternalCustomer} customer
  * @property {Quote} quote
- * @property {ShippingOptionList} shippingOptions
+ * @property {InternalShippingOptionList} shippingOptions
  */

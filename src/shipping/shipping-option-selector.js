@@ -12,7 +12,7 @@ export default class ShippingOptionSelector {
     }
 
     /**
-     * @return {ShippingOptionList}
+     * @return {InternalShippingOptionList}
      */
     getShippingOptions() {
         return this._shippingOptions.data;

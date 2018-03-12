@@ -14,7 +14,7 @@
  * @property {string} quoteMeta.geoCountryCode
  * @property {string} quoteMeta.sessionHash
  * @property {Address} shippingAddress
- * @property {ShippingOption} shippingOption
+ * @property {InternalShippingOption} shippingOption
  * @property {string} source
  * @property {Object} store
  * @property {string} store.storeHash
