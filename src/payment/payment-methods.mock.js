@@ -261,6 +261,38 @@ export function getAmazonPay() {
     };
 }
 
+export function getSquare() {
+    return {
+        id: 'square',
+        gateway: null,
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+            'DISCOVER',
+            'JCB',
+            'DINERS',
+        ],
+        config: {
+            displayName: 'Credit Card',
+            cardCode: true,
+            helpText: null,
+            enablePaypal: true,
+            merchantId: '',
+            is3dsEnabled: null,
+            testMode: true,
+            isVisaCheckoutEnabled: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        nonce: null,
+        initializationData: null,
+        clientToken: null,
+        returnUrl: null,
+    };
+}
+
 export function getPaymentMethod() {
     return getAuthorizenet();
 }
