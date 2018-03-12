@@ -9,7 +9,7 @@ export default class CartRequestSender {
 
     /**
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Quote>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     loadCart({ timeout } = {}) {
         const url = '/internalapi/v1/checkout/cart';

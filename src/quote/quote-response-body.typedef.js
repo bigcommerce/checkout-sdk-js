@@ -1,6 +1,6 @@
 /**
  * @typedef {Object} QuoteResponseBody
- * @property {Cart} cart
+ * @property {InternalCart} cart
  * @property {InternalCustomer} customer
  * @property {Order} order
  * @property {Quote} quote

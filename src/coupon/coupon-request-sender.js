@@ -10,7 +10,7 @@ export default class CouponRequestSender {
     /**
      * @param {string} couponCode
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     applyCoupon(couponCode, { timeout } = {}) {
         const url = '/internalapi/v1/checkout/coupon';
@@ -21,7 +21,7 @@ export default class CouponRequestSender {
     /**
      * @param {string} couponCode
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     removeCoupon(couponCode, { timeout } = {}) {
         const url = `/internalapi/v1/checkout/coupon/${couponCode}`;

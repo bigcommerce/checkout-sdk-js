@@ -33,7 +33,7 @@ export default class CartActionCreator {
 
     /**
      * @deprecated
-     * @param {Cart} cart
+     * @param {InternalCart} cart
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */

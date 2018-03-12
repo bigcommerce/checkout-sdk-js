@@ -3,8 +3,8 @@ import { omitPrivate } from '../common/utility';
 
 export default class CartComparator {
     /**
-     * @param {Cart} cartA
-     * @param {Cart} cartB
+     * @param {InternalCart} cartA
+     * @param {InternalCart} cartB
      * @return {boolean}
      */
     isEqual(cartA, cartB) {
@@ -15,8 +15,8 @@ export default class CartComparator {
     }
 
     /**
-     * @param {Cart} cart
-     * @return {Cart}
+     * @param {InternalCart} cart
+     * @return {InternalCart}
      */
     _normalize(cart) {
         return omitPrivate({

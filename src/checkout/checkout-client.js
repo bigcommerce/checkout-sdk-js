@@ -55,7 +55,7 @@ export default class CheckoutClient {
 
     /**
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     loadCart(options) {
         return this._cartRequestSender.loadCart(options);
@@ -177,7 +177,7 @@ export default class CheckoutClient {
     /**
      * @param {string} code
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     applyCoupon(code, options) {
         return this._couponRequestSender.applyCoupon(code, options);
@@ -186,7 +186,7 @@ export default class CheckoutClient {
     /**
      * @param {string} code
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     removeCoupon(code, options) {
         return this._couponRequestSender.removeCoupon(code, options);
@@ -195,7 +195,7 @@ export default class CheckoutClient {
     /**
      * @param {string} code
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     applyGiftCertificate(code, options) {
         return this._giftCertificateRequestSender.applyGiftCertificate(code, options);
@@ -204,7 +204,7 @@ export default class CheckoutClient {
     /**
      * @param {string} code
      * @param {RequestOptions} [options]
-     * @return {Promise<Response<Cart>>}
+     * @return {Promise<Response<InternalCart>>}
      */
     removeGiftCertificate(code, options) {
         return this._giftCertificateRequestSender.removeGiftCertificate(code, options);

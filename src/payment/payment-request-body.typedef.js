@@ -2,7 +2,7 @@
  * @typedef {Object} PaymentRequestBody
  * @property {string} authToken
  * @property {Address} billingAddress
- * @property {Cart} cart
+ * @property {InternalCart} cart
  * @property {InternalCustomer} customer
  * @property {Order} order
  * @property {Object} orderMeta

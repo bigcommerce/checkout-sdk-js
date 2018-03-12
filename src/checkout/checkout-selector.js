@@ -172,7 +172,7 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @return {Cart}
+     * @return {InternalCart}
      */
     getCart() {
         return this._cart.getCart();

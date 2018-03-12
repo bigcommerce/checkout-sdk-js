@@ -8,7 +8,7 @@ export default class CartSelector {
     }
 
     /**
-     * @return {Cart}
+     * @return {InternalCart}
      */
     getCart() {
         return this._cart.data;

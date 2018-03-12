@@ -1,6 +1,6 @@
 /**
  * @typedef {Object} CartState
- * @property {?Cart} data
+ * @property {?InternalCart} data
  * @property {?CartMeta} meta
  * @property {Object} errors
  * @property {?ErrorResponse} errors.loadError
