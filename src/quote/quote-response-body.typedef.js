@@ -3,6 +3,6 @@
  * @property {InternalCart} cart
  * @property {InternalCustomer} customer
  * @property {Order} order
- * @property {Quote} quote
+ * @property {InternalQuote} quote
  * @property {InternalShippingOptionList} shippingOptions
  */

@@ -8,7 +8,7 @@ export default class QuoteSelector {
     }
 
     /**
-     * @return {Quote}
+     * @return {InternalQuote}
      */
     getQuote() {
         return this._quote.data;

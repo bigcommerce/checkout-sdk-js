@@ -93,7 +93,7 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @return {Quote}
+     * @return {InternalQuote}
      */
     getQuote() {
         return this._quote.getQuote();
