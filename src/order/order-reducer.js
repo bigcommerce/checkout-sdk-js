@@ -20,9 +20,9 @@ export default function orderReducer(state = {}, action) {
 
 /**
  * @private
- * @param {?Order} data
+ * @param {?InternalOrder} data
  * @param {Action} action
- * @return {?Order}
+ * @return {?InternalOrder}
  */
 function dataReducer(data, action) {
     switch (action.type) {
