@@ -1,15 +1,15 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { getAppConfig } from '../config/configs.mock';
 import { getResponse } from '../common/http-request/responses.mock';
-import { getBillingAddress } from '../billing/billing-address.mock';
-import { getCart, getCartResponseBody } from '../cart/carts.mock';
-import { getCompleteOrder } from '../order/orders.mock';
+import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
+import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
+import { getCompleteOrder } from '../order/internal-orders.mock';
 import { getCountries } from '../geography/countries.mock';
-import { getCustomerResponseBody } from '../customer/customers.mock';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
-import { getQuote } from '../quote/quotes.mock';
-import { getShippingAddress } from '../shipping/shipping-address.mock';
-import { getShippingOptions } from '../shipping/shipping-options.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
+import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
+import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import CheckoutClient from './checkout-client';
 
 describe('CheckoutClient', () => {

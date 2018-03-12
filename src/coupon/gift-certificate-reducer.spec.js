@@ -1,4 +1,4 @@
-import { getGiftCertificateResponseBody } from './gift-certificate.mock';
+import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import giftCertificateReducer from './gift-certificate-reducer';

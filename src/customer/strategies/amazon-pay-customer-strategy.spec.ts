@@ -8,7 +8,7 @@ import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../
 import { PaymentMethod } from '../../payment';
 import { RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
-import { getGuestCustomer } from '../customers.mock';
+import { getGuestCustomer } from '../internal-customers.mock';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';

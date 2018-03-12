@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { getCart, getCartResponseBody } from './carts.mock';
+import { getCart, getCartResponseBody } from './internal-carts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './cart-action-types';
 import CartActionCreator from './cart-action-creator';

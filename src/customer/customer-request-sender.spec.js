@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getCustomerResponseBody } from './customers.mock';
+import { getCustomerResponseBody } from './internal-customers.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import CustomerRequestSender from './customer-request-sender';
 

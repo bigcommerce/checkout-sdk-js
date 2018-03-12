@@ -1,14 +1,14 @@
-import { getCart } from '../cart/carts.mock';
-import { getGuestCustomer } from '../customer/customers.mock';
-import { getIncompleteOrder } from '../order/orders.mock';
-import { getShippingOptions } from '../shipping/shipping-options.mock';
+import { getCart } from '../cart/internal-carts.mock';
+import { getGuestCustomer } from '../customer/internal-customers.mock';
+import { getIncompleteOrder } from '../order/internal-orders.mock';
+import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 
 export function getQuote() {
     return {
         orderComment: '',
         shippingOption: '0:61d4bb52f746477e1d4fb411221318c3',
         shippingAddress: {
-            id: '59a6bc597d832',
+            id: '55c96cda6f04c',
             firstName: 'Test',
             lastName: 'Tester',
             company: 'Bigcommerce',
@@ -22,11 +22,10 @@ export function getQuote() {
             countryCode: 'US',
             phone: '555-555-5555',
             type: 'residential',
-            isValid: false,
             customFields: [],
         },
         billingAddress: {
-            id: '59a6bc597d832',
+            id: '55c96cda6f04c',
             firstName: 'Test',
             lastName: 'Tester',
             company: 'Bigcommerce',
@@ -40,7 +39,6 @@ export function getQuote() {
             countryCode: 'US',
             phone: '555-555-5555',
             type: 'residential',
-            isValid: false,
             customFields: [],
         },
     };

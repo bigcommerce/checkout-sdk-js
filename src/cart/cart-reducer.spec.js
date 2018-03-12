@@ -1,10 +1,10 @@
-import { getBillingAddressResponseBody } from '../billing/billing-address.mock';
-import { getCart, getCartResponseBody } from './carts.mock';
-import { getCustomerResponseBody } from '../customer/customers.mock';
+import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
+import { getCart, getCartResponseBody } from './internal-carts.mock';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteResponseBody } from '../quote/quotes.mock';
-import { getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
-import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
+import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
+import { getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
+import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import * as cartActionTypes from '../cart/cart-action-types';
 import * as couponActionTypes from '../coupon/coupon-action-types';

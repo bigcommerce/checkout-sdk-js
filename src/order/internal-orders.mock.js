@@ -1,4 +1,4 @@
-import { getGuestCustomer } from '../customer/customers.mock';
+import { getGuestCustomer } from '../customer/internal-customers.mock';
 import { getPayment } from '../payment/payments.mock';
 
 export function getOrderRequestBody() {
@@ -34,7 +34,7 @@ export function getIncompleteOrderState() {
 export function getCompleteOrder() {
     return {
         ...getIncompleteOrder(),
-        id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+        id: 123,
         items: [
             {
                 id: '12e11c8f-7dce-4da3-9413-b649533f8bad',

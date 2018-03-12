@@ -7,7 +7,7 @@ import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '..
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
 import { getAfterpay } from '../../payment/payment-methods.mock';
-import { getIncompleteOrder, getOrderRequestBody } from '../../order/orders.mock';
+import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';

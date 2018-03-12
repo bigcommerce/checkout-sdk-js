@@ -1,6 +1,6 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
-import { getShippingOptions } from '../shipping/shipping-options.mock';
+import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './shipping-option-action-types';
 import ShippingOptionActionCreator from './shipping-option-action-creator';

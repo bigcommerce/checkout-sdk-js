@@ -1,6 +1,6 @@
-import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './orders.mock';
+import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteResponseBody } from '../quote/quotes.mock';
+import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as orderActionTypes from './order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import orderReducer from './order-reducer';

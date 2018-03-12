@@ -1,7 +1,8 @@
-import { getCart } from '../cart/carts.mock';
-import { getQuote } from '../quote/quotes.mock';
+import { getCart } from '../cart/internal-carts.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
+import { getShippingOptions } from './internal-shipping-options.mock';
 
-export function getBillingAddress() {
+export function getShippingAddress() {
     return {
         id: '55c96cda6f04c',
         firstName: 'Test',
@@ -17,17 +18,17 @@ export function getBillingAddress() {
         countryCode: 'US',
         phone: '555-555-5555',
         type: 'residential',
-        isValid: false,
         customFields: [],
     };
 }
 
-export function getBillingAddressResponseBody() {
+export function getShippingAddressResponseBody() {
     return {
         data: {
             quote: getQuote(),
             cart: getCart(),
-            billingAddress: getBillingAddress(),
+            shippingAddress: getShippingAddress(),
+            shippingOptions: getShippingOptions(),
         },
     };
 }

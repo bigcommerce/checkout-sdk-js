@@ -1,6 +1,6 @@
-import { getCart } from '../cart/carts.mock';
-import { getQuote } from '../quote/quotes.mock';
-import { getShippingOptions } from '../shipping/shipping-options.mock';
+import { getCart } from '../cart/internal-carts.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
+import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 
 export function getGuestCustomer() {
     return {

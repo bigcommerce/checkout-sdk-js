@@ -1,9 +1,9 @@
-import { getCart } from '../cart/carts.mock';
-import { getQuote } from '../quote/quotes.mock';
+import { getCart } from '../cart/internal-carts.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
 
 export function getShippingOptions() {
     return {
-        '59a6bc597d832': [
+        '55c96cda6f04c': [
             getFlatRateOption(),
         ],
     };

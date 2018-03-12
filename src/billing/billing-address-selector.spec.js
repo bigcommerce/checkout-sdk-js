@@ -1,5 +1,5 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteState } from '../quote/quotes.mock';
+import { getQuoteState } from '../quote/internal-quotes.mock';
 import BillingAddressSelector from './billing-address-selector';
 
 describe('BillingAddressSelector', () => {

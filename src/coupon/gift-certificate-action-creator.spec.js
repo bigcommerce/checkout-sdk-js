@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../checkout';
-import { getGiftCertificateResponseBody } from './gift-certificate.mock';
+import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './gift-certificate-action-types';
 import GiftCertificateActionCreator from './gift-certificate-action-creator';

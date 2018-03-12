@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getShippingAddress } from './shipping-address.mock';
+import { getShippingAddress } from './internal-shipping-addresses.mock';
 import ShippingAddressRequestSender from './shipping-address-request-sender';
 
 describe('ShippingAddressRequestSender', () => {

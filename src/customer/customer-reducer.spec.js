@@ -1,7 +1,7 @@
-import { getCustomerResponseBody } from './customers.mock';
-import { getCompleteOrderResponseBody } from '../order/orders.mock';
+import { getCustomerResponseBody } from './internal-customers.mock';
+import { getCompleteOrderResponseBody } from '../order/internal-orders.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteResponseBody } from '../quote/quotes.mock';
+import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';

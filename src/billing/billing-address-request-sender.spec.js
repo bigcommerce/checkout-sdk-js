@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getBillingAddress } from './billing-address.mock';
+import { getBillingAddress } from './internal-billing-addresses.mock';
 import BillingAddressRequestSender from './billing-address-request-sender';
 
 describe('BillingAddressRequestSender', () => {

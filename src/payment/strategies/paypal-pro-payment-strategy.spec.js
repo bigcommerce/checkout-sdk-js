@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 import { createCheckoutStore } from '../../checkout';
-import { getOrderRequestBody, getIncompleteOrder } from '../../order/orders.mock';
+import { getOrderRequestBody, getIncompleteOrder } from '../../order/internal-orders.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 

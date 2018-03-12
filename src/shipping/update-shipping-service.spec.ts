@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
 import { createAction } from '@bigcommerce/data-store';
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../checkout';
-import { getFlatRateOption } from './shipping-options.mock';
-import { getShippingAddress } from './shipping-address.mock';
+import { getFlatRateOption } from './internal-shipping-options.mock';
+import { getShippingAddress } from './internal-shipping-addresses.mock';
 import * as addressActionTypes from './shipping-address-action-types';
 import * as optionActionTypes from './shipping-option-action-types';
 import ShippingActionCreator from './shipping-action-creator';

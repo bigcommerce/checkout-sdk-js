@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getBillingAddress, getBillingAddressResponseBody } from './billing-address.mock';
+import { getBillingAddress, getBillingAddressResponseBody } from './internal-billing-addresses.mock';
 import * as actionTypes from './billing-address-action-types';
 import BillingAddressActionCreator from './billing-address-action-creator';
 

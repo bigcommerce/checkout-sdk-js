@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getCouponResponseBody } from './coupon.mock';
+import { getCouponResponseBody } from './internal-coupons.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import CouponRequestSender from './coupon-request-sender';
 

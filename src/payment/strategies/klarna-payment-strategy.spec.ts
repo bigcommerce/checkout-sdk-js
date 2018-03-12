@@ -8,7 +8,7 @@ import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { getKlarna } from '../../payment/payment-methods.mock';
-import { getIncompleteOrder, getOrderRequestBody } from '../../order/orders.mock';
+import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
 import PaymentMethod from '../payment-method';

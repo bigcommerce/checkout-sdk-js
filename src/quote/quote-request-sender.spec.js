@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getQuoteResponseBody } from './quotes.mock';
+import { getQuoteResponseBody } from './internal-quotes.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import QuoteRequestSender from './quote-request-sender';
 

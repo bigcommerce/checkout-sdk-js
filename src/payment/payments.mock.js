@@ -1,9 +1,9 @@
-import { getCart } from '../cart/carts.mock';
-import { getSubmittedOrder } from '../order/orders.mock';
-import { getFlatRateOption } from '../shipping/shipping-options.mock';
-import { getGuestCustomer } from '../customer/customers.mock';
+import { getCart } from '../cart/internal-carts.mock';
+import { getSubmittedOrder } from '../order/internal-orders.mock';
+import { getFlatRateOption } from '../shipping/internal-shipping-options.mock';
+import { getGuestCustomer } from '../customer/internal-customers.mock';
 import { getAuthorizenet } from './payment-methods.mock';
-import { getQuote, getQuoteMeta } from '../quote/quotes.mock';
+import { getQuote, getQuoteMeta } from '../quote/internal-quotes.mock';
 
 export function getPayment() {
     return {

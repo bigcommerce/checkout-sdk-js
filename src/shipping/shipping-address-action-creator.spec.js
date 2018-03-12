@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getShippingAddress, getShippingAddressResponseBody } from './shipping-address.mock';
+import { getShippingAddress, getShippingAddressResponseBody } from './internal-shipping-addresses.mock';
 import * as actionTypes from './shipping-address-action-types';
 import ShippingAddressActionCreator from './shipping-address-action-creator';
 

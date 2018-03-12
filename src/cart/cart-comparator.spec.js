@@ -1,4 +1,4 @@
-import { getCart } from './carts.mock';
+import { getCart } from './internal-carts.mock';
 import CartComparator from './cart-comparator';
 
 describe('CartComparator', () => {

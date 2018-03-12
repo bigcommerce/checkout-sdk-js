@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { getQuoteResponseBody } from './quotes.mock';
+import { getQuoteResponseBody } from './internal-quotes.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './quote-action-types';
 import QuoteActionCreator from './quote-action-creator';
