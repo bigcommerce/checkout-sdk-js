@@ -1,9 +1,11 @@
 import { combineReducers } from '@bigcommerce/data-store';
+import { CheckoutActionType } from '../checkout';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from './quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+import mapToInternalQuote from './map-to-internal-quote';
 
 /**
  * @param {QuoteState} state
@@ -29,6 +31,9 @@ export default function quoteReducer(state = {}, action) {
  */
 function dataReducer(data, action) {
     switch (action.type) {
+    case CheckoutActionType.LoadCheckoutSucceeded:
+        return { ...data, ...mapToInternalQuote(action.payload, data) };
+
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
@@ -67,10 +72,13 @@ function metaReducer(meta, action) {
  */
 function errorsReducer(errors = {}, action) {
     switch (action.type) {
+    case CheckoutActionType.LoadCheckoutRequested:
+    case CheckoutActionType.LoadCheckoutSucceeded:
     case quoteActionTypes.LOAD_QUOTE_REQUESTED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return { ...errors, loadError: undefined };
 
+    case CheckoutActionType.LoadCheckoutFailed:
     case quoteActionTypes.LOAD_QUOTE_FAILED:
         return { ...errors, loadError: action.payload };
 
@@ -101,9 +109,12 @@ function errorsReducer(errors = {}, action) {
  */
 function statusesReducer(statuses = {}, action) {
     switch (action.type) {
+    case CheckoutActionType.LoadCheckoutRequested:
     case quoteActionTypes.LOAD_QUOTE_REQUESTED:
         return { ...statuses, isLoading: true };
 
+    case CheckoutActionType.LoadCheckoutSucceeded:
+    case CheckoutActionType.LoadCheckoutFailed:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_FAILED:
         return { ...statuses, isLoading: false };

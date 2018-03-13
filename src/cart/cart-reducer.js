@@ -1,4 +1,5 @@
 import { combineReducers } from '@bigcommerce/data-store';
+import { CheckoutActionType } from '../checkout';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import * as cartActionTypes from '../cart/cart-action-types';
 import * as couponActionTypes from '../coupon/coupon-action-types';
@@ -7,6 +8,7 @@ import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-t
 import * as quoteActionTypes from '../quote/quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+import mapToInternalCart from './map-to-internal-cart';
 
 /**
  * @param {CartState} state
@@ -32,6 +34,9 @@ export default function cartReducer(state = {}, action) {
  */
 function dataReducer(data, action) {
     switch (action.type) {
+    case CheckoutActionType.LoadCheckoutSucceeded:
+        return { ...data, ...mapToInternalCart(action.payload, data) };
+
     case cartActionTypes.CART_UPDATED:
         return action.payload ? { ...data, ...action.payload } : data;
 
@@ -65,6 +70,7 @@ function metaReducer(meta, action) {
     case cartActionTypes.VERIFY_CART_SUCCEEDED:
         return { ...meta, isValid: action.payload };
 
+    case CheckoutActionType.LoadCheckoutSucceeded:
     case cartActionTypes.LOAD_CART_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return { ...meta, isValid: true };
