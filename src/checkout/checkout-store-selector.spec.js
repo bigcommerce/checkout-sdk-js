@@ -15,9 +15,9 @@ import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getCountries } from '../geography/countries.mock';
 import { getBraintree } from '../payment/payment-methods.mock';
 import { getShippingCountries } from '../shipping/shipping-countries.mock';
-import CheckoutSelector from './checkout-selector';
+import CheckoutStoreSelector from './checkout-store-selector';
 
-describe('CheckoutSelector', () => {
+describe('CheckoutStoreSelector', () => {
     let cacheFactory;
     let orderSelector;
     let formSelector;
@@ -30,7 +30,7 @@ describe('CheckoutSelector', () => {
         orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
         formSelector = new FormSelector(state.config);
 
-        selector = new CheckoutSelector(
+        selector = new CheckoutStoreSelector(
             state.checkout,
             new BillingAddressSelector(state.quote),
             new CartSelector(state.cart),

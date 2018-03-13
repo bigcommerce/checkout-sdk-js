@@ -1,4 +1,4 @@
-export default class CheckoutErrorSelector {
+export default class CheckoutStoreErrorSelector {
     /**
      * @constructor
      * @param {CheckoutState} checkoutState

@@ -11,9 +11,9 @@ import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingSelector, ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
 import { getCheckoutStoreState } from './checkouts.mock';
-import CheckoutStatusSelector from './checkout-status-selector';
+import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 
-describe('CheckoutStatusSelector', () => {
+describe('CheckoutStoreStatusSelector', () => {
     let billingAddress;
     let cart;
     let config;
@@ -52,7 +52,7 @@ describe('CheckoutStatusSelector', () => {
         shippingCountries = new ShippingCountrySelector(state.shippingCountries);
         shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
-        statuses = new CheckoutStatusSelector(
+        statuses = new CheckoutStoreStatusSelector(
             state.checkout,
             billingAddress,
             cart,

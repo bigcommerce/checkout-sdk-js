@@ -25,9 +25,9 @@ import {
     shippingOptionReducer,
 } from '../shipping';
 
-import CheckoutErrorSelector from './checkout-error-selector';
-import CheckoutSelector from './checkout-selector';
-import CheckoutStatusSelector from './checkout-status-selector';
+import CheckoutStoreErrorSelector from './checkout-store-error-selector';
+import CheckoutStoreSelector from './checkout-store-selector';
+import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 import checkoutReducer from './checkout-reducer';
 import createActionTransformer from './create-action-transformer';
 
@@ -102,7 +102,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
-    const checkout = new CheckoutSelector(
+    const checkout = new CheckoutStoreSelector(
         state.checkout,
         billingAddress,
         cart,
@@ -121,7 +121,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         cacheFactory
     );
 
-    const errors = new CheckoutErrorSelector(
+    const errors = new CheckoutStoreErrorSelector(
         state.checkout,
         billingAddress,
         cart,
@@ -140,7 +140,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         shippingOptions
     );
 
-    const statuses = new CheckoutStatusSelector(
+    const statuses = new CheckoutStoreStatusSelector(
         state.checkout,
         billingAddress,
         cart,

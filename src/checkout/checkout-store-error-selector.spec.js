@@ -12,10 +12,10 @@ import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getCheckoutStoreState } from './checkouts.mock';
-import CheckoutErrorSelector from './checkout-error-selector';
+import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import ShippingSelector from '../shipping/shipping-selector';
 
-describe('CheckoutErrorSelector', () => {
+describe('CheckoutStoreErrorSelector', () => {
     let billingAddress;
     let cart;
     let config;
@@ -55,7 +55,7 @@ describe('CheckoutErrorSelector', () => {
         shippingCountries = new ShippingCountrySelector(state.shippingCountries);
         shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
-        errors = new CheckoutErrorSelector(
+        errors = new CheckoutStoreErrorSelector(
             state.checkout,
             billingAddress,
             cart,
