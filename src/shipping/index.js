@@ -2,6 +2,7 @@ export { default as createShippingStrategyRegistry } from './create-shipping-str
 export { default as createUpdateShippingService } from './create-update-shipping-service';
 
 export { default as Consignment } from './consignment';
+export { default as consignmentReducer } from './consignment-reducer';
 
 export { default as ShippingAddressActionCreator } from './shipping-address-action-creator';
 export { default as ShippingAddressRequestSender } from './shipping-address-request-sender';
