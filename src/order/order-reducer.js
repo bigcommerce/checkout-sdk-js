@@ -1,6 +1,8 @@
 import { combineReducers } from '@bigcommerce/data-store';
+import { CheckoutActionType } from '../checkout';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
+import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
 
 /**
  * @param {OrderState} state
@@ -26,6 +28,9 @@ export default function orderReducer(state = {}, action) {
  */
 function dataReducer(data, action) {
     switch (action.type) {
+    case CheckoutActionType.LoadCheckoutSucceeded:
+        return { ...data, ...mapToInternalIncompleteOrder(action.payload, data) };
+
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
     case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
     case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
