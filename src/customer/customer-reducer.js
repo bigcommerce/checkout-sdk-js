@@ -1,7 +1,9 @@
 import { combineReducers } from '@bigcommerce/data-store';
+import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
+import mapToInternalCustomer from './map-to-internal-customer';
 
 /**
  * @param {CustomerState} state
@@ -26,6 +28,9 @@ export default function customerReducer(state = {}, action) {
  */
 function dataReducer(data, action) {
     switch (action.type) {
+    case CheckoutActionType.LoadCheckoutSucceeded:
+        return { ...data, ...mapToInternalCustomer(action.payload, data) };
+
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
