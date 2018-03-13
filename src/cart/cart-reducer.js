@@ -18,6 +18,7 @@ import mapToInternalCart from './map-to-internal-cart';
 export default function cartReducer(state = {}, action) {
     const reducer = combineReducers({
         data: dataReducer,
+        externalData: externalDataReducer,
         errors: errorsReducer,
         meta: metaReducer,
         statuses: statusesReducer,
@@ -53,6 +54,22 @@ function dataReducer(data, action) {
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
     case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.cart } : data;
+
+    default:
+        return data;
+    }
+}
+
+/**
+ * @private
+ * @param {?Cart} data
+ * @param {Action} action
+ * @return {?Cart}
+ */
+function externalDataReducer(data, action) {
+    switch (action.type) {
+    case CheckoutActionType.LoadCheckoutSucceeded:
+        return { ...data, ...action.payload.cart };
 
     default:
         return data;
