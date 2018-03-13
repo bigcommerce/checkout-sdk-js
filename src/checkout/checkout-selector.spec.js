@@ -11,17 +11,17 @@ import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
 import { CacheFactory } from '../common/cache';
-import { getCartState } from '../cart/carts.mock';
-import { getCompleteOrderState } from '../order/orders.mock';
+import { getCartState } from '../cart/internal-carts.mock';
+import { getCompleteOrderState } from '../order/internal-orders.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCountries, getCountriesState } from '../geography/countries.mock';
-import { getCustomerState } from '../customer/customers.mock';
+import { getCustomerState } from '../customer/internal-customers.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { getBraintree, getPaymentMethodsState } from '../payment/payment-methods.mock';
-import { getQuoteState } from '../quote/quotes.mock';
+import { getQuoteState } from '../quote/internal-quotes.mock';
 import { getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
 import { getShippingCountries, getShippingCountriesState } from '../shipping/shipping-countries.mock';
-import { getShippingOptionsState } from '../shipping/shipping-options.mock';
+import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
 import CheckoutSelector from './checkout-selector';
 
 describe('CheckoutSelector', () => {

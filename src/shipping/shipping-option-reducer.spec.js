@@ -1,8 +1,8 @@
-import { getCustomerResponseBody } from '../customer/customers.mock';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteResponseBody } from '../quote/quotes.mock';
-import { getShippingAddressResponseBody } from './shipping-address.mock';
-import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
+import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
+import { getShippingAddressResponseBody } from './internal-shipping-addresses.mock';
+import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';

@@ -5,8 +5,8 @@ import {
     getOrderRequestBody,
     getSubmitOrderResponseBody,
     getSubmitOrderResponseHeaders,
-} from './orders.mock';
-import { getCart, getCartResponseBody } from '../cart/carts.mock';
+} from './internal-orders.mock';
+import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './order-action-types';

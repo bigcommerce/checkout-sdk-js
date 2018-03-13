@@ -2,16 +2,16 @@ import { createAction } from '@bigcommerce/data-store';
 import { createTimeout } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { createCheckoutStore } from '../checkout';
-import { getCartState } from '../cart/carts.mock';
+import { getCartState } from '../cart/internal-carts.mock';
 import { getConfigState } from '../config/configs.mock';
-import { getCustomerState } from '../customer/customers.mock';
-import { getCompleteOrder, getOrderRequestBody } from './orders.mock';
+import { getCustomerState } from '../customer/internal-customers.mock';
+import { getCompleteOrder, getOrderRequestBody } from './internal-orders.mock';
 import { getPayment, getPaymentRequestBody } from '../payment/payments.mock';
 import { getInstrumentsState, getInstrumentsMeta } from '../payment/instrument/instrument.mock';
 import { getPaymentMethodsState } from '../payment/payment-methods.mock';
-import { getQuoteState } from '../quote/quotes.mock';
-import { getShippingOptionsState } from '../shipping/shipping-options.mock';
-import { getSubmittedOrderState } from '../order/orders.mock';
+import { getQuoteState } from '../quote/internal-quotes.mock';
+import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
+import { getSubmittedOrderState } from '../order/internal-orders.mock';
 import PlaceOrderService from './place-order-service';
 
 describe('PlaceOrderService', () => {

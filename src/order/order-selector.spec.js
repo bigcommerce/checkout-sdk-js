@@ -1,8 +1,8 @@
 import { merge } from 'lodash';
 import { CacheFactory } from '../common/cache';
-import { getCartState } from '../cart/carts.mock';
-import { getCustomerState } from '../customer/customers.mock';
-import { getSubmittedOrder, getSubmittedOrderState } from './orders.mock';
+import { getCartState } from '../cart/internal-carts.mock';
+import { getCustomerState } from '../customer/internal-customers.mock';
+import { getSubmittedOrder, getSubmittedOrderState } from './internal-orders.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 import { getPaymentState } from '../payment/payments.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';

@@ -1,8 +1,7 @@
-import { getCart } from '../cart/carts.mock';
-import { getQuote } from '../quote/quotes.mock';
-import { getShippingOptions } from './shipping-options.mock';
+import { getCart } from '../cart/internal-carts.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
 
-export function getShippingAddress() {
+export function getBillingAddress() {
     return {
         id: '55c96cda6f04c',
         firstName: 'Test',
@@ -22,13 +21,12 @@ export function getShippingAddress() {
     };
 }
 
-export function getShippingAddressResponseBody() {
+export function getBillingAddressResponseBody() {
     return {
         data: {
             quote: getQuote(),
             cart: getCart(),
-            shippingAddress: getShippingAddress(),
-            shippingOptions: getShippingOptions(),
+            billingAddress: getBillingAddress(),
         },
     };
 }

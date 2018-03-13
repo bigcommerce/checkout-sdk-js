@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getCompleteOrderResponseBody } from './orders.mock';
+import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import OrderRequestSender from './order-request-sender';
 

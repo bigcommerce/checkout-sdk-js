@@ -1,5 +1,5 @@
 import { createCheckoutStore } from '../../checkout';
-import { getOrderRequestBody } from '../../order/orders.mock';
+import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import LegacyPaymentStrategy from './legacy-payment-strategy';
 
 describe('LegacyPaymentStrategy', () => {

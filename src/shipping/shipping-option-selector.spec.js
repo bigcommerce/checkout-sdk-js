@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getFlatRateOption, getShippingOptionsState } from './shipping-options.mock';
-import { getQuoteState } from '../quote/quotes.mock';
+import { getFlatRateOption, getShippingOptionsState } from './internal-shipping-options.mock';
+import { getQuoteState } from '../quote/internal-quotes.mock';
 import ShippingOptionSelector from './shipping-option-selector';
 
 describe('ShippingOptionSelector', () => {

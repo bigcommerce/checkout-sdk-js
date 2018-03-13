@@ -1,4 +1,4 @@
-import { getGuestCustomer } from './customers.mock';
+import { getGuestCustomer } from './internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CustomerSelector from './customer-selector';
 

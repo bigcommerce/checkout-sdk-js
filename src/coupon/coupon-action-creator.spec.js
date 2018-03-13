@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../checkout';
-import { getCouponResponseBody } from './coupon.mock';
+import { getCouponResponseBody } from './internal-coupons.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './coupon-action-types';
 import CouponActionCreator from './coupon-action-creator';

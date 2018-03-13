@@ -17,6 +17,7 @@ export function getCart() {
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
                 integerTax: 0,
+                variantId: 71,
             },
         ],
         currency: 'USD',
@@ -73,8 +74,8 @@ export function getCart() {
             integerAmount: 80,
         },
         grandTotal: {
-            amount: 200,
-            integerAmount: 20000,
+            amount: 190,
+            integerAmount: 19000,
         },
     };
 }

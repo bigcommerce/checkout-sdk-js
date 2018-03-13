@@ -1,9 +1,9 @@
-import { getCart } from '../cart/carts.mock';
-import { getQuote } from '../quote/quotes.mock';
+import { getCart } from '../cart/internal-carts.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
 
 export function getShippingOptions() {
     return {
-        '59a6bc597d832': [
+        '55c96cda6f04c': [
             getFlatRateOption(),
         ],
     };
@@ -17,6 +17,7 @@ export function getFlatRateOption() {
         price: 0,
         formattedPrice: '$0.00',
         id: '0:61d4bb52f746477e1d4fb411221318c3',
+        isRecommended: true,
         selected: true,
         imageUrl: '',
         transitTime: '',

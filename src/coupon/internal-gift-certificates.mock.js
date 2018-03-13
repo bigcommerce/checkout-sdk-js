@@ -1,4 +1,4 @@
-import { getCart } from '../cart/carts.mock';
+import { getCart } from '../cart/internal-carts.mock';
 
 export function getGiftCertificateResponseBody() {
     return {

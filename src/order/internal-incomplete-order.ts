@@ -2,11 +2,11 @@ export default interface InternalIncompleteOrder {
     orderId: number;
     token: string;
     payment: {
-        id: string;
-        redirectUrl: string;
-        returnUrl: string;
-        status: string;
-        helpText: string;
+        id?: string;
+        redirectUrl?: string;
+        returnUrl?: string;
+        status?: string;
+        helpText?: string;
     };
     socialData: {
         [key: string]: {

@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getShippingOptions } from './shipping-options.mock';
+import { getShippingOptions } from './internal-shipping-options.mock';
 import ShippingOptionRequestSender from './shipping-option-request-sender';
 
 describe('ShippingOptionRequestSender', () => {

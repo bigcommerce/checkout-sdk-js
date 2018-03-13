@@ -1,4 +1,4 @@
-import { getQuote, getQuoteMeta } from './quotes.mock';
+import { getQuote, getQuoteMeta } from './internal-quotes.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import QuoteSelector from './quote-selector';
 

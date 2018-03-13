@@ -1,9 +1,9 @@
-import { getBillingAddressResponseBody } from '../billing/billing-address.mock';
-import { getCustomerResponseBody } from '../customer/customers.mock';
+import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuote, getQuoteResponseBody } from './quotes.mock';
-import { getShippingAddressResponseBody } from '../shipping/shipping-address.mock';
-import { getShippingOptionResponseBody } from '../shipping/shipping-options.mock';
+import { getQuote, getQuoteResponseBody } from './internal-quotes.mock';
+import { getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
+import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from './quote-action-types';

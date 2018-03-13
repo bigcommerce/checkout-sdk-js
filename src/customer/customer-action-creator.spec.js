@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { getCustomerResponseBody } from './customers.mock';
+import { getCustomerResponseBody } from './internal-customers.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './customer-action-types';
 import CustomerActionCreator from './customer-action-creator';

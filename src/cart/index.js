@@ -8,3 +8,7 @@ export { default as CartComparator } from './cart-comparator';
 export { default as cartReducer } from './cart-reducer';
 export { default as CartRequestSender } from './cart-request-sender';
 export { default as CartSelector } from './cart-selector';
+
+export { default as mapToInternalCart } from './map-to-internal-cart';
+export { default as mapToInternalLineItem } from './map-to-internal-line-item';
+export { default as mapToInternalLineItems } from './map-to-internal-line-items';

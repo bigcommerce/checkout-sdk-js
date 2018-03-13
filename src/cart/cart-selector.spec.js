@@ -1,4 +1,4 @@
-import { getCart } from './carts.mock';
+import { getCart } from './internal-carts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CartSelector from './cart-selector';
 

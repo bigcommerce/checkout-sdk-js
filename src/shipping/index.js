@@ -22,5 +22,7 @@ export { default as shippingOptionReducer } from './shipping-option-reducer';
 export { default as ShippingActionCreator } from './shipping-action-creator';
 export { default as ShippingSelector } from './shipping-selector';
 export { default as shippingReducer } from './shipping-reducer';
-
 export { default as UpdateShippingService } from './update-shipping-service';
+
+export { default as mapToInternalShippingOption } from './map-to-internal-shipping-option';
+export { default as mapToInternalShippingOptions } from './map-to-internal-shipping-options';

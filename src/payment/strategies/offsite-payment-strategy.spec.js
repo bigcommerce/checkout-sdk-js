@@ -1,6 +1,6 @@
 import { merge, omit } from 'lodash';
 import { createCheckoutStore } from '../../checkout';
-import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/orders.mock';
+import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
 import OffsitePaymentStrategy from './offsite-payment-strategy';
