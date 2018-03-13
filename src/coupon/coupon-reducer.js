@@ -1,4 +1,5 @@
 import { combineReducers } from '@bigcommerce/data-store';
+import { CheckoutActionType } from '../checkout';
 import * as couponActionTypes from './coupon-action-types';
 
 /**
@@ -8,11 +9,28 @@ import * as couponActionTypes from './coupon-action-types';
  */
 export default function couponReducer(state = {}, action) {
     const reducer = combineReducers({
+        data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
     });
 
     return reducer(state, action);
+}
+
+/**
+ * @private
+ * @param {Coupon[]} state
+ * @param {Action<Coupon[]>} action
+ * @return {Coupon[]}
+ */
+function dataReducer(data, action) {
+    switch (action.type) {
+    case CheckoutActionType.LoadCheckoutSucceeded:
+        return action.payload.coupons;
+
+    default:
+        return data;
+    }
 }
 
 /**
