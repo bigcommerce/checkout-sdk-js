@@ -9,8 +9,7 @@
     "lib/"
   ],
   "engines": {
-    "node": "^6.10.0",
-    "yarn": "^0.27.5"
+    "node": "^6.10.0"
   },
   "repository": {
     "type": "git",
@@ -45,7 +44,7 @@
   },
   "dependencies": {
     "@bigcommerce/data-store": "git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.1",
-    "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.0",
+    "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.1",
     "@bigcommerce/script-loader": "git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.0",
     "@types/lodash": "^4.14.92",
     "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.10.0",
