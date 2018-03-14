@@ -1,4 +1,5 @@
 import { combineReducers } from '@bigcommerce/data-store';
+import { CheckoutActionType } from '../checkout';
 import * as giftCertificateActionTypes from './gift-certificate-action-types';
 
 /**
@@ -8,11 +9,28 @@ import * as giftCertificateActionTypes from './gift-certificate-action-types';
  */
 export default function giftCertificateReducer(state = {}, action) {
     const reducer = combineReducers({
+        data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
     });
 
     return reducer(state, action);
+}
+
+/**
+ * @private
+ * @param {GiftCertificate[]} state
+ * @param {Action<GiftCertificate[]>} action
+ * @return {GiftCertificate[]}
+ */
+function dataReducer(data, action) {
+    switch (action.type) {
+    case CheckoutActionType.LoadCheckoutSucceeded:
+        return action.payload.giftCertificates;
+
+    default:
+        return data;
+    }
 }
 
 /**
