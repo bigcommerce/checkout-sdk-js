@@ -1,7 +1,6 @@
 import { createDataStore } from '@bigcommerce/data-store';
 import { CacheFactory } from '../common/cache';
 import { cartReducer, CartSelector } from '../cart';
-import { CheckoutErrorSelector, CheckoutSelector, CheckoutStatusSelector } from '../checkout';
 import { configReducer, ConfigSelector } from '../config';
 import { countryReducer, CountrySelector } from '../geography';
 import { createFreezeProxy } from '../common/utility';
@@ -14,16 +13,22 @@ import { paymentReducer, paymentMethodReducer, PaymentMethodSelector } from '../
 import { remoteCheckoutReducer, RemoteCheckoutSelector } from '../remote-checkout';
 import { instrumentReducer, InstrumentSelector } from '../payment/instrument';
 import { quoteReducer, QuoteSelector } from '../quote';
-import { BillingAddressSelector } from '../billing';
+import { billingAddressReducer, BillingAddressSelector } from '../billing';
 import {
     ShippingSelector,
     ShippingAddressSelector,
     ShippingCountrySelector,
     ShippingOptionSelector,
+    consignmentReducer,
     shippingReducer,
     shippingCountryReducer,
     shippingOptionReducer,
 } from '../shipping';
+
+import CheckoutErrorSelector from './checkout-error-selector';
+import CheckoutSelector from './checkout-selector';
+import CheckoutStatusSelector from './checkout-status-selector';
+import checkoutReducer from './checkout-reducer';
 import createActionTransformer from './create-action-transformer';
 
 /**
@@ -45,12 +50,15 @@ export default function createCheckoutStore(initialState = {}, options = {}) {
 
 /**
  * @private
- * @return {CheckoutReducers}
+ * @return {CheckoutStoreReducers}
  */
 function createCheckoutReducers() {
     return {
+        billingAddress: billingAddressReducer,
         cart: cartReducer,
+        checkout: checkoutReducer,
         config: configReducer,
+        consignment: consignmentReducer,
         countries: countryReducer,
         coupons: couponReducer,
         customer: customerReducer,
@@ -69,7 +77,7 @@ function createCheckoutReducers() {
 
 /**
  * @private
- * @param {CheckoutState} state
+ * @param {CheckoutStoreState} state
  * @param {CacheFactory} cacheFactory
  * @param {Object} [options={}]
  * @param {boolean} [options.shouldWarnMutation=true]

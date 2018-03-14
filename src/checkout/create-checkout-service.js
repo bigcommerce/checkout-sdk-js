@@ -52,7 +52,7 @@ export default function createCheckoutService(options = {}) {
 /**
  * @private
  * @param {Object} options
- * @return {CheckoutState}
+ * @return {CheckoutStoreState}
  */
 function createInitialState(options) {
     return {
