@@ -2,18 +2,18 @@
 # yarn lockfile v1
 
 
-"@bigcommerce/data-store@git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.0":
-  version "0.1.0"
-  resolved "git+ssh://git@github.com/bigcommerce/data-store-js.git#9cc179a3b9b3683640c6c6f9dab7278bb06018a4"
+"@bigcommerce/data-store@git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.1":
+  version "0.1.1"
+  resolved "git+ssh://git@github.com/bigcommerce/data-store-js.git#1ab98e71d19a2f0f7509e7de601074f79fae5b2d"
   dependencies:
     "@types/lodash" "^4.14.92"
     lodash "^4.17.4"
     rxjs "^5.5.5"
     tslib "^1.8.0"
 
-"@bigcommerce/request-sender@git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.0":
-  version "0.1.0"
-  resolved "git+ssh://git@github.com/bigcommerce/request-sender-js.git#2169a2246a48d8cd0d8278920c710164b1862334"
+"@bigcommerce/request-sender@git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.1":
+  version "0.1.1"
+  resolved "git+ssh://git@github.com/bigcommerce/request-sender-js.git#8a00e3a2cb6cd80960d688b1c29131e815fff744"
   dependencies:
     is-promise "^2.1.0"
     js-cookie "^2.1.4"
