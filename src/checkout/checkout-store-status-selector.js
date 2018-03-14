@@ -1,8 +1,9 @@
-export default class CheckoutStatusSelector {
+export default class CheckoutStoreStatusSelector {
     /**
      * @constructor
      * @param {BillingAddressSelector} billingAddress
      * @param {CartSelector} cart
+     * @param {CheckoutSelector} checkout
      * @param {ConfigSelector} config
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
@@ -21,6 +22,7 @@ export default class CheckoutStatusSelector {
     constructor(
         billingAddress,
         cart,
+        checkout,
         config,
         countries,
         coupon,
@@ -38,6 +40,7 @@ export default class CheckoutStatusSelector {
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
+        this._checkout = checkout;
         this._config = config;
         this._countries = countries;
         this._coupon = coupon;
@@ -91,7 +94,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isLoadingCheckout() {
-        return this._quote.isLoading();
+        return this._quote.isLoading() || this._checkout.isLoading();
     }
 
     /**

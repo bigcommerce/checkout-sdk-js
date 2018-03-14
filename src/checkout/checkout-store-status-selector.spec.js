@@ -10,11 +10,14 @@ import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingSelector, ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
-import CheckoutStatusSelector from './checkout-status-selector';
+import { getCheckoutStoreState } from './checkouts.mock';
+import CheckoutStoreStatusSelector from './checkout-store-status-selector';
+import CheckoutSelector from './checkout-selector';
 
-describe('CheckoutStatusSelector', () => {
+describe('CheckoutStoreStatusSelector', () => {
     let billingAddress;
     let cart;
+    let checkout;
     let config;
     let countries;
     let coupon;
@@ -28,30 +31,34 @@ describe('CheckoutStatusSelector', () => {
     let shipping;
     let shippingAddress;
     let shippingCountries;
-    let shippingOption;
+    let shippingOptions;
     let statuses;
+    let state;
 
     beforeEach(() => {
-        billingAddress = new BillingAddressSelector();
-        cart = new CartSelector();
-        config = new ConfigSelector();
-        countries = new CountrySelector();
-        coupon = new CouponSelector();
-        customer = new CustomerSelector();
-        giftCertificate = new GiftCertificateSelector();
-        order = new OrderSelector();
-        paymentMethods = new PaymentMethodSelector();
-        instruments = new InstrumentSelector();
-        quote = new QuoteSelector();
-        remoteCheckout = new RemoteCheckoutSelector();
-        shipping = new ShippingSelector();
-        shippingAddress = new ShippingAddressSelector();
-        shippingCountries = new ShippingCountrySelector();
-        shippingOption = new ShippingOptionSelector();
+        state = getCheckoutStoreState();
+        billingAddress = new BillingAddressSelector(state.quote);
+        cart = new CartSelector(state.cart);
+        checkout = new CheckoutSelector(state.checkout);
+        config = new ConfigSelector(state.config);
+        countries = new CountrySelector(state.countries);
+        coupon = new CouponSelector(state.coupons);
+        customer = new CustomerSelector(state.customer);
+        giftCertificate = new GiftCertificateSelector(state.giftCertificates);
+        order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+        paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+        instruments = new InstrumentSelector(state.instruments);
+        quote = new QuoteSelector(state.quote);
+        remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
+        shipping = new ShippingSelector(state.shipping);
+        shippingAddress = new ShippingAddressSelector(state.quote);
+        shippingCountries = new ShippingCountrySelector(state.shippingCountries);
+        shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
-        statuses = new CheckoutStatusSelector(
+        statuses = new CheckoutStoreStatusSelector(
             billingAddress,
             cart,
+            checkout,
             config,
             countries,
             coupon,
@@ -65,7 +72,7 @@ describe('CheckoutStatusSelector', () => {
             shipping,
             shippingAddress,
             shippingCountries,
-            shippingOption
+            shippingOptions
         );
     });
 
@@ -333,33 +340,33 @@ describe('CheckoutStatusSelector', () => {
 
     describe('#isLoadingShippingOptions()', () => {
         it('returns true if loading shipping options', () => {
-            jest.spyOn(shippingOption, 'isLoading').mockReturnValue(true);
+            jest.spyOn(shippingOptions, 'isLoading').mockReturnValue(true);
 
             expect(statuses.isLoadingShippingOptions()).toEqual(true);
-            expect(shippingOption.isLoading).toHaveBeenCalled();
+            expect(shippingOptions.isLoading).toHaveBeenCalled();
         });
 
         it('returns false if not loading shipping options', () => {
-            jest.spyOn(shippingOption, 'isLoading').mockReturnValue(false);
+            jest.spyOn(shippingOptions, 'isLoading').mockReturnValue(false);
 
             expect(statuses.isLoadingShippingOptions()).toEqual(false);
-            expect(shippingOption.isLoading).toHaveBeenCalled();
+            expect(shippingOptions.isLoading).toHaveBeenCalled();
         });
     });
 
     describe('#isSelectingShippingOption()', () => {
         it('returns true if selecting shipping options', () => {
-            jest.spyOn(shippingOption, 'isSelecting').mockReturnValue(true);
+            jest.spyOn(shippingOptions, 'isSelecting').mockReturnValue(true);
 
             expect(statuses.isSelectingShippingOption()).toEqual(true);
-            expect(shippingOption.isSelecting).toHaveBeenCalled();
+            expect(shippingOptions.isSelecting).toHaveBeenCalled();
         });
 
         it('returns false if not selecting shipping options', () => {
-            jest.spyOn(shippingOption, 'isSelecting').mockReturnValue(false);
+            jest.spyOn(shippingOptions, 'isSelecting').mockReturnValue(false);
 
             expect(statuses.isSelectingShippingOption()).toEqual(false);
-            expect(shippingOption.isSelecting).toHaveBeenCalled();
+            expect(shippingOptions.isSelecting).toHaveBeenCalled();
         });
     });
 

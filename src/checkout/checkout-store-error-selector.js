@@ -1,8 +1,9 @@
-export default class CheckoutErrorSelector {
+export default class CheckoutStoreErrorSelector {
     /**
      * @constructor
      * @param {BillingAddressSelector} billingAddress
      * @param {CartSelector} cart
+     * @param {CheckoutSelector} checkout
      * @param {ConfigSelector} config
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
@@ -21,6 +22,7 @@ export default class CheckoutErrorSelector {
     constructor(
         billingAddress,
         cart,
+        checkout,
         config,
         countries,
         coupon,
@@ -38,6 +40,7 @@ export default class CheckoutErrorSelector {
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
+        this._checkout = checkout;
         this._config = config;
         this._countries = countries;
         this._coupon = coupon;
@@ -91,7 +94,7 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getLoadCheckoutError() {
-        return this._quote.getLoadError();
+        return this._quote.getLoadError() || this._checkout.getLoadError();
     }
 
     /**

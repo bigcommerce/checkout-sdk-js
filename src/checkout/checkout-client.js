@@ -3,6 +3,7 @@ export default class CheckoutClient {
      * @constructor
      * @param {BillingAddressRequestSender} billingAddressRequestSender
      * @param {CartRequestSender} cartRequestSender
+     * @param {CheckoutRequestSender} checkoutRequestSender
      * @param {ConfigRequestSender} configRequestSender
      * @param {CountryRequestSender} countryRequestSender
      * @param {CouponRequestSender} couponRequestSender
@@ -18,6 +19,7 @@ export default class CheckoutClient {
     constructor(
         billingAddressRequestSender,
         cartRequestSender,
+        checkoutRequestSender,
         configRequestSender,
         countryRequestSender,
         couponRequestSender,
@@ -32,6 +34,7 @@ export default class CheckoutClient {
     ) {
         this._billingAddressRequestSender = billingAddressRequestSender;
         this._cartRequestSender = cartRequestSender;
+        this._checkoutRequestSender = checkoutRequestSender;
         this._configRequestSender = configRequestSender;
         this._countryRequestSender = countryRequestSender;
         this._couponRequestSender = couponRequestSender;
@@ -46,10 +49,19 @@ export default class CheckoutClient {
     }
 
     /**
+     * @param {string} id
      * @param {RequestOptions} [options]
      * @return {Promise<Response<Quote>>}
      */
-    loadCheckout(options) {
+    loadCheckout(id, options) {
+        return this._checkoutRequestSender.loadCheckout(id, options);
+    }
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<Response<Quote>>}
+     */
+    loadQuote(options) {
         return this._quoteRequestSender.loadQuote(options);
     }
 

@@ -1,9 +1,9 @@
-import CheckoutSelector from './checkout-selector';
-import CheckoutStatusSelector from './checkout-status-selector';
-import CheckoutErrorSelector from './checkout-error-selector';
+import CheckoutStoreSelector from './checkout-store-selector';
+import CheckoutStoreStatusSelector from './checkout-store-status-selector';
+import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 
 export default interface CheckoutSelectors {
-    checkout: CheckoutSelector;
-    errors: CheckoutErrorSelector;
-    statuses: CheckoutStatusSelector;
+    checkout: CheckoutStoreSelector;
+    errors: CheckoutStoreErrorSelector;
+    statuses: CheckoutStoreStatusSelector;
 }
