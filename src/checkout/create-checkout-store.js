@@ -58,7 +58,7 @@ function createCheckoutReducers() {
         cart: cartReducer,
         checkout: checkoutReducer,
         config: configReducer,
-        consignment: consignmentReducer,
+        consignments: consignmentReducer,
         countries: countryReducer,
         coupons: couponReducer,
         customer: customerReducer,
@@ -103,6 +103,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
     const checkout = new CheckoutSelector(
+        state.checkout,
         billingAddress,
         cart,
         config,
@@ -121,6 +122,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     );
 
     const errors = new CheckoutErrorSelector(
+        state.checkout,
         billingAddress,
         cart,
         config,
@@ -139,6 +141,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     );
 
     const statuses = new CheckoutStatusSelector(
+        state.checkout,
         billingAddress,
         cart,
         config,

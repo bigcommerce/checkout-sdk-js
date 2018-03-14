@@ -1,6 +1,7 @@
 export default class CheckoutStatusSelector {
     /**
      * @constructor
+     * @param {CheckoutState} checkoutState
      * @param {BillingAddressSelector} billingAddress
      * @param {CartSelector} cart
      * @param {ConfigSelector} config
@@ -19,6 +20,7 @@ export default class CheckoutStatusSelector {
      * @param {ShippingOptionSelector} shippingOptions
      */
     constructor(
+        checkoutState,
         billingAddress,
         cart,
         config,
@@ -36,6 +38,7 @@ export default class CheckoutStatusSelector {
         shippingCountries,
         shippingOptions
     ) {
+        this._checkoutState = checkoutState;
         this._billingAddress = billingAddress;
         this._cart = cart;
         this._config = config;
@@ -91,7 +94,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isLoadingCheckout() {
-        return this._quote.isLoading();
+        return !!(this._quote.isLoading() || this._checkoutState.statuses.isLoading);
     }
 
     /**

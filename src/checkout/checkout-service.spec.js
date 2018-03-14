@@ -16,7 +16,8 @@ import { MissingDataError } from '../common/error/errors';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getAppConfig } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
-import { getCartResponseBody } from '../cart/internal-carts.mock';
+import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
+import { getCheckout } from './checkouts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { getCouponResponseBody } from '../coupon/internal-coupons.mock';
 import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } from '../order/internal-orders.mock';
@@ -30,11 +31,13 @@ import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from './create-checkout-store';
+import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
 
 describe('CheckoutService', () => {
     let checkoutClient;
     let checkoutService;
+    let cartRequestSender;
     let customerStrategyRegistry;
     let paymentStrategy;
     let paymentStrategyRegistry;
@@ -76,6 +79,10 @@ describe('CheckoutService', () => {
             ),
 
             loadCheckout: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout()))
+            ),
+
+            loadQuote: jest.fn(() =>
                 Promise.resolve(getResponse(getQuoteResponseBody()))
             ),
 
@@ -140,6 +147,16 @@ describe('CheckoutService', () => {
             ),
         };
 
+        cartRequestSender = {
+            loadCart: jest.fn(() =>
+                Promise.resolve(getResponse(getCartResponseBody()))
+            ),
+
+            loadCarts: jest.fn(() =>
+                Promise.resolve(getResponse([getCart()]))
+            ),
+        };
+
         store = createCheckoutStore({
             config: { data: getAppConfig() },
         });
@@ -166,6 +183,7 @@ describe('CheckoutService', () => {
             shippingStrategyRegistry,
             new BillingAddressActionCreator(checkoutClient),
             new CartActionCreator(checkoutClient),
+            new CheckoutActionCreator(checkoutClient, cartRequestSender),
             new ConfigActionCreator(checkoutClient),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(checkoutClient),
@@ -196,8 +214,15 @@ describe('CheckoutService', () => {
         it('loads quote data', async () => {
             const { checkout } = await checkoutService.loadCheckout();
 
-            expect(checkoutClient.loadCheckout).toHaveBeenCalled();
+            expect(checkoutClient.loadQuote).toHaveBeenCalled();
             expect(checkout.getQuote()).toEqual(getQuoteResponseBody().data.quote);
+        });
+
+        it('loads checkout data', async () => {
+            const { checkout } = await checkoutService.loadCheckout();
+
+            expect(checkoutClient.loadCheckout).toHaveBeenCalled();
+            expect(checkout.getCheckout()).toEqual(getCheckout());
         });
 
         it('loads config data', async () => {
@@ -212,7 +237,6 @@ describe('CheckoutService', () => {
 
             await checkoutService.loadCheckout();
 
-            expect(store.dispatch).toHaveBeenCalledTimes(2);
             expect(store.dispatch).toHaveBeenCalledWith(expect.any(Observable), { queueId: 'config' });
         });
     });
@@ -298,7 +322,7 @@ describe('CheckoutService', () => {
 
     describe('#finalizeOrderIfNeeded()', () => {
         beforeEach(() => {
-            jest.spyOn(checkoutClient, 'loadCheckout').mockReturnValue(
+            jest.spyOn(checkoutClient, 'loadQuote').mockReturnValue(
                 Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
                     data: { order: getSubmittedOrder() },
                 })))
@@ -342,7 +366,7 @@ describe('CheckoutService', () => {
         });
 
         it('returns rejected promise if order does not require finalization', async () => {
-            jest.spyOn(checkoutClient, 'loadCheckout').mockReturnValue(
+            jest.spyOn(checkoutClient, 'loadQuote').mockReturnValue(
                 Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
                     data: { order: { ...getSubmittedOrder(), payment: null } },
                 })))

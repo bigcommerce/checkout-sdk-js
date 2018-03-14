@@ -30,3 +30,10 @@ export function getBillingAddressResponseBody() {
         },
     };
 }
+
+export function getBillingAddressState() {
+    return {
+        data: getBillingAddress(),
+        meta: {},
+    };
+}

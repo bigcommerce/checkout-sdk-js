@@ -1,6 +1,7 @@
 export default class CheckoutSelector {
     /**
      * @constructor
+     * @param {CheckoutState} checkoutState
      * @param {BillingAddressSelector} billingAddress
      * @param {CartSelector} cart
      * @param {ConfigSelector} config
@@ -18,6 +19,7 @@ export default class CheckoutSelector {
      * @param {CacheFactory} cacheFactory
      */
     constructor(
+        checkoutState,
         billingAddress,
         cart,
         config,
@@ -34,6 +36,7 @@ export default class CheckoutSelector {
         shippingOptions,
         cacheFactory
     ) {
+        this._checkoutState = checkoutState;
         this._billingAddress = billingAddress;
         this._cart = cart;
         this._config = config;
@@ -49,6 +52,13 @@ export default class CheckoutSelector {
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
         this._cacheFactory = cacheFactory;
+    }
+
+    /**
+     * @return {CheckoutState}
+     */
+    getCheckout() {
+        return this._checkoutState.data;
     }
 
     /**

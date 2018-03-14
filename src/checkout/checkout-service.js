@@ -10,6 +10,7 @@ export default class CheckoutService {
      * @param {Registry<ShippingStrategy>} shippingStrategyRegistry
      * @param {BillingAddressActionCreator} billingAddressActionCreator
      * @param {CartActionCreator} cartActionCreator
+     * @param {CheckoutActionCreator} checkoutActionCreator
      * @param {ConfigActionCreator} configActionCreator
      * @param {CountryActionCreator} countryActionCreator
      * @param {CouponActionCreator} couponActionCreator
@@ -29,6 +30,7 @@ export default class CheckoutService {
         shippingStrategyRegistry,
         billingAddressActionCreator,
         cartActionCreator,
+        checkoutActionCreator,
         configActionCreator,
         countryActionCreator,
         couponActionCreator,
@@ -47,6 +49,7 @@ export default class CheckoutService {
         this._shippingStrategyRegistry = shippingStrategyRegistry;
         this._billingAddressActionCreator = billingAddressActionCreator;
         this._cartActionCreator = cartActionCreator;
+        this._checkoutActionCreator = checkoutActionCreator;
         this._configActionCreator = configActionCreator;
         this._countryActionCreator = countryActionCreator;
         this._couponActionCreator = couponActionCreator;
@@ -93,6 +96,7 @@ export default class CheckoutService {
     loadCheckout(options) {
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._checkoutActionCreator.loadCheckout(options)),
             this._store.dispatch(this._configActionCreator.loadConfig(options), { queueId: 'config' }),
         ]).then(() => this._store.getState());
     }

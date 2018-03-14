@@ -11,17 +11,10 @@ import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
 import { CacheFactory } from '../common/cache';
-import { getCartState } from '../cart/internal-carts.mock';
-import { getCompleteOrderState } from '../order/internal-orders.mock';
-import { getConfigState } from '../config/configs.mock';
-import { getCountries, getCountriesState } from '../geography/countries.mock';
-import { getCustomerState } from '../customer/internal-customers.mock';
-import { getInstrumentsState } from '../payment/instrument/instrument.mock';
-import { getBraintree, getPaymentMethodsState } from '../payment/payment-methods.mock';
-import { getQuoteState } from '../quote/internal-quotes.mock';
-import { getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
-import { getShippingCountries, getShippingCountriesState } from '../shipping/shipping-countries.mock';
-import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
+import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
+import { getCountries } from '../geography/countries.mock';
+import { getBraintree } from '../payment/payment-methods.mock';
+import { getShippingCountries } from '../shipping/shipping-countries.mock';
 import CheckoutSelector from './checkout-selector';
 
 describe('CheckoutSelector', () => {
@@ -32,25 +25,13 @@ describe('CheckoutSelector', () => {
     let state;
 
     beforeEach(() => {
-        state = {
-            cart: getCartState(),
-            config: getConfigState(),
-            countries: getCountriesState(),
-            customer: getCustomerState(),
-            instruments: getInstrumentsState(),
-            order: getCompleteOrderState(),
-            paymentMethods: getPaymentMethodsState(),
-            quote: getQuoteState(),
-            remoteCheckout: getRemoteCheckoutState(),
-            shippingOptions: getShippingOptionsState(),
-            shippingCountries: getShippingCountriesState(),
-        };
-
+        state = getCheckoutStoreState();
         cacheFactory = new CacheFactory();
         orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
         formSelector = new FormSelector(state.config);
 
         selector = new CheckoutSelector(
+            state.checkout,
             new BillingAddressSelector(state.quote),
             new CartSelector(state.cart),
             new ConfigSelector(state.config),
@@ -67,6 +48,10 @@ describe('CheckoutSelector', () => {
             new ShippingOptionSelector(state.shippingOptions),
             cacheFactory
         );
+    });
+
+    it('returns checkout data', () => {
+        expect(selector.getCheckout()).toEqual(getCheckout());
     });
 
     it('returns checkout meta', () => {
