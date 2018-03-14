@@ -1,0 +1,1 @@
+{"version":3,"file":"map-to-internal-coupon.js","sourceRoot":"","sources":["../../src/coupon/map-to-internal-coupon.ts"],"names":[],"mappings":";;AAGA,6BAA4C,MAAc,EAAE,cAA8B;IACtF,MAAM,CAAC;QACH,IAAI,EAAE,MAAM,CAAC,IAAI;QACjB,QAAQ,EAAE,cAAc,CAAC,QAAQ;QACjC,YAAY,EAAE,cAAc,CAAC,YAAY;QACzC,IAAI,EAAE,cAAc,CAAC,IAAI;KAC5B,CAAC;AACN,CAAC;AAPD,sCAOC"}
