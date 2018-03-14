@@ -25,6 +25,7 @@ import {
     shippingOptionReducer,
 } from '../shipping';
 
+import CheckoutSelector from './checkout-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
@@ -86,6 +87,7 @@ function createCheckoutReducers() {
 function createCheckoutSelectors(state, cacheFactory, options) {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
+    const checkout = new CheckoutSelector(state.checkout);
     const config = new ConfigSelector(state.config);
     const countries = new CountrySelector(state.countries);
     const coupon = new CouponSelector(state.coupons);
@@ -102,10 +104,10 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
-    const checkout = new CheckoutStoreSelector(
-        state.checkout,
+    const store = new CheckoutStoreSelector(
         billingAddress,
         cart,
+        checkout,
         config,
         countries,
         customer,
@@ -121,10 +123,10 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         cacheFactory
     );
 
-    const errors = new CheckoutStoreErrorSelector(
-        state.checkout,
+    const storeErrors = new CheckoutStoreErrorSelector(
         billingAddress,
         cart,
+        checkout,
         config,
         countries,
         coupon,
@@ -140,10 +142,10 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         shippingOptions
     );
 
-    const statuses = new CheckoutStoreStatusSelector(
-        state.checkout,
+    const storeStatuses = new CheckoutStoreStatusSelector(
         billingAddress,
         cart,
+        checkout,
         config,
         countries,
         coupon,
@@ -161,8 +163,8 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     );
 
     return {
-        checkout: options.shouldWarnMutation ? createFreezeProxy(checkout) : checkout,
-        errors: options.shouldWarnMutation ? createFreezeProxy(errors) : errors,
-        statuses: options.shouldWarnMutation ? createFreezeProxy(statuses) : statuses,
+        checkout: options.shouldWarnMutation ? createFreezeProxy(store) : store,
+        errors: options.shouldWarnMutation ? createFreezeProxy(storeErrors) : storeErrors,
+        statuses: options.shouldWarnMutation ? createFreezeProxy(storeStatuses) : storeStatuses,
     };
 }

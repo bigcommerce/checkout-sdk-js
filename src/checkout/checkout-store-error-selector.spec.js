@@ -9,15 +9,16 @@ import { PaymentMethodSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
+import { ShippingSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getCheckoutStoreState } from './checkouts.mock';
+import CheckoutSelector from './checkout-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
-import ShippingSelector from '../shipping/shipping-selector';
 
 describe('CheckoutStoreErrorSelector', () => {
     let billingAddress;
     let cart;
+    let checkout;
     let config;
     let countries;
     let coupon;
@@ -40,6 +41,7 @@ describe('CheckoutStoreErrorSelector', () => {
         state = getCheckoutStoreState();
         billingAddress = new BillingAddressSelector(state.quote);
         cart = new CartSelector(state.cart);
+        checkout = new CheckoutSelector(state.checkout);
         config = new ConfigSelector(state.config);
         countries = new CountrySelector(state.countries);
         coupon = new CouponSelector(state.coupons);
@@ -56,9 +58,9 @@ describe('CheckoutStoreErrorSelector', () => {
         shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
         errors = new CheckoutStoreErrorSelector(
-            state.checkout,
             billingAddress,
             cart,
+            checkout,
             config,
             countries,
             coupon,

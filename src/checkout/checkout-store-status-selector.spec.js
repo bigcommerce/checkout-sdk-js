@@ -12,10 +12,12 @@ import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingSelector, ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
 import { getCheckoutStoreState } from './checkouts.mock';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
+import CheckoutSelector from './checkout-selector';
 
 describe('CheckoutStoreStatusSelector', () => {
     let billingAddress;
     let cart;
+    let checkout;
     let config;
     let countries;
     let coupon;
@@ -37,6 +39,7 @@ describe('CheckoutStoreStatusSelector', () => {
         state = getCheckoutStoreState();
         billingAddress = new BillingAddressSelector(state.quote);
         cart = new CartSelector(state.cart);
+        checkout = new CheckoutSelector(state.checkout);
         config = new ConfigSelector(state.config);
         countries = new CountrySelector(state.countries);
         coupon = new CouponSelector(state.coupons);
@@ -53,9 +56,9 @@ describe('CheckoutStoreStatusSelector', () => {
         shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
         statuses = new CheckoutStoreStatusSelector(
-            state.checkout,
             billingAddress,
             cart,
+            checkout,
             config,
             countries,
             coupon,

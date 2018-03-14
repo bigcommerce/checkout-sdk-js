@@ -1,9 +1,9 @@
 export default class CheckoutStoreErrorSelector {
     /**
      * @constructor
-     * @param {CheckoutState} checkoutState
      * @param {BillingAddressSelector} billingAddress
      * @param {CartSelector} cart
+     * @param {CheckoutSelector} checkout
      * @param {ConfigSelector} config
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
@@ -20,9 +20,9 @@ export default class CheckoutStoreErrorSelector {
      * @param {ShippingOptionSelector} shippingOptions
      */
     constructor(
-        checkoutState,
         billingAddress,
         cart,
+        checkout,
         config,
         countries,
         coupon,
@@ -38,9 +38,9 @@ export default class CheckoutStoreErrorSelector {
         shippingCountries,
         shippingOptions
     ) {
-        this._checkoutState = checkoutState;
         this._billingAddress = billingAddress;
         this._cart = cart;
+        this._checkout = checkout;
         this._config = config;
         this._countries = countries;
         this._coupon = coupon;
@@ -94,7 +94,7 @@ export default class CheckoutStoreErrorSelector {
      * @return {?ErrorResponse}
      */
     getLoadCheckoutError() {
-        return this._quote.getLoadError() || this._checkoutState.errors.loadError;
+        return this._quote.getLoadError() || this._checkout.getLoadError();
     }
 
     /**
