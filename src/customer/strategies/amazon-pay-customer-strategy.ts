@@ -34,14 +34,13 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             return super.initialize(options);
         }
 
+        this._paymentMethod = options.paymentMethod;
+
         return this._signInCustomerService
             .initializeCustomer(options.paymentMethod.id, () =>
                 new Promise((resolve, reject) => {
                     const { onError = noop } = options;
-
-                    this._paymentMethod = options.paymentMethod;
-
-                    this._window.onAmazonPaymentsReady = () => {
+                    const onReady = () => {
                         this._signInButton = this._createSignInButton({
                             ...options as InitializeWidgetOptions,
                             onError: (error) => {
@@ -53,7 +52,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
                         resolve();
                     };
 
-                    this._scriptLoader.loadWidget(this._paymentMethod)
+                    this._scriptLoader.loadWidget(options.paymentMethod, onReady)
                         .catch(reject);
                 })
             )

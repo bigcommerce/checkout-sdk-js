@@ -20,9 +20,9 @@
     query-string "^5.0.0"
     tslib "^1.8.0"
 
-"@bigcommerce/script-loader@git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.0":
-  version "0.1.0"
-  resolved "git+ssh://git@github.com/bigcommerce/script-loader-js.git#13fd8a427494c4be459ff03baab235b58669dce1"
+"@bigcommerce/script-loader@git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.1":
+  version "0.1.1"
+  resolved "git+ssh://git@github.com/bigcommerce/script-loader-js.git#2b6c98bb0b36e788bc645a339c7b3cdd1e59972a"
   dependencies:
     tslib "^1.8.0"
 

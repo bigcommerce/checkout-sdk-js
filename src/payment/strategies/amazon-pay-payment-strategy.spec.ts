@@ -87,9 +87,10 @@ describe('AmazonPayPaymentStrategy', () => {
         container.setAttribute('id', 'wallet');
         document.body.appendChild(container);
 
-        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation(() => {
+        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
             hostWindow.OffAmazonPayments = { Widgets: { Wallet } };
-            hostWindow.onAmazonPaymentsReady();
+
+            onReady();
 
             return Promise.resolve();
         });
@@ -116,7 +117,7 @@ describe('AmazonPayPaymentStrategy', () => {
     it('loads widget script', async () => {
         await strategy.initialize({ container: 'wallet', paymentMethod });
 
-        expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod);
+        expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod, expect.any(Function));
     });
 
     it('creates wallet widget with required properties', async () => {
