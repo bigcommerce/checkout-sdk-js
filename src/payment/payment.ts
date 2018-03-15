@@ -7,13 +7,13 @@ export default interface Payment {
 
 export interface CreditCard {
     ccExpiry: {
-        month: number,
-        year: number,
+        month: string,
+        year: string,
     };
     ccName: string;
     ccNumber: string;
     ccType: string;
-    ccCvv?: number;
+    ccCvv?: string;
     deviceSessionId?: string;
     shouldSaveInstrument?: boolean;
 }
