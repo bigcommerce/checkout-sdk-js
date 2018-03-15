@@ -75,9 +75,10 @@ describe('AmazonPayShippingStrategy', () => {
         container.setAttribute('id', 'addressBook');
         document.body.appendChild(container);
 
-        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation(() => {
+        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
             hostWindow.OffAmazonPayments = { Widgets: { AddressBook } };
-            hostWindow.onAmazonPaymentsReady();
+
+            onReady();
 
             return Promise.resolve();
         });
@@ -96,7 +97,7 @@ describe('AmazonPayShippingStrategy', () => {
             paymentMethod,
         });
 
-        expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod);
+        expect(scriptLoader.loadWidget).not.toHaveBeenCalledWith(paymentMethod);
     });
 
     it('only initializes widget once until deinitialization', async () => {

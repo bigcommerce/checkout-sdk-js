@@ -1,5 +1,5 @@
 import { createFormPoster } from 'form-poster';
-import { createScriptLoader } from '@bigcommerce/script-loader';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
@@ -31,7 +31,7 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
     const registry = new PaymentStrategyRegistry(checkout.getConfig());
     const placeOrderService = createPlaceOrderService(store, client, paymentClient);
     const remoteCheckoutService = createRemoteCheckoutService(store, client);
-    const scriptLoader = createScriptLoader();
+    const scriptLoader = getScriptLoader();
     const afterpayScriptLoader = createAfterpayScriptLoader();
     const klarnaScriptLoader = new KlarnaScriptLoader(scriptLoader);
 
