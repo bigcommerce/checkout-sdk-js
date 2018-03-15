@@ -18,6 +18,7 @@ export interface CreditCard {
     ccCvv?: string;
     deviceSessionId?: string;
     shouldSaveInstrument?: boolean;
+    extraData?: any;
 }
 
 export interface TokenizedCreditCard {

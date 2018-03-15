@@ -11,6 +11,7 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../rem
 import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
+import { WepayRiskClient } from '../remote-checkout/methods/wepay';
 
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import {
@@ -26,6 +27,7 @@ import {
     PaypalExpressPaymentStrategy,
     PaypalProPaymentStrategy,
     SagePayPaymentStrategy,
+    WepayPaymentStrategy,
 } from './strategies';
 import { createBraintreePaymentProcessor } from './strategies/braintree';
 
@@ -98,6 +100,10 @@ export default function createPaymentStrategyRegistry(
 
     registry.register('braintree', () =>
         new BraintreeCreditCardPaymentStrategy(store, placeOrderService, createBraintreePaymentProcessor(scriptLoader))
+    );
+
+    registry.register('wepay', () =>
+        new WepayPaymentStrategy(store, placeOrderService, new WepayRiskClient(scriptLoader))
     );
 
     return registry;
