@@ -37,7 +37,7 @@ export function getCompleteOrder() {
         id: 295,
         items: [
             {
-                id: '12e11c8f-7dce-4da3-9413-b649533f8bad',
+                id: 103,
                 type: 'ItemPhysicalEntity',
                 name: 'Canvas Laundry Cart',
                 imageUrl: '/images/canvas-laundry-cart.jpg',

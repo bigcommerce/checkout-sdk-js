@@ -10,6 +10,9 @@ export function getOrder(): Order {
         baseAmount: 200,
         billingAddress: getBillingAddress(),
         cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+        coupons: [
+            getCoupon(),
+        ],
         currency: getCurrency(),
         customerCreated: false,
         customerId: 0,

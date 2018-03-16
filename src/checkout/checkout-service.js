@@ -125,9 +125,10 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     loadOrder(orderId, options) {
-        const action = this._orderActionCreator.loadOrder(orderId, options);
-
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._orderActionCreator.loadInternalOrder(orderId, options)),
+            this._store.dispatch(this._orderActionCreator.loadOrder(orderId, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**

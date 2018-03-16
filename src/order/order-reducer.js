@@ -3,6 +3,7 @@ import { CheckoutActionType } from '../checkout';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import mapFromOrderToInternal from './map-from-order-to-internal';
 
 /**
  * @param {OrderState} state
@@ -32,6 +33,9 @@ function dataReducer(data, action) {
         return { ...data, ...mapToInternalIncompleteOrder(action.payload, data) };
 
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
+        return mapFromOrderToInternal(action.payload, data);
+
+    case orderActionTypes.LOAD_INTERNAL_ORDER_SUCCEEDED:
     case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
     case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:

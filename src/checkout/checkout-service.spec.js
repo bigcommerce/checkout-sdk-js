@@ -24,6 +24,7 @@ import { getCustomerResponseBody, getGuestCustomer } from '../customer/internal-
 import { getFormFields } from '../form/form.mocks';
 import { getGiftCertificateResponseBody } from '../coupon/internal-gift-certificates.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
+import { getOrder } from '../order/orders.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody, getPaymentMethod } from '../payment/payment-methods.mock';
 import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
@@ -56,6 +57,10 @@ describe('CheckoutService', () => {
             ),
 
             loadOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getOrder()))
+            ),
+
+            loadInternalOrder: jest.fn(() =>
                 Promise.resolve(getResponse(getCompleteOrderResponseBody()))
             ),
 

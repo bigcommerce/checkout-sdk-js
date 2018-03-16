@@ -71,6 +71,15 @@ export default class CheckoutClient {
     }
 
     /**
+     * @param {number} orderId
+     * @param {RequestOptions} [options]
+     * @return {Promise<Response<Order>>}
+     */
+    loadInternalOrder(orderId, options) {
+        return this._orderRequestSender.loadInternalOrder(orderId, options);
+    }
+
+    /**
      * @param {OrderRequestBody} body
      * @param {RequestOptions} [options]
      * @return {Promise<Response<Order>>}
