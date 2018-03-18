@@ -47,7 +47,7 @@
     "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.1",
     "@bigcommerce/script-loader": "git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.1",
     "@types/lodash": "^4.14.92",
-    "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.10.0",
+    "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.10.1",
     "form-poster": "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1",
     "lodash": "^4.17.4",
     "memoizee": "^0.4.11",
