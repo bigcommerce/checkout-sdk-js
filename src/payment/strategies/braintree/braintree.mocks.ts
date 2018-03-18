@@ -2,6 +2,7 @@ import { Payment } from '../..';
 import { getPayment } from '../../payments.mock';
 
 import { Braintree } from './braintree';
+import { ModalHandler } from './braintree-payment-processor';
 
 export function getClientMock(): Braintree.Client {
     return {
@@ -66,5 +67,13 @@ export function getBraintreePaymentData(): Payment {
     return {
         ...getPayment(),
         name: 'braintree',
+    };
+}
+
+export function getModalHandlerMock(): ModalHandler {
+    return {
+        addFrame: jest.fn(),
+        removeFrame: jest.fn(),
+        onRemoveFrame: jest.fn(),
     };
 }
