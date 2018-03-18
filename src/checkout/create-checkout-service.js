@@ -6,7 +6,7 @@ import { CheckoutService } from '../checkout';
 import { ConfigActionCreator } from '../config';
 import { CountryActionCreator } from '../geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { OrderActionCreator } from '../order';
 import { createPaymentStrategyRegistry, PaymentMethodActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
@@ -30,7 +30,6 @@ export default function createCheckoutService(options = {}) {
 
     return new CheckoutService(
         store,
-        createCustomerStrategyRegistry(store, client),
         createPaymentStrategyRegistry(store, client, paymentClient),
         createShippingStrategyRegistry(store, client),
         new BillingAddressActionCreator(client),
@@ -38,7 +37,7 @@ export default function createCheckoutService(options = {}) {
         new ConfigActionCreator(client),
         new CountryActionCreator(client),
         new CouponActionCreator(client),
-        new CustomerActionCreator(client),
+        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
         new GiftCertificateActionCreator(client),
         new InstrumentActionCreator(instrumentRequestSender),
         new OrderActionCreator(client),

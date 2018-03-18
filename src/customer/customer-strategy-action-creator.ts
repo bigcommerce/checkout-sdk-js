@@ -1,18 +1,25 @@
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
-import { CustomerStrategy } from './strategies';
-import { CustomerStrategyAction, CustomerStrategyActionType } from './customer-strategy-actions';
+
 import { Registry } from '../common/registry';
 import CustomerCredentials from './customer-credentials';
+import {
+    CustomerStrategyActionType,
+    CustomerStrategyDeinitializeAction,
+    CustomerStrategyInitializeAction,
+    CustomerStrategySignInAction,
+    CustomerStrategySignOutAction,
+} from './customer-strategy-actions';
+import { CustomerStrategy } from './strategies';
 
 export default class CustomerStrategyActionCreator {
     constructor(
         private _strategyRegistry: Registry<CustomerStrategy>
     ) {}
 
-    signIn(credentials: CustomerCredentials, options: CustomerActionOptions = {}): Observable<CustomerStrategyAction> {
-        return Observable.create((observer: Observer<CustomerStrategyAction>) => {
+    signIn(credentials: CustomerCredentials, options: CustomerActionOptions = {}): Observable<CustomerStrategySignInAction> {
+        return Observable.create((observer: Observer<CustomerStrategySignInAction>) => {
             const meta = { methodId: options.methodId };
 
             observer.next(createAction(CustomerStrategyActionType.SignInRequested, undefined, meta));
@@ -29,13 +36,13 @@ export default class CustomerStrategyActionCreator {
         });
     }
 
-    signOut(options: CustomerActionOptions = {}): Observable<CustomerStrategyAction> {
-        return Observable.create((observer: Observer<CustomerStrategyAction>) => {
+    signOut(options: CustomerActionOptions = {}): Observable<CustomerStrategySignOutAction> {
+        return Observable.create((observer: Observer<CustomerStrategySignOutAction>) => {
             const meta = { methodId: options.methodId };
 
             observer.next(createAction(CustomerStrategyActionType.SignOutRequested, undefined, meta));
 
-            this._strategyRegistry.get(options && options.methodId)
+            this._strategyRegistry.get(options.methodId)
                 .signOut(options)
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.SignOutSucceeded, undefined, meta));
@@ -47,13 +54,13 @@ export default class CustomerStrategyActionCreator {
         });
     }
 
-    initialize(options: CustomerActionOptions = {}): Observable<CustomerStrategyAction> {
-        return Observable.create((observer: Observer<CustomerStrategyAction>) => {
+    initialize(options: CustomerActionOptions = {}): Observable<CustomerStrategyInitializeAction> {
+        return Observable.create((observer: Observer<CustomerStrategyInitializeAction>) => {
             const meta = { methodId: options.methodId };
 
             observer.next(createAction(CustomerStrategyActionType.InitializeRequested, undefined, meta));
 
-            this._strategyRegistry.get(options && options.methodId)
+            this._strategyRegistry.get(options.methodId)
                 .initialize(options)
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.InitializeSucceeded, undefined, meta));
@@ -65,13 +72,13 @@ export default class CustomerStrategyActionCreator {
         });
     }
 
-    deinitialize(options: CustomerActionOptions = {}): Observable<CustomerStrategyAction> {
-        return Observable.create((observer: Observer<CustomerStrategyAction>) => {
+    deinitialize(options: CustomerActionOptions = {}): Observable<CustomerStrategyDeinitializeAction> {
+        return Observable.create((observer: Observer<CustomerStrategyDeinitializeAction>) => {
             const meta = { methodId: options.methodId };
 
             observer.next(createAction(CustomerStrategyActionType.DeinitializeRequested, undefined, meta));
 
-            this._strategyRegistry.get(options && options.methodId)
+            this._strategyRegistry.get(options.methodId)
                 .deinitialize(options)
                 .then(() => {
                     observer.next(createAction(CustomerStrategyActionType.DeinitializeSucceeded, undefined, meta));

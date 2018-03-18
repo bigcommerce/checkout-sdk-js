@@ -16,15 +16,27 @@ export enum CustomerStrategyActionType {
 }
 
 export type CustomerStrategyAction =
+    CustomerStrategySignInAction |
+    CustomerStrategySignOutAction |
+    CustomerStrategyInitializeAction |
+    CustomerStrategyDeinitializeAction;
+
+export type CustomerStrategySignInAction =
     SignInRequestedAction |
     SignInSucceededAction |
-    SignInFailedAction |
+    SignInFailedAction;
+
+export type CustomerStrategySignOutAction =
     SignOutRequestedAction |
     SignOutSucceededAction |
-    SignOutFailedAction |
+    SignOutFailedAction;
+
+export type CustomerStrategyInitializeAction =
     InitializeRequestedAction |
     InitializeSucceededAction |
-    InitializeFailedAction |
+    InitializeFailedAction;
+
+export type CustomerStrategyDeinitializeAction =
     DeinitializeRequestedAction |
     DeinitializeSucceededAction |
     DeinitializeFailedAction;

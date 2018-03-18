@@ -6,7 +6,7 @@ import { CartActionCreator } from '../cart';
 import { ConfigActionCreator } from '../config';
 import { CountryActionCreator } from '../geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { OrderActionCreator } from '../order';
 import { PaymentMethodActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
@@ -161,7 +161,6 @@ describe('CheckoutService', () => {
 
         checkoutService = new CheckoutService(
             store,
-            customerStrategyRegistry,
             paymentStrategyRegistry,
             shippingStrategyRegistry,
             new BillingAddressActionCreator(checkoutClient),
@@ -169,7 +168,7 @@ describe('CheckoutService', () => {
             new ConfigActionCreator(checkoutClient),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(checkoutClient),
-            new CustomerActionCreator(checkoutClient),
+            new CustomerStrategyActionCreator(customerStrategyRegistry),
             new GiftCertificateActionCreator(checkoutClient),
             new InstrumentActionCreator(checkoutClient),
             new OrderActionCreator(checkoutClient),
@@ -547,7 +546,7 @@ describe('CheckoutService', () => {
             expect(strategy.initialize).toHaveBeenCalledWith(expect.objectContaining({ paymentMethod }));
         });
 
-        it('initializes default shipping strategy if remote payment is not enabled', async () => {
+        it('initializes default customer strategy if remote payment is not enabled', async () => {
             const strategy = customerStrategyRegistry.get('default');
             const options = {};
 
