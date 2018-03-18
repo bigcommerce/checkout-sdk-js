@@ -1,5 +1,6 @@
 import { combineReducers } from '@bigcommerce/data-store';
 import { CheckoutActionType } from '../checkout';
+import { CustomerStrategyActionType } from './customer-strategy-actions';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
@@ -52,20 +53,44 @@ function dataReducer(data, action) {
  */
 function errorsReducer(errors = {}, action) {
     switch (action.type) {
+    case CustomerStrategyActionType.SignInRequested:
+    case CustomerStrategyActionType.SignInSucceeded:
     case customerActionTypes.SIGN_IN_CUSTOMER_REQUESTED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
-        return { ...errors, signInError: undefined };
+        return {
+            ...errors,
+            signInError: undefined,
+            signInMethod: undefined,
+        };
 
+    case CustomerStrategyActionType.SignInFailed:
     case customerActionTypes.SIGN_IN_CUSTOMER_FAILED:
-        return { ...errors, signInError: action.payload };
+        return {
+            ...errors,
+            signInError: action.payload,
+            signInMethod: action.meta && action.meta.methodId,
+        };
 
+    case CustomerStrategyActionType.SignOutRequested:
+    case CustomerStrategyActionType.SignOutSucceeded:
     case customerActionTypes.SIGN_OUT_CUSTOMER_REQUESTED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
-        return { ...errors, signOutError: undefined };
+        return {
+            ...errors,
+            signOutError: undefined,
+            signOutMethod: undefined,
+        };
 
+    case CustomerStrategyActionType.SignOutFailed:
     case customerActionTypes.SIGN_OUT_CUSTOMER_FAILED:
-        return { ...errors, signOutError: action.payload };
+        return {
+            ...errors,
+            signOutError: action.payload,
+            signOutMethod: action.meta && action.meta.methodId,
+        };
 
+    case CustomerStrategyActionType.InitializeRequested:
+    case CustomerStrategyActionType.InitializeSucceeded:
     case customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED:
     case customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED:
         return {
@@ -74,11 +99,27 @@ function errorsReducer(errors = {}, action) {
             initializeMethod: undefined,
         };
 
+    case CustomerStrategyActionType.InitializeFailed:
     case customerActionTypes.INITIALIZE_CUSTOMER_FAILED:
         return {
             ...errors,
             initializeError: action.payload,
             initializeMethod: action.meta && action.meta.methodId,
+        };
+
+    case CustomerStrategyActionType.DeinitializeRequested:
+    case CustomerStrategyActionType.DeinitializeSucceeded:
+        return {
+            ...errors,
+            deinitializeError: undefined,
+            deinitializeMethod: undefined,
+        };
+
+    case CustomerStrategyActionType.DeinitializeFailed:
+        return {
+            ...errors,
+            deinitializeError: action.payload,
+            deinitializeMethod: action.meta && action.meta.methodId,
         };
 
     default:
@@ -94,20 +135,43 @@ function errorsReducer(errors = {}, action) {
  */
 function statusesReducer(statuses = {}, action) {
     switch (action.type) {
+    case CustomerStrategyActionType.SignInRequested:
     case customerActionTypes.SIGN_IN_CUSTOMER_REQUESTED:
-        return { ...statuses, isSigningIn: true };
+        return {
+            ...statuses,
+            signingInMethod: action.meta && action.meta.methodId,
+            isSigningIn: true,
+        };
 
+    case CustomerStrategyActionType.SignInSucceeded:
+    case CustomerStrategyActionType.SignInFailed:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_FAILED:
-        return { ...statuses, isSigningIn: false };
+        return {
+            ...statuses,
+            signingInMethod: undefined,
+            isSigningIn: false,
+        };
 
+    case CustomerStrategyActionType.SignOutRequested:
     case customerActionTypes.SIGN_OUT_CUSTOMER_REQUESTED:
-        return { ...statuses, isSigningOut: true };
+        return {
+            ...statuses,
+            isSigningOut: true,
+            signingOutMethod: action.meta && action.meta.methodId,
+        };
 
+    case CustomerStrategyActionType.SignOutSucceeded:
+    case CustomerStrategyActionType.SignOutFailed:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_FAILED:
-        return { ...statuses, isSigningOut: false };
+        return {
+            ...statuses,
+            isSigningOut: false,
+            signingOutMethod: undefined,
+        };
 
+    case CustomerStrategyActionType.InitializeRequested:
     case customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED:
         return {
             ...statuses,
@@ -115,12 +179,29 @@ function statusesReducer(statuses = {}, action) {
             isInitializing: true,
         };
 
+    case CustomerStrategyActionType.InitializeSucceeded:
+    case CustomerStrategyActionType.InitializeFailed:
     case customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED:
     case customerActionTypes.INITIALIZE_CUSTOMER_FAILED:
         return {
             ...statuses,
             initializingMethod: undefined,
             isInitializing: false,
+        };
+
+    case CustomerStrategyActionType.DeinitializeRequested:
+        return {
+            ...statuses,
+            deinitializingMethod: action.meta && action.meta.methodId,
+            isDeinitializing: true,
+        };
+
+    case CustomerStrategyActionType.DeinitializeSucceeded:
+    case CustomerStrategyActionType.DeinitializeFailed:
+        return {
+            ...statuses,
+            deinitializingMethod: undefined,
+            isDeinitializing: false,
         };
 
     default:
