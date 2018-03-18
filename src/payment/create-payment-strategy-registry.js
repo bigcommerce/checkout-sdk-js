@@ -3,6 +3,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
+    BraintreeCreditCardPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
     NoPaymentDataRequiredPaymentStrategy,
@@ -20,6 +21,7 @@ import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay'
 import { createRemoteCheckoutService } from '../remote-checkout';
 import { createPlaceOrderService } from '../order';
 import { SquareScriptLoader } from './strategies/square';
+import { createBraintreePaymentProcessor } from './strategies/braintree';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 
 /**
@@ -38,6 +40,7 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
     const afterpayScriptLoader = createAfterpayScriptLoader();
     const klarnaScriptLoader = new KlarnaScriptLoader(scriptLoader);
     const squareScriptLoader = new SquareScriptLoader(scriptLoader);
+    const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
 
     registry.register('afterpay', () =>
         new AfterpayPaymentStrategy(store, placeOrderService, remoteCheckoutService, afterpayScriptLoader)
@@ -94,6 +97,10 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
 
     registry.register('nopaymentdatarequired', () =>
         new NoPaymentDataRequiredPaymentStrategy(store, placeOrderService)
+    );
+
+    registry.register('braintree', () =>
+        new BraintreeCreditCardPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
     );
 
     return registry;

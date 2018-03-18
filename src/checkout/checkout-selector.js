@@ -186,10 +186,10 @@ export default class CheckoutSelector {
     }
 
     /**
-     * @param {boolean} useStoreCredit
+     * @param {boolean|undefined} useStoreCredit
      * @return {boolean}
      */
-    isPaymentDataRequired(useStoreCredit) {
+    isPaymentDataRequired(useStoreCredit = false) {
         return this._order.isPaymentDataRequired(useStoreCredit);
     }
 

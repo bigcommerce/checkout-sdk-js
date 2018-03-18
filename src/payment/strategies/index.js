@@ -10,4 +10,5 @@ export { default as PaypalExpressPaymentStrategy } from './paypal-express-paymen
 export { default as PaypalProPaymentStrategy } from './paypal-pro-payment-strategy';
 export { default as SagePayPaymentStrategy } from './sage-pay-payment-strategy';
 export { default as NoPaymentDataRequiredPaymentStrategy } from './no-payment-data-required-strategy';
+export { BraintreeCreditCardPaymentStrategy } from './braintree';
 export { SquarePaymentStrategy } from './square';
