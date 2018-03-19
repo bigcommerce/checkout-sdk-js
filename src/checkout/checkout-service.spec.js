@@ -532,21 +532,7 @@ describe('CheckoutService', () => {
             expect(customerStrategyRegistry.get).toHaveBeenCalledWith(options.methodId);
         });
 
-        it('initializes remote customer strategy with remote payment method', async () => {
-            const paymentMethod = getPaymentMethod();
-            const strategy = customerStrategyRegistry.get(paymentMethod.id);
-
-            jest.spyOn(strategy, 'initialize');
-            jest.spyOn(checkoutClient, 'loadPaymentMethod')
-                .mockReturnValue(Promise.resolve(getResponse(getPaymentMethodResponseBody())));
-
-            await checkoutService.initializeCustomer({ methodId: paymentMethod.id });
-
-            expect(checkoutClient.loadPaymentMethod).toHaveBeenCalledWith(paymentMethod.id, undefined);
-            expect(strategy.initialize).toHaveBeenCalledWith(expect.objectContaining({ paymentMethod }));
-        });
-
-        it('initializes default customer strategy if remote payment is not enabled', async () => {
+        it('initializes default customer strategy if method id is not provided', async () => {
             const strategy = customerStrategyRegistry.get('default');
             const options = {};
 

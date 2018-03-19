@@ -285,17 +285,6 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     initializeCustomer(options = {}) {
-        if (options.methodId) {
-            return this.loadPaymentMethod(options.methodId)
-                .then(({ checkout }) => this._store.dispatch(
-                    this._customerStrategyActionCreator.initialize({
-                        ...options,
-                        paymentMethod: checkout.getPaymentMethod(options.methodId),
-                    }),
-                    { queueId: 'customerStrategy' }
-                ));
-        }
-
         return this._store.dispatch(
             this._customerStrategyActionCreator.initialize(options),
             { queueId: 'customerStrategy' }
