@@ -41,7 +41,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return this._updateShippingService
             .initializeShipping(options.paymentMethod.id, () =>
                 new Promise((resolve, reject) => {
-                    this._window.onAmazonPaymentsReady = () => {
+                    const onReady = () => {
                         this._createAddressBook(options)
                             .then((addressBook) => {
                                 this._addressBook = addressBook;
@@ -50,7 +50,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                             .catch(reject);
                     };
 
-                    this._scriptLoader.loadWidget(options.paymentMethod)
+                    this._scriptLoader.loadWidget(options.paymentMethod, onReady)
                         .catch(reject);
                 })
             )

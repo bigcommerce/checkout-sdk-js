@@ -65,10 +65,11 @@ describe('AmazonPayCustomerStrategy', () => {
         container.setAttribute('id', 'login');
         document.body.appendChild(container);
 
-        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation(() => {
+        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
             hostWindow.OffAmazonPayments = { Button };
             hostWindow.amazon = { Login };
-            hostWindow.onAmazonPaymentsReady();
+
+            onReady();
 
             return Promise.resolve();
         });
@@ -87,7 +88,7 @@ describe('AmazonPayCustomerStrategy', () => {
     it('loads widget script', async () => {
         await strategy.initialize({ container: 'login', paymentMethod });
 
-        expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod);
+        expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod, expect.any(Function));
     });
 
     it('creates login button', async () => {

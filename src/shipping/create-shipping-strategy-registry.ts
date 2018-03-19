@@ -1,4 +1,4 @@
-import { createScriptLoader } from '@bigcommerce/script-loader';
+import { getScriptLoader } from '@bigcommerce/script-loader';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { AmazonPayShippingStrategy, DefaultShippingStrategy, ShippingStrategy } from './strategies';
 import { CheckoutClient, CheckoutStore } from '../checkout';
@@ -19,7 +19,7 @@ export default function createShippingStrategyRegistry(
             store,
             updateShippingService,
             remoteCheckoutService,
-            new AmazonPayScriptLoader(createScriptLoader())
+            new AmazonPayScriptLoader(getScriptLoader())
         )
     );
 

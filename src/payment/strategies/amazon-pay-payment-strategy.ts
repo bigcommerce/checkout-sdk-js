@@ -40,7 +40,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return this._placeOrderService
             .initializePaymentMethod(this._paymentMethod.id, () =>
                 new Promise((resolve, reject) => {
-                    this._window.onAmazonPaymentsReady = () => {
+                    const onReady = () => {
                         this._createWallet(options)
                             .then((wallet) => {
                                 this._wallet = wallet;
@@ -49,7 +49,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                             .catch(reject);
                     };
 
-                    this._scriptLoader.loadWidget(options.paymentMethod)
+                    this._scriptLoader.loadWidget(options.paymentMethod, onReady)
                         .catch(reject);
                 })
             )

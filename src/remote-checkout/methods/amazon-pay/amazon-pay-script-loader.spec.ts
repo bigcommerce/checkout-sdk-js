@@ -1,4 +1,5 @@
 /// <reference path="./amazon-login.d.ts" />
+/// <reference path="./off-amazon-payments.d.ts" />
 
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -7,7 +8,7 @@ import AmazonPayScriptLoader from './amazon-pay-script-loader';
 
 describe('AmazonPayScriptLoader', () => {
     let amazonPayScriptLoader: AmazonPayScriptLoader;
-    let hostWindow: amazon.HostWindow;
+    let hostWindow: amazon.HostWindow & OffAmazonPayments.HostWindow;
     let scriptLoader: ScriptLoader;
     let setClientIdSpy: jest.Mock;
     let setUseCookieSpy: jest.Mock;
@@ -69,15 +70,42 @@ describe('AmazonPayScriptLoader', () => {
 
     it('configures widget SDK', () => {
         const method = getAmazonPay();
-        const global: any = window;
 
         amazonPayScriptLoader.loadWidget(method);
 
-        expect(global.onAmazonLoginReady).not.toBeUndefined();
+        expect(hostWindow.onAmazonLoginReady).not.toBeUndefined();
 
-        global.onAmazonLoginReady();
+        hostWindow.onAmazonLoginReady();
 
         expect(setClientIdSpy).toHaveBeenCalledWith(method.initializationData.clientId);
         expect(setUseCookieSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('overrides existing callbacks', () => {
+        hostWindow.onAmazonPaymentsReady = jest.fn();
+
+        const onReady = jest.fn();
+
+        amazonPayScriptLoader.loadWidget(getAmazonPay(), onReady);
+
+        expect(hostWindow.onAmazonPaymentsReady).toBe(onReady);
+    });
+
+    it('triggers payment callback directly if `OffAmazonPayments` module is already loaded', () => {
+        const onReady = jest.fn();
+
+        hostWindow.OffAmazonPayments = {};
+
+        amazonPayScriptLoader.loadWidget(getAmazonPay(), onReady);
+
+        expect(onReady).toHaveBeenCalled();
+    });
+
+    it('triggers login callback directly if `amazon` module is already loaded', () => {
+        hostWindow.amazon = amazon;
+
+        amazonPayScriptLoader.loadWidget(getAmazonPay());
+
+        expect(setClientIdSpy).toHaveBeenCalled();
     });
 });
