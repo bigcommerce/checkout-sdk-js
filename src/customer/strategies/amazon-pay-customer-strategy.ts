@@ -10,7 +10,6 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../
 import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import CustomerCredentials from '../customer-credentials';
-import SignInCustomerService from '../sign-in-customer-service';
 import CustomerStrategy from './customer-strategy';
 
 export default class AmazonPayCustomerStrategy extends CustomerStrategy {
@@ -20,13 +19,12 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
     constructor(
         store: CheckoutStore,
-        signInCustomerService: SignInCustomerService,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
-        super(store, signInCustomerService);
+        super(store);
 
         this._window = window;
     }

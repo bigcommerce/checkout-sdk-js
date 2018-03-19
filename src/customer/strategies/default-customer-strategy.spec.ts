@@ -2,28 +2,24 @@ import { createAction } from '@bigcommerce/data-store';
 import 'rxjs/add/observable/of';
 import { Observable } from 'rxjs/Observable';
 import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
-import createSignInCustomerService from '../../customer/create-sign-in-customer-service';
 import { getQuote } from '../../quote/internal-quotes.mock';
 import CustomerActionCreator from '../customer-action-creator';
 import { SIGN_IN_CUSTOMER_SUCCEEDED, SIGN_OUT_CUSTOMER_SUCCEEDED } from '../customer-action-types';
-import SignInCustomerService from '../sign-in-customer-service';
 import DefaultCustomerStrategy from './default-customer-strategy';
 
 describe('DefaultCustomerStrategy', () => {
     let customerActionCreator: CustomerActionCreator;
     let client: CheckoutClient;
     let store: CheckoutStore;
-    let signInCustomerService: SignInCustomerService;
 
     beforeEach(() => {
         store = createCheckoutStore();
         client = createCheckoutClient();
         customerActionCreator = new CustomerActionCreator(client);
-        signInCustomerService = createSignInCustomerService(store, client);
     });
 
     it('dispatches action to sign in customer', async () => {
-        const strategy = new DefaultCustomerStrategy(store, signInCustomerService, customerActionCreator);
+        const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
         const credentials = { email: 'foo@bar.com', password: 'foobar' };
         const options = {};
         const action = Observable.of(createAction(SIGN_IN_CUSTOMER_SUCCEEDED, getQuote()));
@@ -41,7 +37,7 @@ describe('DefaultCustomerStrategy', () => {
     });
 
     it('dispatches action to sign out customer', async () => {
-        const strategy = new DefaultCustomerStrategy(store, signInCustomerService, customerActionCreator);
+        const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
         const options = {};
         const action = Observable.of(createAction(SIGN_OUT_CUSTOMER_SUCCEEDED, getQuote()));
 

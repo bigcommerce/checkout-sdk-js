@@ -8,7 +8,6 @@ import 'rxjs/add/observable/of';
 import { Observable } from 'rxjs/Observable';
 import { CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { getResponse } from '../../common/http-request/responses.mock';
-import createSignInCustomerService from '../../customer/create-sign-in-customer-service';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
 import { SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
@@ -17,7 +16,6 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
 import { getGuestCustomer } from '../internal-customers.mock';
-import SignInCustomerService from '../sign-in-customer-service';
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
 
 describe('AmazonPayCustomerStrategy', () => {
@@ -30,7 +28,6 @@ describe('AmazonPayCustomerStrategy', () => {
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
     let scriptLoader: AmazonPayScriptLoader;
-    let signInCustomerService: SignInCustomerService;
     let strategy: AmazonPayCustomerStrategy;
     let store: CheckoutStore;
 
@@ -67,11 +64,9 @@ describe('AmazonPayCustomerStrategy', () => {
         remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
         store = createCheckoutStore();
-        signInCustomerService = createSignInCustomerService(store, createCheckoutClient());
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
         strategy = new AmazonPayCustomerStrategy(
             store,
-            signInCustomerService,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             remoteCheckoutRequestSender,

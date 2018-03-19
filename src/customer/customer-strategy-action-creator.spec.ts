@@ -8,7 +8,6 @@ import { Observable } from 'rxjs/Observable';
 import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import createCustomerStrategyRegistry from './create-customer-strategy-registry';
-import createSignInCustomerService from './create-sign-in-customer-service';
 import CustomerActionCreator from './customer-action-creator';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategyActionType } from './customer-strategy-actions';
@@ -26,7 +25,6 @@ describe('CustomerStrategyActionCreator', () => {
         registry = createCustomerStrategyRegistry(store, client);
         strategy = new DefaultCustomerStrategy(
             store,
-            createSignInCustomerService(store, client),
             new CustomerActionCreator(client)
         );
 
