@@ -9,6 +9,7 @@ import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStor
 import { Registry } from '../common/registry';
 import createCustomerStrategyRegistry from './create-customer-strategy-registry';
 import createSignInCustomerService from './create-sign-in-customer-service';
+import CustomerActionCreator from './customer-action-creator';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategyActionType } from './customer-strategy-actions';
 import { CustomerStrategy, DefaultCustomerStrategy } from './strategies';
@@ -23,7 +24,11 @@ describe('CustomerStrategyActionCreator', () => {
         store = createCheckoutStore();
         client = createCheckoutClient();
         registry = createCustomerStrategyRegistry(store, client);
-        strategy = new DefaultCustomerStrategy(store, createSignInCustomerService(store, client));
+        strategy = new DefaultCustomerStrategy(
+            store,
+            createSignInCustomerService(store, client),
+            new CustomerActionCreator(client)
+        );
 
         jest.spyOn(registry, 'get')
             .mockReturnValue(strategy);

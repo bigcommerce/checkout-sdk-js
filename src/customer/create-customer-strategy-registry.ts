@@ -7,6 +7,7 @@ import { PaymentMethod, PaymentMethodActionCreator } from '../payment';
 import { Registry } from '../common/registry';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import createSignInCustomerService from '../customer/create-sign-in-customer-service';
+import CustomerActionCreator from './customer-action-creator';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
@@ -28,7 +29,11 @@ export default function createCustomerStrategyRegistry(
     );
 
     registry.register('default', () =>
-        new DefaultCustomerStrategy(store, signInCustomerService)
+        new DefaultCustomerStrategy(
+            store,
+            signInCustomerService,
+            new CustomerActionCreator(client)
+        )
     );
 
     return registry;
