@@ -10,9 +10,10 @@ import { CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../
 import { getResponse } from '../../common/http-request/responses.mock';
 import createSignInCustomerService from '../../customer/create-sign-in-customer-service';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import * as paymentMethodActionTypes from '../../payment/payment-method-action-types';
+import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
+import { SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
-import { RemoteCheckoutRequestSender } from '../../remote-checkout';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
 import { getGuestCustomer } from '../internal-customers.mock';
@@ -26,7 +27,8 @@ describe('AmazonPayCustomerStrategy', () => {
     let hostWindow: OffAmazonPayments.HostWindow & amazon.HostWindow;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let requestSender: RemoteCheckoutRequestSender;
+    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
+    let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
     let scriptLoader: AmazonPayScriptLoader;
     let signInCustomerService: SignInCustomerService;
     let strategy: AmazonPayCustomerStrategy;
@@ -62,11 +64,19 @@ describe('AmazonPayCustomerStrategy', () => {
         hostWindow = window;
         paymentMethod = getAmazonPay();
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
-        requestSender = new RemoteCheckoutRequestSender(createRequestSender());
+        remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
         store = createCheckoutStore();
         signInCustomerService = createSignInCustomerService(store, createCheckoutClient());
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
-        strategy = new AmazonPayCustomerStrategy(store, signInCustomerService, paymentMethodActionCreator, requestSender, scriptLoader);
+        strategy = new AmazonPayCustomerStrategy(
+            store,
+            signInCustomerService,
+            paymentMethodActionCreator,
+            remoteCheckoutActionCreator,
+            remoteCheckoutRequestSender,
+            scriptLoader
+        );
 
         container.setAttribute('id', 'login');
         document.body.appendChild(container);
@@ -80,14 +90,14 @@ describe('AmazonPayCustomerStrategy', () => {
             return Promise.resolve();
         });
 
-        jest.spyOn(requestSender, 'generateToken')
+        jest.spyOn(remoteCheckoutRequestSender, 'generateToken')
             .mockReturnValue(Promise.resolve(getResponse(getRemoteTokenResponseBody())));
 
-        jest.spyOn(requestSender, 'trackAuthorizationEvent')
+        jest.spyOn(remoteCheckoutRequestSender, 'trackAuthorizationEvent')
             .mockReturnValue(Promise.resolve(getResponse()));
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(paymentMethodActionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
+            .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
     });
 
     afterEach(() => {
@@ -95,9 +105,17 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('loads payment method', async () => {
+        const action = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod }));
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
+
         await strategy.initialize({ container: 'login', methodId: 'amazon' });
 
         expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('amazon');
+        expect(store.dispatch).toHaveBeenCalledWith(action);
     });
 
     it('loads widget script', async () => {
@@ -137,7 +155,7 @@ describe('AmazonPayCustomerStrategy', () => {
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
 
-        expect(requestSender.generateToken).toHaveBeenCalled();
+        expect(remoteCheckoutRequestSender.generateToken).toHaveBeenCalled();
     });
 
     it('tracks authorization event', async () => {
@@ -148,7 +166,7 @@ describe('AmazonPayCustomerStrategy', () => {
 
         await new Promise((resolve) => process.nextTick(resolve));
 
-        expect(requestSender.trackAuthorizationEvent).toHaveBeenCalled();
+        expect(remoteCheckoutRequestSender.trackAuthorizationEvent).toHaveBeenCalled();
     });
 
     it('sends authorization request', async () => {
@@ -167,27 +185,37 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('signs out from remote checkout provider', async () => {
+        const action = Observable.of(createAction(SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
+
         jest.spyOn(store.getState().checkout, 'getCustomer')
             .mockReturnValue({
                 ...getGuestCustomer(),
                 remote: { provider: 'amazon' },
             });
 
-        jest.spyOn(signInCustomerService, 'remoteSignOut')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(remoteCheckoutActionCreator, 'signOut')
+            .mockReturnValue(action);
 
         await strategy.signOut();
 
-        expect(signInCustomerService.remoteSignOut).toHaveBeenCalledWith('amazon', undefined);
+        expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('amazon', undefined);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
     });
 
     it('does nothing if already signed out from remote checkout provider', async () => {
-        jest.spyOn(signInCustomerService, 'remoteSignOut')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        const action = Observable.of(createAction(SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
+
+        jest.spyOn(remoteCheckoutActionCreator, 'signOut')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
 
         await strategy.signOut();
 
-        expect(signInCustomerService.remoteSignOut).not.toHaveBeenCalled();
+        expect(remoteCheckoutActionCreator.signOut).not.toHaveBeenCalled();
+        expect(store.dispatch).not.toHaveBeenCalledWith(action);
     });
 
     it('throws error if trying to sign in programmatically', async () => {

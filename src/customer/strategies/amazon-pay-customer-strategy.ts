@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotImplementedError, NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { RemoteCheckoutRequestSender } from '../../remote-checkout';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import CustomerCredentials from '../customer-credentials';
@@ -22,6 +22,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         store: CheckoutStore,
         signInCustomerService: SignInCustomerService,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
@@ -83,7 +84,9 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             return Promise.resolve(this._store.getState());
         }
 
-        return this._signInCustomerService.remoteSignOut(remote.provider, options);
+        return this._store.dispatch(
+            this._remoteCheckoutActionCreator.signOut(remote.provider, options)
+        );
     }
 
     private _createSignInButton(options: InitializeWidgetOptions): OffAmazonPayments.Button {
