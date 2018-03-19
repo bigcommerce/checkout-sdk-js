@@ -1,3 +1,4 @@
+import { CustomerStrategyActionType } from './customer-strategy-actions';
 import { getCustomerResponseBody } from './internal-customers.mock';
 import { getCompleteOrderResponseBody } from '../order/internal-orders.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
@@ -137,7 +138,7 @@ describe('customerReducer()', () => {
 
     it('returns new customer data while initializing customer', () => {
         const action = {
-            type: customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED,
+            type: CustomerStrategyActionType.InitializeRequested,
             meta: { methodId: 'foobar' },
         };
 
@@ -149,7 +150,7 @@ describe('customerReducer()', () => {
 
     it('returns new customer data if customer has initialized successfully', () => {
         const action = {
-            type: customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED,
+            type: CustomerStrategyActionType.InitializeSucceeded,
             meta: { methodId: 'foobar' },
         };
 
@@ -161,7 +162,7 @@ describe('customerReducer()', () => {
 
     it('returns new customer data if customer has failed to initialize', () => {
         const action = {
-            type: customerActionTypes.INITIALIZE_CUSTOMER_FAILED,
+            type: CustomerStrategyActionType.InitializeFailed,
             payload: getErrorResponse(),
             meta: { methodId: 'foobar' },
         };

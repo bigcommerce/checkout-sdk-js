@@ -91,8 +91,6 @@ function errorsReducer(errors = {}, action) {
 
     case CustomerStrategyActionType.InitializeRequested:
     case CustomerStrategyActionType.InitializeSucceeded:
-    case customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED:
-    case customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED:
         return {
             ...errors,
             initializeError: undefined,
@@ -100,7 +98,6 @@ function errorsReducer(errors = {}, action) {
         };
 
     case CustomerStrategyActionType.InitializeFailed:
-    case customerActionTypes.INITIALIZE_CUSTOMER_FAILED:
         return {
             ...errors,
             initializeError: action.payload,
@@ -172,7 +169,6 @@ function statusesReducer(statuses = {}, action) {
         };
 
     case CustomerStrategyActionType.InitializeRequested:
-    case customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED:
         return {
             ...statuses,
             initializingMethod: action.meta && action.meta.methodId,
@@ -181,8 +177,6 @@ function statusesReducer(statuses = {}, action) {
 
     case CustomerStrategyActionType.InitializeSucceeded:
     case CustomerStrategyActionType.InitializeFailed:
-    case customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED:
-    case customerActionTypes.INITIALIZE_CUSTOMER_FAILED:
         return {
             ...statuses,
             initializingMethod: undefined,

@@ -49,24 +49,4 @@ export default class CustomerActionCreator {
                 });
         });
     }
-
-    /**
-     * @param {string} methodId
-     * @param {function(): Promise<any>} initializer
-     * @return {Observable<Action>}
-     */
-    initializeCustomer(methodId, initializer) {
-        return Observable.create((observer) => {
-            observer.next(createAction(actionTypes.INITIALIZE_CUSTOMER_REQUESTED, undefined, { methodId }));
-
-            initializer()
-                .then((data) => {
-                    observer.next(createAction(actionTypes.INITIALIZE_CUSTOMER_SUCCEEDED, data, { methodId }));
-                    observer.complete();
-                })
-                .catch((response) => {
-                    observer.error(createErrorAction(actionTypes.INITIALIZE_CUSTOMER_FAILED, response, { methodId }));
-                });
-        });
-    }
 }

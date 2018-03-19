@@ -2,9 +2,8 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
 import { noop } from 'lodash';
-import { ReadableDataStore } from '@bigcommerce/data-store';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotInitializedError, NotImplementedError } from '../../common/error/errors';
 import { PaymentMethod } from '../../payment';
 import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
@@ -19,7 +18,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     private _window: OffAmazonPayments.HostWindow;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         signInCustomerService: SignInCustomerService,
         private _requestSender: RemoteCheckoutRequestSender,
         private _scriptLoader: AmazonPayScriptLoader
@@ -36,26 +35,23 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
         this._paymentMethod = options.paymentMethod;
 
-        return this._signInCustomerService
-            .initializeCustomer(options.paymentMethod.id, () =>
-                new Promise((resolve, reject) => {
-                    const { onError = noop } = options;
-                    const onReady = () => {
-                        this._signInButton = this._createSignInButton({
-                            ...options as InitializeWidgetOptions,
-                            onError: (error) => {
-                                reject(error);
-                                onError(error);
-                            },
-                        });
+        return new Promise((resolve, reject) => {
+            const { onError = noop } = options;
+            const onReady = () => {
+                this._signInButton = this._createSignInButton({
+                    ...options as InitializeWidgetOptions,
+                    onError: (error) => {
+                        reject(error);
+                        onError(error);
+                    },
+                });
 
-                        resolve();
-                    };
+                resolve();
+            };
 
-                    this._scriptLoader.loadWidget(options.paymentMethod, onReady)
-                        .catch(reject);
-                })
-            )
+            this._scriptLoader.loadWidget(options.paymentMethod, onReady)
+                .catch(reject);
+        })
             .then(() => super.initialize(options));
     }
 

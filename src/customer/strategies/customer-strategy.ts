@@ -1,5 +1,4 @@
-import { ReadableDataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import CustomerCredentials from '../customer-credentials';
 import SignInCustomerService from '../sign-in-customer-service';
 
@@ -7,7 +6,7 @@ export default abstract class CustomerStrategy {
     protected _isInitialized = false;
 
     constructor(
-        protected _store: ReadableDataStore<CheckoutSelectors>,
+        protected _store: CheckoutStore,
         protected _signInCustomerService: SignInCustomerService
     ) {}
 
