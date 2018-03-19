@@ -1,9 +1,11 @@
 export default interface Payment {
     name: string;
-    paymentData?: CreditCard | TokenizedCreditCard;
+    paymentData?: PaymentInstrument;
     gateway?: string;
     source?: string;
 }
+
+export type PaymentInstrument = CreditCard | TokenizedCreditCard | VaultedInstrument;
 
 export interface CreditCard {
     ccExpiry: {
@@ -21,4 +23,9 @@ export interface CreditCard {
 export interface TokenizedCreditCard {
     nonce: string;
     deviceSessionId?: string;
+}
+
+export interface VaultedInstrument {
+    instrumentId: string;
+    cvv?: number;
 }
