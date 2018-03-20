@@ -7,7 +7,7 @@ export default function mapToInternalLineItem(item: LineItem, existingItem: Inte
         amountAfterDiscount: existingItem.amountAfterDiscount,
         attributes: existingItem.attributes,
         discount: item.discountAmount,
-        id: item.id,
+        id: item.productId,
         imageUrl: item.imageUrl,
         integerAmount: existingItem.integerAmount,
         integerAmountAfterDiscount: existingItem.integerAmountAfterDiscount,
