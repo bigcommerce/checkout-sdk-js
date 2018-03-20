@@ -292,7 +292,6 @@ describe('CheckoutStatusSelector', () => {
     describe('#isSigningOut()', () => {
         beforeEach(() => {
             jest.spyOn(customer, 'isSigningOut').mockReturnValue(false);
-            jest.spyOn(remoteCheckout, 'isSigningOut').mockReturnValue(false);
         });
 
         it('returns true if signing out', () => {
@@ -300,13 +299,6 @@ describe('CheckoutStatusSelector', () => {
 
             expect(statuses.isSigningOut()).toEqual(true);
             expect(customer.isSigningOut).toHaveBeenCalled();
-        });
-
-        it('returns true if signing out remotely', () => {
-            jest.spyOn(remoteCheckout, 'isSigningOut').mockReturnValue(true);
-
-            expect(statuses.isSigningOut()).toEqual(true);
-            expect(remoteCheckout.isSigningOut).toHaveBeenCalled();
         });
 
         it('returns false if signing out', () => {

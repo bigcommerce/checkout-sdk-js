@@ -10,6 +10,8 @@ describe('CustomerSelector', () => {
         state = {
             customer: {
                 data: getGuestCustomer(),
+                errors: {},
+                statuses: {},
             },
         };
     });

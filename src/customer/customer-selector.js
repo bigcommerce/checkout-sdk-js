@@ -15,16 +15,26 @@ export default class CustomerSelector {
     }
 
     /**
+     * @param {?string} methodId
      * @return {?ErrorResponse}
      */
-    getSignInError() {
+    getSignInError(methodId) {
+        if (methodId && this._customer.errors.signInMethod !== methodId) {
+            return;
+        }
+
         return this._customer.errors && this._customer.errors.signInError;
     }
 
     /**
+     * @param {?string} methodId
      * @return {?ErrorResponse}
      */
-    getSignOutError() {
+    getSignOutError(methodId) {
+        if (methodId && this._customer.errors.signOutMethod !== methodId) {
+            return;
+        }
+
         return this._customer.errors && this._customer.errors.signOutError;
     }
 
@@ -41,17 +51,27 @@ export default class CustomerSelector {
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isSigningIn() {
-        return !!(this._customer.statuses && this._customer.statuses.isSigningIn);
+    isSigningIn(methodId) {
+        if (methodId && this._customer.statuses.signingInMethod !== methodId) {
+            return false;
+        }
+
+        return !!this._customer.statuses.isSigningIn;
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isSigningOut() {
-        return !!(this._customer.statuses && this._customer.statuses.isSigningOut);
+    isSigningOut(methodId) {
+        if (methodId && this._customer.statuses.signingOutMethod !== methodId) {
+            return false;
+        }
+
+        return !!this._customer.statuses.isSigningOut;
     }
 
     /**

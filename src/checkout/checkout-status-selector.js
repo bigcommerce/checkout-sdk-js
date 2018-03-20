@@ -171,17 +171,19 @@ export default class CheckoutStatusSelector {
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isSigningIn() {
-        return this._customer.isSigningIn();
+    isSigningIn(methodId) {
+        return this._customer.isSigningIn(methodId);
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isSigningOut() {
-        return this._customer.isSigningOut() || this._remoteCheckout.isSigningOut();
+    isSigningOut(methodId) {
+        return this._customer.isSigningOut(methodId);
     }
 
     /**
