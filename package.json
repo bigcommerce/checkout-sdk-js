@@ -43,7 +43,7 @@
     "validate-dependencies": "yarn install --check-files --frozen-lockfile"
   },
   "dependencies": {
-    "@bigcommerce/data-store": "git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.1",
+    "@bigcommerce/data-store": "git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.2",
     "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.1",
     "@bigcommerce/script-loader": "git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.2",
     "@types/lodash": "^4.14.92",
