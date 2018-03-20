@@ -6,7 +6,7 @@ export default class RequestError extends StandardError {
      * @param {Response} response
      * @param {string} [message] - Fallback message
      */
-    constructor({ body = {}, headers, status, statusText }, message) {
+    constructor({ body = {}, headers, status, statusText } = {}, message) {
         super(joinErrors(body.errors) || body.detail || body.title || message || 'An unexpected error has occurred.');
 
         this.type = 'request';
