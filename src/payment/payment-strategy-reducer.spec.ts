@@ -2,16 +2,13 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { PaymentStrategyActionType } from './payment-strategy-actions';
 import paymentStrategyReducer from './payment-strategy-reducer';
-import PaymentStrategyState from './payment-strategy-state';
+import PaymentStrategyState, { DEFAULT_STATE } from './payment-strategy-state';
 
 describe('paymentStrategyReducer()', () => {
     let initialState: PaymentStrategyState;
 
     beforeEach(() => {
-        initialState = {
-            errors: {},
-            statuses: {},
-        };
+        initialState = DEFAULT_STATE;
     });
 
     it('returns pending flag as true if initializing payment', () => {

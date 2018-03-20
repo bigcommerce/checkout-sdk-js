@@ -1,11 +1,9 @@
 import { MissingDataError } from '../common/error/errors';
-import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 export default class CheckoutService {
     /**
      * @constructor
      * @param {DataStore} store
-     * @param {PaymentStrategyRegistry} paymentStrategyRegistry
      * @param {BillingAddressActionCreator} billingAddressActionCreator
      * @param {CartActionCreator} cartActionCreator
      * @param {ConfigActionCreator} configActionCreator
@@ -16,6 +14,7 @@ export default class CheckoutService {
      * @param {InstrumentActionCreator} instrumentActionCreator
      * @param {OrderActionCreator} orderActionCreator
      * @param {PaymentMethodActionCreator} paymentMethodActionCreator
+     * @param {PaymentStrategyActionCreator} paymentStrategyActionCreator
      * @param {QuoteActionCreator} quoteActionCreator
      * @param {ShippingCountryActionCreator} shippingCountryActionCreator
      * @param {ShippingOptionActionCreator} shippingOptionActionCreator
@@ -23,7 +22,6 @@ export default class CheckoutService {
      */
     constructor(
         store,
-        paymentStrategyRegistry,
         billingAddressActionCreator,
         cartActionCreator,
         configActionCreator,
@@ -34,13 +32,13 @@ export default class CheckoutService {
         instrumentActionCreator,
         orderActionCreator,
         paymentMethodActionCreator,
+        paymentStrategyActionCreator,
         quoteActionCreator,
         shippingCountryActionCreator,
         shippingOptionActionCreator,
         shippingStrategyActionCreator
     ) {
         this._store = store;
-        this._paymentStrategyRegistry = paymentStrategyRegistry;
         this._billingAddressActionCreator = billingAddressActionCreator;
         this._cartActionCreator = cartActionCreator;
         this._configActionCreator = configActionCreator;
@@ -51,6 +49,7 @@ export default class CheckoutService {
         this._instrumentActionCreator = instrumentActionCreator;
         this._orderActionCreator = orderActionCreator;
         this._paymentMethodActionCreator = paymentMethodActionCreator;
+        this._paymentStrategyActionCreator = paymentStrategyActionCreator;
         this._quoteActionCreator = quoteActionCreator;
         this._shippingCountryActionCreator = shippingCountryActionCreator;
         this._shippingOptionActionCreator = shippingOptionActionCreator;
@@ -133,19 +132,9 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     submitOrder(payload, options) {
-        const { checkout } = this._store.getState();
-        const { payment = {}, useStoreCredit } = payload;
-        const method = checkout.getPaymentMethod(payment.name, payment.gateway);
+        const action = this._paymentStrategyActionCreator.execute(payload, options);
 
-        if (!method) {
-            throw new MissingDataError();
-        }
-
-        if (!checkout.isPaymentDataRequired(useStoreCredit)) {
-            return this._paymentStrategyRegistry.get('nopaymentdatarequired').execute(payload, options);
-        }
-
-        return this._paymentStrategyRegistry.getByMethod(method).execute(payload, options);
+        return this._store.dispatch(action, { queueId: 'paymentStrategy' });
     }
 
     /**
@@ -165,24 +154,9 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     finalizeOrderIfNeeded(options) {
-        const { checkout } = this._store.getState();
-        const order = checkout.getOrder();
+        const action = this._paymentStrategyActionCreator.finalize(options);
 
-        if (!order) {
-            throw new MissingDataError();
-        }
-
-        if (!order.payment || !order.payment.id) {
-            return Promise.reject(new OrderFinalizationNotRequiredError());
-        }
-
-        const method = checkout.getPaymentMethod(order.payment.id, order.payment.gateway);
-
-        if (!method) {
-            throw new MissingDataError();
-        }
-
-        return this._paymentStrategyRegistry.getByMethod(method).finalize(options);
+        return this._store.dispatch(action, { queueId: 'paymentStrategy' });
     }
 
     /**
@@ -213,34 +187,21 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     initializePaymentMethod(methodId, gatewayId, options) {
-        const { checkout } = this._store.getState();
-        const paymentMethod = checkout.getPaymentMethod(methodId, gatewayId);
+        const action = this._paymentStrategyActionCreator.initialize(methodId, gatewayId, options);
 
-        if (!paymentMethod) {
-            throw new MissingDataError();
-        }
-
-        return this._paymentStrategyRegistry.getByMethod(paymentMethod)
-            .initialize({
-                ...options,
-                paymentMethod,
-            });
+        return this._store.dispatch(action, { queueId: 'paymentStrategy' });
     }
 
     /**
      * @param {string} methodId
      * @param {string} [gatewayId]
+     * @param {Object} [options]
      * @return {Promise<CheckoutSelectors>}
      */
-    deinitializePaymentMethod(methodId, gatewayId) {
-        const { checkout } = this._store.getState();
-        const method = checkout.getPaymentMethod(methodId, gatewayId);
+    deinitializePaymentMethod(methodId, gatewayId, options) {
+        const action = this._paymentStrategyActionCreator.deinitialize(methodId, gatewayId, options);
 
-        if (!method) {
-            throw new MissingDataError();
-        }
-
-        return this._paymentStrategyRegistry.getByMethod(method).deinitialize();
+        return this._store.dispatch(action, { queueId: 'paymentStrategy' });
     }
 
     /**

@@ -88,19 +88,6 @@ describe('AfterpayPaymentStrategy', () => {
 
             expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod);
         });
-
-        it('toggles the initialization flag', async () => {
-            const results = [];
-
-            store.subscribe(
-                ({ statuses }) => results.push(statuses.isInitializingPaymentMethod(paymentMethod.id)),
-                ({ statuses }) => statuses.isInitializingPaymentMethod(paymentMethod.id)
-            );
-
-            await strategy.initialize({ paymentMethod });
-
-            expect(results).toEqual([false, true, false]);
-        });
     });
 
     describe('#execute()', () => {

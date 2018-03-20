@@ -5,17 +5,22 @@ import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
 
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { merge } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
+import { getCartState } from '../cart/internal-carts.mock';
 import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../checkout';
+import { MissingDataError } from '../common/error/errors';
+import { getCustomerState } from '../customer/internal-customers.mock';
 import { createPlaceOrderService } from '../order';
-import { getCompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
+import { OrderFinalizationNotRequiredError } from '../order/errors';
+import { getCompleteOrderState, getIncompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import { getPaymentMethod, getPaymentMethodsState } from './payment-methods.mock';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
-import { CreditCardPaymentStrategy, PaymentStrategy } from './strategies';
+import { CreditCardPaymentStrategy, NoPaymentDataRequiredPaymentStrategy, PaymentStrategy } from './strategies';
 
 describe('PaymentStrategyActionCreator', () => {
     let client: CheckoutClient;
@@ -23,9 +28,11 @@ describe('PaymentStrategyActionCreator', () => {
     let registry: PaymentStrategyRegistry;
     let store: CheckoutStore;
     let strategy: PaymentStrategy;
+    let noPaymentDataStrategy: PaymentStrategy;
 
     beforeEach(() => {
         store = createCheckoutStore({
+            cart: getCartState(),
             order: getCompleteOrderState(),
             paymentMethods: getPaymentMethodsState(),
         });
@@ -33,6 +40,10 @@ describe('PaymentStrategyActionCreator', () => {
         paymentClient = createPaymentClient();
         registry = createPaymentStrategyRegistry(store, client, paymentClient);
         strategy = new CreditCardPaymentStrategy(
+            store,
+            createPlaceOrderService(store, client, paymentClient)
+        );
+        noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(
             store,
             createPlaceOrderService(store, client, paymentClient)
         );
@@ -100,6 +111,16 @@ describe('PaymentStrategyActionCreator', () => {
                 { type: PaymentStrategyActionType.InitializeFailed, error: true, payload: initializeError, meta: { methodId: method.id } },
             ]);
         });
+
+        it('throws error if payment method has not been loaded', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+
+            try {
+                await Observable.from(actionCreator.initialize('unknown')(store)).toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
     });
 
     describe('#deinitialize()', () => {
@@ -161,11 +182,24 @@ describe('PaymentStrategyActionCreator', () => {
                 { type: PaymentStrategyActionType.DeinitializeFailed, error: true, payload: deinitializeError, meta: { methodId: method.id } },
             ]);
         });
+
+        it('throws error if payment method has not been loaded', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+
+            try {
+                await Observable.from(actionCreator.initialize('unknown')(store)).toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
     });
 
     describe('#execute()', () => {
         beforeEach(() => {
             jest.spyOn(strategy, 'execute')
+                .mockReturnValue(Promise.resolve(store.getState()));
+
+            jest.spyOn(noPaymentDataStrategy, 'execute')
                 .mockReturnValue(Promise.resolve(store.getState()));
         });
 
@@ -221,6 +255,43 @@ describe('PaymentStrategyActionCreator', () => {
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.name } },
                 { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId: payload.payment.name } },
             ]);
+        });
+
+        it('throws error if payment method is not found or loaded', async () => {
+            store = createCheckoutStore();
+            registry = createPaymentStrategyRegistry(store, client, paymentClient);
+
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+
+            try {
+                await Observable.from(actionCreator.execute(getOrderRequestBody())(store)).toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('finds `nopaymentrequired` strategy if payment data is not required', async () => {
+            store = createCheckoutStore({
+                customer: merge({}, getCustomerState(), {
+                    data: {
+                        storeCredit: 9999,
+                    },
+                }),
+            });
+
+            registry = createPaymentStrategyRegistry(store, client, paymentClient);
+
+            jest.spyOn(registry, 'get')
+                .mockReturnValue(noPaymentDataStrategy);
+
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const payload = { ...getOrderRequestBody(), useStoreCredit: true };
+
+            await Observable.from(actionCreator.execute(payload)(store))
+                .toPromise();
+
+            expect(registry.get).toHaveBeenCalledWith('nopaymentdatarequired');
+            expect(noPaymentDataStrategy.execute).toHaveBeenCalledWith(payload, undefined);
         });
     });
 
@@ -282,6 +353,35 @@ describe('PaymentStrategyActionCreator', () => {
                 { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeFailed, error: true, payload: finalizeError, meta: { methodId: method.id } },
             ]);
+        });
+
+        it('throws error if payment data is not available', async () => {
+            store = createCheckoutStore();
+            registry = createPaymentStrategyRegistry(store, client, paymentClient);
+
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+
+            try {
+                await Observable.from(actionCreator.finalize()(store)).toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('returns rejected promise if order does not require finalization', async () => {
+            store = createCheckoutStore({
+                order: getIncompleteOrderState(),
+                paymentMethods: getPaymentMethodsState(),
+            });
+            registry = createPaymentStrategyRegistry(store, client, paymentClient);
+
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+
+            try {
+                await Observable.from(actionCreator.finalize()(store)).toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });

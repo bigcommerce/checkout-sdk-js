@@ -8,7 +8,7 @@ import { CountryActionCreator } from '../geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { OrderActionCreator } from '../order';
-import { createPaymentStrategyRegistry, PaymentMethodActionCreator } from '../payment';
+import { createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
@@ -30,7 +30,6 @@ export default function createCheckoutService(options = {}) {
 
     return new CheckoutService(
         store,
-        createPaymentStrategyRegistry(store, client, paymentClient),
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
         new ConfigActionCreator(client),
@@ -41,6 +40,7 @@ export default function createCheckoutService(options = {}) {
         new InstrumentActionCreator(instrumentRequestSender),
         new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
+        new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
         new QuoteActionCreator(client),
         new ShippingCountryActionCreator(client),
         new ShippingOptionActionCreator(client),

@@ -24,3 +24,8 @@ export interface PaymentStrategyStatusesState {
     isFinalizing?: boolean;
     isInitializing?: boolean;
 }
+
+export const DEFAULT_STATE: PaymentStrategyState = {
+    errors: {},
+    statuses: {},
+};

@@ -1,15 +1,7 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { PaymentStrategyAction, PaymentStrategyActionType } from './payment-strategy-actions';
-import PaymentStrategyState, {
-    PaymentStrategyErrorsState,
-    PaymentStrategyStatusesState,
-} from './payment-strategy-state';
-
-const DEFAULT_STATE: PaymentStrategyState = {
-    errors: {},
-    statuses: {},
-};
+import PaymentStrategyState, { DEFAULT_STATE, PaymentStrategyErrorsState, PaymentStrategyStatusesState } from './payment-strategy-state';
 
 export default function paymentStrategyReducer(
     state: PaymentStrategyState = DEFAULT_STATE,

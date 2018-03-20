@@ -9,12 +9,11 @@ import { CountryActionCreator } from '../geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { OrderActionCreator } from '../order';
-import { PaymentMethodActionCreator } from '../payment';
+import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import { MissingDataError } from '../common/error/errors';
-import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getAppConfig } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
 import { getCartResponseBody } from '../cart/internal-carts.mock';
@@ -164,7 +163,6 @@ describe('CheckoutService', () => {
 
         checkoutService = new CheckoutService(
             store,
-            paymentStrategyRegistry,
             new BillingAddressActionCreator(checkoutClient),
             new CartActionCreator(checkoutClient),
             new ConfigActionCreator(checkoutClient),
@@ -175,6 +173,7 @@ describe('CheckoutService', () => {
             new InstrumentActionCreator(checkoutClient),
             new OrderActionCreator(checkoutClient),
             new PaymentMethodActionCreator(checkoutClient),
+            new PaymentStrategyActionCreator(paymentStrategyRegistry),
             new QuoteActionCreator(checkoutClient),
             new ShippingCountryActionCreator(checkoutClient),
             new ShippingOptionActionCreator(checkoutClient),
@@ -304,27 +303,6 @@ describe('CheckoutService', () => {
 
             expect(paymentStrategy.execute).toHaveBeenCalledWith(getOrderRequestBody(), options);
         });
-
-        it('executes nopaymentrequired strategy if payment data is not required', async () => {
-            jest.spyOn(checkoutClient, 'loadCheckout').mockReturnValue(
-                Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
-                    data: { customer: { storeCredit: 9999 } },
-                })))
-            );
-            const orderWithStoreCredit = { ...getOrderRequestBody(), useStoreCredit: true };
-            await checkoutService.loadCheckout();
-
-            await checkoutService.loadPaymentMethods();
-            await checkoutService.submitOrder(orderWithStoreCredit);
-
-            expect(paymentStrategyRegistry.get).toHaveBeenCalledWith('nopaymentdatarequired');
-            expect(noPaymentDataRequiredPaymentStrategy.execute)
-                .toHaveBeenCalledWith(orderWithStoreCredit, undefined);
-        });
-
-        it('throws error if payment method is not found or loaded', () => {
-            expect(() => checkoutService.submitOrder(getOrderRequestBody())).toThrow(MissingDataError);
-        });
     });
 
     describe('#finalizeOrderIfNeeded()', () => {
@@ -360,33 +338,6 @@ describe('CheckoutService', () => {
             await checkoutService.finalizeOrderIfNeeded(options);
 
             expect(paymentStrategy.finalize).toHaveBeenCalledWith(options);
-        });
-
-        it('throws error if payment data is not available', async () => {
-            await checkoutService.loadCheckout();
-
-            expect(() => checkoutService.finalizeOrderIfNeeded()).toThrow();
-        });
-
-        it('throws error if checkout data is not available', () => {
-            expect(() => checkoutService.finalizeOrderIfNeeded()).toThrow();
-        });
-
-        it('returns rejected promise if order does not require finalization', async () => {
-            jest.spyOn(checkoutClient, 'loadCheckout').mockReturnValue(
-                Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
-                    data: { order: { ...getSubmittedOrder(), payment: null } },
-                })))
-            );
-
-            await checkoutService.loadCheckout();
-            await checkoutService.loadPaymentMethods();
-
-            try {
-                await checkoutService.finalizeOrderIfNeeded();
-            } catch (error) {
-                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-            }
         });
     });
 
@@ -466,10 +417,6 @@ describe('CheckoutService', () => {
                 paymentMethod: getBraintree(),
             });
         });
-
-        it('throws error if payment method has not been loaded', () => {
-            expect(() => checkoutService.initializePaymentMethod('braintree')).toThrow(MissingDataError);
-        });
     });
 
     describe('#deinitializePaymentMethod()', () => {
@@ -485,10 +432,6 @@ describe('CheckoutService', () => {
             await checkoutService.deinitializePaymentMethod('braintree');
 
             expect(paymentStrategy.deinitialize).toHaveBeenCalled();
-        });
-
-        it('throws error if payment method has not been loaded', () => {
-            expect(() => checkoutService.deinitializePaymentMethod('braintree')).toThrow(MissingDataError);
         });
     });
 

@@ -14,7 +14,7 @@ import {
     PaymentStrategyInitializeAction,
 } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
-import { InitializeOptions } from './strategies/payment-strategy';
+import PaymentStrategy, { InitializeOptions } from './strategies/payment-strategy';
 
 export default class PaymentStrategyActionCreator {
     constructor(
@@ -24,13 +24,26 @@ export default class PaymentStrategyActionCreator {
     execute(payload: OrderRequestBody, options?: any): ThunkAction<PaymentStrategyExecuteAction> {
         return (store) => Observable.create((observer: Observer<PaymentStrategyExecuteAction>) => {
             const { checkout } = store.getState();
-            const { payment = {} as Payment } = payload;
-            const method = checkout.getPaymentMethod(payment.name, payment.gateway);
-            const meta = { methodId: method.id };
+            const { payment = {} as Payment, useStoreCredit } = payload;
+            const meta = { methodId: payment.name };
+
+            let strategy: PaymentStrategy;
+
+            if (checkout.isPaymentDataRequired(useStoreCredit)) {
+                const method = checkout.getPaymentMethod(payment.name, payment.gateway);
+
+                if (!method) {
+                    throw new MissingDataError();
+                }
+
+                strategy = this._strategyRegistry.getByMethod(method);
+            } else {
+                strategy = this._strategyRegistry.get('nopaymentdatarequired');
+            }
 
             observer.next(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta));
 
-            this._strategyRegistry.getByMethod(method)
+            strategy
                 .execute(payload, options)
                 .then(() => {
                     observer.next(createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
