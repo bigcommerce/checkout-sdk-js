@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@bigcommerce/data-store@git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.1":
-  version "0.1.1"
-  resolved "git+ssh://git@github.com/bigcommerce/data-store-js.git#1ab98e71d19a2f0f7509e7de601074f79fae5b2d"
+"@bigcommerce/data-store@git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.2":
+  version "0.1.2"
+  resolved "git+ssh://git@github.com/bigcommerce/data-store-js.git#f6488acd70540958017879020fc372ca0235f50c"
   dependencies:
     "@types/lodash" "^4.14.92"
     lodash "^4.17.4"
@@ -20,9 +20,9 @@
     query-string "^5.0.0"
     tslib "^1.8.0"
 
-"@bigcommerce/script-loader@git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.1":
-  version "0.1.1"
-  resolved "git+ssh://git@github.com/bigcommerce/script-loader-js.git#2b6c98bb0b36e788bc645a339c7b3cdd1e59972a"
+"@bigcommerce/script-loader@git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.2":
+  version "0.1.2"
+  resolved "git+ssh://git@github.com/bigcommerce/script-loader-js.git#a98ae63523e247e19c8907f2111cb9e3f91a541b"
   dependencies:
     tslib "^1.8.0"
 
