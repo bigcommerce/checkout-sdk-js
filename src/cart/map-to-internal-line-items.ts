@@ -4,14 +4,23 @@ import InternalLineItem from './internal-line-item';
 import LineItemMap from './line-item-map';
 import mapToInternalLineItem from './map-to-internal-line-item';
 
-export default function mapToInternalLineItems(itemMap: LineItemMap, existingItems: InternalLineItem[]): InternalLineItem[] {
+export default function mapToInternalLineItems(
+    itemMap: LineItemMap,
+    existingItems: InternalLineItem[],
+    idKey: keyof LineItem = 'id'
+): InternalLineItem[] {
     return (Object.keys(itemMap) as Array<keyof LineItemMap>)
         .reduce((result, key) => [
             ...result,
-            ...(itemMap[key] as LineItem[]).map((item) => {
-                const existingItem = find(existingItems, { id: item.productId })!;
+            ...(itemMap[key] as LineItem[]).map((item: any) => {
+                const existingItem = find(existingItems, { id: item[idKey] })!;
 
-                return mapToInternalLineItem(item, existingItem, mapToInternalLineItemType(key));
+                return mapToInternalLineItem(
+                    item,
+                    existingItem,
+                    mapToInternalLineItemType(key),
+                    idKey
+                );
             }),
         ], [] as InternalLineItem[]);
 }

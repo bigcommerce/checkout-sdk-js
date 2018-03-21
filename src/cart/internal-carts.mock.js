@@ -3,7 +3,7 @@ export function getCart() {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         items: [
             {
-                id: 103,
+                id: '666',
                 type: 'ItemPhysicalEntity',
                 name: 'Canvas Laundry Cart',
                 imageUrl: '/images/canvas-laundry-cart.jpg',

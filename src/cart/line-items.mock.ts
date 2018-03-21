@@ -2,7 +2,7 @@ import { PhysicalItem } from '../cart';
 
 export function getPhysicalItem(): PhysicalItem {
     return {
-        id: 666,
+        id: '666',
         variantId: 71,
         productId: 103,
         sku: 'CLC',

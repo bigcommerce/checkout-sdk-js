@@ -3,7 +3,7 @@ export default interface InternalLineItem {
     amountAfterDiscount: number;
     attributes: Array<{ name: string, value: string }>;
     discount: number;
-    id: number;
+    id: string | number;
     imageUrl: string;
     integerAmount: number;
     integerAmountAfterDiscount: number;
