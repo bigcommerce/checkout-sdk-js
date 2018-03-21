@@ -382,41 +382,41 @@ describe('CheckoutClient', () => {
 
     describe('#applyCoupon()', () => {
         it('applies a coupon code', async () => {
-            const output = await client.applyCoupon('couponCode1234');
+            const output = await client.applyCoupon('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(couponRequestSender.applyCoupon)
-                .toHaveBeenCalledWith('couponCode1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#removeCoupon()', () => {
         it('removes a coupon code', async () => {
-            const output = await client.removeCoupon('couponCode1234');
+            const output = await client.removeCoupon('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(couponRequestSender.removeCoupon)
-                .toHaveBeenCalledWith('couponCode1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#applyGiftCertificate()', () => {
         it('applies a gift certificate', async () => {
-            const output = await client.applyGiftCertificate('giftCertificate1234');
+            const output = await client.applyGiftCertificate('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(giftCertificateRequestSender.applyGiftCertificate)
-                .toHaveBeenCalledWith('giftCertificate1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#removeGiftCertificate()', () => {
         it('removes a gift certificate', async () => {
-            const output = await client.removeGiftCertificate('giftCertificate1234');
+            const output = await client.removeGiftCertificate('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(giftCertificateRequestSender.removeGiftCertificate)
-                .toHaveBeenCalledWith('giftCertificate1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 

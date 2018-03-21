@@ -17,13 +17,11 @@ import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getAppConfig } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
 import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
-import { getCheckout } from './checkouts.mock';
+import { getCheckout, getCheckoutState } from './checkouts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
-import { getCouponResponseBody } from '../coupon/internal-coupons.mock';
 import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } from '../order/internal-orders.mock';
 import { getCustomerResponseBody, getGuestCustomer } from '../customer/internal-customers.mock';
 import { getFormFields } from '../form/form.mocks';
-import { getGiftCertificateResponseBody } from '../coupon/internal-gift-certificates.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import { getOrder } from '../order/orders.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody, getPaymentMethod } from '../payment/payment-methods.mock';
@@ -120,19 +118,19 @@ describe('CheckoutService', () => {
             ),
 
             applyCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCouponResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             removeCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCouponResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             applyGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getGiftCertificateResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             removeGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getGiftCertificateResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             getVaultAccessToken: jest.fn(() =>
@@ -163,6 +161,7 @@ describe('CheckoutService', () => {
         };
 
         store = createCheckoutStore({
+            checkout: getCheckoutState(),
             config: { data: getAppConfig() },
         });
 
@@ -812,7 +811,7 @@ describe('CheckoutService', () => {
             await checkoutService.applyCoupon(code, options);
 
             expect(checkoutClient.applyCoupon)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -823,7 +822,7 @@ describe('CheckoutService', () => {
             await checkoutService.removeCoupon(code, options);
 
             expect(checkoutClient.removeCoupon)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -834,7 +833,7 @@ describe('CheckoutService', () => {
             await checkoutService.applyGiftCertificate(code, options);
 
             expect(checkoutClient.applyGiftCertificate)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -845,7 +844,7 @@ describe('CheckoutService', () => {
             await checkoutService.removeGiftCertificate(code, options);
 
             expect(checkoutClient.removeGiftCertificate)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 

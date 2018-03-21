@@ -8,12 +8,13 @@ export default class CouponRequestSender {
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} couponCode
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    applyCoupon(couponCode, { timeout } = {}) {
-        const url = '/internalapi/v1/checkout/coupon';
+    applyCoupon(checkoutId, couponCode, { timeout } = {}) {
+        const url = `/api/storefront/checkouts/${checkoutId}/coupons`;
 
         return this._requestSender.post(url, { timeout, body: { couponCode } });
     }
@@ -23,8 +24,8 @@ export default class CouponRequestSender {
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    removeCoupon(couponCode, { timeout } = {}) {
-        const url = `/internalapi/v1/checkout/coupon/${couponCode}`;
+    removeCoupon(checkoutId, couponCode, { timeout } = {}) {
+        const url = `/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`;
 
         return this._requestSender.delete(url, { timeout });
     }

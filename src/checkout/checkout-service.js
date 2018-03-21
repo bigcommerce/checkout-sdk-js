@@ -417,9 +417,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     applyCoupon(code, options = {}) {
-        const action = this._couponActionCreator.applyCoupon(code, options);
+        const { checkout } = this._store.getState();
+        const checkoutId = checkout.getCheckout().id;
 
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._couponActionCreator.applyCoupon(checkoutId, code, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**
@@ -428,9 +432,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     removeCoupon(code, options = {}) {
-        const action = this._couponActionCreator.removeCoupon(code, options);
+        const { checkout } = this._store.getState();
+        const checkoutId = checkout.getCheckout().id;
 
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._couponActionCreator.removeCoupon(checkoutId, code, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**
@@ -439,9 +447,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     applyGiftCertificate(code, options = {}) {
-        const action = this._giftCertificateActionCreator.applyGiftCertificate(code, options);
+        const { checkout } = this._store.getState();
+        const checkoutId = checkout.getCheckout().id;
 
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._giftCertificateActionCreator.applyGiftCertificate(checkoutId, code, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**
@@ -450,9 +462,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     removeGiftCertificate(code, options = {}) {
-        const action = this._giftCertificateActionCreator.removeGiftCertificate(code, options);
+        const { checkout } = this._store.getState();
+        const checkoutId = checkout.getCheckout().id;
 
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._giftCertificateActionCreator.removeGiftCertificate(checkoutId, code, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**

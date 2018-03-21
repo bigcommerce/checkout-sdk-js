@@ -1,5 +1,6 @@
 import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
 import { getCart, getCartResponseBody } from './internal-carts.mock';
+import { getCheckout } from '../checkout/checkouts.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
@@ -9,6 +10,7 @@ import * as billingAddressActionTypes from '../billing/billing-address-action-ty
 import * as cartActionTypes from '../cart/cart-action-types';
 import * as couponActionTypes from '../coupon/coupon-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
+import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
@@ -18,7 +20,9 @@ describe('cartReducer()', () => {
     let initialState;
 
     beforeEach(() => {
-        initialState = {};
+        initialState = {
+            data: getCart(),
+        };
     });
 
     it('returns new data when quote gets updated', () => {
@@ -198,22 +202,44 @@ describe('cartReducer()', () => {
     it('returns new data when coupon gets applied', () => {
         const action = {
             type: couponActionTypes.APPLY_COUPON_SUCCEEDED,
-            payload: getCartResponseBody().data,
+            payload: getCheckout(),
         };
 
         expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
+            data: getCart(),
         }));
     });
 
     it('returns new data when coupon gets removed', () => {
         const action = {
-            type: couponActionTypes.APPLY_COUPON_SUCCEEDED,
-            payload: getCartResponseBody().data,
+            type: couponActionTypes.REMOVE_COUPON_SUCCEEDED,
+            payload: getCheckout(),
         };
 
         expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
+            data: getCart(),
+        }));
+    });
+
+    it('returns new data when gift certificate gets applied', () => {
+        const action = {
+            type: giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED,
+            payload: getCheckout(),
+        };
+
+        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getCart(),
+        }));
+    });
+
+    it('returns new data when gift certificate gets removed', () => {
+        const action = {
+            type: giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED,
+            payload: getCheckout(),
+        };
+
+        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getCart(),
         }));
     });
 });

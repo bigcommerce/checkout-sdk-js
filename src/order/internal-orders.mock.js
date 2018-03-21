@@ -65,8 +65,7 @@ export function getCompleteOrder() {
                 {
                     code: 'savebig2015',
                     discount: '20% off each item',
-                    discountType: 1,
-                    name: '20% off',
+                    discountType: 'percentage_discount',
                 },
             ],
         },
@@ -76,8 +75,19 @@ export function getCompleteOrder() {
         },
         discountNotifications: [],
         giftCertificate: {
-            totalDiscountedAmount: 0,
-            appliedGiftCertificates: [],
+            totalDiscountedAmount: 7,
+            appliedGiftCertificates: [
+                {
+                    code: 'gc',
+                    discountedAmount: 7,
+                    remainingBalance: 3,
+                    giftCertificate: {
+                        code: 'gc',
+                        balance: 10,
+                        purchaseDate: 'ddmmyy',
+                    },
+                },
+            ],
         },
         shipping: {
             amount: 15,
