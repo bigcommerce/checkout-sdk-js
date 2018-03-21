@@ -1,4 +1,4 @@
-import { getGuestCustomer } from './internal-customers.mock';
+import { getCustomerState, getCustomerStrategyState } from './internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CustomerSelector from './customer-selector';
 
@@ -8,17 +8,14 @@ describe('CustomerSelector', () => {
 
     beforeEach(() => {
         state = {
-            customer: {
-                data: getGuestCustomer(),
-                errors: {},
-                statuses: {},
-            },
+            customer: getCustomerState(),
+            customerStrategy: getCustomerStrategyState(),
         };
     });
 
     describe('#getCustomer()', () => {
         it('returns the current customer', () => {
-            customerSelector = new CustomerSelector(state.customer);
+            customerSelector = new CustomerSelector(state.customer, state.customerStrategy);
 
             expect(customerSelector.getCustomer()).toEqual(state.customer.data);
         });
@@ -28,8 +25,8 @@ describe('CustomerSelector', () => {
         it('returns error if unable to sign in', () => {
             const signInError = getErrorResponse();
 
-            customerSelector = new CustomerSelector({
-                ...state.customer,
+            customerSelector = new CustomerSelector(state.customer, {
+                ...state.customerStrategy,
                 errors: { signInError },
             });
 
@@ -37,7 +34,7 @@ describe('CustomerSelector', () => {
         });
 
         it('does not returns error if able to sign in', () => {
-            customerSelector = new CustomerSelector(state.customer);
+            customerSelector = new CustomerSelector(state.customer, state.customerStrategy);
 
             expect(customerSelector.getSignInError()).toBeUndefined();
         });
@@ -47,8 +44,8 @@ describe('CustomerSelector', () => {
         it('returns error if unable to sign out', () => {
             const signOutError = getErrorResponse();
 
-            customerSelector = new CustomerSelector({
-                ...state.customer,
+            customerSelector = new CustomerSelector(state.customer, {
+                ...state.customerStrategy,
                 errors: { signOutError },
             });
 
@@ -56,7 +53,7 @@ describe('CustomerSelector', () => {
         });
 
         it('does not returns error if able to sign out', () => {
-            customerSelector = new CustomerSelector(state.customer);
+            customerSelector = new CustomerSelector(state.customer, state.customerStrategy);
 
             expect(customerSelector.getSignOutError()).toBeUndefined();
         });
@@ -64,8 +61,8 @@ describe('CustomerSelector', () => {
 
     describe('#getInitializeError()', () => {
         it('returns error if unable to initialize any method', () => {
-            customerSelector = new CustomerSelector({
-                ...state.customer,
+            customerSelector = new CustomerSelector(state.customer, {
+                ...state.customerStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethod: 'foobar' },
             });
 
@@ -73,8 +70,8 @@ describe('CustomerSelector', () => {
         });
 
         it('returns error if unable to initialize specific method', () => {
-            customerSelector = new CustomerSelector({
-                ...state.customer,
+            customerSelector = new CustomerSelector(state.customer, {
+                ...state.customerStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethod: 'foobar' },
             });
 
@@ -83,8 +80,8 @@ describe('CustomerSelector', () => {
         });
 
         it('does not return error if able to initialize', () => {
-            customerSelector = new CustomerSelector({
-                ...state.customer,
+            customerSelector = new CustomerSelector(state.customer, {
+                ...state.customerStrategy,
                 errors: {},
             });
 
@@ -94,8 +91,8 @@ describe('CustomerSelector', () => {
 
     describe('#isSigningIn()', () => {
         it('returns true if signing in', () => {
-            customerSelector = new CustomerSelector({
-                ...state.customer,
+            customerSelector = new CustomerSelector(state.customer, {
+                ...state.customerStrategy,
                 statuses: { isSigningIn: true },
             });
 
@@ -103,7 +100,7 @@ describe('CustomerSelector', () => {
         });
 
         it('returns false if not signing in', () => {
-            customerSelector = new CustomerSelector(state.customer);
+            customerSelector = new CustomerSelector(state.customer, state.customerStrategy);
 
             expect(customerSelector.isSigningIn()).toEqual(false);
         });
@@ -111,8 +108,8 @@ describe('CustomerSelector', () => {
 
     describe('#isSigningOut()', () => {
         it('returns true if signing out', () => {
-            customerSelector = new CustomerSelector({
-                ...state.customer,
+            customerSelector = new CustomerSelector(state.customer, {
+                ...state.customerStrategy,
                 statuses: { isSigningOut: true },
             });
 
@@ -120,7 +117,7 @@ describe('CustomerSelector', () => {
         });
 
         it('returns false if not signing out', () => {
-            customerSelector = new CustomerSelector(state.customer);
+            customerSelector = new CustomerSelector(state.customer, state.customerStrategy);
 
             expect(customerSelector.isSigningOut()).toEqual(false);
         });
@@ -128,7 +125,7 @@ describe('CustomerSelector', () => {
 
     describe('#isInitializing()', () => {
         it('returns true if initializing any method', () => {
-            customerSelector = new CustomerSelector({
+            customerSelector = new CustomerSelector(state.customer, {
                 statuses: { initializingMethod: 'foobar', isInitializing: true },
             });
 
@@ -136,7 +133,7 @@ describe('CustomerSelector', () => {
         });
 
         it('returns true if initializing specific method', () => {
-            customerSelector = new CustomerSelector({
+            customerSelector = new CustomerSelector(state.customer, {
                 statuses: { initializingMethod: 'foobar', isInitializing: true },
             });
 
@@ -145,7 +142,7 @@ describe('CustomerSelector', () => {
         });
 
         it('returns false if not initializing method', () => {
-            customerSelector = new CustomerSelector({
+            customerSelector = new CustomerSelector(state.customer, {
                 statuses: { initializingMethod: undefined, isInitializing: false },
             });
 

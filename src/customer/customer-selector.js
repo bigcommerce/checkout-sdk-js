@@ -2,9 +2,11 @@ export default class CustomerSelector {
     /**
      * @constructor
      * @param {CustomerState} customer
+     * @param {CustomerStrategyState} customerStrategy
      */
-    constructor(customer = {}) {
+    constructor(customer = {}, customerStrategy = {}) {
         this._customer = customer;
+        this._customerStrategy = customerStrategy;
     }
 
     /**
@@ -19,11 +21,11 @@ export default class CustomerSelector {
      * @return {?ErrorResponse}
      */
     getSignInError(methodId) {
-        if (methodId && this._customer.errors.signInMethod !== methodId) {
+        if (methodId && this._customerStrategy.errors.signInMethod !== methodId) {
             return;
         }
 
-        return this._customer.errors && this._customer.errors.signInError;
+        return this._customerStrategy.errors.signInError;
     }
 
     /**
@@ -31,11 +33,11 @@ export default class CustomerSelector {
      * @return {?ErrorResponse}
      */
     getSignOutError(methodId) {
-        if (methodId && this._customer.errors.signOutMethod !== methodId) {
+        if (methodId && this._customerStrategy.errors.signOutMethod !== methodId) {
             return;
         }
 
-        return this._customer.errors && this._customer.errors.signOutError;
+        return this._customerStrategy.errors.signOutError;
     }
 
     /**
@@ -43,11 +45,11 @@ export default class CustomerSelector {
      * @return {?ErrorResponse}
      */
     getInitializeError(methodId) {
-        if (methodId && this._customer.errors.initializeMethod !== methodId) {
+        if (methodId && this._customerStrategy.errors.initializeMethod !== methodId) {
             return;
         }
 
-        return this._customer.errors.initializeError;
+        return this._customerStrategy.errors.initializeError;
     }
 
     /**
@@ -55,11 +57,11 @@ export default class CustomerSelector {
      * @return {boolean}
      */
     isSigningIn(methodId) {
-        if (methodId && this._customer.statuses.signingInMethod !== methodId) {
+        if (methodId && this._customerStrategy.statuses.signingInMethod !== methodId) {
             return false;
         }
 
-        return !!this._customer.statuses.isSigningIn;
+        return !!this._customerStrategy.statuses.isSigningIn;
     }
 
     /**
@@ -67,11 +69,11 @@ export default class CustomerSelector {
      * @return {boolean}
      */
     isSigningOut(methodId) {
-        if (methodId && this._customer.statuses.signingOutMethod !== methodId) {
+        if (methodId && this._customerStrategy.statuses.signingOutMethod !== methodId) {
             return false;
         }
 
-        return !!this._customer.statuses.isSigningOut;
+        return !!this._customerStrategy.statuses.isSigningOut;
     }
 
     /**
@@ -79,10 +81,10 @@ export default class CustomerSelector {
      * @return {boolean}
      */
     isInitializing(methodId) {
-        if (methodId && this._customer.statuses.initializingMethod !== methodId) {
+        if (methodId && this._customerStrategy.statuses.initializingMethod !== methodId) {
             return false;
         }
 
-        return !!this._customer.statuses.isInitializing;
+        return !!this._customerStrategy.statuses.isInitializing;
     }
 }
