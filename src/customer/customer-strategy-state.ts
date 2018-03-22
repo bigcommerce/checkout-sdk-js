@@ -5,22 +5,22 @@ export default interface CustomerStrategyState {
 
 export interface CustomerStrategyErrorsState {
     deinitializeError?: Error;
-    deinitializeMethod?: string;
+    deinitializeMethodId?: string;
     initializeError?: Error;
-    initializeMethod?: string;
+    initializeMethodId?: string;
     signInError?: Error;
-    signInMethod?: string;
+    signInMethodId?: string;
     signOutError?: Error;
-    signOutMethod?: string;
+    signOutMethodId?: string;
 }
 
 export interface CustomerStrategyStatusesState {
-    deinitializingMethod?: string;
-    initializingMethod?: string;
+    deinitializeMethodId?: string;
+    initializeMethodId?: string;
     isDeinitializing?: boolean;
     isInitializing?: boolean;
     isSigningIn?: boolean;
     isSigningOut?: boolean;
-    signingInMethod?: string;
-    signingOutMethod?: string;
+    signInMethodId?: string;
+    signOutMethodId?: string;
 }

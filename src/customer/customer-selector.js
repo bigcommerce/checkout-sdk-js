@@ -21,7 +21,7 @@ export default class CustomerSelector {
      * @return {?ErrorResponse}
      */
     getSignInError(methodId) {
-        if (methodId && this._customerStrategy.errors.signInMethod !== methodId) {
+        if (methodId && this._customerStrategy.errors.signInMethodId !== methodId) {
             return;
         }
 
@@ -33,7 +33,7 @@ export default class CustomerSelector {
      * @return {?ErrorResponse}
      */
     getSignOutError(methodId) {
-        if (methodId && this._customerStrategy.errors.signOutMethod !== methodId) {
+        if (methodId && this._customerStrategy.errors.signOutMethodId !== methodId) {
             return;
         }
 
@@ -45,7 +45,7 @@ export default class CustomerSelector {
      * @return {?ErrorResponse}
      */
     getInitializeError(methodId) {
-        if (methodId && this._customerStrategy.errors.initializeMethod !== methodId) {
+        if (methodId && this._customerStrategy.errors.initializeMethodId !== methodId) {
             return;
         }
 
@@ -57,7 +57,7 @@ export default class CustomerSelector {
      * @return {boolean}
      */
     isSigningIn(methodId) {
-        if (methodId && this._customerStrategy.statuses.signingInMethod !== methodId) {
+        if (methodId && this._customerStrategy.statuses.signInMethodId !== methodId) {
             return false;
         }
 
@@ -69,7 +69,7 @@ export default class CustomerSelector {
      * @return {boolean}
      */
     isSigningOut(methodId) {
-        if (methodId && this._customerStrategy.statuses.signingOutMethod !== methodId) {
+        if (methodId && this._customerStrategy.statuses.signOutMethodId !== methodId) {
             return false;
         }
 
@@ -81,7 +81,7 @@ export default class CustomerSelector {
      * @return {boolean}
      */
     isInitializing(methodId) {
-        if (methodId && this._customerStrategy.statuses.initializingMethod !== methodId) {
+        if (methodId && this._customerStrategy.statuses.initializeMethodId !== methodId) {
             return false;
         }
 

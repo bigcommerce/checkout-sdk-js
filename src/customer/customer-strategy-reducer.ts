@@ -33,14 +33,14 @@ function errorsReducer(
         return {
             ...errors,
             initializeError: undefined,
-            initializeMethod: undefined,
+            initializeMethodId: undefined,
         };
 
     case CustomerStrategyActionType.InitializeFailed:
         return {
             ...errors,
             initializeError: action.payload,
-            initializeMethod: action.meta && action.meta.methodId,
+            initializeMethodId: action.meta && action.meta.methodId,
         };
 
     case CustomerStrategyActionType.DeinitializeRequested:
@@ -48,14 +48,14 @@ function errorsReducer(
         return {
             ...errors,
             deinitializeError: undefined,
-            deinitializeMethod: undefined,
+            deinitializeMethodId: undefined,
         };
 
     case CustomerStrategyActionType.DeinitializeFailed:
         return {
             ...errors,
             deinitializeError: action.payload,
-            deinitializeMethod: action.meta && action.meta.methodId,
+            deinitializeMethodId: action.meta && action.meta.methodId,
         };
 
     case CustomerStrategyActionType.SignInRequested:
@@ -63,14 +63,14 @@ function errorsReducer(
         return {
             ...errors,
             signInError: undefined,
-            signInMethod: undefined,
+            signInMethodId: undefined,
         };
 
     case CustomerStrategyActionType.SignInFailed:
         return {
             ...errors,
             signInError: action.payload,
-            signInMethod: action.meta && action.meta.methodId,
+            signInMethodId: action.meta && action.meta.methodId,
         };
 
     case CustomerStrategyActionType.SignOutRequested:
@@ -78,14 +78,14 @@ function errorsReducer(
         return {
             ...errors,
             signOutError: undefined,
-            signOutMethod: undefined,
+            signOutMethodId: undefined,
         };
 
     case CustomerStrategyActionType.SignOutFailed:
         return {
             ...errors,
             signOutError: action.payload,
-            signOutMethod: action.meta && action.meta.methodId,
+            signOutMethodId: action.meta && action.meta.methodId,
         };
 
     default:
@@ -102,7 +102,7 @@ function statusesReducer(
         return {
             ...statuses,
             isInitializing: true,
-            initializingMethod: action.meta && action.meta.methodId,
+            initializeMethodId: action.meta && action.meta.methodId,
         };
 
     case CustomerStrategyActionType.InitializeFailed:
@@ -110,14 +110,14 @@ function statusesReducer(
         return {
             ...statuses,
             isInitializing: false,
-            initializingMethod: undefined,
+            initializeMethodId: undefined,
         };
 
     case CustomerStrategyActionType.DeinitializeRequested:
         return {
             ...statuses,
             isDeinitializing: true,
-            deinitializingMethod: action.meta && action.meta.methodId,
+            deinitializeMethodId: action.meta && action.meta.methodId,
         };
 
     case CustomerStrategyActionType.DeinitializeFailed:
@@ -125,14 +125,14 @@ function statusesReducer(
         return {
             ...statuses,
             isDeinitializing: false,
-            deinitializingMethod: undefined,
+            deinitializeMethodId: undefined,
         };
 
     case CustomerStrategyActionType.SignInRequested:
         return {
             ...statuses,
             isSigningIn: true,
-            signingInMethod: action.meta && action.meta.methodId,
+            signInMethodId: action.meta && action.meta.methodId,
         };
 
     case CustomerStrategyActionType.SignInFailed:
@@ -140,14 +140,14 @@ function statusesReducer(
         return {
             ...statuses,
             isSigningIn: false,
-            signingInMethod: undefined,
+            signInMethodId: undefined,
         };
 
     case CustomerStrategyActionType.SignOutRequested:
         return {
             ...statuses,
             isSigningOut: true,
-            signingOutMethod: action.meta && action.meta.methodId,
+            signOutMethodId: action.meta && action.meta.methodId,
         };
 
     case CustomerStrategyActionType.SignOutFailed:
@@ -155,7 +155,7 @@ function statusesReducer(
         return {
             ...statuses,
             isSigningOut: false,
-            signingOutMethod: undefined,
+            signOutMethodId: undefined,
         };
 
     default:

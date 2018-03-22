@@ -63,7 +63,7 @@ describe('CustomerSelector', () => {
         it('returns error if unable to initialize any method', () => {
             customerSelector = new CustomerSelector(state.customer, {
                 ...state.customerStrategy,
-                errors: { initializeError: getErrorResponse(), initializeMethod: 'foobar' },
+                errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
 
             expect(customerSelector.getInitializeError()).toEqual(getErrorResponse());
@@ -72,7 +72,7 @@ describe('CustomerSelector', () => {
         it('returns error if unable to initialize specific method', () => {
             customerSelector = new CustomerSelector(state.customer, {
                 ...state.customerStrategy,
-                errors: { initializeError: getErrorResponse(), initializeMethod: 'foobar' },
+                errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
 
             expect(customerSelector.getInitializeError('foobar')).toEqual(getErrorResponse());
@@ -126,7 +126,7 @@ describe('CustomerSelector', () => {
     describe('#isInitializing()', () => {
         it('returns true if initializing any method', () => {
             customerSelector = new CustomerSelector(state.customer, {
-                statuses: { initializingMethod: 'foobar', isInitializing: true },
+                statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
 
             expect(customerSelector.isInitializing()).toEqual(true);
@@ -134,7 +134,7 @@ describe('CustomerSelector', () => {
 
         it('returns true if initializing specific method', () => {
             customerSelector = new CustomerSelector(state.customer, {
-                statuses: { initializingMethod: 'foobar', isInitializing: true },
+                statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
 
             expect(customerSelector.isInitializing('foobar')).toEqual(true);
@@ -143,7 +143,7 @@ describe('CustomerSelector', () => {
 
         it('returns false if not initializing method', () => {
             customerSelector = new CustomerSelector(state.customer, {
-                statuses: { initializingMethod: undefined, isInitializing: false },
+                statuses: { initializeMethodId: undefined, isInitializing: false },
             });
 
             expect(customerSelector.isInitializing()).toEqual(false);

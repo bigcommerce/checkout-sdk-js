@@ -22,7 +22,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
-            initializingMethod: 'foobar',
+            initializeMethodId: 'foobar',
             isInitializing: true,
         });
     });
@@ -35,7 +35,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
-            initializingMethod: undefined,
+            initializeMethodId: undefined,
             isInitializing: false,
         });
     });
@@ -48,7 +48,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
-            initializeMethod: 'foobar',
+            initializeMethodId: 'foobar',
             initializeError: action.payload,
         });
     });
@@ -61,7 +61,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
-            deinitializingMethod: 'foobar',
+            deinitializeMethodId: 'foobar',
             isDeinitializing: true,
         });
     });
@@ -74,7 +74,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
-            deinitializingMethod: undefined,
+            deinitializeMethodId: undefined,
             isDeinitializing: false,
         });
     });
@@ -87,7 +87,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
-            deinitializeMethod: 'foobar',
+            deinitializeMethodId: 'foobar',
             deinitializeError: action.payload,
         });
     });
@@ -100,7 +100,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
-            signingInMethod: 'foobar',
+            signInMethodId: 'foobar',
             isSigningIn: true,
         });
     });
@@ -113,7 +113,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
-            signingInMethod: undefined,
+            signInMethodId: undefined,
             isSigningIn: false,
         });
     });
@@ -126,7 +126,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
-            signInMethod: 'foobar',
+            signInMethodId: 'foobar',
             signInError: action.payload,
         });
     });
@@ -139,7 +139,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
-            signingOutMethod: 'foobar',
+            signOutMethodId: 'foobar',
             isSigningOut: true,
         });
     });
@@ -152,7 +152,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
-            signingOutMethod: undefined,
+            signOutMethodId: undefined,
             isSigningOut: false,
         });
     });
@@ -165,7 +165,7 @@ describe('customerStrategyReducer()', () => {
         );
 
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
-            signOutMethod: 'foobar',
+            signOutMethodId: 'foobar',
             signOutError: action.payload,
         });
     });
