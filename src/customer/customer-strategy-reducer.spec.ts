@@ -51,6 +51,10 @@ describe('customerStrategyReducer()', () => {
             initializeMethodId: 'foobar',
             initializeError: action.payload,
         });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            isInitializing: false,
+        });
     });
 
     it('returns pending flag as true if deinitializing customer', () => {
@@ -90,6 +94,10 @@ describe('customerStrategyReducer()', () => {
             deinitializeMethodId: 'foobar',
             deinitializeError: action.payload,
         });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            isDeinitializing: false,
+        });
     });
 
     it('returns pending flag as true if signing in customer', () => {
@@ -114,6 +122,10 @@ describe('customerStrategyReducer()', () => {
 
         expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             signInMethodId: undefined,
+            isSigningIn: false,
+        });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
             isSigningIn: false,
         });
     });
@@ -167,6 +179,10 @@ describe('customerStrategyReducer()', () => {
         expect(customerStrategyReducer(initialState, action).errors).toEqual({
             signOutMethodId: 'foobar',
             signOutError: action.payload,
+        });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            isSigningOut: false,
         });
     });
 });
