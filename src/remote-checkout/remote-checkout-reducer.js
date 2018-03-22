@@ -31,9 +31,6 @@ function dataReducer(data, action) {
     case actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED:
         return { ...data, shippingAddress: action.payload.shipping && action.payload.shipping.address };
 
-    case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
-        return { ...data, isPaymentInitialized: action.payload.payment };
-
     default:
         return data;
     }
@@ -93,21 +90,6 @@ function errorsReducer(errors = {}, action) {
             initializeShippingError: action.payload,
         };
 
-    case actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED:
-    case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
-        return {
-            ...errors,
-            failedPaymentMethod: undefined,
-            initializePaymentError: undefined,
-        };
-
-    case actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED:
-        return {
-            ...errors,
-            failedPaymentMethod: action.meta && action.meta.methodId,
-            initializePaymentError: action.payload,
-        };
-
     default:
         return errors;
     }
@@ -149,21 +131,6 @@ function statusesReducer(statuses = {}, action) {
             ...statuses,
             isInitializingShipping: false,
             loadingShippingMethod: undefined,
-        };
-
-    case actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED:
-        return {
-            ...statuses,
-            isInitializingPayment: true,
-            loadingPaymentMethod: action.meta && action.meta.methodId,
-        };
-
-    case actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED:
-    case actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED:
-        return {
-            ...statuses,
-            isInitializingPayment: false,
-            loadingPaymentMethod: undefined,
         };
 
     default:

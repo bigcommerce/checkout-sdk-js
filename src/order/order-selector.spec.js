@@ -80,55 +80,6 @@ describe('OrderSelector', () => {
         });
     });
 
-    describe('#getSubmitError()', () => {
-        it('returns error if unable to submit order', () => {
-            const submitError = getErrorResponse();
-
-            orderSelector = new OrderSelector({
-                ...state.order,
-                errors: { submitError },
-            }, state.payment, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.getSubmitError()).toEqual(submitError);
-        });
-
-        it('returns error if unable to submit payment', () => {
-            const submitError = getErrorResponse();
-
-            orderSelector = new OrderSelector(state.order, {
-                ...state.payment,
-                errors: { submitError },
-            }, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.getSubmitError()).toEqual(submitError);
-        });
-
-        it('does not returns error if able to submit order', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.getSubmitError()).toBeUndefined();
-        });
-    });
-
-    describe('#getFinalizeError()', () => {
-        it('returns error if unable to finalize', () => {
-            const finalizeError = getErrorResponse();
-
-            orderSelector = new OrderSelector({
-                ...state.order,
-                errors: { finalizeError },
-            }, state.payment, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.getFinalizeError()).toEqual(finalizeError);
-        });
-
-        it('does not returns error if able to load', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.getFinalizeError()).toBeUndefined();
-        });
-    });
-
     describe('#isLoading()', () => {
         it('returns true if loading order', () => {
             orderSelector = new OrderSelector({
@@ -143,51 +94,6 @@ describe('OrderSelector', () => {
             orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
 
             expect(orderSelector.isLoading()).toEqual(false);
-        });
-    });
-
-    describe('#isSubmitting()', () => {
-        it('returns true if submitting order', () => {
-            orderSelector = new OrderSelector({
-                ...state.order,
-                statuses: { isSubmitting: true },
-            }, state.payment, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.isSubmitting()).toEqual(true);
-        });
-
-        it('returns true if submitting payment', () => {
-            orderSelector = new OrderSelector(
-                state.order,
-                { ...state.payment, statuses: { isSubmitting: true } },
-                state.customer,
-                state.cart
-            );
-
-            expect(orderSelector.isSubmitting()).toEqual(true);
-        });
-
-        it('returns false if not submitting order', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.isSubmitting()).toEqual(false);
-        });
-    });
-
-    describe('#isFinalizing()', () => {
-        it('returns true if finalizing order', () => {
-            orderSelector = new OrderSelector({
-                ...state.order,
-                statuses: { isFinalizing: true },
-            }, state.payment, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.isFinalizing()).toEqual(true);
-        });
-
-        it('returns false if not finalizing order', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
-
-            expect(orderSelector.isFinalizing()).toEqual(false);
         });
     });
 

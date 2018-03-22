@@ -1,5 +1,5 @@
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getRemoteBillingResponseBody, getRemoteShippingResponseBody, getRemotePaymentResponseBody, getRemoteCheckoutMeta } from './remote-checkout.mock';
+import { getRemoteBillingResponseBody, getRemoteShippingResponseBody, getRemoteCheckoutMeta } from './remote-checkout.mock';
 import * as actionTypes from './remote-checkout-action-types';
 import remoteCheckoutReducer from './remote-checkout-reducer';
 
@@ -124,68 +124,6 @@ describe('remoteCheckoutReducer', () => {
                 statuses: {
                     isInitializingShipping: true,
                     loadingShippingMethod: 'amazon',
-                },
-            }));
-    });
-
-    it('returns state with payment initialization result', () => {
-        const response = getResponse(getRemotePaymentResponseBody());
-        const action = {
-            type: actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED,
-            payload: response.body,
-            meta: { methodId: 'amazon' },
-        };
-
-        expect(remoteCheckoutReducer({}, action))
-            .toEqual(expect.objectContaining({
-                data: {
-                    isPaymentInitialized: response.body.payment,
-                },
-                errors: {
-                    failedPaymentMethod: undefined,
-                    initializePaymentError: undefined,
-                },
-                statuses: {
-                    isInitializingPayment: false,
-                    loadingPaymentMethod: undefined,
-                },
-            }));
-    });
-
-    it('returns state with error if failed to initialize payment', () => {
-        const response = getErrorResponse();
-        const action = {
-            type: actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED,
-            payload: response,
-            meta: { methodId: 'amazon' },
-        };
-
-        expect(remoteCheckoutReducer({}, action))
-            .toEqual(expect.objectContaining({
-                errors: {
-                    failedPaymentMethod: 'amazon',
-                    initializePaymentError: response,
-                },
-                statuses: {
-                    isInitializingPayment: false,
-                    loadingPaymentMethod: undefined,
-                },
-            }));
-    });
-
-    it('returns state with loading flag if waiting to initialize payment', () => {
-        const response = getErrorResponse();
-        const action = {
-            type: actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED,
-            payload: response,
-            meta: { methodId: 'amazon' },
-        };
-
-        expect(remoteCheckoutReducer({}, action))
-            .toEqual(expect.objectContaining({
-                statuses: {
-                    isInitializingPayment: true,
-                    loadingPaymentMethod: 'amazon',
                 },
             }));
     });

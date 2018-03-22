@@ -9,8 +9,6 @@ import * as actionTypes from './payment-action-types';
 export default function paymentReducer(state = {}, action) {
     const reducer = combineReducers({
         data: dataReducer,
-        errors: errorsReducer,
-        statuses: statusesReducer,
     });
 
     return reducer(state, action);
@@ -29,45 +27,5 @@ function dataReducer(data = {}, action) {
 
     default:
         return data;
-    }
-}
-
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
-function errorsReducer(errors = {}, action) {
-    switch (action.type) {
-    case actionTypes.SUBMIT_PAYMENT_REQUESTED:
-    case actionTypes.SUBMIT_PAYMENT_SUCCEEDED:
-        return { ...errors, submitError: undefined };
-
-    case actionTypes.SUBMIT_PAYMENT_FAILED:
-        return { ...errors, submitError: action.payload };
-
-    default:
-        return errors;
-    }
-}
-
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
-function statusesReducer(statuses = {}, action) {
-    switch (action.type) {
-    case actionTypes.SUBMIT_PAYMENT_REQUESTED:
-        return { ...statuses, isSubmitting: true };
-
-    case actionTypes.SUBMIT_PAYMENT_SUCCEEDED:
-    case actionTypes.SUBMIT_PAYMENT_FAILED:
-        return { ...statuses, isSubmitting: false };
-
-    default:
-        return statuses;
     }
 }

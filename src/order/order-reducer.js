@@ -73,20 +73,6 @@ function errorsReducer(errors = {}, action) {
     case orderActionTypes.LOAD_ORDER_FAILED:
         return { ...errors, loadError: action.payload };
 
-    case orderActionTypes.SUBMIT_ORDER_REQUESTED:
-    case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
-        return { ...errors, submitError: undefined };
-
-    case orderActionTypes.SUBMIT_ORDER_FAILED:
-        return { ...errors, submitError: action.payload };
-
-    case orderActionTypes.FINALIZE_ORDER_REQUESTED:
-    case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
-        return { ...errors, finalizeError: undefined };
-
-    case orderActionTypes.FINALIZE_ORDER_FAILED:
-        return { ...errors, finalizeError: action.payload };
-
     default:
         return errors;
     }
@@ -106,21 +92,6 @@ function statusesReducer(statuses = {}, action) {
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
     case orderActionTypes.LOAD_ORDER_FAILED:
         return { ...statuses, isLoading: false };
-
-    case orderActionTypes.SUBMIT_ORDER_REQUESTED:
-        return { ...statuses, isSubmitting: true };
-
-    case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
-    case orderActionTypes.SUBMIT_ORDER_FAILED:
-        return { ...statuses, isSubmitting: false };
-
-    case orderActionTypes.FINALIZE_ORDER_REQUESTED:
-        return { ...statuses, isFinalizing: true };
-
-    case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
-    case orderActionTypes.FINALIZE_ORDER_FAILED:
-        return { ...statuses, isFinalizing: false };
-
     default:
         return statuses;
     }

@@ -9,7 +9,6 @@ export function getRemoteCheckoutState(): RemoteCheckoutState {
         data: {
             billingAddress: getBillingAddress(),
             shippingAddress: getShippingAddress(),
-            isPaymentInitialized: true,
         },
         errors: {},
         meta: getRemoteCheckoutMeta(),
