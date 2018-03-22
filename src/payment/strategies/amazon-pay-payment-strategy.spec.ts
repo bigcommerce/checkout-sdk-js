@@ -180,15 +180,6 @@ describe('AmazonPayPaymentStrategy', () => {
             });
     });
 
-    it('resolves with current state if initialization is complete', async () => {
-        jest.spyOn(placeOrderService, 'initializePaymentMethod');
-
-        const output = await strategy.initialize({ container: 'wallet', paymentMethod });
-
-        expect(output).toEqual(store.getState());
-        expect(placeOrderService.initializePaymentMethod).toHaveBeenCalledWith(paymentMethod.id, expect.any(Function));
-    });
-
     it('rejects with error if initialization fails', async () => {
         paymentMethod = { ...paymentMethod, config: {} };
 

@@ -25,21 +25,18 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        return this._placeOrderService
-            .initializePaymentMethod(this._paymentMethod.id, () =>
-                this._scriptLoader.loadScript('//www.paypalobjects.com/api/checkout.min.js')
-                    .then(() => {
-                        this._paypalSdk = window.paypal;
+        return this._scriptLoader.loadScript('//www.paypalobjects.com/api/checkout.min.js')
+            .then(() => {
+                this._paypalSdk = window.paypal;
 
-                        const { merchantId, testMode } = this._paymentMethod.config;
-                        const environment = testMode ? 'sandbox' : 'production';
+                const { merchantId, testMode } = this._paymentMethod.config;
+                const environment = testMode ? 'sandbox' : 'production';
 
-                        this._paypalSdk.checkout.setup(merchantId, {
-                            button: 'paypal-button',
-                            environment,
-                        });
-                    })
-            )
+                this._paypalSdk.checkout.setup(merchantId, {
+                    button: 'paypal-button',
+                    environment,
+                });
+            })
             .then(() => super.initialize(options));
     }
 
