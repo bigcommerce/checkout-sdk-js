@@ -1,15 +1,7 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { CustomerStrategyAction, CustomerStrategyActionType } from './customer-strategy-actions';
-import CustomerStrategyState, {
-    CustomerStrategyErrorsState,
-    CustomerStrategyStatusesState,
-} from './customer-strategy-state';
-
-const DEFAULT_STATE: CustomerStrategyState = {
-    errors: {},
-    statuses: {},
-};
+import CustomerStrategyState, { CustomerStrategyErrorsState, CustomerStrategyStatusesState, DEFAULT_STATE } from './customer-strategy-state';
 
 export default function customerStrategyReducer(
     state: CustomerStrategyState = DEFAULT_STATE,

@@ -6,7 +6,7 @@ import { configReducer, ConfigSelector } from '../config';
 import { countryReducer, CountrySelector } from '../geography';
 import { createFreezeProxy } from '../common/utility';
 import { createRequestErrorFactory } from '../common/error';
-import { customerReducer, customerStrategyReducer, CustomerSelector } from '../customer';
+import { customerReducer, customerStrategyReducer, CustomerSelector, CustomerStrategySelector } from '../customer';
 import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from '../coupon';
 import { FormSelector } from '../form';
 import { orderReducer, OrderSelector } from '../order';
@@ -82,7 +82,8 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const config = new ConfigSelector(state.config);
     const countries = new CountrySelector(state.countries);
     const coupon = new CouponSelector(state.coupons);
-    const customer = new CustomerSelector(state.customer, state.customerStrategy);
+    const customer = new CustomerSelector(state.customer);
+    const customerStrategy = new CustomerStrategySelector(state.customerStrategy);
     const form = new FormSelector(state.config);
     const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
@@ -120,6 +121,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         countries,
         coupon,
         customer,
+        customerStrategy,
         giftCertificate,
         instruments,
         order,
@@ -138,6 +140,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         countries,
         coupon,
         customer,
+        customerStrategy,
         giftCertificate,
         instruments,
         order,

@@ -24,3 +24,8 @@ export interface CustomerStrategyStatusesState {
     signInMethodId?: string;
     signOutMethodId?: string;
 }
+
+export const DEFAULT_STATE: CustomerStrategyState = {
+    errors: {},
+    statuses: {},
+};

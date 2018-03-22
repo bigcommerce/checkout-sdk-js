@@ -11,6 +11,7 @@ import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingSelector, ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
 import CheckoutStatusSelector from './checkout-status-selector';
+import CustomerStrategySelector from '../customer/customer-strategy-selector';
 
 describe('CheckoutStatusSelector', () => {
     let billingAddress;
@@ -19,6 +20,7 @@ describe('CheckoutStatusSelector', () => {
     let countries;
     let coupon;
     let customer;
+    let customerStrategy;
     let giftCertificate;
     let instruments;
     let order;
@@ -38,6 +40,7 @@ describe('CheckoutStatusSelector', () => {
         countries = new CountrySelector();
         coupon = new CouponSelector();
         customer = new CustomerSelector();
+        customerStrategy = new CustomerStrategySelector();
         giftCertificate = new GiftCertificateSelector();
         order = new OrderSelector();
         paymentMethods = new PaymentMethodSelector();
@@ -56,6 +59,7 @@ describe('CheckoutStatusSelector', () => {
             countries,
             coupon,
             customer,
+            customerStrategy,
             giftCertificate,
             instruments,
             order,
@@ -275,51 +279,51 @@ describe('CheckoutStatusSelector', () => {
 
     describe('#isSigningIn()', () => {
         it('returns true if signing in', () => {
-            jest.spyOn(customer, 'isSigningIn').mockReturnValue(true);
+            jest.spyOn(customerStrategy, 'isSigningIn').mockReturnValue(true);
 
             expect(statuses.isSigningIn()).toEqual(true);
-            expect(customer.isSigningIn).toHaveBeenCalled();
+            expect(customerStrategy.isSigningIn).toHaveBeenCalled();
         });
 
         it('returns false if signing in', () => {
-            jest.spyOn(customer, 'isSigningIn').mockReturnValue(false);
+            jest.spyOn(customerStrategy, 'isSigningIn').mockReturnValue(false);
 
             expect(statuses.isSigningIn()).toEqual(false);
-            expect(customer.isSigningIn).toHaveBeenCalled();
+            expect(customerStrategy.isSigningIn).toHaveBeenCalled();
         });
     });
 
     describe('#isSigningOut()', () => {
         beforeEach(() => {
-            jest.spyOn(customer, 'isSigningOut').mockReturnValue(false);
+            jest.spyOn(customerStrategy, 'isSigningOut').mockReturnValue(false);
         });
 
         it('returns true if signing out', () => {
-            jest.spyOn(customer, 'isSigningOut').mockReturnValue(true);
+            jest.spyOn(customerStrategy, 'isSigningOut').mockReturnValue(true);
 
             expect(statuses.isSigningOut()).toEqual(true);
-            expect(customer.isSigningOut).toHaveBeenCalled();
+            expect(customerStrategy.isSigningOut).toHaveBeenCalled();
         });
 
         it('returns false if signing out', () => {
             expect(statuses.isSigningOut()).toEqual(false);
-            expect(customer.isSigningOut).toHaveBeenCalled();
+            expect(customerStrategy.isSigningOut).toHaveBeenCalled();
         });
     });
 
     describe('#isInitializingCustomer()', () => {
         it('returns true if initializing', () => {
-            jest.spyOn(customer, 'isInitializing').mockReturnValue(true);
+            jest.spyOn(customerStrategy, 'isInitializing').mockReturnValue(true);
 
             expect(statuses.isInitializingCustomer('foobar')).toEqual(true);
-            expect(customer.isInitializing).toHaveBeenCalledWith('foobar');
+            expect(customerStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
         it('returns false if not initializing', () => {
-            jest.spyOn(customer, 'isInitializing').mockReturnValue(false);
+            jest.spyOn(customerStrategy, 'isInitializing').mockReturnValue(false);
 
             expect(statuses.isInitializingCustomer('foobar')).toEqual(false);
-            expect(customer.isInitializing).toHaveBeenCalledWith('foobar');
+            expect(customerStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });
 

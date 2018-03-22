@@ -1,26 +1,11 @@
-export default class CustomerSelector {
-    /**
-     * @constructor
-     * @param {CustomerState} customer
-     * @param {CustomerStrategyState} customerStrategy
-     */
-    constructor(customer = {}, customerStrategy = {}) {
-        this._customer = customer;
-        this._customerStrategy = customerStrategy;
-    }
+import CustomerStrategyState from './customer-strategy-state';
 
-    /**
-     * @return {InternalCustomer}
-     */
-    getCustomer() {
-        return this._customer.data;
-    }
+export default class CustomerStrategySelector {
+    constructor(
+        private _customerStrategy: CustomerStrategyState
+    ) {}
 
-    /**
-     * @param {?string} methodId
-     * @return {?ErrorResponse}
-     */
-    getSignInError(methodId) {
+    getSignInError(methodId?: string): Error | undefined {
         if (methodId && this._customerStrategy.errors.signInMethodId !== methodId) {
             return;
         }
@@ -28,11 +13,7 @@ export default class CustomerSelector {
         return this._customerStrategy.errors.signInError;
     }
 
-    /**
-     * @param {?string} methodId
-     * @return {?ErrorResponse}
-     */
-    getSignOutError(methodId) {
+    getSignOutError(methodId?: string): Error | undefined {
         if (methodId && this._customerStrategy.errors.signOutMethodId !== methodId) {
             return;
         }
@@ -40,11 +21,7 @@ export default class CustomerSelector {
         return this._customerStrategy.errors.signOutError;
     }
 
-    /**
-     * @param {?string} methodId
-     * @return {?ErrorResponse}
-     */
-    getInitializeError(methodId) {
+    getInitializeError(methodId?: string): Error | undefined {
         if (methodId && this._customerStrategy.errors.initializeMethodId !== methodId) {
             return;
         }
@@ -52,11 +29,7 @@ export default class CustomerSelector {
         return this._customerStrategy.errors.initializeError;
     }
 
-    /**
-     * @param {?string} methodId
-     * @return {boolean}
-     */
-    isSigningIn(methodId) {
+    isSigningIn(methodId?: string): boolean {
         if (methodId && this._customerStrategy.statuses.signInMethodId !== methodId) {
             return false;
         }
@@ -64,11 +37,7 @@ export default class CustomerSelector {
         return !!this._customerStrategy.statuses.isSigningIn;
     }
 
-    /**
-     * @param {?string} methodId
-     * @return {boolean}
-     */
-    isSigningOut(methodId) {
+    isSigningOut(methodId?: string): boolean {
         if (methodId && this._customerStrategy.statuses.signOutMethodId !== methodId) {
             return false;
         }
@@ -76,11 +45,7 @@ export default class CustomerSelector {
         return !!this._customerStrategy.statuses.isSigningOut;
     }
 
-    /**
-     * @param {?string} methodId
-     * @return {boolean}
-     */
-    isInitializing(methodId) {
+    isInitializing(methodId?: string): boolean {
         if (methodId && this._customerStrategy.statuses.initializeMethodId !== methodId) {
             return false;
         }

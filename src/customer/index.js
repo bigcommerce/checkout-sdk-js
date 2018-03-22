@@ -8,6 +8,7 @@ export { default as CustomerCredentials } from './customer-credentials';
 export { default as CustomerRequestSender } from './customer-request-sender';
 export { default as CustomerSelector } from './customer-selector';
 export { default as CustomerStrategyActionCreator } from './customer-strategy-action-creator';
+export { default as CustomerStrategySelector } from './customer-strategy-selector';
 export { default as customerStrategyReducer } from './customer-strategy-reducer';
 
 export { default as mapToInternalCustomer } from './map-to-internal-customer';
