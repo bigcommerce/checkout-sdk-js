@@ -10,7 +10,7 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
     return {
         ...mapToInternalIncompleteOrder(checkout, existingOrder),
         id: order.orderId,
-        items: mapToInternalLineItems(order.lineItems, existingOrder.items),
+        items: mapToInternalLineItems(order.lineItems, existingOrder.items, 'productId'),
         currency: order.currency.code,
         customerCanBeCreated: existingOrder.customerCanBeCreated,
         subtotal: {
