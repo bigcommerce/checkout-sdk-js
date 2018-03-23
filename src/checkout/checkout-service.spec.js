@@ -1,3 +1,4 @@
+import { createAction } from '@bigcommerce/data-store';
 import { createTimeout } from '@bigcommerce/request-sender';
 import { merge, map } from 'lodash';
 import { Observable } from 'rxjs';
@@ -11,7 +12,7 @@ import { OrderActionCreator } from '../order';
 import { PaymentMethodActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
+import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import { MissingDataError } from '../common/error/errors';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getAppConfig } from '../config/configs.mock';
@@ -38,7 +39,7 @@ describe('CheckoutService', () => {
     let customerStrategyRegistry;
     let paymentStrategy;
     let paymentStrategyRegistry;
-    let shippingStrategyRegistry;
+    let shippingStrategyActionCreator;
     let store;
 
     beforeEach(() => {
@@ -155,14 +156,15 @@ describe('CheckoutService', () => {
             getByMethod: jest.fn(() => paymentStrategy),
         };
 
-        shippingStrategyRegistry = createShippingStrategyRegistry(store, checkoutClient);
+        shippingStrategyActionCreator = new ShippingStrategyActionCreator(
+            createShippingStrategyRegistry(store, checkoutClient)
+        );
 
         customerStrategyRegistry = createCustomerStrategyRegistry(store, checkoutClient);
 
         checkoutService = new CheckoutService(
             store,
             paymentStrategyRegistry,
-            shippingStrategyRegistry,
             new BillingAddressActionCreator(checkoutClient),
             new CartActionCreator(checkoutClient),
             new ConfigActionCreator(checkoutClient),
@@ -175,7 +177,8 @@ describe('CheckoutService', () => {
             new PaymentMethodActionCreator(checkoutClient),
             new QuoteActionCreator(checkoutClient),
             new ShippingCountryActionCreator(checkoutClient),
-            new ShippingOptionActionCreator(checkoutClient)
+            new ShippingOptionActionCreator(checkoutClient),
+            shippingStrategyActionCreator
         );
     });
 
@@ -651,131 +654,73 @@ describe('CheckoutService', () => {
     });
 
     describe('#initializeShipping()', () => {
-        let customer;
-        let remoteCustomer;
-        let paymentMethod;
-        let state;
+        it('dispatches action to initialize shipping', async () => {
+            const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('INITIALIZE_SHIPPING'));
 
-        beforeEach(() => {
-            customer = getGuestCustomer();
-            paymentMethod = getPaymentMethod();
-            remoteCustomer = { ...getGuestCustomer(), remote: { provider: paymentMethod.id } };
-            state = {
-                checkout: {
-                    getCustomer: () => customer,
-                    getPaymentMethod: () => paymentMethod,
-                },
-            };
+            jest.spyOn(shippingStrategyActionCreator, 'initialize')
+                .mockReturnValue(action);
 
-            jest.spyOn(shippingStrategyRegistry, 'get');
-
-            jest.spyOn(store, 'getState')
-                .mockReturnValue(state);
-
-            jest.spyOn(checkoutClient, 'loadPaymentMethod')
-                .mockReturnValue(Promise.resolve(getResponse(getPaymentMethodResponseBody())));
-        });
-
-        it('finds shipping strategy', async () => {
-            jest.spyOn(state.checkout, 'getCustomer')
-                .mockReturnValue(remoteCustomer);
-
-            await checkoutService.initializeShipping();
-
-            expect(shippingStrategyRegistry.get).toHaveBeenCalledWith(remoteCustomer.remote.provider);
-        });
-
-        it('initializes remote shipping strategy with remote payment method', async () => {
-            const strategy = shippingStrategyRegistry.get(remoteCustomer.remote.provider);
-
-            jest.spyOn(strategy, 'initialize');
-
-            jest.spyOn(state.checkout, 'getCustomer')
-                .mockReturnValue(remoteCustomer);
-
-            await checkoutService.initializeShipping();
-
-            expect(checkoutClient.loadPaymentMethod).toHaveBeenCalledWith(remoteCustomer.remote.provider, undefined);
-            expect(strategy.initialize).toHaveBeenCalledWith({ paymentMethod });
-        });
-
-        it('initializes default shipping strategy if remote payment is not enabled', async () => {
-            const strategy = shippingStrategyRegistry.get();
-            const options = {};
-
-            jest.spyOn(strategy, 'initialize');
+            jest.spyOn(store, 'dispatch');
 
             await checkoutService.initializeShipping(options);
 
-            expect(strategy.initialize).toHaveBeenCalledWith(options);
-        });
-
-        it('returns current state', async () => {
-            const output = await checkoutService.initializeShipping();
-
-            expect(output).toEqual(store.getState());
+            expect(shippingStrategyActionCreator.initialize).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
         });
     });
 
     describe('#deinitializeShipping()', () => {
-        let customer;
-
-        beforeEach(() => {
-            customer = { ...getGuestCustomer(), remote: { provider: getPaymentMethod().id } };
-
-            jest.spyOn(shippingStrategyRegistry, 'get');
-
-            jest.spyOn(store, 'getState')
-                .mockReturnValue({
-                    checkout: {
-                        getCustomer: () => customer,
-                    },
-                });
-        });
-
-        it('finds shipping strategy', async () => {
-            await checkoutService.deinitializeShipping();
-
-            expect(shippingStrategyRegistry.get).toHaveBeenCalledWith(customer.remote.provider);
-        });
-
-        it('deinitializes shipping strategy', async () => {
-            const strategy = shippingStrategyRegistry.get(customer.remote.provider);
-
-            jest.spyOn(strategy, 'deinitialize');
-
-            await checkoutService.deinitializeShipping();
-
-            expect(strategy.deinitialize).toHaveBeenCalled();
-        });
-
-        it('returns current state', async () => {
-            const output = await checkoutService.deinitializeShipping();
-
-            expect(output).toEqual(store.getState());
-        });
-    });
-
-    describe('#selectShippingOption()', () => {
-        it('selects a shipping option', async () => {
-            const addressId = 'addresd-id-123';
-            const shippingOptionId = 'shipping-option-id-456';
+        it('dispatches action to deinitialize shipping', async () => {
             const options = { timeout: createTimeout() };
-            await checkoutService.selectShippingOption(addressId, shippingOptionId, options);
+            const action = Observable.of(createAction('DEINITIALIZE_SHIPPING'));
 
-            expect(checkoutClient.selectShippingOption)
-                .toHaveBeenCalledWith(addressId, shippingOptionId, options);
+            jest.spyOn(shippingStrategyActionCreator, 'deinitialize')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            await checkoutService.deinitializeShipping(options);
+
+            expect(shippingStrategyActionCreator.deinitialize).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
         });
     });
 
     describe('#updateShippingAddress()', () => {
-        it('updates the shipping address', async () => {
+        it('dispatches action to update shipping address', async () => {
             const address = getShippingAddress();
             const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('UPDATE_SHIPPING_ADDRESS'));
+
+            jest.spyOn(shippingStrategyActionCreator, 'updateAddress')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
             await checkoutService.updateShippingAddress(address, options);
 
-            expect(checkoutClient.updateShippingAddress)
-                .toHaveBeenCalledWith(address, options);
+            expect(shippingStrategyActionCreator.updateAddress).toHaveBeenCalledWith(address, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
+        });
+    });
+
+    describe('#updateShippingOption()', () => {
+        it('dispatches action to select shipping option', async () => {
+            const addressId = 'address-id-123';
+            const shippingOptionId = 'shipping-option-id-456';
+            const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('SELECT_SHIPPING_OPTION'));
+
+            jest.spyOn(shippingStrategyActionCreator, 'selectOption')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            await checkoutService.selectShippingOption(addressId, shippingOptionId, options);
+
+            expect(shippingStrategyActionCreator.selectOption).toHaveBeenCalledWith(addressId, shippingOptionId, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
         });
     });
 

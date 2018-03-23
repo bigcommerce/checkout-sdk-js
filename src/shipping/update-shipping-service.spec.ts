@@ -5,7 +5,6 @@ import { getFlatRateOption } from './internal-shipping-options.mock';
 import { getShippingAddress } from './internal-shipping-addresses.mock';
 import * as addressActionTypes from './shipping-address-action-types';
 import * as optionActionTypes from './shipping-option-action-types';
-import ShippingActionCreator from './shipping-action-creator';
 import ShippingAddressActionCreator from './shipping-address-action-creator';
 import ShippingOptionActionCreator from './shipping-option-action-creator';
 import UpdateShippingService from './update-shipping-service';
@@ -13,18 +12,16 @@ import UpdateShippingService from './update-shipping-service';
 describe('UpdateShippingService', () => {
     let addressActionCreator: ShippingAddressActionCreator;
     let optionActionCreator: ShippingOptionActionCreator;
-    let shippingActionCreator: ShippingActionCreator;
     let store: CheckoutStore;
 
     beforeEach(() => {
         addressActionCreator = new ShippingAddressActionCreator(createCheckoutClient());
         optionActionCreator = new ShippingOptionActionCreator(createCheckoutClient());
-        shippingActionCreator = new ShippingActionCreator();
         store = createCheckoutStore();
     });
 
     it('dispatches action to update shipping address', async () => {
-        const service = new UpdateShippingService(store, addressActionCreator, optionActionCreator, shippingActionCreator);
+        const service = new UpdateShippingService(store, addressActionCreator, optionActionCreator);
         const address = getShippingAddress();
         const options = {};
         const action = Observable.of(createAction(addressActionTypes.UPDATE_SHIPPING_ADDRESS_REQUESTED));
@@ -40,7 +37,7 @@ describe('UpdateShippingService', () => {
     });
 
     it('dispatches action to select shipping option', async () => {
-        const service = new UpdateShippingService(store, addressActionCreator, optionActionCreator, shippingActionCreator);
+        const service = new UpdateShippingService(store, addressActionCreator, optionActionCreator);
         const address = getShippingAddress();
         const shippingOption = getFlatRateOption();
         const options = {};

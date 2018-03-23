@@ -2,14 +2,12 @@ import { InternalAddress } from '../address';
 import { CheckoutStore, CheckoutSelectors } from '../checkout';
 import ShippingAddressActionCreator from './shipping-address-action-creator';
 import ShippingOptionActionCreator from './shipping-option-action-creator';
-import ShippingActionCreator from './shipping-action-creator';
 
 export default class UpdateShippingService {
     constructor(
         private _store: CheckoutStore,
         private _addressActionCreator: ShippingAddressActionCreator,
-        private _optionActionCreator: ShippingOptionActionCreator,
-        private _shippingActionCreator: ShippingActionCreator
+        private _optionActionCreator: ShippingOptionActionCreator
     ) {}
 
     updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
@@ -21,12 +19,6 @@ export default class UpdateShippingService {
     selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
         return this._store.dispatch(
             this._optionActionCreator.selectShippingOption(addressId, optionId, options)
-        );
-    }
-
-    initializeShipping(methodId: string, initializer: () => Promise<any>): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._shippingActionCreator.initializeShipping(methodId, initializer)
         );
     }
 }

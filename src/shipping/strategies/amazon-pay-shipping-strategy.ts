@@ -1,27 +1,23 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
-
-import { noop } from 'lodash';
-import { ReadableDataStore } from '@bigcommerce/data-store';
 import { InternalAddress } from '../../address';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotInitializedError } from '../../common/error/errors';
-import { PaymentMethod } from '../../payment';
+import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutService } from '../../remote-checkout';
 import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
-import { isAddressEqual } from '../../address';
-import ShippingStrategy from './shipping-strategy';
+import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import UpdateShippingService from '../update-shipping-service';
+import ShippingStrategy from './shipping-strategy';
 
 export default class AmazonPayShippingStrategy extends ShippingStrategy {
     private _addressBook?: OffAmazonPayments.Widgets.AddressBook;
-    private _addressBookOptions?: InitializeWidgetOptions;
     private _paymentMethod?: PaymentMethod;
     private _window: OffAmazonPayments.HostWindow;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         updateShippingService: UpdateShippingService,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutService: RemoteCheckoutService,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
@@ -35,25 +31,22 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             return super.initialize(options);
         }
 
-        this._addressBookOptions = options;
-        this._paymentMethod = options.paymentMethod;
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
+            .then(({ checkout }) => new Promise((resolve, reject) => {
+                this._paymentMethod = checkout.getPaymentMethod(options.methodId);
 
-        return this._updateShippingService
-            .initializeShipping(options.paymentMethod.id, () =>
-                new Promise((resolve, reject) => {
-                    const onReady = () => {
-                        this._createAddressBook(options)
-                            .then((addressBook) => {
-                                this._addressBook = addressBook;
-                                resolve();
-                            })
-                            .catch(reject);
-                    };
-
-                    this._scriptLoader.loadWidget(options.paymentMethod, onReady)
+                const onReady = () => {
+                    this._createAddressBook(options)
+                        .then((addressBook) => {
+                            this._addressBook = addressBook;
+                            resolve();
+                        })
                         .catch(reject);
-                })
-            )
+                };
+
+                this._scriptLoader.loadWidget(this._paymentMethod!, onReady)
+                    .catch(reject);
+            }))
             .then(() => super.initialize(options));
     }
 
@@ -78,7 +71,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     private _createAddressBook(options: InitializeWidgetOptions): Promise<OffAmazonPayments.Widgets.AddressBook> {
         return new Promise((resolve, reject) => {
-            const { container, onAddressSelect = noop, onError = noop, onReady = noop } = options;
+            const { container, onAddressSelect = () => {}, onError = () => {}, onReady = () => {} } = options;
             const merchantId = this._paymentMethod && this._paymentMethod.config.merchantId;
 
             if (!merchantId || !document.getElementById(container)) {
@@ -156,7 +149,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 }
 
 export interface InitializeOptions extends InitializeWidgetOptions {
-    paymentMethod: PaymentMethod;
+    methodId: string;
 }
 
 export interface InitializeWidgetOptions {

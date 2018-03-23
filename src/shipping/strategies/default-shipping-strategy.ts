@@ -1,12 +1,11 @@
-import { ReadableDataStore } from '@bigcommerce/data-store';
 import { InternalAddress } from '../../address';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import UpdateShippingService from '../update-shipping-service';
 import ShippingStrategy from './shipping-strategy';
 
 export default class DefaultShippingStrategy extends ShippingStrategy {
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         updateShippingService: UpdateShippingService
     ) {
         super(store, updateShippingService);

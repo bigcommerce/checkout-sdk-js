@@ -24,9 +24,6 @@ export { default as ShippingStrategyActionCreator } from './shipping-strategy-ac
 export { default as ShippingStrategySelector } from './shipping-strategy-selector';
 export { default as shippingStrategyReducer } from './shipping-strategy-reducer';
 
-export { default as ShippingActionCreator } from './shipping-action-creator';
-export { default as ShippingSelector } from './shipping-selector';
-export { default as shippingReducer } from './shipping-reducer';
 export { default as UpdateShippingService } from './update-shipping-service';
 
 export { default as mapToInternalShippingOption } from './map-to-internal-shipping-option';

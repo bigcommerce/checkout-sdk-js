@@ -15,15 +15,7 @@ import { remoteCheckoutReducer, RemoteCheckoutSelector } from '../remote-checkou
 import { instrumentReducer, InstrumentSelector } from '../payment/instrument';
 import { quoteReducer, QuoteSelector } from '../quote';
 import { BillingAddressSelector } from '../billing';
-import {
-    ShippingSelector,
-    ShippingAddressSelector,
-    ShippingCountrySelector,
-    ShippingOptionSelector,
-    shippingReducer,
-    shippingCountryReducer,
-    shippingOptionReducer,
-} from '../shipping';
+import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector, shippingCountryReducer, shippingOptionReducer, shippingStrategyReducer } from '../shipping';
 import createActionTransformer from './create-action-transformer';
 
 /**
@@ -62,9 +54,9 @@ function createCheckoutReducers() {
         paymentMethods: paymentMethodReducer,
         quote: quoteReducer,
         remoteCheckout: remoteCheckoutReducer,
-        shipping: shippingReducer,
         shippingCountries: shippingCountryReducer,
         shippingOptions: shippingOptionReducer,
+        shippingStrategy: shippingStrategyReducer,
     };
 }
 
@@ -91,10 +83,10 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
     const quote = new QuoteSelector(state.quote);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
-    const shipping = new ShippingSelector(state.shipping);
     const shippingAddress = new ShippingAddressSelector(state.quote);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
+    const shippingStrategy = new ShippingStrategySelector(state.shippingStrategy);
 
     const checkout = new CheckoutSelector(
         billingAddress,
@@ -127,10 +119,10 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         order,
         paymentMethods,
         quote,
-        shipping,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        shippingStrategy
     );
 
     const statuses = new CheckoutStatusSelector(
@@ -147,10 +139,10 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         paymentMethods,
         quote,
         remoteCheckout,
-        shipping,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        shippingStrategy
     );
 
     return {
