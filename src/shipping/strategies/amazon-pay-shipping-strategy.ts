@@ -1,11 +1,17 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
-import { InternalAddress } from '../../address';
+import { InternalAddress, isAddressEqual } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { RemoteCheckoutService } from '../../remote-checkout';
-import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
+import { RemoteCheckoutActionCreator } from '../../remote-checkout';
+import {
+    RemoteCheckoutAccountInvalidError,
+    RemoteCheckoutSessionError,
+    RemoteCheckoutShippingError,
+    RemoteCheckoutSynchronizationError,
+} from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import ShippingAddressActionCreator from '../shipping-address-action-creator';
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
 import ShippingStrategy from './shipping-strategy';
 
@@ -16,9 +22,10 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     constructor(
         store: CheckoutStore,
+        private _addressActionCreator: ShippingAddressActionCreator,
         private _optionActionCreator: ShippingOptionActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _remoteCheckoutService: RemoteCheckoutService,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store);
@@ -108,19 +115,40 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         });
     }
 
+    private _synchronizeShippingAddress(): Promise<CheckoutSelectors> {
+        const { checkout } = this._store.getState();
+        const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
+
+        if (!this._paymentMethod) {
+            throw new NotInitializedError();
+        }
+
+        return this._store.dispatch(
+            this._remoteCheckoutActionCreator.initializeShipping(this._paymentMethod.id, { referenceId })
+        )
+            .then(({ checkout }) => {
+                const { remoteCheckout = {} } = checkout.getCheckoutMeta();
+
+                if (remoteCheckout.shippingAddress === false) {
+                    throw new RemoteCheckoutSynchronizationError();
+                }
+
+                if (isAddressEqual(remoteCheckout.shippingAddress, checkout.getShippingAddress())) {
+                    return this._store.getState();
+                }
+
+                return this._store.dispatch(
+                    this._addressActionCreator.updateAddress(remoteCheckout.shippingAddress)
+                );
+            });
+    }
+
     private _handleAddressSelect(
         orderReference: OffAmazonPayments.Widgets.OrderReference,
         callback: (address: InternalAddress) => void,
         errorCallback: (error: Error) => void
     ): void {
-        if (!this._paymentMethod) {
-            throw new NotInitializedError();
-        }
-
-        const { checkout } = this._store.getState();
-        const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
-
-        this._remoteCheckoutService.synchronizeShippingAddress(this._paymentMethod.id, { referenceId })
+        this._synchronizeShippingAddress()
             .then(({ checkout }: CheckoutSelectors) => {
                 callback(checkout.getShippingAddress());
             })
@@ -134,9 +162,11 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             throw new NotInitializedError();
         }
 
-        this._remoteCheckoutService.setCheckoutMeta(this._paymentMethod.id, {
-            referenceId: orderReference.getAmazonOrderReferenceId(),
-        });
+        this._store.dispatch(
+            this._remoteCheckoutActionCreator.setCheckoutMeta(this._paymentMethod.id, {
+                referenceId: orderReference.getAmazonOrderReferenceId(),
+            })
+        );
     }
 
     private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {

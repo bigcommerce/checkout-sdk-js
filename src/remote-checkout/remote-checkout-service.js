@@ -37,19 +37,6 @@ export default class RemoteCheckoutService {
     /**
      * @param {string} methodId
      * @param {Object} params
-     * @param {string} [params.referenceId]
-     * @param {RequestOptions} [options]
-     * @return {Promise<CheckoutSelectors>}
-     */
-    initializeShipping(methodId, params, options) {
-        return this._store.dispatch(
-            this._remoteCheckoutActionCreator.initializeShipping(methodId, params, options)
-        );
-    }
-
-    /**
-     * @param {string} methodId
-     * @param {Object} params
      * @param {?string} [params.referenceId]
      * @param {?string} [params.customerMessage]
      * @param {?boolean} [params.useStoreCredit]
@@ -85,32 +72,6 @@ export default class RemoteCheckoutService {
 
                 return this._store.dispatch(
                     this._billingAddressActionCreator.updateAddress(billingAddress, options)
-                );
-            });
-    }
-
-    /**
-     * @param {string} methodId
-     * @param {Object} params
-     * @param {string} [params.referenceId]
-     * @param {RequestOptions} [options]
-     * @return {Promise<CheckoutSelectors>}
-     */
-    synchronizeShippingAddress(methodId, params, options) {
-        return this.initializeShipping(methodId, params, options)
-            .then(({ checkout }) => {
-                const { remoteCheckout: { shippingAddress } = {} } = checkout.getCheckoutMeta();
-
-                if (shippingAddress === false) {
-                    throw new RemoteCheckoutSynchronizationError(methodId);
-                }
-
-                if (isAddressEqual(shippingAddress, checkout.getShippingAddress())) {
-                    return this._store.getState();
-                }
-
-                return this._store.dispatch(
-                    this._shippingAddressActionCreator.updateAddress(shippingAddress, options)
                 );
             });
     }
