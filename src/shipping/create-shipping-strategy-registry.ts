@@ -5,7 +5,8 @@ import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator } from '../payment';
 import { createRemoteCheckoutService } from '../remote-checkout';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
-import createUpdateShippingService from './create-update-shipping-service';
+import ShippingAddressActionCreator from './shipping-address-action-creator';
+import ShippingOptionActionCreator from './shipping-option-action-creator';
 import { AmazonPayShippingStrategy, DefaultShippingStrategy, ShippingStrategy } from './strategies';
 
 export default function createShippingStrategyRegistry(
@@ -13,13 +14,12 @@ export default function createShippingStrategyRegistry(
     client: CheckoutClient
 ): Registry<ShippingStrategy> {
     const registry = new Registry<ShippingStrategy>();
-    const updateShippingService = createUpdateShippingService(store, client);
     const remoteCheckoutService = createRemoteCheckoutService(store, client);
 
     registry.register('amazon', () =>
         new AmazonPayShippingStrategy(
             store,
-            updateShippingService,
+            new ShippingOptionActionCreator(client),
             new PaymentMethodActionCreator(client),
             remoteCheckoutService,
             new AmazonPayScriptLoader(getScriptLoader())
@@ -27,7 +27,11 @@ export default function createShippingStrategyRegistry(
     );
 
     registry.register('default', () =>
-        new DefaultShippingStrategy(store, updateShippingService)
+        new DefaultShippingStrategy(
+            store,
+            new ShippingAddressActionCreator(client),
+            new ShippingOptionActionCreator(client)
+        )
     );
 
     return registry;

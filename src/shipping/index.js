@@ -1,5 +1,4 @@
 export { default as createShippingStrategyRegistry } from './create-shipping-strategy-registry';
-export { default as createUpdateShippingService } from './create-update-shipping-service';
 
 export { default as Consignment } from './consignment';
 export { default as consignmentReducer } from './consignment-reducer';
@@ -23,8 +22,6 @@ export { default as shippingOptionReducer } from './shipping-option-reducer';
 export { default as ShippingStrategyActionCreator } from './shipping-strategy-action-creator';
 export { default as ShippingStrategySelector } from './shipping-strategy-selector';
 export { default as shippingStrategyReducer } from './shipping-strategy-reducer';
-
-export { default as UpdateShippingService } from './update-shipping-service';
 
 export { default as mapToInternalShippingOption } from './map-to-internal-shipping-option';
 export { default as mapToInternalShippingOptions } from './map-to-internal-shipping-options';

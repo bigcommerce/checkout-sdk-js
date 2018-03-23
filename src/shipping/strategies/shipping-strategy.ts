@@ -1,13 +1,11 @@
 import { InternalAddress } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import UpdateShippingService from '../update-shipping-service';
 
 export default abstract class ShippingStrategy {
     protected _isInitialized = false;
 
     constructor(
-        protected _store: CheckoutStore,
-        protected _updateShippingService: UpdateShippingService
+        protected _store: CheckoutStore
     ) {}
 
     abstract updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors>;

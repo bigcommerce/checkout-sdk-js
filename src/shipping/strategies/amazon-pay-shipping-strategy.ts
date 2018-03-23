@@ -6,7 +6,7 @@ import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutService } from '../../remote-checkout';
 import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import UpdateShippingService from '../update-shipping-service';
+import ShippingOptionActionCreator from '../shipping-option-action-creator';
 import ShippingStrategy from './shipping-strategy';
 
 export default class AmazonPayShippingStrategy extends ShippingStrategy {
@@ -16,12 +16,12 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     constructor(
         store: CheckoutStore,
-        updateShippingService: UpdateShippingService,
+        private _optionActionCreator: ShippingOptionActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutService: RemoteCheckoutService,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
-        super(store, updateShippingService);
+        super(store);
 
         this._window = window;
     }
@@ -66,7 +66,9 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
     }
 
     selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
-        return this._updateShippingService.selectOption(addressId, optionId, options);
+        return this._store.dispatch(
+            this._optionActionCreator.selectShippingOption(addressId, optionId, options)
+        );
     }
 
     private _createAddressBook(options: InitializeWidgetOptions): Promise<OffAmazonPayments.Widgets.AddressBook> {
