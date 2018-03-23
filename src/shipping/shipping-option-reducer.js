@@ -60,13 +60,6 @@ function statusesReducer(statuses = {}, action) {
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
         return { ...statuses, isLoading: false };
 
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_REQUESTED:
-        return { ...statuses, isSelecting: true };
-
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_FAILED:
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
-        return { ...statuses, isSelecting: false };
-
     default:
         return statuses;
     }
@@ -86,13 +79,6 @@ function errorsReducer(errors = {}, action) {
 
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_FAILED:
         return { ...errors, loadError: action.payload };
-
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_REQUESTED:
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
-        return { ...errors, selectError: undefined };
-
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_FAILED:
-        return { ...errors, selectError: action.payload };
 
     default:
         return errors;

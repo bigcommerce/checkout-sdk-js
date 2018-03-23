@@ -60,25 +60,6 @@ describe('ShippingOptionSelector', () => {
         });
     });
 
-    describe('#getSelectError()', () => {
-        it('returns error if unable to select', () => {
-            const selectError = getErrorResponse();
-
-            shippingOptionSelector = new ShippingOptionSelector({
-                ...state.shippingOptions,
-                errors: { selectError },
-            }, state.quote);
-
-            expect(shippingOptionSelector.getSelectError()).toEqual(selectError);
-        });
-
-        it('does not returns error if able to select', () => {
-            shippingOptionSelector = new ShippingOptionSelector(state.shippingOptions, state.quote);
-
-            expect(shippingOptionSelector.getSelectError()).toBeUndefined();
-        });
-    });
-
     describe('#isLoading()', () => {
         it('returns true if loading shipping options', () => {
             shippingOptionSelector = new ShippingOptionSelector({
@@ -93,23 +74,6 @@ describe('ShippingOptionSelector', () => {
             shippingOptionSelector = new ShippingOptionSelector(state.shippingOptions, state.quote);
 
             expect(shippingOptionSelector.isLoading()).toEqual(false);
-        });
-    });
-
-    describe('#isSelecting()', () => {
-        it('returns true if selecting shipping options', () => {
-            shippingOptionSelector = new ShippingOptionSelector({
-                ...state.shippingOptions,
-                statuses: { isSelecting: true },
-            }, state.quote);
-
-            expect(shippingOptionSelector.isSelecting()).toEqual(true);
-        });
-
-        it('returns false if not selecting shipping options', () => {
-            shippingOptionSelector = new ShippingOptionSelector(state.shippingOptions, state.quote);
-
-            expect(shippingOptionSelector.isSelecting()).toEqual(false);
         });
     });
 });
