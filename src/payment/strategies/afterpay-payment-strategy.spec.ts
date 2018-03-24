@@ -1,28 +1,30 @@
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { CartActionCreator } from '../../cart';
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
-import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
-import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
-import { getAfterpay } from '../../payment/payment-methods.mock';
-import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
-import { getResponse } from '../../common/http-request/responses.mock';
-import AfterpayPaymentStrategy from './afterpay-payment-strategy';
-import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
+import { Observable } from 'rxjs';
+
+import { CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
 import CheckoutClient from '../../checkout/checkout-client';
+import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
+import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
+import { getAfterpay } from '../../payment/payment-methods.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
+import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
+import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentMethod from '../payment-method';
+import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 
 describe('AfterpayPaymentStrategy', () => {
     let client: CheckoutClient;
+    let payload: OrderRequestBody;
+    let paymentMethod: PaymentMethod;
+    let placeOrderService: PlaceOrderService;
+    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AfterpayScriptLoader;
     let store: CheckoutStore;
     let strategy: AfterpayPaymentStrategy;
-    let remoteCheckoutService: RemoteCheckoutService;
-    let paymentMethod: PaymentMethod;
-    let placeOrderService: PlaceOrderService;
-    let payload: OrderRequestBody;
 
     const clientToken: string = 'foo';
     const afterpaySdk = {
@@ -34,13 +36,14 @@ describe('AfterpayPaymentStrategy', () => {
         client = createCheckoutClient();
         store = createCheckoutStore();
         placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
-        remoteCheckoutService = createRemoteCheckoutService(store, client);
-        paymentMethod = getAfterpay();
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+            new RemoteCheckoutRequestSender(createRequestSender())
+        );
         scriptLoader = new AfterpayScriptLoader(createScriptLoader());
         strategy = new AfterpayPaymentStrategy(
             store,
             placeOrderService,
-            remoteCheckoutService,
+            remoteCheckoutActionCreator,
             scriptLoader
         );
 
@@ -70,9 +73,11 @@ describe('AfterpayPaymentStrategy', () => {
         jest.spyOn(afterpaySdk, 'init').mockImplementation(() => {});
         jest.spyOn(afterpaySdk, 'display').mockImplementation(() => {});
 
-        jest.spyOn(remoteCheckoutService, 'initializePayment').mockImplementation(() => {
-            return Promise.resolve({});
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockImplementation(() => {
+            return Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         });
+
+        paymentMethod = getAfterpay();
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
@@ -109,7 +114,7 @@ describe('AfterpayPaymentStrategy', () => {
         });
 
         it('notifies store credit usage to remote checkout service', () => {
-            expect(remoteCheckoutService.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false, customerMessage: '' });
+            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false, customerMessage: '' });
         });
 
         it('verifies the cart', () => {

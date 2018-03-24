@@ -1,13 +1,11 @@
 /// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
-
 import { omit } from 'lodash';
+
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { RemoteCheckoutService } from '../../remote-checkout';
-import { NotInitializedError } from '../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
-import { PaymentMethodUninitializedError, PaymentMethodMissingDataError } from '../errors';
+import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
-import PaymentMethod from '../payment-method';
+import { PaymentMethodMissingDataError, PaymentMethodUninitializedError } from '../errors';
 import PaymentStrategy, { InitializeOptions } from './payment-strategy';
 
 export default class AfterpayPaymentStrategy extends PaymentStrategy {
@@ -16,7 +14,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
-        private _remoteCheckoutService: RemoteCheckoutService,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {
         super(store, placeOrderService);
@@ -55,7 +53,9 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             throw new PaymentMethodMissingDataError('gateway');
         }
 
-        return this._remoteCheckoutService.initializePayment(paymentId, { useStoreCredit, customerMessage })
+        return this._store.dispatch(
+            this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
+        )
             .then(() => this._placeOrderService.verifyCart())
             .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
             .then((resp: any) => this._displayModal(resp.checkout.getPaymentMethod(paymentId).clientToken))
