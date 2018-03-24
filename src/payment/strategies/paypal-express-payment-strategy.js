@@ -4,7 +4,7 @@ import * as paymentStatusTypes from '../payment-status-types';
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     /**
      * @constructor
-     * @param {ReadableDataStore} store
+     * @param {CheckoutStore} store
      * @param {PlaceOrderService} placeOrderService
      * @param {ScriptLoader} scriptLoader
      */

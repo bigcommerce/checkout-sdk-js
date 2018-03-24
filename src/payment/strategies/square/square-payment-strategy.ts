@@ -1,8 +1,7 @@
 /// <reference path="./square-form.d.ts" />
 
-import { ReadableDataStore } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
-import { CheckoutSelectors } from '../../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../../order';
 import { PaymentMethodUninitializedError, PaymentMethodMissingDataError } from '../../errors';
@@ -15,7 +14,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     private _deferredRequestNonce?: DeferredPromise;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _scriptLoader: SquareScriptLoader
     ) {

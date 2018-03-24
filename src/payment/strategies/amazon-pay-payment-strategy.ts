@@ -1,10 +1,9 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 
 import { noop, omit } from 'lodash';
-import { ReadableDataStore } from '@bigcommerce/data-store';
 import { InternalAddress } from '../../address';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
@@ -19,7 +18,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     private _window: OffAmazonPayments.HostWindow;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _remoteCheckoutService: RemoteCheckoutService,
         private _scriptLoader: AmazonPayScriptLoader

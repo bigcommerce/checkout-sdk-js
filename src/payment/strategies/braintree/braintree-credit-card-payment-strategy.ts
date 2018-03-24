@@ -1,21 +1,21 @@
-import { ReadableDataStore } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
 
 import { Payment } from '../..';
-import { CheckoutSelectors } from '../../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { StandardError } from '../../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../../order';
 import isCreditCardLike from '../../is-credit-card';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { PaymentInstrument } from '../../payment';
 import PaymentStrategy from '../payment-strategy';
+
 import BraintreePaymentProcessor, { BraintreeCreditCardInitializeOptions } from './braintree-payment-processor';
 
 export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy {
     private _is3dsEnabled?: boolean;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _braintreePaymentProcessor: BraintreePaymentProcessor
     ) {

@@ -5,7 +5,7 @@ import PaymentStrategy from './payment-strategy';
 export default class SagePayPaymentStrategy extends PaymentStrategy {
     /**
      * @constructor
-     * @param {ReadableDataStore} store
+     * @param {CheckoutStore} store
      * @param {PlaceOrderService} placeOrderService
      * @param {FormPoster} formPoster
      */

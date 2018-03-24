@@ -1,8 +1,7 @@
 /// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
 
 import { omit } from 'lodash';
-import { ReadableDataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { RemoteCheckoutService } from '../../remote-checkout';
 import { NotInitializedError } from '../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
@@ -15,7 +14,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     private _afterpaySdk?: Afterpay.Sdk;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _remoteCheckoutService: RemoteCheckoutService,
         private _afterpayScriptLoader: AfterpayScriptLoader

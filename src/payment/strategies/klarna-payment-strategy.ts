@@ -1,8 +1,7 @@
 /// <reference path="../../remote-checkout/methods/klarna/klarna-sdk.d.ts" />
 
 import { omit } from 'lodash';
-import { ReadableDataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutService } from '../../remote-checkout';
@@ -14,7 +13,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     private _unsubscribe?: (() => void) | undefined;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _remoteCheckoutService: RemoteCheckoutService,
         private _klarnaScriptLoader: KlarnaScriptLoader
