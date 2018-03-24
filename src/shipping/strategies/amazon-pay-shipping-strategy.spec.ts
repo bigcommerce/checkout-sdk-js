@@ -1,6 +1,5 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
-
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -24,6 +23,7 @@ import ShippingAddressActionCreator from '../shipping-address-action-creator';
 import { UPDATE_SHIPPING_ADDRESS_REQUESTED } from '../shipping-address-action-types';
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
 import { SELECT_SHIPPING_OPTION_REQUESTED } from '../shipping-option-action-types';
+import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
 
 describe('AmazonPayShippingStrategy', () => {
@@ -180,6 +180,28 @@ describe('AmazonPayShippingStrategy', () => {
 
         expect(store.dispatch).toHaveBeenCalledWith(initializeShippingAction);
         expect(store.dispatch).toHaveBeenCalledWith(updateAddressAction);
+    });
+
+    it('tracks strategy execution while synchronizing checkout address', async () => {
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const paymentMethod = getAmazonPay();
+
+        jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
+            .mockReturnValue(Observable.of(createAction(INITIALIZE_REMOTE_SHIPPING_REQUESTED)));
+
+        jest.spyOn(addressActionCreator, 'updateAddress')
+            .mockReturnValue(Observable.of(createAction(UPDATE_SHIPPING_ADDRESS_REQUESTED)));
+
+        jest.spyOn(store, 'dispatch');
+
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+
+        document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
+
+        await new Promise((resolve) => process.nextTick(resolve));
+
+        expect(store.dispatch).toHaveBeenCalledWith(createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId: paymentMethod.id }));
+        expect(store.dispatch).toHaveBeenCalledWith(createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId: paymentMethod.id }));
     });
 
     it('sets order reference id when order reference gets created', async () => {

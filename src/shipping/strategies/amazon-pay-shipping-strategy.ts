@@ -1,4 +1,6 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
+
 import { InternalAddress, isAddressEqual } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotInitializedError } from '../../common/error/errors';
@@ -13,6 +15,7 @@ import {
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import ShippingAddressActionCreator from '../shipping-address-action-creator';
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
+import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 import ShippingStrategy from './shipping-strategy';
 
 export default class AmazonPayShippingStrategy extends ShippingStrategy {
@@ -118,14 +121,18 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
     private _synchronizeShippingAddress(): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
+        const methodId = this._paymentMethod && this._paymentMethod.id;
 
-        if (!this._paymentMethod) {
+        if (!methodId || !referenceId) {
             throw new NotInitializedError();
         }
 
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.initializeShipping(this._paymentMethod.id, { referenceId })
+            createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId })
         )
+            .then(() => this._store.dispatch(
+                this._remoteCheckoutActionCreator.initializeShipping(methodId, { referenceId })
+            ))
             .then(({ checkout }) => {
                 const { remoteCheckout = {} } = checkout.getCheckoutMeta();
 
@@ -140,7 +147,13 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 return this._store.dispatch(
                     this._addressActionCreator.updateAddress(remoteCheckout.shippingAddress)
                 );
-            });
+            })
+            .then(() => this._store.dispatch(
+                createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId })
+            ))
+            .catch((error) => this._store.dispatch(
+                createErrorAction(ShippingStrategyActionType.UpdateAddressFailed, error, { methodId })
+            ));
     }
 
     private _handleAddressSelect(
