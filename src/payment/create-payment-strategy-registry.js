@@ -5,6 +5,7 @@ import {
     AmazonPayPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
+    NoPaymentDataRequiredPaymentStrategy,
     LegacyPaymentStrategy,
     OfflinePaymentStrategy,
     OffsitePaymentStrategy,
@@ -89,6 +90,10 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
 
     registry.register('squarev2', () =>
         new SquarePaymentStrategy(store, placeOrderService, squareScriptLoader)
+    );
+
+    registry.register('nopaymentdatarequired', () =>
+        new NoPaymentDataRequiredPaymentStrategy(store, placeOrderService)
     );
 
     return registry;

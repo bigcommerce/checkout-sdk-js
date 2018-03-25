@@ -9,4 +9,5 @@ export { default as PaymentStrategy } from './payment-strategy';
 export { default as PaypalExpressPaymentStrategy } from './paypal-express-payment-strategy';
 export { default as PaypalProPaymentStrategy } from './paypal-pro-payment-strategy';
 export { default as SagePayPaymentStrategy } from './sage-pay-payment-strategy';
+export { NoPaymentDataRequiredPaymentStrategy } from './no-payment-data-required-strategy';
 export { SquarePaymentStrategy } from './square';
