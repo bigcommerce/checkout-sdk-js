@@ -4,7 +4,19 @@
 
 Checkout JS SDK provides you with the tools you need to build your own checkout solution for a BigCommerce store.
 
-The SDK has a convenient application interface for starting and completing a checkout flow. Behind the interface, it handles all the necessary interactions with our Storefront APIs and other third-party SDKs. So you can focus on creating a UI that is unique to your business.
+The SDK has a convenient application interface for starting and completing a checkout flow. Behind the interface, it handles all the necessary interactions with our Storefront APIs and other payment SDKs. So you can focus on creating a checkout experience that is unique to your business.
+
+## What can you do with this?
+
+The Checkout SDK is a JavaScript wrapper for our [Storefront Checkout API](https://developer.bigcommerce.com/api/v3/storefront.html). It provides methods for all the operations needed to process a checkout - signing in a customer, populating shipping & billing addresses, fetching shipping quotes & selecting a shipping method, fetching payment options and finally creating an order. It also provides integrations with all the [payment gateways](https://support.bigcommerce.com/articles/Public/Optimized-Single-Page-Checkout) supported by Optimized One Page Checkout, such as:
+* PayPal Express
+* Braintree
+* Square
+* Amazon
+* Klarna
+* AfterPay
+
+Using these tools in conjunction with your favorite frontend framework, it’s possible to build a complete checkout experience specific to a single store, or a checkout replacement that’s augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/cornerstone/compare/master...davidchin:checkout_sdk_demo) in React to get you started.
 
 
 ## Install
@@ -34,6 +46,7 @@ As our Storefront Web APIs currently don't support CORS, you may not be able to 
 ## Usage
 
 Below are a few examples showing you some of the things you can do with the library.
+
 
 ### Initialize checkout
 
@@ -196,6 +209,13 @@ await service.submitOrder({ payment });
 ```
 
 
+## Notes
+
+* You must have [Optimized One Page Checkout](https://support.bigcommerce.com/articles/Public/Optimized-Single-Page-Checkout/) enabled if your store is using a Stencil theme. Otherwise, any changes you have made to the `checkout.html` template won't be applied.
+* In order to keep up to date on the latest changes, please subscribe to this repository by clicking on the [watch](https://github.com/bigcommerce/checkout-sdk-js/subscription) button.
+
+
+
 ## See also
 
 * [Cornerstone example](https://github.com/bigcommerce/cornerstone/compare/master...davidchin:checkout_sdk_demo) - A sample checkout app written in React.
@@ -211,4 +231,4 @@ If you want to contribute, please refer to the [contribution guide](CONTRIBUTING
 
 ## License
 
-MIT (Pending)
+MIT
