@@ -4,6 +4,7 @@ import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
     BraintreeCreditCardPaymentStrategy,
+    BraintreePaypalPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
     NoPaymentDataRequiredPaymentStrategy,
@@ -101,6 +102,14 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
 
     registry.register('braintree', () =>
         new BraintreeCreditCardPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+    );
+
+    registry.register('braintreepaypal', () =>
+        new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+    );
+
+    registry.register('braintreepaypalcredit', () =>
+        new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessor, true)
     );
 
     return registry;

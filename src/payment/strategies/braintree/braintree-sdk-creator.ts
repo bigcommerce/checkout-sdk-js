@@ -7,6 +7,7 @@ export default class BraintreeSDKCreator {
     private _client?: Promise<Braintree.Client>;
     private _3ds?: Promise<Braintree.ThreeDSecure>;
     private _dataCollector?: Promise<Braintree.DataCollector>;
+    private _paypal?: Promise<Braintree.Paypal>;
     private _clientToken?: string;
 
     constructor(
@@ -28,6 +29,18 @@ export default class BraintreeSDKCreator {
         }
 
         return this._client;
+    }
+
+    getPaypal(): Promise<Braintree.Paypal> {
+        if (!this._paypal) {
+            this._paypal = Promise.all([
+                this.getClient(),
+                this._braintreeScriptLoader.loadPaypal(),
+            ])
+            .then(([client, paypal]) => paypal.create({ client }));
+        }
+
+        return this._paypal;
     }
 
     get3DS(): Promise<Braintree.ThreeDSecure> {

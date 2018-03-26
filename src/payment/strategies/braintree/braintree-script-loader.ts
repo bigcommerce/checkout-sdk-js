@@ -25,4 +25,10 @@ export default class BraintreeScriptLoader {
             .loadScript('//js.braintreegateway.com/web/3.15.0/js/data-collector.min.js')
             .then(() => this._window.braintree!.dataCollector!);
     }
+
+    loadPaypal(): Promise<Braintree.PaypalCreator> {
+        return this._scriptLoader
+            .loadScript('//js.braintreegateway.com/web/3.15.0/js/paypal.min.js')
+            .then(() => this._window.braintree!.paypal!);
+    }
 }
