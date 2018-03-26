@@ -10,9 +10,9 @@
     form-poster "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1"
     object-assign "^4.1.0"
 
-"@bigcommerce/data-store@git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.2":
-  version "0.1.2"
-  resolved "git+ssh://git@github.com/bigcommerce/data-store-js.git#f6488acd70540958017879020fc372ca0235f50c"
+"@bigcommerce/data-store@git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.3":
+  version "0.1.3"
+  resolved "git+ssh://git@github.com/bigcommerce/data-store-js.git#7376b3bc76fb30201272fd0003dccf8c9986b74e"
   dependencies:
     "@types/lodash" "^4.14.92"
     lodash "^4.17.4"
