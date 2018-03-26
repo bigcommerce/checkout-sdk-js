@@ -268,6 +268,18 @@ describe('CheckoutService', () => {
     });
 
     describe('#submitOrder()', () => {
+        let noPaymentDataRequiredPaymentStrategy;
+
+        beforeEach(async () => {
+            await checkoutService.loadCheckout();
+
+            noPaymentDataRequiredPaymentStrategy = {
+                execute: jest.fn(() => Promise.resolve(store.getState())),
+            };
+
+            paymentStrategyRegistry.get = jest.fn(() => noPaymentDataRequiredPaymentStrategy);
+        });
+
         it('finds payment strategy', async () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.submitOrder(getOrderRequestBody());
@@ -289,6 +301,23 @@ describe('CheckoutService', () => {
             await checkoutService.submitOrder(getOrderRequestBody(), options);
 
             expect(paymentStrategy.execute).toHaveBeenCalledWith(getOrderRequestBody(), options);
+        });
+
+        it('executes nopaymentrequired strategy if payment data is not required', async () => {
+            jest.spyOn(checkoutClient, 'loadCheckout').mockReturnValue(
+                Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
+                    data: { customer: { storeCredit: 9999 } },
+                })))
+            );
+            const orderWithStoreCredit = { ...getOrderRequestBody(), useStoreCredit: true };
+            await checkoutService.loadCheckout();
+
+            await checkoutService.loadPaymentMethods();
+            await checkoutService.submitOrder(orderWithStoreCredit);
+
+            expect(paymentStrategyRegistry.get).toHaveBeenCalledWith('nopaymentdatarequired');
+            expect(noPaymentDataRequiredPaymentStrategy.execute)
+                .toHaveBeenCalledWith(orderWithStoreCredit, undefined);
         });
 
         it('throws error if payment method is not found or loaded', () => {

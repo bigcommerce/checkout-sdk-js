@@ -137,11 +137,15 @@ export default class CheckoutService {
      */
     submitOrder(payload, options) {
         const { checkout } = this._store.getState();
-        const { payment = {} } = payload;
+        const { payment = {}, useStoreCredit } = payload;
         const method = checkout.getPaymentMethod(payment.name, payment.gateway);
 
         if (!method) {
             throw new MissingDataError();
+        }
+
+        if (!checkout.isPaymentDataRequired(useStoreCredit)) {
+            return this._paymentStrategyRegistry.get('nopaymentdatarequired').execute(payload, options);
         }
 
         return this._paymentStrategyRegistry.getByMethod(method).execute(payload, options);
