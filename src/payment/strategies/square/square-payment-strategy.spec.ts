@@ -1,6 +1,6 @@
 /// <reference path="./square-form.d.ts" />
 
-import { createClient as createPaymentClient } from 'bigpay-client';
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../../checkout';
 import { createPlaceOrderService } from '../../../order';

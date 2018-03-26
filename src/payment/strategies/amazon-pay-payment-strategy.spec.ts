@@ -2,7 +2,7 @@
 
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
-import { createClient as createPaymentClient } from 'bigpay-client';
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { CartActionCreator } from '../../cart';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
