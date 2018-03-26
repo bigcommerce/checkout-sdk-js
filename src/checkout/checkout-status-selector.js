@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
-import { bindDecorator as bind } from '../common/utility';
+import { selectorDecorator as selector } from '../common/selector';
 
-@bind
+@selector
 export default class CheckoutStatusSelector {
     /**
      * @constructor
