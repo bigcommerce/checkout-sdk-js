@@ -41,7 +41,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 
             if (this._deferredRequestNonce) {
                 this._deferredRequestNonce.reject(new TimeoutError());
-            };
+            }
 
             this._deferredRequestNonce = { resolve, reject };
             this._paymentForm.requestCardNonce();
@@ -55,7 +55,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         if (!widgetConfig) {
             throw new PaymentMethodMissingDataError('widgetConfig');
         }
-        
+
         return {
             ...widgetConfig,
             ...paymentMethod.initializationData,
@@ -77,8 +77,8 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 cardNonceResponseReceived: (errors, nonce) => {
                     this._cardNonceResponseReceived(errors, nonce);
                 },
-            }
-        }
+            },
+        };
     }
 
     private _cardNonceResponseReceived(errors: any, nonce: string): void {
