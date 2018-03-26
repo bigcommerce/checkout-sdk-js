@@ -1,5 +1,5 @@
 import { omit } from 'lodash';
-import { createClient as createPaymentClient } from 'bigpay-client';
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import { createPlaceOrderService, PlaceOrderService } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';

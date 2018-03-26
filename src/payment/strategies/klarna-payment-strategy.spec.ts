@@ -1,5 +1,5 @@
 import { merge } from 'lodash';
-import { createClient as createPaymentClient } from 'bigpay-client';
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { CartActionCreator } from '../../cart';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
