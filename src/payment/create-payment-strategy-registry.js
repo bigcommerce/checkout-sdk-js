@@ -1,4 +1,4 @@
-import { createFormPoster } from 'form-poster';
+import { createFormPoster } from '@bigcommerce/form-poster';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import {
     AfterpayPaymentStrategy,

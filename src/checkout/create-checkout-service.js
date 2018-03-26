@@ -1,5 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createClient as createPaymentClient } from 'bigpay-client';
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator, CartRequestSender } from '../cart';
 import { CheckoutService } from '../checkout';

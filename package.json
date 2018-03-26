@@ -1,7 +1,8 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "BigCommerce Checkout JavaScript SDK",
+  "license": "MIT",
   "main": "lib/index.js",
   "files": [
     "dist/",
@@ -47,8 +48,8 @@
     "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.1",
     "@bigcommerce/script-loader": "git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.2",
     "@types/lodash": "^4.14.92",
-    "bigpay-client": "git+ssh://git@github.com/bigcommerce-labs/bigpay-client-js.git#2.10.1",
-    "form-poster": "git+ssh://git@github.com/bigcommerce-labs/form-poster-js.git#1.1.1",
+    "@bigcommerce/bigpay-client": "git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#2.10.1",
+    "@bigcommerce/form-poster": "git+ssh://git@github.com/bigcommerce/form-poster-js.git#1.1.1",
     "lodash": "^4.17.4",
     "memoizee": "^0.4.11",
     "messageformat": "0.3.0",

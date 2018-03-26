@@ -1,6 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { createClient as createPaymentClient } from 'bigpay-client';
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { CartActionCreator } from '../../cart';
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
