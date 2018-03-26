@@ -19,7 +19,6 @@ export default class CheckoutSelector {
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
-     * @param {CacheFactory} cacheFactory
      */
     constructor(
         billingAddress,
@@ -35,8 +34,7 @@ export default class CheckoutSelector {
         remoteCheckout,
         shippingAddress,
         shippingCountries,
-        shippingOptions,
-        cacheFactory
+        shippingOptions
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
@@ -52,41 +50,31 @@ export default class CheckoutSelector {
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
-        this._cacheFactory = cacheFactory;
     }
 
     /**
      * @return {CheckoutMeta}
      */
     getCheckoutMeta() {
-        return this._cacheFactory.get('getCheckoutMeta')
-            .retain((orderMeta,
-                quoteMeta,
-                isCartVerified,
-                paymentAuthToken,
-                instrumentsMeta,
-                remoteCheckout,
-                remoteCheckoutMeta
-            ) => ({
-                ...orderMeta,
-                ...(quoteMeta && quoteMeta.request),
-                ...instrumentsMeta,
-                isCartVerified,
-                paymentAuthToken,
-                remoteCheckout: {
-                    ...remoteCheckout,
-                    ...remoteCheckoutMeta,
-                },
-            }))
-            .retrieve(
-                this._order.getOrderMeta(),
-                this._quote.getQuoteMeta(),
-                this._cart.isValid(),
-                this._order.getPaymentAuthToken(),
-                this._instruments.getInstrumentsMeta(),
-                this._remoteCheckout.getCheckout(),
-                this._remoteCheckout.getCheckoutMeta()
-            );
+        const orderMeta = this._order.getOrderMeta();
+        const quoteMeta = this._quote.getQuoteMeta();
+        const isCartVerified = this._cart.isValid();
+        const paymentAuthToken = this._order.getPaymentAuthToken();
+        const instrumentsMeta = this._instruments.getInstrumentsMeta();
+        const remoteCheckout = this._remoteCheckout.getCheckout();
+        const remoteCheckoutMeta = this._remoteCheckout.getCheckoutMeta();
+
+        return {
+            ...orderMeta,
+            ...(quoteMeta && quoteMeta.request),
+            ...instrumentsMeta,
+            isCartVerified,
+            paymentAuthToken,
+            remoteCheckout: {
+                ...remoteCheckout,
+                ...remoteCheckoutMeta,
+            },
+        };
     }
 
     /**

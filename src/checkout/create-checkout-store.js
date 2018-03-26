@@ -1,5 +1,4 @@
 import { createDataStore } from '@bigcommerce/data-store';
-import { CacheFactory } from '../common/cache';
 import { cartReducer, CartSelector } from '../cart';
 import { CheckoutErrorSelector, CheckoutSelector, CheckoutStatusSelector } from '../checkout';
 import { configReducer, ConfigSelector } from '../config';
@@ -24,9 +23,8 @@ import createActionTransformer from './create-action-transformer';
  * @return {DataStore}
  */
 export default function createCheckoutStore(initialState = {}, options = {}) {
-    const cacheFactory = new CacheFactory();
     const actionTransformer = createActionTransformer(createRequestErrorFactory());
-    const stateTransformer = (state) => createCheckoutSelectors(state, cacheFactory, options);
+    const stateTransformer = (state) => createCheckoutSelectors(state, options);
 
     return createDataStore(
         createCheckoutReducers(),
@@ -64,12 +62,11 @@ function createCheckoutReducers() {
 /**
  * @private
  * @param {CheckoutState} state
- * @param {CacheFactory} cacheFactory
  * @param {Object} [options={}]
  * @param {boolean} [options.shouldWarnMutation=true]
  * @return {CheckoutSelectors}
  */
-function createCheckoutSelectors(state, cacheFactory, options) {
+function createCheckoutSelectors(state, options) {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
     const config = new ConfigSelector(state.config);
@@ -80,7 +77,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const form = new FormSelector(state.config);
     const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
-    const order = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
+    const order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
     const paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
     const quote = new QuoteSelector(state.quote);
@@ -104,8 +101,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         remoteCheckout,
         shippingAddress,
         shippingCountries,
-        shippingOptions,
-        cacheFactory
+        shippingOptions
     );
 
     const errors = new CheckoutErrorSelector(
