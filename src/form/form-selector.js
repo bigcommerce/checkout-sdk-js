@@ -18,7 +18,6 @@ export default class FormSelector {
         const selectedCountry = find(countries, { code: countryCode });
 
         return this._config.storeConfig.formFields.shippingAddressFields
-            .map((field) => field.name === 'phone' ? { ...field, required: false } : field)
             .map((field) => this._processField(field, countries, selectedCountry));
     }
 
