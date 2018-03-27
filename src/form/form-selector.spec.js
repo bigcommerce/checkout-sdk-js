@@ -82,14 +82,6 @@ describe('FormSelector', () => {
 
             expect(postCode.required).toBe(false);
         });
-
-        it('makes phone number NOT required', () => {
-            const forms = formSelector.getShippingAddressFields(countries, 'JP');
-            const phone = find(forms, { name: 'phone' });
-
-            expect(find(getFormFields(), { name: 'phone' }).required).toBe(true);
-            expect(phone.required).toBe(false);
-        });
     });
 
     describe('#getBillingAddressFields()', () => {
@@ -159,13 +151,6 @@ describe('FormSelector', () => {
             const postCode = find(forms, { name: 'postCode' });
 
             expect(postCode.required).toBe(false);
-        });
-
-        it('does not modify the required value for phone number', () => {
-            const forms = formSelector.getBillingAddressFields(countries, 'JP');
-            const phone = find(forms, { name: 'phone' });
-
-            expect(phone.required).toBe(true);
         });
     });
 });
