@@ -1,5 +1,5 @@
-import { isEqual } from 'lodash';
-import * as memoize from 'memoizee';
+import { isEqual, memoize } from 'lodash';
+import CacheKeyResolver from './cache-key-resolver';
 
 import { bindDecorator } from '../utility';
 
@@ -35,14 +35,20 @@ function selectorMethodDecorator<T extends Method>(target: object, key: string, 
         return descriptor;
     }
 
+    let resolver = new CacheKeyResolver();
     let method = descriptor.value;
-    let memoizedMethod = memoize(method, { length: false });
+    let memoizedMethod = memoize(method, (...args) => resolver.getKey(...args));
 
     return bindDecorator(target, key, {
         get() {
             const value = ((...args: any[]) => {
-                const newValue = method.call(this, ...args);
                 const cachedValue = memoizedMethod.call(this, ...args);
+
+                if (resolver.getUsedCount(...args) === 1) {
+                    return cachedValue;
+                }
+
+                const newValue = method.call(this, ...args);
 
                 if (isEqual(newValue, cachedValue)) {
                     return cachedValue;
@@ -56,8 +62,9 @@ function selectorMethodDecorator<T extends Method>(target: object, key: string, 
             return value;
         },
         set(value) {
+            resolver = new CacheKeyResolver();
             method = value;
-            memoizedMethod = memoize(method, { length: false });
+            memoizedMethod = memoize(method, (...args) => resolver.getKey(...args));
         },
     });
 }
