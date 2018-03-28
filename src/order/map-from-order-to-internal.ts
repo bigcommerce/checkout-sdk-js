@@ -26,12 +26,7 @@ export default function mapFromOrderToInternal(order: Order, fallbackOrder: Inte
         },
         coupon: {
             discountedAmount: fallbackOrder.coupon.discountedAmount,
-            coupons: order.coupons.map(coupon =>
-                mapToInternalCoupon(
-                    coupon,
-                    find(fallbackOrder.coupon.coupons, { code: coupon.code })!
-                )
-            ),
+            coupons: order.coupons.map(mapToInternalCoupon),
         },
         discount: {
             amount: order.discountAmount,

@@ -20,17 +20,18 @@ describe('Coupon Request Sender', () => {
         expect(couponRequestSender).toBeDefined();
     });
 
+    const checkoutId = 'checkoutId1234';
+    const couponCode = 'myCouponCode1234';
+
     describe('#applyCoupon()', () => {
         it('applies coupon code', async () => {
             const response = getResponse(getCouponResponseBody());
-
             requestSender.post.mockReturnValue(Promise.resolve(response));
 
-            const couponCode = 'myCouponCode1234';
-            const output = await couponRequestSender.applyCoupon(couponCode);
+            const output = await couponRequestSender.applyCoupon(checkoutId, couponCode);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/coupon', {
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons', {
                 body: { couponCode },
             });
         });
@@ -38,14 +39,12 @@ describe('Coupon Request Sender', () => {
         it('applies coupon with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCouponResponseBody());
-
             requestSender.post.mockReturnValue(Promise.resolve(response));
 
-            const couponCode = 'myCouponCode1234';
-            const output = await couponRequestSender.applyCoupon(couponCode, options);
+            const output = await couponRequestSender.applyCoupon(checkoutId, couponCode, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/coupon', {
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons', {
                 ...options,
                 body: { couponCode },
             });
@@ -55,27 +54,23 @@ describe('Coupon Request Sender', () => {
     describe('#removeCoupon()', () => {
         it('removes coupon code', async () => {
             const response = getResponse(getCouponResponseBody());
-
             requestSender.delete.mockReturnValue(Promise.resolve(response));
 
-            const couponCode = 'myCouponCode1234';
-            const output = await couponRequestSender.removeCoupon(couponCode);
+            const output = await couponRequestSender.removeCoupon(checkoutId, couponCode);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/coupon/myCouponCode1234', {});
+            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', {});
         });
 
         it('removes coupon code with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCouponResponseBody());
-
             requestSender.delete.mockReturnValue(Promise.resolve(response));
 
-            const couponCode = 'myCouponCode1234';
-            const output = await couponRequestSender.removeCoupon(couponCode, options);
+            const output = await couponRequestSender.removeCoupon(checkoutId, couponCode, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/coupon/myCouponCode1234', options);
+            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', options);
         });
     });
 });

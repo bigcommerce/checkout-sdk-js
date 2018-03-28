@@ -7,6 +7,7 @@ import { getConfigState } from '../config/configs.mock';
 import { getConsignment } from '../shipping/consignments.mock';
 import { getCountriesState } from '../geography/countries.mock';
 import { getCustomerState } from '../customer/internal-customers.mock';
+import { getGiftCertificate } from '../coupon/gift-certificates.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
@@ -32,7 +33,9 @@ export function getCheckout(): Checkout {
         taxTotal: 0,
         grandTotal: 190,
         storeCredit: 0,
-        giftCertificates: [],
+        giftCertificates: [
+            getGiftCertificate(),
+        ],
         balanceDue: 0,
         createdTime: '2018-03-06T04:41:49+00:00',
         updatedTime: '2018-03-07T03:44:51+00:00',

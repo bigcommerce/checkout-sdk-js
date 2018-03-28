@@ -1,4 +1,4 @@
-import { find } from 'lodash';
+import { find, reduce } from 'lodash';
 import { Checkout } from '../checkout';
 import { default as InternalOrder } from './internal-order';
 import { mapToInternalCart, mapToInternalLineItems } from '../cart';
@@ -18,13 +18,10 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
             integerAmount: existingOrder.subtotal.integerAmount,
         },
         coupon: {
-            discountedAmount: existingOrder.coupon.discountedAmount,
-            coupons: checkout.cart.coupons.map((coupon) =>
-                mapToInternalCoupon(
-                    coupon,
-                    find(existingOrder.coupon.coupons, { code: coupon.code })!
-                )
-            ),
+            discountedAmount: reduce(checkout.cart.coupons, (sum, coupon) => {
+                return sum + coupon.discountedAmount;
+            }, 0),
+            coupons: checkout.cart.coupons.map(mapToInternalCoupon),
         },
         discount: {
             amount: order.discountAmount,
@@ -32,13 +29,10 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
         },
         discountNotifications: existingOrder.discountNotifications,
         giftCertificate: {
-            totalDiscountedAmount: existingOrder.giftCertificate.totalDiscountedAmount,
-            appliedGiftCertificates: checkout.giftCertificates.map((giftCertificate) =>
-                mapToInternalGiftCertificate(
-                    giftCertificate,
-                    find(existingOrder.giftCertificate.appliedGiftCertificates, { code: giftCertificate.code })!
-                )
-            ),
+            totalDiscountedAmount: reduce(checkout.giftCertificates, (sum, certificate) => {
+                return sum + certificate.used;
+            }, 0),
+            appliedGiftCertificates: checkout.giftCertificates.map(mapToInternalGiftCertificate),
         },
         shipping: {
             amount: checkout.shippingCostTotal,

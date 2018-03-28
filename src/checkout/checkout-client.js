@@ -196,39 +196,43 @@ export default class CheckoutClient {
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    applyCoupon(code, options) {
-        return this._couponRequestSender.applyCoupon(code, options);
+    applyCoupon(checkoutId, code, options) {
+        return this._couponRequestSender.applyCoupon(checkoutId, code, options);
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    removeCoupon(code, options) {
-        return this._couponRequestSender.removeCoupon(code, options);
+    removeCoupon(checkoutId, code, options) {
+        return this._couponRequestSender.removeCoupon(checkoutId, code, options);
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    applyGiftCertificate(code, options) {
-        return this._giftCertificateRequestSender.applyGiftCertificate(code, options);
+    applyGiftCertificate(checkoutId, code, options) {
+        return this._giftCertificateRequestSender.applyGiftCertificate(checkoutId, code, options);
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    removeGiftCertificate(code, options) {
-        return this._giftCertificateRequestSender.removeGiftCertificate(code, options);
+    removeGiftCertificate(checkoutId, code, options) {
+        return this._giftCertificateRequestSender.removeGiftCertificate(checkoutId, code, options);
     }
 
 

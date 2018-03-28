@@ -36,6 +36,10 @@ export default function cartReducer(state = {}, action) {
 function dataReducer(data, action) {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case couponActionTypes.APPLY_COUPON_SUCCEEDED:
+    case couponActionTypes.REMOVE_COUPON_SUCCEEDED:
+    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
+    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
         return { ...data, ...mapToInternalCart(action.payload, data) };
 
     case cartActionTypes.CART_UPDATED:
@@ -49,10 +53,6 @@ function dataReducer(data, action) {
     case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
     case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
-    case couponActionTypes.APPLY_COUPON_SUCCEEDED:
-    case couponActionTypes.REMOVE_COUPON_SUCCEEDED:
-    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
-    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.cart } : data;
 
     default:

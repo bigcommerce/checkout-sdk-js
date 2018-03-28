@@ -12,17 +12,18 @@ export default class CouponActionCreator {
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */
-    applyCoupon(code, options) {
+    applyCoupon(checkoutId, code, options) {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.APPLY_COUPON_REQUESTED));
 
-            this._checkoutClient.applyCoupon(code, options)
-                .then(({ body: { data } = {} }) => {
-                    observer.next(createAction(actionTypes.APPLY_COUPON_SUCCEEDED, data));
+            this._checkoutClient.applyCoupon(checkoutId, code, options)
+                .then(({ body } = {}) => {
+                    observer.next(createAction(actionTypes.APPLY_COUPON_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch((response) => {
@@ -32,17 +33,18 @@ export default class CouponActionCreator {
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */
-    removeCoupon(code, options) {
+    removeCoupon(checkoutId, code, options) {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.REMOVE_COUPON_REQUESTED));
 
-            this._checkoutClient.removeCoupon(code, options)
-                .then(({ body: { data } = {} }) => {
-                    observer.next(createAction(actionTypes.REMOVE_COUPON_SUCCEEDED, data));
+            this._checkoutClient.removeCoupon(checkoutId, code, options)
+                .then(({ body } = {}) => {
+                    observer.next(createAction(actionTypes.REMOVE_COUPON_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch((response) => {
