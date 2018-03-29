@@ -1,6 +1,7 @@
 /// <reference path="./square-form.d.ts" />
 
 import { ReadableDataStore } from '@bigcommerce/data-store';
+import { omit } from 'lodash';
 import { CheckoutSelectors } from '../../../checkout';
 import { TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../../order';
@@ -46,7 +47,9 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             this._deferredRequestNonce = { resolve, reject };
             this._paymentForm.requestCardNonce();
         })
-        .then(paymentData => this._placeOrderService.submitOrder(payload, paymentData));
+        .then(paymentData => this._placeOrderService.submitOrder(
+            omit(payload, 'payment'), true, options)
+        );
     }
 
     private _getFormOptions(options: InitializeOptions, deferred: DeferredPromise): Square.FormOptions {

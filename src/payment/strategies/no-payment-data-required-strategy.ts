@@ -6,7 +6,6 @@ import PaymentStrategy from './payment-strategy';
 
 export default class NoPaymentDataRequiredPaymentStrategy extends PaymentStrategy {
     execute(orderRequest: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
-        const { useStoreCredit } = orderRequest;
-        return this._placeOrderService.submitOrder(omit(orderRequest, 'payment'), useStoreCredit, options);
+        return this._placeOrderService.submitOrder(omit(orderRequest, 'payment'), true, options);
     }
 }
