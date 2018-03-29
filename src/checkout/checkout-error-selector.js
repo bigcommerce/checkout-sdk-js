@@ -12,6 +12,7 @@ export default class CheckoutErrorSelector {
      * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
+     * @param {PaymentStrategySelector} paymentStrategy
      * @param {QuoteSelector} quote
      * @param {RemoteCheckout} remoteCheckout
      * @param {ShippingAddressSelector} shippingAddress
@@ -31,6 +32,7 @@ export default class CheckoutErrorSelector {
         instruments,
         order,
         paymentMethods,
+        paymentStrategy,
         quote,
         remoteCheckout,
         shippingAddress,
@@ -49,6 +51,7 @@ export default class CheckoutErrorSelector {
         this._instruments = instruments;
         this._order = order;
         this._paymentMethods = paymentMethods;
+        this._paymentStrategy = paymentStrategy;
         this._quote = quote;
         this._remoteCheckout = remoteCheckout;
         this._shippingAddress = shippingAddress;
@@ -101,14 +104,14 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getSubmitOrderError() {
-        return this._order.getSubmitError();
+        return this._paymentStrategy.getExecuteError();
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getFinalizeOrderError() {
-        return this._order.getFinalizeError();
+        return this._paymentStrategy.getFinalizeError();
     }
 
     /**
@@ -166,7 +169,7 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getInitializePaymentMethodError(methodId) {
-        return this._paymentMethods.getInitializeError(methodId) || this._remoteCheckout.getInitializePaymentError(methodId);
+        return this._paymentStrategy.getInitializeError(methodId);
     }
 
     /**

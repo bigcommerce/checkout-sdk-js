@@ -12,6 +12,7 @@ export default class CheckoutStatusSelector {
      * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
+     * @param {PaymentStrategySelector} paymentStrategy
      * @param {QuoteSelector} quote
      * @param {RemoteCheckoutSelector} remoteCheckout
      * @param {ShippingAddressSelector} shippingAddress
@@ -31,6 +32,7 @@ export default class CheckoutStatusSelector {
         instruments,
         order,
         paymentMethods,
+        paymentStrategy,
         quote,
         remoteCheckout,
         shippingAddress,
@@ -49,6 +51,7 @@ export default class CheckoutStatusSelector {
         this._instruments = instruments;
         this._order = order;
         this._paymentMethods = paymentMethods;
+        this._paymentStrategy = paymentStrategy;
         this._quote = quote;
         this._remoteCheckout = remoteCheckout;
         this._shippingAddress = shippingAddress;
@@ -101,14 +104,14 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isSubmittingOrder() {
-        return this._order.isSubmitting();
+        return this._paymentStrategy.isExecuting();
     }
 
     /**
      * @return {boolean}
      */
     isFinalizingOrder() {
-        return this._order.isFinalizing();
+        return this._paymentStrategy.isFinalizing();
     }
 
     /**
@@ -166,11 +169,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isInitializingPaymentMethod(methodId) {
-        return (
-            this._paymentMethods.isInitializingMethod(methodId) ||
-            this._remoteCheckout.isInitializingPayment(methodId) ||
-            this._remoteCheckout.isInitializingBilling(methodId)
-        );
+        return this._paymentStrategy.isInitializing(methodId);
     }
 
     /**

@@ -1,13 +1,26 @@
+/// <reference path="../common/form-poster/index.d.ts" />
+/// <reference path="../common/http-request/request-sender.d.ts" />
 import { createFormPoster } from '@bigcommerce/form-poster';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
+
+import { BillingAddressActionCreator } from '../billing';
+import { CheckoutClient, CheckoutStore } from '../checkout';
+import { createPlaceOrderService } from '../order';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
+import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
+import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
+import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
+
+import PaymentStrategyRegistry from './payment-strategy-registry';
 import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
     BraintreeCreditCardPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
-    NoPaymentDataRequiredPaymentStrategy,
     LegacyPaymentStrategy,
+    NoPaymentDataRequiredPaymentStrategy,
     OfflinePaymentStrategy,
     OffsitePaymentStrategy,
     PaypalExpressPaymentStrategy,
@@ -15,42 +28,32 @@ import {
     SagePayPaymentStrategy,
     SquarePaymentStrategy,
 } from './strategies';
-import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
-import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
-import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
-import { createRemoteCheckoutService } from '../remote-checkout';
-import { createPlaceOrderService } from '../order';
-import { SquareScriptLoader } from './strategies/square';
 import { createBraintreePaymentProcessor } from './strategies/braintree';
-import PaymentStrategyRegistry from './payment-strategy-registry';
+import { SquareScriptLoader } from './strategies/square';
 
-/**
- * Creates a Payment Strategy Registry and registers available payment strategies.
- * @param {DataStore} store
- * @param {CheckoutClient} client
- * @param {Client} paymentClient
- * @return {PaymentStrategyRegistry}
- */
-export default function createPaymentStrategyRegistry(store, client, paymentClient) {
+export default function createPaymentStrategyRegistry(
+    store: CheckoutStore,
+    client: CheckoutClient,
+    paymentClient: any
+) {
     const { checkout } = store.getState();
     const registry = new PaymentStrategyRegistry(checkout.getConfig());
     const placeOrderService = createPlaceOrderService(store, client, paymentClient);
-    const remoteCheckoutService = createRemoteCheckoutService(store, client);
     const scriptLoader = getScriptLoader();
-    const afterpayScriptLoader = createAfterpayScriptLoader();
-    const klarnaScriptLoader = new KlarnaScriptLoader(scriptLoader);
-    const squareScriptLoader = new SquareScriptLoader(scriptLoader);
-    const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
+    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+        new RemoteCheckoutRequestSender(createRequestSender())
+    );
 
     registry.register('afterpay', () =>
-        new AfterpayPaymentStrategy(store, placeOrderService, remoteCheckoutService, afterpayScriptLoader)
+        new AfterpayPaymentStrategy(store, placeOrderService, remoteCheckoutActionCreator, createAfterpayScriptLoader())
     );
 
     registry.register('amazon', () =>
         new AmazonPayPaymentStrategy(
             store,
             placeOrderService,
-            remoteCheckoutService,
+            new BillingAddressActionCreator(client),
+            remoteCheckoutActionCreator,
             new AmazonPayScriptLoader(scriptLoader)
         )
     );
@@ -60,7 +63,7 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
     );
 
     registry.register('klarna', () =>
-        new KlarnaPaymentStrategy(store, placeOrderService, remoteCheckoutService, klarnaScriptLoader)
+        new KlarnaPaymentStrategy(store, placeOrderService, remoteCheckoutActionCreator, new KlarnaScriptLoader(scriptLoader))
     );
 
     registry.register('legacy', () =>
@@ -92,7 +95,7 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
     );
 
     registry.register('squarev2', () =>
-        new SquarePaymentStrategy(store, placeOrderService, squareScriptLoader)
+        new SquarePaymentStrategy(store, placeOrderService, new SquareScriptLoader(scriptLoader))
     );
 
     registry.register('nopaymentdatarequired', () =>
@@ -100,7 +103,7 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
     );
 
     registry.register('braintree', () =>
-        new BraintreeCreditCardPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+        new BraintreeCreditCardPaymentStrategy(store, placeOrderService, createBraintreePaymentProcessor(scriptLoader))
     );
 
     return registry;

@@ -5,7 +5,7 @@ import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector } from '../customer';
 import { OrderSelector } from '../order';
-import { PaymentMethodSelector } from '../payment';
+import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
@@ -25,6 +25,7 @@ describe('CheckoutStatusSelector', () => {
     let instruments;
     let order;
     let paymentMethods;
+    let paymentStrategy;
     let quote;
     let remoteCheckout;
     let shippingAddress;
@@ -44,6 +45,7 @@ describe('CheckoutStatusSelector', () => {
         giftCertificate = new GiftCertificateSelector();
         order = new OrderSelector();
         paymentMethods = new PaymentMethodSelector();
+        paymentStrategy = new PaymentStrategySelector();
         instruments = new InstrumentSelector();
         quote = new QuoteSelector();
         remoteCheckout = new RemoteCheckoutSelector();
@@ -64,6 +66,7 @@ describe('CheckoutStatusSelector', () => {
             instruments,
             order,
             paymentMethods,
+            paymentStrategy,
             quote,
             remoteCheckout,
             shippingAddress,
@@ -91,33 +94,33 @@ describe('CheckoutStatusSelector', () => {
 
     describe('#isSubmittingOrder()', () => {
         it('returns true if submitting order', () => {
-            jest.spyOn(order, 'isSubmitting').mockReturnValue(true);
+            jest.spyOn(paymentStrategy, 'isExecuting').mockReturnValue(true);
 
             expect(statuses.isSubmittingOrder()).toEqual(true);
-            expect(order.isSubmitting).toHaveBeenCalled();
+            expect(paymentStrategy.isExecuting).toHaveBeenCalled();
         });
 
         it('returns false if submitting order', () => {
-            jest.spyOn(order, 'isSubmitting').mockReturnValue(false);
+            jest.spyOn(paymentStrategy, 'isExecuting').mockReturnValue(false);
 
             expect(statuses.isSubmittingOrder()).toEqual(false);
-            expect(order.isSubmitting).toHaveBeenCalled();
+            expect(paymentStrategy.isExecuting).toHaveBeenCalled();
         });
     });
 
     describe('#isFinalizingOrder()', () => {
         it('returns true if finalizing order', () => {
-            jest.spyOn(order, 'isFinalizing').mockReturnValue(true);
+            jest.spyOn(paymentStrategy, 'isFinalizing').mockReturnValue(true);
 
             expect(statuses.isFinalizingOrder()).toEqual(true);
-            expect(order.isFinalizing).toHaveBeenCalled();
+            expect(paymentStrategy.isFinalizing).toHaveBeenCalled();
         });
 
         it('returns false if finalizing order', () => {
-            jest.spyOn(order, 'isFinalizing').mockReturnValue(false);
+            jest.spyOn(paymentStrategy, 'isFinalizing').mockReturnValue(false);
 
             expect(statuses.isFinalizingOrder()).toEqual(false);
-            expect(order.isFinalizing).toHaveBeenCalled();
+            expect(paymentStrategy.isFinalizing).toHaveBeenCalled();
         });
     });
 
@@ -235,45 +238,19 @@ describe('CheckoutStatusSelector', () => {
 
     describe('#isInitializingPaymentMethod()', () => {
         beforeEach(() => {
-            jest.spyOn(paymentMethods, 'isInitializingMethod').mockReturnValue(false);
-            jest.spyOn(remoteCheckout, 'isInitializingPayment').mockReturnValue(false);
-            jest.spyOn(remoteCheckout, 'isInitializingBilling').mockReturnValue(false);
+            jest.spyOn(paymentStrategy, 'isInitializing').mockReturnValue(false);
         });
 
         it('returns true if initializing payment', () => {
-            jest.spyOn(paymentMethods, 'isInitializingMethod').mockReturnValue(true);
+            jest.spyOn(paymentStrategy, 'isInitializing').mockReturnValue(true);
 
             expect(statuses.isInitializingPaymentMethod('foobar')).toEqual(true);
-            expect(paymentMethods.isInitializingMethod).toHaveBeenCalledWith('foobar');
+            expect(paymentStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
         it('returns false if not initializing payment', () => {
             expect(statuses.isInitializingPaymentMethod('foobar')).toEqual(false);
-            expect(paymentMethods.isInitializingMethod).toHaveBeenCalledWith('foobar');
-        });
-
-        it('returns true if initializing remote payment', () => {
-            jest.spyOn(remoteCheckout, 'isInitializingPayment').mockReturnValue(true);
-
-            expect(statuses.isInitializingPaymentMethod()).toEqual(true);
-            expect(remoteCheckout.isInitializingPayment).toHaveBeenCalled();
-        });
-
-        it('returns false if not initializing remote payment', () => {
-            expect(statuses.isInitializingPaymentMethod()).toEqual(false);
-            expect(remoteCheckout.isInitializingPayment).toHaveBeenCalled();
-        });
-
-        it('returns true if initializing remote billing', () => {
-            jest.spyOn(remoteCheckout, 'isInitializingBilling').mockReturnValue(true);
-
-            expect(statuses.isInitializingPaymentMethod()).toEqual(true);
-            expect(remoteCheckout.isInitializingBilling).toHaveBeenCalled();
-        });
-
-        it('returns false if not initializing remote billing', () => {
-            expect(statuses.isInitializingPaymentMethod()).toEqual(false);
-            expect(remoteCheckout.isInitializingBilling).toHaveBeenCalled();
+            expect(paymentStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });
 

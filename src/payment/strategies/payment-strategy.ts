@@ -1,5 +1,4 @@
-import { ReadableDataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { OrderRequestBody } from '../../order';
 import PaymentMethod from '../payment-method';
@@ -9,7 +8,7 @@ export default abstract class PaymentStrategy {
     protected _paymentMethod?: PaymentMethod;
 
     constructor(
-        protected _store: ReadableDataStore<CheckoutSelectors>,
+        protected _store: CheckoutStore,
         protected _placeOrderService: any
     ) {}
 

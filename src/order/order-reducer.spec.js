@@ -62,16 +62,6 @@ describe('orderReducer()', () => {
         }));
     });
 
-    it('returns new data while submitting order', () => {
-        const action = {
-            type: orderActionTypes.SUBMIT_ORDER_REQUESTED,
-        };
-
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isSubmitting: true },
-        }));
-    });
-
     it('returns new data if it is submitted successfully', () => {
         const response = getSubmitOrderResponseBody();
         const headers = getSubmitOrderResponseHeaders();
@@ -90,30 +80,6 @@ describe('orderReducer()', () => {
                 token: headers.token,
             }),
             data: action.payload.order,
-            statuses: { isSubmitting: false },
-        }));
-    });
-
-    it('returns new data if it is not submitted successfully', () => {
-        const response = getErrorResponse();
-        const action = {
-            type: orderActionTypes.SUBMIT_ORDER_FAILED,
-            payload: response.data,
-        };
-
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { submitError: action.payload },
-            statuses: { isSubmitting: false },
-        }));
-    });
-
-    it('returns new data while finalizing order', () => {
-        const action = {
-            type: orderActionTypes.FINALIZE_ORDER_REQUESTED,
-        };
-
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isFinalizing: true },
         }));
     });
 
@@ -127,20 +93,6 @@ describe('orderReducer()', () => {
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
             data: action.payload.order,
-            statuses: { isFinalizing: false },
-        }));
-    });
-
-    it('returns new data if it is not finalized successfully', () => {
-        const response = getErrorResponse();
-        const action = {
-            type: orderActionTypes.FINALIZE_ORDER_FAILED,
-            payload: response.data,
-        };
-
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { finalizeError: action.payload },
-            statuses: { isFinalizing: false },
         }));
     });
 });

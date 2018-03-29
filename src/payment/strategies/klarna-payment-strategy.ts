@@ -1,11 +1,10 @@
 /// <reference path="../../remote-checkout/methods/klarna/klarna-sdk.d.ts" />
 
 import { omit } from 'lodash';
-import { ReadableDataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
-import { RemoteCheckoutService } from '../../remote-checkout';
+import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import PaymentMethod from '../payment-method';
 import PaymentStrategy from './payment-strategy';
 
@@ -14,9 +13,9 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     private _unsubscribe?: (() => void) | undefined;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         placeOrderService: PlaceOrderService,
-        private _remoteCheckoutService: RemoteCheckoutService,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _klarnaScriptLoader: KlarnaScriptLoader
     ) {
         super(store, placeOrderService);
@@ -48,7 +47,10 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
         return this._authorize()
             .then((res: Klarna.AuthorizationResponse) => {
                 const authorizationToken = res.authorization_token;
-                return this._remoteCheckoutService.initializePayment(payload.payment.name, { authorizationToken });
+
+                return this._store.dispatch(
+                    this._remoteCheckoutActionCreator.initializePayment(payload.payment.name, { authorizationToken })
+                );
             })
             .then(() => {
                 return this._placeOrderService.submitOrder({

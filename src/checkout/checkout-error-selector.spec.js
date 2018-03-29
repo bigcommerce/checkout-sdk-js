@@ -5,7 +5,7 @@ import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector, CustomerStrategySelector } from '../customer';
 import { OrderSelector } from '../order';
-import { PaymentMethodSelector } from '../payment';
+import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
@@ -27,6 +27,7 @@ describe('CheckoutErrorSelector', () => {
     let errors;
     let order;
     let paymentMethods;
+    let paymentStrategy;
     let quote;
     let remoteCheckout;
     let shippingAddress;
@@ -46,6 +47,7 @@ describe('CheckoutErrorSelector', () => {
         instruments = new InstrumentSelector();
         order = new OrderSelector();
         paymentMethods = new PaymentMethodSelector();
+        paymentStrategy = new PaymentStrategySelector();
         quote = new QuoteSelector();
         remoteCheckout = new RemoteCheckoutSelector();
         shippingAddress = new ShippingAddressSelector();
@@ -65,6 +67,7 @@ describe('CheckoutErrorSelector', () => {
             instruments,
             order,
             paymentMethods,
+            paymentStrategy,
             quote,
             remoteCheckout,
             shippingAddress,
@@ -94,33 +97,33 @@ describe('CheckoutErrorSelector', () => {
 
     describe('#getSubmitOrderError()', () => {
         it('returns error if there is an error when submitting order', () => {
-            jest.spyOn(order, 'getSubmitError').mockReturnValue(errorResponse);
+            jest.spyOn(paymentStrategy, 'getExecuteError').mockReturnValue(errorResponse);
 
             expect(errors.getSubmitOrderError()).toEqual(errorResponse);
-            expect(order.getSubmitError).toHaveBeenCalled();
+            expect(paymentStrategy.getExecuteError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when submitting order', () => {
-            jest.spyOn(order, 'getSubmitError').mockReturnValue();
+            jest.spyOn(paymentStrategy, 'getExecuteError').mockReturnValue();
 
             expect(errors.getSubmitOrderError()).toEqual(undefined);
-            expect(order.getSubmitError).toHaveBeenCalled();
+            expect(paymentStrategy.getExecuteError).toHaveBeenCalled();
         });
     });
 
     describe('#getFinalizeOrderError()', () => {
         it('returns error if there is an error when finalizing order', () => {
-            jest.spyOn(order, 'getFinalizeError').mockReturnValue(errorResponse);
+            jest.spyOn(paymentStrategy, 'getFinalizeError').mockReturnValue(errorResponse);
 
             expect(errors.getFinalizeOrderError()).toEqual(errorResponse);
-            expect(order.getFinalizeError).toHaveBeenCalled();
+            expect(paymentStrategy.getFinalizeError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when finalizing order', () => {
-            jest.spyOn(order, 'getFinalizeError').mockReturnValue();
+            jest.spyOn(paymentStrategy, 'getFinalizeError').mockReturnValue();
 
             expect(errors.getFinalizeOrderError()).toEqual(undefined);
-            expect(order.getFinalizeError).toHaveBeenCalled();
+            expect(paymentStrategy.getFinalizeError).toHaveBeenCalled();
         });
     });
 
@@ -238,27 +241,17 @@ describe('CheckoutErrorSelector', () => {
 
     describe('#getInitializePaymentMethodError()', () => {
         it('returns error if unable to initialize payment', () => {
-            jest.spyOn(remoteCheckout, 'getInitializePaymentError').mockReturnValue();
-            jest.spyOn(paymentMethods, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(paymentStrategy, 'getInitializeError').mockReturnValue(errorResponse);
 
             expect(errors.getInitializePaymentMethodError('braintree')).toEqual(errorResponse);
-            expect(paymentMethods.getInitializeError).toHaveBeenCalledWith('braintree');
-        });
-
-        it('returns error if unable to initialize remote payment', () => {
-            jest.spyOn(remoteCheckout, 'getInitializePaymentError').mockReturnValue(errorResponse);
-            jest.spyOn(paymentMethods, 'getInitializeError').mockReturnValue();
-
-            expect(errors.getInitializePaymentMethodError('braintree')).toEqual(errorResponse);
-            expect(remoteCheckout.getInitializePaymentError).toHaveBeenCalledWith('braintree');
+            expect(paymentStrategy.getInitializeError).toHaveBeenCalledWith('braintree');
         });
 
         it('returns undefined if able to initialize payment', () => {
-            jest.spyOn(remoteCheckout, 'getInitializePaymentError').mockReturnValue();
-            jest.spyOn(paymentMethods, 'getInitializeError').mockReturnValue();
+            jest.spyOn(paymentStrategy, 'getInitializeError').mockReturnValue();
 
             expect(errors.getInitializePaymentMethodError('braintree')).toEqual(undefined);
-            expect(paymentMethods.getInitializeError).toHaveBeenCalledWith('braintree');
+            expect(paymentStrategy.getInitializeError).toHaveBeenCalledWith('braintree');
         });
     });
 

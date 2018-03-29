@@ -125,43 +125,4 @@ describe('paymentMethodReducer()', () => {
             ],
         }));
     });
-
-    it('returns new state if able to initialize payment method', () => {
-        const action = {
-            type: actionTypes.INITIALIZE_PAYMENT_METHOD_SUCCEEDED,
-            meta: { methodId: 'braintree' },
-        };
-
-        expect(paymentMethodReducer(initialState, action)).toEqual({
-            ...initialState,
-            errors: {
-                initializeMethod: undefined,
-                initializeError: undefined,
-            },
-            statuses: {
-                isInitializing: false,
-                initializingMethod: undefined,
-            },
-        });
-    });
-
-    it('returns new state if unable to initialize payment method', () => {
-        const action = {
-            type: actionTypes.INITIALIZE_PAYMENT_METHOD_FAILED,
-            payload: getErrorResponse(),
-            meta: { methodId: 'braintree' },
-        };
-
-        expect(paymentMethodReducer(initialState, action)).toEqual({
-            ...initialState,
-            errors: {
-                initializeMethod: 'braintree',
-                initializeError: getErrorResponse(),
-            },
-            statuses: {
-                isInitializing: false,
-                initializingMethod: undefined,
-            },
-        });
-    });
 });

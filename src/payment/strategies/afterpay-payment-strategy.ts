@@ -1,23 +1,20 @@
 /// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
-
 import { omit } from 'lodash';
-import { ReadableDataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
-import { RemoteCheckoutService } from '../../remote-checkout';
-import { NotInitializedError } from '../../common/error/errors';
+
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
-import { PaymentMethodUninitializedError, PaymentMethodMissingDataError } from '../errors';
+import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
-import PaymentMethod from '../payment-method';
+import { PaymentMethodMissingDataError, PaymentMethodUninitializedError } from '../errors';
 import PaymentStrategy, { InitializeOptions } from './payment-strategy';
 
 export default class AfterpayPaymentStrategy extends PaymentStrategy {
     private _afterpaySdk?: Afterpay.Sdk;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         placeOrderService: PlaceOrderService,
-        private _remoteCheckoutService: RemoteCheckoutService,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {
         super(store, placeOrderService);
@@ -28,13 +25,10 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        return this._placeOrderService
-            .initializePaymentMethod(options.paymentMethod.id, () =>
-                this._afterpayScriptLoader.load(options.paymentMethod)
-                    .then((afterpaySdk) => {
-                        this._afterpaySdk = afterpaySdk;
-                    })
-            )
+        return this._afterpayScriptLoader.load(options.paymentMethod)
+            .then((afterpaySdk) => {
+                this._afterpaySdk = afterpaySdk;
+            })
             .then(() => super.initialize(options));
     }
 
@@ -59,7 +53,9 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             throw new PaymentMethodMissingDataError('gateway');
         }
 
-        return this._remoteCheckoutService.initializePayment(paymentId, { useStoreCredit, customerMessage })
+        return this._store.dispatch(
+            this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
+        )
             .then(() => this._placeOrderService.verifyCart())
             .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
             .then((resp: any) => this._displayModal(resp.checkout.getPaymentMethod(paymentId).clientToken))

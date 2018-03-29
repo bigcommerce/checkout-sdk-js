@@ -10,7 +10,7 @@ import { customerReducer, customerStrategyReducer, CustomerSelector, CustomerStr
 import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from '../coupon';
 import { FormSelector } from '../form';
 import { orderReducer, OrderSelector } from '../order';
-import { paymentReducer, paymentMethodReducer, PaymentMethodSelector } from '../payment';
+import { paymentReducer, paymentMethodReducer, paymentStrategyReducer, PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { remoteCheckoutReducer, RemoteCheckoutSelector } from '../remote-checkout';
 import { instrumentReducer, InstrumentSelector } from '../payment/instrument';
 import { quoteReducer, QuoteSelector } from '../quote';
@@ -52,6 +52,7 @@ function createCheckoutReducers() {
         order: orderReducer,
         payment: paymentReducer,
         paymentMethods: paymentMethodReducer,
+        paymentStrategy: paymentStrategyReducer,
         quote: quoteReducer,
         remoteCheckout: remoteCheckoutReducer,
         shippingCountries: shippingCountryReducer,
@@ -81,6 +82,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const instruments = new InstrumentSelector(state.instruments);
     const order = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+    const paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
     const quote = new QuoteSelector(state.quote);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingAddress = new ShippingAddressSelector(state.quote);
@@ -118,6 +120,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         instruments,
         order,
         paymentMethods,
+        paymentStrategy,
         quote,
         shippingAddress,
         shippingCountries,
@@ -137,6 +140,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         instruments,
         order,
         paymentMethods,
+        paymentStrategy,
         quote,
         remoteCheckout,
         shippingAddress,
