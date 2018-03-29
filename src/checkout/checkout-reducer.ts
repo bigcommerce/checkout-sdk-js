@@ -9,7 +9,7 @@ const DEFAULT_STATE: CheckoutState = {
     statuses: {},
 };
 
-export default function shippingReducer(
+export default function checkoutReducer(
     state: CheckoutState = DEFAULT_STATE,
     action: CheckoutAction
 ): CheckoutState {

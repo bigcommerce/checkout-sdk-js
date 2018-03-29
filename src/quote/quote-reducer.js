@@ -89,13 +89,6 @@ function errorsReducer(errors = {}, action) {
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED:
         return { ...errors, updateBillingAddressError: action.payload };
 
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_REQUESTED:
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
-        return { ...errors, updateShippingAddressError: undefined };
-
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_FAILED:
-        return { ...errors, updateShippingAddressError: action.payload };
-
     default:
         return errors;
     }
@@ -125,13 +118,6 @@ function statusesReducer(statuses = {}, action) {
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED:
         return { ...statuses, isUpdatingBillingAddress: false };
-
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_REQUESTED:
-        return { ...statuses, isUpdatingShippingAddress: true };
-
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_FAILED:
-        return { ...statuses, isUpdatingShippingAddress: false };
 
     default:
         return statuses;

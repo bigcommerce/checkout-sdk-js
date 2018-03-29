@@ -120,32 +120,6 @@ describe('quoteReducer()', () => {
     });
 
     describe('when updating shipping address', () => {
-        it('sets updating flag to true while updating', () => {
-            const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_REQUESTED,
-            };
-
-            expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                statuses: { isUpdatingShippingAddress: true },
-            }));
-        });
-
-        it('cleans errors while updating', () => {
-            const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_REQUESTED,
-            };
-
-            initialState.errors = {
-                updateShippingAddressError: getErrorResponse(),
-            };
-
-            expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                errors: {
-                    updateShippingAddressError: undefined,
-                },
-            }));
-        });
-
         it('saves the payload when update succeeds', () => {
             const response = getShippingAddressResponseBody();
             const action = {
@@ -155,55 +129,6 @@ describe('quoteReducer()', () => {
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
                 data: action.payload.quote,
-            }));
-        });
-
-        it('sets updating flag to false when update succeeds', () => {
-            const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-                payload: getErrorResponse(),
-            };
-
-            expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                statuses: { isUpdatingShippingAddress: false },
-            }));
-        });
-
-        it('cleans errors when update succeeds', () => {
-            const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-            };
-
-            initialState.errors = {
-                updateShippingAddressError: getErrorResponse(),
-            };
-
-            expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                errors: {
-                    updateShippingAddressError: undefined,
-                },
-            }));
-        });
-
-        it('saves the error when update fails', () => {
-            const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_FAILED,
-                payload: getErrorResponse(),
-            };
-
-            expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                errors: { updateShippingAddressError: action.payload },
-            }));
-        });
-
-        it('sets the updating flag to false when update fails', () => {
-            const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_FAILED,
-                payload: getErrorResponse(),
-            };
-
-            expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                errors: { updateShippingAddressError: action.payload },
             }));
         });
     });

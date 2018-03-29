@@ -1,31 +1,42 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
-
+import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { NotInitializedError } from '../../common/error/errors';
-import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
-import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
-import { getAmazonPay } from '../../payment/payment-methods.mock';
+import { Observable } from 'rxjs';
+
+import { CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { getCheckoutMeta } from '../../checkout/checkouts.mock';
-import { getFlatRateOption } from '../internal-shipping-options.mock';
-import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
+import { NotInitializedError } from '../../common/error/errors';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
+import { PaymentMethodActionCreator } from '../../payment';
+import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
+import { getAmazonPay } from '../../payment/payment-methods.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
+import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
+import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import { getShippingAddress } from '../internal-shipping-addresses.mock';
+import { getFlatRateOption } from '../internal-shipping-options.mock';
+import ShippingAddressActionCreator from '../shipping-address-action-creator';
+import { UPDATE_SHIPPING_ADDRESS_REQUESTED } from '../shipping-address-action-types';
+import ShippingOptionActionCreator from '../shipping-option-action-creator';
+import { SELECT_SHIPPING_OPTION_REQUESTED } from '../shipping-option-action-types';
+import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
-import UpdateShippingService from '../update-shipping-service';
-import createUpdateShippingService from '../../shipping/create-update-shipping-service';
 
 describe('AmazonPayShippingStrategy', () => {
+    let addressActionCreator: ShippingAddressActionCreator;
     let addressBookSpy: jest.Mock;
     let container: HTMLDivElement;
     let hostWindow: OffAmazonPayments.HostWindow;
-    let updateShippingService: UpdateShippingService;
     let orderReference: OffAmazonPayments.Widgets.OrderReference;
     let store: CheckoutStore;
     let scriptLoader: AmazonPayScriptLoader;
-    let remoteCheckoutService: RemoteCheckoutService;
+    let optionActionCreator: ShippingOptionActionCreator;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
 
     class AddressBook implements OffAmazonPayments.Widgets.AddressBook {
         constructor(public options: OffAmazonPayments.Widgets.AddressBookOptions) {
@@ -54,6 +65,7 @@ describe('AmazonPayShippingStrategy', () => {
     }
 
     beforeEach(() => {
+        addressActionCreator = new ShippingAddressActionCreator(createCheckoutClient());
         addressBookSpy = jest.fn();
         container = document.createElement('div');
         hostWindow = window;
@@ -63,8 +75,9 @@ describe('AmazonPayShippingStrategy', () => {
             },
             remoteCheckout: getRemoteCheckoutState(),
         });
-        remoteCheckoutService = createRemoteCheckoutService(store, createCheckoutClient());
-        updateShippingService = createUpdateShippingService(store, createCheckoutClient());
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(createRequestSender()));
+        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        optionActionCreator = new ShippingOptionActionCreator(createCheckoutClient());
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
 
         orderReference = {
@@ -82,6 +95,9 @@ describe('AmazonPayShippingStrategy', () => {
 
             return Promise.resolve();
         });
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod: getAmazonPay() })));
     });
 
     afterEach(() => {
@@ -89,122 +105,128 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('loads widget script during initialization', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
-        await strategy.initialize({
-            container: 'addressBook',
-            paymentMethod,
-        });
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
 
         expect(scriptLoader.loadWidget).not.toHaveBeenCalledWith(paymentMethod);
     });
 
     it('only initializes widget once until deinitialization', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
-        await strategy.initialize({ container: 'addressBook', paymentMethod });
-        await strategy.initialize({ container: 'addressBook', paymentMethod });
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
 
         expect(addressBookSpy).toHaveBeenCalledTimes(1);
 
         await strategy.deinitialize();
-        await strategy.initialize({ container: 'addressBook', paymentMethod });
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
 
         expect(addressBookSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('resolves with current state if initialization is complete', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
-        const paymentMethod = getAmazonPay();
-
-        jest.spyOn(updateShippingService, 'initializeShipping');
-
-        const output = await strategy.initialize({
-            container: 'addressBook',
-            paymentMethod,
-        });
-
-        expect(output).toEqual(store.getState());
-        expect(updateShippingService.initializeShipping).toHaveBeenCalledWith(paymentMethod.id, expect.any(Function));
-    });
-
     it('rejects with error if initialization fails', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = { ...getAmazonPay(), config: {} };
 
         try {
-            await strategy.initialize({
-                container: 'addressBook',
-                paymentMethod,
-            });
+            await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
         } catch (error) {
             expect(error).toBeInstanceOf(NotInitializedError);
         }
     });
 
     it('rejects with error if initialization fails because of invalid container', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
         try {
-            await strategy.initialize({ container: 'missingWallet', paymentMethod });
+            await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
         } catch (error) {
             expect(error).toBeInstanceOf(NotInitializedError);
         }
     });
 
     it('synchronizes checkout address when selecting new address', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
+        const initializeShippingAction = Observable.of(createAction(INITIALIZE_REMOTE_SHIPPING_REQUESTED));
+        const updateAddressAction = Observable.of(createAction(UPDATE_SHIPPING_ADDRESS_REQUESTED));
 
-        await strategy.initialize({
-            container: 'addressBook',
-            paymentMethod,
-        });
+        jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
+            .mockReturnValue(initializeShippingAction);
 
-        jest.spyOn(remoteCheckoutService, 'synchronizeShippingAddress')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(addressActionCreator, 'updateAddress')
+            .mockReturnValue(updateAddressAction);
+
+        jest.spyOn(store, 'dispatch');
+
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
 
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
 
-        expect(remoteCheckoutService.synchronizeShippingAddress)
+        await new Promise((resolve) => process.nextTick(resolve));
+
+        expect(remoteCheckoutActionCreator.initializeShipping)
             .toHaveBeenCalledWith(paymentMethod.id, {
                 referenceId: getCheckoutMeta().remoteCheckout.amazon.referenceId,
             });
+
+        expect(addressActionCreator.updateAddress)
+            .toHaveBeenCalledWith(getShippingAddress());
+
+        expect(store.dispatch).toHaveBeenCalledWith(initializeShippingAction);
+        expect(store.dispatch).toHaveBeenCalledWith(updateAddressAction);
+    });
+
+    it('tracks strategy execution while synchronizing checkout address', async () => {
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const paymentMethod = getAmazonPay();
+
+        jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
+            .mockReturnValue(Observable.of(createAction(INITIALIZE_REMOTE_SHIPPING_REQUESTED)));
+
+        jest.spyOn(addressActionCreator, 'updateAddress')
+            .mockReturnValue(Observable.of(createAction(UPDATE_SHIPPING_ADDRESS_REQUESTED)));
+
+        jest.spyOn(store, 'dispatch');
+
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+
+        document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
+
+        await new Promise((resolve) => process.nextTick(resolve));
+
+        expect(store.dispatch).toHaveBeenCalledWith(createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId: paymentMethod.id }));
+        expect(store.dispatch).toHaveBeenCalledWith(createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId: paymentMethod.id }));
     });
 
     it('sets order reference id when order reference gets created', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
-        jest.spyOn(remoteCheckoutService, 'setCheckoutMeta');
+        jest.spyOn(remoteCheckoutActionCreator, 'setCheckoutMeta');
 
-        await strategy.initialize({
-            container: 'addressBook',
-            paymentMethod,
-        });
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
 
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('orderReferenceCreate'));
 
-        expect(remoteCheckoutService.setCheckoutMeta)
+        expect(remoteCheckoutActionCreator.setCheckoutMeta)
             .toHaveBeenCalledWith(paymentMethod.id, {
                 referenceId: getCheckoutMeta().remoteCheckout.amazon.referenceId,
             });
     });
 
     it('passes error to callback when address book encounters error', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
         const onError = jest.fn();
         const element = document.getElementById('addressBook');
 
-        await strategy.initialize({
-            container: 'addressBook',
-            onError,
-            paymentMethod,
-        });
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id, onError });
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
         expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutSessionError));
@@ -217,18 +239,14 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('passes error to callback if unable to synchronize address data', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
         const onError = jest.fn();
         const error = new Error();
 
-        await strategy.initialize({
-            container: 'addressBook',
-            onError,
-            paymentMethod,
-        });
+        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id, onError });
 
-        jest.spyOn(remoteCheckoutService, 'synchronizeShippingAddress')
+        jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
             .mockReturnValue(Promise.reject(error));
 
         document.getElementById('addressBook')
@@ -239,29 +257,22 @@ describe('AmazonPayShippingStrategy', () => {
         expect(onError).toHaveBeenCalledWith(error);
     });
 
-    it('does nothing if trying to directly update address', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
-
-        jest.spyOn(updateShippingService, 'updateAddress');
-
-        const output = await strategy.updateAddress(getShippingAddress());
-
-        expect(updateShippingService.updateAddress).not.toHaveBeenCalled();
-        expect(output).toEqual(store.getState());
-    });
-
     it('selects shipping option', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, updateShippingService, remoteCheckoutService, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const address = getShippingAddress();
         const method = getFlatRateOption();
         const options = {};
+        const action = Observable.of(createAction(SELECT_SHIPPING_OPTION_REQUESTED));
 
-        jest.spyOn(updateShippingService, 'selectOption')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(optionActionCreator, 'selectShippingOption')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
 
         const output = await strategy.selectOption(address.id, method.id, options);
 
+        expect(optionActionCreator.selectShippingOption).toHaveBeenCalledWith(address.id, method.id, options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
-        expect(updateShippingService.selectOption).toHaveBeenCalledWith(address.id, method.id, options);
     });
 });

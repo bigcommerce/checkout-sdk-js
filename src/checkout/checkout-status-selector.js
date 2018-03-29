@@ -14,10 +14,10 @@ export default class CheckoutStatusSelector {
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
      * @param {RemoteCheckoutSelector} remoteCheckout
-     * @param {ShippingSelector} shipping
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
+     * @param {ShippingStrategySelector} shippingStrategy
      */
     constructor(
         billingAddress,
@@ -33,10 +33,10 @@ export default class CheckoutStatusSelector {
         paymentMethods,
         quote,
         remoteCheckout,
-        shipping,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        shippingStrategy
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
@@ -51,10 +51,10 @@ export default class CheckoutStatusSelector {
         this._paymentMethods = paymentMethods;
         this._quote = quote;
         this._remoteCheckout = remoteCheckout;
-        this._shipping = shipping;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
+        this._shippingStrategy = shippingStrategy;
     }
 
     /**
@@ -208,7 +208,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isSelectingShippingOption() {
-        return this._shippingOptions.isSelecting();
+        return this._shippingStrategy.isSelectingOption();
     }
 
     /**
@@ -222,7 +222,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isUpdatingShippingAddress() {
-        return this._shippingAddress.isUpdating();
+        return this._shippingStrategy.isUpdatingAddress();
     }
 
     /**
@@ -230,7 +230,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isInitializingShipping(methodId) {
-        return this._shipping.isInitializing(methodId) || this._remoteCheckout.isInitializingShipping(methodId);
+        return this._shippingStrategy.isInitializing(methodId);
     }
 
     /**

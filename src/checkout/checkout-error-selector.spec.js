@@ -3,17 +3,15 @@ import { CartSelector } from '../cart';
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector } from '../customer';
+import { CustomerSelector, CustomerStrategySelector } from '../customer';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
+import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CheckoutErrorSelector from './checkout-error-selector';
-import ShippingSelector from '../shipping/shipping-selector';
-import CustomerStrategySelector from '../customer/customer-strategy-selector';
 
 describe('CheckoutErrorSelector', () => {
     let billingAddress;
@@ -31,10 +29,10 @@ describe('CheckoutErrorSelector', () => {
     let paymentMethods;
     let quote;
     let remoteCheckout;
-    let shipping;
     let shippingAddress;
     let shippingCountries;
     let shippingOptions;
+    let shippingStrategy;
 
     beforeEach(() => {
         billingAddress = new BillingAddressSelector();
@@ -50,10 +48,10 @@ describe('CheckoutErrorSelector', () => {
         paymentMethods = new PaymentMethodSelector();
         quote = new QuoteSelector();
         remoteCheckout = new RemoteCheckoutSelector();
-        shipping = new ShippingSelector();
         shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
         shippingOptions = new ShippingOptionSelector();
+        shippingStrategy = new ShippingStrategySelector();
 
         errors = new CheckoutErrorSelector(
             billingAddress,
@@ -69,10 +67,10 @@ describe('CheckoutErrorSelector', () => {
             paymentMethods,
             quote,
             remoteCheckout,
-            shipping,
             shippingAddress,
             shippingCountries,
-            shippingOptions
+            shippingOptions,
+            shippingStrategy
         );
 
         errorResponse = getErrorResponse();
@@ -330,17 +328,17 @@ describe('CheckoutErrorSelector', () => {
 
     describe('#getSelectShippingOptionError()', () => {
         it('returns error if there is an error when selecting the shipping options', () => {
-            jest.spyOn(shippingOptions, 'getSelectError').mockReturnValue(errorResponse);
+            jest.spyOn(shippingStrategy, 'getSelectOptionError').mockReturnValue(errorResponse);
 
             expect(errors.getSelectShippingOptionError()).toEqual(errorResponse);
-            expect(shippingOptions.getSelectError).toHaveBeenCalled();
+            expect(shippingStrategy.getSelectOptionError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is NO error when selecting the shipping options', () => {
-            jest.spyOn(shippingOptions, 'getSelectError').mockReturnValue();
+            jest.spyOn(shippingStrategy, 'getSelectOptionError').mockReturnValue();
 
             expect(errors.getSelectShippingOptionError()).toEqual(undefined);
-            expect(shippingOptions.getSelectError).toHaveBeenCalled();
+            expect(shippingStrategy.getSelectOptionError).toHaveBeenCalled();
         });
     });
 
@@ -362,43 +360,33 @@ describe('CheckoutErrorSelector', () => {
 
     describe('#getUpdateShippingAddressError()', () => {
         it('returns error if there is an error when updating the shipping address', () => {
-            jest.spyOn(shippingAddress, 'getUpdateError').mockReturnValue(errorResponse);
+            jest.spyOn(shippingStrategy, 'getUpdateAddressError').mockReturnValue(errorResponse);
 
             expect(errors.getUpdateShippingAddressError()).toEqual(errorResponse);
-            expect(shippingAddress.getUpdateError).toHaveBeenCalled();
+            expect(shippingStrategy.getUpdateAddressError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is NO error when updating the shipping address', () => {
-            jest.spyOn(shippingAddress, 'getUpdateError').mockReturnValue();
+            jest.spyOn(shippingStrategy, 'getUpdateAddressError').mockReturnValue();
 
             expect(errors.getUpdateShippingAddressError()).toEqual(undefined);
-            expect(shippingAddress.getUpdateError).toHaveBeenCalled();
+            expect(shippingStrategy.getUpdateAddressError).toHaveBeenCalled();
         });
     });
 
     describe('#getInitializePaymentMethodError()', () => {
         it('returns error if unable to initialize shipping', () => {
-            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue();
-            jest.spyOn(shipping, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(shippingStrategy, 'getInitializeError').mockReturnValue(errorResponse);
 
             expect(errors.getInitializeShippingError('foobar')).toEqual(errorResponse);
-            expect(shipping.getInitializeError).toHaveBeenCalledWith('foobar');
-        });
-
-        it('returns error if unable to initialize remote shipping', () => {
-            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue(errorResponse);
-            jest.spyOn(shipping, 'getInitializeError').mockReturnValue();
-
-            expect(errors.getInitializeShippingError('foobar')).toEqual(errorResponse);
-            expect(remoteCheckout.getInitializeShippingError).toHaveBeenCalledWith('foobar');
+            expect(shippingStrategy.getInitializeError).toHaveBeenCalledWith('foobar');
         });
 
         it('returns undefined if able to initialize shipping', () => {
-            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue();
-            jest.spyOn(shipping, 'getInitializeError').mockReturnValue();
+            jest.spyOn(shippingStrategy, 'getInitializeError').mockReturnValue();
 
             expect(errors.getInitializeShippingError('foobar')).toEqual(undefined);
-            expect(shipping.getInitializeError).toHaveBeenCalledWith('foobar');
+            expect(shippingStrategy.getInitializeError).toHaveBeenCalledWith('foobar');
         });
     });
 

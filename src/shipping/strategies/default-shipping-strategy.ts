@@ -1,22 +1,27 @@
-import { ReadableDataStore } from '@bigcommerce/data-store';
 import { InternalAddress } from '../../address';
-import { CheckoutSelectors } from '../../checkout';
-import UpdateShippingService from '../update-shipping-service';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import ShippingAddressActionCreator from '../shipping-address-action-creator';
+import ShippingOptionActionCreator from '../shipping-option-action-creator';
 import ShippingStrategy from './shipping-strategy';
 
 export default class DefaultShippingStrategy extends ShippingStrategy {
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
-        updateShippingService: UpdateShippingService
+        store: CheckoutStore,
+        private _addressActionCreator: ShippingAddressActionCreator,
+        private _optionActionCreator: ShippingOptionActionCreator
     ) {
-        super(store, updateShippingService);
+        super(store);
     }
 
     updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
-        return this._updateShippingService.updateAddress(address, options);
+        return this._store.dispatch(
+            this._addressActionCreator.updateAddress(address, options)
+        );
     }
 
     selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
-        return this._updateShippingService.selectOption(addressId, optionId, options);
+        return this._store.dispatch(
+            this._optionActionCreator.selectShippingOption(addressId, optionId, options)
+        );
     }
 }

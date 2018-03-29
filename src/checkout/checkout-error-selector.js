@@ -14,10 +14,10 @@ export default class CheckoutErrorSelector {
      * @param {PaymentMethodSelector} paymentMethods
      * @param {QuoteSelector} quote
      * @param {RemoteCheckout} remoteCheckout
-     * @param {ShippingSelector} shipping
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
+     * @param {ShippingStrategySelector} shippingStrategy
      */
     constructor(
         billingAddress,
@@ -33,10 +33,10 @@ export default class CheckoutErrorSelector {
         paymentMethods,
         quote,
         remoteCheckout,
-        shipping,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        shippingStrategy
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
@@ -51,10 +51,10 @@ export default class CheckoutErrorSelector {
         this._paymentMethods = paymentMethods;
         this._quote = quote;
         this._remoteCheckout = remoteCheckout;
-        this._shipping = shipping;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
+        this._shippingStrategy = shippingStrategy;
     }
 
     /**
@@ -202,7 +202,7 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getSelectShippingOptionError() {
-        return this._shippingOptions.getSelectError();
+        return this._shippingStrategy.getSelectOptionError();
     }
 
     /**
@@ -216,7 +216,7 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getUpdateShippingAddressError() {
-        return this._shippingAddress.getUpdateError();
+        return this._shippingStrategy.getUpdateAddressError();
     }
 
     /**
@@ -224,7 +224,7 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getInitializeShippingError(methodId) {
-        return this._shipping.getInitializeError(methodId) || this._remoteCheckout.getInitializeShippingError(methodId);
+        return this._shippingStrategy.getInitializeError(methodId);
     }
 
     /**
