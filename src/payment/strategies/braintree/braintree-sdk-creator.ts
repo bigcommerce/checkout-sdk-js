@@ -24,7 +24,7 @@ export default class BraintreeSDKCreator {
 
         if (!this._client) {
             this._client = this._braintreeScriptLoader.loadClient()
-                .then(client => client.create({ authorization: this._clientToken }));
+                .then((client) => client.create({ authorization: this._clientToken }));
         }
 
         return this._client;
