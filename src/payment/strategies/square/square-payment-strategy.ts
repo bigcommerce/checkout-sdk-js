@@ -48,7 +48,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             this._deferredRequestNonce = { resolve, reject };
             this._paymentForm.requestCardNonce();
         })
-        .then(paymentData => this._placeOrderService.submitOrder(
+        .then((paymentData) => this._placeOrderService.submitOrder(
             omit(payload, 'payment'), true, options)
         );
     }

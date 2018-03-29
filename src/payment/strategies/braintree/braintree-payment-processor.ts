@@ -26,7 +26,7 @@ export default class BraintreePaymentProcessor {
         const requestData = this._mapToCreditCard(paymentData as CreditCard, billingAddress);
 
         return this._braintreeSDKCreator.getClient()
-            .then(client => client.request(requestData))
+            .then((client) => client.request(requestData))
             .then(({ creditCards }) => ({
                 nonce: creditCards[0].nonce,
             }));
