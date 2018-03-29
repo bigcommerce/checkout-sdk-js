@@ -22,7 +22,7 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
         it('calls submit order with the right data', async () => {
             await noPaymentDataRequiredPaymentStrategy.execute(getOrderRequestBody(), undefined);
 
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(getOrderRequestBody(), 'payment'), false, undefined);
+            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(getOrderRequestBody(), 'payment'), true, undefined);
         });
 
         it('does not call submit payment', async () => {
@@ -35,13 +35,7 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
             const options = { myOptions: 'option1' };
             await noPaymentDataRequiredPaymentStrategy.execute(getOrderRequestBody(), options);
 
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(expect.any(Object), false, options);
-        });
-
-        it('passes useStoreCredit to submitOrder', async () => {
-            await noPaymentDataRequiredPaymentStrategy.execute({ ...getOrderRequestBody(), useStoreCredit: true });
-
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, undefined);
+            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, options);
         });
     });
 });

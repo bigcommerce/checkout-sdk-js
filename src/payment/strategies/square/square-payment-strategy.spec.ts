@@ -151,12 +151,12 @@ describe('SquarePaymentStrategy', () => {
                 let promise;
 
                 beforeEach(() => {
-                    promise = strategy.execute({});
+                    promise = strategy.execute({ payment: '', x: 'y' }, { b: 'f' });
                     callbacks.cardNonceResponseReceived(null, 'nonce');
                 });
 
-                it('places the order', () => {
-                    expect(placeOrderService.submitOrder).toHaveBeenCalledTimes(1);
+                it('places the order with the right arguments', () => {
+                    expect(placeOrderService.submitOrder).toHaveBeenCalledWith({ x: 'y' }, true, { b: 'f' });
                 });
 
                 it('resolves to what is returned by submitOrder', async () => {
