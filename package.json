@@ -51,7 +51,6 @@
     "@bigcommerce/script-loader": "git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.2",
     "@types/lodash": "^4.14.92",
     "lodash": "^4.17.4",
-    "memoizee": "^0.4.11",
     "messageformat": "0.3.0",
     "rxjs": "^5.5.5",
     "tslib": "^1.8.0"

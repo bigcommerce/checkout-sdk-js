@@ -10,7 +10,6 @@ import { PaymentMethodSelector } from '../payment';
 import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
-import { CacheFactory } from '../common/cache';
 import { getCartState } from '../cart/internal-carts.mock';
 import { getCompleteOrderState } from '../order/internal-orders.mock';
 import { getConfigState } from '../config/configs.mock';
@@ -25,7 +24,6 @@ import { getShippingOptionsState } from '../shipping/internal-shipping-options.m
 import CheckoutSelector from './checkout-selector';
 
 describe('CheckoutSelector', () => {
-    let cacheFactory;
     let orderSelector;
     let formSelector;
     let selector;
@@ -47,8 +45,7 @@ describe('CheckoutSelector', () => {
             shippingCountries: getShippingCountriesState(),
         };
 
-        cacheFactory = new CacheFactory();
-        orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
+        orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
         formSelector = new FormSelector(state.config);
 
         selector = new CheckoutSelector(
@@ -65,8 +62,7 @@ describe('CheckoutSelector', () => {
             new RemoteCheckoutSelector(state.remoteCheckout),
             new ShippingAddressSelector(state.quote),
             new ShippingCountrySelector(state.shippingCountries),
-            new ShippingOptionSelector(state.shippingOptions),
-            cacheFactory
+            new ShippingOptionSelector(state.shippingOptions)
         );
     });
 

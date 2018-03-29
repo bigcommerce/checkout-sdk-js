@@ -1,4 +1,3 @@
-import { pick } from 'lodash';
 import * as paymentStatusTypes from '../payment/payment-status-types';
 
 export default class OrderSelector {
@@ -8,14 +7,12 @@ export default class OrderSelector {
      * @param {PaymentState} payment
      * @param {CustomerState} customer
      * @param {CartState} cart
-     * @param {CacheFactory} cacheFactory
      */
-    constructor(order = {}, payment = {}, customer = {}, cart = {}, cacheFactory) {
+    constructor(order = {}, payment = {}, customer = {}, cart = {}) {
         this._order = order;
         this._payment = payment;
         this._customer = customer;
         this._cart = cart;
-        this._cacheFactory = cacheFactory;
     }
 
     /**
@@ -29,9 +26,9 @@ export default class OrderSelector {
      * @return {Object}
      */
     getOrderMeta() {
-        return this._cacheFactory.get('getOrderMeta')
-            .retain((meta) => pick(meta, 'deviceFingerprint'))
-            .retrieve(this._order.meta);
+        return {
+            deviceFingerprint: this._order.meta && this._order.meta.deviceFingerprint,
+        };
     }
 
     /**
