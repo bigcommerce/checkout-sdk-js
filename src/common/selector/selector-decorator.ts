@@ -55,6 +55,8 @@ function selectorMethodDecorator<T extends Method>(target: object, key: string, 
                     return cachedValue;
                 }
 
+                memoizedMethod.cache.set(resolver.getKey(...args), newValue);
+
                 return newValue;
             }) as T;
 

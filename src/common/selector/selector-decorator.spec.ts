@@ -53,6 +53,15 @@ describe('SelectorDecorator', () => {
         expect(foo.serialize()).not.toBe(foo.serialize('Hello world'));
     });
 
+    it('returns new value if different to cached value with different instances', () => {
+        const foo = new Foo('foo');
+        const foo2 = new Foo('FOO');
+
+        expect(foo.serialize()).not.toBe(foo2.serialize());
+        expect(foo.serialize()).toBe(foo.serialize());
+        expect(foo2.serialize()).toBe(foo2.serialize());
+    });
+
     it('allows object destruction', () => {
         const foo = new Foo('foo');
         const { serialize } = foo;

@@ -1,8 +1,8 @@
 export default class CacheKeyResolver {
-    private _lastUsedKey = 0;
+    private _lastId = 0;
     private _maps: CacheKeyMap[] = [];
 
-    getKey(...args: any[]): number {
+    getKey(...args: any[]): string {
         const { index, map, parentMaps } = this._resolveMap(...args);
 
         if (map) {
@@ -51,7 +51,7 @@ export default class CacheKeyResolver {
         return { index, parentMaps };
     }
 
-    private _generateKey(maps: CacheKeyMap[], args: any[]): number {
+    private _generateKey(maps: CacheKeyMap[], args: any[]): string {
         let index = 0;
         let parentMaps = maps;
         let map!: CacheKeyMap;
@@ -69,9 +69,9 @@ export default class CacheKeyResolver {
             index++;
         } while (index < args.length);
 
-        map.cacheKey = ++this._lastUsedKey;
+        map.cacheKey = `${++this._lastId}`;
 
-        return this._lastUsedKey;
+        return map.cacheKey;
     }
 }
 
@@ -79,7 +79,7 @@ interface CacheKeyMap {
     maps: CacheKeyMap[];
     value: any;
     usedCount: number;
-    cacheKey?: number;
+    cacheKey?: string;
 }
 
 interface ResolveResult {

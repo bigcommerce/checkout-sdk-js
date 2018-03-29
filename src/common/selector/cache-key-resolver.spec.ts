@@ -4,26 +4,26 @@ describe('CacheKeyResolver', () => {
     it('returns same cache key if params are equal', () => {
         const resolver = new CacheKeyResolver();
 
-        expect(resolver.getKey('hello')).toEqual(1);
-        expect(resolver.getKey('bye')).toEqual(2);
-        expect(resolver.getKey('hello')).toEqual(1);
-        expect(resolver.getKey('bye')).toEqual(2);
+        expect(resolver.getKey('hello')).toEqual('1');
+        expect(resolver.getKey('bye')).toEqual('2');
+        expect(resolver.getKey('hello')).toEqual('1');
+        expect(resolver.getKey('bye')).toEqual('2');
     });
 
     it('returns same cache key if multiple params are equal', () => {
         const resolver = new CacheKeyResolver();
 
-        expect(resolver.getKey('hello', 'world')).toEqual(1);
-        expect(resolver.getKey('hello', 'good', 'bye')).toEqual(2);
-        expect(resolver.getKey('hello', 'world')).toEqual(1);
-        expect(resolver.getKey('hello', 'good', 'bye')).toEqual(2);
+        expect(resolver.getKey('hello', 'world')).toEqual('1');
+        expect(resolver.getKey('hello', 'good', 'bye')).toEqual('2');
+        expect(resolver.getKey('hello', 'world')).toEqual('1');
+        expect(resolver.getKey('hello', 'good', 'bye')).toEqual('2');
     });
 
     it('returns same cache key if no params are provided', () => {
         const resolver = new CacheKeyResolver();
 
-        expect(resolver.getKey()).toEqual(1);
-        expect(resolver.getKey()).toEqual(1);
+        expect(resolver.getKey()).toEqual('1');
+        expect(resolver.getKey()).toEqual('1');
     });
 
     it('works with non-primitive params', () => {
@@ -32,10 +32,10 @@ describe('CacheKeyResolver', () => {
         const personB = { name: 'Bar' };
         const personC = { name: 'Foobar' };
 
-        expect(resolver.getKey(personA, personB)).toEqual(1);
-        expect(resolver.getKey(personB, personA)).toEqual(2);
-        expect(resolver.getKey(personA, personB)).toEqual(1);
-        expect(resolver.getKey(personB, personA, personC)).toEqual(3);
+        expect(resolver.getKey(personA, personB)).toEqual('1');
+        expect(resolver.getKey(personB, personA)).toEqual('2');
+        expect(resolver.getKey(personA, personB)).toEqual('1');
+        expect(resolver.getKey(personB, personA, personC)).toEqual('3');
     });
 
     it('returns cache key used count', () => {
