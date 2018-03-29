@@ -18,45 +18,44 @@ describe('PaymentActionCreator', () => {
     });
 
     describe('#submitPayment()', () => {
-        it('dispatches actions to data store', () => {
-            paymentActionCreator.submitPayment(getPayment())
+        it('dispatches actions to data store', async () => {
+            const actions = await paymentActionCreator.submitPayment(getPayment())
                 .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        {
-                            type: actionTypes.SUBMIT_PAYMENT_REQUESTED,
-                        },
-                        {
-                            type: actionTypes.SUBMIT_PAYMENT_SUCCEEDED,
-                            payload: getPaymentResponseBody(),
-                        },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                {
+                    type: actionTypes.SUBMIT_PAYMENT_REQUESTED,
+                },
+                {
+                    type: actionTypes.SUBMIT_PAYMENT_SUCCEEDED,
+                    payload: getPaymentResponseBody(),
+                },
+            ]);
         });
 
-        it('dispatches error actions to data store if unsuccessful', () => {
+        it('dispatches error actions to data store if unsuccessful', async () => {
             jest.spyOn(paymentRequestSender, 'submitPayment').mockReturnValue(
                 Promise.reject(getResponse(getErrorPaymentResponseBody()))
             );
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            paymentActionCreator.submitPayment(getPayment())
+            const actions = await paymentActionCreator.submitPayment(getPayment())
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        {
-                            type: actionTypes.SUBMIT_PAYMENT_REQUESTED,
-                        },
-                        {
-                            type: actionTypes.SUBMIT_PAYMENT_FAILED,
-                            payload: getResponse(getErrorPaymentResponseBody()),
-                            error: true,
-                        },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                {
+                    type: actionTypes.SUBMIT_PAYMENT_REQUESTED,
+                },
+                {
+                    type: actionTypes.SUBMIT_PAYMENT_FAILED,
+                    payload: getResponse(getErrorPaymentResponseBody()),
+                    error: true,
+                },
+            ]);
         });
     });
 
