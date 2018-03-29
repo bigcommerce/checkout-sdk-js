@@ -1,7 +1,7 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 import { noop, omit } from 'lodash';
 
-import { InternalAddress, isAddressEqual } from '../../address';
+import { isAddressEqual, InternalAddress } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
@@ -10,6 +10,7 @@ import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError, RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import PaymentMethod from '../payment-method';
+
 import PaymentStrategy from './payment-strategy';
 
 export default class AmazonPayPaymentStrategy extends PaymentStrategy {

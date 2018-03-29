@@ -1,7 +1,8 @@
-import { getRemoteCheckoutMeta } from '../remote-checkout/remote-checkout.mock';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getCart } from '../cart/carts.mock';
+import { getRemoteCheckoutMeta } from '../remote-checkout/remote-checkout.mock';
 import { getConsignment } from '../shipping/consignments.mock';
+
 import Checkout from './checkout';
 
 export function getCheckout(): Checkout {

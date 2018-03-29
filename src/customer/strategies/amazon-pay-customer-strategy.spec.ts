@@ -6,16 +6,18 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import 'rxjs/add/observable/of';
 import { Observable } from 'rxjs/Observable';
-import { CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
+
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import { getResponse } from '../../common/http-request/responses.mock';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
-import { SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import { SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
 import { getGuestCustomer } from '../internal-customers.mock';
+
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
 
 describe('AmazonPayCustomerStrategy', () => {

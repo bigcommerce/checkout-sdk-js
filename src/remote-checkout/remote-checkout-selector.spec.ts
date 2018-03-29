@@ -1,6 +1,7 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getRemoteCheckoutState, getEmptyRemoteCheckoutState } from './remote-checkout.mock';
+
 import RemoteCheckoutSelector from './remote-checkout-selector';
+import { getEmptyRemoteCheckoutState, getRemoteCheckoutState } from './remote-checkout.mock';
 
 describe('RemoteCheckoutSelector', () => {
     it('returns remote checkout data', () => {

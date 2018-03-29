@@ -7,6 +7,7 @@ import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator } from '../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
+
 import ShippingAddressActionCreator from './shipping-address-action-creator';
 import ShippingOptionActionCreator from './shipping-option-action-creator';
 import { AmazonPayShippingStrategy, DefaultShippingStrategy, ShippingStrategy } from './strategies';

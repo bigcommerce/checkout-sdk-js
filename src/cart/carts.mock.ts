@@ -1,7 +1,8 @@
 import { Cart } from '../cart';
-import { getCurrency } from '../currency/currencies.mock';
 import { getCoupon } from '../coupon/coupons.mock';
+import { getCurrency } from '../currency/currencies.mock';
 import { getDiscount } from '../discount/discounts.mock';
+
 import { getPhysicalItem } from './line-items.mock';
 
 export function getCart(): Cart {

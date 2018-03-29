@@ -1,8 +1,9 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { getCurrency } from '../currency/currencies.mock';
-import { getCoupon } from '../coupon/coupons.mock';
-import { getDiscount } from '../discount/discounts.mock';
 import { getPhysicalItem } from '../cart/line-items.mock';
+import { getCoupon } from '../coupon/coupons.mock';
+import { getCurrency } from '../currency/currencies.mock';
+import { getDiscount } from '../discount/discounts.mock';
+
 import Order from './order';
 
 export function getOrder(): Order {

@@ -1,4 +1,5 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
+
 import ShippingStrategySelector from './shipping-strategy-selector';
 import { DEFAULT_STATE } from './shipping-strategy-state';
 

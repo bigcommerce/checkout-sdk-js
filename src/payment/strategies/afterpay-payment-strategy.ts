@@ -6,6 +6,7 @@ import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import { PaymentMethodMissingDataError, PaymentMethodUninitializedError } from '../errors';
+
 import PaymentStrategy, { InitializeOptions } from './payment-strategy';
 
 export default class AfterpayPaymentStrategy extends PaymentStrategy {

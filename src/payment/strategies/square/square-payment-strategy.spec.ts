@@ -2,12 +2,14 @@
 
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../../checkout';
 import { createPlaceOrderService } from '../../../order';
 import { getSquare } from '../../../payment/payment-methods.mock';
+import PaymentMethod from '../../payment-method';
+
 import SquarePaymentStrategy from './square-payment-strategy';
 import SquareScriptLoader from './square-script-loader';
-import PaymentMethod from '../../payment-method';
 
 describe('SquarePaymentStrategy', () => {
     let client: CheckoutClient;

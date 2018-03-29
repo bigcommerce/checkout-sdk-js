@@ -1,13 +1,15 @@
 /// <reference path="../common/http-request/request-sender.d.ts" />
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
-import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
-import { AmazonPayCustomerStrategy, DefaultCustomerStrategy, CustomerStrategy } from './strategies';
+
 import { CheckoutClient, CheckoutStore } from '../checkout';
-import { PaymentMethod, PaymentMethodActionCreator } from '../payment';
 import { Registry } from '../common/registry';
+import { PaymentMethod, PaymentMethodActionCreator } from '../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
+import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
+
 import CustomerActionCreator from './customer-action-creator';
+import { AmazonPayCustomerStrategy, CustomerStrategy, DefaultCustomerStrategy } from './strategies';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,

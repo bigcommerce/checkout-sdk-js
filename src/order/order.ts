@@ -1,6 +1,6 @@
 import { Address } from '../address';
-import { Currency } from '../currency';
 import { DigitalItem, GiftCertificateItem, PhysicalItem } from '../cart';
+import { Currency } from '../currency';
 
 export default interface Order {
     baseAmount: number;

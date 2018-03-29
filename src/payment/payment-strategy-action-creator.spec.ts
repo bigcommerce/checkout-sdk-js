@@ -1,20 +1,20 @@
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { merge } from 'lodash';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
-
-import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { merge } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 
 import { getCartState } from '../cart/internal-carts.mock';
-import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/internal-customers.mock';
 import { createPlaceOrderService } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getCompleteOrderState, getIncompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
+
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import { getPaymentMethod, getPaymentMethodsState } from './payment-methods.mock';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';

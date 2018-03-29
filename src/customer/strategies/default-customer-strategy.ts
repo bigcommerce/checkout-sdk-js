@@ -1,7 +1,8 @@
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import CustomerCredentials from '../customer-credentials';
-import CustomerStrategy from './customer-strategy';
 import CustomerActionCreator from '../customer-action-creator';
+import CustomerCredentials from '../customer-credentials';
+
+import CustomerStrategy from './customer-strategy';
 
 export default class DefaultCustomerStrategy extends CustomerStrategy {
     constructor(

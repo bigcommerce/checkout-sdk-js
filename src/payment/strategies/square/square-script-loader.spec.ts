@@ -1,5 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
+
 import SquareScriptLoader from './square-script-loader';
 
 describe('SquareScriptLoader', () => {

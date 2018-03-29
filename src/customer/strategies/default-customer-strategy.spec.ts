@@ -1,10 +1,12 @@
 import { createAction } from '@bigcommerce/data-store';
 import 'rxjs/add/observable/of';
 import { Observable } from 'rxjs/Observable';
-import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
+
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { getQuote } from '../../quote/internal-quotes.mock';
 import CustomerActionCreator from '../customer-action-creator';
 import { SIGN_IN_CUSTOMER_SUCCEEDED, SIGN_OUT_CUSTOMER_SUCCEEDED } from '../customer-action-types';
+
 import DefaultCustomerStrategy from './default-customer-strategy';
 
 describe('DefaultCustomerStrategy', () => {

@@ -1,6 +1,7 @@
-import { LineItem } from './line-item';
 import { find } from 'lodash';
+
 import InternalLineItem from './internal-line-item';
+import { LineItem } from './line-item';
 import LineItemMap from './line-item-map';
 import mapToInternalLineItem from './map-to-internal-line-item';
 

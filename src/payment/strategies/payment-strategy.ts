@@ -1,6 +1,6 @@
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { OrderRequestBody } from '../../order';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import PaymentMethod from '../payment-method';
 
 export default abstract class PaymentStrategy {

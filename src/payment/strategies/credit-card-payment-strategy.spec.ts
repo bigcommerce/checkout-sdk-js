@@ -1,8 +1,10 @@
-import { omit } from 'lodash';
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { omit } from 'lodash';
+
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import { createPlaceOrderService, PlaceOrderService } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
+
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 
 describe('CreditCardPaymentStrategy', () => {

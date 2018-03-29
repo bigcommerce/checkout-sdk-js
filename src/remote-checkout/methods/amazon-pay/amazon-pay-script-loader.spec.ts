@@ -3,7 +3,9 @@
 
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
+
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
+
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
 
 describe('AmazonPayScriptLoader', () => {

@@ -5,7 +5,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import CheckoutClient from '../../checkout/checkout-client';
 import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
@@ -14,6 +14,7 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentMethod from '../payment-method';
+
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 
 describe('AfterpayPaymentStrategy', () => {

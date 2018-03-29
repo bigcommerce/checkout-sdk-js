@@ -2,6 +2,7 @@
 /// <reference path="./off-amazon-payments.d.ts" />
 
 import { ScriptLoader } from '@bigcommerce/script-loader';
+
 import { PaymentMethod } from '../../../payment';
 
 export default class AmazonPayScriptLoader {

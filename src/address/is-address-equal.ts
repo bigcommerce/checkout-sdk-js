@@ -1,5 +1,7 @@
 import { isEqual } from 'lodash';
+
 import { omitPrivate } from '../common/utility';
+
 import InternalAddress from './internal-address';
 
 export default function isAddressEqual(addressA: InternalAddress, addressB: InternalAddress): boolean {

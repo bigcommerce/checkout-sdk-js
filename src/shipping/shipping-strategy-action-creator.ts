@@ -4,6 +4,7 @@ import { Observer } from 'rxjs/Observer';
 
 import { InternalAddress } from '../address';
 import { Registry } from '../common/registry';
+
 import {
     ShippingStrategyActionType,
     ShippingStrategyDeinitializeAction,

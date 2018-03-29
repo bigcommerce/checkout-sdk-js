@@ -2,6 +2,7 @@ import { InternalAddress } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import ShippingAddressActionCreator from '../shipping-address-action-creator';
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
+
 import ShippingStrategy from './shipping-strategy';
 
 export default class DefaultShippingStrategy extends ShippingStrategy {

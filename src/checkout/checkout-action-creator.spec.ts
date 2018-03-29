@@ -1,13 +1,15 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { CartRequestSender } from '../cart';
-import { CheckoutActionType } from './checkout-actions';
-import { getCart } from '../cart/carts.mock';
-import { getCheckout } from './checkouts.mock';
-import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import CheckoutActionCreator from './checkout-action-creator';
-import CheckoutRequestSender from './checkout-request-sender';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
+
+import { CartRequestSender } from '../cart';
+import { getCart } from '../cart/carts.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+
+import CheckoutActionCreator from './checkout-action-creator';
+import { CheckoutActionType } from './checkout-actions';
+import CheckoutRequestSender from './checkout-request-sender';
+import { getCheckout } from './checkouts.mock';
 
 describe('CheckoutActionCreator', () => {
     let checkoutRequestSender;
