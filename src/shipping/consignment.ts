@@ -1,4 +1,5 @@
 import { Address } from '../address';
+
 import ShippingOption from './shipping-option';
 
 export default interface Consignment {

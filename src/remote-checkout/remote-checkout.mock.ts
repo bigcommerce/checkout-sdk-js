@@ -1,8 +1,9 @@
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
-import RemoteCheckoutState from './remote-checkout-state';
+
 import RemoteCheckout from './remote-checkout';
 import RemoteCheckoutMeta from './remote-checkout-meta';
+import RemoteCheckoutState from './remote-checkout-state';
 
 export function getRemoteCheckoutState(): RemoteCheckoutState {
     return {

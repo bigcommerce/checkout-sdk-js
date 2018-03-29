@@ -1,6 +1,8 @@
 import { createAction } from '@bigcommerce/data-store';
-import { getCheckout } from '../checkout/checkouts.mock';
+
 import { CheckoutActionType } from '../checkout';
+import { getCheckout } from '../checkout/checkouts.mock';
+
 import billingAddressReducer from './billing-address-reducer';
 
 describe('billingAddressReducer', () => {

@@ -1,6 +1,7 @@
 /// <reference path="./afterpay-sdk.d.ts" />
 
 import { ScriptLoader } from '@bigcommerce/script-loader';
+
 import { PaymentMethod } from '../../../payment';
 
 const SCRIPT_PROD = '//www.secure-afterpay.com.au/afterpay-async.js';

@@ -1,7 +1,9 @@
-import { Action, combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import { Address } from '../address';
-import { CheckoutAction, CheckoutActionType } from './checkout-actions';
+
 import Checkout from './checkout';
+import { CheckoutAction, CheckoutActionType } from './checkout-actions';
 import CheckoutState, { CheckoutErrorsState, CheckoutStatusesState } from './checkout-state';
 
 const DEFAULT_STATE: CheckoutState = {

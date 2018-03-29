@@ -1,4 +1,5 @@
 import { find } from 'lodash';
+
 import Consignment from './consignment';
 import InternalShippingOption from './internal-shipping-option';
 import mapToInternalShippingOption from './map-to-internal-shipping-option';

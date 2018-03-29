@@ -1,10 +1,12 @@
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+
 import { CartRequestSender } from '../cart';
 import { CartUnavailableError } from '../cart/errors';
-import { CheckoutAction, CheckoutActionType } from './checkout-actions';
+
 import Checkout from './checkout';
+import { CheckoutAction, CheckoutActionType } from './checkout-actions';
 import CheckoutRequestSender from './checkout-request-sender';
 
 export default class CheckoutActionCreator {

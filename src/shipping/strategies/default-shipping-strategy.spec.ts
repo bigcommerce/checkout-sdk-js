@@ -1,14 +1,15 @@
 import { createAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 
-import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { getShippingAddress } from '../internal-shipping-addresses.mock';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
 import ShippingAddressActionCreator from '../shipping-address-action-creator';
 import { UPDATE_SHIPPING_ADDRESS_REQUESTED } from '../shipping-address-action-types';
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
-import DefaultShippingStrategy from './default-shipping-strategy';
 import { SELECT_SHIPPING_OPTION_REQUESTED } from '../shipping-option-action-types';
+
+import DefaultShippingStrategy from './default-shipping-strategy';
 
 describe('DefaultShippingStrategy', () => {
     let client: CheckoutClient;

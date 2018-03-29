@@ -5,6 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { MissingDataError } from '../common/error/errors';
 import { OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
+
 import Payment from './payment';
 import {
     PaymentStrategyActionType,

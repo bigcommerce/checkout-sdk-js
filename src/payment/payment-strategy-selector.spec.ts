@@ -1,4 +1,5 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
+
 import PaymentStrategySelector from './payment-strategy-selector';
 import { DEFAULT_STATE } from './payment-strategy-state';
 

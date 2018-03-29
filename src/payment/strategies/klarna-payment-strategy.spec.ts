@@ -5,7 +5,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getKlarna } from '../../payment/payment-methods.mock';
@@ -13,6 +13,7 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentMethod from '../payment-method';
+
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
 
 describe('KlarnaPaymentStrategy', () => {

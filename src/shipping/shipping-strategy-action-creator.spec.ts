@@ -3,13 +3,13 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
-
 import { Observable } from 'rxjs/Observable';
 
-import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { getCustomerState, getGuestCustomer } from '../customer/internal-customers.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
+
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
 import { getShippingAddress } from './internal-shipping-addresses.mock';
 import { getShippingOptions } from './internal-shipping-options.mock';

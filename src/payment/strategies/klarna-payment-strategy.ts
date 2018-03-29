@@ -1,11 +1,13 @@
 /// <reference path="../../remote-checkout/methods/klarna/klarna-sdk.d.ts" />
 
 import { omit } from 'lodash';
+
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
+import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import PaymentMethod from '../payment-method';
+
 import PaymentStrategy from './payment-strategy';
 
 export default class KlarnaPaymentStrategy extends PaymentStrategy {

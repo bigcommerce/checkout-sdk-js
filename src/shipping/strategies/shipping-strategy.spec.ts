@@ -1,6 +1,8 @@
 import { DataStore } from '@bigcommerce/data-store';
+
 import { InternalAddress } from '../../address';
 import { createCheckoutClient, createCheckoutStore, CheckoutSelectors } from '../../checkout';
+
 import ShippingStrategy from './shipping-strategy';
 
 describe('ShippingStrategy', () => {

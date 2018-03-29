@@ -1,4 +1,5 @@
 import { NotInitializedError } from '../../../common/error/errors';
+
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import {

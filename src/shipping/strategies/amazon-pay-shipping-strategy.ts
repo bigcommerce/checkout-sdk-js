@@ -1,7 +1,7 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
-import { InternalAddress, isAddressEqual } from '../../address';
+import { isAddressEqual, InternalAddress } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
@@ -16,6 +16,7 @@ import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay'
 import ShippingAddressActionCreator from '../shipping-address-action-creator';
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
+
 import ShippingStrategy from './shipping-strategy';
 
 export default class AmazonPayShippingStrategy extends ShippingStrategy {

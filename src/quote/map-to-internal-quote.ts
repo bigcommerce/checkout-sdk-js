@@ -1,5 +1,6 @@
-import { Checkout } from '../checkout';
 import { mapToInternalAddress } from '../address';
+import { Checkout } from '../checkout';
+
 import InternalQuote from './internal-quote';
 
 export default function mapToInternalQuote(checkout: Checkout, existingQuote: InternalQuote): InternalQuote {

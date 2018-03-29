@@ -3,6 +3,7 @@
 
 import 'rxjs/add/observable/empty';
 import { Observable } from 'rxjs/Observable';
+
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotImplementedError, NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
@@ -10,6 +11,7 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../
 import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import CustomerCredentials from '../customer-credentials';
+
 import CustomerStrategy from './customer-strategy';
 
 export default class AmazonPayCustomerStrategy extends CustomerStrategy {

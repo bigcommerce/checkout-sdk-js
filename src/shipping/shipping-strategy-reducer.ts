@@ -1,7 +1,7 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { ShippingStrategyAction, ShippingStrategyActionType } from './shipping-strategy-actions';
-import ShippingStrategyState, { ShippingStrategyErrorsState, ShippingStrategyStatusesState, DEFAULT_STATE } from './shipping-strategy-state';
+import ShippingStrategyState, { DEFAULT_STATE, ShippingStrategyErrorsState, ShippingStrategyStatusesState } from './shipping-strategy-state';
 
 export default function shippingStrategyReducer(
     state: ShippingStrategyState = DEFAULT_STATE,

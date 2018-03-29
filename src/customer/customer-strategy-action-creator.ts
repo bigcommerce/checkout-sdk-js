@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { Registry } from '../common/registry';
+
 import CustomerCredentials from './customer-credentials';
 import {
     CustomerStrategyActionType,

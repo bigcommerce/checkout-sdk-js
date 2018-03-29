@@ -1,6 +1,6 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { Action, createAction } from '@bigcommerce/data-store';
+import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
@@ -10,7 +10,7 @@ import { BillingAddressActionCreator } from '../../billing';
 import { UPDATE_BILLING_ADDRESS_REQUESTED } from '../../billing/billing-address-action-types';
 import { getBillingAddress } from '../../billing/internal-billing-addresses.mock';
 import { getCartResponseBody } from '../../cart/internal-carts.mock';
-import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { getCheckoutMeta } from '../../checkout/checkouts.mock';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
@@ -25,6 +25,7 @@ import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay'
 import { INITIALIZE_REMOTE_BILLING_REQUESTED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import PaymentMethod from '../payment-method';
+
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
 
 describe('AmazonPayPaymentStrategy', () => {

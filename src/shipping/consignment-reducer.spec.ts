@@ -1,6 +1,8 @@
 import { createAction } from '@bigcommerce/data-store';
-import { getCheckout } from '../checkout/checkouts.mock';
+
 import { CheckoutActionType } from '../checkout';
+import { getCheckout } from '../checkout/checkouts.mock';
+
 import consignmentReducer from './consignment-reducer';
 
 describe('consignmentReducer', () => {

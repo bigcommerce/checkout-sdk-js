@@ -2,6 +2,7 @@ import { omit } from 'lodash';
 
 import { createCheckoutStore } from '../../checkout';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
+
 import { NoPaymentDataRequiredPaymentStrategy } from '.';
 
 describe('NoPaymentDataRequiredPaymentStrategy', () => {

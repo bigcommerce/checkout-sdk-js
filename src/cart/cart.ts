@@ -1,6 +1,7 @@
 import { Coupon } from '../coupon';
 import { Currency } from '../currency';
 import { Discount } from '../discount';
+
 import LineItemMap from './line-item-map';
 
 export default interface Cart {

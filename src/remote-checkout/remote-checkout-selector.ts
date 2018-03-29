@@ -1,6 +1,6 @@
-import RemoteCheckoutState from './remote-checkout-state';
 import RemoteCheckout from './remote-checkout';
 import RemoteCheckoutMeta from './remote-checkout-meta';
+import RemoteCheckoutState from './remote-checkout-state';
 
 export default class RemoteCheckoutSelector {
     constructor(

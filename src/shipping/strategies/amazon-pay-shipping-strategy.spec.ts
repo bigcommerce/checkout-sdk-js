@@ -5,7 +5,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
-import { CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import { getCheckoutMeta } from '../../checkout/checkouts.mock';
 import { NotInitializedError } from '../../common/error/errors';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
@@ -24,6 +24,7 @@ import { UPDATE_SHIPPING_ADDRESS_REQUESTED } from '../shipping-address-action-ty
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
 import { SELECT_SHIPPING_OPTION_REQUESTED } from '../shipping-option-action-types';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
+
 import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
 
 describe('AmazonPayShippingStrategy', () => {

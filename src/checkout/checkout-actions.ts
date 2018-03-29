@@ -1,4 +1,5 @@
 import { Action } from '@bigcommerce/data-store';
+
 import Checkout from './checkout';
 
 export enum CheckoutActionType {

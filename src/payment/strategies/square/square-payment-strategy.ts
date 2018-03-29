@@ -1,13 +1,15 @@
 /// <reference path="./square-form.d.ts" />
 
 import { omit } from 'lodash';
+
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../../order';
-import { PaymentMethodUninitializedError, PaymentMethodMissingDataError } from '../../errors';
-import SquareScriptLoader from './square-script-loader';
+import { PaymentMethodMissingDataError, PaymentMethodUninitializedError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import PaymentStrategy from '../payment-strategy';
+
+import SquareScriptLoader from './square-script-loader';
 
 export default class SquarePaymentStrategy extends PaymentStrategy {
     private _paymentForm?: Square.PaymentForm;

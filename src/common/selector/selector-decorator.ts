@@ -1,7 +1,8 @@
 import { isEqual, memoize } from 'lodash';
-import CacheKeyResolver from './cache-key-resolver';
 
 import { bindDecorator } from '../utility';
+
+import CacheKeyResolver from './cache-key-resolver';
 
 /**
  * Decorates a class by patching all of its methods to cache their return values
