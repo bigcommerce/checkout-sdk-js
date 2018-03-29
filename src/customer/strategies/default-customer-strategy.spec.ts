@@ -1,41 +1,55 @@
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
+import { createAction } from '@bigcommerce/data-store';
+import 'rxjs/add/observable/of';
+import { Observable } from 'rxjs/Observable';
+import { CheckoutClient, CheckoutStore, createCheckoutClient, createCheckoutStore } from '../../checkout';
+import { getQuote } from '../../quote/internal-quotes.mock';
+import CustomerActionCreator from '../customer-action-creator';
+import { SIGN_IN_CUSTOMER_SUCCEEDED, SIGN_OUT_CUSTOMER_SUCCEEDED } from '../customer-action-types';
 import DefaultCustomerStrategy from './default-customer-strategy';
-import SignInCustomerService from '../sign-in-customer-service';
-import createSignInCustomerService from '../../customer/create-sign-in-customer-service';
 
 describe('DefaultCustomerStrategy', () => {
+    let customerActionCreator: CustomerActionCreator;
+    let client: CheckoutClient;
     let store: CheckoutStore;
-    let signInCustomerService: SignInCustomerService;
 
     beforeEach(() => {
         store = createCheckoutStore();
-        signInCustomerService = createSignInCustomerService(store, createCheckoutClient());
+        client = createCheckoutClient();
+        customerActionCreator = new CustomerActionCreator(client);
     });
 
-    it('signs in customer', async () => {
-        const strategy = new DefaultCustomerStrategy(store, signInCustomerService);
+    it('dispatches action to sign in customer', async () => {
+        const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
         const credentials = { email: 'foo@bar.com', password: 'foobar' };
         const options = {};
+        const action = Observable.of(createAction(SIGN_IN_CUSTOMER_SUCCEEDED, getQuote()));
 
-        jest.spyOn(signInCustomerService, 'signIn')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(customerActionCreator, 'signInCustomer')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
 
         const output = await strategy.signIn(credentials, options);
 
-        expect(signInCustomerService.signIn).toHaveBeenCalledWith(credentials, options);
+        expect(customerActionCreator.signInCustomer).toHaveBeenCalledWith(credentials, options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });
 
-    it('signs out customer', async () => {
-        const strategy = new DefaultCustomerStrategy(store, signInCustomerService);
+    it('dispatches action to sign out customer', async () => {
+        const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
         const options = {};
+        const action = Observable.of(createAction(SIGN_OUT_CUSTOMER_SUCCEEDED, getQuote()));
 
-        jest.spyOn(signInCustomerService, 'signOut')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        jest.spyOn(customerActionCreator, 'signOutCustomer')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
 
         const output = await strategy.signOut(options);
 
-        expect(signInCustomerService.signOut).toHaveBeenCalledWith(options);
+        expect(customerActionCreator.signOutCustomer).toHaveBeenCalledWith(options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });
 });

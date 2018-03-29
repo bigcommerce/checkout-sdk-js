@@ -7,6 +7,7 @@ export default class CheckoutErrorSelector {
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
+     * @param {CustomerStrategySelector} customerStrategy
      * @param {GiftCertificateSelector} giftCertificate
      * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
@@ -25,6 +26,7 @@ export default class CheckoutErrorSelector {
         countries,
         coupon,
         customer,
+        customerStrategy,
         giftCertificate,
         instruments,
         order,
@@ -42,6 +44,7 @@ export default class CheckoutErrorSelector {
         this._countries = countries;
         this._coupon = coupon;
         this._customer = customer;
+        this._customerStrategy = customerStrategy;
         this._giftCertificate = giftCertificate;
         this._instruments = instruments;
         this._order = order;
@@ -170,14 +173,14 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getSignInError() {
-        return this._customer.getSignInError();
+        return this._customerStrategy.getSignInError();
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getSignOutError() {
-        return this._customer.getSignOutError();
+        return this._customerStrategy.getSignOutError();
     }
 
     /**
@@ -185,7 +188,7 @@ export default class CheckoutErrorSelector {
      * @return {?ErrorResponse}
      */
     getInitializeCustomerError(methodId) {
-        return this._customer.getInitializeError(methodId);
+        return this._customerStrategy.getInitializeError(methodId);
     }
 
     /**

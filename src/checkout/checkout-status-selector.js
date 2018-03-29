@@ -7,6 +7,7 @@ export default class CheckoutStatusSelector {
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
+     * @param {CustomerStrategySelector} customerStrategy
      * @param {GiftCertificateSelector} giftCertificate
      * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
@@ -25,6 +26,7 @@ export default class CheckoutStatusSelector {
         countries,
         coupon,
         customer,
+        customerStrategy,
         giftCertificate,
         instruments,
         order,
@@ -42,6 +44,7 @@ export default class CheckoutStatusSelector {
         this._countries = countries;
         this._coupon = coupon;
         this._customer = customer;
+        this._customerStrategy = customerStrategy;
         this._giftCertificate = giftCertificate;
         this._instruments = instruments;
         this._order = order;
@@ -171,17 +174,19 @@ export default class CheckoutStatusSelector {
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isSigningIn() {
-        return this._customer.isSigningIn();
+    isSigningIn(methodId) {
+        return this._customerStrategy.isSigningIn(methodId);
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isSigningOut() {
-        return this._customer.isSigningOut() || this._remoteCheckout.isSigningOut();
+    isSigningOut(methodId) {
+        return this._customerStrategy.isSigningOut(methodId);
     }
 
     /**
@@ -189,7 +194,7 @@ export default class CheckoutStatusSelector {
      * @return {boolean}
      */
     isInitializingCustomer(methodId) {
-        return this._customer.isInitializing(methodId);
+        return this._customerStrategy.isInitializing(methodId);
     }
 
     /**

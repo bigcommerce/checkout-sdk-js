@@ -13,6 +13,7 @@ import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelecto
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CheckoutErrorSelector from './checkout-error-selector';
 import ShippingSelector from '../shipping/shipping-selector';
+import CustomerStrategySelector from '../customer/customer-strategy-selector';
 
 describe('CheckoutErrorSelector', () => {
     let billingAddress;
@@ -21,6 +22,7 @@ describe('CheckoutErrorSelector', () => {
     let countries;
     let coupon;
     let customer;
+    let customerStrategy;
     let giftCertificate;
     let instruments;
     let errorResponse;
@@ -41,6 +43,7 @@ describe('CheckoutErrorSelector', () => {
         countries = new CountrySelector();
         coupon = new CouponSelector();
         customer = new CustomerSelector();
+        customerStrategy = new CustomerStrategySelector();
         giftCertificate = new GiftCertificateSelector();
         instruments = new InstrumentSelector();
         order = new OrderSelector();
@@ -59,6 +62,7 @@ describe('CheckoutErrorSelector', () => {
             countries,
             coupon,
             customer,
+            customerStrategy,
             giftCertificate,
             instruments,
             order,
@@ -262,49 +266,49 @@ describe('CheckoutErrorSelector', () => {
 
     describe('#getSignInError()', () => {
         it('returns error if there is an error when signing in', () => {
-            jest.spyOn(customer, 'getSignInError').mockReturnValue(errorResponse);
+            jest.spyOn(customerStrategy, 'getSignInError').mockReturnValue(errorResponse);
 
             expect(errors.getSignInError()).toEqual(errorResponse);
-            expect(customer.getSignInError).toHaveBeenCalled();
+            expect(customerStrategy.getSignInError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when signing in', () => {
-            jest.spyOn(customer, 'getSignInError').mockReturnValue();
+            jest.spyOn(customerStrategy, 'getSignInError').mockReturnValue();
 
             expect(errors.getSignInError()).toEqual(undefined);
-            expect(customer.getSignInError).toHaveBeenCalled();
+            expect(customerStrategy.getSignInError).toHaveBeenCalled();
         });
     });
 
     describe('#getSignOutError()', () => {
         it('returns error if there is an error when signing out', () => {
-            jest.spyOn(customer, 'getSignOutError').mockReturnValue(errorResponse);
+            jest.spyOn(customerStrategy, 'getSignOutError').mockReturnValue(errorResponse);
 
             expect(errors.getSignOutError()).toEqual(errorResponse);
-            expect(customer.getSignOutError).toHaveBeenCalled();
+            expect(customerStrategy.getSignOutError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when signing out', () => {
-            jest.spyOn(customer, 'getSignOutError').mockReturnValue();
+            jest.spyOn(customerStrategy, 'getSignOutError').mockReturnValue();
 
             expect(errors.getSignOutError()).toEqual(undefined);
-            expect(customer.getSignOutError).toHaveBeenCalled();
+            expect(customerStrategy.getSignOutError).toHaveBeenCalled();
         });
     });
 
     describe('#getInitializeCustomerError()', () => {
         it('returns error if unable to initialize customer', () => {
-            jest.spyOn(customer, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(customerStrategy, 'getInitializeError').mockReturnValue(errorResponse);
 
             expect(errors.getInitializeCustomerError()).toEqual(errorResponse);
-            expect(customer.getInitializeError).toHaveBeenCalled();
+            expect(customerStrategy.getInitializeError).toHaveBeenCalled();
         });
 
         it('returns undefined if able to initialize customer', () => {
-            jest.spyOn(customer, 'getInitializeError').mockReturnValue();
+            jest.spyOn(customerStrategy, 'getInitializeError').mockReturnValue();
 
             expect(errors.getInitializeCustomerError()).toEqual(undefined);
-            expect(customer.getInitializeError).toHaveBeenCalled();
+            expect(customerStrategy.getInitializeError).toHaveBeenCalled();
         });
     });
 
