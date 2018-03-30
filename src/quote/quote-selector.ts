@@ -1,37 +1,30 @@
+import InternalQuote from './internal-quote';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class QuoteSelector {
     /**
      * @constructor
      * @param {QuoteState} quote
      */
-    constructor(quote = {}) {
-        this._quote = quote;
-    }
+    constructor(
+        private _quote: any = {}
+    ) {}
 
-    /**
-     * @return {InternalQuote}
-     */
-    getQuote() {
+    getQuote(): InternalQuote | undefined {
         return this._quote.data;
     }
 
-    /**
-     * @return {QuoteMeta}
-     */
-    getQuoteMeta() {
+    getQuoteMeta(): any {
         return this._quote.meta;
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getLoadError() {
+    getLoadError(): Error | undefined {
         return this._quote.errors && this._quote.errors.loadError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isLoading() {
+    isLoading(): boolean {
         return !!(this._quote.statuses && this._quote.statuses.isLoading);
     }
 }

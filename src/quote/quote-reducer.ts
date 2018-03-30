@@ -1,19 +1,24 @@
-import { combineReducers } from '@bigcommerce/data-store';
-import { CheckoutActionType } from '../checkout';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
+import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
-import * as quoteActionTypes from './quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+
+import InternalQuote from './internal-quote';
 import mapToInternalQuote from './map-to-internal-quote';
+import * as quoteActionTypes from './quote-action-types';
 
 /**
+ * @todo Convert this file into TypeScript properly
+ * i.e.: Action<T>, QuoteState, QuoteMeta
  * @param {QuoteState} state
  * @param {Action} action
  * @return {QuoteState}
  */
-export default function quoteReducer(state = {}, action) {
-    const reducer = combineReducers({
+export default function quoteReducer(state: any = {}, action: Action): any {
+    const reducer = combineReducers<any>({
         data: dataReducer,
         errors: errorsReducer,
         meta: metaReducer,
@@ -23,13 +28,7 @@ export default function quoteReducer(state = {}, action) {
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?Quote} data
- * @param {Action} action
- * @return {?Quote}
- */
-function dataReducer(data, action) {
+function dataReducer(data: InternalQuote, action: Action): InternalQuote {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...data, ...mapToInternalQuote(action.payload, data) };
@@ -54,7 +53,7 @@ function dataReducer(data, action) {
  * @param {Action} action
  * @return {?Object}
  */
-function metaReducer(meta, action) {
+function metaReducer(meta: any, action: Action): any {
     switch (action.type) {
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.meta ? { ...meta, ...action.meta } : meta;
@@ -70,7 +69,7 @@ function metaReducer(meta, action) {
  * @param {Action} action
  * @return {Object}
  */
-function errorsReducer(errors = {}, action) {
+function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
@@ -100,7 +99,7 @@ function errorsReducer(errors = {}, action) {
  * @param {Action} action
  * @return {Object}
  */
-function statusesReducer(statuses = {}, action) {
+function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case quoteActionTypes.LOAD_QUOTE_REQUESTED:
