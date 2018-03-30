@@ -1,40 +1,31 @@
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class CouponSelector {
     /**
      * @constructor
      * @param {CouponState} coupon
      */
-    constructor(coupon = {}) {
-        this._coupon = coupon;
-    }
+    constructor(
+        private _coupon: any = {}
+    ) {}
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getRemoveError() {
+    getRemoveError(): Error | undefined {
         return this._coupon.errors &&
             this._coupon.errors.removeCouponError;
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getApplyError() {
+    getApplyError(): Error | undefined {
         return this._coupon.errors &&
             this._coupon.errors.applyCouponError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isApplying() {
+    isApplying(): boolean {
         return !!(this._coupon.statuses &&
             this._coupon.statuses.isApplyingCoupon);
     }
 
-    /**
-     * @return {boolean}
-     */
-    isRemoving() {
+    isRemoving(): boolean {
         return !!(this._coupon.statuses &&
             this._coupon.statuses.isRemovingCoupon);
     }
