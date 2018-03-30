@@ -1,18 +1,18 @@
-export default class CustomerRequestSender {
-    /**
-     * @constructor
-     * @param {RequestSender} requestSender
-     */
-    constructor(requestSender) {
-        this._requestSender = requestSender;
-    }
+import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-    /**
-     * @param {CustomerCredentials} credentials
-     * @param {RequestOptions} [options]
-     * @return {Promise<CustomerResponseBody>}
-     */
-    signInCustomer(credentials, { timeout } = {}) {
+import { RequestOptions } from '../common/http-request';
+
+import CustomerCredentials from './customer-credentials';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
+export default class CustomerRequestSender {
+    constructor(
+        private _requestSender: RequestSender
+    ) {}
+
+    signInCustomer(credentials: CustomerCredentials, { timeout }: RequestOptions = {}): Promise<Response> {
         const url = '/internalapi/v1/checkout/customer';
         const params = {
             includes: ['cart', 'quote', 'shippingOptions'].join(','),
@@ -21,11 +21,7 @@ export default class CustomerRequestSender {
         return this._requestSender.post(url, { params, timeout, body: credentials });
     }
 
-    /**
-     * @param {RequestOptions} [options]
-     * @return {Promise<CustomerResponseBody>}
-     */
-    signOutCustomer({ timeout } = {}) {
+    signOutCustomer({ timeout }: RequestOptions = {}): Promise<Response> {
         const url = '/internalapi/v1/checkout/customer';
         const params = {
             includes: ['cart', 'quote', 'shippingOptions'].join(','),
