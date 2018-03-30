@@ -1,30 +1,27 @@
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class ConfigSelector {
     /**
      * @constructor
      * @param {ConfigState} config
      */
-    constructor(config = {}) {
-        this._config = config;
-    }
+    constructor(
+        private _config: any = {}
+    ) {}
 
     /**
      * @return {Config}
      */
-    getConfig() {
+    getConfig(): any {
         return this._config.data;
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getLoadError() {
+    getLoadError(): Error | undefined {
         return this._config.errors && this._config.errors.loadError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isLoading() {
+    isLoading(): boolean {
         return !!(this._config.statuses && this._config.statuses.isLoading);
     }
 }
