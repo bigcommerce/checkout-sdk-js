@@ -1,30 +1,27 @@
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class ShippingCountrySelector {
     /**
      * @constructor
      * @param {ShippingCountriesState} shippingCountries
      */
-    constructor(shippingCountries = {}) {
-        this._shippingCountries = shippingCountries;
-    }
+    constructor(
+        private _shippingCountries: any = {}
+    ) {}
 
     /**
      * @return {Country[]}
      */
-    getShippingCountries() {
+    getShippingCountries(): any[] {
         return this._shippingCountries.data;
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getLoadError() {
+    getLoadError(): Error | undefined {
         return this._shippingCountries.errors && this._shippingCountries.errors.loadError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isLoading() {
+    isLoading(): boolean {
         return !!(this._shippingCountries.statuses && this._shippingCountries.statuses.isLoading);
     }
 }

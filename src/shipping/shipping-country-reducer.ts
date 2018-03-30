@@ -1,5 +1,22 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import * as actionTypes from './shipping-country-action-types';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ * @param {CountriesState} state
+ * @param {Action} action
+ * @return {CountriesState}
+ */
+export default function shippingCountryReducer(state: any = {}, action: Action): any {
+    const reducer = combineReducers({
+        errors: errorsReducer,
+        data: dataReducer,
+        statuses: statusesReducer,
+    });
+
+    return reducer(state, action);
+}
 
 /**
  * @private
@@ -7,7 +24,7 @@ import * as actionTypes from './shipping-country-action-types';
  * @param {Action} action
  * @return {Country[]}
  */
-function dataReducer(data, action) {
+function dataReducer(data: any, action: Action): any[] {
     switch (action.type) {
     case actionTypes.LOAD_SHIPPING_COUNTRIES_SUCCEEDED:
         return action.payload || [];
@@ -23,7 +40,7 @@ function dataReducer(data, action) {
  * @param {Action} action
  * @return {Object}
  */
-function errorsReducer(errors = {}, action) {
+function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_SHIPPING_COUNTRIES_REQUESTED:
     case actionTypes.LOAD_SHIPPING_COUNTRIES_SUCCEEDED:
@@ -43,7 +60,7 @@ function errorsReducer(errors = {}, action) {
  * @param {Action} action
  * @return {Object}
  */
-function statusesReducer(statuses = {}, action) {
+function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_SHIPPING_COUNTRIES_REQUESTED:
         return { ...statuses, isLoading: true };
@@ -55,19 +72,4 @@ function statusesReducer(statuses = {}, action) {
     default:
         return statuses;
     }
-}
-
-/**
- * @param {CountriesState} state
- * @param {Action} action
- * @return {CountriesState}
- */
-export default function shippingCountryReducer(state = {}, action) {
-    const reducer = combineReducers({
-        errors: errorsReducer,
-        data: dataReducer,
-        statuses: statusesReducer,
-    });
-
-    return reducer(state, action);
 }
