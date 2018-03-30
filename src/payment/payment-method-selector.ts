@@ -1,29 +1,26 @@
 import { find } from 'lodash';
 
+import PaymentMethod from './payment-method';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class PaymentMethodSelector {
     /**
      * @constructor
      * @param {PaymentMethodsState} paymentMethods
      * @param {OrderState} order
      */
-    constructor(paymentMethods = {}, order = {}) {
-        this._paymentMethods = paymentMethods;
-        this._order = order;
-    }
+    constructor(
+        private _paymentMethods: any = {},
+        private _order: any = {}
+    ) {}
 
-    /**
-     * @return {PaymentMethod[]}
-     */
-    getPaymentMethods() {
+    getPaymentMethods(): PaymentMethod[] {
         return this._paymentMethods.data;
     }
 
-    /**
-     * @param {string} methodId
-     * @param {string} [gatewayId]
-     * @return {?PaymentMethod}
-     */
-    getPaymentMethod(methodId, gatewayId) {
+    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined {
         const predicate = gatewayId ?
             { id: methodId, gateway: gatewayId } :
             { id: methodId };
@@ -31,10 +28,7 @@ export default class PaymentMethodSelector {
         return find(this._paymentMethods.data, predicate);
     }
 
-    /**
-     * @return {?PaymentMethod}
-     */
-    getSelectedPaymentMethod() {
+    getSelectedPaymentMethod(): PaymentMethod | undefined {
         if (!this._order.data || !this._order.data.payment) {
             return;
         }
@@ -45,18 +39,11 @@ export default class PaymentMethodSelector {
         );
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getLoadError() {
+    getLoadError(): Error | undefined {
         return this._paymentMethods.errors && this._paymentMethods.errors.loadError;
     }
 
-    /**
-     * @param {string} [methodId]
-     * @return {?ErrorResponse}
-     */
-    getLoadMethodError(methodId) {
+    getLoadMethodError(methodId?: string): Error | undefined {
         if (!this._paymentMethods.errors ||
             (methodId && this._paymentMethods.errors.loadMethod !== methodId)) {
             return;
@@ -65,18 +52,11 @@ export default class PaymentMethodSelector {
         return this._paymentMethods.errors.loadMethodError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isLoading() {
+    isLoading(): boolean {
         return !!(this._paymentMethods.statuses && this._paymentMethods.statuses.isLoading);
     }
 
-    /**
-     * @param {string} [methodId]
-     * @return {boolean}
-     */
-    isLoadingMethod(methodId) {
+    isLoadingMethod(methodId?: string): boolean {
         if (!this._paymentMethods.statuses ||
             (methodId && this._paymentMethods.statuses.loadingMethod !== methodId)) {
             return false;

@@ -1,24 +1,29 @@
-import PaymentStrategy from './payment-strategy';
+import { CheckoutSelectors } from '../../checkout';
 import * as paymentStatusTypes from '../payment-status-types';
 
+import PaymentStrategy from './payment-strategy';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
+    private _paypalSdk: any;
+
     /**
      * @constructor
      * @param {CheckoutStore} store
      * @param {PlaceOrderService} placeOrderService
      * @param {ScriptLoader} scriptLoader
      */
-    constructor(store, placeOrderService, scriptLoader) {
+    constructor(
+        store: any,
+        placeOrderService: any,
+        private _scriptLoader: any
+    ) {
         super(store, placeOrderService);
-
-        this._scriptLoader = scriptLoader;
-        this._paypalSdk = null;
     }
 
-    /**
-     * @inheritdoc
-     */
-    initialize(options) {
+    initialize(options?: any): Promise<CheckoutSelectors> {
         this._paymentMethod = options.paymentMethod;
 
         if (!this._isInContextEnabled() || this._isInitialized) {
@@ -27,9 +32,9 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
         return this._scriptLoader.loadScript('//www.paypalobjects.com/api/checkout.min.js')
             .then(() => {
-                this._paypalSdk = window.paypal;
+                this._paypalSdk = (window as any).paypal;
 
-                const { merchantId, testMode } = this._paymentMethod.config;
+                const { merchantId, testMode } = this._paymentMethod!.config;
                 const environment = testMode ? 'sandbox' : 'production';
 
                 this._paypalSdk.checkout.setup(merchantId, {
@@ -40,10 +45,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             .then(() => super.initialize(options));
     }
 
-    /**
-     * @inheritdoc
-     */
-    deinitialize() {
+    deinitialize(): Promise<CheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize();
         }
@@ -56,10 +58,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         return super.deinitialize();
     }
 
-    /**
-     * @inheritdoc
-     */
-    execute(payload, options) {
+    execute(payload: any, options: any): Promise<CheckoutSelectors> {
         if (this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
             this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
             return this._placeOrderService.submitOrder(payload, true);
@@ -67,7 +66,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
         if (!this._isInContextEnabled()) {
             return this._placeOrderService.submitOrder(payload, true, options)
-                .then((state) => {
+                .then((state: any) => {
                     window.location.assign(state.checkout.getOrder().payment.redirectUrl);
 
                     // We need to hold execution so the consumer does not redirect us somewhere else
@@ -78,23 +77,20 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         this._paypalSdk.checkout.initXO();
 
         return this._placeOrderService.submitOrder(payload, true, options)
-            .then((state) => {
+            .then((state: any) => {
                 this._paypalSdk.checkout.startFlow(state.checkout.getOrder().payment.redirectUrl);
 
                 // We need to hold execution so the consumer does not redirect us somewhere else
                 return new Promise(() => {});
             })
-            .catch((state) => {
+            .catch((state: any) => {
                 this._paypalSdk.checkout.closeFlow();
 
                 return Promise.reject(state);
             });
     }
 
-    /**
-     * @inheritdoc
-     */
-    finalize(options) {
+    finalize(options: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const { orderId } = checkout.getOrder();
 
@@ -107,22 +103,14 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         return super.finalize();
     }
 
-    /**
-     * @private
-     * @return {?string}
-     */
-    _getPaymentStatus() {
+    private _getPaymentStatus(): string | undefined {
         const { checkout } = this._store.getState();
         const { payment } = checkout.getOrder();
 
         return payment && payment.status;
     }
 
-    /**
-     * @private
-     * @return {boolean}
-     */
-    _isInContextEnabled() {
-        return !!this._paymentMethod.config.merchantId;
+    private _isInContextEnabled(): boolean {
+        return !!this._paymentMethod!.config.merchantId;
     }
 }

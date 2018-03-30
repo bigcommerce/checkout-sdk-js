@@ -1,14 +1,18 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import { mergeOrPush } from '../common/utility';
+
+import PaymentMethod from './payment-method';
 import * as actionTypes from './payment-method-action-types';
 
 /**
+ * @todo Convert this file into TypeScript properly
  * @param {PaymentMethodsState} state
  * @param {Action} action
  * @return {PaymentMethodsState}
  */
-export default function paymentMethodReducer(state = {}, action) {
-    const reducer = combineReducers({
+export default function paymentMethodReducer(state: any = {}, action: Action): any {
+    const reducer = combineReducers<any>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -23,13 +27,13 @@ export default function paymentMethodReducer(state = {}, action) {
  * @param {Action} action
  * @return {?PaymentMethod[]}
  */
-function dataReducer(data, action) {
+function dataReducer(data: PaymentMethod[], action: Action): PaymentMethod[] {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
         return mergeOrPush(data || [], action.payload.paymentMethod, {
             id: action.payload.paymentMethod.id,
             gateway: action.payload.paymentMethod.gateway,
-        });
+        } as any);
 
     case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
         return action.payload.paymentMethods || [];
@@ -45,7 +49,7 @@ function dataReducer(data, action) {
  * @param {Action} action
  * @return {Object}
  */
-function errorsReducer(errors = {}, action) {
+function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHODS_REQUESTED:
     case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
@@ -80,7 +84,7 @@ function errorsReducer(errors = {}, action) {
  * @param {Action} action
  * @return {Object}
  */
-function statusesReducer(statuses = {}, action) {
+function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHODS_REQUESTED:
         return { ...statuses, isLoading: true };

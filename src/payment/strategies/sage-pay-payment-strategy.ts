@@ -1,29 +1,27 @@
 import { omit, some } from 'lodash';
+
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { RequestError } from '../../common/error/errors';
+import { OrderRequestBody, PlaceOrderService } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
+
 import PaymentStrategy from './payment-strategy';
 
 export default class SagePayPaymentStrategy extends PaymentStrategy {
-    /**
-     * @constructor
-     * @param {CheckoutStore} store
-     * @param {PlaceOrderService} placeOrderService
-     * @param {FormPoster} formPoster
-     */
-    constructor(store, placeOrderService, formPoster) {
+    constructor(
+        store: CheckoutStore,
+        placeOrderService: PlaceOrderService,
+        private _formPoster: any
+    ) {
         super(store, placeOrderService);
-
-        this._formPoster = formPoster;
     }
 
-    /**
-     * @inheritdoc
-     */
-    execute(payload, options) {
+    execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
         return this._placeOrderService.submitOrder(omit(payload, 'payment'), options)
             .then(() =>
                 this._placeOrderService.submitPayment(payload.payment, payload.useStoreCredit, options)
             )
-            .catch((error) => {
+            .catch((error: RequestError) => {
                 const { body } = error;
 
                 if (!some(body.errors, { code: 'three_d_secure_required' })) {
@@ -40,10 +38,7 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
             });
     }
 
-    /**
-     * @inheritdoc
-     */
-    finalize(options) {
+    finalize(options?: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const { orderId, payment = {} } = checkout.getOrder();
 

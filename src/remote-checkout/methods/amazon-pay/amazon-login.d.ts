@@ -12,7 +12,9 @@ declare namespace amazon {
     }
 
     interface HostWindow extends Window {
-        amazon?: amazon;
+        amazon?: {
+            Login: Login,
+        };
         onAmazonLoginReady?: () => void;
     }
 }

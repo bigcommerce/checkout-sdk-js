@@ -1,12 +1,14 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import * as actionTypes from './instrument-action-types';
 
 /**
+ * @todo Convert this file into TypeScript properly
  * @param {InstrumentState} state
  * @param {Action} action
  * @return {InstrumentState}
  */
-export default function instrumentReducer(state = {}, action) {
+export default function instrumentReducer(state: any = {}, action: Action): any {
     const reducer = combineReducers({
         data: dataReducer,
         errors: errorsReducer,
@@ -23,7 +25,7 @@ export default function instrumentReducer(state = {}, action) {
  * @param {Action} action
  * @return {?Instruments[]}
  */
-function dataReducer(data, action) {
+function dataReducer(data: any, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
         return action.payload.vaulted_instruments || [];
@@ -32,7 +34,7 @@ function dataReducer(data, action) {
         return [...(data || []), action.payload.vaulted_instrument];
 
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
-        return (data || []).filter(instrument =>
+        return (data || []).filter((instrument: any) =>
             instrument.bigpay_token !== action.payload.instrumentId
         );
 
@@ -47,7 +49,7 @@ function dataReducer(data, action) {
  * @param {Action} action
  * @return {?Object}
  */
-function metaReducer(meta, action) {
+function metaReducer(meta: any, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
     case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
@@ -65,7 +67,7 @@ function metaReducer(meta, action) {
  * @param {Action} action
  * @return {Object}
  */
-function errorsReducer(errors = {}, action) {
+function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
@@ -107,7 +109,7 @@ function errorsReducer(errors = {}, action) {
  * @param {Action} action
  * @return {Object}
  */
-function statusesReducer(statuses = {}, action) {
+function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
         return { ...statuses, isLoading: true };
