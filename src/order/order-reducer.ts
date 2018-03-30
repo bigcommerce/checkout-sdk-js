@@ -1,16 +1,20 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import { CheckoutActionType } from '../checkout';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
+
+import InternalOrder from './internal-order';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
 
 /**
+ * @todo Convert this file into TypeScript properly
  * @param {OrderState} state
  * @param {Action} action
  * @return {OrderState}
  */
-export default function orderReducer(state = {}, action) {
-    const reducer = combineReducers({
+export default function orderReducer(state: any = {}, action: Action): any {
+    const reducer = combineReducers<any>({
         data: dataReducer,
         errors: errorsReducer,
         meta: metaReducer,
@@ -20,13 +24,7 @@ export default function orderReducer(state = {}, action) {
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?InternalOrder} data
- * @param {Action} action
- * @return {?InternalOrder}
- */
-function dataReducer(data, action) {
+function dataReducer(data: InternalOrder, action: Action): InternalOrder {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...data, ...mapToInternalIncompleteOrder(action.payload, data) };
@@ -42,13 +40,7 @@ function dataReducer(data, action) {
     }
 }
 
-/**
- * @private
- * @param {?Object} meta
- * @param {Action} action
- * @return {?Object}
- */
-function metaReducer(meta, action) {
+function metaReducer(meta: any, action: Action): any {
     switch (action.type) {
     case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
         return { ...meta, ...action.meta };
@@ -58,13 +50,7 @@ function metaReducer(meta, action) {
     }
 }
 
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
-function errorsReducer(errors = {}, action) {
+function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case orderActionTypes.LOAD_ORDER_REQUESTED:
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
@@ -78,13 +64,7 @@ function errorsReducer(errors = {}, action) {
     }
 }
 
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
-function statusesReducer(statuses = {}, action) {
+function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case orderActionTypes.LOAD_ORDER_REQUESTED:
         return { ...statuses, isLoading: true };
