@@ -1,0 +1,21 @@
+{
+    "compiler": {
+        "configType": "tsconfig",
+        "rootFolder": "."
+    },
+    "project": {
+        "entryPointSourceFile": "temp/index.d.ts"
+    },
+    "validationRules": {
+        "missingReleaseTags": "allow"
+    },
+    "apiReviewFile": {
+        "enabled": false
+    },
+    "apiJsonFile": {
+        "enabled": false
+    },
+    "dtsRollup": {
+        "enabled": true
+    }
+}
