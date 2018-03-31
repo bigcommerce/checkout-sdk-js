@@ -66,12 +66,12 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     finalize(options: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { useStoreCredit, customerMessage } = checkout.getCustomer().remote;
+        const { useStoreCredit, customerMessage } = checkout.getCustomer()!.remote;
         const order = checkout.getOrder();
 
         const payload = {
             payment: {
-                name: order.payment.id,
+                name: order!.payment.id,
                 paymentData: { nonce: options.nonce },
             },
         };

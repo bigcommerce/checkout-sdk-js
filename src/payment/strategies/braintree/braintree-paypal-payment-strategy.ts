@@ -27,9 +27,9 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
         return this._placeOrderService.loadPaymentMethod(paymentId)
             .then(({ checkout }: CheckoutSelectors) => {
-                const { clientToken } = checkout.getPaymentMethod(paymentId);
+                const { clientToken } = checkout.getPaymentMethod(paymentId)!;
 
-                this._braintreePaymentProcessor.initialize(clientToken, options);
+                this._braintreePaymentProcessor.initialize(clientToken!, options);
                 return this._braintreePaymentProcessor.preloadPaypal();
             })
             .then(() => super.initialize(options))
@@ -62,7 +62,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
     private _preparePaymentData(payment: Payment): Promise<Payment> {
         const { checkout } = this._store.getState();
-        const { amount } = checkout.getCart().grandTotal;
+        const { amount } = checkout.getCart()!.grandTotal;
         const { currency, storeLanguage } = checkout.getConfig();
         const { method, nonce } = this._paymentMethod!;
 

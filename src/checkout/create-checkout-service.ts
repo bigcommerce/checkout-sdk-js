@@ -1,28 +1,30 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
+/// <reference path="../payment/bigpay-client.d.ts" />
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createRequestSender } from '@bigcommerce/request-sender';
+
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
 import { CheckoutService } from '../checkout';
 import { ConfigActionCreator } from '../config';
-import { CountryActionCreator } from '../geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
+import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
 import { createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import {
+    createShippingStrategyRegistry,
+    ShippingCountryActionCreator,
+    ShippingOptionActionCreator,
+    ShippingStrategyActionCreator,
+} from '../shipping';
+
+import CheckoutClient from './checkout-client';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 
-/**
- * @param {Object} [options]
- * @param {Config} [options.config]
- * @param {CheckoutClient} [options.client]
- * @param {string} [options.locale]
- * @return {CheckoutService}
- */
-export default function createCheckoutService(options = {}) {
+export default function createCheckoutService(options: CheckoutServiceOptions = {}): CheckoutService {
     const client = options.client || createCheckoutClient({ locale: options.locale });
     const store = createCheckoutStore(createInitialState({ config: options.config }), { shouldWarnMutation: options.shouldWarnMutation });
     const paymentClient = createPaymentClient({ host: options.config && options.config.bigpayBaseUrl });
@@ -48,12 +50,14 @@ export default function createCheckoutService(options = {}) {
     );
 }
 
-/**
- * @private
- * @param {Object} options
- * @return {CheckoutState}
- */
-function createInitialState(options) {
+export interface CheckoutServiceOptions {
+    client?: CheckoutClient;
+    config?: any;
+    locale?: string;
+    shouldWarnMutation?: boolean;
+}
+
+function createInitialState(options: CheckoutServiceOptions) {
     return {
         config: {
             data: options.config,

@@ -23,7 +23,7 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
 
     private _isPaymentAcknowledged(): boolean {
         const { checkout } = this._store.getState();
-        const { payment = {} } = checkout.getOrder();
+        const { payment = {} } = checkout.getOrder()!;
 
         return payment.status === paymentStatusTypes.ACKNOWLEDGE;
     }

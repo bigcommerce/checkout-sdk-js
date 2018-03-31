@@ -172,7 +172,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (isAddressEqual(remoteCheckout.billingAddress, checkout.getBillingAddress()) || !remoteCheckout.billingAddress) {
+                if (isAddressEqual(remoteCheckout.billingAddress, checkout.getBillingAddress()!) || !remoteCheckout.billingAddress) {
                     return this._store.getState();
                 }
 
@@ -182,7 +182,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             });
     }
 
-    private _handlePaymentSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address: InternalAddress) => void): void {
+    private _handlePaymentSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address?: InternalAddress) => void): void {
         this._synchronizeBillingAddress()
             .then(({ checkout }: CheckoutSelectors) => callback(checkout.getBillingAddress()));
     }
@@ -203,7 +203,7 @@ export interface InitializeOptions extends InitializeWidgetOptions {
 export interface InitializeWidgetOptions {
     container: string;
     amazonOrderReferenceId?: string;
-    onPaymentSelect?: (address: InternalAddress) => void;
+    onPaymentSelect?: (address?: InternalAddress) => void;
     onError?: (error: Error) => void;
     onReady?: () => void;
 }

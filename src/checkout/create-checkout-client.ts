@@ -1,22 +1,19 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
+
 import { BillingAddressRequestSender } from '../billing';
 import { CartRequestSender } from '../cart';
 import { ConfigRequestSender } from '../config';
-import { CountryRequestSender } from '../geography';
 import { CouponRequestSender, GiftCertificateRequestSender } from '../coupon';
 import { CustomerRequestSender } from '../customer';
-import { PaymentMethodRequestSender } from '../payment';
+import { CountryRequestSender } from '../geography';
 import { OrderRequestSender } from '../order';
+import { PaymentMethodRequestSender } from '../payment';
 import { QuoteRequestSender } from '../quote';
 import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
+
 import CheckoutClient from './checkout-client';
 
-/**
- * @param {Object} [config={}]
- * @param {string} [config.locale]
- * @return {CheckoutClient}
- */
-export default function createCheckoutClient(config = {}) {
+export default function createCheckoutClient(config: { locale?: string } = {}): CheckoutClient {
     const requestSender = createRequestSender();
     const cartRequestSender = new CartRequestSender(requestSender);
     const configRequestSender = new ConfigRequestSender(requestSender);
@@ -45,6 +42,6 @@ export default function createCheckoutClient(config = {}) {
         quoteRequestSender,
         shippingAddressRequestSender,
         shippingCountryRequestSender,
-        shippingOptionRequestSender,
+        shippingOptionRequestSender
     );
 }

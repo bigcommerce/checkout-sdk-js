@@ -6,7 +6,7 @@ module.exports = {
     devtool: 'source-map',
 
     entry: {
-        'checkout-sdk': './src/index.js',
+        'checkout-sdk': './src/index.ts',
     },
 
     output: {
