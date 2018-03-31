@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-        "declaration": true,
+        "allowJs": true,
+        "declaration": false,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "importHelpers": true,
@@ -17,9 +18,7 @@
         "target": "es5"
     },
     "include": [
+        "src/**/*.js",
         "src/**/*.ts"
-    ],
-    "exclude": [
-        "src/**/*.*.ts"
     ]
 }
