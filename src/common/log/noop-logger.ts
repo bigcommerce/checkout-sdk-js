@@ -1,4 +1,6 @@
-export default class NoopLogger {
+import Logger from './logger';
+
+export default class NoopLogger implements Logger {
     log(): void {}
 
     info(): void {}

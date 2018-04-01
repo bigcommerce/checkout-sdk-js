@@ -1,12 +1,12 @@
 import { createLogger } from './index';
-import Logger from './logger';
+import ConsoleLogger from './console-logger';
 import NoopLogger from './noop-logger';
 
 describe('createLogger()', () => {
     it('returns a console logger if logging is enabled', () => {
         const logger = createLogger();
 
-        expect(logger instanceof Logger).toEqual(true);
+        expect(logger instanceof ConsoleLogger).toEqual(true);
     });
 
     it('returns a noop logger if logging is disabled', () => {

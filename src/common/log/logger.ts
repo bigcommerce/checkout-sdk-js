@@ -1,33 +1,11 @@
-export default class Logger {
-    constructor(
-        private _console: Console
-    ) {}
+export default interface Logger {
+    log(...messages: any[]): void;
 
-    log(...messages: any[]): void {
-        this._logToConsole('log', ...messages);
-    }
+    info(...messages: any[]): void;
 
-    info(...messages: any[]): void {
-        this._logToConsole('info', ...messages);
-    }
+    warn(...messages: any[]): void;
 
-    warn(...messages: any[]): void {
-        this._logToConsole('warn', ...messages);
-    }
+    error(...messages: any[]): void;
 
-    error(...messages: any[]): void {
-        this._logToConsole('error', ...messages);
-    }
-
-    debug(...messages: any[]): void {
-        this._logToConsole('debug', ...messages);
-    }
-
-    private _logToConsole(type: keyof Console, ...messages: any[]): void {
-        if (!this._console || !this._console[type]) {
-            return;
-        }
-
-        this._console[type].call(this._console, ...messages);
-    }
+    debug(...messages: any[]): void;
 }
