@@ -8,7 +8,6 @@ import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import CheckoutStatusSelector from './checkout-status-selector';
 import CustomerStrategySelector from '../customer/customer-strategy-selector';
@@ -27,7 +26,6 @@ describe('CheckoutStatusSelector', () => {
     let paymentMethods;
     let paymentStrategy;
     let quote;
-    let remoteCheckout;
     let shippingAddress;
     let shippingCountries;
     let shippingOption;
@@ -48,7 +46,6 @@ describe('CheckoutStatusSelector', () => {
         paymentStrategy = new PaymentStrategySelector();
         instruments = new InstrumentSelector();
         quote = new QuoteSelector();
-        remoteCheckout = new RemoteCheckoutSelector();
         shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
         shippingOption = new ShippingOptionSelector();
@@ -68,7 +65,6 @@ describe('CheckoutStatusSelector', () => {
             paymentMethods,
             paymentStrategy,
             quote,
-            remoteCheckout,
             shippingAddress,
             shippingCountries,
             shippingOption,
