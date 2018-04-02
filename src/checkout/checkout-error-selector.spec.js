@@ -8,7 +8,6 @@ import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CheckoutErrorSelector from './checkout-error-selector';
@@ -29,7 +28,6 @@ describe('CheckoutErrorSelector', () => {
     let paymentMethods;
     let paymentStrategy;
     let quote;
-    let remoteCheckout;
     let shippingAddress;
     let shippingCountries;
     let shippingOptions;
@@ -49,7 +47,6 @@ describe('CheckoutErrorSelector', () => {
         paymentMethods = new PaymentMethodSelector();
         paymentStrategy = new PaymentStrategySelector();
         quote = new QuoteSelector();
-        remoteCheckout = new RemoteCheckoutSelector();
         shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
         shippingOptions = new ShippingOptionSelector();
@@ -69,7 +66,6 @@ describe('CheckoutErrorSelector', () => {
             paymentMethods,
             paymentStrategy,
             quote,
-            remoteCheckout,
             shippingAddress,
             shippingCountries,
             shippingOptions,

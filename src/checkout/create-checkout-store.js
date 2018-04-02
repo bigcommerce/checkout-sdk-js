@@ -138,7 +138,6 @@ function createCheckoutSelectors(state, options) {
         paymentMethods,
         paymentStrategy,
         quote,
-        remoteCheckout,
         shippingAddress,
         shippingCountries,
         shippingOptions,

@@ -18,7 +18,6 @@ export default class CheckoutErrorSelector {
      * @param {PaymentMethodSelector} paymentMethods
      * @param {PaymentStrategySelector} paymentStrategy
      * @param {QuoteSelector} quote
-     * @param {RemoteCheckout} remoteCheckout
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
@@ -38,7 +37,6 @@ export default class CheckoutErrorSelector {
         paymentMethods,
         paymentStrategy,
         quote,
-        remoteCheckout,
         shippingAddress,
         shippingCountries,
         shippingOptions,
@@ -57,7 +55,6 @@ export default class CheckoutErrorSelector {
         this._paymentMethods = paymentMethods;
         this._paymentStrategy = paymentStrategy;
         this._quote = quote;
-        this._remoteCheckout = remoteCheckout;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
