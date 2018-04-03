@@ -26,10 +26,8 @@ import {
     PaypalExpressPaymentStrategy,
     PaypalProPaymentStrategy,
     SagePayPaymentStrategy,
-    SquarePaymentStrategy,
 } from './strategies';
 import { createBraintreePaymentProcessor } from './strategies/braintree';
-import { SquareScriptLoader } from './strategies/square';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
@@ -92,10 +90,6 @@ export default function createPaymentStrategyRegistry(
 
     registry.register('sagepay', () =>
         new SagePayPaymentStrategy(store, placeOrderService, createFormPoster())
-    );
-
-    registry.register('squarev2', () =>
-        new SquarePaymentStrategy(store, placeOrderService, new SquareScriptLoader(scriptLoader))
     );
 
     registry.register('nopaymentdatarequired', () =>
