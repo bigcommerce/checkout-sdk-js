@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.13.2"></a>
+## [0.13.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.13.1...v0.13.2) (2018-04-03)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-2905 Hold execution to avoid unwanted redirect ([972244f](https://github.com/bigcommerce/checkout-sdk-js/commit/972244f))
+* **payment:** CHECKOUT-2926 Unregister Square v2 ([d02e99d](https://github.com/bigcommerce/checkout-sdk-js/commit/d02e99d))
+
+
+
 <a name="0.13.1"></a>
 ## [0.13.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.13.0...v0.13.1) (2018-04-03)
 
