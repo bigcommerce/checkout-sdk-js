@@ -15,7 +15,6 @@ import {
     PaypalExpressPaymentStrategy,
     PaypalProPaymentStrategy,
     SagePayPaymentStrategy,
-    SquarePaymentStrategy,
 } from './strategies';
 
 describe('CreatePaymentStrategyRegistry', () => {
@@ -85,11 +84,6 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instanciate sagepay', () => {
         const paymentStrategy = registry.get('sagepay');
         expect(paymentStrategy).toBeInstanceOf(SagePayPaymentStrategy);
-    });
-
-    it('can instanciate squarev2', () => {
-        const paymentStrategy = registry.get('squarev2');
-        expect(paymentStrategy).toBeInstanceOf(SquarePaymentStrategy);
     });
 
     it('can instanciate nopaymentdatarequired', () => {
