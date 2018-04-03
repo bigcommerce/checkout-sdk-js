@@ -70,7 +70,8 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
                 .then((state) => {
                     window.location.assign(state.checkout.getOrder().payment.redirectUrl);
 
-                    return this._resolveBeforeUnload(state);
+                    // We need to hold execution so the consumer does not redirect us somewhere else
+                    return new Promise(() => {});
                 });
         }
 
@@ -80,7 +81,8 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             .then((state) => {
                 this._paypalSdk.checkout.startFlow(state.checkout.getOrder().payment.redirectUrl);
 
-                return this._resolveBeforeUnload(state);
+                // We need to hold execution so the consumer does not redirect us somewhere else
+                return new Promise(() => {});
             })
             .catch((state) => {
                 this._paypalSdk.checkout.closeFlow();
@@ -122,22 +124,5 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
      */
     _isInContextEnabled() {
         return !!this._paymentMethod.config.merchantId;
-    }
-
-    /**
-     * @private
-     * @param {CheckoutSelectors} state
-     * @return {Promise<CheckoutSelectors>}
-     */
-    _resolveBeforeUnload(state) {
-        return new Promise((resolve) => {
-            const handleUnload = () => {
-                window.removeEventListener('unload', handleUnload);
-
-                resolve(state);
-            };
-
-            window.addEventListener('unload', handleUnload);
-        });
     }
 }

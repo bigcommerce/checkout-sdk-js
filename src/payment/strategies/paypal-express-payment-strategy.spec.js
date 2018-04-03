@@ -26,14 +26,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             checkout: {
                 setup: jest.fn(),
                 initXO: jest.fn(),
-                startFlow: jest.fn(() => {
-                    setTimeout(() => {
-                        const event = document.createEvent('Event');
-
-                        event.initEvent('unload', true, false);
-                        document.body.dispatchEvent(event);
-                    });
-                }),
+                startFlow: jest.fn(),
                 closeFlow: jest.fn(),
             },
         };
@@ -50,14 +43,7 @@ describe('PaypalExpressPaymentStrategy', () => {
 
         paymentMethod = getPaypalExpress();
 
-        jest.spyOn(window.location, 'assign').mockImplementation(() => {
-            setTimeout(() => {
-                const event = document.createEvent('Event');
-
-                event.initEvent('unload', true, false);
-                document.body.dispatchEvent(event);
-            });
-        });
+        jest.spyOn(window.location, 'assign').mockImplementation(() => {});
 
         strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader);
     });
@@ -140,13 +126,15 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('opens in-context modal', async () => {
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.initXO).toHaveBeenCalled();
             });
 
             it('starts in-context payment flow', async () => {
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.startFlow).toHaveBeenCalledWith(order.payment.redirectUrl);
             });
@@ -154,7 +142,8 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not open in-context modal if payment is already acknowledged', async () => {
                 order.payment.status = paymentStatusTypes.ACKNOWLEDGE;
 
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.initXO).not.toHaveBeenCalled();
                 expect(paypalSdk.checkout.startFlow).not.toHaveBeenCalled();
@@ -163,7 +152,8 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not open in-context modal if payment is already finalized', async () => {
                 order.payment.status = paymentStatusTypes.FINALIZE;
 
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.initXO).not.toHaveBeenCalled();
                 expect(paypalSdk.checkout.startFlow).not.toHaveBeenCalled();
@@ -172,7 +162,8 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('submits order with payment data', async () => {
                 const options = {};
 
-                await strategy.execute(payload, options);
+                strategy.execute(payload, options);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(placeOrderService.submitOrder).toHaveBeenCalledWith(payload, true, options);
             });
@@ -180,21 +171,17 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not submit payment data separately', async () => {
                 const options = {};
 
-                await strategy.execute(payload, options);
+                strategy.execute(payload, options);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(placeOrderService.submitPayment).not.toHaveBeenCalledWith(options);
             });
 
             it('does not redirect shopper directly if order submission is successful', async () => {
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(window.location.assign).not.toHaveBeenCalled();
-            });
-
-            it('returns checkout state', async () => {
-                const output = await strategy.execute(payload);
-
-                expect(output).toEqual(store.getState());
             });
         });
 
@@ -206,13 +193,15 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('does not open in-context modal', async () => {
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.initXO).not.toHaveBeenCalled();
             });
 
             it('does not start in-context payment flow', async () => {
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(paypalSdk.checkout.startFlow).not.toHaveBeenCalled();
             });
@@ -220,19 +209,22 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('submits order with payment data', async () => {
                 const options = {};
 
-                await strategy.execute(payload, options);
+                strategy.execute(payload, options);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(placeOrderService.submitOrder).toHaveBeenCalledWith(payload, true, options);
             });
 
             it('does not submit payment data separately', async () => {
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(placeOrderService.submitPayment).not.toHaveBeenCalled();
             });
 
             it('redirects shopper directly if order submission is successful', async () => {
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(window.location.assign).toHaveBeenCalledWith(order.payment.redirectUrl);
             });
@@ -240,7 +232,8 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not redirect shopper if payment is already acknowledged', async () => {
                 order.payment.status = paymentStatusTypes.ACKNOWLEDGE;
 
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(window.location.assign).not.toHaveBeenCalled();
             });
@@ -248,15 +241,10 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not redirect shopper if payment is already finalized', async () => {
                 order.payment.status = paymentStatusTypes.FINALIZE;
 
-                await strategy.execute(payload);
+                strategy.execute(payload);
+                await new Promise((resolve) => process.nextTick(resolve));
 
                 expect(window.location.assign).not.toHaveBeenCalled();
-            });
-
-            it('returns checkout state', async () => {
-                const output = await strategy.execute(payload);
-
-                expect(output).toEqual(store.getState());
             });
         });
     });
