@@ -12,14 +12,12 @@ import {
     PaypalExpressPaymentStrategy,
     PaypalProPaymentStrategy,
     SagePayPaymentStrategy,
-    SquarePaymentStrategy,
 } from './strategies';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
 import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { createRemoteCheckoutService } from '../remote-checkout';
 import { createPlaceOrderService } from '../order';
-import { SquareScriptLoader } from './strategies/square';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 
 /**
@@ -37,7 +35,6 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
     const scriptLoader = getScriptLoader();
     const afterpayScriptLoader = createAfterpayScriptLoader();
     const klarnaScriptLoader = new KlarnaScriptLoader(scriptLoader);
-    const squareScriptLoader = new SquareScriptLoader(scriptLoader);
 
     registry.register('afterpay', () =>
         new AfterpayPaymentStrategy(store, placeOrderService, remoteCheckoutService, afterpayScriptLoader)
@@ -86,10 +83,6 @@ export default function createPaymentStrategyRegistry(store, client, paymentClie
 
     registry.register('sagepay', () =>
         new SagePayPaymentStrategy(store, placeOrderService, createFormPoster())
-    );
-
-    registry.register('squarev2', () =>
-        new SquarePaymentStrategy(store, placeOrderService, squareScriptLoader)
     );
 
     registry.register('nopaymentdatarequired', () =>
