@@ -1,11 +1,9 @@
-import { UnrecoverableError } from './errors';
 import { PaymentMethodInvalidError } from '../../payment/errors';
+
+import { UnrecoverableError } from './errors';
 import RequestErrorFactory from './request-error-factory';
 
-/**
- * @return {RequestErrorFactory}
- */
-export default function createRequestErrorFactory() {
+export default function createRequestErrorFactory(): RequestErrorFactory {
     const factory = new RequestErrorFactory();
 
     const unrecoverableErrorTypes = [
@@ -25,11 +23,11 @@ export default function createRequestErrorFactory() {
     ];
 
     unrecoverableErrorTypes.forEach((type) => {
-        factory.register(type, (...args) => new UnrecoverableError(...args));
+        factory.register(type, (response, message) => new UnrecoverableError(response, message));
     });
 
-    factory.register('invalid_payment_provider', (...args) => new PaymentMethodInvalidError(...args));
-    factory.register('payment_config_not_found', (...args) => new PaymentMethodInvalidError(...args));
+    factory.register('invalid_payment_provider', (response) => new PaymentMethodInvalidError(response));
+    factory.register('payment_config_not_found', (response) => new PaymentMethodInvalidError(response));
 
     return factory;
 }

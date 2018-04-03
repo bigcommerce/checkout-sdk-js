@@ -1,23 +1,12 @@
 import { deepFreeze } from '@bigcommerce/data-store';
 
-/**
- * @param {T} target
- * @return {T}
- * @template T
- */
-export default function createFreezeProxy(target) {
+export default function createFreezeProxy<T extends object>(target: T): T {
     return createProxy(target, (target, name) =>
-        (...args) => deepFreeze(target[name].call(target, ...args))
+        (...args: any[]) => deepFreeze(target[name].call(target, ...args))
     );
 }
 
-/**
- * @private
- * @param {T} target
- * @return {T}
- * @template T
- */
-function createProxy(target, trap) {
+function createProxy<T extends object>(target: T, trap: (target: T, name: keyof T, proxy: T) => any): T {
     const proxy = Object.create(target);
 
     traversePrototypeOf(target, (prototype) => {
@@ -27,20 +16,14 @@ function createProxy(target, trap) {
                     return;
                 }
 
-                proxy[name] = trap(target, name, proxy);
+                proxy[name] = trap(target, name as keyof T, proxy);
             });
     });
 
     return proxy;
 }
 
-/**
- * @private
- * @param {Object} target
- * @param {function(prototype: Object)} iteratee
- * @return {void}
- */
-function traversePrototypeOf(target, iteratee) {
+function traversePrototypeOf(target: object, iteratee: (prototype: object) => void): void {
     let prototype = Object.getPrototypeOf(target);
 
     while (prototype) {

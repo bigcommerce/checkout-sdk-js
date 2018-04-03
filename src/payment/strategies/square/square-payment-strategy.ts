@@ -1,5 +1,4 @@
 /// <reference path="./square-form.d.ts" />
-
 import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
