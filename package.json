@@ -3,6 +3,7 @@
   "version": "0.15.1",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
+  "private": true,
   "main": "lib/index.js",
   "files": [
     "dist/",
