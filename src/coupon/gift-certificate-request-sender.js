@@ -8,23 +8,25 @@ export default class GiftCertificateRequestSender {
     }
 
     /**
-     * @param {string} couponCode
+     * @param {string} checkoutId
+     * @param {string} giftCertificateCode
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    applyGiftCertificate(couponCode, { timeout } = {}) {
-        const url = '/internalapi/v1/checkout/coupon';
+    applyGiftCertificate(checkoutId, giftCertificateCode, { timeout } = {}) {
+        const url = `/api/storefront/checkouts/${checkoutId}/gift-certificates`;
 
-        return this._requestSender.post(url, { timeout, body: { couponCode } });
+        return this._requestSender.post(url, { timeout, body: { giftCertificateCode } });
     }
 
     /**
-     * @param {string} couponCode
+     * @param {string} checkoutId
+     * @param {string} giftCertificateCode
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    removeGiftCertificate(couponCode, { timeout } = {}) {
-        const url = `/internalapi/v1/checkout/coupon/${couponCode}`;
+    removeGiftCertificate(checkoutId, giftCertificateCode, { timeout } = {}) {
+        const url = `/api/storefront/checkouts/${checkoutId}/gift-certificates/${giftCertificateCode}`;
 
         return this._requestSender.delete(url, { timeout });
     }

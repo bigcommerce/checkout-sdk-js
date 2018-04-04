@@ -24,12 +24,32 @@ export default class OrderActionCreator {
             observer.next(createAction(actionTypes.LOAD_ORDER_REQUESTED));
 
             this._checkoutClient.loadOrder(orderId, options)
-                .then(({ body: { data } = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_ORDER_SUCCEEDED, data));
+                .then(({ body } = {}) => {
+                    observer.next(createAction(actionTypes.LOAD_ORDER_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_ORDER_FAILED, response));
+                });
+        });
+    }
+
+    /**
+     * @param {number} orderId
+     * @param {RequestOptions} [options]
+     * @return {Observable<Action>}
+     */
+    loadInternalOrder(orderId, options) {
+        return Observable.create((observer) => {
+            observer.next(createAction(actionTypes.LOAD_INTERNAL_ORDER_REQUESTED));
+
+            this._checkoutClient.loadInternalOrder(orderId, options)
+                .then(({ body: { data } = {} }) => {
+                    observer.next(createAction(actionTypes.LOAD_INTERNAL_ORDER_SUCCEEDED, data));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(actionTypes.LOAD_INTERNAL_ORDER_FAILED, response));
                 });
         });
     }

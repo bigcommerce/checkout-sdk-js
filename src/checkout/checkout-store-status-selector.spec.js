@@ -3,18 +3,20 @@ import { CartSelector } from '../cart';
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector } from '../customer';
+import { CustomerSelector, CustomerStrategySelector } from '../customer';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
-import CheckoutStatusSelector from './checkout-status-selector';
-import CustomerStrategySelector from '../customer/customer-strategy-selector';
+import { getCheckoutStoreState } from './checkouts.mock';
+import CheckoutStoreStatusSelector from './checkout-store-status-selector';
+import CheckoutSelector from './checkout-selector';
 
-describe('CheckoutStatusSelector', () => {
+describe('CheckoutStoreStatusSelector', () => {
     let billingAddress;
     let cart;
+    let checkout;
     let config;
     let countries;
     let coupon;
@@ -28,32 +30,36 @@ describe('CheckoutStatusSelector', () => {
     let quote;
     let shippingAddress;
     let shippingCountries;
-    let shippingOption;
+    let shippingOptions;
     let shippingStrategy;
     let statuses;
+    let state;
 
     beforeEach(() => {
-        billingAddress = new BillingAddressSelector();
-        cart = new CartSelector();
-        config = new ConfigSelector();
-        countries = new CountrySelector();
-        coupon = new CouponSelector();
-        customer = new CustomerSelector();
+        state = getCheckoutStoreState();
+        billingAddress = new BillingAddressSelector(state.quote);
+        cart = new CartSelector(state.cart);
+        checkout = new CheckoutSelector(state.checkout);
+        config = new ConfigSelector(state.config);
+        countries = new CountrySelector(state.countries);
+        coupon = new CouponSelector(state.coupons);
+        customer = new CustomerSelector(state.customer);
         customerStrategy = new CustomerStrategySelector();
-        giftCertificate = new GiftCertificateSelector();
-        order = new OrderSelector();
-        paymentMethods = new PaymentMethodSelector();
+        giftCertificate = new GiftCertificateSelector(state.giftCertificates);
+        order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+        paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
         paymentStrategy = new PaymentStrategySelector();
-        instruments = new InstrumentSelector();
-        quote = new QuoteSelector();
-        shippingAddress = new ShippingAddressSelector();
-        shippingCountries = new ShippingCountrySelector();
-        shippingOption = new ShippingOptionSelector();
+        instruments = new InstrumentSelector(state.instruments);
+        quote = new QuoteSelector(state.quote);
+        shippingAddress = new ShippingAddressSelector(state.quote);
+        shippingCountries = new ShippingCountrySelector(state.shippingCountries);
+        shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
         shippingStrategy = new ShippingStrategySelector();
 
-        statuses = new CheckoutStatusSelector(
+        statuses = new CheckoutStoreStatusSelector(
             billingAddress,
             cart,
+            checkout,
             config,
             countries,
             coupon,
@@ -67,7 +73,7 @@ describe('CheckoutStatusSelector', () => {
             quote,
             shippingAddress,
             shippingCountries,
-            shippingOption,
+            shippingOptions,
             shippingStrategy
         );
     });
@@ -302,17 +308,17 @@ describe('CheckoutStatusSelector', () => {
 
     describe('#isLoadingShippingOptions()', () => {
         it('returns true if loading shipping options', () => {
-            jest.spyOn(shippingOption, 'isLoading').mockReturnValue(true);
+            jest.spyOn(shippingOptions, 'isLoading').mockReturnValue(true);
 
             expect(statuses.isLoadingShippingOptions()).toEqual(true);
-            expect(shippingOption.isLoading).toHaveBeenCalled();
+            expect(shippingOptions.isLoading).toHaveBeenCalled();
         });
 
         it('returns false if not loading shipping options', () => {
-            jest.spyOn(shippingOption, 'isLoading').mockReturnValue(false);
+            jest.spyOn(shippingOptions, 'isLoading').mockReturnValue(false);
 
             expect(statuses.isLoadingShippingOptions()).toEqual(false);
-            expect(shippingOption.isLoading).toHaveBeenCalled();
+            expect(shippingOptions.isLoading).toHaveBeenCalled();
         });
     });
 

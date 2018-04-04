@@ -9,12 +9,15 @@ import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { getCheckoutStoreState } from './checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import CheckoutErrorSelector from './checkout-error-selector';
+import CheckoutSelector from './checkout-selector';
+import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 
-describe('CheckoutErrorSelector', () => {
+describe('CheckoutStoreErrorSelector', () => {
     let billingAddress;
     let cart;
+    let checkout;
     let config;
     let countries;
     let coupon;
@@ -32,29 +35,33 @@ describe('CheckoutErrorSelector', () => {
     let shippingCountries;
     let shippingOptions;
     let shippingStrategy;
+    let state;
 
     beforeEach(() => {
-        billingAddress = new BillingAddressSelector();
-        cart = new CartSelector();
-        config = new ConfigSelector();
-        countries = new CountrySelector();
-        coupon = new CouponSelector();
-        customer = new CustomerSelector();
-        customerStrategy = new CustomerStrategySelector();
-        giftCertificate = new GiftCertificateSelector();
-        instruments = new InstrumentSelector();
-        order = new OrderSelector();
-        paymentMethods = new PaymentMethodSelector();
-        paymentStrategy = new PaymentStrategySelector();
-        quote = new QuoteSelector();
-        shippingAddress = new ShippingAddressSelector();
-        shippingCountries = new ShippingCountrySelector();
-        shippingOptions = new ShippingOptionSelector();
-        shippingStrategy = new ShippingStrategySelector();
+        state = getCheckoutStoreState();
+        billingAddress = new BillingAddressSelector(state.quote);
+        cart = new CartSelector(state.cart);
+        checkout = new CheckoutSelector(state.checkout);
+        config = new ConfigSelector(state.config);
+        countries = new CountrySelector(state.countries);
+        coupon = new CouponSelector(state.coupons);
+        customer = new CustomerSelector(state.customer);
+        customerStrategy = new CustomerStrategySelector(state.customerStrategy);
+        giftCertificate = new GiftCertificateSelector(state.giftCertificates);
+        instruments = new InstrumentSelector(state.instruments);
+        order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+        paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+        paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
+        quote = new QuoteSelector(state.quote);
+        shippingAddress = new ShippingAddressSelector(state.quote);
+        shippingCountries = new ShippingCountrySelector(state.shippingCountries);
+        shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
+        shippingStrategy = new ShippingStrategySelector(state.shippingStrategy);
 
-        errors = new CheckoutErrorSelector(
+        errors = new CheckoutStoreErrorSelector(
             billingAddress,
             cart,
+            checkout,
             config,
             countries,
             coupon,

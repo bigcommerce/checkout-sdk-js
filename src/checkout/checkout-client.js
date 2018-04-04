@@ -3,6 +3,7 @@ export default class CheckoutClient {
      * @constructor
      * @param {BillingAddressRequestSender} billingAddressRequestSender
      * @param {CartRequestSender} cartRequestSender
+     * @param {CheckoutRequestSender} checkoutRequestSender
      * @param {ConfigRequestSender} configRequestSender
      * @param {CountryRequestSender} countryRequestSender
      * @param {CouponRequestSender} couponRequestSender
@@ -18,6 +19,7 @@ export default class CheckoutClient {
     constructor(
         billingAddressRequestSender,
         cartRequestSender,
+        checkoutRequestSender,
         configRequestSender,
         countryRequestSender,
         couponRequestSender,
@@ -32,6 +34,7 @@ export default class CheckoutClient {
     ) {
         this._billingAddressRequestSender = billingAddressRequestSender;
         this._cartRequestSender = cartRequestSender;
+        this._checkoutRequestSender = checkoutRequestSender;
         this._configRequestSender = configRequestSender;
         this._countryRequestSender = countryRequestSender;
         this._couponRequestSender = couponRequestSender;
@@ -46,10 +49,19 @@ export default class CheckoutClient {
     }
 
     /**
+     * @param {string} id
      * @param {RequestOptions} [options]
      * @return {Promise<Response<Quote>>}
      */
-    loadCheckout(options) {
+    loadCheckout(id, options) {
+        return this._checkoutRequestSender.loadCheckout(id, options);
+    }
+
+    /**
+     * @param {RequestOptions} [options]
+     * @return {Promise<Response<Quote>>}
+     */
+    loadQuote(options) {
         return this._quoteRequestSender.loadQuote(options);
     }
 
@@ -68,6 +80,15 @@ export default class CheckoutClient {
      */
     loadOrder(orderId, options) {
         return this._orderRequestSender.loadOrder(orderId, options);
+    }
+
+    /**
+     * @param {number} orderId
+     * @param {RequestOptions} [options]
+     * @return {Promise<Response<Order>>}
+     */
+    loadInternalOrder(orderId, options) {
+        return this._orderRequestSender.loadInternalOrder(orderId, options);
     }
 
     /**
@@ -175,39 +196,43 @@ export default class CheckoutClient {
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    applyCoupon(code, options) {
-        return this._couponRequestSender.applyCoupon(code, options);
+    applyCoupon(checkoutId, code, options) {
+        return this._couponRequestSender.applyCoupon(checkoutId, code, options);
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    removeCoupon(code, options) {
-        return this._couponRequestSender.removeCoupon(code, options);
+    removeCoupon(checkoutId, code, options) {
+        return this._couponRequestSender.removeCoupon(checkoutId, code, options);
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    applyGiftCertificate(code, options) {
-        return this._giftCertificateRequestSender.applyGiftCertificate(code, options);
+    applyGiftCertificate(checkoutId, code, options) {
+        return this._giftCertificateRequestSender.applyGiftCertificate(checkoutId, code, options);
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} code
      * @param {RequestOptions} [options]
      * @return {Promise<Response<InternalCart>>}
      */
-    removeGiftCertificate(code, options) {
-        return this._giftCertificateRequestSender.removeGiftCertificate(code, options);
+    removeGiftCertificate(checkoutId, code, options) {
+        return this._giftCertificateRequestSender.removeGiftCertificate(checkoutId, code, options);
     }
 
 

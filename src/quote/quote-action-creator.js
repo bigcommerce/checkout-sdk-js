@@ -19,7 +19,7 @@ export default class QuoteActionCreator {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.LOAD_QUOTE_REQUESTED));
 
-            this._checkoutClient.loadCheckout(options)
+            this._checkoutClient.loadQuote(options)
                 .then(({ body: { data, meta } = {} }) => {
                     observer.next(createAction(actionTypes.LOAD_QUOTE_SUCCEEDED, data, meta));
                     observer.complete();

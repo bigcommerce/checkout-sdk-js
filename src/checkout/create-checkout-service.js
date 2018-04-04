@@ -1,7 +1,7 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { BillingAddressActionCreator } from '../billing';
-import { CartActionCreator } from '../cart';
+import { CartActionCreator, CartRequestSender } from '../cart';
 import { CheckoutService } from '../checkout';
 import { ConfigActionCreator } from '../config';
 import { CountryActionCreator } from '../geography';
@@ -14,6 +14,7 @@ import { QuoteActionCreator } from '../quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
+import CheckoutActionCreator from './checkout-action-creator';
 
 /**
  * @param {Object} [options]
@@ -26,18 +27,19 @@ export default function createCheckoutService(options = {}) {
     const client = options.client || createCheckoutClient({ locale: options.locale });
     const store = createCheckoutStore(createInitialState({ config: options.config }), { shouldWarnMutation: options.shouldWarnMutation });
     const paymentClient = createPaymentClient({ host: options.config && options.config.bigpayBaseUrl });
-    const instrumentRequestSender = new InstrumentRequestSender(paymentClient, createRequestSender());
+    const requestSender = createRequestSender();
 
     return new CheckoutService(
         store,
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
+        new CheckoutActionCreator(client, new CartRequestSender(requestSender)),
         new ConfigActionCreator(client),
         new CountryActionCreator(client),
         new CouponActionCreator(client),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
         new GiftCertificateActionCreator(client),
-        new InstrumentActionCreator(instrumentRequestSender),
+        new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
         new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
@@ -51,7 +53,7 @@ export default function createCheckoutService(options = {}) {
 /**
  * @private
  * @param {Object} options
- * @return {CheckoutState}
+ * @return {CheckoutStoreState}
  */
 function createInitialState(options) {
     return {

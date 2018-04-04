@@ -1,4 +1,5 @@
 import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
+import { getOrder } from './orders.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as orderActionTypes from './order-action-types';
@@ -36,15 +37,17 @@ describe('orderReducer()', () => {
     });
 
     it('returns new data if it is fetched successfully', () => {
-        const response = getCompleteOrderResponseBody();
         const action = {
             type: orderActionTypes.LOAD_ORDER_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
+            payload: getOrder(),
+        };
+
+        initialState = {
+            data: getCompleteOrderResponseBody().data.order,
         };
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.order,
+            data: initialState.data,
             statuses: { isLoading: false },
         }));
     });

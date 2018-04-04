@@ -12,17 +12,18 @@ export default class GiftCertificateActionCreator {
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} giftCertificate
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */
-    applyGiftCertificate(giftCertificate, options) {
+    applyGiftCertificate(checkoutId, giftCertificate, options) {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED));
 
-            this._checkoutClient.applyGiftCertificate(giftCertificate, options)
-                .then(({ body: { data } = {} }) => {
-                    observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED, data));
+            this._checkoutClient.applyGiftCertificate(checkoutId, giftCertificate, options)
+                .then(({ body } = {}) => {
+                    observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch((response) => {
@@ -32,17 +33,18 @@ export default class GiftCertificateActionCreator {
     }
 
     /**
+     * @param {string} checkoutId
      * @param {string} giftCertificate
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */
-    removeGiftCertificate(giftCertificate, options) {
+    removeGiftCertificate(checkoutId, giftCertificate, options) {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED));
 
-            this._checkoutClient.removeGiftCertificate(giftCertificate, options)
-                .then(({ body: { data } = {} }) => {
-                    observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED, data));
+            this._checkoutClient.removeGiftCertificate(checkoutId, giftCertificate, options)
+                .then(({ body } = {}) => {
+                    observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch((response) => {
