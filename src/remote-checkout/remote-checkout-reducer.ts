@@ -1,13 +1,12 @@
-import { combineReducers } from '@bigcommerce/data-store';
-import * as actionTypes from './remote-checkout-action-types';
+import { combineReducers, Action } from '@bigcommerce/data-store';
 
-/**
- * @param {RemoteCheckoutState} state
- * @param {Action} action
- * @return {RemoteCheckoutState}
- */
-export default function remoteCheckoutReducer(state = {}, action) {
-    const reducer = combineReducers({
+import RemoteCheckout from './remote-checkout';
+import * as actionTypes from './remote-checkout-action-types';
+import RemoteCheckoutMeta from './remote-checkout-meta';
+import RemoteCheckoutState from './remote-checkout-state';
+
+export default function remoteCheckoutReducer(state: RemoteCheckoutState = {}, action: Action): RemoteCheckoutState {
+    const reducer = combineReducers<RemoteCheckoutState>({
         data: dataReducer,
         meta: metaReducer,
     });
@@ -15,13 +14,7 @@ export default function remoteCheckoutReducer(state = {}, action) {
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?RemoteCheckout} data
- * @param {Action} action
- * @return {?RemoteCheckout}
- */
-function dataReducer(data, action) {
+function dataReducer(data: RemoteCheckout = {}, action: Action): RemoteCheckout {
     switch (action.type) {
     case actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED:
         return { ...data, billingAddress: action.payload.billing && action.payload.billing.address };
@@ -34,13 +27,7 @@ function dataReducer(data, action) {
     }
 }
 
-/**
- * @private
- * @param {?RemoteCheckoutMeta} meta
- * @param {Action} action
- * @return {?RemoteCheckoutMeta}
- */
-function metaReducer(meta, action) {
+function metaReducer(meta: RemoteCheckoutMeta = {}, action: Action): RemoteCheckoutMeta {
     switch (action.type) {
     case actionTypes.SET_REMOTE_CHECKOUT_META:
         return { ...meta, ...action.payload };
