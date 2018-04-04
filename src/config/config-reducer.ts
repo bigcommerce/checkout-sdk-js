@@ -1,6 +1,9 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
+import Config from './config';
 import * as configActionType from './config-action-types';
+import LegacyConfig from './legacy-config';
+import mapToLegacyConfig from './map-to-legacy-config';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -8,7 +11,7 @@ import * as configActionType from './config-action-types';
  * @param {Action} action
  * @return {ConfigState}
  */
-export default function configReducer(state: any = {}, action: Action): any {
+export default function configReducer(state: any = {}, action: Action<Config>): any {
     const reducer = combineReducers({
         data: dataReducer,
         errors: errorsReducer,
@@ -18,16 +21,10 @@ export default function configReducer(state: any = {}, action: Action): any {
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?Config} data
- * @param {Action} action
- * @return {?Config}
- */
-function dataReducer(data: any, action: Action): any {
+function dataReducer(data: LegacyConfig | undefined, action: Action<Config>): LegacyConfig | undefined {
     switch (action.type) {
     case configActionType.LOAD_CONFIG_SUCCEEDED:
-        return action.payload ? { ...data, ...action.payload } : data;
+        return action.payload ? { ...data, ...mapToLegacyConfig(action.payload.storeConfig) } : data;
 
     default:
         return data;
