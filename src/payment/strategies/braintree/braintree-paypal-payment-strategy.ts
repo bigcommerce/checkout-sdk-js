@@ -63,7 +63,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     private _preparePaymentData(payment: Payment): Promise<Payment> {
         const { checkout } = this._store.getState();
         const { amount } = checkout.getCart()!.grandTotal;
-        const { currency, storeLanguage } = checkout.getConfig();
+        const { currency, storeLanguage } = checkout.getConfig()!;
         const { method, nonce } = this._paymentMethod!;
 
         if (nonce) {
