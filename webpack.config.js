@@ -1,8 +1,9 @@
 const { DefinePlugin } = require('webpack');
 const path = require('path');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const nodeExternals = require('webpack-node-externals');
 
-module.exports = {
+const assetConfig = {
     devtool: 'source-map',
 
     entry: {
@@ -12,7 +13,6 @@ module.exports = {
     output: {
         filename: '[name].js',
         library: "checkoutKit",
-        libraryTarget: "umd",
         path: path.resolve(__dirname, 'dist'),
     },
 
@@ -37,5 +37,22 @@ module.exports = {
         new UglifyJSPlugin({
             sourceMap: true,
         }),
-    ],
+    ]
 };
+
+module.exports = [
+    Object.assign({}, assetConfig, {
+        output: Object.assign({}, assetConfig.output, {
+            libraryTarget: 'umd',
+            filename: '[name].umd.js',
+        })
+    }),
+    Object.assign({}, assetConfig, {
+        output: Object.assign({}, assetConfig.output, {
+            libraryTarget: 'commonjs2',
+        }),
+        externals: [
+            nodeExternals()
+        ],
+    })
+];
