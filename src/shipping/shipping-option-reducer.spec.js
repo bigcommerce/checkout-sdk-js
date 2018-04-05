@@ -88,17 +88,6 @@ describe('shippingOptionReducer()', () => {
         }));
     });
 
-    it('returns a loading state if selection shipping option', () => {
-        const action = {
-            type: shippingOptionActionTypes.SELECT_SHIPPING_OPTION_REQUESTED,
-        };
-
-        expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { selectError: undefined },
-            statuses: { isSelecting: true },
-        }));
-    });
-
     it('returns new shipping option data when a selection succedes', () => {
         const action = {
             type: shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED,
@@ -107,18 +96,6 @@ describe('shippingOptionReducer()', () => {
 
         expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
             data: action.payload.shippingOptions,
-        }));
-    });
-
-    it('returns an error state if shipping option selection fails', () => {
-        const action = {
-            type: shippingOptionActionTypes.SELECT_SHIPPING_OPTION_FAILED,
-            payload: getErrorResponse(),
-        };
-
-        expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { selectError: action.payload },
-            statuses: { isSelecting: false },
         }));
     });
 

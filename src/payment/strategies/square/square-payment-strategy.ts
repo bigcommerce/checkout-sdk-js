@@ -1,20 +1,22 @@
 /// <reference path="./square-form.d.ts" />
 
-import { ReadableDataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../../checkout';
+import { omit } from 'lodash';
+
+import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../../order';
-import { PaymentMethodUninitializedError, PaymentMethodMissingDataError } from '../../errors';
-import SquareScriptLoader from './square-script-loader';
+import { PaymentMethodMissingDataError, PaymentMethodUninitializedError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import PaymentStrategy from '../payment-strategy';
+
+import SquareScriptLoader from './square-script-loader';
 
 export default class SquarePaymentStrategy extends PaymentStrategy {
     private _paymentForm?: Square.PaymentForm;
     private _deferredRequestNonce?: DeferredPromise;
 
     constructor(
-        store: ReadableDataStore<CheckoutSelectors>,
+        store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _scriptLoader: SquareScriptLoader
     ) {
@@ -41,12 +43,14 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 
             if (this._deferredRequestNonce) {
                 this._deferredRequestNonce.reject(new TimeoutError());
-            };
+            }
 
             this._deferredRequestNonce = { resolve, reject };
             this._paymentForm.requestCardNonce();
         })
-        .then(paymentData => this._placeOrderService.submitOrder(payload, paymentData));
+        .then((paymentData) => this._placeOrderService.submitOrder(
+            omit(payload, 'payment'), true, options)
+        );
     }
 
     private _getFormOptions(options: InitializeOptions, deferred: DeferredPromise): Square.FormOptions {
@@ -55,7 +59,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         if (!widgetConfig) {
             throw new PaymentMethodMissingDataError('widgetConfig');
         }
-        
+
         return {
             ...widgetConfig,
             ...paymentMethod.initializationData,
@@ -77,8 +81,8 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 cardNonceResponseReceived: (errors, nonce) => {
                     this._cardNonceResponseReceived(errors, nonce);
                 },
-            }
-        }
+            },
+        };
     }
 
     private _cardNonceResponseReceived(errors: any, nonce: string): void {

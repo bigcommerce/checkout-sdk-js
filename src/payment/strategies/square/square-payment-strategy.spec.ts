@@ -2,12 +2,14 @@
 
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../../checkout';
 import { createPlaceOrderService } from '../../../order';
 import { getSquare } from '../../../payment/payment-methods.mock';
+import PaymentMethod from '../../payment-method';
+
 import SquarePaymentStrategy from './square-payment-strategy';
 import SquareScriptLoader from './square-script-loader';
-import PaymentMethod from '../../payment-method';
 
 describe('SquarePaymentStrategy', () => {
     let client: CheckoutClient;
@@ -79,7 +81,7 @@ describe('SquarePaymentStrategy', () => {
                 };
 
                 strategy.initialize({ paymentMethod })
-                    .catch(error => expect(error.type).toEqual('payment_method_missing_data'));
+                    .catch((error) => expect(error.type).toEqual('payment_method_missing_data'));
             });
         });
 
@@ -101,7 +103,7 @@ describe('SquarePaymentStrategy', () => {
                 };
 
                 strategy.initialize(initOptions)
-                    .catch(e => expect(e.type).toEqual('unsupported_browser'));
+                    .catch((e) => expect(e.type).toEqual('unsupported_browser'));
 
                 expect(scriptLoader.load).toHaveBeenCalledTimes(1);
                 expect(squareForm.build).toHaveBeenCalledTimes(0);
@@ -113,7 +115,7 @@ describe('SquarePaymentStrategy', () => {
         describe('when form has not been initialized', () => {
             it('rejects the promise', () => {
                 strategy.execute()
-                    .catch(e => expect(e.type).toEqual('payment_method_uninitialized'));
+                    .catch((e) => expect(e.type).toEqual('payment_method_uninitialized'));
 
                 expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
             });
@@ -138,7 +140,7 @@ describe('SquarePaymentStrategy', () => {
 
             it('cancels the first request', async () => {
                 strategy.execute({})
-                    .catch(e => expect(e.type).toEqual('timeout'));
+                    .catch((e) => expect(e.type).toEqual('timeout'));
 
                 setTimeout(() => {
                     callbacks.cardNonceResponseReceived(null, 'nonce');
@@ -151,16 +153,16 @@ describe('SquarePaymentStrategy', () => {
                 let promise;
 
                 beforeEach(() => {
-                    promise = strategy.execute({});
+                    promise = strategy.execute({ payment: '', x: 'y' }, { b: 'f' });
                     callbacks.cardNonceResponseReceived(null, 'nonce');
                 });
 
-                it('places the order', () => {
-                    expect(placeOrderService.submitOrder).toHaveBeenCalledTimes(1);
+                it('places the order with the right arguments', () => {
+                    expect(placeOrderService.submitOrder).toHaveBeenCalledWith({ x: 'y' }, true, { b: 'f' });
                 });
 
                 it('resolves to what is returned by submitOrder', async () => {
-                    await promise.then(response => expect(response).toMatchObject({ foo: 'bar' }));
+                    await promise.then((response) => expect(response).toMatchObject({ foo: 'bar' }));
                 });
             });
 
@@ -177,7 +179,7 @@ describe('SquarePaymentStrategy', () => {
                 });
 
                 it('rejects the promise', async () => {
-                    await promise.catch(error => expect(error).toBeTruthy());
+                    await promise.catch((error) => expect(error).toBeTruthy());
                 });
             });
         });

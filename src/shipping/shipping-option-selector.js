@@ -40,23 +40,9 @@ export default class ShippingOptionSelector {
     }
 
     /**
-     * @return {?ErrorResponse}
-     */
-    getSelectError() {
-        return this._shippingOptions.errors && this._shippingOptions.errors.selectError;
-    }
-
-    /**
      * @return {boolean}
      */
     isLoading() {
         return !!(this._shippingOptions.statuses && this._shippingOptions.statuses.isLoading);
-    }
-
-    /**
-     * @return {boolean}
-     */
-    isSelecting() {
-        return !!(this._shippingOptions.statuses && this._shippingOptions.statuses.isSelecting);
     }
 }

@@ -1,7 +1,9 @@
 import { some } from 'lodash';
+
 import { Registry } from '../common/registry';
-import * as paymentMethodTypes from './payment-method-types';
+
 import PaymentMethod from './payment-method';
+import * as paymentMethodTypes from './payment-method-types';
 import PaymentStrategy from './strategies/payment-strategy';
 
 export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {

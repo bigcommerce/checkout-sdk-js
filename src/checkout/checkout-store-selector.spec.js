@@ -10,7 +10,6 @@ import { PaymentMethodSelector } from '../payment';
 import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
-import { CacheFactory } from '../common/cache';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getCountries } from '../geography/countries.mock';
 import { getBraintree } from '../payment/payment-methods.mock';
@@ -19,7 +18,6 @@ import CheckoutSelector from './checkout-selector';
 import CheckoutStoreSelector from './checkout-store-selector';
 
 describe('CheckoutStoreSelector', () => {
-    let cacheFactory;
     let orderSelector;
     let formSelector;
     let selector;
@@ -27,8 +25,7 @@ describe('CheckoutStoreSelector', () => {
 
     beforeEach(() => {
         state = getCheckoutStoreState();
-        cacheFactory = new CacheFactory();
-        orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
+        orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
         formSelector = new FormSelector(state.config);
 
         selector = new CheckoutStoreSelector(
@@ -37,7 +34,7 @@ describe('CheckoutStoreSelector', () => {
             new CheckoutSelector(state.checkout),
             new ConfigSelector(state.config),
             new CountrySelector(state.countries),
-            new CustomerSelector(state.customer),
+            new CustomerSelector(state.customer, state.customerStrategy),
             formSelector,
             new InstrumentSelector(state.instruments),
             orderSelector,
@@ -46,8 +43,7 @@ describe('CheckoutStoreSelector', () => {
             new RemoteCheckoutSelector(state.remoteCheckout),
             new ShippingAddressSelector(state.quote),
             new ShippingCountrySelector(state.shippingCountries),
-            new ShippingOptionSelector(state.shippingOptions),
-            cacheFactory
+            new ShippingOptionSelector(state.shippingOptions)
         );
     });
 

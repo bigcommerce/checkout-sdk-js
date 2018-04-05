@@ -1,4 +1,3 @@
-import { pick } from 'lodash';
 import * as paymentStatusTypes from '../payment/payment-status-types';
 
 export default class OrderSelector {
@@ -8,14 +7,12 @@ export default class OrderSelector {
      * @param {PaymentState} payment
      * @param {CustomerState} customer
      * @param {CartState} cart
-     * @param {CacheFactory} cacheFactory
      */
-    constructor(order = {}, payment = {}, customer = {}, cart = {}, cacheFactory) {
+    constructor(order = {}, payment = {}, customer = {}, cart = {}) {
         this._order = order;
         this._payment = payment;
         this._customer = customer;
         this._cart = cart;
-        this._cacheFactory = cacheFactory;
     }
 
     /**
@@ -29,9 +26,9 @@ export default class OrderSelector {
      * @return {Object}
      */
     getOrderMeta() {
-        return this._cacheFactory.get('getOrderMeta')
-            .retain((meta) => pick(meta, 'deviceFingerprint'))
-            .retrieve(this._order.meta);
+        return {
+            deviceFingerprint: this._order.meta && this._order.meta.deviceFingerprint,
+        };
     }
 
     /**
@@ -72,43 +69,9 @@ export default class OrderSelector {
     }
 
     /**
-     * @return {?ErrorResponse}
-     */
-    getSubmitError() {
-        return (
-            (this._order.errors && this._order.errors.submitError) ||
-            (this._payment.errors && this._payment.errors.submitError)
-        );
-    }
-
-    /**
-     * @return {?ErrorResponse}
-     */
-    getFinalizeError() {
-        return this._order.errors && this._order.errors.finalizeError;
-    }
-
-    /**
      * @return {boolean}
      */
     isLoading() {
         return !!(this._order.statuses && this._order.statuses.isLoading);
-    }
-
-    /**
-     * @return {boolean}
-     */
-    isSubmitting() {
-        return !!(
-            (this._order.statuses && this._order.statuses.isSubmitting) ||
-            (this._payment.statuses && this._payment.statuses.isSubmitting)
-        );
-    }
-
-    /**
-     * @return {boolean}
-     */
-    isFinalizing() {
-        return !!(this._order.statuses && this._order.statuses.isFinalizing);
     }
 }

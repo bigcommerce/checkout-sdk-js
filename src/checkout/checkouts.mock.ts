@@ -2,18 +2,19 @@ import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getBillingAddressState } from '../billing/internal-billing-addresses.mock';
 import { getCart } from '../cart/carts.mock';
 import { getCartState } from '../cart/internal-carts.mock';
-import { getCompleteOrderState } from '../order/internal-orders.mock';
 import { getConfigState } from '../config/configs.mock';
-import { getConsignment } from '../shipping/consignments.mock';
-import { getCountriesState } from '../geography/countries.mock';
-import { getCustomerState } from '../customer/internal-customers.mock';
 import { getGiftCertificate } from '../coupon/gift-certificates.mock';
+import { getCustomerState } from '../customer/internal-customers.mock';
+import { getCountriesState } from '../geography/countries.mock';
+import { getCompleteOrderState } from '../order/internal-orders.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
 import { getRemoteCheckoutMeta, getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
-import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
+import { getConsignment } from '../shipping/consignments.mock';
 import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
+import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
+
 import Checkout from './checkout';
 import CheckoutState from './checkout-state';
 

@@ -1,5 +1,6 @@
-import { getCheckout } from '../checkout/checkouts.mock';
 import { getCart as getInternalCart } from '../cart/internal-carts.mock';
+import { getCheckout } from '../checkout/checkouts.mock';
+
 import mapToInternalCart from './map-to-internal-cart';
 
 describe('mapToInternalLineItems()', () => {

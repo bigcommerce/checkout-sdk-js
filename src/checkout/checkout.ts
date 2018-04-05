@@ -1,9 +1,9 @@
 import { Address } from '../address';
 import { Cart } from '../cart';
-import { Consignment } from '../shipping';
 import { Coupon, GiftCertificate } from '../coupon';
-import { Discount } from '../discount';
 import { Shopper } from '../customer';
+import { Discount } from '../discount';
+import { Consignment } from '../shipping';
 import { Tax } from '../tax';
 
 export default interface Checkout {

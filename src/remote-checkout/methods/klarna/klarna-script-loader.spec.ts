@@ -1,5 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
+
 import KlarnaScriptLoader from './klarna-script-loader';
 
 describe('KlarnaScriptLoader', () => {

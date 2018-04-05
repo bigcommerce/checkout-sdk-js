@@ -12,7 +12,7 @@ declare namespace Square {
     }
 
     interface HostWindow extends Window {
-        SqPaymentForm: PaymentFormConstructor
+        SqPaymentForm: PaymentFormConstructor;
     }
 
     interface FormOptions {

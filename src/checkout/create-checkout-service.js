@@ -6,15 +6,15 @@ import { CheckoutService } from '../checkout';
 import { ConfigActionCreator } from '../config';
 import { CountryActionCreator } from '../geography';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { OrderActionCreator } from '../order';
-import { createPaymentStrategyRegistry, PaymentMethodActionCreator } from '../payment';
+import { createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator } from '../shipping';
-import CheckoutActionCreator from './checkout-action-creator';
+import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
+import CheckoutActionCreator from './checkout-action-creator';
 
 /**
  * @param {Object} [options]
@@ -31,23 +31,22 @@ export default function createCheckoutService(options = {}) {
 
     return new CheckoutService(
         store,
-        createCustomerStrategyRegistry(store, client),
-        createPaymentStrategyRegistry(store, client, paymentClient),
-        createShippingStrategyRegistry(store, client),
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
         new CheckoutActionCreator(client, new CartRequestSender(requestSender)),
         new ConfigActionCreator(client),
         new CountryActionCreator(client),
         new CouponActionCreator(client),
-        new CustomerActionCreator(client),
+        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
         new GiftCertificateActionCreator(client),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
+        new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
         new QuoteActionCreator(client),
         new ShippingCountryActionCreator(client),
-        new ShippingOptionActionCreator(client)
+        new ShippingOptionActionCreator(client),
+        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, client))
     );
 }
 

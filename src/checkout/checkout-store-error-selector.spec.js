@@ -3,15 +3,14 @@ import { CartSelector } from '../cart';
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector } from '../customer';
+import { CustomerSelector, CustomerStrategySelector } from '../customer';
 import { OrderSelector } from '../order';
-import { PaymentMethodSelector } from '../payment';
+import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ShippingSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
-import { getErrorResponse } from '../common/http-request/responses.mock';
+import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import { getCheckoutStoreState } from './checkouts.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import CheckoutSelector from './checkout-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 
@@ -23,18 +22,19 @@ describe('CheckoutStoreErrorSelector', () => {
     let countries;
     let coupon;
     let customer;
+    let customerStrategy;
     let giftCertificate;
     let instruments;
     let errorResponse;
     let errors;
     let order;
     let paymentMethods;
+    let paymentStrategy;
     let quote;
-    let remoteCheckout;
-    let shipping;
     let shippingAddress;
     let shippingCountries;
     let shippingOptions;
+    let shippingStrategy;
     let state;
 
     beforeEach(() => {
@@ -46,16 +46,17 @@ describe('CheckoutStoreErrorSelector', () => {
         countries = new CountrySelector(state.countries);
         coupon = new CouponSelector(state.coupons);
         customer = new CustomerSelector(state.customer);
+        customerStrategy = new CustomerStrategySelector(state.customerStrategy);
         giftCertificate = new GiftCertificateSelector(state.giftCertificates);
         instruments = new InstrumentSelector(state.instruments);
         order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
         paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+        paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
         quote = new QuoteSelector(state.quote);
-        remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
-        shipping = new ShippingSelector(state.shipping);
         shippingAddress = new ShippingAddressSelector(state.quote);
         shippingCountries = new ShippingCountrySelector(state.shippingCountries);
         shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
+        shippingStrategy = new ShippingStrategySelector(state.shippingStrategy);
 
         errors = new CheckoutStoreErrorSelector(
             billingAddress,
@@ -65,16 +66,17 @@ describe('CheckoutStoreErrorSelector', () => {
             countries,
             coupon,
             customer,
+            customerStrategy,
             giftCertificate,
             instruments,
             order,
             paymentMethods,
+            paymentStrategy,
             quote,
-            remoteCheckout,
-            shipping,
             shippingAddress,
             shippingCountries,
-            shippingOptions
+            shippingOptions,
+            shippingStrategy
         );
 
         errorResponse = getErrorResponse();
@@ -98,33 +100,33 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getSubmitOrderError()', () => {
         it('returns error if there is an error when submitting order', () => {
-            jest.spyOn(order, 'getSubmitError').mockReturnValue(errorResponse);
+            jest.spyOn(paymentStrategy, 'getExecuteError').mockReturnValue(errorResponse);
 
             expect(errors.getSubmitOrderError()).toEqual(errorResponse);
-            expect(order.getSubmitError).toHaveBeenCalled();
+            expect(paymentStrategy.getExecuteError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when submitting order', () => {
-            jest.spyOn(order, 'getSubmitError').mockReturnValue();
+            jest.spyOn(paymentStrategy, 'getExecuteError').mockReturnValue();
 
             expect(errors.getSubmitOrderError()).toEqual(undefined);
-            expect(order.getSubmitError).toHaveBeenCalled();
+            expect(paymentStrategy.getExecuteError).toHaveBeenCalled();
         });
     });
 
     describe('#getFinalizeOrderError()', () => {
         it('returns error if there is an error when finalizing order', () => {
-            jest.spyOn(order, 'getFinalizeError').mockReturnValue(errorResponse);
+            jest.spyOn(paymentStrategy, 'getFinalizeError').mockReturnValue(errorResponse);
 
             expect(errors.getFinalizeOrderError()).toEqual(errorResponse);
-            expect(order.getFinalizeError).toHaveBeenCalled();
+            expect(paymentStrategy.getFinalizeError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when finalizing order', () => {
-            jest.spyOn(order, 'getFinalizeError').mockReturnValue();
+            jest.spyOn(paymentStrategy, 'getFinalizeError').mockReturnValue();
 
             expect(errors.getFinalizeOrderError()).toEqual(undefined);
-            expect(order.getFinalizeError).toHaveBeenCalled();
+            expect(paymentStrategy.getFinalizeError).toHaveBeenCalled();
         });
     });
 
@@ -242,75 +244,65 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getInitializePaymentMethodError()', () => {
         it('returns error if unable to initialize payment', () => {
-            jest.spyOn(remoteCheckout, 'getInitializePaymentError').mockReturnValue();
-            jest.spyOn(paymentMethods, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(paymentStrategy, 'getInitializeError').mockReturnValue(errorResponse);
 
             expect(errors.getInitializePaymentMethodError('braintree')).toEqual(errorResponse);
-            expect(paymentMethods.getInitializeError).toHaveBeenCalledWith('braintree');
-        });
-
-        it('returns error if unable to initialize remote payment', () => {
-            jest.spyOn(remoteCheckout, 'getInitializePaymentError').mockReturnValue(errorResponse);
-            jest.spyOn(paymentMethods, 'getInitializeError').mockReturnValue();
-
-            expect(errors.getInitializePaymentMethodError('braintree')).toEqual(errorResponse);
-            expect(remoteCheckout.getInitializePaymentError).toHaveBeenCalledWith('braintree');
+            expect(paymentStrategy.getInitializeError).toHaveBeenCalledWith('braintree');
         });
 
         it('returns undefined if able to initialize payment', () => {
-            jest.spyOn(remoteCheckout, 'getInitializePaymentError').mockReturnValue();
-            jest.spyOn(paymentMethods, 'getInitializeError').mockReturnValue();
+            jest.spyOn(paymentStrategy, 'getInitializeError').mockReturnValue();
 
             expect(errors.getInitializePaymentMethodError('braintree')).toEqual(undefined);
-            expect(paymentMethods.getInitializeError).toHaveBeenCalledWith('braintree');
+            expect(paymentStrategy.getInitializeError).toHaveBeenCalledWith('braintree');
         });
     });
 
     describe('#getSignInError()', () => {
         it('returns error if there is an error when signing in', () => {
-            jest.spyOn(customer, 'getSignInError').mockReturnValue(errorResponse);
+            jest.spyOn(customerStrategy, 'getSignInError').mockReturnValue(errorResponse);
 
             expect(errors.getSignInError()).toEqual(errorResponse);
-            expect(customer.getSignInError).toHaveBeenCalled();
+            expect(customerStrategy.getSignInError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when signing in', () => {
-            jest.spyOn(customer, 'getSignInError').mockReturnValue();
+            jest.spyOn(customerStrategy, 'getSignInError').mockReturnValue();
 
             expect(errors.getSignInError()).toEqual(undefined);
-            expect(customer.getSignInError).toHaveBeenCalled();
+            expect(customerStrategy.getSignInError).toHaveBeenCalled();
         });
     });
 
     describe('#getSignOutError()', () => {
         it('returns error if there is an error when signing out', () => {
-            jest.spyOn(customer, 'getSignOutError').mockReturnValue(errorResponse);
+            jest.spyOn(customerStrategy, 'getSignOutError').mockReturnValue(errorResponse);
 
             expect(errors.getSignOutError()).toEqual(errorResponse);
-            expect(customer.getSignOutError).toHaveBeenCalled();
+            expect(customerStrategy.getSignOutError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is no error when signing out', () => {
-            jest.spyOn(customer, 'getSignOutError').mockReturnValue();
+            jest.spyOn(customerStrategy, 'getSignOutError').mockReturnValue();
 
             expect(errors.getSignOutError()).toEqual(undefined);
-            expect(customer.getSignOutError).toHaveBeenCalled();
+            expect(customerStrategy.getSignOutError).toHaveBeenCalled();
         });
     });
 
     describe('#getInitializeCustomerError()', () => {
         it('returns error if unable to initialize customer', () => {
-            jest.spyOn(customer, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(customerStrategy, 'getInitializeError').mockReturnValue(errorResponse);
 
             expect(errors.getInitializeCustomerError()).toEqual(errorResponse);
-            expect(customer.getInitializeError).toHaveBeenCalled();
+            expect(customerStrategy.getInitializeError).toHaveBeenCalled();
         });
 
         it('returns undefined if able to initialize customer', () => {
-            jest.spyOn(customer, 'getInitializeError').mockReturnValue();
+            jest.spyOn(customerStrategy, 'getInitializeError').mockReturnValue();
 
             expect(errors.getInitializeCustomerError()).toEqual(undefined);
-            expect(customer.getInitializeError).toHaveBeenCalled();
+            expect(customerStrategy.getInitializeError).toHaveBeenCalled();
         });
     });
 
@@ -332,17 +324,17 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getSelectShippingOptionError()', () => {
         it('returns error if there is an error when selecting the shipping options', () => {
-            jest.spyOn(shippingOptions, 'getSelectError').mockReturnValue(errorResponse);
+            jest.spyOn(shippingStrategy, 'getSelectOptionError').mockReturnValue(errorResponse);
 
             expect(errors.getSelectShippingOptionError()).toEqual(errorResponse);
-            expect(shippingOptions.getSelectError).toHaveBeenCalled();
+            expect(shippingStrategy.getSelectOptionError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is NO error when selecting the shipping options', () => {
-            jest.spyOn(shippingOptions, 'getSelectError').mockReturnValue();
+            jest.spyOn(shippingStrategy, 'getSelectOptionError').mockReturnValue();
 
             expect(errors.getSelectShippingOptionError()).toEqual(undefined);
-            expect(shippingOptions.getSelectError).toHaveBeenCalled();
+            expect(shippingStrategy.getSelectOptionError).toHaveBeenCalled();
         });
     });
 
@@ -364,43 +356,33 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getUpdateShippingAddressError()', () => {
         it('returns error if there is an error when updating the shipping address', () => {
-            jest.spyOn(shippingAddress, 'getUpdateError').mockReturnValue(errorResponse);
+            jest.spyOn(shippingStrategy, 'getUpdateAddressError').mockReturnValue(errorResponse);
 
             expect(errors.getUpdateShippingAddressError()).toEqual(errorResponse);
-            expect(shippingAddress.getUpdateError).toHaveBeenCalled();
+            expect(shippingStrategy.getUpdateAddressError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is NO error when updating the shipping address', () => {
-            jest.spyOn(shippingAddress, 'getUpdateError').mockReturnValue();
+            jest.spyOn(shippingStrategy, 'getUpdateAddressError').mockReturnValue();
 
             expect(errors.getUpdateShippingAddressError()).toEqual(undefined);
-            expect(shippingAddress.getUpdateError).toHaveBeenCalled();
+            expect(shippingStrategy.getUpdateAddressError).toHaveBeenCalled();
         });
     });
 
     describe('#getInitializePaymentMethodError()', () => {
         it('returns error if unable to initialize shipping', () => {
-            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue();
-            jest.spyOn(shipping, 'getInitializeError').mockReturnValue(errorResponse);
+            jest.spyOn(shippingStrategy, 'getInitializeError').mockReturnValue(errorResponse);
 
             expect(errors.getInitializeShippingError('foobar')).toEqual(errorResponse);
-            expect(shipping.getInitializeError).toHaveBeenCalledWith('foobar');
-        });
-
-        it('returns error if unable to initialize remote shipping', () => {
-            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue(errorResponse);
-            jest.spyOn(shipping, 'getInitializeError').mockReturnValue();
-
-            expect(errors.getInitializeShippingError('foobar')).toEqual(errorResponse);
-            expect(remoteCheckout.getInitializeShippingError).toHaveBeenCalledWith('foobar');
+            expect(shippingStrategy.getInitializeError).toHaveBeenCalledWith('foobar');
         });
 
         it('returns undefined if able to initialize shipping', () => {
-            jest.spyOn(remoteCheckout, 'getInitializeShippingError').mockReturnValue();
-            jest.spyOn(shipping, 'getInitializeError').mockReturnValue();
+            jest.spyOn(shippingStrategy, 'getInitializeError').mockReturnValue();
 
             expect(errors.getInitializeShippingError('foobar')).toEqual(undefined);
-            expect(shipping.getInitializeError).toHaveBeenCalledWith('foobar');
+            expect(shippingStrategy.getInitializeError).toHaveBeenCalledWith('foobar');
         });
     });
 

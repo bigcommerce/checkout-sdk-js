@@ -1,3 +1,7 @@
+// eslint-disable-next-line no-unused-vars
+import { selectorDecorator as selector } from '../common/selector';
+
+@selector
 export default class CheckoutStoreSelector {
     /**
      * @constructor
@@ -16,7 +20,6 @@ export default class CheckoutStoreSelector {
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
-     * @param {CacheFactory} cacheFactory
      */
     constructor(
         billingAddress,
@@ -33,8 +36,7 @@ export default class CheckoutStoreSelector {
         remoteCheckout,
         shippingAddress,
         shippingCountries,
-        shippingOptions,
-        cacheFactory
+        shippingOptions
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
@@ -51,7 +53,6 @@ export default class CheckoutStoreSelector {
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
-        this._cacheFactory = cacheFactory;
     }
 
     /**
@@ -65,34 +66,25 @@ export default class CheckoutStoreSelector {
      * @return {CheckoutMeta}
      */
     getCheckoutMeta() {
-        return this._cacheFactory.get('getCheckoutMeta')
-            .retain((orderMeta,
-                quoteMeta,
-                isCartVerified,
-                paymentAuthToken,
-                instrumentsMeta,
-                remoteCheckout,
-                remoteCheckoutMeta
-            ) => ({
-                ...orderMeta,
-                ...(quoteMeta && quoteMeta.request),
-                ...instrumentsMeta,
-                isCartVerified,
-                paymentAuthToken,
-                remoteCheckout: {
-                    ...remoteCheckout,
-                    ...remoteCheckoutMeta,
-                },
-            }))
-            .retrieve(
-                this._order.getOrderMeta(),
-                this._quote.getQuoteMeta(),
-                this._cart.isValid(),
-                this._order.getPaymentAuthToken(),
-                this._instruments.getInstrumentsMeta(),
-                this._remoteCheckout.getCheckout(),
-                this._remoteCheckout.getCheckoutMeta()
-            );
+        const orderMeta = this._order.getOrderMeta();
+        const quoteMeta = this._quote.getQuoteMeta();
+        const isCartVerified = this._cart.isValid();
+        const paymentAuthToken = this._order.getPaymentAuthToken();
+        const instrumentsMeta = this._instruments.getInstrumentsMeta();
+        const remoteCheckout = this._remoteCheckout.getCheckout();
+        const remoteCheckoutMeta = this._remoteCheckout.getCheckoutMeta();
+
+        return {
+            ...orderMeta,
+            ...(quoteMeta && quoteMeta.request),
+            ...instrumentsMeta,
+            isCartVerified,
+            paymentAuthToken,
+            remoteCheckout: {
+                ...remoteCheckout,
+                ...remoteCheckoutMeta,
+            },
+        };
     }
 
     /**
@@ -196,10 +188,10 @@ export default class CheckoutStoreSelector {
     }
 
     /**
-     * @param {boolean} useStoreCredit
+     * @param {boolean|undefined} useStoreCredit
      * @return {boolean}
      */
-    isPaymentDataRequired(useStoreCredit) {
+    isPaymentDataRequired(useStoreCredit = false) {
         return this._order.isPaymentDataRequired(useStoreCredit);
     }
 

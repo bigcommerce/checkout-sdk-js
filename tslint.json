@@ -1,8 +1,6 @@
 {
     "extends": "tslint:recommended",
     "rules": {
-        "arrow-parens": false,
-        "grouped-imports": false,
         "interface-name": [true, "never-prefix"],
         "max-line-length": false,
         "member-access": [true, "no-public"],
@@ -11,7 +9,14 @@
         "no-reference": false,
         "no-shadowed-variable": false,
         "object-literal-sort-keys": false,
-        "ordered-imports": false,
+        "ordered-imports": [
+            true,
+            {
+                "grouped-imports": true,
+                "import-sources-order": "lowercase-first",
+                "named-imports-order": "lowercase-first"
+            }
+        ],
         "quotemark": [true, "single"],
         "trailing-comma": [
             true,

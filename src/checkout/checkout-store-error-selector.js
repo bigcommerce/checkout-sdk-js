@@ -1,3 +1,7 @@
+// eslint-disable-next-line no-unused-vars
+import { selectorDecorator as selector } from '../common/selector';
+
+@selector
 export default class CheckoutStoreErrorSelector {
     /**
      * @constructor
@@ -8,16 +12,17 @@ export default class CheckoutStoreErrorSelector {
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
+     * @param {CustomerStrategySelector} customerStrategy
      * @param {GiftCertificateSelector} giftCertificate
      * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
+     * @param {PaymentStrategySelector} paymentStrategy
      * @param {QuoteSelector} quote
-     * @param {RemoteCheckout} remoteCheckout
-     * @param {ShippingSelector} shipping
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
+     * @param {ShippingStrategySelector} shippingStrategy
      */
     constructor(
         billingAddress,
@@ -27,16 +32,17 @@ export default class CheckoutStoreErrorSelector {
         countries,
         coupon,
         customer,
+        customerStrategy,
         giftCertificate,
         instruments,
         order,
         paymentMethods,
+        paymentStrategy,
         quote,
-        remoteCheckout,
-        shipping,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        shippingStrategy
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
@@ -45,16 +51,17 @@ export default class CheckoutStoreErrorSelector {
         this._countries = countries;
         this._coupon = coupon;
         this._customer = customer;
+        this._customerStrategy = customerStrategy;
         this._giftCertificate = giftCertificate;
         this._instruments = instruments;
         this._order = order;
         this._paymentMethods = paymentMethods;
+        this._paymentStrategy = paymentStrategy;
         this._quote = quote;
-        this._remoteCheckout = remoteCheckout;
-        this._shipping = shipping;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
+        this._shippingStrategy = shippingStrategy;
     }
 
     /**
@@ -101,14 +108,14 @@ export default class CheckoutStoreErrorSelector {
      * @return {?ErrorResponse}
      */
     getSubmitOrderError() {
-        return this._order.getSubmitError();
+        return this._paymentStrategy.getExecuteError();
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getFinalizeOrderError() {
-        return this._order.getFinalizeError();
+        return this._paymentStrategy.getFinalizeError();
     }
 
     /**
@@ -166,21 +173,21 @@ export default class CheckoutStoreErrorSelector {
      * @return {?ErrorResponse}
      */
     getInitializePaymentMethodError(methodId) {
-        return this._paymentMethods.getInitializeError(methodId) || this._remoteCheckout.getInitializePaymentError(methodId);
+        return this._paymentStrategy.getInitializeError(methodId);
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getSignInError() {
-        return this._customer.getSignInError();
+        return this._customerStrategy.getSignInError();
     }
 
     /**
      * @return {?ErrorResponse}
      */
     getSignOutError() {
-        return this._customer.getSignOutError();
+        return this._customerStrategy.getSignOutError();
     }
 
     /**
@@ -188,7 +195,7 @@ export default class CheckoutStoreErrorSelector {
      * @return {?ErrorResponse}
      */
     getInitializeCustomerError(methodId) {
-        return this._customer.getInitializeError(methodId);
+        return this._customerStrategy.getInitializeError(methodId);
     }
 
     /**
@@ -202,7 +209,7 @@ export default class CheckoutStoreErrorSelector {
      * @return {?ErrorResponse}
      */
     getSelectShippingOptionError() {
-        return this._shippingOptions.getSelectError();
+        return this._shippingStrategy.getSelectOptionError();
     }
 
     /**
@@ -216,7 +223,7 @@ export default class CheckoutStoreErrorSelector {
      * @return {?ErrorResponse}
      */
     getUpdateShippingAddressError() {
-        return this._shippingAddress.getUpdateError();
+        return this._shippingStrategy.getUpdateAddressError();
     }
 
     /**
@@ -224,7 +231,7 @@ export default class CheckoutStoreErrorSelector {
      * @return {?ErrorResponse}
      */
     getInitializeShippingError(methodId) {
-        return this._shipping.getInitializeError(methodId) || this._remoteCheckout.getInitializeShippingError(methodId);
+        return this._shippingStrategy.getInitializeError(methodId);
     }
 
     /**

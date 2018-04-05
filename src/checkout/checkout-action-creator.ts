@@ -1,10 +1,11 @@
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+
 import { CartRequestSender } from '../cart';
 import { CartUnavailableError } from '../cart/errors';
+
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
-import Checkout from './checkout';
 import CheckoutClient from './checkout-client';
 
 export default class CheckoutActionCreator {
@@ -30,7 +31,7 @@ export default class CheckoutActionCreator {
                     observer.next(createAction(CheckoutActionType.LoadCheckoutSucceeded, body));
                     observer.complete();
                 })
-                .catch(response => {
+                .catch((response) => {
                     observer.error(createErrorAction(CheckoutActionType.LoadCheckoutFailed, response));
                 });
         });

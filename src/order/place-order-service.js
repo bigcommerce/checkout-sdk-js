@@ -69,10 +69,6 @@ export default class PlaceOrderService {
      * @return {Promise<CheckoutSelectors>}
      */
     submitPayment(payment, useStoreCredit = false, options) {
-        if (!this._shouldSubmitPayment(useStoreCredit)) {
-            return Promise.resolve(this._store.getState());
-        }
-
         const payload = this._getPaymentRequestBody(payment);
 
         return this._store.dispatch(this._paymentActionCreator.submitPayment(payload, options))
@@ -90,24 +86,9 @@ export default class PlaceOrderService {
      * @return {Promise<CheckoutSelectors>}
      */
     initializeOffsitePayment(payment, useStoreCredit = false, options) {
-        if (!this._shouldSubmitPayment(useStoreCredit)) {
-            return Promise.resolve(this._store.getState());
-        }
-
         const payload = this._getPaymentRequestBody(payment);
 
         return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payload, options));
-    }
-
-    /**
-     * @param {string} methodId
-     * @param {function(): Promise<any>} initializer
-     * @return {Promise<CheckoutSelectors>}
-     */
-    initializePaymentMethod(methodId, initializer) {
-        return this._store.dispatch(
-            this._paymentMethodActionCreator.initializePaymentMethod(methodId, initializer)
-        );
     }
 
     /**
@@ -120,17 +101,6 @@ export default class PlaceOrderService {
         const action = this._paymentMethodActionCreator.loadPaymentMethod(methodId, options);
 
         return this._store.dispatch(action, { queueId: 'paymentMethods' });
-    }
-
-    /**
-     * @private
-     * @param {boolean} useStoreCredit
-     * @return {boolean}
-     */
-    _shouldSubmitPayment(useStoreCredit) {
-        const { checkout } = this._store.getState();
-
-        return checkout.isPaymentDataRequired(useStoreCredit);
     }
 
     /**

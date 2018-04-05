@@ -1,5 +1,5 @@
-import { LineItem } from './line-item';
 import InternalLineItem from './internal-line-item';
+import { LineItem } from './line-item';
 
 export default function mapToInternalLineItem(
     item: LineItem,

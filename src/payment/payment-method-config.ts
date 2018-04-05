@@ -1,6 +1,7 @@
 export default interface PaymentMethodConfig {
-    cardCode?: string;
+    cardCode?: boolean;
     displayName?: string;
+    is3dsEnabled?: boolean;
     merchantId?: string;
     redirectUrl?: string;
     testMode?: boolean;

@@ -12,13 +12,13 @@ export function getPayment() {
         source: 'bcapp-checkout-uco',
         paymentData: {
             ccExpiry: {
-                month: 10,
-                year: 20,
+                month: '10',
+                year: '20',
             },
             ccName: 'BigCommerce',
             ccNumber: '4111111111111111',
             ccType: 'visa',
-            ccCvv: 123,
+            ccCvv: '123',
         },
     };
 }

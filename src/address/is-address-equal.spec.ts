@@ -1,4 +1,5 @@
 import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
+
 import isAddressEqual from './is-address-equal';
 
 describe('isAddressEqual', () => {

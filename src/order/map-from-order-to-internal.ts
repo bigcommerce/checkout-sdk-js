@@ -1,7 +1,7 @@
-import { find } from 'lodash';
+import { mapToInternalLineItems } from '../cart';
+import { mapToInternalCoupon } from '../coupon';
+
 import InternalOrder from './internal-order';
-import { mapToInternalCart, mapToInternalLineItems } from '../cart';
-import { Coupon, mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
 import Order from './order';
 
 export default function mapFromOrderToInternal(order: Order, fallbackOrder: InternalOrder): InternalOrder {

@@ -1,4 +1,5 @@
 import { Checkout } from '../checkout';
+
 import InternalCustomer from './internal-customer';
 
 export default function mapToInternalCustomer(checkout: Checkout, existingCustomer: InternalCustomer): InternalCustomer {

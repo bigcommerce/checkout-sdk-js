@@ -1,6 +1,7 @@
 import { Checkout } from '../checkout';
-import InternalOrder from './internal-order';
+
 import InternalIncompleteOrder from './internal-incomplete-order';
+import InternalOrder from './internal-order';
 
 export default function mapToInternalIncompleteOrder(checkout: Checkout, existingOrder: InternalIncompleteOrder): InternalIncompleteOrder {
     return {

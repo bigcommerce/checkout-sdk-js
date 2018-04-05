@@ -1,28 +1,27 @@
 import { createDataStore } from '@bigcommerce/data-store';
-import { CacheFactory } from '../common/cache';
 import { cartReducer, CartSelector } from '../cart';
 import { configReducer, ConfigSelector } from '../config';
 import { countryReducer, CountrySelector } from '../geography';
 import { createFreezeProxy } from '../common/utility';
 import { createRequestErrorFactory } from '../common/error';
-import { customerReducer, CustomerSelector } from '../customer';
+import { customerReducer, customerStrategyReducer, CustomerSelector, CustomerStrategySelector } from '../customer';
 import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from '../coupon';
 import { FormSelector } from '../form';
 import { orderReducer, OrderSelector } from '../order';
-import { paymentReducer, paymentMethodReducer, PaymentMethodSelector } from '../payment';
+import { paymentReducer, paymentMethodReducer, paymentStrategyReducer, PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { remoteCheckoutReducer, RemoteCheckoutSelector } from '../remote-checkout';
 import { instrumentReducer, InstrumentSelector } from '../payment/instrument';
 import { quoteReducer, QuoteSelector } from '../quote';
 import { billingAddressReducer, BillingAddressSelector } from '../billing';
 import {
-    ShippingSelector,
     ShippingAddressSelector,
     ShippingCountrySelector,
     ShippingOptionSelector,
+    ShippingStrategySelector,
     consignmentReducer,
-    shippingReducer,
     shippingCountryReducer,
     shippingOptionReducer,
+    shippingStrategyReducer,
 } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
@@ -38,9 +37,8 @@ import createActionTransformer from './create-action-transformer';
  * @return {DataStore}
  */
 export default function createCheckoutStore(initialState = {}, options = {}) {
-    const cacheFactory = new CacheFactory();
     const actionTransformer = createActionTransformer(createRequestErrorFactory());
-    const stateTransformer = (state) => createCheckoutSelectors(state, cacheFactory, options);
+    const stateTransformer = (state) => createCheckoutSelectors(state, options);
 
     return createDataStore(
         createCheckoutReducers(),
@@ -63,28 +61,29 @@ function createCheckoutReducers() {
         countries: countryReducer,
         coupons: couponReducer,
         customer: customerReducer,
+        customerStrategy: customerStrategyReducer,
         giftCertificates: giftCertificateReducer,
         instruments: instrumentReducer,
         order: orderReducer,
         payment: paymentReducer,
         paymentMethods: paymentMethodReducer,
+        paymentStrategy: paymentStrategyReducer,
         quote: quoteReducer,
         remoteCheckout: remoteCheckoutReducer,
-        shipping: shippingReducer,
         shippingCountries: shippingCountryReducer,
         shippingOptions: shippingOptionReducer,
+        shippingStrategy: shippingStrategyReducer,
     };
 }
 
 /**
  * @private
  * @param {CheckoutStoreState} state
- * @param {CacheFactory} cacheFactory
  * @param {Object} [options={}]
  * @param {boolean} [options.shouldWarnMutation=true]
  * @return {CheckoutSelectors}
  */
-function createCheckoutSelectors(state, cacheFactory, options) {
+function createCheckoutSelectors(state, options) {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
     const checkout = new CheckoutSelector(state.checkout);
@@ -92,17 +91,19 @@ function createCheckoutSelectors(state, cacheFactory, options) {
     const countries = new CountrySelector(state.countries);
     const coupon = new CouponSelector(state.coupons);
     const customer = new CustomerSelector(state.customer);
+    const customerStrategy = new CustomerStrategySelector(state.customerStrategy);
     const form = new FormSelector(state.config);
     const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
-    const order = new OrderSelector(state.order, state.payment, state.customer, state.cart, cacheFactory);
+    const order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+    const paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
     const quote = new QuoteSelector(state.quote);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
-    const shipping = new ShippingSelector(state.shipping);
     const shippingAddress = new ShippingAddressSelector(state.quote);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
+    const shippingStrategy = new ShippingStrategySelector(state.shippingStrategy);
 
     const store = new CheckoutStoreSelector(
         billingAddress,
@@ -119,8 +120,7 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         remoteCheckout,
         shippingAddress,
         shippingCountries,
-        shippingOptions,
-        cacheFactory
+        shippingOptions
     );
 
     const storeErrors = new CheckoutStoreErrorSelector(
@@ -131,15 +131,17 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         countries,
         coupon,
         customer,
+        customerStrategy,
         giftCertificate,
         instruments,
         order,
         paymentMethods,
+        paymentStrategy,
         quote,
-        shipping,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        shippingStrategy
     );
 
     const storeStatuses = new CheckoutStoreStatusSelector(
@@ -150,16 +152,17 @@ function createCheckoutSelectors(state, cacheFactory, options) {
         countries,
         coupon,
         customer,
+        customerStrategy,
         giftCertificate,
         instruments,
         order,
         paymentMethods,
+        paymentStrategy,
         quote,
-        remoteCheckout,
-        shipping,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        shippingStrategy
     );
 
     return {

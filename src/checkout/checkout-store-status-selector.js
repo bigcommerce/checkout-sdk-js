@@ -1,3 +1,7 @@
+// eslint-disable-next-line no-unused-vars
+import { selectorDecorator as selector } from '../common/selector';
+
+@selector
 export default class CheckoutStoreStatusSelector {
     /**
      * @constructor
@@ -8,16 +12,17 @@ export default class CheckoutStoreStatusSelector {
      * @param {CountrySelector} countries
      * @param {CouponSelector} coupon
      * @param {CustomerSelector} customer
+     * @param {CustomerStrategySelector} customerStrategy
      * @param {GiftCertificateSelector} giftCertificate
      * @param {InstrumentSelector} instruments
      * @param {OrderSelector} order
      * @param {PaymentMethodSelector} paymentMethods
+     * @param {PaymentStrategySelector} paymentStrategy
      * @param {QuoteSelector} quote
-     * @param {RemoteCheckoutSelector} remoteCheckout
-     * @param {ShippingSelector} shipping
      * @param {ShippingAddressSelector} shippingAddress
      * @param {ShippingCountrySelector} shippingCountries
      * @param {ShippingOptionSelector} shippingOptions
+     * @param {ShippingStrategySelector} shippingStrategy
      */
     constructor(
         billingAddress,
@@ -27,16 +32,17 @@ export default class CheckoutStoreStatusSelector {
         countries,
         coupon,
         customer,
+        customerStrategy,
         giftCertificate,
         instruments,
         order,
         paymentMethods,
+        paymentStrategy,
         quote,
-        remoteCheckout,
-        shipping,
         shippingAddress,
         shippingCountries,
-        shippingOptions
+        shippingOptions,
+        shippingStrategy
     ) {
         this._billingAddress = billingAddress;
         this._cart = cart;
@@ -45,16 +51,17 @@ export default class CheckoutStoreStatusSelector {
         this._countries = countries;
         this._coupon = coupon;
         this._customer = customer;
+        this._customerStrategy = customerStrategy;
         this._giftCertificate = giftCertificate;
         this._instruments = instruments;
         this._order = order;
         this._paymentMethods = paymentMethods;
+        this._paymentStrategy = paymentStrategy;
         this._quote = quote;
-        this._remoteCheckout = remoteCheckout;
-        this._shipping = shipping;
         this._shippingAddress = shippingAddress;
         this._shippingCountries = shippingCountries;
         this._shippingOptions = shippingOptions;
+        this._shippingStrategy = shippingStrategy;
     }
 
     /**
@@ -101,14 +108,14 @@ export default class CheckoutStoreStatusSelector {
      * @return {boolean}
      */
     isSubmittingOrder() {
-        return this._order.isSubmitting();
+        return this._paymentStrategy.isExecuting();
     }
 
     /**
      * @return {boolean}
      */
     isFinalizingOrder() {
-        return this._order.isFinalizing();
+        return this._paymentStrategy.isFinalizing();
     }
 
     /**
@@ -166,25 +173,23 @@ export default class CheckoutStoreStatusSelector {
      * @return {boolean}
      */
     isInitializingPaymentMethod(methodId) {
-        return (
-            this._paymentMethods.isInitializingMethod(methodId) ||
-            this._remoteCheckout.isInitializingPayment(methodId) ||
-            this._remoteCheckout.isInitializingBilling(methodId)
-        );
+        return this._paymentStrategy.isInitializing(methodId);
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isSigningIn() {
-        return this._customer.isSigningIn();
+    isSigningIn(methodId) {
+        return this._customerStrategy.isSigningIn(methodId);
     }
 
     /**
+     * @param {?string} methodId
      * @return {boolean}
      */
-    isSigningOut() {
-        return this._customer.isSigningOut() || this._remoteCheckout.isSigningOut();
+    isSigningOut(methodId) {
+        return this._customerStrategy.isSigningOut(methodId);
     }
 
     /**
@@ -192,7 +197,7 @@ export default class CheckoutStoreStatusSelector {
      * @return {boolean}
      */
     isInitializingCustomer(methodId) {
-        return this._customer.isInitializing(methodId);
+        return this._customerStrategy.isInitializing(methodId);
     }
 
     /**
@@ -206,7 +211,7 @@ export default class CheckoutStoreStatusSelector {
      * @return {boolean}
      */
     isSelectingShippingOption() {
-        return this._shippingOptions.isSelecting();
+        return this._shippingStrategy.isSelectingOption();
     }
 
     /**
@@ -220,7 +225,7 @@ export default class CheckoutStoreStatusSelector {
      * @return {boolean}
      */
     isUpdatingShippingAddress() {
-        return this._shippingAddress.isUpdating();
+        return this._shippingStrategy.isUpdatingAddress();
     }
 
     /**
@@ -228,7 +233,7 @@ export default class CheckoutStoreStatusSelector {
      * @return {boolean}
      */
     isInitializingShipping(methodId) {
-        return this._shipping.isInitializing(methodId) || this._remoteCheckout.isInitializingShipping(methodId);
+        return this._shippingStrategy.isInitializing(methodId);
     }
 
     /**

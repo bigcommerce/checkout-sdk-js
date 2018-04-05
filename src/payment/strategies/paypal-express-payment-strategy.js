@@ -4,7 +4,7 @@ import * as paymentStatusTypes from '../payment-status-types';
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     /**
      * @constructor
-     * @param {ReadableDataStore} store
+     * @param {CheckoutStore} store
      * @param {PlaceOrderService} placeOrderService
      * @param {ScriptLoader} scriptLoader
      */
@@ -25,21 +25,18 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        return this._placeOrderService
-            .initializePaymentMethod(this._paymentMethod.id, () =>
-                this._scriptLoader.loadScript('//www.paypalobjects.com/api/checkout.min.js')
-                    .then(() => {
-                        this._paypalSdk = window.paypal;
+        return this._scriptLoader.loadScript('//www.paypalobjects.com/api/checkout.min.js')
+            .then(() => {
+                this._paypalSdk = window.paypal;
 
-                        const { merchantId, testMode } = this._paymentMethod.config;
-                        const environment = testMode ? 'sandbox' : 'production';
+                const { merchantId, testMode } = this._paymentMethod.config;
+                const environment = testMode ? 'sandbox' : 'production';
 
-                        this._paypalSdk.checkout.setup(merchantId, {
-                            button: 'paypal-button',
-                            environment,
-                        });
-                    })
-            )
+                this._paypalSdk.checkout.setup(merchantId, {
+                    button: 'paypal-button',
+                    environment,
+                });
+            })
             .then(() => super.initialize(options));
     }
 
@@ -73,7 +70,8 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
                 .then((state) => {
                     window.location.assign(state.checkout.getOrder().payment.redirectUrl);
 
-                    return this._resolveBeforeUnload(state);
+                    // We need to hold execution so the consumer does not redirect us somewhere else
+                    return new Promise(() => {});
                 });
         }
 
@@ -83,7 +81,8 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             .then((state) => {
                 this._paypalSdk.checkout.startFlow(state.checkout.getOrder().payment.redirectUrl);
 
-                return this._resolveBeforeUnload(state);
+                // We need to hold execution so the consumer does not redirect us somewhere else
+                return new Promise(() => {});
             })
             .catch((state) => {
                 this._paypalSdk.checkout.closeFlow();
@@ -125,22 +124,5 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
      */
     _isInContextEnabled() {
         return !!this._paymentMethod.config.merchantId;
-    }
-
-    /**
-     * @private
-     * @param {CheckoutSelectors} state
-     * @return {Promise<CheckoutSelectors>}
-     */
-    _resolveBeforeUnload(state) {
-        return new Promise((resolve) => {
-            const handleUnload = () => {
-                window.removeEventListener('unload', handleUnload);
-
-                resolve(state);
-            };
-
-            window.addEventListener('unload', handleUnload);
-        });
     }
 }

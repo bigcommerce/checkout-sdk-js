@@ -1,10 +1,12 @@
-import { find, reduce } from 'lodash';
+import { reduce } from 'lodash';
+
+import { mapToInternalLineItems } from '../cart';
 import { Checkout } from '../checkout';
-import { default as InternalOrder } from './internal-order';
-import { mapToInternalCart, mapToInternalLineItems } from '../cart';
 import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
-import Order from './order';
+
+import InternalOrder from './internal-order';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import Order from './order';
 
 export default function mapToInternalOrder(checkout: Checkout, order: Order, existingOrder: InternalOrder): InternalOrder {
     return {

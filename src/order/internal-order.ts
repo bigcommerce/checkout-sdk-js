@@ -1,5 +1,6 @@
 import { InternalLineItem } from '../cart';
 import { InternalCoupon, InternalGiftCertificate } from '../coupon';
+
 import InternalIncompleteOrder from './internal-incomplete-order';
 
 export default interface InternalOrder extends InternalIncompleteOrder {

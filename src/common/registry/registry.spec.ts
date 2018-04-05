@@ -1,4 +1,5 @@
 import { InvalidArgumentError } from '../error/errors';
+
 import Registry from './registry';
 
 describe('Registry', () => {

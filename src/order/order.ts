@@ -1,7 +1,7 @@
 import { Address } from '../address';
+import { DigitalItem, GiftCertificateItem, PhysicalItem } from '../cart';
 import { Coupon } from '../coupon';
 import { Currency } from '../currency';
-import { DigitalItem, GiftCertificateItem, PhysicalItem } from '../cart';
 
 export default interface Order {
     baseAmount: number;

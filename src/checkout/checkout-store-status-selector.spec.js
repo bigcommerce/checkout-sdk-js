@@ -3,13 +3,12 @@ import { CartSelector } from '../cart';
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector } from '../customer';
+import { CustomerSelector, CustomerStrategySelector } from '../customer';
 import { OrderSelector } from '../order';
-import { PaymentMethodSelector } from '../payment';
+import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ShippingSelector, ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
+import { ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import { getCheckoutStoreState } from './checkouts.mock';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 import CheckoutSelector from './checkout-selector';
@@ -22,16 +21,17 @@ describe('CheckoutStoreStatusSelector', () => {
     let countries;
     let coupon;
     let customer;
+    let customerStrategy;
     let giftCertificate;
     let instruments;
     let order;
     let paymentMethods;
+    let paymentStrategy;
     let quote;
-    let remoteCheckout;
-    let shipping;
     let shippingAddress;
     let shippingCountries;
     let shippingOptions;
+    let shippingStrategy;
     let statuses;
     let state;
 
@@ -44,16 +44,17 @@ describe('CheckoutStoreStatusSelector', () => {
         countries = new CountrySelector(state.countries);
         coupon = new CouponSelector(state.coupons);
         customer = new CustomerSelector(state.customer);
+        customerStrategy = new CustomerStrategySelector();
         giftCertificate = new GiftCertificateSelector(state.giftCertificates);
         order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
         paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+        paymentStrategy = new PaymentStrategySelector();
         instruments = new InstrumentSelector(state.instruments);
         quote = new QuoteSelector(state.quote);
-        remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
-        shipping = new ShippingSelector(state.shipping);
         shippingAddress = new ShippingAddressSelector(state.quote);
         shippingCountries = new ShippingCountrySelector(state.shippingCountries);
         shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
+        shippingStrategy = new ShippingStrategySelector();
 
         statuses = new CheckoutStoreStatusSelector(
             billingAddress,
@@ -63,16 +64,17 @@ describe('CheckoutStoreStatusSelector', () => {
             countries,
             coupon,
             customer,
+            customerStrategy,
             giftCertificate,
             instruments,
             order,
             paymentMethods,
+            paymentStrategy,
             quote,
-            remoteCheckout,
-            shipping,
             shippingAddress,
             shippingCountries,
-            shippingOptions
+            shippingOptions,
+            shippingStrategy
         );
     });
 
@@ -94,33 +96,33 @@ describe('CheckoutStoreStatusSelector', () => {
 
     describe('#isSubmittingOrder()', () => {
         it('returns true if submitting order', () => {
-            jest.spyOn(order, 'isSubmitting').mockReturnValue(true);
+            jest.spyOn(paymentStrategy, 'isExecuting').mockReturnValue(true);
 
             expect(statuses.isSubmittingOrder()).toEqual(true);
-            expect(order.isSubmitting).toHaveBeenCalled();
+            expect(paymentStrategy.isExecuting).toHaveBeenCalled();
         });
 
         it('returns false if submitting order', () => {
-            jest.spyOn(order, 'isSubmitting').mockReturnValue(false);
+            jest.spyOn(paymentStrategy, 'isExecuting').mockReturnValue(false);
 
             expect(statuses.isSubmittingOrder()).toEqual(false);
-            expect(order.isSubmitting).toHaveBeenCalled();
+            expect(paymentStrategy.isExecuting).toHaveBeenCalled();
         });
     });
 
     describe('#isFinalizingOrder()', () => {
         it('returns true if finalizing order', () => {
-            jest.spyOn(order, 'isFinalizing').mockReturnValue(true);
+            jest.spyOn(paymentStrategy, 'isFinalizing').mockReturnValue(true);
 
             expect(statuses.isFinalizingOrder()).toEqual(true);
-            expect(order.isFinalizing).toHaveBeenCalled();
+            expect(paymentStrategy.isFinalizing).toHaveBeenCalled();
         });
 
         it('returns false if finalizing order', () => {
-            jest.spyOn(order, 'isFinalizing').mockReturnValue(false);
+            jest.spyOn(paymentStrategy, 'isFinalizing').mockReturnValue(false);
 
             expect(statuses.isFinalizingOrder()).toEqual(false);
-            expect(order.isFinalizing).toHaveBeenCalled();
+            expect(paymentStrategy.isFinalizing).toHaveBeenCalled();
         });
     });
 
@@ -238,103 +240,69 @@ describe('CheckoutStoreStatusSelector', () => {
 
     describe('#isInitializingPaymentMethod()', () => {
         beforeEach(() => {
-            jest.spyOn(paymentMethods, 'isInitializingMethod').mockReturnValue(false);
-            jest.spyOn(remoteCheckout, 'isInitializingPayment').mockReturnValue(false);
-            jest.spyOn(remoteCheckout, 'isInitializingBilling').mockReturnValue(false);
+            jest.spyOn(paymentStrategy, 'isInitializing').mockReturnValue(false);
         });
 
         it('returns true if initializing payment', () => {
-            jest.spyOn(paymentMethods, 'isInitializingMethod').mockReturnValue(true);
+            jest.spyOn(paymentStrategy, 'isInitializing').mockReturnValue(true);
 
             expect(statuses.isInitializingPaymentMethod('foobar')).toEqual(true);
-            expect(paymentMethods.isInitializingMethod).toHaveBeenCalledWith('foobar');
+            expect(paymentStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
         it('returns false if not initializing payment', () => {
             expect(statuses.isInitializingPaymentMethod('foobar')).toEqual(false);
-            expect(paymentMethods.isInitializingMethod).toHaveBeenCalledWith('foobar');
-        });
-
-        it('returns true if initializing remote payment', () => {
-            jest.spyOn(remoteCheckout, 'isInitializingPayment').mockReturnValue(true);
-
-            expect(statuses.isInitializingPaymentMethod()).toEqual(true);
-            expect(remoteCheckout.isInitializingPayment).toHaveBeenCalled();
-        });
-
-        it('returns false if not initializing remote payment', () => {
-            expect(statuses.isInitializingPaymentMethod()).toEqual(false);
-            expect(remoteCheckout.isInitializingPayment).toHaveBeenCalled();
-        });
-
-        it('returns true if initializing remote billing', () => {
-            jest.spyOn(remoteCheckout, 'isInitializingBilling').mockReturnValue(true);
-
-            expect(statuses.isInitializingPaymentMethod()).toEqual(true);
-            expect(remoteCheckout.isInitializingBilling).toHaveBeenCalled();
-        });
-
-        it('returns false if not initializing remote billing', () => {
-            expect(statuses.isInitializingPaymentMethod()).toEqual(false);
-            expect(remoteCheckout.isInitializingBilling).toHaveBeenCalled();
+            expect(paymentStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });
 
     describe('#isSigningIn()', () => {
         it('returns true if signing in', () => {
-            jest.spyOn(customer, 'isSigningIn').mockReturnValue(true);
+            jest.spyOn(customerStrategy, 'isSigningIn').mockReturnValue(true);
 
             expect(statuses.isSigningIn()).toEqual(true);
-            expect(customer.isSigningIn).toHaveBeenCalled();
+            expect(customerStrategy.isSigningIn).toHaveBeenCalled();
         });
 
         it('returns false if signing in', () => {
-            jest.spyOn(customer, 'isSigningIn').mockReturnValue(false);
+            jest.spyOn(customerStrategy, 'isSigningIn').mockReturnValue(false);
 
             expect(statuses.isSigningIn()).toEqual(false);
-            expect(customer.isSigningIn).toHaveBeenCalled();
+            expect(customerStrategy.isSigningIn).toHaveBeenCalled();
         });
     });
 
     describe('#isSigningOut()', () => {
         beforeEach(() => {
-            jest.spyOn(customer, 'isSigningOut').mockReturnValue(false);
-            jest.spyOn(remoteCheckout, 'isSigningOut').mockReturnValue(false);
+            jest.spyOn(customerStrategy, 'isSigningOut').mockReturnValue(false);
         });
 
         it('returns true if signing out', () => {
-            jest.spyOn(customer, 'isSigningOut').mockReturnValue(true);
+            jest.spyOn(customerStrategy, 'isSigningOut').mockReturnValue(true);
 
             expect(statuses.isSigningOut()).toEqual(true);
-            expect(customer.isSigningOut).toHaveBeenCalled();
-        });
-
-        it('returns true if signing out remotely', () => {
-            jest.spyOn(remoteCheckout, 'isSigningOut').mockReturnValue(true);
-
-            expect(statuses.isSigningOut()).toEqual(true);
-            expect(remoteCheckout.isSigningOut).toHaveBeenCalled();
+            expect(customerStrategy.isSigningOut).toHaveBeenCalled();
         });
 
         it('returns false if signing out', () => {
             expect(statuses.isSigningOut()).toEqual(false);
-            expect(customer.isSigningOut).toHaveBeenCalled();
+            expect(customerStrategy.isSigningOut).toHaveBeenCalled();
         });
     });
 
     describe('#isInitializingCustomer()', () => {
         it('returns true if initializing', () => {
-            jest.spyOn(customer, 'isInitializing').mockReturnValue(true);
+            jest.spyOn(customerStrategy, 'isInitializing').mockReturnValue(true);
 
             expect(statuses.isInitializingCustomer('foobar')).toEqual(true);
-            expect(customer.isInitializing).toHaveBeenCalledWith('foobar');
+            expect(customerStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
         it('returns false if not initializing', () => {
-            jest.spyOn(customer, 'isInitializing').mockReturnValue(false);
+            jest.spyOn(customerStrategy, 'isInitializing').mockReturnValue(false);
 
             expect(statuses.isInitializingCustomer('foobar')).toEqual(false);
-            expect(customer.isInitializing).toHaveBeenCalledWith('foobar');
+            expect(customerStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });
 
@@ -356,17 +324,17 @@ describe('CheckoutStoreStatusSelector', () => {
 
     describe('#isSelectingShippingOption()', () => {
         it('returns true if selecting shipping options', () => {
-            jest.spyOn(shippingOptions, 'isSelecting').mockReturnValue(true);
+            jest.spyOn(shippingStrategy, 'isSelectingOption').mockReturnValue(true);
 
             expect(statuses.isSelectingShippingOption()).toEqual(true);
-            expect(shippingOptions.isSelecting).toHaveBeenCalled();
+            expect(shippingStrategy.isSelectingOption).toHaveBeenCalled();
         });
 
         it('returns false if not selecting shipping options', () => {
-            jest.spyOn(shippingOptions, 'isSelecting').mockReturnValue(false);
+            jest.spyOn(shippingStrategy, 'isSelectingOption').mockReturnValue(false);
 
             expect(statuses.isSelectingShippingOption()).toEqual(false);
-            expect(shippingOptions.isSelecting).toHaveBeenCalled();
+            expect(shippingStrategy.isSelectingOption).toHaveBeenCalled();
         });
     });
 
@@ -388,43 +356,33 @@ describe('CheckoutStoreStatusSelector', () => {
 
     describe('#isUpdatingShippingAddress()', () => {
         it('returns true if updating shipping address', () => {
-            jest.spyOn(shippingAddress, 'isUpdating').mockReturnValue(true);
+            jest.spyOn(shippingStrategy, 'isUpdatingAddress').mockReturnValue(true);
 
             expect(statuses.isUpdatingShippingAddress()).toEqual(true);
-            expect(shippingAddress.isUpdating).toHaveBeenCalled();
+            expect(shippingStrategy.isUpdatingAddress).toHaveBeenCalled();
         });
 
         it('returns false if not updating shipping address', () => {
-            jest.spyOn(shippingAddress, 'isUpdating').mockReturnValue(false);
+            jest.spyOn(shippingStrategy, 'isUpdatingAddress').mockReturnValue(false);
 
             expect(statuses.isUpdatingShippingAddress()).toEqual(false);
-            expect(shippingAddress.isUpdating).toHaveBeenCalled();
+            expect(shippingStrategy.isUpdatingAddress).toHaveBeenCalled();
         });
     });
 
     describe('#isInitializingShipping()', () => {
         it('returns true if initializing shipping', () => {
-            jest.spyOn(shipping, 'isInitializing').mockReturnValue(true);
-            jest.spyOn(remoteCheckout, 'isInitializingShipping').mockReturnValue(false);
+            jest.spyOn(shippingStrategy, 'isInitializing').mockReturnValue(true);
 
             expect(statuses.isInitializingShipping('foobar')).toEqual(true);
-            expect(shipping.isInitializing).toHaveBeenCalledWith('foobar');
-        });
-
-        it('returns true if initializing remote shipping', () => {
-            jest.spyOn(shipping, 'isInitializing').mockReturnValue(false);
-            jest.spyOn(remoteCheckout, 'isInitializingShipping').mockReturnValue(true);
-
-            expect(statuses.isInitializingShipping('foobar')).toEqual(true);
-            expect(remoteCheckout.isInitializingShipping).toHaveBeenCalledWith('foobar');
+            expect(shippingStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
         it('returns false if not initializing shipping', () => {
-            jest.spyOn(shipping, 'isInitializing').mockReturnValue(false);
-            jest.spyOn(remoteCheckout, 'isInitializingShipping').mockReturnValue(false);
+            jest.spyOn(shippingStrategy, 'isInitializing').mockReturnValue(false);
 
             expect(statuses.isInitializingShipping('foobar')).toEqual(false);
-            expect(remoteCheckout.isInitializingShipping).toHaveBeenCalledWith('foobar');
+            expect(shippingStrategy.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });
 

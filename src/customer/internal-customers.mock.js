@@ -47,6 +47,12 @@ export function getCustomerResponseBody() {
 export function getCustomerState() {
     return {
         data: getGuestCustomer(),
-        meta: {},
+    };
+}
+
+export function getCustomerStrategyState() {
+    return {
+        errors: {},
+        statuses: {},
     };
 }

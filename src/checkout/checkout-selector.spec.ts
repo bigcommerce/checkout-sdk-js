@@ -1,5 +1,5 @@
-import { getCheckout, getCheckoutState } from './checkouts.mock';
 import CheckoutSelector from './checkout-selector';
+import { getCheckout, getCheckoutState } from './checkouts.mock';
 
 describe('CheckoutSelector', () => {
     it('returns checkout', () => {

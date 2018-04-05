@@ -66,19 +66,6 @@ export default class PaymentMethodSelector {
     }
 
     /**
-     * @param {string} [methodId]
-     * @return {?ErrorResponse}
-     */
-    getInitializeError(methodId) {
-        if (!this._paymentMethods.errors ||
-            (methodId && this._paymentMethods.errors.initializeMethod !== methodId)) {
-            return;
-        }
-
-        return this._paymentMethods.errors.initializeError;
-    }
-
-    /**
      * @return {boolean}
      */
     isLoading() {
@@ -96,18 +83,5 @@ export default class PaymentMethodSelector {
         }
 
         return !!this._paymentMethods.statuses.isLoadingMethod;
-    }
-
-    /**
-     * @param {string} [methodId]
-     * @return {boolean}
-     */
-    isInitializingMethod(methodId) {
-        if (!this._paymentMethods.statuses ||
-            (methodId && this._paymentMethods.statuses.initializingMethod !== methodId)) {
-            return false;
-        }
-
-        return !!this._paymentMethods.statuses.isInitializing;
     }
 }

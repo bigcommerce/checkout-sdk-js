@@ -1,6 +1,8 @@
-import { Action, combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import { Address } from '../address';
 import { Checkout, CheckoutAction, CheckoutActionType } from '../checkout';
+
 import BillingAddressState from './billing-address-state';
 
 const DEFAULT_STATE: BillingAddressState = {};

@@ -1,5 +1,6 @@
-import { DiscountNotification } from '../discount';
 import { InternalCoupon, InternalGiftCertificate } from '../coupon';
+import { DiscountNotification } from '../discount';
+
 import InternalLineItem from './internal-line-item';
 
 export default interface InternalCart {

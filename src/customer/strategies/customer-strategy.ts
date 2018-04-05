@@ -1,14 +1,11 @@
-import { ReadableDataStore } from '@bigcommerce/data-store';
-import { CheckoutSelectors } from '../../checkout';
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import CustomerCredentials from '../customer-credentials';
-import SignInCustomerService from '../sign-in-customer-service';
 
 export default abstract class CustomerStrategy {
     protected _isInitialized = false;
 
     constructor(
-        protected _store: ReadableDataStore<CheckoutSelectors>,
-        protected _signInCustomerService: SignInCustomerService
+        protected _store: CheckoutStore
     ) {}
 
     abstract signIn(credentials: CustomerCredentials, options?: any): Promise<CheckoutSelectors>;

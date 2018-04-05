@@ -202,17 +202,6 @@ describe('PlaceOrderService', () => {
 
             expect(output).toEqual(store.getState());
         });
-
-        it('does not submit payment data if payment is not required', async () => {
-            const { checkout } = store.getState();
-
-            jest.spyOn(checkout, 'isPaymentDataRequired').mockReturnValue(false);
-
-            await placeOrderService.submitPayment(getPayment(), true);
-
-            expect(checkout.isPaymentDataRequired).toHaveBeenCalledWith(true);
-            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
-        });
     });
 
     describe('#initializeOffsitePayment()', () => {
@@ -231,17 +220,6 @@ describe('PlaceOrderService', () => {
             const output = await placeOrderService.initializeOffsitePayment(getPayment(), false);
 
             expect(output).toEqual(store.getState());
-        });
-
-        it('does not submit payment data if payment is not required', async () => {
-            const { checkout } = store.getState();
-
-            jest.spyOn(checkout, 'isPaymentDataRequired').mockReturnValue(false);
-
-            await placeOrderService.initializeOffsitePayment(getPayment(), true);
-
-            expect(checkout.isPaymentDataRequired).toHaveBeenCalledWith(true);
-            expect(paymentActionCreator.initializeOffsitePayment).not.toHaveBeenCalled();
         });
     });
 });

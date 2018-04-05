@@ -1,58 +1,62 @@
-import { merge } from 'lodash';
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { CartActionCreator } from '../../cart';
+import { merge } from 'lodash';
+import { Observable } from 'rxjs';
+
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
-import { createRemoteCheckoutService, RemoteCheckoutService } from '../../remote-checkout';
-import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
-import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
+import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getKlarna } from '../../payment/payment-methods.mock';
-import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
-import { getResponse } from '../../common/http-request/responses.mock';
-import KlarnaPaymentStrategy from './klarna-payment-strategy';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
+import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
+import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentMethod from '../payment-method';
+
+import KlarnaPaymentStrategy from './klarna-payment-strategy';
 
 describe('KlarnaPaymentStrategy', () => {
     let client: CheckoutClient;
+    let klarnaSdk: Klarna.Sdk;
+    let payload: OrderRequestBody;
+    let paymentMethod: PaymentMethod;
+    let placeOrderService: PlaceOrderService;
+    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: KlarnaScriptLoader;
     let store: CheckoutStore;
     let strategy: KlarnaPaymentStrategy;
-    let remoteCheckoutService: RemoteCheckoutService;
-    let paymentMethod: PaymentMethod;
-    let placeOrderService: PlaceOrderService;
-    let payload: OrderRequestBody;
-
-    const clientToken: string = 'foo';
-    const klarnaSdk = {
-        authorize: (a, b) => Promise.resolve({ approved: true }),
-        init: () => Promise.resolve(),
-        load: () => Promise.resolve(),
-    };
 
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore();
         placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
-        remoteCheckoutService = createRemoteCheckoutService(store, client);
-        paymentMethod = getKlarna();
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+            new RemoteCheckoutRequestSender(createRequestSender())
+        );
         scriptLoader = new KlarnaScriptLoader(createScriptLoader());
         strategy = new KlarnaPaymentStrategy(
             store,
             placeOrderService,
-            remoteCheckoutService,
+            remoteCheckoutActionCreator,
             scriptLoader
         );
 
-        jest.spyOn(remoteCheckoutService, 'initializePayment').mockImplementation(() => {
-            return Promise.resolve({});
+        klarnaSdk = {
+            authorize: jest.fn((a, b) => Promise.resolve({ approved: true })),
+            init: jest.fn(() => Promise.resolve()),
+            load: jest.fn(() => Promise.resolve()),
+        };
+
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockImplementation(() => {
+            return Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         });
 
         jest.spyOn(placeOrderService, 'loadPaymentMethod').mockImplementation(() => {
             return Promise.resolve({
                 checkout: {
                     getPaymentMethod: () => {
-                        return { clientToken };
+                        return { clientToken: 'foo' };
                     },
                 },
             });
@@ -67,9 +71,7 @@ describe('KlarnaPaymentStrategy', () => {
         jest.spyOn(store, 'subscribe')
             .mockImplementation(() => Promise.resolve());
 
-        jest.spyOn(klarnaSdk, 'init');
-        jest.spyOn(klarnaSdk, 'load');
-        jest.spyOn(klarnaSdk, 'authorize');
+        paymentMethod = getKlarna();
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
@@ -81,8 +83,7 @@ describe('KlarnaPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         beforeEach(async () => {
-            klarnaSdk.load.mockReset();
-            await strategy.initialize({ paymentMethod });
+            await strategy.initialize({ container: '#container', paymentMethod });
         });
 
         it('loads script when initializing strategy', () => {
@@ -101,7 +102,7 @@ describe('KlarnaPaymentStrategy', () => {
 
     describe('#execute()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ paymentMethod });
+            await strategy.initialize({ container: '#container', paymentMethod });
         });
 
         it('authorizes against klarna', () => {
@@ -111,12 +112,16 @@ describe('KlarnaPaymentStrategy', () => {
 
         it('submits authorization token', async () => {
             const authorizationToken = 'bar';
-            jest.spyOn(strategy, '_authorize')
-                .mockImplementation(() => Promise.resolve({ authorization_token: authorizationToken }));
+
+            jest.spyOn(klarnaSdk, 'authorize')
+                .mockImplementation((params, callback) => callback({
+                    approved: true,
+                    authorization_token: authorizationToken,
+                }));
 
             await strategy.execute(payload);
 
-            expect(remoteCheckoutService.initializePayment)
+            expect(remoteCheckoutActionCreator.initializePayment)
                 .toHaveBeenCalledWith('klarna', { authorizationToken });
 
             expect(placeOrderService.submitOrder)

@@ -58,9 +58,10 @@ export default class RemoteCheckoutActionCreator {
     /**
      * @param {string} methodId
      * @param {Object} params
+     * @param {string} [params.authorizationToken]
+     * @param {string} [params.customerMessage]
      * @param {string} [params.referenceId]
      * @param {boolean} [params.useStoreCredit]
-     * @param {boolean} [params.authorizationToken]
      * @param {RequestOptions} [options]
      * @return {Observable<Action>}
      */

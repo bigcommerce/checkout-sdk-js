@@ -1,6 +1,5 @@
 import { getCustomerResponseBody } from './internal-customers.mock';
 import { getCompleteOrderResponseBody } from '../order/internal-orders.mock';
-import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as orderActionTypes from '../order/order-action-types';
@@ -66,16 +65,6 @@ describe('customerReducer()', () => {
         }));
     });
 
-    it('returns new customer data while signing in customer', () => {
-        const action = {
-            type: customerActionTypes.SIGN_IN_CUSTOMER_REQUESTED,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isSigningIn: true },
-        }));
-    });
-
     it('returns new customer data if customer has signed in successfully', () => {
         const action = {
             type: customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED,
@@ -84,29 +73,6 @@ describe('customerReducer()', () => {
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
             data: action.payload.customer,
-            statuses: { isSigningIn: false },
-        }));
-    });
-
-    it('returns new customer data if customer has failed to sign in', () => {
-        const action = {
-            type: customerActionTypes.SIGN_IN_CUSTOMER_FAILED,
-            payload: getErrorResponse(),
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { signInError: getErrorResponse() },
-            statuses: { isSigningIn: false },
-        }));
-    });
-
-    it('returns new customer data while signing out customer', () => {
-        const action = {
-            type: customerActionTypes.SIGN_OUT_CUSTOMER_REQUESTED,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isSigningOut: true },
         }));
     });
 
@@ -118,62 +84,6 @@ describe('customerReducer()', () => {
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
             data: action.payload.customer,
-            errors: {},
-            statuses: { isSigningOut: false },
         }));
-    });
-
-    it('returns new customer data if customer has failed to sign out', () => {
-        const action = {
-            type: customerActionTypes.SIGN_OUT_CUSTOMER_FAILED,
-            payload: getErrorResponse(),
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { signOutError: getErrorResponse() },
-            statuses: { isSigningOut: false },
-        }));
-    });
-
-    it('returns new customer data while initializing customer', () => {
-        const action = {
-            type: customerActionTypes.INITIALIZE_CUSTOMER_REQUESTED,
-            meta: { methodId: 'foobar' },
-        };
-
-        expect(customerReducer(initialState, action).statuses).toEqual({
-            initializingMethod: 'foobar',
-            isInitializing: true,
-        });
-    });
-
-    it('returns new customer data if customer has initialized successfully', () => {
-        const action = {
-            type: customerActionTypes.INITIALIZE_CUSTOMER_SUCCEEDED,
-            meta: { methodId: 'foobar' },
-        };
-
-        expect(customerReducer(initialState, action).statuses).toEqual({
-            initializingMethod: undefined,
-            isInitializing: false,
-        });
-    });
-
-    it('returns new customer data if customer has failed to initialize', () => {
-        const action = {
-            type: customerActionTypes.INITIALIZE_CUSTOMER_FAILED,
-            payload: getErrorResponse(),
-            meta: { methodId: 'foobar' },
-        };
-
-        expect(customerReducer(initialState, action).statuses).toEqual({
-            initializingMethod: undefined,
-            isInitializing: false,
-        });
-
-        expect(customerReducer(initialState, action).errors).toEqual({
-            initializeMethod: 'foobar',
-            initializeError: action.payload,
-        });
     });
 });

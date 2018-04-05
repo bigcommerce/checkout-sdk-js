@@ -1,7 +1,7 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { getCurrency } from '../currency/currencies.mock';
 import { getCoupon } from '../coupon/coupons.mock';
-import { getDiscount } from '../discount/discounts.mock';
+import { getCurrency } from '../currency/currencies.mock';
+
 import { getPhysicalItem } from './line-items.mock';
 import Order from './order';
 

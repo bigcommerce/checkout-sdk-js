@@ -1,10 +1,12 @@
 import { createAction } from '@bigcommerce/data-store';
+
 import { CheckoutActionType } from '../checkout';
-import { RequestError } from '../common/error/errors';
 import { getCheckout } from '../checkout/checkouts.mock';
+import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import CheckoutState from './checkout-state';
+
 import checkoutReducer from './checkout-reducer';
+import CheckoutState from './checkout-state';
 
 describe('checkoutReducer', () => {
     let initialState: CheckoutState;

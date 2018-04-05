@@ -1,6 +1,8 @@
 import { omit } from 'lodash';
+
 import { CheckoutSelectors } from '../../checkout';
 import { OrderRequestBody } from '../../order';
+
 import PaymentStrategy from './payment-strategy';
 
 export default class CreditCardPaymentStrategy extends PaymentStrategy {
