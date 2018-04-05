@@ -1,30 +1,27 @@
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class CountrySelector {
     /**
      * @constructor
      * @param {CountriesState} countries
      */
-    constructor(countries = {}) {
-        this._countries = countries;
-    }
+    constructor(
+        private _countries: any = {}
+    ) {}
 
     /**
      * @return {Country[]}
      */
-    getCountries() {
+    getCountries(): any[] {
         return this._countries.data;
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getLoadError() {
+    getLoadError(): Error | undefined {
         return this._countries.errors && this._countries.errors.loadError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isLoading() {
+    isLoading(): boolean {
         return !!(this._countries.statuses && this._countries.statuses.isLoading);
     }
 }
