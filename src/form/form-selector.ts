@@ -1,12 +1,27 @@
 import { find } from 'lodash';
 
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class FormSelector {
     /**
      * @constructor
      * @param {ConfigState} config
      */
-    constructor(config = {}) {
-        this._config = config.data;
+    constructor(
+        private _config: any = {}
+    ) {}
+
+    /**
+     * @param {Country[]} countries
+     * @param {string} countryCode
+     * @returns {Field[]}
+     */
+    getShippingAddressFields(countries: any = [], countryCode: string): any {
+        const selectedCountry = find(countries, { code: countryCode });
+
+        return this._config.data.storeConfig.formFields.shippingAddressFields
+            .map((field: any) => this._processField(field, countries, selectedCountry));
     }
 
     /**
@@ -14,23 +29,11 @@ export default class FormSelector {
      * @param {string} countryCode
      * @returns {Field[]}
      */
-    getShippingAddressFields(countries = [], countryCode) {
+    getBillingAddressFields(countries: any[] = [], countryCode: string): any {
         const selectedCountry = find(countries, { code: countryCode });
 
-        return this._config.storeConfig.formFields.shippingAddressFields
-            .map((field) => this._processField(field, countries, selectedCountry));
-    }
-
-    /**
-     * @param {Country[]} countries
-     * @param {string} countryCode
-     * @returns {Field[]}
-     */
-    getBillingAddressFields(countries = [], countryCode) {
-        const selectedCountry = find(countries, { code: countryCode });
-
-        return this._config.storeConfig.formFields.billingAddressFields
-            .map((field) => this._processField(field, countries, selectedCountry));
+        return this._config.data.storeConfig.formFields.billingAddressFields
+            .map((field: any) => this._processField(field, countries, selectedCountry));
     }
 
     /**
@@ -40,7 +43,7 @@ export default class FormSelector {
      * @param {Country} selectedCountry
      * @returns {Field}
      */
-    _processField(field, countries, selectedCountry = {}) {
+    private _processField(field: any, countries: any[], selectedCountry: any = {}): any {
         if (field.name === 'countryCode') {
             return this._processCountry(field, countries, selectedCountry);
         }
@@ -64,12 +67,12 @@ export default class FormSelector {
      * @param {string} country.code
      * @returns {Field}
      */
-    _processCountry(field, countries = [], { code = '' }) {
+    private _processCountry(field: any, countries: any[] = [], { code = '' }: any): any {
         if (!countries.length) {
             return field;
         }
 
-        const items = countries.map(({ code, name }) => ({
+        const items = countries.map(({ code, name }: any) => ({
             value: code,
             label: name,
         }));
@@ -91,7 +94,7 @@ export default class FormSelector {
      * @param {State[]} country.subdivisions
      * @returns {Field}
      */
-    _processProvince(field, { subdivisions = [] }) {
+    private _processProvince(field: any, { subdivisions = [] }: any): any {
         if (!subdivisions.length) {
             return {
                 ...field,
@@ -99,7 +102,7 @@ export default class FormSelector {
             };
         }
 
-        const items = subdivisions.map(({ code, name }) => ({
+        const items = subdivisions.map(({ code, name }: any) => ({
             value: code,
             label: name,
         }));
@@ -122,7 +125,7 @@ export default class FormSelector {
      * @param {boolean} country.hasPostalCodes
      * @returns {Field}
      */
-    _processsPostCode(field, { hasPostalCodes }) {
+    private _processsPostCode(field: any, { hasPostalCodes }: any): any {
         if (hasPostalCodes === undefined) {
             return field;
         }
