@@ -1,6 +1,6 @@
-import Logger from './logger';
+import ConsoleLogger from './console-logger';
 
-describe('Logger', () => {
+describe('ConsoleLogger', () => {
     let logger;
     let mockConsole;
 
@@ -13,7 +13,7 @@ describe('Logger', () => {
             debug: jest.fn(),
         };
 
-        logger = new Logger(mockConsole);
+        logger = new ConsoleLogger(mockConsole);
     });
 
     describe('#log()', () => {
@@ -24,7 +24,7 @@ describe('Logger', () => {
         });
 
         it('does not throw an error if console is unavailable', () => {
-            logger = new Logger(undefined);
+            logger = new ConsoleLogger(undefined);
 
             expect(() => logger.log('hello', 'world')).not.toThrow();
         });
