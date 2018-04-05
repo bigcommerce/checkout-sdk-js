@@ -1,30 +1,28 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
+
+import InternalCustomer from './internal-customer';
 import mapToInternalCustomer from './map-to-internal-customer';
 
 /**
+ * @todo Convert this file into TypeScript properly
  * @param {CustomerState} state
  * @param {Action} action
  * @return {CustomerState}
  */
-export default function customerReducer(state = {}, action) {
-    const reducer = combineReducers({
+export default function customerReducer(state: any = {}, action: Action): any {
+    const reducer = combineReducers<any>({
         data: dataReducer,
     });
 
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?Customer} data
- * @param {Action} action
- * @return {?Customer}
- */
-function dataReducer(data, action) {
+function dataReducer(data: InternalCustomer, action: Action): InternalCustomer {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...data, ...mapToInternalCustomer(action.payload, data) };
