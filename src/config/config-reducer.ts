@@ -1,12 +1,14 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import * as configActionType from './config-action-types';
 
 /**
+ * @todo Convert this file into TypeScript properly
  * @param {ConfigState} state
  * @param {Action} action
  * @return {ConfigState}
  */
-export default function configReducer(state = {}, action) {
+export default function configReducer(state: any = {}, action: Action): any {
     const reducer = combineReducers({
         data: dataReducer,
         errors: errorsReducer,
@@ -22,7 +24,7 @@ export default function configReducer(state = {}, action) {
  * @param {Action} action
  * @return {?Config}
  */
-function dataReducer(data, action) {
+function dataReducer(data: any, action: Action): any {
     switch (action.type) {
     case configActionType.LOAD_CONFIG_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload } : data;
@@ -38,7 +40,7 @@ function dataReducer(data, action) {
  * @param {Action} action
  * @return {Object}
  */
-function errorsReducer(errors = {}, action) {
+function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case configActionType.LOAD_CONFIG_SUCCEEDED:
         return { ...errors, loadError: undefined };
@@ -57,7 +59,7 @@ function errorsReducer(errors = {}, action) {
  * @param {Action} action
  * @return {Object}
  */
-function statusesReducer(statuses = {}, action) {
+function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case configActionType.LOAD_CONFIG_REQUESTED:
         return { ...statuses, isLoading: true };
