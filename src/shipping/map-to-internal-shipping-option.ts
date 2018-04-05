@@ -10,7 +10,7 @@ export default function mapToInternalShippingOption(option: ShippingOption, exis
         formattedPrice: existingOption.formattedPrice,
         id: option.id,
         selected: existingOption.selected,
-        isRecommended: existingOption.isRecommended,
+        isRecommended: option.isRecommended,
         imageUrl: option.imageUrl,
         transitTime: option.transitTime,
     };
