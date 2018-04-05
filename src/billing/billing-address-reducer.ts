@@ -7,7 +7,7 @@ import BillingAddressState from './billing-address-state';
 
 const DEFAULT_STATE: BillingAddressState = {};
 
-export default function shippingReducer(
+export default function billingAddressReducer(
     state: BillingAddressState = DEFAULT_STATE,
     action: CheckoutAction
 ): BillingAddressState {
