@@ -1,22 +1,27 @@
-import { combineReducers } from '@bigcommerce/data-store';
-import { CheckoutActionType } from '../checkout';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import * as cartActionTypes from '../cart/cart-action-types';
+import { CheckoutActionType } from '../checkout';
 import * as couponActionTypes from '../coupon/coupon-action-types';
-import * as customerActionTypes from '../customer/customer-action-types';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
+import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+
+import Cart from './cart';
+import InternalCart from './internal-cart';
 import mapToInternalCart from './map-to-internal-cart';
 
 /**
+ * @todo Convert this file into TypeScript properly
  * @param {CartState} state
  * @param {Action} action
  * @return {CartState}
  */
-export default function cartReducer(state = {}, action) {
-    const reducer = combineReducers({
+export default function cartReducer(state: any = {}, action: Action): any {
+    const reducer = combineReducers<any>({
         data: dataReducer,
         externalData: externalDataReducer,
         errors: errorsReducer,
@@ -27,19 +32,10 @@ export default function cartReducer(state = {}, action) {
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?InternalCart} data
- * @param {Action} action
- * @return {?InternalCart}
- */
-function dataReducer(data, action) {
+function dataReducer(data: InternalCart, action: Action): InternalCart {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...data, ...mapToInternalCart(action.payload, data) };
-
-    case cartActionTypes.CART_UPDATED:
-        return action.payload ? { ...data, ...action.payload } : data;
 
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case cartActionTypes.LOAD_CART_SUCCEEDED:
@@ -60,13 +56,7 @@ function dataReducer(data, action) {
     }
 }
 
-/**
- * @private
- * @param {?Cart} data
- * @param {Action} action
- * @return {?Cart}
- */
-function externalDataReducer(data, action) {
+function externalDataReducer(data: Cart, action: Action): Cart {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...data, ...action.payload.cart };
@@ -82,7 +72,7 @@ function externalDataReducer(data, action) {
  * @param {Action} action
  * @return {?CartMeta}
  */
-function metaReducer(meta, action) {
+function metaReducer(meta: any, action: Action): any {
     switch (action.type) {
     case cartActionTypes.VERIFY_CART_SUCCEEDED:
         return { ...meta, isValid: action.payload };
@@ -97,13 +87,7 @@ function metaReducer(meta, action) {
     }
 }
 
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
-function errorsReducer(errors = {}, action) {
+function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case cartActionTypes.LOAD_CART_REQUESTED:
     case cartActionTypes.LOAD_CART_SUCCEEDED:
@@ -124,13 +108,7 @@ function errorsReducer(errors = {}, action) {
     }
 }
 
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
-function statusesReducer(statuses = {}, action) {
+function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case cartActionTypes.LOAD_CART_REQUESTED:
         return { ...statuses, isLoading: true };

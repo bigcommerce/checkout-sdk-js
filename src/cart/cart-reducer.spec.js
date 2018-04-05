@@ -1,5 +1,5 @@
 import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
-import { getCart, getCartResponseBody } from './internal-carts.mock';
+import { getCartResponseBody } from './internal-carts.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
@@ -31,21 +31,6 @@ describe('cartReducer()', () => {
 
         expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
             data: action.payload.cart,
-        }));
-    });
-
-    it('returns new data when the cart gets updated', () => {
-        const cart = getCart();
-        const action = {
-            type: cartActionTypes.CART_UPDATED,
-            payload: cart,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: {
-                ...initialState.data,
-                ...action.payload,
-            },
         }));
     });
 
