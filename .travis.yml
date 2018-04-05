@@ -9,5 +9,6 @@ dist: trusty
 sudo: false
 
 script:
+    - yarn validate-commits
     - yarn lint
     - yarn test:series --coverage
