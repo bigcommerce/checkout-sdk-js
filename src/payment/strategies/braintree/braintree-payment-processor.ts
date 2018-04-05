@@ -21,6 +21,10 @@ export default class BraintreePaymentProcessor {
         this._modalHandler = options.modalHandler;
     }
 
+    preloadPaypal(): Promise<Braintree.Paypal> {
+        return this._braintreeSDKCreator.getPaypal();
+    }
+
     tokenizeCard(payment: Payment, billingAddress: InternalAddress): Promise<TokenizedCreditCard> {
         const { paymentData } = payment;
         const requestData = this._mapToCreditCard(paymentData as CreditCard, billingAddress);
@@ -29,6 +33,19 @@ export default class BraintreePaymentProcessor {
             .then((client) => client.request(requestData))
             .then(({ creditCards }) => ({
                 nonce: creditCards[0].nonce,
+            }));
+    }
+
+    paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<TokenizedCreditCard> {
+        return this._braintreeSDKCreator.getPaypal()
+            .then((paypal) => paypal.tokenize({
+                amount,
+                currency,
+                enableShippingAddress: true,
+                flow: 'checkout',
+                locale: storeLanguage,
+                offerCredit,
+                useraction: 'commit',
             }));
     }
 

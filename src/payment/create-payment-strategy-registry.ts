@@ -17,6 +17,7 @@ import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
     BraintreeCreditCardPaymentStrategy,
+    BraintreePaypalPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
@@ -39,6 +40,7 @@ export default function createPaymentStrategyRegistry(
     const registry = new PaymentStrategyRegistry(checkout.getConfig());
     const placeOrderService = createPlaceOrderService(store, client, paymentClient);
     const scriptLoader = getScriptLoader();
+    const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
         new RemoteCheckoutRequestSender(createRequestSender())
     );
@@ -98,7 +100,15 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register('braintree', () =>
-        new BraintreeCreditCardPaymentStrategy(store, placeOrderService, createBraintreePaymentProcessor(scriptLoader))
+        new BraintreeCreditCardPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+    );
+
+    registry.register('braintreepaypal', () =>
+        new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+    );
+
+    registry.register('braintreepaypalcredit', () =>
+        new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessor, true)
     );
 
     registry.register('wepay', () =>
