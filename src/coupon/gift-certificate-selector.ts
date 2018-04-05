@@ -1,40 +1,31 @@
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class GiftCertificateSelector {
     /**
      * @constructor
      * @param {GiftCertificateState} giftCertificate
      */
-    constructor(giftCertificate = {}) {
-        this._giftCertificate = giftCertificate;
-    }
+    constructor(
+        private _giftCertificate: any = {}
+    ) {}
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getRemoveError() {
+    getRemoveError(): Error | undefined {
         return this._giftCertificate.errors &&
             this._giftCertificate.errors.removeGiftCertificateError;
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getApplyError() {
+    getApplyError(): Error | undefined {
         return this._giftCertificate.errors &&
             this._giftCertificate.errors.applyGiftCertificateError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isApplying() {
+    isApplying(): boolean {
         return !!(this._giftCertificate.statuses &&
             this._giftCertificate.statuses.isApplyingGiftCertificate);
     }
 
-    /**
-     * @return {boolean}
-     */
-    isRemoving() {
+    isRemoving(): boolean {
         return !!(this._giftCertificate.statuses &&
             this._giftCertificate.statuses.isRemovingGiftCertificate);
     }
