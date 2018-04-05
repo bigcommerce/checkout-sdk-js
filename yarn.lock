@@ -23,9 +23,9 @@
   version "1.1.2"
   resolved "git+ssh://git@github.com/bigcommerce/form-poster-js.git#0d0c14290df3fdbe8432935a99a0c6da648cd72f"
 
-"@bigcommerce/request-sender@git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.1":
-  version "0.1.1"
-  resolved "git+ssh://git@github.com/bigcommerce/request-sender-js.git#8a00e3a2cb6cd80960d688b1c29131e815fff744"
+"@bigcommerce/request-sender@git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.2":
+  version "0.1.2"
+  resolved "git+ssh://git@github.com/bigcommerce/request-sender-js.git#c0f86a54e57ff8efcf873ff669a8645f1e36054b"
   dependencies:
     is-promise "^2.1.0"
     js-cookie "^2.1.4"

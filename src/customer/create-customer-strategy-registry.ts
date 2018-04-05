@@ -1,4 +1,3 @@
-/// <reference path="../common/http-request/request-sender.d.ts" />
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
