@@ -1,35 +1,32 @@
+import { RequestSender, Response } from '@bigcommerce/request-sender';
+
+import { RequestOptions } from '../../common/http-request';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class InstrumentRequestSender {
     /**
      * @constructor
      * @param {BigpayClient} client
      * @param {RequestSender} requestSender
      */
-    constructor(client, requestSender) {
-        this._client = client;
-        this._requestSender = requestSender;
-    }
+    constructor(
+        private _client: any,
+        private _requestSender: RequestSender
+    ) {}
 
-    /**
-     * @param {RequestOptions} [options]
-     * @return {Promise<Response<VaultAccessTokenResponseBody>>}
-     */
-    getVaultAccessToken({ timeout } = {}) {
+    getVaultAccessToken({ timeout }: RequestOptions = {}): Promise<Response> {
         const url = '/internalapi/v1/checkout/payments/vault-access-token';
 
         return this._requestSender.get(url, { timeout });
     }
 
-    /**
-     * @param {string} storeId
-     * @param {string} shopperId
-     * @param {string} authToken
-     * @return {Promise<Response<InstrumentsResponseBody>>}
-     */
-    getInstruments(storeId, shopperId, authToken) {
+    getInstruments(storeId: string, shopperId: number, authToken: string): Promise<Response> {
         const payload = { storeId, shopperId, authToken };
 
         return new Promise((resolve, reject) => {
-            this._client.getShopperInstruments(payload, (error, response) => {
+            this._client.getShopperInstruments(payload, (error: any, response: any) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {
@@ -41,12 +38,12 @@ export default class InstrumentRequestSender {
 
     /**
      * @param {string} storeId
-     * @param {string} shopperId
+     * @param {number} shopperId
      * @param {InstrumentRequestBody} instrument
      * @param {string} authToken
      * @return {Promise<Response<InstrumentResponseBody>>}
      */
-    vaultInstrument(storeId, shopperId, instrument, authToken) {
+    vaultInstrument(storeId: string, shopperId: number, instrument: any, authToken: string): Promise<Response> {
         const payload = {
             storeId,
             shopperId,
@@ -55,7 +52,7 @@ export default class InstrumentRequestSender {
         };
 
         return new Promise((resolve, reject) => {
-            this._client.postShopperInstrument(payload, (error, response) => {
+            this._client.postShopperInstrument(payload, (error: Error, response: any) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {
@@ -67,16 +64,16 @@ export default class InstrumentRequestSender {
 
     /**
      * @param {string} storeId
-     * @param {string} shopperId
+     * @param {number} shopperId
      * @param {string} authToken
      * @param {string} instrumentId
      * @return {Promise<void>}
      */
-    deleteInstrument(storeId, shopperId, authToken, instrumentId) {
+    deleteInstrument(storeId: string, shopperId: number, authToken: string, instrumentId: string): Promise<Response> {
         const payload = { storeId, shopperId, authToken, instrumentId };
 
         return new Promise((resolve, reject) => {
-            this._client.deleteShopperInstrument(payload, (error, response) => {
+            this._client.deleteShopperInstrument(payload, (error: any, response: any) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {
@@ -91,7 +88,7 @@ export default class InstrumentRequestSender {
      * @param {Object} response
      * @return {Response<any>}
      */
-    _transformResponse({ data: body, status, statusText }) {
+    private _transformResponse({ data: body, status, statusText }: any): Response {
         return {
             headers: {},
             body,

@@ -1,41 +1,31 @@
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class InstrumentSelector {
-    constructor(instruments = {}) {
-        this._instruments = instruments;
-    }
+    constructor(
+        private _instruments: any = {}
+    ) {}
 
     /**
      * @return {Array<Instrument>}
      */
-    getInstruments() {
+    getInstruments(): any[] {
         return this._instruments.data;
     }
 
-    /**
-     * @return {Object}
-     */
-    getInstrumentsMeta() {
+    getInstrumentsMeta(): any {
         return this._instruments.meta;
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getLoadError() {
+    getLoadError(): Error | undefined {
         return this._instruments.errors && this._instruments.errors.loadError;
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getVaultError() {
+    getVaultError(): Error | undefined {
         return this._instruments.errors && this._instruments.errors.vaultError;
     }
 
-    /**
-     * @param {string} [instrumentId]
-     * @return {?ErrorResponse}
-     */
-    getDeleteError(instrumentId) {
+    getDeleteError(instrumentId?: string): Error | undefined {
         if (!this._instruments.errors || (instrumentId && this._instruments.errors.failedInstrument !== instrumentId)) {
             return;
         }
@@ -43,25 +33,15 @@ export default class InstrumentSelector {
         return this._instruments.errors.deleteError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isLoading() {
+    isLoading(): boolean {
         return !!(this._instruments.statuses && this._instruments.statuses.isLoading);
     }
 
-    /**
-     * @return {boolean}
-     */
-    isVaulting() {
+    isVaulting(): boolean {
         return !!(this._instruments.statuses && this._instruments.statuses.isVaulting);
     }
 
-    /**
-     * @param {string} [instrumentId]
-     * @return {boolean}
-     */
-    isDeleting(instrumentId) {
+    isDeleting(instrumentId?: string): boolean {
         if (!this._instruments.statuses || (instrumentId && this._instruments.statuses.deletingInstrument !== instrumentId)) {
             return false;
         }

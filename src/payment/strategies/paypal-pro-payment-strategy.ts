@@ -1,12 +1,13 @@
 import { omit, pick } from 'lodash';
+
+import { CheckoutSelectors } from '../../checkout';
+import { OrderRequestBody } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
+
 import PaymentStrategy from './payment-strategy';
 
 export default class PaypalProPaymentStrategy extends PaymentStrategy {
-    /**
-     * @inheritdoc
-     */
-    execute(payload, options) {
+    execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
         if (this._isPaymentAcknowledged()) {
             return this._placeOrderService.submitOrder({
                 ...payload,
@@ -20,11 +21,7 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
             );
     }
 
-    /**
-     * @private
-     * @return {boolean}
-     */
-    _isPaymentAcknowledged() {
+    private _isPaymentAcknowledged(): boolean {
         const { checkout } = this._store.getState();
         const { payment = {} } = checkout.getOrder();
 

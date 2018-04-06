@@ -1,36 +1,39 @@
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
-import { addMinutes, isFuture } from '../../common/date-time';
-import * as actionTypes from './instrument-action-types';
+import { Observer } from 'rxjs/Observer';
 
+import { addMinutes, isFuture } from '../../common/date-time';
+
+import * as actionTypes from './instrument-action-types';
+import InstrumentRequestSender from './instrument-request-sender';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class InstrumentActionCreator {
-    /**
-     * @constructor
-     * @param {InstrumentRequestSender} instrumentRequestSender
-     */
-    constructor(instrumentRequestSender) {
-        this._instrumentRequestSender = instrumentRequestSender;
-    }
+    constructor(
+        private _instrumentRequestSender: InstrumentRequestSender
+    ) {}
 
     /**
      * @param {string} storeId
-     * @param {string} shopperId
+     * @param {number} shopperId
      * @param {?VaultAccessToken} accessToken
      * @return {Observable<Action>}
      */
-    loadInstruments(storeId, shopperId, accessToken) {
-        return Observable.create((observer) => {
+    loadInstruments(storeId: string, shopperId: number, accessToken: any): Observable<Action> {
+        return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_REQUESTED));
 
             this._getValidAccessToken(accessToken)
-                .then(currentToken =>
+                .then((currentToken) =>
                     this._instrumentRequestSender.getInstruments(storeId, shopperId, currentToken.vaultAccessToken)
-                        .then(({ body } = {}) => {
+                        .then(({ body }) => {
                             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, body, currentToken));
                             observer.complete();
                         })
                 )
-                .catch(response => {
+                .catch((response) => {
                     observer.error(createErrorAction(actionTypes.LOAD_INSTRUMENTS_FAILED, response));
                 });
         });
@@ -43,19 +46,19 @@ export default class InstrumentActionCreator {
      * @param {InstrumentRequestBody} instrument
      * @return {Observable<Action>}
      */
-    vaultInstrument(storeId, shopperId, accessToken, instrument) {
-        return Observable.create((observer) => {
+    vaultInstrument(storeId: string, shopperId: number, accessToken: any, instrument: any): Observable<Action> {
+        return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.VAULT_INSTRUMENT_REQUESTED));
 
             this._getValidAccessToken(accessToken)
-                .then(currentToken =>
+                .then((currentToken) =>
                     this._instrumentRequestSender.vaultInstrument(storeId, shopperId, currentToken.vaultAccessToken, instrument)
-                        .then(({ body } = {}) => {
+                        .then(({ body }) => {
                             observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, body, currentToken));
                             observer.complete();
                         })
                 )
-                .catch(response => {
+                .catch((response) => {
                     observer.error(createErrorAction(actionTypes.VAULT_INSTRUMENT_FAILED, response));
                 });
         });
@@ -68,12 +71,12 @@ export default class InstrumentActionCreator {
      * @param {string} instrumentId
      * @return {Observable<Action>}
      */
-    deleteInstrument(storeId, shopperId, accessToken, instrumentId) {
-        return Observable.create((observer) => {
+    deleteInstrument(storeId: string, shopperId: number, accessToken: any, instrumentId: string): Observable<Action> {
+        return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.DELETE_INSTRUMENT_REQUESTED, undefined, { instrumentId }));
 
             this._getValidAccessToken(accessToken)
-                .then(currentToken =>
+                .then((currentToken) =>
                     this._instrumentRequestSender.deleteInstrument(storeId, shopperId, currentToken.vaultAccessToken, instrumentId)
                         .then(() => {
                             observer.next(createAction(actionTypes.DELETE_INSTRUMENT_SUCCEEDED, undefined, {
@@ -83,7 +86,7 @@ export default class InstrumentActionCreator {
                             observer.complete();
                         })
                 )
-                .catch(response => {
+                .catch((response) => {
                     observer.error(createErrorAction(actionTypes.DELETE_INSTRUMENT_FAILED, response, { instrumentId }));
                 });
         });
@@ -94,7 +97,7 @@ export default class InstrumentActionCreator {
      * @param {VaultAccessToken} accessToken
      * @return {boolean}
      */
-    _isValidVaultAccessToken(accessToken) {
+    private _isValidVaultAccessToken(accessToken: any): boolean {
         if (!accessToken || !accessToken.vaultAccessToken) {
             return false;
         }
@@ -111,13 +114,13 @@ export default class InstrumentActionCreator {
      * @param {VaultAccessToken} [accessToken]
      * @return {Promise<VaultAccessToken>}
      */
-    _getValidAccessToken(accessToken) {
+    private _getValidAccessToken(accessToken: any): Promise<any> {
         return this._isValidVaultAccessToken(accessToken)
             ? Promise.resolve(accessToken)
             : this._instrumentRequestSender.getVaultAccessToken()
-                .then(({ body: { data } = {} }) => ({
-                    vaultAccessToken: data.token,
-                    vaultAccessExpiry: data.expires_at,
+                .then(({ body = {} }: any) => ({
+                    vaultAccessToken: body.data.token,
+                    vaultAccessExpiry: body.data.expires_at,
                 }));
     }
 }

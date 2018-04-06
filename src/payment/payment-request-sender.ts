@@ -1,19 +1,24 @@
+import { Response } from '@bigcommerce/request-sender';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class PaymentRequestSender {
     /**
      * @constructor
      * @param {BigpayClient} client
      */
-    constructor(client) {
-        this._client = client;
-    }
+    constructor(
+        private _client: any
+    ) {}
 
     /**
      * @param {PaymentRequestBody} payload
      * @return {Promise<Response<PaymentResponseBody>>}
      */
-    submitPayment(payload) {
+    submitPayment(payload: any): Promise<Response> {
         return new Promise((resolve, reject) => {
-            this._client.submitPayment(payload, (error, response) => {
+            this._client.submitPayment(payload, (error: any, response: any) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {
@@ -27,18 +32,13 @@ export default class PaymentRequestSender {
      * @param {PaymentRequestBody} payload
      * @return {Promise<void>}
      */
-    initializeOffsitePayment(payload) {
+    initializeOffsitePayment(payload: any): Promise<void> {
         return new Promise(() => {
             this._client.initializeOffsitePayment(payload);
         });
     }
 
-    /**
-     * @private
-     * @param {Object} response
-     * @return {Response<any>}
-     */
-    _transformResponse(response) {
+    private _transformResponse(response: any): Response {
         return {
             headers: {},
             body: response.data,

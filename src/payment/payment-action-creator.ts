@@ -1,30 +1,36 @@
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
-import * as actionTypes from './payment-action-types';
+import { Observer } from 'rxjs/Observer';
 
+import * as actionTypes from './payment-action-types';
+import PaymentRequestSender from './payment-request-sender';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class PaymentActionCreator {
     /**
      * @constructor
      * @param {PaymentRequestSender} paymentRequestSender
      */
-    constructor(paymentRequestSender) {
-        this._paymentRequestSender = paymentRequestSender;
-    }
+    constructor(
+        private _paymentRequestSender: PaymentRequestSender
+    ) {}
 
     /**
      * @param {PaymentRequestBody} payment
      * @return {Observable<Action>}
      */
-    submitPayment(payment) {
-        return Observable.create((observer) => {
+    submitPayment(payment: any): Observable<Action> {
+        return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.SUBMIT_PAYMENT_REQUESTED));
 
             return this._paymentRequestSender.submitPayment(payment)
-                .then(({ body } = {}) => {
+                .then(({ body }) => {
                     observer.next(createAction(actionTypes.SUBMIT_PAYMENT_SUCCEEDED, body));
                     observer.complete();
                 })
-                .catch(response => {
+                .catch((response) => {
                     observer.error(createErrorAction(actionTypes.SUBMIT_PAYMENT_FAILED, response));
                 });
         });
@@ -34,8 +40,8 @@ export default class PaymentActionCreator {
      * @param {PaymentRequestBody} payment
      * @return {Observable<Action>}
      */
-    initializeOffsitePayment(payment) {
-        return Observable.create((observer) => {
+    initializeOffsitePayment(payment: any): Observable<Action> {
+        return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
 
             return this._paymentRequestSender.initializeOffsitePayment(payment)
