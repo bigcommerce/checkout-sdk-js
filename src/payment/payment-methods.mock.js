@@ -293,6 +293,38 @@ export function getSquare() {
     };
 }
 
+export function getWepay() {
+    return {
+        id: 'wepay',
+        gateway: null,
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+            'DISCOVER',
+            'JCB',
+            'DINERS',
+        ],
+        config: {
+            displayName: 'Credit Card',
+            cardCode: null,
+            helpText: null,
+            enablePaypal: false,
+            merchantId: '',
+            is3dsEnabled: null,
+            testMode: true,
+            isVisaCheckoutEnabled: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        nonce: null,
+        initializationData: null,
+        clientToken: null,
+        returnUrl: null,
+    };
+}
+
 export function getPaymentMethod() {
     return getAuthorizenet();
 }

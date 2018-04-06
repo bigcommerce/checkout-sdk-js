@@ -38,21 +38,6 @@ describe('cartReducer()', () => {
         }));
     });
 
-    it('returns new data when the cart gets updated', () => {
-        const cart = getCart();
-        const action = {
-            type: cartActionTypes.CART_UPDATED,
-            payload: cart,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: {
-                ...initialState.data,
-                ...action.payload,
-            },
-        }));
-    });
-
     it('returns new data if customer has signed in successfully', () => {
         const action = {
             type: customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED,

@@ -2,7 +2,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CartRequestSender } from '../cart';
+import { Cart, CartRequestSender } from '../cart';
 import { CartUnavailableError } from '../cart/errors';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
@@ -19,7 +19,7 @@ export default class CheckoutActionCreator {
             observer.next(createAction(CheckoutActionType.LoadCheckoutRequested));
 
             this._cartRequestSender.loadCarts(options)
-                .then(({ body: [cart] }) => {
+                .then(({ body: [cart] }: { body: Cart[] }) => {
                     if (!cart) {
                         throw new CartUnavailableError();
                     }

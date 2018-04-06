@@ -1,5 +1,4 @@
 /// <reference path="../common/form-poster/index.d.ts" />
-/// <reference path="../common/http-request/request-sender.d.ts" />
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
@@ -11,12 +10,14 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../rem
 import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
+import { WepayRiskClient } from '../remote-checkout/methods/wepay';
 
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
     BraintreeCreditCardPaymentStrategy,
+    BraintreePaypalPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
@@ -26,6 +27,7 @@ import {
     PaypalExpressPaymentStrategy,
     PaypalProPaymentStrategy,
     SagePayPaymentStrategy,
+    WepayPaymentStrategy,
 } from './strategies';
 import { createBraintreePaymentProcessor } from './strategies/braintree';
 
@@ -38,6 +40,7 @@ export default function createPaymentStrategyRegistry(
     const registry = new PaymentStrategyRegistry(checkout.getConfig());
     const placeOrderService = createPlaceOrderService(store, client, paymentClient);
     const scriptLoader = getScriptLoader();
+    const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
         new RemoteCheckoutRequestSender(createRequestSender())
     );
@@ -97,7 +100,19 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register('braintree', () =>
-        new BraintreeCreditCardPaymentStrategy(store, placeOrderService, createBraintreePaymentProcessor(scriptLoader))
+        new BraintreeCreditCardPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+    );
+
+    registry.register('braintreepaypal', () =>
+        new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+    );
+
+    registry.register('braintreepaypalcredit', () =>
+        new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessor, true)
+    );
+
+    registry.register('wepay', () =>
+        new WepayPaymentStrategy(store, placeOrderService, new WepayRiskClient(scriptLoader))
     );
 
     return registry;

@@ -1,0 +1,39 @@
+import { Response } from '@bigcommerce/request-sender';
+import { last } from 'lodash';
+
+import { RequestError, TimeoutError } from './errors';
+
+export default class RequestErrorFactory {
+    private _factoryMethods: { [key: string]: ErrorFactoryMethod } = {};
+
+    constructor() {
+        this.register('default', (response, message) => new RequestError(response, message));
+        this.register('timeout', (response) => new TimeoutError(response));
+    }
+
+    register(type: string, factoryMethod: ErrorFactoryMethod): void {
+        this._factoryMethods[type] = factoryMethod;
+    }
+
+    createError(response: Response, message?: string): Error {
+        const factoryMethod = this._factoryMethods[this._getType(response)] || this._factoryMethods.default;
+
+        return factoryMethod(response, message);
+    }
+
+    private _getType(response: Response): string {
+        if (response.status === 0) {
+            return 'timeout';
+        }
+
+        const { body = {} } = response;
+
+        if (typeof body.type === 'string') {
+            return last(body.type.split('/')) || 'default';
+        }
+
+        return ((last(body.errors) || {}) as any).code || 'default';
+    }
+}
+
+export type ErrorFactoryMethod = (response: Response, message?: string) => Error;
