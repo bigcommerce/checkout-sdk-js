@@ -15,13 +15,13 @@ export default class GiftCertificateActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    applyGiftCertificate(giftCertificate: string, options?: RequestOptions): Observable<Action> {
+    applyGiftCertificate(checkoutId: string, giftCertificate: string, options?: RequestOptions): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED));
 
-            this._checkoutClient.applyGiftCertificate(giftCertificate, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED, body.data));
+            this._checkoutClient.applyGiftCertificate(checkoutId, giftCertificate, options)
+                .then(({ body } = {}) => {
+                    observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch((response) => {
@@ -30,13 +30,13 @@ export default class GiftCertificateActionCreator {
         });
     }
 
-    removeGiftCertificate(giftCertificate: string, options?: RequestOptions): Observable<Action> {
+    removeGiftCertificate(checkoutId: string, giftCertificate: string, options?: RequestOptions): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED));
 
-            this._checkoutClient.removeGiftCertificate(giftCertificate, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED, body.data));
+            this._checkoutClient.removeGiftCertificate(checkoutId, giftCertificate, options)
+                .then(({ body } = {}) => {
+                    observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch((response) => {

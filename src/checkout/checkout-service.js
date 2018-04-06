@@ -6,6 +6,7 @@ export default class CheckoutService {
      * @param {DataStore} store
      * @param {BillingAddressActionCreator} billingAddressActionCreator
      * @param {CartActionCreator} cartActionCreator
+     * @param {CheckoutActionCreator} checkoutActionCreator
      * @param {ConfigActionCreator} configActionCreator
      * @param {CountryActionCreator} countryActionCreator
      * @param {CouponActionCreator} couponActionCreator
@@ -24,6 +25,7 @@ export default class CheckoutService {
         store,
         billingAddressActionCreator,
         cartActionCreator,
+        checkoutActionCreator,
         configActionCreator,
         countryActionCreator,
         couponActionCreator,
@@ -41,6 +43,7 @@ export default class CheckoutService {
         this._store = store;
         this._billingAddressActionCreator = billingAddressActionCreator;
         this._cartActionCreator = cartActionCreator;
+        this._checkoutActionCreator = checkoutActionCreator;
         this._configActionCreator = configActionCreator;
         this._countryActionCreator = countryActionCreator;
         this._couponActionCreator = couponActionCreator;
@@ -89,6 +92,7 @@ export default class CheckoutService {
     loadCheckout(options) {
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._checkoutActionCreator.loadCheckout(options)),
             this._store.dispatch(this._configActionCreator.loadConfig(options), { queueId: 'config' }),
         ]).then(() => this._store.getState());
     }
@@ -121,9 +125,10 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     loadOrder(orderId, options) {
-        const action = this._orderActionCreator.loadOrder(orderId, options);
-
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._orderActionCreator.loadInternalOrder(orderId, options)),
+            this._store.dispatch(this._orderActionCreator.loadOrder(orderId, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**
@@ -357,9 +362,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     applyCoupon(code, options = {}) {
-        const action = this._couponActionCreator.applyCoupon(code, options);
+        const { checkout } = this._store.getState();
+        const checkoutId = checkout.getCheckout().id;
 
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._couponActionCreator.applyCoupon(checkoutId, code, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**
@@ -368,9 +377,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     removeCoupon(code, options = {}) {
-        const action = this._couponActionCreator.removeCoupon(code, options);
+        const { checkout } = this._store.getState();
+        const checkoutId = checkout.getCheckout().id;
 
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._couponActionCreator.removeCoupon(checkoutId, code, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**
@@ -379,9 +392,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     applyGiftCertificate(code, options = {}) {
-        const action = this._giftCertificateActionCreator.applyGiftCertificate(code, options);
+        const { checkout } = this._store.getState();
+        const checkoutId = checkout.getCheckout().id;
 
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._giftCertificateActionCreator.applyGiftCertificate(checkoutId, code, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**
@@ -390,9 +407,13 @@ export default class CheckoutService {
      * @return {Promise<CheckoutSelectors>}
      */
     removeGiftCertificate(code, options = {}) {
-        const action = this._giftCertificateActionCreator.removeGiftCertificate(code, options);
+        const { checkout } = this._store.getState();
+        const checkoutId = checkout.getCheckout().id;
 
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._giftCertificateActionCreator.removeGiftCertificate(checkoutId, code, options)),
+        ]).then(() => this._store.getState());
     }
 
     /**

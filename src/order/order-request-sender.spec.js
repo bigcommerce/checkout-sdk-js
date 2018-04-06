@@ -29,7 +29,7 @@ describe('OrderRequestSender', () => {
             const output = await orderRequestSender.loadOrder(295);
 
             expect(output).toEqual(response);
-            expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', { timeout: undefined });
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', { timeout: undefined });
         });
 
         it('loads order with timeout', async () => {
@@ -37,7 +37,7 @@ describe('OrderRequestSender', () => {
             const output = await orderRequestSender.loadOrder(295, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', options);
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', options);
         });
     });
 
