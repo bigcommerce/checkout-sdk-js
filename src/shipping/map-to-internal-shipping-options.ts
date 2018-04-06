@@ -8,7 +8,11 @@ export default function mapToInternalShippingOptions(consignments: Consignment[]
     return consignments.reduce((result, consignment) => ({
         ...result,
         [consignment.shippingAddress.id]: (consignment.availableShippingOptions || []).map((option) =>
-            mapToInternalShippingOption(option, find(existingOptions[consignment.shippingAddress.id], { id: option.id })!)
+            mapToInternalShippingOption(
+                option,
+                option.id === consignment.selectedShippingOptionId,
+                find(existingOptions[consignment.shippingAddress.id], { id: option.id })!
+            )
         ),
     }), {});
 }
