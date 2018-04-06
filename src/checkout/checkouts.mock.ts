@@ -4,6 +4,7 @@ import { getCart } from '../cart/carts.mock';
 import { getCartState } from '../cart/internal-carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getGiftCertificate } from '../coupon/gift-certificates.mock';
+import { getGuestCustomer } from '../customer/customers.mock';
 import { getCustomerState } from '../customer/internal-customers.mock';
 import { getCountriesState } from '../geography/countries.mock';
 import { getCompleteOrderState } from '../order/internal-orders.mock';
@@ -22,6 +23,7 @@ export function getCheckout(): Checkout {
     return {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         cart: getCart(),
+        customer: getGuestCustomer(),
         billingAddress: getBillingAddress(),
         consignments: [
             getConsignment(),

@@ -5,7 +5,7 @@ import mapToInternalAddress from './map-to-internal-address';
 
 describe('mapToInternalAddress()', () => {
     it('maps to internal address', () => {
-        expect(mapToInternalAddress(getShippingAddress(), getInternalShippingAddress()))
+        expect(mapToInternalAddress(getShippingAddress()))
             .toEqual(getInternalShippingAddress());
     });
 });

@@ -17,7 +17,6 @@ export function getShippingAddress() {
         country: 'United States',
         countryCode: 'US',
         phone: '555-555-5555',
-        type: 'residential',
         customFields: [],
     };
 }
