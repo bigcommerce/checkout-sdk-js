@@ -149,7 +149,7 @@ export default class CheckoutSelector {
 
     /**
      * @param {string} methodId
-     * @param {string} [gatewayId]
+     * @param {string|undefined} [gatewayId]
      * @return {?PaymentMethod}
      */
     getPaymentMethod(methodId, gatewayId) {

@@ -1,31 +1,31 @@
 import { omit, pick } from 'lodash';
-import { MissingDataError } from '../common/error/errors';
 
+import { CartActionCreator } from '../cart';
+import { CheckoutSelectors, CheckoutStore } from '../checkout';
+import { MissingDataError } from '../common/error/errors';
+import { RequestOptions } from '../common/http-request';
+import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../payment';
+import { CreditCard, VaultedInstrument } from '../payment/payment';
+
+import OrderActionCreator from './order-action-creator';
+import OrderRequestBody from './order-request-body';
+
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class PlaceOrderService {
-    /**
-     * @constructor
-     * @param {DataStore} store
-     * @param {CartActionCreator} cartActionCreator
-     * @param {OrderActionCreator} orderActionCreator
-     * @param {PaymentActionCreator} paymentActionCreator
-     * @param {PaymentMethodActionCreator} paymentMethodActionCreator
-     */
-    constructor(store, cartActionCreator, orderActionCreator, paymentActionCreator, paymentMethodActionCreator) {
-        this._store = store;
-        this._cartActionCreator = cartActionCreator;
-        this._orderActionCreator = orderActionCreator;
-        this._paymentActionCreator = paymentActionCreator;
-        this._paymentMethodActionCreator = paymentMethodActionCreator;
-    }
+    constructor(
+        private _store: CheckoutStore,
+        private _cartActionCreator: CartActionCreator,
+        private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator
+    ) {}
 
     /**
      * @todo Remove `shouldVerifyCart` flag in the future. Always verify cart by default
-     * @param {OrderRequestBody} payload
-     * @param {boolean} [shouldVerifyCart=false]
-     * @param {RequestOptions} [options]
-     * @return {Promise<CheckoutSelectors>}
      */
-    submitOrder(payload, shouldVerifyCart = false, options) {
+    submitOrder(payload: OrderRequestBody, shouldVerifyCart: boolean = false, options?: RequestOptions): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const cart = checkout.getCart();
 
@@ -42,75 +42,43 @@ export default class PlaceOrderService {
         return this._store.dispatch(action);
     }
 
-    /**
-     * @param {RequestOptions} [options]
-     * @return {Promise<CheckoutSelectors>}
-     */
-    verifyCart(options) {
+    verifyCart(options?: RequestOptions): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const action = this._cartActionCreator.verifyCart(checkout.getCart(), options);
 
         return this._store.dispatch(action);
     }
 
-    /**
-     * @param {number} orderId
-     * @param {RequestOptions} [options]
-     * @return {Promise<CheckoutSelectors>}
-     */
-    finalizeOrder(orderId, options) {
+    finalizeOrder(orderId: number, options: RequestOptions): Promise<CheckoutSelectors> {
         return this._store.dispatch(this._orderActionCreator.finalizeOrder(orderId, options));
     }
 
-    /**
-     * @param {Payment} payment
-     * @param {boolean} [useStoreCredit=false]
-     * @param {RequestOptions} [options]
-     * @return {Promise<CheckoutSelectors>}
-     */
-    submitPayment(payment, useStoreCredit = false, options) {
+    submitPayment(payment: Payment, useStoreCredit: boolean = false, options?: RequestOptions): Promise<CheckoutSelectors> {
         const payload = this._getPaymentRequestBody(payment);
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment(payload, options))
-            .then(({ checkout }) => {
+        return this._store.dispatch(this._paymentActionCreator.submitPayment(payload))
+            .then(({ checkout }: any) => {
                 const { orderId } = checkout.getOrder();
 
                 return this._store.dispatch(this._orderActionCreator.loadOrder(orderId, options));
             });
     }
 
-    /**
-     * @param {Payment} payment
-     * @param {boolean} [useStoreCredit=false]
-     * @param {RequestOptions} [options]
-     * @return {Promise<CheckoutSelectors>}
-     */
-    initializeOffsitePayment(payment, useStoreCredit = false, options) {
+    initializeOffsitePayment(payment: Payment, useStoreCredit: boolean = false): Promise<CheckoutSelectors> {
         const payload = this._getPaymentRequestBody(payment);
 
-        return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payload, options));
+        return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payload));
     }
 
-    /**
-     * Loads a payment method from the API.
-     * @param {string} methodId
-     * @param {RequestOptions} [options]
-     * @return {Promise<CheckoutSelectors>}
-     */
-    loadPaymentMethod(methodId, options) {
+    loadPaymentMethod(methodId: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentMethodActionCreator.loadPaymentMethod(methodId, options);
 
         return this._store.dispatch(action, { queueId: 'paymentMethods' });
     }
 
-    /**
-     * @private
-     * @param {Payment} payment
-     * @return {PaymentRequestBody}
-     */
-    _getPaymentRequestBody(payment) {
+    private _getPaymentRequestBody(payment: Payment): any {
         const { checkout } = this._store.getState();
-        const deviceSessionId = payment.paymentData && payment.paymentData.deviceSessionId || checkout.getCheckoutMeta().deviceSessionId;
+        const deviceSessionId = payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId || checkout.getCheckoutMeta().deviceSessionId;
         const checkoutMeta = checkout.getCheckoutMeta();
         const billingAddress = checkout.getBillingAddress();
         const cart = checkout.getCart();
@@ -121,7 +89,7 @@ export default class PlaceOrderService {
         const shippingOption = checkout.getSelectedShippingOption();
         const config = checkout.getConfig();
 
-        const authToken = payment.paymentData && payment.paymentData.instrumentId
+        const authToken = payment.paymentData && (payment.paymentData as VaultedInstrument).instrumentId
             ? `${checkoutMeta.paymentAuthToken}, ${checkoutMeta.vaultAccessToken}`
             : checkoutMeta.paymentAuthToken;
 
@@ -155,13 +123,7 @@ export default class PlaceOrderService {
         };
     }
 
-    /**
-     * Convenience method to transform a payment method into the format expected by the API.
-     * @private
-     * @param {PaymentMethod} paymentMethod
-     * @return {PaymentMethod}
-     */
-    _getRequestPaymentMethod(paymentMethod) {
+    private _getRequestPaymentMethod(paymentMethod: PaymentMethod): PaymentMethod {
         return (paymentMethod.method === 'multi-option' && !paymentMethod.gateway) ?
             { ...paymentMethod, gateway: paymentMethod.id } :
             paymentMethod;

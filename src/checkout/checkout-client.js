@@ -80,7 +80,7 @@ export default class CheckoutClient {
     }
 
     /**
-     * @param {string} orderId
+     * @param {number} orderId
      * @param {RequestOptions} [options]
      * @return {Promise<Response<Order>>}
      */
