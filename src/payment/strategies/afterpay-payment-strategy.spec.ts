@@ -1,10 +1,12 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
+import { CartActionCreator } from '../../cart';
+import { VERIFY_CART_REQUESTED } from '../../cart/cart-action-types';
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import CheckoutClient from '../../checkout/checkout-client';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
@@ -19,7 +21,9 @@ import PaymentMethod from '../payment-method';
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 
 describe('AfterpayPaymentStrategy', () => {
+    let cartActionCreator: CartActionCreator;
     let client: CheckoutClient;
+    let initializePaymentAction: Observable<Action>;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
     let placeOrderService: PlaceOrderService;
@@ -27,6 +31,7 @@ describe('AfterpayPaymentStrategy', () => {
     let scriptLoader: AfterpayScriptLoader;
     let store: CheckoutStore;
     let strategy: AfterpayPaymentStrategy;
+    let verifyCartAction: Observable<Action>;
 
     const clientToken: string = 'foo';
     const afterpaySdk = {
@@ -37,6 +42,7 @@ describe('AfterpayPaymentStrategy', () => {
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore();
+        cartActionCreator = new CartActionCreator(client);
         placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
@@ -45,11 +51,31 @@ describe('AfterpayPaymentStrategy', () => {
         strategy = new AfterpayPaymentStrategy(
             store,
             placeOrderService,
+            cartActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
         );
 
-        jest.spyOn(placeOrderService, 'verifyCart').mockImplementation(() => {});
+        paymentMethod = getAfterpay();
+
+        payload = merge({}, getOrderRequestBody(), {
+            payment: {
+                name: paymentMethod.id,
+                gateway: paymentMethod.gateway,
+            },
+        });
+
+        initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
+        verifyCartAction = Observable.of(createAction(VERIFY_CART_REQUESTED));
+
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(cartActionCreator, 'verifyCart')
+            .mockReturnValue(verifyCartAction);
+
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
+            .mockReturnValue(initializePaymentAction);
+
         jest.spyOn(placeOrderService, 'loadPaymentMethod').mockImplementation(() => {
             return Promise.resolve({
                 checkout: {
@@ -74,19 +100,6 @@ describe('AfterpayPaymentStrategy', () => {
 
         jest.spyOn(afterpaySdk, 'init').mockImplementation(() => {});
         jest.spyOn(afterpaySdk, 'display').mockImplementation(() => {});
-
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockImplementation(() => {
-            return Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
-        });
-
-        paymentMethod = getAfterpay();
-
-        payload = merge({}, getOrderRequestBody(), {
-            payment: {
-                name: paymentMethod.id,
-                gateway: paymentMethod.gateway,
-            },
-        });
     });
 
     describe('#initialize()', () => {
@@ -115,10 +128,12 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('notifies store credit usage to remote checkout service', () => {
             expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false, customerMessage: '' });
+            expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
         });
 
         it('verifies the cart', () => {
-            expect(placeOrderService.verifyCart).toHaveBeenCalled();
+            expect(cartActionCreator.verifyCart).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(verifyCartAction);
         });
 
         it('does not resolve if execution is successful', () => {

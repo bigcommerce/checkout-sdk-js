@@ -4,6 +4,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator } from '../billing';
+import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
 import { createPlaceOrderService, OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
@@ -48,7 +49,13 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register('afterpay', () =>
-        new AfterpayPaymentStrategy(store, placeOrderService, remoteCheckoutActionCreator, createAfterpayScriptLoader())
+        new AfterpayPaymentStrategy(
+            store,
+            placeOrderService,
+            new CartActionCreator(client),
+            remoteCheckoutActionCreator,
+            createAfterpayScriptLoader()
+        )
     );
 
     registry.register('amazon', () =>

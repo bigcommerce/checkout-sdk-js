@@ -1,6 +1,5 @@
 import { omit, pick } from 'lodash';
 
-import { CartActionCreator } from '../cart';
 import { CheckoutSelectors, CheckoutStore } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -16,7 +15,6 @@ import OrderRequestBody from './order-request-body';
 export default class PlaceOrderService {
     constructor(
         private _store: CheckoutStore,
-        private _cartActionCreator: CartActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator
@@ -38,13 +36,6 @@ export default class PlaceOrderService {
             shouldVerifyCart ? cart : undefined,
             options
         );
-
-        return this._store.dispatch(action);
-    }
-
-    verifyCart(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const action = this._cartActionCreator.verifyCart(checkout.getCart(), options);
 
         return this._store.dispatch(action);
     }

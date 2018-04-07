@@ -1,4 +1,3 @@
-import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
 import { PaymentActionCreator, PaymentMethodActionCreator, PaymentRequestSender } from '../payment';
 
@@ -12,7 +11,6 @@ export default function createPlaceOrderService(
 ): PlaceOrderService {
     return new PlaceOrderService(
         store,
-        new CartActionCreator(client),
         new OrderActionCreator(client),
         new PaymentActionCreator(new PaymentRequestSender(paymentClient)),
         new PaymentMethodActionCreator(client)

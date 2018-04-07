@@ -1,6 +1,7 @@
 /// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
 import { omit } from 'lodash';
 
+import { CartActionCreator } from '../../cart';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
@@ -15,6 +16,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _cartActionCreator: CartActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {
@@ -57,9 +59,11 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
         )
-            .then(() => this._placeOrderService.verifyCart())
+            .then(({ checkout }) => this._store.dispatch(
+                this._cartActionCreator.verifyCart(checkout.getCart(), options)
+            ))
             .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
-            .then((resp: any) => this._displayModal(resp.checkout.getPaymentMethod(paymentId).clientToken))
+            .then(({ checkout }) => this._displayModal(checkout.getPaymentMethod(paymentId).clientToken))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
             .then(() => new Promise<never>(() => {}));
     }

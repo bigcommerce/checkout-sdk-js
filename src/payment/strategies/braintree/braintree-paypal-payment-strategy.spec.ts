@@ -41,7 +41,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
         placeOrderService = {} as PlaceOrderService;
         placeOrderService.submitPayment = jest.fn(() => Promise.resolve());
         placeOrderService.submitOrder = jest.fn(() => Promise.resolve());
-        placeOrderService.verifyCart = jest.fn(() => Promise.resolve());
         placeOrderService.loadPaymentMethod = jest.fn(() => Promise.resolve(store.getState()));
 
         braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessorMock);
