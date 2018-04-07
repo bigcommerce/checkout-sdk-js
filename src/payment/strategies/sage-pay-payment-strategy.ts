@@ -2,7 +2,7 @@ import { omit, some } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { MissingDataError, RequestError } from '../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -11,6 +11,7 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _formPoster: any
     ) {
         super(store, placeOrderService);
@@ -49,7 +50,7 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
         const { orderId, payment = {} } = order;
 
         if (orderId && payment.status === paymentStatusTypes.FINALIZE) {
-            return this._placeOrderService.finalizeOrder(orderId, options);
+            return this._store.dispatch(this._orderActionCreator.finalizeOrder(orderId, options));
         }
 
         return super.finalize();

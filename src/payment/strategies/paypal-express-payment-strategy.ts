@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
-import { PlaceOrderService } from '../../order';
+import { OrderActionCreator, PlaceOrderService } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -13,15 +13,10 @@ import PaymentStrategy from './payment-strategy';
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     private _paypalSdk: any;
 
-    /**
-     * @constructor
-     * @param {CheckoutStore} store
-     * @param {PlaceOrderService} placeOrderService
-     * @param {ScriptLoader} scriptLoader
-     */
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _scriptLoader: ScriptLoader
     ) {
         super(store, placeOrderService);
@@ -106,7 +101,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         if (order.orderId &&
             this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
             this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
-            return this._placeOrderService.finalizeOrder(order.orderId, options);
+            return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
         }
 
         return super.finalize();

@@ -1,12 +1,18 @@
+import { createAction } from '@bigcommerce/data-store';
+import { Observable } from 'rxjs';
 import { merge } from 'lodash';
-import { createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
+import { FINALIZE_ORDER_REQUESTED } from '../../order/order-action-types';
+import { OrderActionCreator } from '../../order';
 import { getPaypalExpress } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalExpressPaymentStrategy from './paypal-express-payment-strategy';
 
 describe('PaypalExpressPaymentStrategy', () => {
+    let finalizeOrderAction;
+    let orderActionCreator;
     let paymentMethod;
     let paypalSdk;
     let placeOrderService;
@@ -15,8 +21,9 @@ describe('PaypalExpressPaymentStrategy', () => {
     let strategy;
 
     beforeEach(() => {
+        orderActionCreator = new OrderActionCreator(createCheckoutClient());
+
         placeOrderService = {
-            finalizeOrder: jest.fn(() => Promise.resolve(store.getState())),
             verifyCart: jest.fn(() => Promise.resolve(store.getState())),
             submitOrder: jest.fn(() => Promise.resolve(store.getState())),
             submitPayment: jest.fn(() => Promise.resolve(store.getState())),
@@ -40,12 +47,17 @@ describe('PaypalExpressPaymentStrategy', () => {
         };
 
         store = createCheckoutStore();
-
         paymentMethod = getPaypalExpress();
+        finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
 
         jest.spyOn(window.location, 'assign').mockImplementation(() => {});
 
-        strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader);
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'finalizeOrder')
+            .mockReturnValue(finalizeOrderAction);
+
+        strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader);
     });
 
     afterEach(() => {
@@ -270,7 +282,8 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             await strategy.finalize();
 
-            expect(placeOrderService.finalizeOrder).toHaveBeenCalled();
+            expect(orderActionCreator.finalizeOrder).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
         });
 
         it('finalizes order if order is created and payment is finalized', async () => {
@@ -278,7 +291,8 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             await strategy.finalize();
 
-            expect(placeOrderService.finalizeOrder).toHaveBeenCalled();
+            expect(orderActionCreator.finalizeOrder).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
         });
 
         it('does not finalize order if order is not created', async () => {
@@ -288,7 +302,8 @@ describe('PaypalExpressPaymentStrategy', () => {
                 await strategy.finalize();
             } catch (error) {
                 expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-                expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+                expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
+                expect(store.dispatch).not.toHaveBeenCalledWith(finalizeOrderAction);
             }
         });
 
@@ -297,7 +312,8 @@ describe('PaypalExpressPaymentStrategy', () => {
                 await strategy.finalize();
             } catch (error) {
                 expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-                expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+                expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
+                expect(store.dispatch).not.toHaveBeenCalledWith(finalizeOrderAction);
             }
         });
     });

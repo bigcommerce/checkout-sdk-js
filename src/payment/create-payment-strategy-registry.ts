@@ -5,7 +5,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator } from '../billing';
 import { CheckoutClient, CheckoutStore } from '../checkout';
-import { createPlaceOrderService } from '../order';
+import { createPlaceOrderService, OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
@@ -38,11 +38,11 @@ export default function createPaymentStrategyRegistry(
     client: CheckoutClient,
     paymentClient: any
 ) {
-    const { checkout } = store.getState();
-    const registry = new PaymentStrategyRegistry(checkout.getConfig());
+    const registry = new PaymentStrategyRegistry(store.getState().checkout.getConfig());
     const placeOrderService = createPlaceOrderService(store, client, paymentClient);
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
+    const orderActionCreator = new OrderActionCreator(client);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
         new RemoteCheckoutRequestSender(createRequestSender())
     );
@@ -78,7 +78,7 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register('offsite', () =>
-        new OffsitePaymentStrategy(store, placeOrderService)
+        new OffsitePaymentStrategy(store, placeOrderService, orderActionCreator)
     );
 
     registry.register('paypal', () =>
@@ -86,15 +86,15 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register('paypalexpress', () =>
-        new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader)
+        new PaypalExpressPaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader)
     );
 
     registry.register('paypalexpresscredit', () =>
-        new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader)
+        new PaypalExpressPaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader)
     );
 
     registry.register('sagepay', () =>
-        new SagePayPaymentStrategy(store, placeOrderService, createFormPoster())
+        new SagePayPaymentStrategy(store, placeOrderService, orderActionCreator, createFormPoster())
     );
 
     registry.register('squarev2', () =>

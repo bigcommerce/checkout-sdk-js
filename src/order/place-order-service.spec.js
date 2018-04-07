@@ -95,34 +95,6 @@ describe('PlaceOrderService', () => {
         });
     });
 
-    describe('#finalizeOrder()', () => {
-        it('dispatches finalize order action', async () => {
-            jest.spyOn(store, 'dispatch');
-
-            await placeOrderService.finalizeOrder(295);
-
-            expect(orderActionCreator.finalizeOrder).toHaveBeenCalledWith(295, undefined);
-            expect(store.dispatch).toHaveBeenCalledWith(createAction('FINALIZE_ORDER'));
-        });
-
-        it('dispatches finalize order action with timeout', async () => {
-            jest.spyOn(store, 'dispatch');
-
-            const options = { timeout: createTimeout() };
-
-            await placeOrderService.finalizeOrder(295, options);
-
-            expect(orderActionCreator.finalizeOrder).toHaveBeenCalledWith(295, options);
-            expect(store.dispatch).toHaveBeenCalledWith(createAction('FINALIZE_ORDER'));
-        });
-
-        it('returns checkout state', async () => {
-            const output = await placeOrderService.finalizeOrder(295);
-
-            expect(output).toEqual(store.getState());
-        });
-    });
-
     describe('#submitPayment()', () => {
         it('dispatches submit payment action', async () => {
             jest.spyOn(store, 'dispatch');

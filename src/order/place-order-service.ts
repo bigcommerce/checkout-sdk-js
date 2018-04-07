@@ -49,10 +49,6 @@ export default class PlaceOrderService {
         return this._store.dispatch(action);
     }
 
-    finalizeOrder(orderId: number, options: RequestOptions): Promise<CheckoutSelectors> {
-        return this._store.dispatch(this._orderActionCreator.finalizeOrder(orderId, options));
-    }
-
     submitPayment(payment: Payment, useStoreCredit: boolean = false, options?: RequestOptions): Promise<CheckoutSelectors> {
         const payload = this._getPaymentRequestBody(payment);
 

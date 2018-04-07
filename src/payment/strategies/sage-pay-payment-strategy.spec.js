@@ -1,22 +1,28 @@
+import { createAction } from '@bigcommerce/data-store';
+import { Observable } from 'rxjs';
 import { merge, omit } from 'lodash';
-import { createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { getErrorPaymentResponseBody } from '../payments.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
+import { FINALIZE_ORDER_REQUESTED } from '../../order/order-action-types';
+import { OrderActionCreator } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
 
 describe('SagePayPaymentStrategy', () => {
+    let finalizeOrderAction;
     let formPoster;
+    let orderActionCreator;
     let placeOrderService;
     let store;
     let strategy;
 
     beforeEach(() => {
+        orderActionCreator = new OrderActionCreator(createCheckoutClient());
         placeOrderService = {
-            finalizeOrder: jest.fn(() => Promise.resolve(store.getState())),
             submitOrder: jest.fn(() => Promise.resolve(store.getState())),
             submitPayment: jest.fn(() => Promise.resolve(store.getState())),
         };
@@ -27,7 +33,14 @@ describe('SagePayPaymentStrategy', () => {
 
         store = createCheckoutStore();
 
-        strategy = new SagePayPaymentStrategy(store, placeOrderService, formPoster);
+        finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
+
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'finalizeOrder')
+            .mockReturnValue(finalizeOrderAction);
+
+        strategy = new SagePayPaymentStrategy(store, placeOrderService, orderActionCreator, formPoster);
     });
 
     it('submits order without payment data', async () => {
@@ -106,7 +119,8 @@ describe('SagePayPaymentStrategy', () => {
 
         await strategy.finalize();
 
-        expect(placeOrderService.finalizeOrder).toHaveBeenCalled();
+        expect(orderActionCreator.finalizeOrder).toHaveBeenCalled();
+        expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
     });
 
     it('does not finalize order if order is not created', async () => {
@@ -117,7 +131,8 @@ describe('SagePayPaymentStrategy', () => {
         try {
             await strategy.finalize();
         } catch (error) {
-            expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+            expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalledWith(finalizeOrderAction);
             expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
         }
     });
@@ -134,7 +149,8 @@ describe('SagePayPaymentStrategy', () => {
         try {
             await strategy.finalize();
         } catch (error) {
-            expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+            expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalledWith(finalizeOrderAction);
             expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
         }
     });
