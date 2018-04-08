@@ -1,5 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction } from '@bigcommerce/data-store';
+import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -13,14 +13,19 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentMethod from '../payment-method';
+import PaymentMethodActionCreator from '../payment-method-action-creator';
+import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../payment-method-action-types';
 
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
 
 describe('KlarnaPaymentStrategy', () => {
     let client: CheckoutClient;
+    let initializePaymentAction: Observable<Action>;
     let klarnaSdk: Klarna.Sdk;
+    let loadPaymentMethodAction: Observable<Action>;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let placeOrderService: PlaceOrderService;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: KlarnaScriptLoader;
@@ -31,6 +36,7 @@ describe('KlarnaPaymentStrategy', () => {
         client = createCheckoutClient();
         store = createCheckoutStore();
         placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
+        paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );
@@ -38,6 +44,7 @@ describe('KlarnaPaymentStrategy', () => {
         strategy = new KlarnaPaymentStrategy(
             store,
             placeOrderService,
+            paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
         );
@@ -48,19 +55,25 @@ describe('KlarnaPaymentStrategy', () => {
             load: jest.fn(() => Promise.resolve()),
         };
 
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockImplementation(() => {
-            return Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
+        paymentMethod = getKlarna();
+
+        payload = merge({}, getOrderRequestBody(), {
+            payment: {
+                name: paymentMethod.id,
+                gateway: paymentMethod.gateway,
+            },
         });
 
-        jest.spyOn(placeOrderService, 'loadPaymentMethod').mockImplementation(() => {
-            return Promise.resolve({
-                checkout: {
-                    getPaymentMethod: () => {
-                        return { clientToken: 'foo' };
-                    },
-                },
-            });
-        });
+        loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod }, { methodId: paymentMethod.id }));
+        initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
+
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(loadPaymentMethodAction);
+
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
+            .mockReturnValue(initializePaymentAction);
 
         jest.spyOn(placeOrderService, 'submitOrder')
             .mockImplementation(() => Promise.resolve());
@@ -70,15 +83,6 @@ describe('KlarnaPaymentStrategy', () => {
 
         jest.spyOn(store, 'subscribe')
             .mockImplementation(() => Promise.resolve());
-
-        paymentMethod = getKlarna();
-
-        payload = merge({}, getOrderRequestBody(), {
-            payment: {
-                name: paymentMethod.id,
-                gateway: paymentMethod.gateway,
-            },
-        });
     });
 
     describe('#initialize()', () => {
@@ -91,7 +95,8 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         it('loads payment data from API', () => {
-            expect(placeOrderService.loadPaymentMethod).toHaveBeenCalledWith('klarna');
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('klarna');
+            expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
         });
 
         it('loads widget', () => {
@@ -123,6 +128,8 @@ describe('KlarnaPaymentStrategy', () => {
 
             expect(remoteCheckoutActionCreator.initializePayment)
                 .toHaveBeenCalledWith('klarna', { authorizationToken });
+
+            expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
 
             expect(placeOrderService.submitOrder)
                 .toHaveBeenCalled();

@@ -3,7 +3,7 @@ import { omit, pick } from 'lodash';
 import { CheckoutSelectors, CheckoutStore } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { Payment, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../payment';
+import { Payment, PaymentActionCreator, PaymentMethod } from '../payment';
 import { CreditCard, VaultedInstrument } from '../payment/payment';
 
 import OrderActionCreator from './order-action-creator';
@@ -16,8 +16,7 @@ export default class PlaceOrderService {
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _paymentActionCreator: PaymentActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator
+        private _paymentActionCreator: PaymentActionCreator
     ) {}
 
     /**
@@ -55,12 +54,6 @@ export default class PlaceOrderService {
         const payload = this._getPaymentRequestBody(payment);
 
         return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payload));
-    }
-
-    loadPaymentMethod(methodId: string, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._paymentMethodActionCreator.loadPaymentMethod(methodId, options);
-
-        return this._store.dispatch(action, { queueId: 'paymentMethods' });
     }
 
     private _getPaymentRequestBody(payment: Payment): any {

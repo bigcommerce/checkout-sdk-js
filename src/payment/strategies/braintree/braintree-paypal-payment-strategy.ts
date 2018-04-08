@@ -4,6 +4,7 @@ import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../../order';
 import Payment from '../../payment';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentStrategy, { InitializeOptions } from '../payment-strategy';
 
 import BraintreePaymentProcessor from './braintree-payment-processor';
@@ -12,6 +13,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor,
         private _credit: boolean = false
     ) {
@@ -25,7 +27,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        return this._placeOrderService.loadPaymentMethod(paymentId)
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
             .then(({ checkout }: CheckoutSelectors) => {
                 this._paymentMethod = checkout.getPaymentMethod(paymentId);
 
@@ -57,7 +59,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
             .then(() => super.deinitialize(options));
     }
 
-    private _handleError(error: Error): void {
+    private _handleError(error: Error): never {
         if (error.name === 'BraintreeError') {
             throw new StandardError(error.message);
         }

@@ -7,6 +7,8 @@ import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
+import PaymentMethod from '../payment-method';
+import PaymentMethodActionCreator from '../payment-method-action-creator';
 
 import PaymentStrategy, { InitializeOptions } from './payment-strategy';
 
@@ -17,6 +19,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _cartActionCreator: CartActionCreator,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {
@@ -62,8 +65,10 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(({ checkout }) => this._store.dispatch(
                 this._cartActionCreator.verifyCart(checkout.getCart(), options)
             ))
-            .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
-            .then(({ checkout }) => this._displayModal(checkout.getPaymentMethod(paymentId).clientToken))
+            .then(() => this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
+            ))
+            .then(({ checkout }) => this._displayModal(checkout.getPaymentMethod(paymentId)))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
             .then(() => new Promise<never>(() => {}));
     }
@@ -92,15 +97,12 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             );
     }
 
-    /**
-     * @param token the token returned by afterpay API
-     */
-    private _displayModal(token: string): void {
-        if (!this._afterpaySdk || !token) {
+    private _displayModal(paymentMethod?: PaymentMethod): void {
+        if (!this._afterpaySdk || !paymentMethod || !paymentMethod.clientToken) {
             throw new NotInitializedError('Unable to display payment modal because payment method has not been initialized.');
         }
 
         this._afterpaySdk.init();
-        this._afterpaySdk.display({ token });
+        this._afterpaySdk.display({ token: paymentMethod.clientToken });
     }
 }

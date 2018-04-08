@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { Payment } from '../..';
+import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../../order';
@@ -17,6 +17,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor
     ) {
         super(store, placeOrderService);
@@ -25,8 +26,8 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
     initialize(options: BraintreeCreditCardInitializeOptions): Promise<CheckoutSelectors> {
         const { id: paymentId } = options.paymentMethod;
 
-        return this._placeOrderService.loadPaymentMethod(paymentId)
-            .then(({ checkout }: CheckoutSelectors) => {
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
+            .then(({ checkout }) => {
                 this._paymentMethod = checkout.getPaymentMethod(paymentId);
 
                 if (!this._paymentMethod || !this._paymentMethod.clientToken) {

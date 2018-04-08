@@ -2,13 +2,14 @@ import { omit } from 'lodash';
 
 import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
 import { getCart } from '../../../cart/internal-carts.mock';
-import { CheckoutSelector, CheckoutStore } from '../../../checkout';
+import { createCheckoutClient, CheckoutSelector, CheckoutStore } from '../../../checkout';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { getLegacyAppConfig } from '../../../config/configs.mock.js';
 import { OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import PlaceOrderService from '../../../order/place-order-service';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getBraintreePaypal } from '../../payment-methods.mock';
 import { InitializeOptions } from '../payment-strategy';
 
@@ -16,6 +17,7 @@ import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
 
 describe('BraintreePaypalPaymentStrategy', () => {
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let placeOrderService: PlaceOrderService;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
     let braintreePaypalPaymentStrategy: BraintreePaypalPaymentStrategy;
@@ -36,14 +38,15 @@ describe('BraintreePaypalPaymentStrategy', () => {
         checkoutMock = {} as CheckoutSelector;
         checkoutMock.isPaymentDataRequired = jest.fn((useStoreCredit: boolean) => true);
         store = {} as CheckoutStore;
+        store.dispatch = jest.fn(() => Promise.resolve({ checkout: checkoutMock }));
         store.getState = jest.fn(() => ({ checkout: checkoutMock }));
 
         placeOrderService = {} as PlaceOrderService;
         placeOrderService.submitPayment = jest.fn(() => Promise.resolve());
         placeOrderService.submitOrder = jest.fn(() => Promise.resolve());
-        placeOrderService.loadPaymentMethod = jest.fn(() => Promise.resolve(store.getState()));
 
-        braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessorMock);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, paymentMethodActionCreator, braintreePaymentProcessorMock);
     });
 
     it('creates an instance of the braintree payment strategy', () => {
@@ -160,7 +163,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         describe('if paypal credit', () => {
             beforeEach(() => {
-                braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessorMock, true);
+                braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, paymentMethodActionCreator, braintreePaymentProcessorMock, true);
             });
 
             it('submitPayment with the right information and sets credit to true', async () => {

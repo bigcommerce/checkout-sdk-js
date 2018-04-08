@@ -2,19 +2,21 @@ import { omit } from 'lodash';
 
 import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
 import { getCart } from '../../../cart/internal-carts.mock';
-import { CheckoutSelector, CheckoutStore } from '../../../checkout';
+import { createCheckoutClient, CheckoutSelector, CheckoutStore } from '../../../checkout';
 import { MissingDataError } from '../../../common/error/errors';
 import { OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import PlaceOrderService from '../../../order/place-order-service';
 import Payment, { CreditCard, VaultedInstrument } from '../../payment';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getBraintree } from '../../payment-methods.mock';
 
 import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 import BraintreePaymentProcessor, { BraintreeCreditCardInitializeOptions } from './braintree-payment-processor';
 
 describe('BraintreeCreditCardPaymentStrategy', () => {
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let placeOrderService: PlaceOrderService;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
     let braintreeCreditCardPaymentStrategy: BraintreeCreditCardPaymentStrategy;
@@ -34,14 +36,15 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         checkoutMock = {} as CheckoutSelector;
         checkoutMock.isPaymentDataRequired = jest.fn((useStoreCredit: boolean) => true);
         const store = {} as CheckoutStore;
+        store.dispatch = jest.fn(() => Promise.resolve({ checkout: checkoutMock }));
         store.getState = jest.fn(() => ({ checkout: checkoutMock }));
 
         placeOrderService = {} as PlaceOrderService;
         placeOrderService.submitPayment = jest.fn(() => Promise.resolve());
         placeOrderService.submitOrder = jest.fn(() => Promise.resolve());
-        placeOrderService.loadPaymentMethod = jest.fn(() => Promise.resolve(store.getState()));
 
-        braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(store, placeOrderService, braintreePaymentProcessorMock);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(store, placeOrderService, paymentMethodActionCreator, braintreePaymentProcessorMock);
     });
 
     it('creates an instance of the braintree payment strategy', () => {

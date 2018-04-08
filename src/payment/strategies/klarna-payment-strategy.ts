@@ -9,6 +9,7 @@ import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import Payment from '../payment';
 import PaymentMethod from '../payment-method';
+import PaymentMethodActionCreator from '../payment-method-action-creator';
 
 import PaymentStrategy from './payment-strategy';
 
@@ -19,6 +20,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _klarnaScriptLoader: KlarnaScriptLoader
     ) {
@@ -71,12 +73,12 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             });
     }
 
-    private _loadWidget(options: InitializeOptions): Promise<CheckoutSelectors> {
+    private _loadWidget(options: InitializeOptions): Promise<void> {
         const { container, loadCallback } = options;
         const { id: paymentId } = options.paymentMethod;
 
-        return this._placeOrderService.loadPaymentMethod(paymentId)
-            .then(({ checkout }: CheckoutSelectors) => {
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
+            .then(({ checkout }) => {
                 const paymentMethod = checkout.getPaymentMethod(paymentId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
@@ -89,8 +91,6 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
                 this._klarnaSdk.init({ client_token: paymentMethod.clientToken });
                 this._klarnaSdk.load({ container }, loadCallback);
-
-                return this._store.getState();
             });
     }
 
