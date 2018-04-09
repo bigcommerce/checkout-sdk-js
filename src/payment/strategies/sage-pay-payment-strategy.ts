@@ -18,7 +18,7 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
-        return this._placeOrderService.submitOrder(omit(payload, 'payment'), options)
+        return this._store.dispatch(this._orderActionCreator.submitOrder(omit(payload, 'payment'), true, options))
             .then(() =>
                 this._placeOrderService.submitPayment(payload.payment, payload.useStoreCredit, options)
             )

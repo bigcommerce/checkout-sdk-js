@@ -9,8 +9,9 @@ import { CartActionCreator } from '../../cart';
 import { VERIFY_CART_REQUESTED } from '../../cart/cart-action-types';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
-import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
+import { createPlaceOrderService, OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
+import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getAfterpay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
@@ -26,12 +27,14 @@ describe('AfterpayPaymentStrategy', () => {
     let client: CheckoutClient;
     let initializePaymentAction: Observable<Action>;
     let loadPaymentMethodAction: Observable<Action>;
+    let orderActionCreator: OrderActionCreator;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let placeOrderService: PlaceOrderService;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AfterpayScriptLoader;
+    let submitOrderAction: Observable<Action>;
     let store: CheckoutStore;
     let strategy: AfterpayPaymentStrategy;
     let verifyCartAction: Observable<Action>;
@@ -44,6 +47,7 @@ describe('AfterpayPaymentStrategy', () => {
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore();
+        orderActionCreator = new OrderActionCreator(client);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         cartActionCreator = new CartActionCreator(client);
         placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
@@ -55,6 +59,7 @@ describe('AfterpayPaymentStrategy', () => {
             store,
             placeOrderService,
             cartActionCreator,
+            orderActionCreator,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
@@ -71,18 +76,8 @@ describe('AfterpayPaymentStrategy', () => {
 
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod }, { methodId: paymentMethod.gateway }));
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
         verifyCartAction = Observable.of(createAction(VERIFY_CART_REQUESTED));
-
-        jest.spyOn(store, 'dispatch');
-
-        jest.spyOn(cartActionCreator, 'verifyCart')
-            .mockReturnValue(verifyCartAction);
-
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(loadPaymentMethodAction);
-
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-            .mockReturnValue(initializePaymentAction);
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
@@ -91,20 +86,26 @@ describe('AfterpayPaymentStrategy', () => {
             },
         });
 
-        jest.spyOn(cartActionCreator, 'verifyCart')
-            .mockReturnValue(Observable.of(createAction(VERIFY_CART_REQUESTED)));
+        jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(placeOrderService, 'submitOrder').mockImplementation(() => {
-            return Promise.resolve();
-        });
+        jest.spyOn(cartActionCreator, 'verifyCart')
+            .mockReturnValue(verifyCartAction);
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(loadPaymentMethodAction);
+
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
+            .mockReturnValue(initializePaymentAction);
 
         jest.spyOn(placeOrderService, 'submitPayment').mockImplementation(() => {
             return Promise.resolve();
         });
 
-        jest.spyOn(scriptLoader, 'load').mockImplementation(() => {
-            return Promise.resolve(afterpaySdk);
-        });
+        jest.spyOn(scriptLoader, 'load')
+            .mockReturnValue(Promise.resolve(afterpaySdk));
 
         jest.spyOn(afterpaySdk, 'init').mockImplementation(() => {});
         jest.spyOn(afterpaySdk, 'display').mockImplementation(() => {});
@@ -198,7 +199,9 @@ describe('AfterpayPaymentStrategy', () => {
 
             await strategy.finalize({ nonce });
 
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 { useStoreCredit: false, customerMessage: 'foo' },
                 true,
                 { nonce }

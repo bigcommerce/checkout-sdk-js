@@ -1,7 +1,7 @@
 import { Payment } from '../payment';
 
 export default interface OrderRequestBody {
-    payment: Payment;
+    payment?: Payment;
     useStoreCredit?: boolean;
     customerMessage?: string;
 }

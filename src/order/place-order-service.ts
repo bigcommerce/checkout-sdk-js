@@ -7,7 +7,6 @@ import { Payment, PaymentActionCreator, PaymentMethod } from '../payment';
 import { CreditCard, VaultedInstrument } from '../payment/payment';
 
 import OrderActionCreator from './order-action-creator';
-import OrderRequestBody from './order-request-body';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -18,26 +17,6 @@ export default class PlaceOrderService {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator
     ) {}
-
-    /**
-     * @todo Remove `shouldVerifyCart` flag in the future. Always verify cart by default
-     */
-    submitOrder(payload: OrderRequestBody, shouldVerifyCart: boolean = false, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const cart = checkout.getCart();
-
-        if (!cart) {
-            throw new MissingDataError('Unable to submit order because "cart" data is missing.');
-        }
-
-        const action = this._orderActionCreator.submitOrder(
-            payload,
-            shouldVerifyCart ? cart : undefined,
-            options
-        );
-
-        return this._store.dispatch(action);
-    }
 
     submitPayment(payment: Payment, useStoreCredit: boolean = false, options?: RequestOptions): Promise<CheckoutSelectors> {
         const payload = this._getPaymentRequestBody(payment);

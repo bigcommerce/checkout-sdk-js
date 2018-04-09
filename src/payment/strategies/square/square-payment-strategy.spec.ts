@@ -1,10 +1,13 @@
 /// <reference path="./square-form.d.ts" />
 
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction, Action } from '@bigcommerce/data-store';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../../checkout';
-import { createPlaceOrderService } from '../../../order';
+import { createPlaceOrderService, OrderActionCreator, PlaceOrderService } from '../../../order';
+import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
 import { getSquare } from '../../../payment/payment-methods.mock';
 import PaymentMethod from '../../payment-method';
 
@@ -16,9 +19,11 @@ describe('SquarePaymentStrategy', () => {
     let scriptLoader: SquareScriptLoader;
     let store: CheckoutStore;
     let strategy: SquarePaymentStrategy;
+    let orderActionCreator: OrderActionCreator;
     let paymentMethod: PaymentMethod;
     let placeOrderService: PlaceOrderService;
     let callbacks: Square.FormCallbacks;
+    let submitOrderAction: Observable<Action>;
 
     const formFactory = options => {
         callbacks = options.callbacks;
@@ -35,21 +40,22 @@ describe('SquarePaymentStrategy', () => {
         store = createCheckoutStore();
         placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
         paymentMethod = getSquare();
+        orderActionCreator = new OrderActionCreator(createCheckoutClient());
         scriptLoader = new SquareScriptLoader(createScriptLoader());
-        strategy = new SquarePaymentStrategy(store, placeOrderService, scriptLoader);
+        strategy = new SquarePaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader);
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED);
 
-        jest.spyOn(placeOrderService, 'submitOrder')
-            .mockImplementation(() => Promise.resolve({ foo: 'bar' }));
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
 
+        jest.spyOn(store, 'dispatch');
         jest.spyOn(store, 'getState')
-            .mockImplementation(() => {
-                return {
-                    getBillingAddress: () => {},
-                };
+            .mockReturnValue({
+                getBillingAddress: () => {},
             });
 
         jest.spyOn(scriptLoader, 'load')
-            .mockImplementation(() => Promise.resolve(formFactory));
+            .mockReturnValue(Promise.resolve(formFactory));
 
         jest.spyOn(squareForm, 'build');
         jest.spyOn(squareForm, 'requestCardNonce');
@@ -161,11 +167,14 @@ describe('SquarePaymentStrategy', () => {
                 });
 
                 it('places the order with the right arguments', () => {
-                    expect(placeOrderService.submitOrder).toHaveBeenCalledWith({ x: 'y' }, true, { b: 'f' });
+                    expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ x: 'y' }, true, { b: 'f' });
+                    expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
                 });
 
                 it('resolves to what is returned by submitOrder', async () => {
-                    await promise.then(response => expect(response).toMatchObject({ foo: 'bar' }));
+                    const value = await promise;
+
+                    expect(value).toEqual(store.getState());
                 });
             });
 
@@ -178,7 +187,8 @@ describe('SquarePaymentStrategy', () => {
                 });
 
                 it('does not place the order', () => {
-                    expect(placeOrderService.submitOrder).toHaveBeenCalledTimes(0);
+                    expect(orderActionCreator.submitOrder).toHaveBeenCalledTimes(0);
+                    expect(store.dispatch).not.toHaveBeenCalledWith(submitOrderAction);
                 });
 
                 it('rejects the promise', async () => {

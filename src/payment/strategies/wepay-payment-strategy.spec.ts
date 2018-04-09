@@ -1,11 +1,14 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
+import { createAction, Action } from '@bigcommerce/data-store';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
+import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import CheckoutClient from '../../checkout/checkout-client';
-import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
+import { createPlaceOrderService, OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
+import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getWepay } from '../../payment/payment-methods.mock';
 import { WepayRiskClient } from '../../remote-checkout/methods/wepay';
 import { CreditCard } from '../payment';
@@ -19,11 +22,13 @@ describe('WepayPaymentStrategy', () => {
 
     let wepayRiskClient: WepayRiskClient;
     let client: CheckoutClient;
+    let orderActionCreator: OrderActionCreator;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
     let placeOrderService: PlaceOrderService;
     let store: CheckoutStore;
     let strategy: WepayPaymentStrategy;
+    let submitOrderAction: Observable<Action>;
 
     beforeEach(() => {
         scriptLoader = createScriptLoader();
@@ -33,7 +38,7 @@ describe('WepayPaymentStrategy', () => {
             .mockReturnValue(Promise.resolve(wepayRiskClient));
 
         jest.spyOn(wepayRiskClient, 'getRiskToken')
-            .mockReturnValue(Promise.resolve(testRiskToken));
+            .mockReturnValue(testRiskToken);
 
         client = createCheckoutClient();
         store = createCheckoutStore();
@@ -47,9 +52,12 @@ describe('WepayPaymentStrategy', () => {
             createPaymentClient()
         );
 
+        orderActionCreator = new OrderActionCreator(client);
+
         strategy = new WepayPaymentStrategy(
             store,
             placeOrderService,
+            orderActionCreator,
             wepayRiskClient
         );
 
@@ -62,8 +70,12 @@ describe('WepayPaymentStrategy', () => {
             },
         });
 
-        jest.spyOn(placeOrderService, 'submitOrder')
-            .mockImplementation(() => Promise.resolve());
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
 
         jest.spyOn(placeOrderService, 'submitPayment')
             .mockImplementation(() => Promise.resolve());
@@ -89,6 +101,7 @@ describe('WepayPaymentStrategy', () => {
             (paymentWithToken.paymentData as CreditCard)
                 .extraData = { riskToken: testRiskToken };
 
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(placeOrderService.submitPayment)
                 .toHaveBeenCalledWith(paymentWithToken, false, undefined);
         });

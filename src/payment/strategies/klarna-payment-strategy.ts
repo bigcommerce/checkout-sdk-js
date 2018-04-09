@@ -3,8 +3,8 @@
 import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { MissingDataError, NotInitializedError } from '../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import Payment from '../payment';
@@ -20,6 +20,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _klarnaScriptLoader: KlarnaScriptLoader
@@ -58,19 +59,23 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             .then((res: Klarna.AuthorizationResponse) => {
                 const authorizationToken = res.authorization_token;
 
+                if (!payload.payment) {
+                    throw new InvalidArgumentError('Unable to proceed because "payload.payment.name" argument is not provided.');
+                }
+
                 return this._store.dispatch(
                     this._remoteCheckoutActionCreator.initializePayment(payload.payment.name, { authorizationToken })
                 );
             })
-            .then(() => {
-                return this._placeOrderService.submitOrder({
+            .then(() => this._store.dispatch(
+                this._orderActionCreator.submitOrder({
                     ...payload,
                     payment: omit(payload.payment, 'paymentData') as Payment,
                     // Note: API currently doesn't support using Store Credit with Klarna.
                     // To prevent deducting customer's store credit, set it as false.
                     useStoreCredit: false,
-                }, options);
-            });
+                }, true, options)
+            ));
     }
 
     private _loadWidget(options: InitializeOptions): Promise<void> {

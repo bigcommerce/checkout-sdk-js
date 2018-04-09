@@ -17,10 +17,10 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
-        const { payment: { gateway = '' } } = payload;
+        const { payment: { gateway = '' } = {} } = payload;
         const orderPayload = gateway === 'adyen' ? payload : omit(payload, 'payment');
 
-        return this._placeOrderService.submitOrder(orderPayload, options)
+        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, true, options))
             .then(() =>
                 this._placeOrderService.initializeOffsitePayment(payload.payment, payload.useStoreCredit, options)
             );

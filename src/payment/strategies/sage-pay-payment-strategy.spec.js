@@ -6,7 +6,7 @@ import { MissingDataError } from '../../common/error/errors';
 import { getErrorPaymentResponseBody } from '../payments.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
-import { FINALIZE_ORDER_REQUESTED } from '../../order/order-action-types';
+import { FINALIZE_ORDER_REQUESTED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { OrderActionCreator } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
@@ -19,11 +19,11 @@ describe('SagePayPaymentStrategy', () => {
     let placeOrderService;
     let store;
     let strategy;
+    let submitOrderAction;
 
     beforeEach(() => {
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
         placeOrderService = {
-            submitOrder: jest.fn(() => Promise.resolve(store.getState())),
             submitPayment: jest.fn(() => Promise.resolve(store.getState())),
         };
 
@@ -34,11 +34,15 @@ describe('SagePayPaymentStrategy', () => {
         store = createCheckoutStore();
 
         finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
 
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(orderActionCreator, 'finalizeOrder')
             .mockReturnValue(finalizeOrderAction);
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
 
         strategy = new SagePayPaymentStrategy(store, placeOrderService, orderActionCreator, formPoster);
     });
@@ -49,7 +53,8 @@ describe('SagePayPaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, options);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('submits payment separately', async () => {

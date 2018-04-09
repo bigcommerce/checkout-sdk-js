@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../../order';
+import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../../order';
 import isCreditCardLike from '../../is-credit-card';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { PaymentInstrument } from '../../payment';
@@ -17,6 +17,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor
     ) {
@@ -46,14 +47,15 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         const { payment, useStoreCredit } = orderRequest;
         const { checkout } = this._store.getState();
 
-        return this._placeOrderService
-            .submitOrder(omit(orderRequest, 'payment'), true, options)
+        return this._store.dispatch(
+            this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), true, options)
+        )
             .then(() =>
-                checkout.isPaymentDataRequired(useStoreCredit) ?
+                checkout.isPaymentDataRequired(useStoreCredit) && payment ?
                     this._preparePaymentData(payment) :
                     Promise.resolve(payment)
             )
-            .then((processedPayment: PaymentInstrument) =>
+            .then(processedPayment =>
                 this._placeOrderService.submitPayment(processedPayment, useStoreCredit, options)
             )
             .catch((error: Error) => this._handleError(error));

@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../../order';
+import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../../order';
 import Payment from '../../payment';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentStrategy, { InitializeOptions } from '../payment-strategy';
@@ -13,6 +13,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor,
         private _credit: boolean = false
@@ -47,8 +48,10 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         const { payment, useStoreCredit } = orderRequest;
 
         return Promise.all([
-                this._preparePaymentData(payment),
-                this._placeOrderService.submitOrder(omit(orderRequest, 'payment'), true, options),
+                payment ? this._preparePaymentData(payment) : Promise.resolve(payment),
+                this._store.dispatch(
+                    this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), true, options)
+                ),
             ])
             .then(([payment]) => this._placeOrderService.submitPayment(payment, useStoreCredit, options))
             .catch((error: Error) => this._handleError(error));

@@ -5,7 +5,7 @@ import { createCheckoutStore } from '../checkout';
 import { getCartState } from '../cart/internal-carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCustomerState } from '../customer/internal-customers.mock';
-import { getCompleteOrder, getOrderRequestBody } from './internal-orders.mock';
+import { getCompleteOrder } from './internal-orders.mock';
 import { getPayment, getPaymentRequestBody } from '../payment/payments.mock';
 import { getInstrumentsState, getInstrumentsMeta } from '../payment/instrument/instrument.mock';
 import { getPaymentMethodsState } from '../payment/payment-methods.mock';
@@ -24,7 +24,6 @@ describe('PlaceOrderService', () => {
         orderActionCreator = {
             finalizeOrder: jest.fn(() => createAction('FINALIZE_ORDER')),
             loadOrder: jest.fn(() => createAction('LOAD_ORDER')),
-            submitOrder: jest.fn(() => createAction('SUBMIT_ORDER')),
         };
 
         paymentActionCreator = {
@@ -44,45 +43,6 @@ describe('PlaceOrderService', () => {
         });
 
         placeOrderService = new PlaceOrderService(store, orderActionCreator, paymentActionCreator);
-    });
-
-    describe('#submitOrder()', () => {
-        it('dispatches submit order action', async () => {
-            jest.spyOn(store, 'dispatch');
-
-            await placeOrderService.submitOrder(getOrderRequestBody(), false);
-
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(getOrderRequestBody(), undefined, undefined);
-            expect(store.dispatch).toHaveBeenCalledWith(createAction('SUBMIT_ORDER'));
-        });
-
-        it('dispatches submit order action with timeout', async () => {
-            jest.spyOn(store, 'dispatch');
-
-            const options = { timeout: createTimeout() };
-
-            await placeOrderService.submitOrder(getOrderRequestBody(), false, options);
-
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(getOrderRequestBody(), undefined, options);
-            expect(store.dispatch).toHaveBeenCalledWith(createAction('SUBMIT_ORDER'));
-        });
-
-        it('dispatches submit order action with cart if should verify cart', async () => {
-            jest.spyOn(store, 'dispatch');
-
-            const { checkout } = store.getState();
-
-            await placeOrderService.submitOrder(getOrderRequestBody(), true);
-
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(getOrderRequestBody(), checkout.getCart(), undefined);
-            expect(store.dispatch).toHaveBeenCalledWith(createAction('SUBMIT_ORDER'));
-        });
-
-        it('returns checkout state', async () => {
-            const output = await placeOrderService.submitOrder(getOrderRequestBody());
-
-            expect(output).toEqual(store.getState());
-        });
     });
 
     describe('#submitPayment()', () => {

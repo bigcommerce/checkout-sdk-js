@@ -1,3 +1,4 @@
+import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../checkout';
 import {
@@ -6,7 +7,7 @@ import {
     getSubmitOrderResponseBody,
     getSubmitOrderResponseHeaders,
 } from './internal-orders.mock';
-import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
+import { getCart, getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './order-action-types';
@@ -19,6 +20,7 @@ describe('OrderActionCreator', () => {
 
     beforeEach(() => {
         store = createCheckoutStore({
+            cart: getCartState(),
             config: getConfigState(),
         });
 
@@ -89,7 +91,7 @@ describe('OrderActionCreator', () => {
         });
 
         it('emits actions if able to submit order', () => {
-            orderActionCreator.submitOrder(getOrderRequestBody())
+            Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
@@ -110,7 +112,7 @@ describe('OrderActionCreator', () => {
             checkoutClient.submitOrder.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await orderActionCreator.submitOrder(getOrderRequestBody())
+            const actions = await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -123,14 +125,20 @@ describe('OrderActionCreator', () => {
         });
 
         it('verifies cart content', async () => {
-            await orderActionCreator.submitOrder(getOrderRequestBody(), getCart()).toPromise();
+            await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody(), true)(store))
+                .toPromise();
 
             expect(checkoutClient.loadCart).toHaveBeenCalled();
         });
 
         it('does not submit order if cart verification fails', async () => {
+            store = createCheckoutStore({
+                cart: merge({}, getCartState(), { data: { ...getCart(), currency: 'JPY' } }),
+                config: getConfigState(),
+            });
+
             try {
-                await orderActionCreator.submitOrder(getOrderRequestBody(), { ...getCart(), currency: 'JPY' }).toPromise();
+                await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody(), true)(store)).toPromise();
             } catch (action) {
                 expect(checkoutClient.submitOrder).not.toHaveBeenCalled();
                 expect(action.payload.type).toEqual('cart_changed');

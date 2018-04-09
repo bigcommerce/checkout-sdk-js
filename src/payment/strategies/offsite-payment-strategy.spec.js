@@ -4,7 +4,7 @@ import { merge, omit } from 'lodash';
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
-import { FINALIZE_ORDER_REQUESTED } from '../../order/order-action-types';
+import { FINALIZE_ORDER_REQUESTED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { OrderActionCreator } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
@@ -16,20 +16,24 @@ describe('OffsitePaymentStrategy', () => {
     let orderActionCreator;
     let store;
     let strategy;
+    let submitOrderAction;
 
     beforeEach(() => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
         placeOrderService = {
-            submitOrder: jest.fn(() => Promise.resolve(store.getState())),
             initializeOffsitePayment: jest.fn(() => Promise.resolve(store.getState())),
         };
         finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
 
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(orderActionCreator, 'finalizeOrder')
             .mockReturnValue(finalizeOrderAction);
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
 
         strategy = new OffsitePaymentStrategy(store, placeOrderService, orderActionCreator);
     });
@@ -40,7 +44,8 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, options);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('submits order with payment data if payment gateway is "adyen"', async () => {
@@ -51,7 +56,8 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(placeOrderService.submitOrder).toHaveBeenCalledWith(payload, options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('initializes offsite payment flow', async () => {

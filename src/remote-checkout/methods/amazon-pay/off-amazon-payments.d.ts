@@ -18,7 +18,10 @@ declare namespace OffAmazonPayments {
 
     interface HostWindow extends Window {
         OffAmazonPayments?: {
-            Button: Button,
+            Button?: Button;
+            Widgets?: {
+                Wallet: Widgets.Wallet;
+            };
         };
         onAmazonPaymentsReady?(): void;
     }

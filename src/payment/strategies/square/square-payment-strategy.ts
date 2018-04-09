@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, StandardError, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../../order';
+import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../../order';
 import PaymentMethod from '../../payment-method';
 import PaymentStrategy from '../payment-strategy';
 
@@ -16,6 +16,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _scriptLoader: SquareScriptLoader
     ) {
         super(store, placeOrderService);
@@ -45,11 +46,12 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             }
 
             this._deferredRequestNonce = { resolve, reject };
+
             this._paymentForm.requestCardNonce();
         })
-        .then(paymentData =>
-            this._placeOrderService.submitOrder(omit(payload, 'payment') as OrderRequestBody, true, options)
-        );
+        .then(paymentData => this._store.dispatch(
+            this._orderActionCreator.submitOrder(omit(payload, 'payment'), true, options)
+        ));
     }
 
     private _getFormOptions(options: InitializeOptions, deferred: DeferredPromise): Square.FormOptions {

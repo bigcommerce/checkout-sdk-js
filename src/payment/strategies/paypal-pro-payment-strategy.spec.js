@@ -1,26 +1,38 @@
+import { createAction } from '@bigcommerce/data-store';
 import { merge, omit } from 'lodash';
+import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { getOrderRequestBody, getIncompleteOrderState } from '../../order/internal-orders.mock';
+import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 
 describe('PaypalProPaymentStrategy', () => {
+    let orderActionCreator;
     let placeOrderService;
     let store;
     let strategy;
+    let submitOrderAction;
 
     beforeEach(() => {
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+
         placeOrderService = {
-            submitOrder: jest.fn(() => Promise.resolve(store.getState())),
             submitPayment: jest.fn(() => Promise.resolve(store.getState())),
+        };
+
+        orderActionCreator = {
+            submitOrder: jest.fn(() => submitOrderAction),
         };
 
         store = createCheckoutStore({
             order: getIncompleteOrderState(),
         });
 
-        strategy = new PaypalProPaymentStrategy(store, placeOrderService);
+        strategy = new PaypalProPaymentStrategy(store, placeOrderService, orderActionCreator);
+
+        jest.spyOn(store, 'dispatch');
     });
 
     it('submits order without payment data', async () => {
@@ -28,7 +40,8 @@ describe('PaypalProPaymentStrategy', () => {
 
         await strategy.execute(payload);
 
-        expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), undefined);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, undefined);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('submits payment separately', async () => {
@@ -47,7 +60,7 @@ describe('PaypalProPaymentStrategy', () => {
 
     it('throws error if order is missing', async () => {
         store = createCheckoutStore();
-        strategy = new PaypalProPaymentStrategy(store, placeOrderService);
+        strategy = new PaypalProPaymentStrategy(store, placeOrderService, orderActionCreator);
 
         try {
             await strategy.execute(getOrderRequestBody());
@@ -66,7 +79,9 @@ describe('PaypalProPaymentStrategy', () => {
                 }),
             });
 
-            strategy = new PaypalProPaymentStrategy(store, placeOrderService);
+            strategy = new PaypalProPaymentStrategy(store, placeOrderService, orderActionCreator);
+
+            jest.spyOn(store, 'dispatch');
         });
 
         it('submits order with payment method name', async () => {
@@ -74,10 +89,11 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith({
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({
                 ...payload,
                 payment: { name: payload.payment.name },
-            }, undefined);
+            }, true, undefined);
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
         it('does not submit payment separately', async () => {
