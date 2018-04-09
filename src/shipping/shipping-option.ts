@@ -5,4 +5,5 @@ export default interface ShippingOption {
     imageUrl: string;
     price: number;
     transitTime: string;
+    type: string;
 }

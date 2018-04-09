@@ -4,7 +4,7 @@ import { getShippingOption } from './shipping-options.mock';
 
 describe('mapToInternalShippingOption()', () => {
     it('maps to internal shipping option', () => {
-        expect(mapToInternalShippingOption(getShippingOption(), true, getInternalShippingOption()))
+        expect(mapToInternalShippingOption(getShippingOption(), true))
             .toEqual(getInternalShippingOption());
     });
 });

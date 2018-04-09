@@ -1,5 +1,3 @@
-import { find } from 'lodash';
-
 import Consignment from './consignment';
 import InternalShippingOption from './internal-shipping-option';
 import mapToInternalShippingOption from './map-to-internal-shipping-option';
@@ -10,8 +8,7 @@ export default function mapToInternalShippingOptions(consignments: Consignment[]
         [consignment.shippingAddress.id]: (consignment.availableShippingOptions || []).map((option) =>
             mapToInternalShippingOption(
                 option,
-                option.id === consignment.selectedShippingOptionId,
-                find(existingOptions[consignment.shippingAddress.id], { id: option.id })!
+                option.id === consignment.selectedShippingOptionId
             )
         ),
     }), {});
