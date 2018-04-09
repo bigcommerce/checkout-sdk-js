@@ -27,8 +27,8 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
 
         return this._placeOrderService.loadPaymentMethod(paymentId)
             .then(({ checkout }: CheckoutSelectors) => {
-                const { clientToken, config } = checkout.getPaymentMethod(paymentId);
-                this._braintreePaymentProcessor.initialize(clientToken, options);
+                const { clientToken, config } = checkout.getPaymentMethod(paymentId)!;
+                this._braintreePaymentProcessor.initialize(clientToken!, options);
                 this._is3dsEnabled = config.is3dsEnabled;
 
                 return super.initialize(options);
@@ -82,12 +82,12 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
             return Promise.resolve(payment);
         }
 
-        const { amount } = checkout.getCart().grandTotal;
+        const { amount } = checkout.getCart()!.grandTotal;
         const billingAddress = checkout.getBillingAddress();
 
         const tokenizedCard = this._is3dsEnabled ?
-            this._braintreePaymentProcessor.verifyCard(payment, billingAddress, amount) :
-            this._braintreePaymentProcessor.tokenizeCard(payment, billingAddress);
+            this._braintreePaymentProcessor.verifyCard(payment, billingAddress!, amount) :
+            this._braintreePaymentProcessor.tokenizeCard(payment, billingAddress!);
 
         return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
             .then((paymentData) => ({ ...payment, paymentData }));

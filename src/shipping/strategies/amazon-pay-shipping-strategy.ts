@@ -141,7 +141,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (isAddressEqual(remoteCheckout.shippingAddress, checkout.getShippingAddress())) {
+                if (isAddressEqual(remoteCheckout.shippingAddress, checkout.getShippingAddress()!)) {
                     return this._store.getState();
                 }
 
@@ -164,7 +164,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
     ): void {
         this._synchronizeShippingAddress()
             .then(({ checkout }: CheckoutSelectors) => {
-                callback(checkout.getShippingAddress());
+                callback(checkout.getShippingAddress()!);
             })
             .catch((error: Error) => {
                 errorCallback(error);

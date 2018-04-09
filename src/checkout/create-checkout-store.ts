@@ -1,33 +1,44 @@
-import { createDataStore } from '@bigcommerce/data-store';
+import { createDataStore, Action, DataStore } from '@bigcommerce/data-store';
+
+import { BillingAddressSelector } from '../billing';
 import { cartReducer, CartSelector } from '../cart';
-import { CheckoutErrorSelector, CheckoutSelector, CheckoutStatusSelector } from '../checkout';
-import { configReducer, ConfigSelector } from '../config';
-import { countryReducer, CountrySelector } from '../geography';
-import { createFreezeProxy } from '../common/utility';
+import { CheckoutErrorSelector, CheckoutSelector, CheckoutSelectors, CheckoutStatusSelector } from '../checkout';
 import { createRequestErrorFactory } from '../common/error';
+import { createFreezeProxy } from '../common/utility';
+import { configReducer, ConfigSelector } from '../config';
+import { couponReducer, giftCertificateReducer, CouponSelector, GiftCertificateSelector } from '../coupon';
 import { customerReducer, customerStrategyReducer, CustomerSelector, CustomerStrategySelector } from '../customer';
-import { couponReducer, CouponSelector, giftCertificateReducer, GiftCertificateSelector } from '../coupon';
 import { FormSelector } from '../form';
+import { countryReducer, CountrySelector } from '../geography';
 import { orderReducer, OrderSelector } from '../order';
-import { paymentReducer, paymentMethodReducer, paymentStrategyReducer, PaymentMethodSelector, PaymentStrategySelector } from '../payment';
-import { remoteCheckoutReducer, RemoteCheckoutSelector } from '../remote-checkout';
+import { paymentMethodReducer, paymentReducer, paymentStrategyReducer, PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { instrumentReducer, InstrumentSelector } from '../payment/instrument';
 import { quoteReducer, QuoteSelector } from '../quote';
-import { BillingAddressSelector } from '../billing';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector, shippingCountryReducer, shippingOptionReducer, shippingStrategyReducer } from '../shipping';
+import { remoteCheckoutReducer, RemoteCheckoutSelector } from '../remote-checkout';
+import {
+    shippingCountryReducer,
+    shippingOptionReducer,
+    shippingStrategyReducer,
+    ShippingAddressSelector,
+    ShippingCountrySelector,
+    ShippingOptionSelector,
+    ShippingStrategySelector,
+} from '../shipping';
+
 import createActionTransformer from './create-action-transformer';
 
 /**
+ * @todo Convert this file into TypeScript properly
  * @param {Object} [initialState={}]
- * @param {Object} [options={}]
+ * @param {CheckoutStoreOptions} [options={}]
  * @return {DataStore}
  */
-export default function createCheckoutStore(initialState = {}, options = {}) {
+export default function createCheckoutStore(initialState = {}, options?: CheckoutStoreOptions): DataStore<any, Action, CheckoutSelectors> {
     const actionTransformer = createActionTransformer(createRequestErrorFactory());
-    const stateTransformer = (state) => createCheckoutSelectors(state, options);
+    const stateTransformer = (state: any) => createCheckoutSelectors(state, options);
 
     return createDataStore(
-        createCheckoutReducers(),
+        createCheckoutReducers() as any,
         initialState,
         { actionTransformer, stateTransformer, ...options }
     );
@@ -37,7 +48,7 @@ export default function createCheckoutStore(initialState = {}, options = {}) {
  * @private
  * @return {CheckoutReducers}
  */
-function createCheckoutReducers() {
+function createCheckoutReducers(): any {
     return {
         cart: cartReducer,
         config: configReducer,
@@ -66,7 +77,7 @@ function createCheckoutReducers() {
  * @param {boolean} [options.shouldWarnMutation=true]
  * @return {CheckoutSelectors}
  */
-function createCheckoutSelectors(state, options) {
+function createCheckoutSelectors(state: any, options: CheckoutStoreOptions = {}): CheckoutSelectors {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
     const config = new ConfigSelector(state.config);
@@ -149,4 +160,8 @@ function createCheckoutSelectors(state, options) {
         errors: options.shouldWarnMutation ? createFreezeProxy(errors) : errors,
         statuses: options.shouldWarnMutation ? createFreezeProxy(statuses) : statuses,
     };
+}
+
+export interface CheckoutStoreOptions {
+    shouldWarnMutation?: boolean;
 }

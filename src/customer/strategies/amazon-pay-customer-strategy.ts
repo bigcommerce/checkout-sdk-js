@@ -78,7 +78,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
     signOut(options?: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { remote = {} } = checkout.getCustomer() || {};
+        const { remote = { provider: undefined } } = checkout.getCustomer() || {};
 
         if (!remote.provider) {
             return Promise.resolve(this._store.getState());

@@ -40,7 +40,7 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
 
     finalize(options?: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { orderId, payment = {} } = checkout.getOrder();
+        const { orderId, payment = {} } = checkout.getOrder()!;
 
         if (orderId && payment.status === paymentStatusTypes.FINALIZE) {
             return this._placeOrderService.finalizeOrder(orderId, options);

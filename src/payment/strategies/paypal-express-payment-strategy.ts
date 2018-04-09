@@ -92,7 +92,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
     finalize(options: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { orderId } = checkout.getOrder();
+        const { orderId } = checkout.getOrder()!;
 
         if (orderId &&
             this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
@@ -105,7 +105,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
     private _getPaymentStatus(): string | undefined {
         const { checkout } = this._store.getState();
-        const { payment } = checkout.getOrder();
+        const { payment } = checkout.getOrder()!;
 
         return payment && payment.status;
     }

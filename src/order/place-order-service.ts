@@ -98,7 +98,7 @@ export default class PlaceOrderService {
             cart,
             customer,
             order,
-            paymentMethod: this._getRequestPaymentMethod(paymentMethod),
+            paymentMethod: this._getRequestPaymentMethod(paymentMethod!),
             shippingAddress,
             shippingOption,
             authToken,

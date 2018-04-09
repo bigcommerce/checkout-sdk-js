@@ -6,6 +6,11 @@ export default interface InternalCustomer {
     customerGroupId: number;
     customerGroupName: number;
     isGuest: boolean;
+    remote: {
+        customerMessage: string;
+        provider: string;
+        useStoreCredit: boolean;
+    };
     phoneNumber: string;
     storeCredit: number;
     email: string;

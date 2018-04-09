@@ -19,7 +19,7 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
 
     finalize(options: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { orderId, payment = {} } = checkout.getOrder();
+        const { orderId, payment = {} } = checkout.getOrder()!;
 
         if (orderId &&
             payment.status === paymentStatusTypes.ACKNOWLEDGE ||

@@ -28,7 +28,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             .then((klarnaSdk) => { this._klarnaSdk = klarnaSdk; })
             .then(() => {
                 this._unsubscribe = this._store.subscribe(() => this._loadWidget(options),
-                    ({ checkout }) => checkout.getCart() && checkout.getCart().grandTotal
+                    ({ checkout }) => checkout.getCart() && checkout.getCart()!.grandTotal
                 );
 
                 return this._loadWidget(options);
