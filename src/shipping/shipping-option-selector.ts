@@ -1,28 +1,31 @@
 import { find } from 'lodash';
 
+/**
+ * @todo Convert this file into TypeScript properly
+ */
 export default class ShippingOptionSelector {
     /**
      * @constructor
      * @param {ShippingOptionsState} shippingOptions
      * @param {QuoteState} quote
      */
-    constructor(shippingOptions = {}, quote = {}) {
-        this._shippingOptions = shippingOptions;
-        this._quote = quote;
-    }
+    constructor(
+        private _shippingOptions: any = {},
+        private _quote: any = {}
+    ) {}
 
     /**
      * @return {InternalShippingOptionList}
      */
-    getShippingOptions() {
+    getShippingOptions(): any | undefined {
         return this._shippingOptions.data;
     }
 
     /**
      * @return {?ShippingOption}
      */
-    getSelectedShippingOption() {
-        const { shippingAddress, shippingOption: optionId } = this._quote.data || {};
+    getSelectedShippingOption(): any | undefined {
+        const { shippingAddress = null, shippingOption: optionId = null } = this._quote.data || {};
         const shippingOptions = this.getShippingOptions();
 
         if (!shippingAddress || !shippingOptions) {
@@ -32,17 +35,11 @@ export default class ShippingOptionSelector {
         return find(shippingOptions[shippingAddress.id], { id: optionId });
     }
 
-    /**
-     * @return {?ErrorResponse}
-     */
-    getLoadError() {
+    getLoadError(): Error | undefined {
         return this._shippingOptions.errors && this._shippingOptions.errors.loadError;
     }
 
-    /**
-     * @return {boolean}
-     */
-    isLoading() {
+    isLoading(): boolean {
         return !!(this._shippingOptions.statuses && this._shippingOptions.statuses.isLoading);
     }
 }

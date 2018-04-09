@@ -1,17 +1,20 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+
 import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+
 import mapToInternalShippingOptions from './map-to-internal-shipping-options';
 
 /**
+ * @todo Convert this file into TypeScript properly
  * @param {ShippingOptionsState} state
  * @param {Action} action
  * @return {ShippingOptionsState}
  */
-export default function shippingOptionReducer(state = {}, action) {
+export default function shippingOptionReducer(state: any = {}, action: Action): any {
     const reducer = combineReducers({
         data: dataReducer,
         errors: errorsReducer,
@@ -27,7 +30,7 @@ export default function shippingOptionReducer(state = {}, action) {
  * @param {Action} action
  * @return {?ShippingOptionList}
  */
-function dataReducer(data, action) {
+function dataReducer(data: any, action: Action): any {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...data, ...mapToInternalShippingOptions(action.payload.consignments, data) };
@@ -45,13 +48,7 @@ function dataReducer(data, action) {
     }
 }
 
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
-function statusesReducer(statuses = {}, action) {
+function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_REQUESTED:
         return { ...statuses, isLoading: true };
@@ -65,13 +62,7 @@ function statusesReducer(statuses = {}, action) {
     }
 }
 
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
-function errorsReducer(errors = {}, action) {
+function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_REQUESTED:
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
