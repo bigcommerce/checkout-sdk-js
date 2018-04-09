@@ -8,5 +8,6 @@ export function getShippingOption(): ShippingOption {
         isRecommended: true,
         price: 0,
         transitTime: '',
+        type: 'shipping_flatrate',
     };
 }
