@@ -61,8 +61,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
             .then((resp: any) => this._displayModal(resp.checkout.getPaymentMethod(paymentId).clientToken))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
-            .then(() => this._resolveBeforeUnload())
-            .then(() => this._store.getState());
+            .then(() => new Promise<never>(() => {}));
     }
 
     finalize(options: any): Promise<CheckoutSelectors> {
@@ -93,16 +92,5 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
         this._afterpaySdk.init();
         this._afterpaySdk.display({ token });
-    }
-
-    private _resolveBeforeUnload(): Promise<void> {
-        return new Promise((resolve) => {
-            const handleUnload = () => {
-                window.removeEventListener('unload', handleUnload);
-                resolve();
-            };
-
-            window.addEventListener('unload', handleUnload);
-        });
     }
 }

@@ -1,5 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -12,7 +12,7 @@ import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-or
 import { getAfterpay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
-import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentMethod from '../payment-method';
 
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
@@ -97,16 +97,14 @@ describe('AfterpayPaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
+        const successHandler = jest.fn();
+
         beforeEach(async () => {
             await strategy.initialize({ paymentMethod });
 
-            strategy.execute(payload);
+            strategy.execute(payload).then(successHandler);
 
-            setTimeout(() => {
-                const event = document.createEvent('Event');
-                event.initEvent('unload', true, false);
-                document.body.dispatchEvent(event);
-            });
+            await new Promise((resolve) => process.nextTick(resolve));
         });
 
         it('displays the afterpay modal', () => {
@@ -120,6 +118,23 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('verifies the cart', () => {
             expect(placeOrderService.verifyCart).toHaveBeenCalled();
+        });
+
+        it('does not resolve if execution is successful', () => {
+            expect(successHandler).not.toHaveBeenCalled();
+        });
+
+        it('rejects with error if execution is unsuccessful', async () => {
+            jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
+                .mockReturnValue(Observable.of(createErrorAction(INITIALIZE_REMOTE_PAYMENT_FAILED, new Error())));
+
+            const errorHandler = jest.fn();
+
+            strategy.execute(payload).catch(errorHandler);
+
+            await new Promise((resolve) => process.nextTick(resolve));
+
+            expect(errorHandler).toHaveBeenCalled();
         });
     });
 
