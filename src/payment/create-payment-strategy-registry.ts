@@ -97,7 +97,7 @@ export default function createPaymentStrategyRegistry(
         new SagePayPaymentStrategy(store, placeOrderService, createFormPoster())
     );
 
-    registry.register('square', () =>
+    registry.register('squarev2', () =>
         new SquarePaymentStrategy(store, placeOrderService, new SquareScriptLoader(scriptLoader))
     );
 
