@@ -16,6 +16,9 @@ import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOpt
 // Convert this file into TypeScript properly
 // i.e.: Response<T>
 export default class CheckoutClient {
+    /**
+     * @internal
+     */
     constructor(
         private _billingAddressRequestSender: BillingAddressRequestSender,
         private _cartRequestSender: CartRequestSender,

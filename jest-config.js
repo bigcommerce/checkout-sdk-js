@@ -28,4 +28,9 @@ module.exports = {
             statements: 80,
         },
     },
+    globals: {
+        'ts-jest': {
+            tsConfigFile: 'tsconfig-jest.json',
+        },
+    },
 };

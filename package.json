@@ -5,12 +5,16 @@
   "license": "MIT",
   "private": true,
   "main": "dist/checkout-sdk.js",
+  "typings": "dist/checkout-sdk.d.ts",
   "files": [
     "dist/",
     "docs/"
   ],
   "engines": {
     "node": "^6.10.0"
+  },
+  "tsdoc": {
+    "tsdocFlavor": "AEDoc"
   },
   "repository": {
     "type": "git",
@@ -28,6 +32,10 @@
     "bundle": "webpack --config webpack.config.js",
     "bundle:analyze": "yarn --silent bundle -- --profile --json > webpack-stats.json && webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip",
     "bundle:watch": "yarn bundle -- --watch",
+    "predocs": "tsc --outDir temp && yarn extract-api -- --local",
+    "docs": "typedoc --theme markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected dist/checkout-sdk.d.ts",
+    "postdocs": "rm -rf temp",
+    "extract-api": "api-extractor run",
     "lint": "yarn lint:js && yarn lint:ts",
     "lint:js": "eslint src --config eslintrc.json",
     "lint:ts": "tslint 'src/**/*.ts' --config tslint.json && tsc --noEmit",
@@ -53,6 +61,7 @@
     "tslib": "^1.8.0"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^5.6.1",
     "@types/jest": "^21.1.10",
     "@types/node": "^6.0.101",
     "eslint": "2.8.0",
@@ -63,6 +72,8 @@
     "ts-jest": "^21.2.3",
     "ts-loader": "^3.2.0",
     "tslint": "^5.9.1",
+    "typedoc": "^0.11.1",
+    "typedoc-plugin-markdown": "^1.0.15",
     "typescript": "^2.7.1",
     "typescript-eslint-parser": "^9.0.1",
     "uglifyjs-webpack-plugin": "^1.1.1",

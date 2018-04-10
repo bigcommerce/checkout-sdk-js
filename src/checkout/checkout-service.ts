@@ -17,10 +17,13 @@ import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
 
 /**
- * @todo Convert this file into TypeScript properly
+ * TODO: Convert this file into TypeScript properly
  * i.e.: Instrument, InitializePaymentOptions etc...
  */
 export default class CheckoutService {
+    /**
+     * @internal
+     */
     constructor(
         private _store: CheckoutStore,
         private _billingAddressActionCreator: BillingAddressActionCreator,

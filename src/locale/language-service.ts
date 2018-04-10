@@ -15,6 +15,9 @@ export default class LanguageService {
     private _translations: Translations;
     private _formatters: { [key: string]: any };
 
+    /**
+     * @internal
+     */
     constructor(
         config: Partial<LanguageConfig>,
         private _logger: Logger

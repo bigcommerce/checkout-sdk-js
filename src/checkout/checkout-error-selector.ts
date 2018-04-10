@@ -14,6 +14,9 @@ import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelecto
 
 @selector
 export default class CheckoutErrorSelector {
+    /**
+     * @internal
+     */
     constructor(
         private _billingAddress: BillingAddressSelector,
         private _cart: CartSelector,

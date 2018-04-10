@@ -20,11 +20,14 @@ import {
 } from '../shipping';
 
 /**
- * @todo Convert this file into TypeScript properly
+ * TODO: Convert this file into TypeScript properly
  * i.e.: CheckoutMeta, Config, Country, Instrument, Field
  */
 @selector
 export default class CheckoutSelector {
+    /**
+     * @internal
+     */
     constructor(
         private _billingAddress: BillingAddressSelector,
         private _cart: CartSelector,
