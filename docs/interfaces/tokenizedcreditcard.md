@@ -12,7 +12,7 @@
 
 **●  deviceSessionId**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:627*
+*Defined in [checkout-sdk.d.ts:627](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L627)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  nonce**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:626*
+*Defined in [checkout-sdk.d.ts:626](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L626)*
 
 
 

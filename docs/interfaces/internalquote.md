@@ -12,7 +12,7 @@
 
 **●  billingAddress**:  *[InternalAddress](internaladdress.md)* 
 
-*Defined in checkout-sdk.d.ts:530*
+*Defined in [checkout-sdk.d.ts:530](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L530)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  orderComment**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:528*
+*Defined in [checkout-sdk.d.ts:528](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L528)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  shippingAddress**:  *[InternalAddress](internaladdress.md)* 
 
-*Defined in checkout-sdk.d.ts:531*
+*Defined in [checkout-sdk.d.ts:531](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L531)*
 
 
 
@@ -54,7 +54,7 @@ ___
 
 **●  shippingOption**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:529*
+*Defined in [checkout-sdk.d.ts:529](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L529)*
 
 
 

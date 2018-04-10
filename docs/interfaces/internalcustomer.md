@@ -12,7 +12,7 @@
 
 **●  addresses**:  *[InternalAddress](internaladdress.md)[]* 
 
-*Defined in checkout-sdk.d.ts:392*
+*Defined in [checkout-sdk.d.ts:392](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L392)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  customerGroupId**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:394*
+*Defined in [checkout-sdk.d.ts:394](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L394)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  customerGroupName**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:395*
+*Defined in [checkout-sdk.d.ts:395](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L395)*
 
 
 
@@ -54,7 +54,7 @@ ___
 
 **●  customerId**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:393*
+*Defined in [checkout-sdk.d.ts:393](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L393)*
 
 
 
@@ -68,7 +68,7 @@ ___
 
 **●  email**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:404*
+*Defined in [checkout-sdk.d.ts:404](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L404)*
 
 
 
@@ -82,7 +82,7 @@ ___
 
 **●  firstName**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:405*
+*Defined in [checkout-sdk.d.ts:405](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L405)*
 
 
 
@@ -96,7 +96,7 @@ ___
 
 **●  isGuest**:  *`boolean`* 
 
-*Defined in checkout-sdk.d.ts:396*
+*Defined in [checkout-sdk.d.ts:396](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L396)*
 
 
 
@@ -110,7 +110,7 @@ ___
 
 **●  name**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:406*
+*Defined in [checkout-sdk.d.ts:406](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L406)*
 
 
 
@@ -124,7 +124,7 @@ ___
 
 **●  phoneNumber**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:402*
+*Defined in [checkout-sdk.d.ts:402](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L402)*
 
 
 
@@ -138,7 +138,7 @@ ___
 
 **●  remote**:  *`object`* 
 
-*Defined in checkout-sdk.d.ts:397*
+*Defined in [checkout-sdk.d.ts:397](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L397)*
 
 
 #### Type declaration
@@ -176,7 +176,7 @@ ___
 
 **●  storeCredit**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:403*
+*Defined in [checkout-sdk.d.ts:403](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L403)*
 
 
 

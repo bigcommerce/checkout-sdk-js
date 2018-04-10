@@ -44,7 +44,7 @@ TODO: Convert this file into TypeScript properly i.e.: CheckoutMeta, Config, Cou
 
 
 
-*Defined in checkout-sdk.d.ts:125*
+*Defined in [checkout-sdk.d.ts:125](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L125)*
 
 
 
@@ -66,7 +66,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:144*
+*Defined in [checkout-sdk.d.ts:144](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L144)*
 
 
 
@@ -99,7 +99,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:129*
+*Defined in [checkout-sdk.d.ts:129](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L129)*
 
 
 
@@ -124,7 +124,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:133*
+*Defined in [checkout-sdk.d.ts:133](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L133)*
 
 
 
@@ -146,7 +146,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:111*
+*Defined in [checkout-sdk.d.ts:111](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L111)*
 
 
 
@@ -171,7 +171,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:117*
+*Defined in [checkout-sdk.d.ts:117](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L117)*
 
 
 
@@ -196,7 +196,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:134*
+*Defined in [checkout-sdk.d.ts:134](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L134)*
 
 
 
@@ -218,7 +218,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:140*
+*Defined in [checkout-sdk.d.ts:140](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L140)*
 
 
 
@@ -243,7 +243,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:112*
+*Defined in [checkout-sdk.d.ts:112](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L112)*
 
 
 
@@ -265,7 +265,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:131*
+*Defined in [checkout-sdk.d.ts:131](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L131)*
 
 
 
@@ -296,7 +296,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:130*
+*Defined in [checkout-sdk.d.ts:130](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L130)*
 
 
 
@@ -318,7 +318,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:113*
+*Defined in [checkout-sdk.d.ts:113](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L113)*
 
 
 
@@ -340,7 +340,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:132*
+*Defined in [checkout-sdk.d.ts:132](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L132)*
 
 
 
@@ -362,7 +362,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:120*
+*Defined in [checkout-sdk.d.ts:120](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L120)*
 
 
 
@@ -384,7 +384,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:118*
+*Defined in [checkout-sdk.d.ts:118](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L118)*
 
 
 
@@ -406,7 +406,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:148*
+*Defined in [checkout-sdk.d.ts:148](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L148)*
 
 
 
@@ -439,7 +439,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:124*
+*Defined in [checkout-sdk.d.ts:124](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L124)*
 
 
 
@@ -464,7 +464,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:119*
+*Defined in [checkout-sdk.d.ts:119](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L119)*
 
 
 
@@ -486,7 +486,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:135*
+*Defined in [checkout-sdk.d.ts:135](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L135)*
 
 
 
@@ -516,7 +516,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:136*
+*Defined in [checkout-sdk.d.ts:136](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L136)*
 
 
 
