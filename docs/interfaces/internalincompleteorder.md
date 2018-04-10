@@ -25,7 +25,7 @@
 
 **●  callbackUrl**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:445](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L445)*
+*Defined in [checkout-sdk.d.ts:445](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L445)*
 
 
 
@@ -39,7 +39,7 @@ ___
 
 **●  customerCreated**:  *`boolean`* 
 
-*Defined in [checkout-sdk.d.ts:441](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L441)*
+*Defined in [checkout-sdk.d.ts:441](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L441)*
 
 
 
@@ -53,7 +53,7 @@ ___
 
 **●  hasDigitalItems**:  *`boolean`* 
 
-*Defined in [checkout-sdk.d.ts:442](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L442)*
+*Defined in [checkout-sdk.d.ts:442](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L442)*
 
 
 
@@ -67,7 +67,7 @@ ___
 
 **●  isComplete**:  *`boolean`* 
 
-*Defined in [checkout-sdk.d.ts:444](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L444)*
+*Defined in [checkout-sdk.d.ts:444](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L444)*
 
 
 
@@ -81,7 +81,7 @@ ___
 
 **●  isDownloadable**:  *`boolean`* 
 
-*Defined in [checkout-sdk.d.ts:443](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L443)*
+*Defined in [checkout-sdk.d.ts:443](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L443)*
 
 
 
@@ -95,7 +95,7 @@ ___
 
 **●  orderId**:  *`number`* 
 
-*Defined in [checkout-sdk.d.ts:421](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L421)*
+*Defined in [checkout-sdk.d.ts:421](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L421)*
 
 
 
@@ -109,7 +109,7 @@ ___
 
 **●  payment**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:423](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L423)*
+*Defined in [checkout-sdk.d.ts:423](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L423)*
 
 
 #### Type declaration
@@ -161,7 +161,7 @@ ___
 
 **●  socialData**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:430](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L430)*
+*Defined in [checkout-sdk.d.ts:430](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L430)*
 
 
 #### Type declaration
@@ -227,7 +227,7 @@ ___
 
 **●  status**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:440](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L440)*
+*Defined in [checkout-sdk.d.ts:440](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L440)*
 
 
 
@@ -241,7 +241,7 @@ ___
 
 **●  token**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:422](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L422)*
+*Defined in [checkout-sdk.d.ts:422](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L422)*
 
 
 
