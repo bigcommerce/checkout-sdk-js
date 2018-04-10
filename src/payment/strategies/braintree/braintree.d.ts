@@ -98,7 +98,6 @@ declare namespace Braintree {
         flow: 'checkout' | 'vault';
         intent?: 'authorize' | 'order' | 'sale';
         landingPageType?: 'login' | 'billing';
-        locale;
         locale?: string;
         offerCredit: boolean;
         shippingAddressEditable?: boolean;

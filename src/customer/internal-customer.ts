@@ -12,9 +12,11 @@ export default interface InternalCustomer {
         billing: string;
         billingMessage: string;
         customer: string;
+        customerMessage: string;
         payment: string;
         provider: string;
         shipping: string;
+        useStoreCredit: boolean;
     };
     customerGroupId?: number;
     customerGroupName?: string;

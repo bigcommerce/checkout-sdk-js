@@ -1,0 +1,68 @@
+/// <reference path="../payment/bigpay-client.d.ts" />
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createRequestSender } from '@bigcommerce/request-sender';
+
+import { BillingAddressActionCreator } from '../billing';
+import { CartActionCreator, CartRequestSender } from '../cart';
+import { CheckoutService } from '../checkout';
+import { ConfigActionCreator } from '../config';
+import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
+import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
+import { CountryActionCreator } from '../geography';
+import { OrderActionCreator } from '../order';
+import { createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
+import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
+import { QuoteActionCreator } from '../quote';
+import {
+    createShippingStrategyRegistry,
+    ShippingCountryActionCreator,
+    ShippingOptionActionCreator,
+    ShippingStrategyActionCreator,
+} from '../shipping';
+
+import CheckoutActionCreator from './checkout-action-creator';
+import CheckoutClient from './checkout-client';
+import createCheckoutClient from './create-checkout-client';
+import createCheckoutStore from './create-checkout-store';
+
+export default function createCheckoutService(options: CheckoutServiceOptions = {}): CheckoutService {
+    const client = options.client || createCheckoutClient({ locale: options.locale });
+    const store = createCheckoutStore(createInitialState({ config: options.config }), { shouldWarnMutation: options.shouldWarnMutation });
+    const paymentClient = createPaymentClient({ host: options.config && options.config.bigpayBaseUrl });
+    const requestSender = createRequestSender();
+
+    return new CheckoutService(
+        store,
+        new BillingAddressActionCreator(client),
+        new CartActionCreator(client),
+        new CheckoutActionCreator(client, new CartRequestSender(requestSender)),
+        new ConfigActionCreator(client),
+        new CountryActionCreator(client),
+        new CouponActionCreator(client),
+        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
+        new GiftCertificateActionCreator(client),
+        new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
+        new OrderActionCreator(client),
+        new PaymentMethodActionCreator(client),
+        new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
+        new QuoteActionCreator(client),
+        new ShippingCountryActionCreator(client),
+        new ShippingOptionActionCreator(client),
+        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, client))
+    );
+}
+
+export interface CheckoutServiceOptions {
+    client?: CheckoutClient;
+    config?: any;
+    locale?: string;
+    shouldWarnMutation?: boolean;
+}
+
+function createInitialState(options: CheckoutServiceOptions) {
+    return {
+        config: {
+            data: options.config,
+        },
+    };
+}

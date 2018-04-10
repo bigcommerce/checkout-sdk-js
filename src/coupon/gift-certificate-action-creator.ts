@@ -20,7 +20,7 @@ export default class GiftCertificateActionCreator {
             observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED));
 
             this._checkoutClient.applyGiftCertificate(checkoutId, giftCertificate, options)
-                .then(({ body } = {}) => {
+                .then(({ body }) => {
                     observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
                 })
@@ -35,7 +35,7 @@ export default class GiftCertificateActionCreator {
             observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED));
 
             this._checkoutClient.removeGiftCertificate(checkoutId, giftCertificate, options)
-                .then(({ body } = {}) => {
+                .then(({ body }) => {
                     observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
                 })

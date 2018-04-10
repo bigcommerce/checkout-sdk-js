@@ -20,7 +20,7 @@ export default class CouponActionCreator {
             observer.next(createAction(actionTypes.APPLY_COUPON_REQUESTED));
 
             this._checkoutClient.applyCoupon(checkoutId, code, options)
-                .then(({ body } = {}) => {
+                .then(({ body }) => {
                     observer.next(createAction(actionTypes.APPLY_COUPON_SUCCEEDED, body));
                     observer.complete();
                 })
@@ -35,7 +35,7 @@ export default class CouponActionCreator {
             observer.next(createAction(actionTypes.REMOVE_COUPON_REQUESTED));
 
             this._checkoutClient.removeCoupon(checkoutId, code, options)
-                .then(({ body } = {}) => {
+                .then(({ body }) => {
                     observer.next(createAction(actionTypes.REMOVE_COUPON_SUCCEEDED, body));
                     observer.complete();
                 })

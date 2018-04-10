@@ -129,7 +129,7 @@ describe('PlaceOrderService', () => {
 
             await placeOrderService.submitPayment(getPayment());
 
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining(getPaymentRequestBody()), undefined);
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining(getPaymentRequestBody()));
             expect(store.dispatch).toHaveBeenCalledWith(createAction('SUBMIT_PAYMENT'));
         });
 
@@ -151,8 +151,7 @@ describe('PlaceOrderService', () => {
                             },
                         },
                     }
-                )),
-                undefined
+                ))
             );
             expect(store.dispatch).toHaveBeenCalledWith(createAction('SUBMIT_PAYMENT'));
         });
@@ -171,8 +170,7 @@ describe('PlaceOrderService', () => {
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(
                 expect.objectContaining({
                     authToken: `${paymentAuthToken}, ${instrumentId}`,
-                }),
-                undefined
+                })
             );
             expect(store.dispatch).toHaveBeenCalledWith(createAction('SUBMIT_PAYMENT'));
         });
@@ -194,7 +192,6 @@ describe('PlaceOrderService', () => {
             await placeOrderService.submitPayment(getPayment(), false, options);
 
             expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(getCompleteOrder().orderId, options);
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expect.objectContaining(getPaymentRequestBody()), options);
         });
 
         it('returns checkout state', async () => {
@@ -208,11 +205,9 @@ describe('PlaceOrderService', () => {
         it('dispatches finalize payment action', async () => {
             jest.spyOn(store, 'dispatch');
 
-            const options = { timeout: createTimeout() };
+            await placeOrderService.initializeOffsitePayment(getPayment(), false);
 
-            await placeOrderService.initializeOffsitePayment(getPayment(), false, options);
-
-            expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(expect.objectContaining(getPaymentRequestBody()), options);
+            expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(expect.objectContaining(getPaymentRequestBody()));
             expect(store.dispatch).toHaveBeenCalledWith(createAction('INITALIZE_OFFSITE_PAYMENT'));
         });
 
