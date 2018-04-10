@@ -1,6 +1,7 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
+
+import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { CartRequestSender } from '../cart';
 import { getCart } from '../cart/carts.mock';
@@ -8,26 +9,26 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 
 import CheckoutActionCreator from './checkout-action-creator';
 import { CheckoutActionType } from './checkout-actions';
-import CheckoutRequestSender from './checkout-request-sender';
 import { getCheckout } from './checkouts.mock';
+import createCheckoutClient from './create-checkout-client';
 
 describe('CheckoutActionCreator', () => {
-    let checkoutRequestSender;
+    let checkoutClient;
     let cartRequestSender;
 
     beforeEach(() => {
-        checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        checkoutClient = createCheckoutClient();
         cartRequestSender = new CartRequestSender(createRequestSender());
 
         jest.spyOn(cartRequestSender, 'loadCarts')
             .mockReturnValue(Promise.resolve(getResponse([getCart()])));
 
-        jest.spyOn(checkoutRequestSender, 'loadCheckout')
+        jest.spyOn(checkoutClient, 'loadCheckout')
             .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
     });
 
     it('emits action to notify loading progress', async () => {
-        const actionCreator = new CheckoutActionCreator(checkoutRequestSender, cartRequestSender);
+        const actionCreator = new CheckoutActionCreator(checkoutClient, cartRequestSender);
         const actions = await actionCreator.loadCheckout()
             .toArray()
             .toPromise();
@@ -39,10 +40,10 @@ describe('CheckoutActionCreator', () => {
     });
 
     it('emits error action if unable to load checkout', async () => {
-        jest.spyOn(checkoutRequestSender, 'loadCheckout')
+        jest.spyOn(checkoutClient, 'loadCheckout')
             .mockReturnValue(Promise.reject(getErrorResponse()));
 
-        const actionCreator = new CheckoutActionCreator(checkoutRequestSender, cartRequestSender);
+        const actionCreator = new CheckoutActionCreator(checkoutClient, cartRequestSender);
 
         try {
             const actions = await actionCreator.loadCheckout()
