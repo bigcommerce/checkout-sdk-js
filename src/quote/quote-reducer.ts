@@ -31,7 +31,7 @@ export default function quoteReducer(state: any = {}, action: Action): any {
 function dataReducer(data: InternalQuote, action: Action): InternalQuote {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...data, ...mapToInternalQuote(action.payload, data) };
+        return { ...data, ...mapToInternalQuote(action.payload) };
 
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
