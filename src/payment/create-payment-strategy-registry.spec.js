@@ -15,6 +15,7 @@ import {
     PaypalExpressPaymentStrategy,
     PaypalProPaymentStrategy,
     SagePayPaymentStrategy,
+    SquarePaymentStrategy,
 } from './strategies';
 
 describe('CreatePaymentStrategyRegistry', () => {
@@ -31,62 +32,67 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(registry).toEqual(expect.any(PaymentStrategyRegistry));
     });
 
-    it('can instanciate amazon', () => {
+    it('can instantiate amazon', () => {
         const paymentStrategy = registry.get('amazon');
         expect(paymentStrategy).toBeInstanceOf(AmazonPayPaymentStrategy);
     });
 
-    it('can instanciate afterpay', () => {
+    it('can instantiate afterpay', () => {
         const paymentStrategy = registry.get('afterpay');
         expect(paymentStrategy).toBeInstanceOf(AfterpayPaymentStrategy);
     });
 
-    it('can instanciate creditcard', () => {
+    it('can instantiate creditcard', () => {
         const paymentStrategy = registry.get('creditcard');
         expect(paymentStrategy).toBeInstanceOf(CreditCardPaymentStrategy);
     });
 
-    it('can instanciate klarna', () => {
+    it('can instantiate klarna', () => {
         const paymentStrategy = registry.get('klarna');
         expect(paymentStrategy).toBeInstanceOf(KlarnaPaymentStrategy);
     });
 
-    it('can instanciate legacy', () => {
+    it('can instantiate legacy', () => {
         const paymentStrategy = registry.get('legacy');
         expect(paymentStrategy).toBeInstanceOf(LegacyPaymentStrategy);
     });
 
-    it('can instanciate offline', () => {
+    it('can instantiate offline', () => {
         const paymentStrategy = registry.get('offline');
         expect(paymentStrategy).toBeInstanceOf(OfflinePaymentStrategy);
     });
 
-    it('can instanciate offsite', () => {
+    it('can instantiate offsite', () => {
         const paymentStrategy = registry.get('offsite');
         expect(paymentStrategy).toBeInstanceOf(OffsitePaymentStrategy);
     });
 
-    it('can instanciate paypal', () => {
+    it('can instantiate paypal', () => {
         const paymentStrategy = registry.get('paypal');
         expect(paymentStrategy).toBeInstanceOf(PaypalProPaymentStrategy);
     });
 
-    it('can instanciate paypalexpress', () => {
+    it('can instantiate paypalexpress', () => {
         const paymentStrategy = registry.get('paypalexpress');
         expect(paymentStrategy).toBeInstanceOf(PaypalExpressPaymentStrategy);
     });
 
-    it('can instanciate paypalexpresscredit', () => {
+    it('can instantiate paypalexpresscredit', () => {
         const paymentStrategy = registry.get('paypalexpresscredit');
         expect(paymentStrategy).toBeInstanceOf(PaypalExpressPaymentStrategy);
     });
 
-    it('can instanciate sagepay', () => {
+    it('can instantiate sagepay', () => {
         const paymentStrategy = registry.get('sagepay');
         expect(paymentStrategy).toBeInstanceOf(SagePayPaymentStrategy);
     });
 
-    it('can instanciate nopaymentdatarequired', () => {
+    it('can instantiate square', () => {
+        const paymentStrategy = registry.get('square');
+        expect(paymentStrategy).toBeInstanceOf(SquarePaymentStrategy);
+    });
+
+    it('can instantiate nopaymentdatarequired', () => {
         const paymentStrategy = registry.get('nopaymentdatarequired');
         expect(paymentStrategy).toBeInstanceOf(NoPaymentDataRequiredPaymentStrategy);
     });
