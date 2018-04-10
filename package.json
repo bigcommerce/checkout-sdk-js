@@ -4,11 +4,10 @@
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "private": true,
-  "main": "lib/index.js",
+  "main": "dist/checkout-sdk.js",
   "files": [
     "dist/",
-    "docs/",
-    "lib/"
+    "docs/"
   ],
   "engines": {
     "node": "^6.10.0"
@@ -24,19 +23,16 @@
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
     "prebuild": "yarn lint && yarn test",
-    "build": "yarn compile && yarn bundle",
+    "build": "yarn bundle",
     "prebundle": "rm -rf dist",
     "bundle": "webpack --config webpack.config.js",
     "bundle:analyze": "yarn --silent bundle -- --profile --json > webpack-stats.json && webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip",
     "bundle:watch": "yarn bundle -- --watch",
-    "precompile": "rm -rf lib",
-    "compile": "tsc --outDir lib",
-    "compile:watch": "yarn compile -- --watch",
     "lint": "yarn lint:js && yarn lint:ts",
     "lint:js": "eslint src --config eslintrc.json",
     "lint:ts": "tslint 'src/**/*.ts' --config tslint.json && tsc --noEmit",
     "prerelease": "git fetch --tags && yarn validate-dependencies && yarn validate-commits && yarn build",
-    "release": "git add dist lib && standard-version -a",
+    "release": "git add dist && standard-version -a",
     "test": "jest --config jest-config.js",
     "test:coverage": "yarn test -- --coverage",
     "test:series": "yarn test -- --runInBand",
@@ -72,6 +68,7 @@
     "uglifyjs-webpack-plugin": "^1.1.1",
     "validate-commits": "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.1.0",
     "webpack": "^3.8.1",
-    "webpack-bundle-analyzer": "^2.9.1"
+    "webpack-bundle-analyzer": "^2.9.1",
+    "webpack-node-externals": "^1.7.2"
   }
 }
