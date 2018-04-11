@@ -16,7 +16,7 @@ The Checkout SDK is a JavaScript wrapper for our [Storefront Checkout API](https
 * Klarna
 * AfterPay
 
-Using these tools in conjunction with your favorite frontend framework, it’s possible to build a complete checkout experience specific to a single store, or a checkout replacement that’s augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/cornerstone/compare/master...davidchin:checkout_sdk_demo) in React to get you started.
+Using these tools in conjunction with your favorite frontend framework, it’s possible to build a complete checkout experience specific to a single store, or a checkout replacement that’s augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) in React to get you started.
 
 
 ## Install
@@ -218,7 +218,7 @@ await service.submitOrder({ payment });
 
 ## See also
 
-* [Cornerstone example](https://github.com/bigcommerce/cornerstone/compare/master...davidchin:checkout_sdk_demo) - A sample checkout app written in React.
+* [Example app](https://github.com/bigcommerce/checkout-sdk-js-example) - A sample checkout app written in React.
 * [Storefront APIs](https://developer.bigcommerce.com/api/v3/storefront.html) - The documentation for Storefront Checkout & Cart Web APIs.
 
 
