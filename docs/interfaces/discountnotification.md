@@ -12,7 +12,7 @@
 
 **●  message**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:305*
+*Defined in [checkout-sdk.d.ts:305](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L305)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  messageHtml**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:306*
+*Defined in [checkout-sdk.d.ts:306](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L306)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:307*
+*Defined in [checkout-sdk.d.ts:307](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L307)*
 
 
 

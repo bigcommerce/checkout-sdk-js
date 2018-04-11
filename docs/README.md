@@ -67,7 +67,7 @@
 
 **Τ PaymentInstrument**:  *[CreditCard](interfaces/creditcard.md)⎮[TokenizedCreditCard](interfaces/tokenizedcreditcard.md)⎮[VaultedInstrument](interfaces/vaultedinstrument.md)* 
 
-*Defined in checkout-sdk.d.ts:592*
+*Defined in [checkout-sdk.d.ts:592](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L592)*
 
 
 
@@ -85,7 +85,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:277*
+*Defined in [checkout-sdk.d.ts:277](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L277)*
 
 
 
@@ -115,7 +115,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:281*
+*Defined in [checkout-sdk.d.ts:281](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L281)*
 
 
 
@@ -145,7 +145,7 @@ ___
 
 
 
-*Defined in checkout-sdk.d.ts:283*
+*Defined in [checkout-sdk.d.ts:283](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L283)*
 
 
 

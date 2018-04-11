@@ -88,7 +88,7 @@ describe('CreatePaymentStrategyRegistry', () => {
     });
 
     it('can instantiate square', () => {
-        const paymentStrategy = registry.get('square');
+        const paymentStrategy = registry.get('squarev2');
         expect(paymentStrategy).toBeInstanceOf(SquarePaymentStrategy);
     });
 

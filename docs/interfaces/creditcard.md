@@ -12,7 +12,7 @@
 
 **●  ccCvv**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:293*
+*Defined in [checkout-sdk.d.ts:293](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L293)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  ccExpiry**:  *`object`* 
 
-*Defined in checkout-sdk.d.ts:286*
+*Defined in [checkout-sdk.d.ts:286](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L286)*
 
 
 #### Type declaration
@@ -57,7 +57,7 @@ ___
 
 **●  ccName**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:290*
+*Defined in [checkout-sdk.d.ts:290](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L290)*
 
 
 
@@ -71,7 +71,7 @@ ___
 
 **●  ccNumber**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:291*
+*Defined in [checkout-sdk.d.ts:291](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L291)*
 
 
 
@@ -85,7 +85,7 @@ ___
 
 **●  ccType**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:292*
+*Defined in [checkout-sdk.d.ts:292](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L292)*
 
 
 
@@ -99,7 +99,7 @@ ___
 
 **●  deviceSessionId**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:294*
+*Defined in [checkout-sdk.d.ts:294](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L294)*
 
 
 
@@ -113,7 +113,7 @@ ___
 
 **●  extraData**:  *`any`* 
 
-*Defined in checkout-sdk.d.ts:296*
+*Defined in [checkout-sdk.d.ts:296](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L296)*
 
 
 
@@ -127,7 +127,7 @@ ___
 
 **●  shouldSaveInstrument**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in checkout-sdk.d.ts:295*
+*Defined in [checkout-sdk.d.ts:295](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L295)*
 
 
 

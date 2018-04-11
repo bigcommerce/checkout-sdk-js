@@ -12,7 +12,7 @@
 
 **●  amount**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:449*
+*Defined in [checkout-sdk.d.ts:449](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L449)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  amountAfterDiscount**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:450*
+*Defined in [checkout-sdk.d.ts:450](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L450)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  attributes**:  *`Array`.<`object`>* 
 
-*Defined in checkout-sdk.d.ts:451*
+*Defined in [checkout-sdk.d.ts:451](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L451)*
 
 
 
@@ -54,7 +54,7 @@ ___
 
 **●  discount**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:455*
+*Defined in [checkout-sdk.d.ts:455](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L455)*
 
 
 
@@ -68,7 +68,7 @@ ___
 
 **●  id**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:456*
+*Defined in [checkout-sdk.d.ts:456](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L456)*
 
 
 
@@ -82,7 +82,7 @@ ___
 
 **●  imageUrl**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:457*
+*Defined in [checkout-sdk.d.ts:457](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L457)*
 
 
 
@@ -96,7 +96,7 @@ ___
 
 **●  integerAmount**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:458*
+*Defined in [checkout-sdk.d.ts:458](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L458)*
 
 
 
@@ -110,7 +110,7 @@ ___
 
 **●  integerAmountAfterDiscount**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:459*
+*Defined in [checkout-sdk.d.ts:459](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L459)*
 
 
 
@@ -124,7 +124,7 @@ ___
 
 **●  integerDiscount**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:460*
+*Defined in [checkout-sdk.d.ts:460](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L460)*
 
 
 
@@ -138,7 +138,7 @@ ___
 
 **●  integerTax**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:461*
+*Defined in [checkout-sdk.d.ts:461](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L461)*
 
 
 
@@ -152,7 +152,7 @@ ___
 
 **●  name**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:462*
+*Defined in [checkout-sdk.d.ts:462](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L462)*
 
 
 
@@ -166,7 +166,7 @@ ___
 
 **●  quantity**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:463*
+*Defined in [checkout-sdk.d.ts:463](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L463)*
 
 
 
@@ -180,7 +180,7 @@ ___
 
 **●  tax**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:464*
+*Defined in [checkout-sdk.d.ts:464](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L464)*
 
 
 
@@ -194,7 +194,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:465*
+*Defined in [checkout-sdk.d.ts:465](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L465)*
 
 
 
@@ -208,7 +208,7 @@ ___
 
 **●  variantId**:  *`number`* 
 
-*Defined in checkout-sdk.d.ts:466*
+*Defined in [checkout-sdk.d.ts:466](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L466)*
 
 
 

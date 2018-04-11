@@ -12,7 +12,7 @@
 
 **●  clientToken**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:600*
+*Defined in [checkout-sdk.d.ts:600](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L600)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  config**:  *[PaymentMethodConfig](paymentmethodconfig.md)* 
 
-*Defined in checkout-sdk.d.ts:596*
+*Defined in [checkout-sdk.d.ts:596](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L596)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  gateway**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:601*
+*Defined in [checkout-sdk.d.ts:601](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L601)*
 
 
 
@@ -54,7 +54,7 @@ ___
 
 **●  id**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:595*
+*Defined in [checkout-sdk.d.ts:595](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L595)*
 
 
 
@@ -68,7 +68,7 @@ ___
 
 **●  initializationData**:  *`any`* 
 
-*Defined in checkout-sdk.d.ts:604*
+*Defined in [checkout-sdk.d.ts:604](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L604)*
 
 
 
@@ -82,7 +82,7 @@ ___
 
 **●  logoUrl**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:602*
+*Defined in [checkout-sdk.d.ts:602](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L602)*
 
 
 
@@ -96,7 +96,7 @@ ___
 
 **●  method**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:597*
+*Defined in [checkout-sdk.d.ts:597](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L597)*
 
 
 
@@ -110,7 +110,7 @@ ___
 
 **●  nonce**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:603*
+*Defined in [checkout-sdk.d.ts:603](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L603)*
 
 
 
@@ -124,7 +124,7 @@ ___
 
 **●  returnUrl**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:605*
+*Defined in [checkout-sdk.d.ts:605](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L605)*
 
 
 
@@ -138,7 +138,7 @@ ___
 
 **●  supportedCards**:  *`string`[]* 
 
-*Defined in checkout-sdk.d.ts:598*
+*Defined in [checkout-sdk.d.ts:598](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L598)*
 
 
 
@@ -152,7 +152,7 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in checkout-sdk.d.ts:599*
+*Defined in [checkout-sdk.d.ts:599](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L599)*
 
 
 

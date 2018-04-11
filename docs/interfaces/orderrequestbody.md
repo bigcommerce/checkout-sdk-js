@@ -12,7 +12,7 @@
 
 **●  customerMessage**:  *`undefined`⎮`string`* 
 
-*Defined in checkout-sdk.d.ts:582*
+*Defined in [checkout-sdk.d.ts:582](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L582)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  payment**:  *[Payment](payment.md)* 
 
-*Defined in checkout-sdk.d.ts:580*
+*Defined in [checkout-sdk.d.ts:580](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L580)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  useStoreCredit**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in checkout-sdk.d.ts:581*
+*Defined in [checkout-sdk.d.ts:581](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L581)*
 
 
 
