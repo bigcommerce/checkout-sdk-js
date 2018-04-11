@@ -4,6 +4,7 @@ import { mergeOrPush } from '../common/utility';
 
 import PaymentMethod from './payment-method';
 import * as actionTypes from './payment-method-action-types';
+import PaymentMethodsMeta from './payment-methods-meta';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -15,18 +16,13 @@ export default function paymentMethodReducer(state: any = {}, action: Action): a
     const reducer = combineReducers<any>({
         data: dataReducer,
         errors: errorsReducer,
+        meta: metaReducer,
         statuses: statusesReducer,
     });
 
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?PaymentMethod[]} data
- * @param {Action} action
- * @return {?PaymentMethod[]}
- */
 function dataReducer(data: PaymentMethod[], action: Action): PaymentMethod[] {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
@@ -43,12 +39,16 @@ function dataReducer(data: PaymentMethod[], action: Action): PaymentMethod[] {
     }
 }
 
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
+function metaReducer(meta: PaymentMethodsMeta, action: Action): PaymentMethodsMeta {
+    switch (action.type) {
+    case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
+        return action.meta ? { ...meta, ...action.meta } : meta;
+
+    default:
+        return meta;
+    }
+}
+
 function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHODS_REQUESTED:
@@ -78,12 +78,6 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
 function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHODS_REQUESTED:

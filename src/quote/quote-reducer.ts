@@ -21,7 +21,6 @@ export default function quoteReducer(state: any = {}, action: Action): any {
     const reducer = combineReducers<any>({
         data: dataReducer,
         errors: errorsReducer,
-        meta: metaReducer,
         statuses: statusesReducer,
     });
 
@@ -44,22 +43,6 @@ function dataReducer(data: InternalQuote, action: Action): InternalQuote {
 
     default:
         return data;
-    }
-}
-
-/**
- * @private
- * @param {?Object} meta
- * @param {Action} action
- * @return {?Object}
- */
-function metaReducer(meta: any, action: Action): any {
-    switch (action.type) {
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-        return action.meta ? { ...meta, ...action.meta } : meta;
-
-    default:
-        return meta;
     }
 }
 

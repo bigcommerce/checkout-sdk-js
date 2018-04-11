@@ -58,7 +58,7 @@ export default class CheckoutStoreSelector {
      */
     getCheckoutMeta() {
         const orderMeta = this._order.getOrderMeta();
-        const quoteMeta = this._quote.getQuoteMeta();
+        const paymentMethodsMeta = this._paymentMethods.getPaymentMethodsMeta();
         const isCartVerified = this._cart.isValid();
         const paymentAuthToken = this._order.getPaymentAuthToken();
         const instrumentsMeta = this._instruments.getInstrumentsMeta();
@@ -67,7 +67,7 @@ export default class CheckoutStoreSelector {
 
         return {
             ...orderMeta,
-            ...(quoteMeta && quoteMeta.request),
+            ...(paymentMethodsMeta && paymentMethodsMeta.request),
             ...instrumentsMeta,
             isCartVerified,
             paymentAuthToken,

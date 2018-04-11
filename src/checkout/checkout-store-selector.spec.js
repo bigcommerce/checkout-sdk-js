@@ -59,7 +59,7 @@ describe('CheckoutStoreSelector', () => {
                 ...state.remoteCheckout.meta,
                 ...state.remoteCheckout.data,
             },
-            ...state.quote.meta.request,
+            ...state.paymentMethods.meta.request,
             ...state.instruments.meta,
             ...state.order.meta,
         });
