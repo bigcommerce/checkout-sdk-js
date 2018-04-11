@@ -10,6 +10,7 @@ export default interface Checkout {
     id: string;
     cart: Cart;
     customer: Customer;
+    customerMessage: string;
     billingAddress: Address;
     consignments: Consignment[];
     taxes: Tax[];
