@@ -24,7 +24,7 @@ export default class PaymentMethodActionCreator {
                     observer.next(createAction(actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_PAYMENT_METHODS_FAILED, response));
                 });
         });
@@ -39,7 +39,7 @@ export default class PaymentMethodActionCreator {
                     observer.next(createAction(actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED, body.data, { methodId }));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_PAYMENT_METHOD_FAILED, response, { methodId }));
                 });
         });

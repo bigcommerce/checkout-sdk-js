@@ -20,7 +20,7 @@ describe('SquarePaymentStrategy', () => {
     let placeOrderService: PlaceOrderService;
     let callbacks: Square.FormCallbacks;
 
-    const formFactory = (options) => {
+    const formFactory = options => {
         callbacks = options.callbacks;
         return squareForm;
     };
@@ -81,7 +81,7 @@ describe('SquarePaymentStrategy', () => {
                 };
 
                 strategy.initialize({ paymentMethod })
-                    .catch((error) => expect(error.type).toEqual('payment_method_missing_data'));
+                    .catch(error => expect(error.type).toEqual('payment_method_missing_data'));
             });
         });
 
@@ -103,7 +103,7 @@ describe('SquarePaymentStrategy', () => {
                 };
 
                 strategy.initialize(initOptions)
-                    .catch((e) => expect(e.type).toEqual('unsupported_browser'));
+                    .catch(e => expect(e.type).toEqual('unsupported_browser'));
 
                 expect(scriptLoader.load).toHaveBeenCalledTimes(1);
                 expect(squareForm.build).toHaveBeenCalledTimes(0);
@@ -115,7 +115,7 @@ describe('SquarePaymentStrategy', () => {
         describe('when form has not been initialized', () => {
             it('rejects the promise', () => {
                 strategy.execute()
-                    .catch((e) => expect(e.type).toEqual('payment_method_uninitialized'));
+                    .catch(e => expect(e.type).toEqual('payment_method_uninitialized'));
 
                 expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
             });
@@ -140,7 +140,7 @@ describe('SquarePaymentStrategy', () => {
 
             it('cancels the first request', async () => {
                 strategy.execute({})
-                    .catch((e) => expect(e.type).toEqual('timeout'));
+                    .catch(e => expect(e.type).toEqual('timeout'));
 
                 setTimeout(() => {
                     callbacks.cardNonceResponseReceived(null, 'nonce');
@@ -162,7 +162,7 @@ describe('SquarePaymentStrategy', () => {
                 });
 
                 it('resolves to what is returned by submitOrder', async () => {
-                    await promise.then((response) => expect(response).toMatchObject({ foo: 'bar' }));
+                    await promise.then(response => expect(response).toMatchObject({ foo: 'bar' }));
                 });
             });
 
@@ -179,7 +179,7 @@ describe('SquarePaymentStrategy', () => {
                 });
 
                 it('rejects the promise', async () => {
-                    await promise.catch((error) => expect(error).toBeTruthy());
+                    await promise.catch(error => expect(error).toBeTruthy());
                 });
             });
         });

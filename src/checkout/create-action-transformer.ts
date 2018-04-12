@@ -8,7 +8,7 @@ import { RequestErrorFactory } from '../common/error';
 export default function createActionTransformer(
     requestErrorFactory: RequestErrorFactory
 ): (action: Observable<Action>) => Observable<Action> {
-    return (action$: Observable<Action>) => action$.catch<Action, never>((action) => {
+    return (action$: Observable<Action>) => action$.catch<Action, never>(action => {
         if (action instanceof Error || action.payload instanceof Error) {
             throw action;
         }
@@ -26,7 +26,7 @@ function isResponse(object: any) {
         return false;
     }
 
-    return ['body', 'headers', 'status', 'statusText'].every((key) =>
+    return ['body', 'headers', 'status', 'statusText'].every(key =>
         object.hasOwnProperty(key)
     );
 }

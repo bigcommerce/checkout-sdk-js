@@ -30,7 +30,7 @@ export default class BraintreePaymentProcessor {
         const requestData = this._mapToCreditCard(paymentData as CreditCard, billingAddress);
 
         return this._braintreeSDKCreator.getClient()
-            .then((client) => client.request(requestData))
+            .then(client => client.request(requestData))
             .then(({ creditCards }) => ({
                 nonce: creditCards[0].nonce,
             }));
@@ -38,7 +38,7 @@ export default class BraintreePaymentProcessor {
 
     paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<TokenizedCreditCard> {
         return this._braintreeSDKCreator.getPaypal()
-            .then((paypal) => paypal.tokenize({
+            .then(paypal => paypal.tokenize({
                 amount,
                 currency,
                 enableShippingAddress: true,
@@ -81,7 +81,7 @@ export default class BraintreePaymentProcessor {
 
     appendSessionId(processedPayment: Promise<TokenizedCreditCard>): Promise<TokenizedCreditCard> {
         return processedPayment
-            .then((paymentData) => Promise.all([paymentData, this._braintreeSDKCreator.getDataCollector()]))
+            .then(paymentData => Promise.all([paymentData, this._braintreeSDKCreator.getDataCollector()]))
             .then(([paymentData, { deviceData }]) => ({ ...paymentData, deviceSessionId: deviceData }));
     }
 

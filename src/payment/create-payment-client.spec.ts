@@ -14,7 +14,7 @@ describe('createPaymentClient()', () => {
         store = createCheckoutStore();
 
         jest.spyOn(store, 'subscribe')
-            .mockImplementation((callback) => {
+            .mockImplementation(callback => {
                 subscribeCallback = callback;
             });
 

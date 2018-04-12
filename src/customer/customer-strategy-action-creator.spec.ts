@@ -77,7 +77,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if unable to initialize', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const initializeError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.reject(initializeError));
@@ -137,7 +137,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if unable to deinitialize', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const deinitializeError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.reject(deinitializeError));
@@ -198,7 +198,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if unable to sign in', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const signInError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'signIn')
                 .mockReturnValue(Promise.reject(signInError));
@@ -258,7 +258,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if unable to sign out', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const signOutError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'signOut')
                 .mockReturnValue(Promise.reject(signOutError));

@@ -25,7 +25,7 @@ export default class QuoteActionCreator {
                     observer.next(createAction(actionTypes.LOAD_QUOTE_SUCCEEDED, body.data, body.meta));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_QUOTE_FAILED, response));
                 });
         });

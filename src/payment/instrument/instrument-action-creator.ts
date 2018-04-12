@@ -26,14 +26,14 @@ export default class InstrumentActionCreator {
             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_REQUESTED));
 
             this._getValidAccessToken(accessToken)
-                .then((currentToken) =>
+                .then(currentToken =>
                     this._instrumentRequestSender.getInstruments(storeId, shopperId, currentToken.vaultAccessToken)
                         .then(({ body }) => {
                             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, body, currentToken));
                             observer.complete();
                         })
                 )
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_INSTRUMENTS_FAILED, response));
                 });
         });
@@ -51,14 +51,14 @@ export default class InstrumentActionCreator {
             observer.next(createAction(actionTypes.VAULT_INSTRUMENT_REQUESTED));
 
             this._getValidAccessToken(accessToken)
-                .then((currentToken) =>
+                .then(currentToken =>
                     this._instrumentRequestSender.vaultInstrument(storeId, shopperId, currentToken.vaultAccessToken, instrument)
                         .then(({ body }) => {
                             observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, body, currentToken));
                             observer.complete();
                         })
                 )
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.VAULT_INSTRUMENT_FAILED, response));
                 });
         });
@@ -76,7 +76,7 @@ export default class InstrumentActionCreator {
             observer.next(createAction(actionTypes.DELETE_INSTRUMENT_REQUESTED, undefined, { instrumentId }));
 
             this._getValidAccessToken(accessToken)
-                .then((currentToken) =>
+                .then(currentToken =>
                     this._instrumentRequestSender.deleteInstrument(storeId, shopperId, currentToken.vaultAccessToken, instrumentId)
                         .then(() => {
                             observer.next(createAction(actionTypes.DELETE_INSTRUMENT_SUCCEEDED, undefined, {
@@ -86,7 +86,7 @@ export default class InstrumentActionCreator {
                             observer.complete();
                         })
                 )
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.DELETE_INSTRUMENT_FAILED, response, { instrumentId }));
                 });
         });

@@ -24,7 +24,7 @@ export default class ShippingOptionActionCreator {
                     observer.next(createAction(actionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_SHIPPING_OPTIONS_FAILED, response));
                 });
         });
@@ -39,7 +39,7 @@ export default class ShippingOptionActionCreator {
                     observer.next(createAction(actionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.SELECT_SHIPPING_OPTION_FAILED, response));
                 });
         });

@@ -24,7 +24,7 @@ export default class CouponActionCreator {
                     observer.next(createAction(actionTypes.APPLY_COUPON_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.APPLY_COUPON_FAILED, response));
                 });
         });
@@ -39,7 +39,7 @@ export default class CouponActionCreator {
                     observer.next(createAction(actionTypes.REMOVE_COUPON_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.REMOVE_COUPON_FAILED, response));
                 });
         });

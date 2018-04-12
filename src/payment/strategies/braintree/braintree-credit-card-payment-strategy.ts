@@ -90,6 +90,6 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
             this._braintreePaymentProcessor.tokenizeCard(payment, billingAddress!);
 
         return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
-            .then((paymentData) => ({ ...payment, paymentData }));
+            .then(paymentData => ({ ...payment, paymentData }));
     }
 }

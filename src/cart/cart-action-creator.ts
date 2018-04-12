@@ -26,7 +26,7 @@ export default class CartActionCreator {
                     observer.next(createAction(actionTypes.LOAD_CART_SUCCEEDED, body.data, body.meta));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_CART_FAILED, response));
                 });
         });
@@ -47,7 +47,7 @@ export default class CartActionCreator {
                     observer.next(createAction(actionTypes.VERIFY_CART_SUCCEEDED, isValid));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.VERIFY_CART_FAILED, response));
                 });
         });

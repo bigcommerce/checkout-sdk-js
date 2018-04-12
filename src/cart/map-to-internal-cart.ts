@@ -14,7 +14,7 @@ export default function mapToInternalCart(checkout: Checkout, existingCart: Inte
         subtotal: existingCart.subtotal,
         coupon: {
             discountedAmount: existingCart.coupon.discountedAmount,
-            coupons: checkout.cart.coupons.map((coupon) =>
+            coupons: checkout.cart.coupons.map(coupon =>
                 mapToInternalCoupon(
                     coupon,
                     find(existingCart.coupon.coupons, { code: coupon.code })!
@@ -28,7 +28,7 @@ export default function mapToInternalCart(checkout: Checkout, existingCart: Inte
         discountNotifications: existingCart.discountNotifications,
         giftCertificate: {
             totalDiscountedAmount: existingCart.giftCertificate.totalDiscountedAmount,
-            appliedGiftCertificates: checkout.giftCertificates.map((giftCertificate) =>
+            appliedGiftCertificates: checkout.giftCertificates.map(giftCertificate =>
                 mapToInternalGiftCertificate(
                     giftCertificate,
                     find(existingCart.giftCertificate.appliedGiftCertificates, { code: giftCertificate.code })!

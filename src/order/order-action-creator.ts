@@ -31,7 +31,7 @@ export default class OrderActionCreator {
                     observer.next(createAction(actionTypes.LOAD_ORDER_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_ORDER_FAILED, response));
                 });
         });
@@ -47,7 +47,7 @@ export default class OrderActionCreator {
                     observer.next(createAction(actionTypes.SUBMIT_ORDER_SUCCEEDED, body.data, { ...body.meta, token: headers.token }));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.SUBMIT_ORDER_FAILED, response));
                 });
         });
@@ -62,7 +62,7 @@ export default class OrderActionCreator {
                     observer.next(createAction(actionTypes.FINALIZE_ORDER_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.FINALIZE_ORDER_FAILED, response));
                 });
         });

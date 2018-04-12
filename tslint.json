@@ -1,7 +1,6 @@
 {
     "extends": "@bigcommerce/tslint-config",
     "rules": {
-        "arrow-parens": true,
         "max-line-length": false,
         "no-empty": false,
         "no-reference": false,

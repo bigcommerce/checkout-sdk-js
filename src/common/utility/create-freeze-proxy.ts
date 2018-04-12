@@ -9,9 +9,9 @@ export default function createFreezeProxy<T extends object>(target: T): T {
 function createProxy<T extends object>(target: T, trap: (target: T, name: keyof T, proxy: T) => any): T {
     const proxy = Object.create(target);
 
-    traversePrototypeOf(target, (prototype) => {
+    traversePrototypeOf(target, prototype => {
         Object.getOwnPropertyNames(prototype)
-            .forEach((name) => {
+            .forEach(name => {
                 if (name === 'constructor' || typeof proxy[name] !== 'function' || name.charAt(0) === '_') {
                     return;
                 }

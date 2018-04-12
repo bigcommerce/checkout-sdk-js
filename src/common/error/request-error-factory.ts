@@ -8,7 +8,7 @@ export default class RequestErrorFactory {
 
     constructor() {
         this.register('default', (response, message) => new RequestError(response, message));
-        this.register('timeout', (response) => new TimeoutError(response));
+        this.register('timeout', response => new TimeoutError(response));
     }
 
     register(type: string, factoryMethod: ErrorFactoryMethod): void {

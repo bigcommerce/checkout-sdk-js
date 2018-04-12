@@ -41,7 +41,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return new Promise((resolve, reject) => {
             const onReady = () => {
                 this._createWallet(options)
-                    .then((wallet) => {
+                    .then(wallet => {
                         this._wallet = wallet;
                         resolve();
                     })
@@ -82,10 +82,10 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                     payment: omit(payload.payment, 'paymentData'),
                 }, true, options)
             )
-            .catch((error) => {
+            .catch(error => {
                 if (error instanceof RequestError && error.body.type === 'provider_widget_error' && this._walletOptions) {
                     return this._createWallet(this._walletOptions)
-                        .then((wallet) => {
+                        .then(wallet => {
                             this._wallet = wallet;
 
                             return Promise.reject(error);
@@ -121,11 +121,11 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 design: { designMode: 'responsive' },
                 scope: 'payments:billing_address payments:shipping_address payments:widget profile',
                 sellerId: merchantId,
-                onError: (error) => {
+                onError: error => {
                     reject(error);
                     this._handleError(error, onError);
                 },
-                onPaymentSelect: (orderReference) => {
+                onPaymentSelect: orderReference => {
                     this._handlePaymentSelect(orderReference, onPaymentSelect);
                 },
                 onReady: () => {
@@ -137,7 +137,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             if (referenceId) {
                 walletOptions.amazonOrderReferenceId = referenceId;
             } else {
-                walletOptions.onOrderReferenceCreate = (orderReference) => {
+                walletOptions.onOrderReferenceCreate = orderReference => {
                     this._store.dispatch(
                         this._remoteCheckoutActionCreator.setCheckoutMeta(this._paymentMethod!.id, {
                             referenceId: orderReference.getAmazonOrderReferenceId(),

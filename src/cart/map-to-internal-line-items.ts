@@ -9,7 +9,7 @@ export default function mapToInternalLineItems(itemMap: LineItemMap, existingIte
     return (Object.keys(itemMap) as Array<keyof LineItemMap>)
         .reduce((result, key) => [
             ...result,
-            ...(itemMap[key] as LineItem[]).map((item) => {
+            ...(itemMap[key] as LineItem[]).map(item => {
                 const existingItem = find(existingItems, { id: item.id })!;
 
                 return mapToInternalLineItem(item, existingItem, mapToInternalLineItemType(key));

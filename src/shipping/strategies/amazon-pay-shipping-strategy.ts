@@ -48,7 +48,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
                 const onReady = () => {
                     this._createAddressBook(options)
-                        .then((addressBook) => {
+                        .then(addressBook => {
                             this._addressBook = addressBook;
                             resolve();
                         })
@@ -97,14 +97,14 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 },
                 scope: 'payments:billing_address payments:shipping_address payments:widget profile',
                 sellerId: merchantId,
-                onAddressSelect: (orderReference) => {
+                onAddressSelect: orderReference => {
                     this._handleAddressSelect(orderReference, onAddressSelect, onError);
                 },
-                onError: (error) => {
+                onError: error => {
                     reject(error);
                     this._handleError(error, onError);
                 },
-                onOrderReferenceCreate: (orderReference) => {
+                onOrderReferenceCreate: orderReference => {
                     this._handleOrderReferenceCreate(orderReference);
                 },
                 onReady: () => {
@@ -152,7 +152,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             .then(() => this._store.dispatch(
                 createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId })
             ))
-            .catch((error) => this._store.dispatch(
+            .catch(error => this._store.dispatch(
                 createErrorAction(ShippingStrategyActionType.UpdateAddressFailed, error, { methodId })
             ));
     }

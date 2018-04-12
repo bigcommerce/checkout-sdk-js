@@ -25,7 +25,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.tokenizeCard = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card' }));
         braintreePaymentProcessorMock.verifyCard = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card' }));
-        braintreePaymentProcessorMock.appendSessionId = jest.fn((tokenizedCard) => tokenizedCard.then((card) => ({ ...card, deviceSessionId: 'my_session_id' })));
+        braintreePaymentProcessorMock.appendSessionId = jest.fn(tokenizedCard => tokenizedCard.then(card => ({ ...card, deviceSessionId: 'my_session_id' })));
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
         paymentMethodMock = { ...getBraintree(), clientToken: 'myToken' };
