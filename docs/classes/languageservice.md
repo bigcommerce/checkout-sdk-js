@@ -24,7 +24,6 @@
 
 
 
-*Defined in [checkout-sdk.d.ts:567](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L567)*
 
 
 
@@ -46,7 +45,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:564](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L564)*
 
 
 
@@ -76,7 +74,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:568](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L568)*
 
 
 

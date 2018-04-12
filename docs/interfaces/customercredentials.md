@@ -12,7 +12,6 @@
 
 **●  email**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:300](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L300)*
 
 
 
@@ -26,7 +25,6 @@ ___
 
 **●  password**:  *`undefined`⎮`string`* 
 
-*Defined in [checkout-sdk.d.ts:301](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L301)*
 
 
 

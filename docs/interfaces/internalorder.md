@@ -25,9 +25,6 @@
 
 **●  callbackUrl**:  *`string`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[callbackUrl](internalincompleteorder.md#callbackurl)*
-
-*Defined in [checkout-sdk.d.ts:445](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L445)*
 
 
 
@@ -41,7 +38,6 @@ ___
 
 **●  coupon**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:478](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L478)*
 
 
 #### Type declaration
@@ -72,7 +68,6 @@ ___
 
 **●  currency**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:472](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L472)*
 
 
 
@@ -86,7 +81,6 @@ ___
 
 **●  customerCanBeCreated**:  *`boolean`* 
 
-*Defined in [checkout-sdk.d.ts:473](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L473)*
 
 
 
@@ -100,9 +94,6 @@ ___
 
 **●  customerCreated**:  *`boolean`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[customerCreated](internalincompleteorder.md#customercreated)*
-
-*Defined in [checkout-sdk.d.ts:441](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L441)*
 
 
 
@@ -116,7 +107,6 @@ ___
 
 **●  discount**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:482](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L482)*
 
 
 #### Type declaration
@@ -147,7 +137,6 @@ ___
 
 **●  discountNotifications**:  *`Array`.<`object`>* 
 
-*Defined in [checkout-sdk.d.ts:486](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L486)*
 
 
 
@@ -161,7 +150,6 @@ ___
 
 **●  giftCertificate**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:491](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L491)*
 
 
 #### Type declaration
@@ -192,7 +180,6 @@ ___
 
 **●  grandTotal**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:521](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L521)*
 
 
 #### Type declaration
@@ -223,7 +210,6 @@ ___
 
 **●  handling**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:517](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L517)*
 
 
 #### Type declaration
@@ -254,9 +240,6 @@ ___
 
 **●  hasDigitalItems**:  *`boolean`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[hasDigitalItems](internalincompleteorder.md#hasdigitalitems)*
-
-*Defined in [checkout-sdk.d.ts:442](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L442)*
 
 
 
@@ -270,7 +253,6 @@ ___
 
 **●  id**:  *`number`* 
 
-*Defined in [checkout-sdk.d.ts:470](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L470)*
 
 
 
@@ -284,9 +266,6 @@ ___
 
 **●  isComplete**:  *`boolean`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[isComplete](internalincompleteorder.md#iscomplete)*
-
-*Defined in [checkout-sdk.d.ts:444](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L444)*
 
 
 
@@ -300,9 +279,6 @@ ___
 
 **●  isDownloadable**:  *`boolean`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[isDownloadable](internalincompleteorder.md#isdownloadable)*
-
-*Defined in [checkout-sdk.d.ts:443](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L443)*
 
 
 
@@ -316,7 +292,6 @@ ___
 
 **●  items**:  *[InternalLineItem](internallineitem.md)[]* 
 
-*Defined in [checkout-sdk.d.ts:471](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L471)*
 
 
 
@@ -330,9 +305,6 @@ ___
 
 **●  orderId**:  *`number`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[orderId](internalincompleteorder.md#orderid)*
-
-*Defined in [checkout-sdk.d.ts:421](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L421)*
 
 
 
@@ -346,9 +318,6 @@ ___
 
 **●  payment**:  *`object`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[payment](internalincompleteorder.md#payment)*
-
-*Defined in [checkout-sdk.d.ts:423](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L423)*
 
 
 #### Type declaration
@@ -400,7 +369,6 @@ ___
 
 **●  shipping**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:495](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L495)*
 
 
 #### Type declaration
@@ -452,9 +420,6 @@ ___
 
 **●  socialData**:  *`object`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[socialData](internalincompleteorder.md#socialdata)*
-
-*Defined in [checkout-sdk.d.ts:430](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L430)*
 
 
 #### Type declaration
@@ -520,9 +485,6 @@ ___
 
 **●  status**:  *`string`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[status](internalincompleteorder.md#status-1)*
-
-*Defined in [checkout-sdk.d.ts:440](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L440)*
 
 
 
@@ -536,7 +498,6 @@ ___
 
 **●  storeCredit**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:502](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L502)*
 
 
 #### Type declaration
@@ -560,7 +521,6 @@ ___
 
 **●  subtotal**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:474](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L474)*
 
 
 #### Type declaration
@@ -591,7 +551,6 @@ ___
 
 **●  taxSubtotal**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:505](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L505)*
 
 
 #### Type declaration
@@ -622,7 +581,6 @@ ___
 
 **●  taxTotal**:  *`object`* 
 
-*Defined in [checkout-sdk.d.ts:513](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L513)*
 
 
 #### Type declaration
@@ -653,7 +611,6 @@ ___
 
 **●  taxes**:  *`Array`.<`object`>* 
 
-*Defined in [checkout-sdk.d.ts:509](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L509)*
 
 
 
@@ -667,9 +624,6 @@ ___
 
 **●  token**:  *`string`* 
 
-*Inherited from [InternalIncompleteOrder](internalincompleteorder.md).[token](internalincompleteorder.md#token)*
-
-*Defined in [checkout-sdk.d.ts:422](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L422)*
 
 
 

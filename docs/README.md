@@ -22,6 +22,8 @@
 * [CreditCard](interfaces/creditcard.md)
 * [CustomerCredentials](interfaces/customercredentials.md)
 * [DiscountNotification](interfaces/discountnotification.md)
+* [FormField](interfaces/formfield.md)
+* [FormFields](interfaces/formfields.md)
 * [InternalAddress](interfaces/internaladdress.md)
 * [InternalCart](interfaces/internalcart.md)
 * [InternalCoupon](interfaces/internalcoupon.md)
@@ -33,9 +35,17 @@
 * [InternalQuote](interfaces/internalquote.md)
 * [InternalShippingOption](interfaces/internalshippingoption.md)
 * [InternalShippingOptionList](interfaces/internalshippingoptionlist.md)
+* [Item](interfaces/item.md)
 * [LanguageConfig](interfaces/languageconfig.md)
+* [LegacyCheckout](interfaces/legacycheckout.md)
+* [LegacyConfig](interfaces/legacyconfig.md)
+* [LegacyCurrency](interfaces/legacycurrency.md)
+* [LegacyShopperCurrency](interfaces/legacyshoppercurrency.md)
+* [LegacyStoreConfig](interfaces/legacystoreconfig.md)
 * [Locales](interfaces/locales.md)
+* [Options](interfaces/options.md)
 * [OrderRequestBody](interfaces/orderrequestbody.md)
+* [PasswordRequirements](interfaces/passwordrequirements.md)
 * [Payment](interfaces/payment.md)
 * [PaymentMethod](interfaces/paymentmethod.md)
 * [PaymentMethodConfig](interfaces/paymentmethodconfig.md)
@@ -67,7 +77,6 @@
 
 **Τ PaymentInstrument**:  *[CreditCard](interfaces/creditcard.md)⎮[TokenizedCreditCard](interfaces/tokenizedcreditcard.md)⎮[VaultedInstrument](interfaces/vaultedinstrument.md)* 
 
-*Defined in [checkout-sdk.d.ts:592](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L592)*
 
 
 
@@ -85,7 +94,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:277](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L277)*
 
 
 
@@ -115,7 +123,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:281](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L281)*
 
 
 
@@ -145,7 +152,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:283](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L283)*
 
 
 

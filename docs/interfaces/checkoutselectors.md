@@ -12,7 +12,6 @@
 
 **●  checkout**:  *[CheckoutSelector](../classes/checkoutselector.md)* 
 
-*Defined in [checkout-sdk.d.ts:152](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L152)*
 
 
 
@@ -26,7 +25,6 @@ ___
 
 **●  errors**:  *[CheckoutErrorSelector](../classes/checkouterrorselector.md)* 
 
-*Defined in [checkout-sdk.d.ts:153](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L153)*
 
 
 
@@ -40,7 +38,6 @@ ___
 
 **●  statuses**:  *[CheckoutStatusSelector](../classes/checkoutstatusselector.md)* 
 
-*Defined in [checkout-sdk.d.ts:154](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L154)*
 
 
 
