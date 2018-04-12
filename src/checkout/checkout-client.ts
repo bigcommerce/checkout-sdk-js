@@ -13,6 +13,8 @@ import { PaymentMethodRequestSender } from '../payment';
 import { QuoteRequestSender } from '../quote';
 import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
 
+import CheckoutRequestSender from './checkout-request-sender';
+
 // Convert this file into TypeScript properly
 // i.e.: Response<T>
 export default class CheckoutClient {
@@ -22,6 +24,7 @@ export default class CheckoutClient {
     constructor(
         private _billingAddressRequestSender: BillingAddressRequestSender,
         private _cartRequestSender: CartRequestSender,
+        private _checkoutRequestSender: CheckoutRequestSender,
         private _configRequestSender: ConfigRequestSender,
         private _countryRequestSender: CountryRequestSender,
         private _couponRequestSender: CouponRequestSender,
@@ -35,7 +38,11 @@ export default class CheckoutClient {
         private _shippingOptionRequestSender: ShippingOptionRequestSender
     ) {}
 
-    loadCheckout(options?: RequestOptions): Promise<Response> {
+    loadCheckout(id: string, options?: RequestOptions): Promise<Response> {
+        return this._checkoutRequestSender.loadCheckout(id, options);
+    }
+
+    loadQuote(options?: RequestOptions): Promise<Response> {
         return this._quoteRequestSender.loadQuote(options);
     }
 
@@ -45,6 +52,10 @@ export default class CheckoutClient {
 
     loadOrder(orderId: number, options?: RequestOptions): Promise<Response> {
         return this._orderRequestSender.loadOrder(orderId, options);
+    }
+
+    loadInternalOrder(orderId: number, options?: RequestOptions): Promise<Response> {
+        return this._orderRequestSender.loadInternalOrder(orderId, options);
     }
 
     submitOrder(body: OrderRequestBody, options?: RequestOptions): Promise<Response> {
@@ -95,20 +106,20 @@ export default class CheckoutClient {
         return this._customerRequestSender.signOutCustomer(options);
     }
 
-    applyCoupon(code: string, options?: RequestOptions): Promise<Response> {
-        return this._couponRequestSender.applyCoupon(code, options);
+    applyCoupon(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
+        return this._couponRequestSender.applyCoupon(checkoutId, code, options);
     }
 
-    removeCoupon(code: string, options?: RequestOptions): Promise<Response> {
-        return this._couponRequestSender.removeCoupon(code, options);
+    removeCoupon(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
+        return this._couponRequestSender.removeCoupon(checkoutId, code, options);
     }
 
-    applyGiftCertificate(code: string, options?: RequestOptions): Promise<Response> {
-        return this._giftCertificateRequestSender.applyGiftCertificate(code, options);
+    applyGiftCertificate(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
+        return this._giftCertificateRequestSender.applyGiftCertificate(checkoutId, code, options);
     }
 
-    removeGiftCertificate(code: string, options?: RequestOptions): Promise<Response> {
-        return this._giftCertificateRequestSender.removeGiftCertificate(code, options);
+    removeGiftCertificate(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
+        return this._giftCertificateRequestSender.removeGiftCertificate(checkoutId, code, options);
     }
 
     loadConfig(options?: RequestOptions): Promise<Response> {

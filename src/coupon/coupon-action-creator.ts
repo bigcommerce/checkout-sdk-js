@@ -15,13 +15,13 @@ export default class CouponActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    applyCoupon(code: string, options?: RequestOptions): Observable<Action> {
+    applyCoupon(checkoutId: string, code: string, options?: RequestOptions): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.APPLY_COUPON_REQUESTED));
 
-            this._checkoutClient.applyCoupon(code, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.APPLY_COUPON_SUCCEEDED, body.data));
+            this._checkoutClient.applyCoupon(checkoutId, code, options)
+                .then(({ body }) => {
+                    observer.next(createAction(actionTypes.APPLY_COUPON_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch((response) => {
@@ -30,13 +30,13 @@ export default class CouponActionCreator {
         });
     }
 
-    removeCoupon(code: string, options?: RequestOptions): Observable<Action> {
+    removeCoupon(checkoutId: string, code: string, options?: RequestOptions): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.REMOVE_COUPON_REQUESTED));
 
-            this._checkoutClient.removeCoupon(code, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.REMOVE_COUPON_SUCCEEDED, body.data));
+            this._checkoutClient.removeCoupon(checkoutId, code, options)
+                .then(({ body }) => {
+                    observer.next(createAction(actionTypes.REMOVE_COUPON_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch((response) => {

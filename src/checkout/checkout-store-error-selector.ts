@@ -12,14 +12,17 @@ import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
+import CheckoutSelector from './checkout-selector';
+
 @selector
-export default class CheckoutErrorSelector {
+export default class CheckoutStoreErrorSelector {
     /**
      * @internal
      */
     constructor(
         private _billingAddress: BillingAddressSelector,
         private _cart: CartSelector,
+        private _checkout: CheckoutSelector,
         private _config: ConfigSelector,
         private _countries: CountrySelector,
         private _coupon: CouponSelector,
@@ -68,7 +71,7 @@ export default class CheckoutErrorSelector {
     }
 
     getLoadCheckoutError(): Error | undefined {
-        return this._quote.getLoadError();
+        return this._quote.getLoadError() || this._checkout.getLoadError();
     }
 
     getSubmitOrderError(): Error | undefined {

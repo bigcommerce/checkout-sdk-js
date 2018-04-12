@@ -29,11 +29,13 @@ describe('paymentMethodReducer()', () => {
         const action = {
             type: actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED,
             payload: response.data,
+            meta: response.meta,
         };
 
         expect(paymentMethodReducer(initialState, action)).toEqual({
             ...initialState,
             data: action.payload.paymentMethods,
+            meta: action.meta,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });

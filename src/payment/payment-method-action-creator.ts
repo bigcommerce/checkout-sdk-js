@@ -21,7 +21,7 @@ export default class PaymentMethodActionCreator {
 
             this._checkoutClient.loadPaymentMethods(options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED, body.data));
+                    observer.next(createAction(actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED, body.data, body.meta));
                     observer.complete();
                 })
                 .catch((response) => {
