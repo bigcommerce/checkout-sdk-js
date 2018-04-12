@@ -1,34 +1,11 @@
 {
-    "extends": "tslint:recommended",
+    "extends": "@bigcommerce/tslint-config",
     "rules": {
-        "interface-name": [true, "never-prefix"],
+        "arrow-parens": true,
         "max-line-length": false,
-        "member-access": [true, "no-public"],
         "no-empty": false,
-        "no-namespace": [true, "allow-declarations"],
         "no-reference": false,
         "no-shadowed-variable": false,
-        "object-literal-sort-keys": false,
-        "ordered-imports": [
-            true,
-            {
-                "grouped-imports": true,
-                "import-sources-order": "lowercase-first",
-                "named-imports-order": "lowercase-first"
-            }
-        ],
-        "quotemark": [true, "single"],
-        "trailing-comma": [
-            true,
-            {
-                "multiline": {
-                    "arrays": "always",
-                    "functions": "never",
-                    "objects": "always",
-                    "typeLiterals": "always"
-                }
-            }
-        ],
-        "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
+        "object-literal-sort-keys": false
     }
 }

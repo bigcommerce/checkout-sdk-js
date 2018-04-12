@@ -59,6 +59,7 @@
     "tslib": "^1.8.0"
   },
   "devDependencies": {
+    "@bigcommerce/tslint-config": "git+ssh://git@github.com/bigcommerce/tslint-config.git#1.0.0",
     "@microsoft/api-extractor": "^5.6.1",
     "@types/jest": "^21.1.10",
     "@types/node": "^6.0.101",
