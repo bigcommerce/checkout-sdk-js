@@ -1,3 +1,5 @@
+import LegacyConfig from './legacy-config';
+
 /**
  * @todo Convert this file into TypeScript properly
  */
@@ -10,10 +12,7 @@ export default class ConfigSelector {
         private _config: any = {}
     ) {}
 
-    /**
-     * @return {Config}
-     */
-    getConfig(): any {
+    getConfig(): LegacyConfig | undefined {
         return this._config.data;
     }
 

@@ -48,16 +48,25 @@ As our Storefront Web APIs currently don't support CORS, you may not be able to 
 Below are a few examples showing you some of the things you can do with the library.
 
 
-### Initialize checkout
+### Initialize service
 
-To create a `CheckoutService` instance and load the initial checkout state:
+To create a `CheckoutService` instance and load the initial configuration:
 
 ```js
 import { createCheckoutService } from '@bigcommerce/checkout-sdk';
 
 const service = createCheckoutService();
 
+service.loadConfig();
+```
+
+### Initialize state
+
+Once the service has been initialized, you can either initialize the checkout or the order state.
+
+```js
 service.loadCheckout();
+service.loadOrder();
 ```
 
 ### Subscribe to data changes
