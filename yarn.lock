@@ -5017,9 +5017,9 @@ uuid@^3.0.0, uuid@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
 
-"validate-commits@git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.1.0":
-  version "1.1.0"
-  resolved "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#ffdc7c72ba529ba8c3652b376ca3b1b7382bb109"
+"validate-commits@git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.4.0":
+  version "1.4.0"
+  resolved "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#7c8ef0b8a5b7efe7fadee0dd90f8dfa874207291"
   dependencies:
     chalk "^2.1.0"
 
