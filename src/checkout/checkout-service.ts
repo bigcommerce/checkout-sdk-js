@@ -67,8 +67,13 @@ export default class CheckoutService {
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
             this._store.dispatch(this._checkoutActionCreator.loadCheckout(options)),
-            this._store.dispatch(this._configActionCreator.loadConfig(options), { queueId: 'config' }),
         ]).then(() => this._store.getState());
+    }
+
+    loadConfig(options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._configActionCreator.loadConfig(options);
+
+        return this._store.dispatch(action, { queueId: 'config' });
     }
 
     loadCart(options?: RequestOptions): Promise<CheckoutSelectors> {
@@ -309,7 +314,7 @@ export default class CheckoutService {
         }
 
         const { customerId } = checkout.getCustomer()!;
-        const { storeId } = checkout.getConfig();
+        const { storeId } = checkout.getConfig()!;
         const { vaultAccessToken, vaultAccessExpiry } = checkout.getCheckoutMeta();
 
         return {

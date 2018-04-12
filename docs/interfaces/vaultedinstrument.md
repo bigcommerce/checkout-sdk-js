@@ -12,7 +12,6 @@
 
 **●  cvv**:  *`undefined`⎮`number`* 
 
-*Defined in [checkout-sdk.d.ts:636](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L636)*
 
 
 
@@ -26,7 +25,6 @@ ___
 
 **●  instrumentId**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:635](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L635)*
 
 
 

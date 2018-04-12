@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "0.17.2",
+  "version": "0.18.0",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "private": true,
@@ -33,7 +33,7 @@
     "bundle:analyze": "yarn --silent bundle -- --profile --json > webpack-stats.json && webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip",
     "bundle:watch": "yarn bundle -- --watch",
     "bundle-dts": "tsc --outDir temp --declaration && api-extractor run && rm -rf temp",
-    "docs": "typedoc --theme markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected dist/checkout-sdk.d.ts",
+    "docs": "typedoc --theme markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected --mdHideSources dist/checkout-sdk.d.ts",
     "lint": "yarn lint:js && yarn lint:ts",
     "lint:js": "eslint src --config eslintrc.json",
     "lint:ts": "tslint 'src/**/*.ts' --config tslint.json && tsc --noEmit",
@@ -47,7 +47,7 @@
     "validate-dependencies": "yarn install --check-files --frozen-lockfile"
   },
   "dependencies": {
-    "@bigcommerce/bigpay-client": "git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#2.10.2",
+    "@bigcommerce/bigpay-client": "git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#2.11.0",
     "@bigcommerce/data-store": "git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.3",
     "@bigcommerce/form-poster": "git+ssh://git@github.com/bigcommerce/form-poster-js.git#1.1.2",
     "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.2",

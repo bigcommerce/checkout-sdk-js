@@ -1,5 +1,5 @@
 import { configReducer } from './index';
-import { getConfigState } from './configs.mock';
+import { getConfigState, getLegacyAppConfig } from './configs.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as configActionTypes from './config-action-types';
 
@@ -27,7 +27,13 @@ describe('configReducer()', () => {
         };
 
         expect(configReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload,
+            data: Object.assign({},
+                getLegacyAppConfig(), {
+                    storeConfig: {
+                        formFields: action.payload.storeConfig.formFields,
+                    },
+                }
+            ),
             statuses: { isLoading: false },
         }));
     });

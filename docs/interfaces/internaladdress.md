@@ -12,7 +12,6 @@
 
 **●  addressLine1**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:315](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L315)*
 
 
 
@@ -26,7 +25,6 @@ ___
 
 **●  addressLine2**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:316](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L316)*
 
 
 
@@ -40,7 +38,6 @@ ___
 
 **●  city**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:317](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L317)*
 
 
 
@@ -54,7 +51,6 @@ ___
 
 **●  company**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:314](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L314)*
 
 
 
@@ -68,7 +64,6 @@ ___
 
 **●  country**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:321](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L321)*
 
 
 
@@ -82,7 +77,6 @@ ___
 
 **●  countryCode**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:322](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L322)*
 
 
 
@@ -96,7 +90,6 @@ ___
 
 **●  customFields**:  *`Array`.<`object`>* 
 
-*Defined in [checkout-sdk.d.ts:325](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L325)*
 
 
 
@@ -110,7 +103,6 @@ ___
 
 **●  firstName**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:312](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L312)*
 
 
 
@@ -124,7 +116,6 @@ ___
 
 **●  id**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:311](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L311)*
 
 
 
@@ -138,7 +129,6 @@ ___
 
 **●  lastName**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:313](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L313)*
 
 
 
@@ -152,7 +142,6 @@ ___
 
 **●  phone**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:323](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L323)*
 
 
 
@@ -166,7 +155,6 @@ ___
 
 **●  postCode**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:320](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L320)*
 
 
 
@@ -180,7 +168,6 @@ ___
 
 **●  province**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:318](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L318)*
 
 
 
@@ -194,7 +181,6 @@ ___
 
 **●  provinceCode**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:319](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L319)*
 
 
 
@@ -208,7 +194,6 @@ ___
 
 **●  type**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:324](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L324)*
 
 
 

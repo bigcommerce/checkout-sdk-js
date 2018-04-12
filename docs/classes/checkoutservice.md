@@ -27,6 +27,7 @@ TODO: Convert this file into TypeScript properly i.e.: Instrument, InitializePay
 * [loadBillingCountries](checkoutservice.md#loadbillingcountries)
 * [loadCart](checkoutservice.md#loadcart)
 * [loadCheckout](checkoutservice.md#loadcheckout)
+* [loadConfig](checkoutservice.md#loadconfig)
 * [loadInstruments](checkoutservice.md#loadinstruments)
 * [loadOrder](checkoutservice.md#loadorder)
 * [loadPaymentMethod](checkoutservice.md#loadpaymentmethod)
@@ -59,7 +60,6 @@ TODO: Convert this file into TypeScript properly i.e.: Instrument, InitializePay
 
 
 
-*Defined in [checkout-sdk.d.ts:212](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L212)*
 
 
 
@@ -90,7 +90,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:214](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L214)*
 
 
 
@@ -121,7 +120,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:203](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L203)*
 
 
 
@@ -151,7 +149,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:197](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L197)*
 
 
 
@@ -183,7 +180,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:208](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L208)*
 
 
 
@@ -213,7 +209,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:218](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L218)*
 
 
 
@@ -243,7 +238,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:192](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L192)*
 
 
 *__deprecated__*: 
@@ -277,7 +271,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:193](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L193)*
 
 
 
@@ -307,7 +300,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:178](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L178)*
 
 
 
@@ -329,7 +321,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:202](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L202)*
 
 
 
@@ -359,7 +350,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:196](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L196)*
 
 
 
@@ -391,7 +381,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:207](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L207)*
 
 
 
@@ -421,7 +410,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:200](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L200)*
 
 
 
@@ -451,7 +439,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:198](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L198)*
 
 
 
@@ -481,7 +468,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:182](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L182)*
 
 
 
@@ -511,7 +497,35 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:181](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L181)*
+
+
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| options | [RequestOptions](../interfaces/requestoptions.md)   |  - |
+
+
+
+
+
+**Returns:** `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+
+
+
+
+___
+
+<a id="loadconfig"></a>
+
+###  loadConfig
+
+► **loadConfig**(options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+
+
 
 
 
@@ -541,7 +555,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:216](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L216)*
 
 
 
@@ -563,7 +576,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:187](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L187)*
 
 
 
@@ -594,7 +606,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:195](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L195)*
 
 
 
@@ -625,7 +636,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:194](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L194)*
 
 
 
@@ -655,7 +665,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:201](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L201)*
 
 
 
@@ -685,7 +694,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:199](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L199)*
 
 
 
@@ -715,7 +723,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:206](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L206)*
 
 
 
@@ -745,7 +752,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:179](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L179)*
 
 
 
@@ -767,7 +773,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:213](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L213)*
 
 
 
@@ -798,7 +803,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:215](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L215)*
 
 
 
@@ -829,7 +833,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:209](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L209)*
 
 
 
@@ -861,7 +864,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:204](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L204)*
 
 
 
@@ -892,7 +894,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:205](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L205)*
 
 
 
@@ -922,7 +923,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:188](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L188)*
 
 
 
@@ -953,7 +953,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:180](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L180)*
 
 
 
@@ -984,7 +983,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:211](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L211)*
 
 
 
@@ -1015,7 +1013,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:210](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L210)*
 
 
 
@@ -1046,7 +1043,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:217](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L217)*
 
 
 
@@ -1076,7 +1072,6 @@ ___
 
 
 
-*Defined in [checkout-sdk.d.ts:186](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L186)*
 
 
 *__deprecated__*: 

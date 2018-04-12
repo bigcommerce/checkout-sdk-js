@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.18.0"></a>
+# [0.18.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.17.2...v0.18.0) (2018-04-12)
+
+
+### Features
+
+* **common:** CHECKOUT-3035 Initialize config using API ([d78df4e](https://github.com/bigcommerce/checkout-sdk-js/commit/d78df4e))
+* **common:** CHECKOUT-3035 Initialize config using API ([013cf59](https://github.com/bigcommerce/checkout-sdk-js/commit/013cf59))
+
+
+### BREAKING CHANGES
+
+* **common:** You now need to initialize CheckoutService calling
+loadConfig() method instead of passing a config object..
+* **common:** You now need to initialize CheckoutService calling
+loadConfig() method instead of passing a config object..
+
+
+
 <a name="0.17.2"></a>
 ## [0.17.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.17.1...v0.17.2) (2018-04-10)
 

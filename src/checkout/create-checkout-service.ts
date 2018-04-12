@@ -1,5 +1,3 @@
-/// <reference path="../payment/bigpay-client.d.ts" />
-import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressActionCreator } from '../billing';
@@ -10,7 +8,12 @@ import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
-import { createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
+import {
+    createPaymentClient,
+    createPaymentStrategyRegistry,
+    PaymentMethodActionCreator,
+    PaymentStrategyActionCreator,
+} from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import {
@@ -27,8 +30,8 @@ import createCheckoutStore from './create-checkout-store';
 
 export default function createCheckoutService(options: CheckoutServiceOptions = {}): CheckoutService {
     const client = options.client || createCheckoutClient({ locale: options.locale });
-    const store = createCheckoutStore(createInitialState({ config: options.config }), { shouldWarnMutation: options.shouldWarnMutation });
-    const paymentClient = createPaymentClient({ host: options.config && options.config.bigpayBaseUrl });
+    const store = createCheckoutStore({}, { shouldWarnMutation: options.shouldWarnMutation });
+    const paymentClient = createPaymentClient(store);
     const requestSender = createRequestSender();
 
     return new CheckoutService(
@@ -54,15 +57,6 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
 
 export interface CheckoutServiceOptions {
     client?: CheckoutClient;
-    config?: any;
     locale?: string;
     shouldWarnMutation?: boolean;
-}
-
-function createInitialState(options: CheckoutServiceOptions) {
-    return {
-        config: {
-            data: options.config,
-        },
-    };
 }

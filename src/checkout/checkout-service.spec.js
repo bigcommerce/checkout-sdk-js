@@ -229,9 +229,11 @@ describe('CheckoutService', () => {
             expect(checkoutClient.loadCheckout).toHaveBeenCalled();
             expect(checkout.getCheckout()).toEqual(getCheckout());
         });
+    });
 
+    describe('#loadConfig()', () => {
         it('loads config data', async () => {
-            const { checkout } = await checkoutService.loadCheckout();
+            const { checkout } = await checkoutService.loadConfig();
 
             expect(checkoutClient.loadConfig).toHaveBeenCalled();
             expect(checkout.getConfig()).toEqual(getAppConfig());
@@ -240,7 +242,7 @@ describe('CheckoutService', () => {
         it('dispatches load config action with queue id', async () => {
             jest.spyOn(store, 'dispatch');
 
-            await checkoutService.loadCheckout();
+            await checkoutService.loadConfig();
 
             expect(store.dispatch).toHaveBeenCalledWith(expect.any(Observable), { queueId: 'config' });
         });

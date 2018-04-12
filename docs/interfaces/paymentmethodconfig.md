@@ -12,7 +12,6 @@
 
 **●  cardCode**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [checkout-sdk.d.ts:609](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L609)*
 
 
 
@@ -26,7 +25,6 @@ ___
 
 **●  displayName**:  *`undefined`⎮`string`* 
 
-*Defined in [checkout-sdk.d.ts:610](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L610)*
 
 
 
@@ -40,7 +38,6 @@ ___
 
 **●  is3dsEnabled**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [checkout-sdk.d.ts:611](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L611)*
 
 
 
@@ -54,7 +51,6 @@ ___
 
 **●  merchantId**:  *`undefined`⎮`string`* 
 
-*Defined in [checkout-sdk.d.ts:612](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L612)*
 
 
 
@@ -68,7 +64,6 @@ ___
 
 **●  redirectUrl**:  *`undefined`⎮`string`* 
 
-*Defined in [checkout-sdk.d.ts:613](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L613)*
 
 
 
@@ -82,7 +77,6 @@ ___
 
 **●  testMode**:  *`undefined`⎮`true`⎮`false`* 
 
-*Defined in [checkout-sdk.d.ts:614](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L614)*
 
 
 

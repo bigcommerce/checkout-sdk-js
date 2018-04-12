@@ -111,10 +111,7 @@ declare class CheckoutSelector {
     getCheckoutMeta(): any;
     getOrder(): InternalOrder | undefined;
     getQuote(): InternalQuote | undefined;
-    /**
-     * @return {Config}
-     */
-    getConfig(): any;
+    getConfig(): LegacyConfig | undefined;
     getShippingAddress(): InternalAddress | undefined;
     getShippingOptions(): InternalShippingOptionList | undefined;
     getSelectedShippingOption(): InternalShippingOption | undefined;
@@ -179,6 +176,7 @@ export declare class CheckoutService {
     notifyState(): void;
     subscribe(subscriber: (state: CheckoutSelectors) => void, ...filters: Array<(state: CheckoutSelectors) => any>): () => void;
     loadCheckout(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadConfig(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadCart(options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * @deprecated
@@ -221,7 +219,6 @@ export declare class CheckoutService {
 
 declare interface CheckoutServiceOptions {
     client?: CheckoutClient;
-    config?: any;
     locale?: string;
     shouldWarnMutation?: boolean;
 }
@@ -305,6 +302,24 @@ declare interface DiscountNotification {
     message: string;
     messageHtml: string;
     type: string;
+}
+
+declare interface FormField {
+    id: string;
+    name: string;
+    custom: boolean;
+    label: string;
+    required: boolean;
+    default?: string;
+    type?: string;
+    fieldType?: string;
+    itemtype?: string;
+    options?: Options;
+}
+
+declare interface FormFields {
+    shippingAddressFields: FormField[];
+    billingAddressFields: FormField[];
 }
 
 declare interface InternalAddress {
@@ -548,6 +563,11 @@ declare interface InternalShippingOptionList {
     [key: string]: InternalShippingOption[];
 }
 
+declare interface Item {
+    value: string;
+    label: string;
+}
+
 declare interface LanguageConfig {
     defaultTranslations: Translations;
     locale: string;
@@ -572,14 +592,90 @@ export declare class LanguageService {
     private _hasTranslations();
 }
 
+declare interface LegacyCheckout {
+    enableOrderComments: number;
+    enableTermsAndConditions: number;
+    guestCheckoutEnabled: number;
+    isCardVaultingEnabled: boolean;
+    isPaymentRequestEnabled: boolean;
+    isPaymentRequestCanMakePaymentEnabled: boolean;
+    orderTermsAndConditions: string;
+    orderTermsAndConditionsLink: string;
+    orderTermsAndConditionsType: string;
+    shippingQuoteFailedMessage: string;
+    realtimeShippingProviders: string[];
+    remoteCheckoutProviders: string[];
+}
+
+declare interface LegacyConfig {
+    bigpayBaseUrl: string;
+    cartLink: string;
+    checkoutLink: string;
+    cdnPath: string;
+    checkout: LegacyCheckout;
+    clientSidePaymentProviders: string[];
+    currency: LegacyCurrency;
+    shopperCurrency: LegacyShopperCurrency;
+    storeConfig: LegacyStoreConfig;
+    defaultNewsletterSignup: boolean;
+    imageDirectory: string;
+    isAngularDebuggingEnabled: boolean;
+    passwordRequirements: PasswordRequirements;
+    orderConfirmationLink: string;
+    orderEmail: string;
+    shopPath: string;
+    showNewsletterSignup: boolean;
+    storeCountry: string;
+    storeHash: string;
+    storeId: string;
+    storeName: string;
+    storePhoneNumber: string;
+    storeLanguage: string;
+}
+
+declare interface LegacyCurrency {
+    code: string;
+    decimal_places: string;
+    decimal_separator: string;
+    symbol_location: string;
+    symbol: string;
+    thousands_separator: string;
+}
+
+declare interface LegacyShopperCurrency {
+    code: string;
+    symbol_location: string;
+    symbol: string;
+    decimal_places: string;
+    decimal_separator: string;
+    thousands_separator: string;
+    exchange_rate: string;
+}
+
+declare interface LegacyStoreConfig {
+    formFields: FormFields;
+}
+
 declare interface Locales {
     [key: string]: string;
+}
+
+declare interface Options {
+    helperLabel: string;
+    items: Item[];
 }
 
 declare interface OrderRequestBody {
     payment: Payment;
     useStoreCredit?: boolean;
     customerMessage?: string;
+}
+
+declare interface PasswordRequirements {
+    alpha: string;
+    numeric: string;
+    minlength: number;
+    error: string;
 }
 
 declare interface Payment {

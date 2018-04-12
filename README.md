@@ -16,7 +16,7 @@ The Checkout SDK is a JavaScript wrapper for our [Storefront Checkout API](https
 * Klarna
 * AfterPay
 
-Using these tools in conjunction with your favorite frontend framework, it’s possible to build a complete checkout experience specific to a single store, or a checkout replacement that’s augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/cornerstone/compare/master...davidchin:checkout_sdk_demo) in React to get you started.
+Using these tools in conjunction with your favorite frontend framework, it’s possible to build a complete checkout experience specific to a single store, or a checkout replacement that’s augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) in React to get you started.
 
 
 ## Install
@@ -48,16 +48,25 @@ As our Storefront Web APIs currently don't support CORS, you may not be able to 
 Below are a few examples showing you some of the things you can do with the library.
 
 
-### Initialize checkout
+### Initialize service
 
-To create a `CheckoutService` instance and load the initial checkout state:
+To create a `CheckoutService` instance and load the initial configuration:
 
 ```js
 import { createCheckoutService } from '@bigcommerce/checkout-sdk';
 
 const service = createCheckoutService();
 
+service.loadConfig();
+```
+
+### Initialize state
+
+Once the service has been initialized, you can either initialize the checkout or the order state.
+
+```js
 service.loadCheckout();
+service.loadOrder();
 ```
 
 ### Subscribe to data changes
@@ -218,7 +227,7 @@ await service.submitOrder({ payment });
 
 ## See also
 
-* [Cornerstone example](https://github.com/bigcommerce/cornerstone/compare/master...davidchin:checkout_sdk_demo) - A sample checkout app written in React.
+* [Example app](https://github.com/bigcommerce/checkout-sdk-js-example) - A sample checkout app written in React.
 * [Storefront APIs](https://developer.bigcommerce.com/api/v3/storefront.html) - The documentation for Storefront Checkout & Cart Web APIs.
 
 

@@ -6,10 +6,13 @@ export function getLegacyAppConfig() {
         cartLink: 'https://store-k1drp8k8.bcapp.dev/cart.php',
         checkoutLink: '/checkout',
         cdnPath: 'https://cdn.bcapp.dev/rHEAD',
+        imageDirectory: 'product_images',
+        isAngularDebuggingEnabled: false,
         checkout: {
             enableOrderComments: 1,
             enableTermsAndConditions: 0,
             guestCheckoutEnabled: 1,
+            isCardVaultingEnabled: true,
             isPaymentRequestEnabled: false,
             isPaymentRequestCanMakePaymentEnabled: false,
             orderTermsAndConditions: '',
@@ -82,9 +85,6 @@ export function getLegacyAppConfig() {
     };
 }
 
-/**
- * @returns {Config}
- */
 export function getAppConfig() {
     return {
         context: {

@@ -12,7 +12,6 @@
 
 **●  code**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:410](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L410)*
 
 
 
@@ -26,7 +25,6 @@ ___
 
 **●  discountedAmount**:  *`number`* 
 
-*Defined in [checkout-sdk.d.ts:411](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L411)*
 
 
 
@@ -40,7 +38,6 @@ ___
 
 **●  giftCertificate**:  *`undefined`⎮`object`* 
 
-*Defined in [checkout-sdk.d.ts:413](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L413)*
 
 
 
@@ -54,7 +51,6 @@ ___
 
 **●  remainingBalance**:  *`number`* 
 
-*Defined in [checkout-sdk.d.ts:412](https://github.com/bigcommerce/checkout-sdk-js/blob/66bc013/dist/checkout-sdk.d.ts#L412)*
 
 
 
