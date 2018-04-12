@@ -25,7 +25,7 @@ export default class CustomerActionCreator {
                     observer.next(createAction(actionTypes.SIGN_IN_CUSTOMER_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.SIGN_IN_CUSTOMER_FAILED, response));
                 });
         });
@@ -40,7 +40,7 @@ export default class CustomerActionCreator {
                     observer.next(createAction(actionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.SIGN_OUT_CUSTOMER_FAILED, response));
                 });
         });

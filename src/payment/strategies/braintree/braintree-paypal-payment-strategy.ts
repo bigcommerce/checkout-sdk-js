@@ -74,6 +74,6 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
             .paypal(amount, storeLanguage, currency.code, this._credit);
 
         return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
-            .then((paymentData) => ({ ...payment, paymentData: { ...paymentData, method } }));
+            .then(paymentData => ({ ...payment, paymentData: { ...paymentData, method } }));
     }
 }

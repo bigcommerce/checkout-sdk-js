@@ -104,7 +104,7 @@ describe('AfterpayPaymentStrategy', () => {
 
             strategy.execute(payload).then(successHandler);
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise(resolve => process.nextTick(resolve));
         });
 
         it('displays the afterpay modal', () => {
@@ -132,7 +132,7 @@ describe('AfterpayPaymentStrategy', () => {
 
             strategy.execute(payload).catch(errorHandler);
 
-            await new Promise((resolve) => process.nextTick(resolve));
+            await new Promise(resolve => process.nextTick(resolve));
 
             expect(errorHandler).toHaveBeenCalled();
         });

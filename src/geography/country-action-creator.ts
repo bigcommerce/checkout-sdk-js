@@ -24,7 +24,7 @@ export default class CountryActionCreator {
                     observer.next(createAction(actionTypes.LOAD_COUNTRIES_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_COUNTRIES_FAILED, response));
                 });
         });

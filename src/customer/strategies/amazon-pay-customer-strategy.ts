@@ -44,7 +44,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
                 const onReady = () => {
                     this._signInButton = this._createSignInButton({
                         ...options as InitializeWidgetOptions,
-                        onError: (error) => {
+                        onError: error => {
                             reject(error);
                             onError(error);
                         },
@@ -105,7 +105,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             authorization: () => {
                 this._handleAuthorization(initializationData);
             },
-            onError: (error) => {
+            onError: error => {
                 this._handleError(error, onError);
             },
         });

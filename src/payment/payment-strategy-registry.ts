@@ -49,7 +49,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
             return false;
         }
 
-        return !some(this._clientSidePaymentProviders, (id) =>
+        return !some(this._clientSidePaymentProviders, id =>
             paymentMethod.id === id || paymentMethod.gateway === id
         );
     }

@@ -41,7 +41,7 @@ describe('AmazonPayCustomerStrategy', () => {
         ) {
             const element = document.getElementById(container);
 
-            element.addEventListener('authorize', (event) => {
+            element.addEventListener('authorize', event => {
                 options.authorization();
             });
 
@@ -161,7 +161,7 @@ describe('AmazonPayCustomerStrategy', () => {
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(remoteCheckoutRequestSender.trackAuthorizationEvent).toHaveBeenCalled();
     });
@@ -172,7 +172,7 @@ describe('AmazonPayCustomerStrategy', () => {
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(authorizeSpy).toHaveBeenCalledWith({
             popup: false,

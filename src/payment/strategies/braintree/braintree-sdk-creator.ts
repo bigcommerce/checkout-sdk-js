@@ -25,7 +25,7 @@ export default class BraintreeSDKCreator {
 
         if (!this._client) {
             this._client = this._braintreeScriptLoader.loadClient()
-                .then((client) => client.create({ authorization: this._clientToken }));
+                .then(client => client.create({ authorization: this._clientToken }));
         }
 
         return this._client;
@@ -62,7 +62,7 @@ export default class BraintreeSDKCreator {
                 this._braintreeScriptLoader.loadDataCollector(),
             ])
             .then(([client, dataCollector]) => dataCollector.create({ client, kount: true }))
-            .catch((error) => {
+            .catch(error => {
                 if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
                     return { deviceData: undefined, teardown: () => Promise.resolve() };
                 }
@@ -86,7 +86,7 @@ export default class BraintreeSDKCreator {
 
     private _teardown(module?: Promise<Braintree.Module>) {
         return module ?
-            module.then((mod) => mod.teardown()) :
+            module.then(mod => mod.teardown()) :
             Promise.resolve();
     }
 }

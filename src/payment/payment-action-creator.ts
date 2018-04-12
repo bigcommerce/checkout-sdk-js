@@ -30,7 +30,7 @@ export default class PaymentActionCreator {
                     observer.next(createAction(actionTypes.SUBMIT_PAYMENT_SUCCEEDED, body));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.SUBMIT_PAYMENT_FAILED, response));
                 });
         });

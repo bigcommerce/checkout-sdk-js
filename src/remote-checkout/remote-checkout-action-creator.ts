@@ -25,7 +25,7 @@ export default class RemoteCheckoutActionCreator {
                     observer.next(createAction(actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED, body, { methodId }));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_BILLING_FAILED, response, { methodId }));
                 });
         });
@@ -40,7 +40,7 @@ export default class RemoteCheckoutActionCreator {
                     observer.next(createAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, body, { methodId }));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED, response, { methodId }));
                 });
         });
@@ -55,7 +55,7 @@ export default class RemoteCheckoutActionCreator {
                     observer.next(createAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED, body, { methodId }));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED, response, { methodId }));
                 });
         });
@@ -70,7 +70,7 @@ export default class RemoteCheckoutActionCreator {
                     observer.next(createAction(actionTypes.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.SIGN_OUT_REMOTE_CUSTOMER_FAILED, response));
                 });
         });

@@ -21,7 +21,7 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
         },
         coupon: {
             discountedAmount: existingOrder.coupon.discountedAmount,
-            coupons: checkout.cart.coupons.map((coupon) =>
+            coupons: checkout.cart.coupons.map(coupon =>
                 mapToInternalCoupon(
                     coupon,
                     find(existingOrder.coupon.coupons, { code: coupon.code })!
@@ -35,7 +35,7 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
         discountNotifications: existingOrder.discountNotifications,
         giftCertificate: {
             totalDiscountedAmount: existingOrder.giftCertificate.totalDiscountedAmount,
-            appliedGiftCertificates: checkout.giftCertificates.map((giftCertificate) =>
+            appliedGiftCertificates: checkout.giftCertificates.map(giftCertificate =>
                 mapToInternalGiftCertificate(
                     giftCertificate,
                     find(existingOrder.giftCertificate.appliedGiftCertificates, { code: giftCertificate.code })!

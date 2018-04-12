@@ -38,6 +38,10 @@
   dependencies:
     tslib "^1.8.0"
 
+"@bigcommerce/tslint-config@git+ssh://git@github.com/bigcommerce/tslint-config.git#1.0.0":
+  version "1.0.0"
+  resolved "git+ssh://git@github.com/bigcommerce/tslint-config.git#7684a2be650889f85d57d138998308de756b4d06"
+
 "@microsoft/api-extractor@^5.6.1":
   version "5.6.1"
   resolved "https://registry.yarnpkg.com/@microsoft/api-extractor/-/api-extractor-5.6.1.tgz#b984fe7317284fc11d478923eec52a6217175b75"

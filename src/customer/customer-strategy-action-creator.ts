@@ -31,7 +31,7 @@ export default class CustomerStrategyActionCreator {
                     observer.next(createAction(CustomerStrategyActionType.SignInSucceeded, undefined, meta));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(CustomerStrategyActionType.SignInFailed, error, meta));
                 });
         });
@@ -49,7 +49,7 @@ export default class CustomerStrategyActionCreator {
                     observer.next(createAction(CustomerStrategyActionType.SignOutSucceeded, undefined, meta));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(CustomerStrategyActionType.SignOutFailed, error, meta));
                 });
         });
@@ -67,7 +67,7 @@ export default class CustomerStrategyActionCreator {
                     observer.next(createAction(CustomerStrategyActionType.InitializeSucceeded, undefined, meta));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(CustomerStrategyActionType.InitializeFailed, error, meta));
                 });
         });
@@ -85,7 +85,7 @@ export default class CustomerStrategyActionCreator {
                     observer.next(createAction(CustomerStrategyActionType.DeinitializeSucceeded, undefined, meta));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(CustomerStrategyActionType.DeinitializeFailed, error, meta));
                 });
         });

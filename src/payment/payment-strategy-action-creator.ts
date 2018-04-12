@@ -23,7 +23,7 @@ export default class PaymentStrategyActionCreator {
     ) {}
 
     execute(payload: OrderRequestBody, options?: any): ThunkAction<PaymentStrategyExecuteAction> {
-        return (store) => Observable.create((observer: Observer<PaymentStrategyExecuteAction>) => {
+        return store => Observable.create((observer: Observer<PaymentStrategyExecuteAction>) => {
             const { checkout } = store.getState();
             const { payment = {} as Payment, useStoreCredit } = payload;
             const meta = { methodId: payment.name };
@@ -50,14 +50,14 @@ export default class PaymentStrategyActionCreator {
                     observer.next(createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta));
                 });
         });
     }
 
     finalize(options?: any): ThunkAction<PaymentStrategyFinalizeAction> {
-        return (store) => Observable.create((observer: Observer<PaymentStrategyFinalizeAction>) => {
+        return store => Observable.create((observer: Observer<PaymentStrategyFinalizeAction>) => {
             const { checkout } = store.getState();
             const order = checkout.getOrder();
 
@@ -80,14 +80,14 @@ export default class PaymentStrategyActionCreator {
                     observer.next(createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, meta));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(PaymentStrategyActionType.FinalizeFailed, error, meta));
                 });
         });
     }
 
     initialize(methodId: string, gatewayId?: string, options?: InitializeOptions): ThunkAction<PaymentStrategyInitializeAction> {
-        return (store) => Observable.create((observer: Observer<PaymentStrategyInitializeAction>) => {
+        return store => Observable.create((observer: Observer<PaymentStrategyInitializeAction>) => {
             const { checkout } = store.getState();
             const method = checkout.getPaymentMethod(methodId, gatewayId);
 
@@ -103,14 +103,14 @@ export default class PaymentStrategyActionCreator {
                     observer.next(createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, { methodId }));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(PaymentStrategyActionType.InitializeFailed, error, { methodId }));
                 });
         });
     }
 
     deinitialize(methodId: string, gatewayId?: string, options?: any): ThunkAction<PaymentStrategyDeinitializeAction> {
-        return (store) => Observable.create((observer: Observer<PaymentStrategyDeinitializeAction>) => {
+        return store => Observable.create((observer: Observer<PaymentStrategyDeinitializeAction>) => {
             const { checkout } = store.getState();
             const method = checkout.getPaymentMethod(methodId, gatewayId);
 
@@ -126,7 +126,7 @@ export default class PaymentStrategyActionCreator {
                     observer.next(createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, { methodId }));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(PaymentStrategyActionType.DeinitializeFailed, error, { methodId }));
                 });
         });

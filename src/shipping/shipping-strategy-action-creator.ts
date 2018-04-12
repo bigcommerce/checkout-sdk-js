@@ -20,7 +20,7 @@ export default class ShippingStrategyActionCreator {
     ) {}
 
     updateAddress(address: InternalAddress, options: ShippingActionOptions = {}): ThunkAction<ShippingStrategyUpdateAddressAction> {
-        return (store) => Observable.create((observer: Observer<ShippingStrategyUpdateAddressAction>) => {
+        return store => Observable.create((observer: Observer<ShippingStrategyUpdateAddressAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
             const methodId = options.methodId || remote.provider;
 
@@ -32,14 +32,14 @@ export default class ShippingStrategyActionCreator {
                     observer.next(createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId }));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(ShippingStrategyActionType.UpdateAddressFailed, error, { methodId }));
                 });
         });
     }
 
     selectOption(addressId: string, shippingOptionId: string, options: ShippingActionOptions = {}): ThunkAction<ShippingStrategySelectOptionAction> {
-        return (store) => Observable.create((observer: Observer<ShippingStrategySelectOptionAction>) => {
+        return store => Observable.create((observer: Observer<ShippingStrategySelectOptionAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
             const methodId = options.methodId || remote.provider;
 
@@ -51,14 +51,14 @@ export default class ShippingStrategyActionCreator {
                     observer.next(createAction(ShippingStrategyActionType.SelectOptionSucceeded, undefined, { methodId }));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(ShippingStrategyActionType.SelectOptionFailed, error, { methodId }));
                 });
         });
     }
 
     initialize(options: ShippingActionOptions = {}): ThunkAction<ShippingStrategyInitializeAction> {
-        return (store) => Observable.create((observer: Observer<ShippingStrategyInitializeAction>) => {
+        return store => Observable.create((observer: Observer<ShippingStrategyInitializeAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
             const methodId = options.methodId || remote.provider;
 
@@ -70,14 +70,14 @@ export default class ShippingStrategyActionCreator {
                     observer.next(createAction(ShippingStrategyActionType.InitializeSucceeded, undefined, { methodId }));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(ShippingStrategyActionType.InitializeFailed, error, { methodId }));
                 });
         });
     }
 
     deinitialize(options: ShippingActionOptions = {}): ThunkAction<ShippingStrategyDeinitializeAction> {
-        return (store) => Observable.create((observer: Observer<ShippingStrategyDeinitializeAction>) => {
+        return store => Observable.create((observer: Observer<ShippingStrategyDeinitializeAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
             const methodId = options.methodId || remote.provider;
 
@@ -89,7 +89,7 @@ export default class ShippingStrategyActionCreator {
                     observer.next(createAction(ShippingStrategyActionType.DeinitializeSucceeded, undefined, { methodId }));
                     observer.complete();
                 })
-                .catch((error) => {
+                .catch(error => {
                     observer.error(createErrorAction(ShippingStrategyActionType.DeinitializeFailed, error, { methodId }));
                 });
         });

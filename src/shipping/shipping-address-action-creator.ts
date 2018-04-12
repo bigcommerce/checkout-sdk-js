@@ -26,7 +26,7 @@ export default class ShippingAddressActionCreator {
                     observer.next(createAction(actionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.UPDATE_SHIPPING_ADDRESS_FAILED, response));
                 });
         });

@@ -24,7 +24,7 @@ export default class ConfigActionCreator {
                     observer.next(createAction(actionTypes.LOAD_CONFIG_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_CONFIG_FAILED, response));
                 });
         });
