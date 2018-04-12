@@ -75,7 +75,7 @@
     "typescript": "^2.7.1",
     "typescript-eslint-parser": "^9.0.1",
     "uglifyjs-webpack-plugin": "^1.1.1",
-    "validate-commits": "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.1.0",
+    "validate-commits": "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.4.0",
     "webpack": "^3.8.1",
     "webpack-bundle-analyzer": "^2.9.1",
     "webpack-node-externals": "^1.7.2"
