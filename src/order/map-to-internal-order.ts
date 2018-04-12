@@ -24,6 +24,7 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
             coupons: checkout.cart.coupons.map(coupon =>
                 mapToInternalCoupon(
                     coupon,
+                    // tslint:disable-next-line:no-non-null-assertion
                     find(existingOrder.coupon.coupons, { code: coupon.code })!
                 )
             ),
@@ -38,6 +39,7 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
             appliedGiftCertificates: checkout.giftCertificates.map(giftCertificate =>
                 mapToInternalGiftCertificate(
                     giftCertificate,
+                    // tslint:disable-next-line:no-non-null-assertion
                     find(existingOrder.giftCertificate.appliedGiftCertificates, { code: giftCertificate.code })!
                 )
             ),

@@ -131,7 +131,10 @@ describe('AmazonPayShippingStrategy', () => {
 
     it('rejects with error if initialization fails', async () => {
         const strategy = new AmazonPayShippingStrategy(store, addressActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
-        const paymentMethod = { ...getAmazonPay(), config: {} };
+        const paymentMethod = { ...getAmazonPay(), config: { merchantId: undefined } };
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
 
         try {
             await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
@@ -145,7 +148,7 @@ describe('AmazonPayShippingStrategy', () => {
         const paymentMethod = getAmazonPay();
 
         try {
-            await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+            await strategy.initialize({ container: 'addressBook123', methodId: paymentMethod.id });
         } catch (error) {
             expect(error).toBeInstanceOf(NotInitializedError);
         }

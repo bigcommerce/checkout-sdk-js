@@ -1,4 +1,8 @@
-import { CheckoutSelectors } from '../../checkout';
+import { ScriptLoader } from '@bigcommerce/script-loader';
+
+import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { MissingDataError } from '../../common/error/errors';
+import { PlaceOrderService } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -16,9 +20,9 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
      * @param {ScriptLoader} scriptLoader
      */
     constructor(
-        store: any,
-        placeOrderService: any,
-        private _scriptLoader: any
+        store: CheckoutStore,
+        placeOrderService: PlaceOrderService,
+        private _scriptLoader: ScriptLoader
     ) {
         super(store, placeOrderService);
     }
@@ -34,12 +38,13 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             .then(() => {
                 this._paypalSdk = (window as any).paypal;
 
-                const { merchantId, testMode } = this._paymentMethod!.config;
-                const environment = testMode ? 'sandbox' : 'production';
+                if (!this._paymentMethod || !this._paymentMethod.config.merchantId) {
+                    throw new MissingDataError('Unable to initialize because "paymentMethod.config.merchantId" field is missing.');
+                }
 
-                this._paypalSdk.checkout.setup(merchantId, {
+                this._paypalSdk.checkout.setup(this._paymentMethod.config.merchantId, {
                     button: 'paypal-button',
-                    environment,
+                    environment: this._paymentMethod.config.testMode ? 'sandbox' : 'production',
                 });
             })
             .then(() => super.initialize(options));
@@ -92,12 +97,16 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
     finalize(options: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { orderId } = checkout.getOrder()!;
+        const order = checkout.getOrder();
 
-        if (orderId &&
+        if (!order) {
+            throw new MissingDataError('Unable to finalize order because "order" data is missing.');
+        }
+
+        if (order.orderId &&
             this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
             this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
-            return this._placeOrderService.finalizeOrder(orderId, options);
+            return this._placeOrderService.finalizeOrder(order.orderId, options);
         }
 
         return super.finalize();
@@ -105,12 +114,16 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
     private _getPaymentStatus(): string | undefined {
         const { checkout } = this._store.getState();
-        const { payment } = checkout.getOrder()!;
+        const order = checkout.getOrder();
 
-        return payment && payment.status;
+        if (!order) {
+            throw new MissingDataError('Unable to determine payment status because "order" data is missing.');
+        }
+
+        return order.payment && order.payment.status;
     }
 
     private _isInContextEnabled(): boolean {
-        return !!this._paymentMethod!.config.merchantId;
+        return !!(this._paymentMethod && this._paymentMethod.config.merchantId);
     }
 }

@@ -73,15 +73,18 @@ describe('SquarePaymentStrategy', () => {
                 expect(scriptLoader.load).toHaveBeenCalledTimes(1);
             });
 
-            it('fails to initialize when widget config is missing', () => {
+            it('fails to initialize when widget config is missing', async () => {
                 const initOptions = {
                     paymentMethod: { ...paymentMethod,
                         initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
                     },
                 };
 
-                strategy.initialize({ paymentMethod })
-                    .catch(error => expect(error.type).toEqual('payment_method_missing_data'));
+                try {
+                    await strategy.initialize({ paymentMethod });
+                } catch (error) {
+                    expect(error.type).toEqual('invalid_argument');
+                }
             });
         });
 
@@ -115,7 +118,7 @@ describe('SquarePaymentStrategy', () => {
         describe('when form has not been initialized', () => {
             it('rejects the promise', () => {
                 strategy.execute()
-                    .catch(e => expect(e.type).toEqual('payment_method_uninitialized'));
+                    .catch(e => expect(e.type).toEqual('not_initialized'));
 
                 expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
             });

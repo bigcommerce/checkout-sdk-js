@@ -1,7 +1,7 @@
 import { omit, some } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { RequestError } from '../../common/error/errors';
+import { MissingDataError, RequestError } from '../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
 
@@ -40,7 +40,13 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
 
     finalize(options?: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { orderId, payment = {} } = checkout.getOrder()!;
+        const order = checkout.getOrder();
+
+        if (!order) {
+            throw new MissingDataError('Unable to finalize order because "order" data is missing.');
+        }
+
+        const { orderId, payment = {} } = order;
 
         if (orderId && payment.status === paymentStatusTypes.FINALIZE) {
             return this._placeOrderService.finalizeOrder(orderId, options);

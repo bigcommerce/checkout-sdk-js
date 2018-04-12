@@ -5,10 +5,10 @@ export default class CacheKeyResolver {
     getKey(...args: any[]): string {
         const { index, map, parentMaps } = this._resolveMap(...args);
 
-        if (map) {
+        if (map && map.cacheKey) {
             map.usedCount++;
 
-            return map.cacheKey!;
+            return map.cacheKey;
         }
 
         return this._generateKey(parentMaps, args.slice(index));

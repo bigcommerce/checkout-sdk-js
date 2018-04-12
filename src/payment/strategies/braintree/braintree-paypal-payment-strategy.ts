@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
-import { StandardError } from '../../../common/error/errors';
+import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../../order';
 import Payment from '../../payment';
 import PaymentStrategy, { InitializeOptions } from '../payment-strategy';
@@ -27,9 +27,14 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
         return this._placeOrderService.loadPaymentMethod(paymentId)
             .then(({ checkout }: CheckoutSelectors) => {
-                const { clientToken } = checkout.getPaymentMethod(paymentId)!;
+                this._paymentMethod = checkout.getPaymentMethod(paymentId);
 
-                this._braintreePaymentProcessor.initialize(clientToken!, options);
+                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                    throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');
+                }
+
+                this._braintreePaymentProcessor.initialize(this._paymentMethod.clientToken, options);
+
                 return this._braintreePaymentProcessor.preloadPaypal();
             })
             .then(() => super.initialize(options))
@@ -62,9 +67,16 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
     private _preparePaymentData(payment: Payment): Promise<Payment> {
         const { checkout } = this._store.getState();
-        const { amount } = checkout.getCart()!.grandTotal;
-        const { currency, storeLanguage } = checkout.getConfig()!;
-        const { method, nonce } = this._paymentMethod!;
+        const cart = checkout.getCart();
+        const config = checkout.getConfig();
+
+        if (!cart || !config || !this._paymentMethod) {
+            throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (${payment.name})" data is missing.`);
+        }
+
+        const { amount } = cart.grandTotal;
+        const { currency, storeLanguage } = config;
+        const { method, nonce } = this._paymentMethod;
 
         if (nonce) {
             return Promise.resolve({ ...payment, paymentData: { nonce, method } });

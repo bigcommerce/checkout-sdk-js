@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import CheckoutClient from '../../checkout/checkout-client';
+import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getAfterpay } from '../../payment/payment-methods.mock';
@@ -136,6 +137,16 @@ describe('AfterpayPaymentStrategy', () => {
 
             expect(errorHandler).toHaveBeenCalled();
         });
+
+        it('throws error if trying to execute before initialization', async () => {
+            await strategy.deinitialize();
+
+            try {
+                await strategy.execute(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
     });
 
     describe('#finalize()', () => {
@@ -169,6 +180,14 @@ describe('AfterpayPaymentStrategy', () => {
                 name: paymentMethod.id,
                 paymentData: { nonce },
             }, false, {});
+        });
+
+        it('throws error if unable to finalize order due to missing data', async () => {
+            try {
+                await strategy.finalize({ nonce });
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
     });
 });

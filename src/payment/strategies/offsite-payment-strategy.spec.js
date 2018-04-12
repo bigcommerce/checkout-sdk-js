@@ -1,5 +1,6 @@
 import { merge, omit } from 'lodash';
 import { createCheckoutStore } from '../../checkout';
+import { MissingDataError } from '../../common/error/errors';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
@@ -107,6 +108,14 @@ describe('OffsitePaymentStrategy', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
             expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+        }
+    });
+
+    it('throws error if unable to finalize due to missing data', async () => {
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(MissingDataError);
         }
     });
 

@@ -4,11 +4,11 @@ import { omitPrivate } from '../common/utility';
 
 import InternalAddress from './internal-address';
 
-export default function isAddressEqual(addressA: InternalAddress, addressB: InternalAddress): boolean {
+export default function isAddressEqual(addressA: Partial<InternalAddress>, addressB: Partial<InternalAddress>): boolean {
     return isEqual(normalize(addressA), normalize(addressB));
 }
 
-function normalize(address: InternalAddress): Partial<InternalAddress> {
+function normalize(address: Partial<InternalAddress>): Partial<InternalAddress> {
     const ignoredKeys = ['id', 'provinceCode'];
 
     return (Object.keys(omitPrivate(address) || {}) as Array<keyof InternalAddress>)

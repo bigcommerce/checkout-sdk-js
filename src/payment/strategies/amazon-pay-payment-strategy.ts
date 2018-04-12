@@ -9,6 +9,7 @@ import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError, RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import Payment from '../payment';
 import PaymentMethod from '../payment-method';
 
 import PaymentStrategy from './payment-strategy';
@@ -71,7 +72,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             .then(() =>
                 this._placeOrderService.submitOrder({
                     ...payload,
-                    payment: omit(payload.payment, 'paymentData'),
+                    payment: omit(payload.payment, 'paymentData') as Payment,
                 }, true, options)
             )
             .catch(error => {
@@ -126,8 +127,12 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 walletOptions.amazonOrderReferenceId = referenceId;
             } else {
                 walletOptions.onOrderReferenceCreate = orderReference => {
+                    if (!this._paymentMethod) {
+                        throw new NotInitializedError('Unable to create Amazon wallet because payment method has not been initialized.');
+                    }
+
                     this._store.dispatch(
-                        this._remoteCheckoutActionCreator.setCheckoutMeta(this._paymentMethod!.id, {
+                        this._remoteCheckoutActionCreator.setCheckoutMeta(this._paymentMethod.id, {
                             referenceId: orderReference.getAmazonOrderReferenceId(),
                         })
                     );
@@ -147,7 +152,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         const methodId = this._paymentMethod && this._paymentMethod.id;
 
         if (!methodId || !referenceId) {
-            throw new NotInitializedError();
+            throw new RemoteCheckoutSynchronizationError();
         }
 
         return this._store.dispatch(
@@ -155,12 +160,13 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         )
             .then(({ checkout }) => {
                 const { remoteCheckout = {} } = checkout.getCheckoutMeta();
+                const address = checkout.getBillingAddress();
 
                 if (remoteCheckout.billingAddress === false) {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (isAddressEqual(remoteCheckout.billingAddress, checkout.getBillingAddress()!) || !remoteCheckout.billingAddress) {
+                if (isAddressEqual(remoteCheckout.billingAddress, address || {}) || !remoteCheckout.billingAddress) {
                     return this._store.getState();
                 }
 

@@ -30,7 +30,7 @@ export default class PlaceOrderService {
         const cart = checkout.getCart();
 
         if (!cart) {
-            throw new MissingDataError();
+            throw new MissingDataError('Unable to submit order because "cart" data is missing.');
         }
 
         const action = this._orderActionCreator.submitOrder(
@@ -93,12 +93,16 @@ export default class PlaceOrderService {
             ? `${checkoutMeta.paymentAuthToken}, ${checkoutMeta.vaultAccessToken}`
             : checkoutMeta.paymentAuthToken;
 
+        if (!paymentMethod) {
+            throw new MissingDataError(`Unable to submit payment because "paymentMethod (${payment.name})" data is missing.`);
+        }
+
         return {
             billingAddress,
             cart,
             customer,
             order,
-            paymentMethod: this._getRequestPaymentMethod(paymentMethod!),
+            paymentMethod: this._getRequestPaymentMethod(paymentMethod),
             shippingAddress,
             shippingOption,
             authToken,

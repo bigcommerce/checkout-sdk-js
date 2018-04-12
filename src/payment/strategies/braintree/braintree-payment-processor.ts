@@ -1,7 +1,8 @@
 import { Payment } from '../..';
 import { InternalAddress } from '../../../address';
+import { NotInitializedError } from '../../../common/error/errors';
 import { CancellablePromise } from '../../../common/utility';
-import { PaymentMethodCancelledError, PaymentMethodUninitializedError } from '../../errors';
+import { PaymentMethodCancelledError } from '../../errors';
 import { CreditCard, TokenizedCreditCard } from '../../payment';
 import PaymentMethod from '../../payment-method';
 import { InitializeOptions } from '../payment-strategy';
@@ -51,7 +52,7 @@ export default class BraintreePaymentProcessor {
 
     verifyCard(payment: Payment, billingAddress: InternalAddress, amount: number): Promise<TokenizedCreditCard> {
         if (!this._modalHandler) {
-            throw new PaymentMethodUninitializedError('A modal handler is required for 3ds payments');
+            throw new NotInitializedError('Unable to verify card because the choosen payment method has not been initialized.');
         }
 
         const { onRemoveFrame, ...modalHandler} = this._modalHandler;
