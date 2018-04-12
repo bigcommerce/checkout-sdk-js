@@ -2,6 +2,7 @@ import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
 
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { Observable } from 'rxjs/Observable';
 
 import { CartRequestSender } from '../cart';
 import { getCart } from '../cart/carts.mock';
@@ -29,7 +30,8 @@ describe('CheckoutActionCreator', () => {
 
     it('emits action to notify loading progress', async () => {
         const actionCreator = new CheckoutActionCreator(checkoutClient, cartRequestSender);
-        const actions = await actionCreator.loadCheckout()
+        const { id } = getCheckout();
+        const actions = await actionCreator.loadCheckout(id)
             .toArray()
             .toPromise();
 
@@ -44,19 +46,18 @@ describe('CheckoutActionCreator', () => {
             .mockReturnValue(Promise.reject(getErrorResponse()));
 
         const actionCreator = new CheckoutActionCreator(checkoutClient, cartRequestSender);
+        const { id } = getCheckout();
+        const errorHandler = jest.fn(action => Observable.of(action));
 
-        try {
-            const actions = await actionCreator.loadCheckout()
-                .toArray()
-                .toPromise();
+        const actions = await actionCreator.loadCheckout(id)
+            .catch(errorHandler)
+            .toArray()
+            .toPromise();
 
-            expect(actions).toEqual([
-                { type: CheckoutActionType.LoadCheckoutRequested },
-            ]);
-        } catch (error) {
-            expect(error).toEqual(
-                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() }
-            );
-        }
+        expect(errorHandler).toHaveBeenCalled();
+        expect(actions).toEqual([
+            { type: CheckoutActionType.LoadCheckoutRequested },
+            { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
+        ]);
     });
 });

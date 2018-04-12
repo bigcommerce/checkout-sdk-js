@@ -63,10 +63,10 @@ export default class CheckoutService {
         );
     }
 
-    loadCheckout(options?: RequestOptions): Promise<CheckoutSelectors> {
+    loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._checkoutActionCreator.loadCheckout(options)),
+            this._store.dispatch(this._checkoutActionCreator.loadCheckout(id, options)),
         ]).then(() => this._store.getState());
     }
 
