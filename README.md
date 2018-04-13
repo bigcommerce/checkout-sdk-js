@@ -57,7 +57,7 @@ import { createCheckoutService } from '@bigcommerce/checkout-sdk';
 
 const service = createCheckoutService();
 
-service.loadConfig();
+await service.loadConfig();
 ```
 
 ### Initialize state
@@ -65,8 +65,11 @@ service.loadConfig();
 Once the service has been initialized, you can either initialize the checkout or the order state.
 
 ```js
-service.loadCheckout();
-service.loadOrder();
+const checkoutId = '0cfd6c06-57c3-4e29-8d7a-de55cc8a9052';
+const orderId = 123;
+
+await service.loadCheckout(checkoutId);
+await service.loadOrder(orderId);
 ```
 
 ### Subscribe to data changes

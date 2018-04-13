@@ -216,15 +216,17 @@ describe('CheckoutService', () => {
     });
 
     describe('#loadCheckout()', () => {
+        const { id } = getCheckout();
+
         it('loads quote data', async () => {
-            const { checkout } = await checkoutService.loadCheckout();
+            const { checkout } = await checkoutService.loadCheckout(id);
 
             expect(checkoutClient.loadQuote).toHaveBeenCalled();
             expect(checkout.getQuote()).toEqual(getQuoteResponseBody().data.quote);
         });
 
         it('loads checkout data', async () => {
-            const { checkout } = await checkoutService.loadCheckout();
+            const { checkout } = await checkoutService.loadCheckout(id);
 
             expect(checkoutClient.loadCheckout).toHaveBeenCalled();
             expect(checkout.getCheckout()).toEqual(getCheckout());
