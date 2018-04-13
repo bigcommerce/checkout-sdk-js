@@ -8,14 +8,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* **common:** CHECKOUT-3035 Initialize config using API ([d78df4e](https://github.com/bigcommerce/checkout-sdk-js/commit/d78df4e))
 * **common:** CHECKOUT-3035 Initialize config using API ([013cf59](https://github.com/bigcommerce/checkout-sdk-js/commit/013cf59))
 
 
 ### BREAKING CHANGES
 
-* **common:** You now need to initialize CheckoutService calling
-loadConfig() method instead of passing a config object..
 * **common:** You now need to initialize CheckoutService calling
 loadConfig() method instead of passing a config object..
 

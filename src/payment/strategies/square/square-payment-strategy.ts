@@ -24,7 +24,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
         return this._scriptLoader.load()
-            .then((createSquareForm) =>
+            .then(createSquareForm =>
                 new Promise((resolve, reject) => {
                     this._paymentForm = createSquareForm(
                         this._getFormOptions(options, { resolve, reject })
@@ -47,7 +47,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             this._deferredRequestNonce = { resolve, reject };
             this._paymentForm.requestCardNonce();
         })
-        .then((paymentData) => this._placeOrderService.submitOrder(
+        .then(paymentData => this._placeOrderService.submitOrder(
             omit(payload, 'payment'), true, options)
         );
     }

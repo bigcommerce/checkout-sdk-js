@@ -14,7 +14,7 @@ export default function selectorDecorator<T extends Constructor<object>>(target:
     const decoratedTarget = class extends target {};
 
     Object.getOwnPropertyNames(target.prototype)
-        .forEach((key) => {
+        .forEach(key => {
             const descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
 
             if (!descriptor || key === 'constructor') {

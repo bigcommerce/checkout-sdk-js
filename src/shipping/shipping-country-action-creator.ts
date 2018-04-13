@@ -25,7 +25,7 @@ export default class ShippingCountryActionCreator {
                     observer.next(createAction(actionTypes.LOAD_SHIPPING_COUNTRIES_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_SHIPPING_COUNTRIES_FAILED, response));
                 });
         });

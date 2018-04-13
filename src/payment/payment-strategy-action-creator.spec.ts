@@ -95,7 +95,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
             const initializeError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.reject(initializeError));
@@ -166,7 +166,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
             const deinitializeError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.reject(deinitializeError));
@@ -240,7 +240,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const payload = getOrderRequestBody();
             const executeError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'execute')
                 .mockReturnValue(Promise.reject(executeError));
@@ -338,7 +338,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
             const finalizeError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'finalize')
                 .mockReturnValue(Promise.reject(finalizeError));

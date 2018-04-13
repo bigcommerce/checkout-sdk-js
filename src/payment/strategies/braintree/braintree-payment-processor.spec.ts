@@ -112,7 +112,7 @@ describe('BraintreePaymentProcessor', () => {
             beforeEach(() => {
                 threeDSecureMock.verifyCard.mockReturnValue(new Promise(() => {}));
                 threeDSecureMock.cancelVerifyCard.mockReturnValue(Promise.resolve());
-                modalHandlerMock.onRemoveFrame.mockImplementation((callback) => callback());
+                modalHandlerMock.onRemoveFrame.mockImplementation(callback => callback());
             });
 
             it('cancels card verification', async () => {

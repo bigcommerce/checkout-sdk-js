@@ -26,12 +26,12 @@ export default class CheckoutActionCreator {
 
                     return cart.id;
                 })
-                .then((id) => this._checkoutClient.loadCheckout(id, options))
+                .then(id => this._checkoutClient.loadCheckout(id, options))
                 .then(({ body }) => {
                     observer.next(createAction(CheckoutActionType.LoadCheckoutSucceeded, body));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(CheckoutActionType.LoadCheckoutFailed, response));
                 });
         });

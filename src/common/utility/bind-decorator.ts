@@ -20,7 +20,7 @@ export function bindClassDecorator<T extends Constructor<object>>(target: T): T 
     const decoratedTarget = class extends target {};
 
     Object.getOwnPropertyNames(target.prototype)
-        .forEach((key) => {
+        .forEach(key => {
             const descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
 
             if (!descriptor || key === 'constructor') {

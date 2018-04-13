@@ -93,7 +93,7 @@ describe('ShippingStrategyActionCreator', () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const initializeError = new Error();
             const methodId = 'default';
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.reject(initializeError));
@@ -159,7 +159,7 @@ describe('ShippingStrategyActionCreator', () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const deinitializeError = new Error();
             const methodId = 'default';
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.reject(deinitializeError));
@@ -226,7 +226,7 @@ describe('ShippingStrategyActionCreator', () => {
         it('emits error action if unable to sign in', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const updateAddressError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'updateAddress')
                 .mockReturnValue(Promise.reject(updateAddressError));
@@ -296,7 +296,7 @@ describe('ShippingStrategyActionCreator', () => {
         it('emits error action if unable to sign out', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const selectOptionError = new Error();
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             jest.spyOn(strategy, 'selectOption')
                 .mockReturnValue(Promise.reject(selectOptionError));

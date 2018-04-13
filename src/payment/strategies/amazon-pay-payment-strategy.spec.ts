@@ -293,7 +293,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(remoteCheckoutActionCreator.initializeBilling)
             .toHaveBeenCalledWith(paymentMethod.id, expect.objectContaining({
@@ -330,7 +330,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);
         expect(store.dispatch).not.toHaveBeenCalledWith(updateAddressAction);
@@ -364,7 +364,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);
         expect(store.dispatch).not.toHaveBeenCalledWith(updateAddressAction);

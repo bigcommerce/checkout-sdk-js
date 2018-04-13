@@ -28,7 +28,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.preloadPaypal = jest.fn(() => Promise.resolve());
         braintreePaymentProcessorMock.paypal = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card' }));
-        braintreePaymentProcessorMock.appendSessionId = jest.fn((tokenizedCard) => tokenizedCard.then((card) => ({ ...card, deviceSessionId: 'my_session_id' })));
+        braintreePaymentProcessorMock.appendSessionId = jest.fn(tokenizedCard => tokenizedCard.then(card => ({ ...card, deviceSessionId: 'my_session_id' })));
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
         paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };

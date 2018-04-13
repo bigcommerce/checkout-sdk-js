@@ -24,7 +24,7 @@ export default class GiftCertificateActionCreator {
                     observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.APPLY_GIFT_CERTIFICATE_FAILED, response));
                 });
         });
@@ -39,7 +39,7 @@ export default class GiftCertificateActionCreator {
                     observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.REMOVE_GIFT_CERTIFICATE_FAILED, response));
                 });
         });

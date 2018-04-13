@@ -169,7 +169,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(remoteCheckoutActionCreator.initializeShipping)
             .toHaveBeenCalledWith(paymentMethod.id, {
@@ -199,7 +199,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(store.dispatch).toHaveBeenCalledWith(createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId: paymentMethod.id }));
         expect(store.dispatch).toHaveBeenCalledWith(createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId: paymentMethod.id }));
@@ -253,7 +253,7 @@ describe('AmazonPayShippingStrategy', () => {
         document.getElementById('addressBook')
             .dispatchEvent(new CustomEvent('addressSelect'));
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(onError).toHaveBeenCalledWith(error);
     });

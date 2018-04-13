@@ -21,7 +21,7 @@ describe('WepayRiskClient', () => {
     }
 
     function mockLoadPromise() {
-        return  new Promise((resolve) => {
+        return  new Promise(resolve => {
             (window as any).WePay = mockClient;
             resolve(null);
         });

@@ -25,7 +25,7 @@ export default class BillingAddressActionCreator {
                     observer.next(createAction(actionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED, body.data));
                     observer.complete();
                 })
-                .catch((response) => {
+                .catch(response => {
                     observer.error(createErrorAction(actionTypes.UPDATE_BILLING_ADDRESS_FAILED, response));
                 });
         });

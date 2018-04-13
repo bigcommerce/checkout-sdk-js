@@ -22,12 +22,12 @@ export default function createRequestErrorFactory(): RequestErrorFactory {
         'stock_too_low',
     ];
 
-    unrecoverableErrorTypes.forEach((type) => {
+    unrecoverableErrorTypes.forEach(type => {
         factory.register(type, (response, message) => new UnrecoverableError(response, message));
     });
 
-    factory.register('invalid_payment_provider', (response) => new PaymentMethodInvalidError(response));
-    factory.register('payment_config_not_found', (response) => new PaymentMethodInvalidError(response));
+    factory.register('invalid_payment_provider', response => new PaymentMethodInvalidError(response));
+    factory.register('payment_config_not_found', response => new PaymentMethodInvalidError(response));
 
     return factory;
 }
