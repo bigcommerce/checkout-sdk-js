@@ -2,9 +2,9 @@ import Coupon from './coupon';
 
 export function getCoupon(): Coupon {
     return {
-        id: '2',
         code: 'savebig2015',
+        description: '20% off each item',
         couponType: 'percentage_discount',
-        discountedAmount: 10,
+        discountedAmount: 5,
     };
 }

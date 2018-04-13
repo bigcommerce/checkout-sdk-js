@@ -3,7 +3,7 @@ export function getCart() {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         items: [
             {
-                id: '12e11c8f-7dce-4da3-9413-b649533f8bad',
+                id: '666',
                 type: 'ItemPhysicalEntity',
                 name: 'Canvas Laundry Cart',
                 imageUrl: '/images/canvas-laundry-cart.jpg',
@@ -31,8 +31,7 @@ export function getCart() {
                 {
                     code: 'savebig2015',
                     discount: '20% off each item',
-                    discountType: 1,
-                    name: '20% off',
+                    discountType: 'percentage_discount',
                 },
             ],
         },
@@ -42,8 +41,19 @@ export function getCart() {
         },
         discountNotifications: [],
         giftCertificate: {
-            totalDiscountedAmount: 0,
-            appliedGiftCertificates: [],
+            totalDiscountedAmount: 7,
+            appliedGiftCertificates: [
+                {
+                    code: 'gc',
+                    discountedAmount: 7,
+                    remainingBalance: 3,
+                    giftCertificate: {
+                        code: 'gc',
+                        balance: 10,
+                        purchaseDate: 'ddmmyy',
+                    },
+                },
+            ],
         },
         shipping: {
             amount: 15,

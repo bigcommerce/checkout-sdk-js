@@ -1,7 +1,7 @@
 import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuote, getQuoteResponseBody } from './internal-quotes.mock';
+import { getQuote } from './internal-quotes.mock';
 import { getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
@@ -38,23 +38,6 @@ describe('quoteReducer()', () => {
 
         expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
             statuses: { isLoading: true },
-        }));
-    });
-
-    it('returns new data if quote is fetched successfully', () => {
-        const response = getQuoteResponseBody();
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            meta: expect.objectContaining({
-                request: action.meta.request,
-            }),
-            data: action.payload.quote,
-            statuses: { isLoading: false },
         }));
     });
 

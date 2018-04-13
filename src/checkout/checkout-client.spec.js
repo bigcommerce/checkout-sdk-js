@@ -4,6 +4,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
 import { getCompleteOrder } from '../order/internal-orders.mock';
+import { getCheckout } from './checkouts.mock';
 import { getCountries } from '../geography/countries.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
@@ -16,6 +17,7 @@ describe('CheckoutClient', () => {
     let client;
     let billingAddressRequestSender;
     let cartRequestSender;
+    let checkoutRequestSender;
     let configRequestSender;
     let countryRequestSender;
     let couponRequestSender;
@@ -35,6 +37,10 @@ describe('CheckoutClient', () => {
 
         cartRequestSender = {
             loadCart: jest.fn(() => Promise.resolve(getResponse(getCart()))),
+        };
+
+        checkoutRequestSender = {
+            loadCheckout: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
         };
 
         configRequestSender = {
@@ -97,6 +103,7 @@ describe('CheckoutClient', () => {
         client = new CheckoutClient(
             billingAddressRequestSender,
             cartRequestSender,
+            checkoutRequestSender,
             configRequestSender,
             countryRequestSender,
             couponRequestSender,
@@ -111,9 +118,9 @@ describe('CheckoutClient', () => {
         );
     });
 
-    describe('#loadCheckout()', () => {
+    describe('#loadQuote()', () => {
         it('loads checkout', async () => {
-            const output = await client.loadCheckout();
+            const output = await client.loadQuote();
 
             expect(output).toEqual(getResponse(getQuote()));
             expect(quoteRequestSender.loadQuote).toHaveBeenCalled();
@@ -121,7 +128,7 @@ describe('CheckoutClient', () => {
 
         it('loads checkout with timeout', async () => {
             const options = { timeout: createTimeout() };
-            const output = await client.loadCheckout(options);
+            const output = await client.loadQuote(options);
 
             expect(output).toEqual(getResponse(getQuote()));
             expect(quoteRequestSender.loadQuote).toHaveBeenCalledWith(options);
@@ -375,41 +382,41 @@ describe('CheckoutClient', () => {
 
     describe('#applyCoupon()', () => {
         it('applies a coupon code', async () => {
-            const output = await client.applyCoupon('couponCode1234');
+            const output = await client.applyCoupon('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(couponRequestSender.applyCoupon)
-                .toHaveBeenCalledWith('couponCode1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#removeCoupon()', () => {
         it('removes a coupon code', async () => {
-            const output = await client.removeCoupon('couponCode1234');
+            const output = await client.removeCoupon('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(couponRequestSender.removeCoupon)
-                .toHaveBeenCalledWith('couponCode1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#applyGiftCertificate()', () => {
         it('applies a gift certificate', async () => {
-            const output = await client.applyGiftCertificate('giftCertificate1234');
+            const output = await client.applyGiftCertificate('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(giftCertificateRequestSender.applyGiftCertificate)
-                .toHaveBeenCalledWith('giftCertificate1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#removeGiftCertificate()', () => {
         it('removes a gift certificate', async () => {
-            const output = await client.removeGiftCertificate('giftCertificate1234');
+            const output = await client.removeGiftCertificate('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(giftCertificateRequestSender.removeGiftCertificate)
-                .toHaveBeenCalledWith('giftCertificate1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
