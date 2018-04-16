@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import * as actionTypes from './payment-action-types';
+import PaymentRequestBody from './payment-request-body';
 import PaymentRequestSender from './payment-request-sender';
 
 /**
@@ -17,11 +18,7 @@ export default class PaymentActionCreator {
         private _paymentRequestSender: PaymentRequestSender
     ) {}
 
-    /**
-     * @param {PaymentRequestBody} payment
-     * @return {Observable<Action>}
-     */
-    submitPayment(payment: any): Observable<Action> {
+    submitPayment(payment: PaymentRequestBody): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.SUBMIT_PAYMENT_REQUESTED));
 
@@ -36,11 +33,7 @@ export default class PaymentActionCreator {
         });
     }
 
-    /**
-     * @param {PaymentRequestBody} payment
-     * @return {Observable<Action>}
-     */
-    initializeOffsitePayment(payment: any): Observable<Action> {
+    initializeOffsitePayment(payment: PaymentRequestBody): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
 

@@ -1,5 +1,7 @@
 import { Response } from '@bigcommerce/request-sender';
 
+import PaymentRequestBody from './payment-request-body';
+
 /**
  * @todo Convert this file into TypeScript properly
  */
@@ -12,11 +14,7 @@ export default class PaymentRequestSender {
         private _client: any
     ) {}
 
-    /**
-     * @param {PaymentRequestBody} payload
-     * @return {Promise<Response<PaymentResponseBody>>}
-     */
-    submitPayment(payload: any): Promise<Response> {
+    submitPayment(payload: PaymentRequestBody): Promise<Response> {
         return new Promise((resolve, reject) => {
             this._client.submitPayment(payload, (error: any, response: any) => {
                 if (error) {
@@ -28,11 +26,7 @@ export default class PaymentRequestSender {
         });
     }
 
-    /**
-     * @param {PaymentRequestBody} payload
-     * @return {Promise<void>}
-     */
-    initializeOffsitePayment(payload: any): Promise<void> {
+    initializeOffsitePayment(payload: PaymentRequestBody): Promise<void> {
         return new Promise(() => {
             this._client.initializeOffsitePayment(payload);
         });

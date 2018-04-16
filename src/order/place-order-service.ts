@@ -5,6 +5,7 @@ import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { Payment, PaymentActionCreator, PaymentMethod } from '../payment';
 import { CreditCard, VaultedInstrument } from '../payment/payment';
+import PaymentRequestBody from '../payment/payment-request-body';
 
 import OrderActionCreator from './order-action-creator';
 
@@ -35,18 +36,18 @@ export default class PlaceOrderService {
         return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payload));
     }
 
-    private _getPaymentRequestBody(payment: Payment): any {
+    private _getPaymentRequestBody(payment: Payment): PaymentRequestBody {
         const { checkout } = this._store.getState();
         const deviceSessionId = payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId || checkout.getCheckoutMeta().deviceSessionId;
         const checkoutMeta = checkout.getCheckoutMeta();
-        const billingAddress = checkout.getBillingAddress();
-        const cart = checkout.getCart();
-        const customer = checkout.getCustomer();
-        const order = checkout.getOrder();
-        const paymentMethod = checkout.getPaymentMethod(payment.name, payment.gateway);
-        const shippingAddress = checkout.getShippingAddress();
-        const shippingOption = checkout.getSelectedShippingOption();
-        const config = checkout.getConfig();
+        const billingAddress = checkout.getBillingAddress()!;
+        const cart = checkout.getCart()!;
+        const customer = checkout.getCustomer()!;
+        const order = checkout.getOrder()!;
+        const paymentMethod = checkout.getPaymentMethod(payment.name, payment.gateway)!;
+        const shippingAddress = checkout.getShippingAddress()!;
+        const shippingOption = checkout.getSelectedShippingOption()!;
+        const config = checkout.getConfig()!;
 
         const authToken = payment.paymentData && (payment.paymentData as VaultedInstrument).instrumentId
             ? `${checkoutMeta.paymentAuthToken}, ${checkoutMeta.vaultAccessToken}`
@@ -66,7 +67,7 @@ export default class PlaceOrderService {
             shippingOption,
             authToken,
             orderMeta: pick(checkoutMeta, ['deviceFingerprint']),
-            payment: omit(payment.paymentData, ['deviceSessionId']),
+            payment: omit(payment.paymentData, ['deviceSessionId']) as Payment,
             quoteMeta: {
                 request: {
                     ...pick(checkoutMeta, [
