@@ -5,6 +5,7 @@
         "no-empty": false,
         "no-reference": false,
         "no-shadowed-variable": false,
+        "no-unused-variable": true,
         "object-literal-sort-keys": false
     }
 }

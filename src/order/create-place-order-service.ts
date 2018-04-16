@@ -1,5 +1,3 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
-
 import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
 import { PaymentActionCreator, PaymentMethodActionCreator, PaymentRequestSender } from '../payment';
@@ -12,8 +10,6 @@ export default function createPlaceOrderService(
     client: CheckoutClient,
     paymentClient: any
 ): PlaceOrderService {
-    const requestSender = createRequestSender();
-
     return new PlaceOrderService(
         store,
         new CartActionCreator(client),

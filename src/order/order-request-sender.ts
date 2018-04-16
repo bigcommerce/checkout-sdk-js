@@ -2,7 +2,6 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { RequestOptions } from '../common/http-request';
 
-import InternalOrder from './internal-order';
 import OrderRequestBody from './order-request-body';
 
 /**

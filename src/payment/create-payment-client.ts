@@ -2,7 +2,6 @@
 import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
 
 import { CheckoutStore } from '../checkout';
-import Config from '../config/config';
 import LegacyConfig from '../config/legacy-config';
 
 export default function createPaymentClient(store: CheckoutStore): any {

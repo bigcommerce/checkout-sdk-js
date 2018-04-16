@@ -3,13 +3,13 @@ import { CartSelector } from '../cart';
 import { selectorDecorator as selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector, CustomerStrategySelector } from '../customer';
+import { CustomerStrategySelector } from '../customer';
 import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
 @selector
 export default class CheckoutStatusSelector {
@@ -22,7 +22,6 @@ export default class CheckoutStatusSelector {
         private _config: ConfigSelector,
         private _countries: CountrySelector,
         private _coupon: CouponSelector,
-        private _customer: CustomerSelector,
         private _customerStrategy: CustomerStrategySelector,
         private _giftCertificate: GiftCertificateSelector,
         private _instruments: InstrumentSelector,
@@ -30,7 +29,6 @@ export default class CheckoutStatusSelector {
         private _paymentMethods: PaymentMethodSelector,
         private _paymentStrategy: PaymentStrategySelector,
         private _quote: QuoteSelector,
-        private _shippingAddress: ShippingAddressSelector,
         private _shippingCountries: ShippingCountrySelector,
         private _shippingOptions: ShippingOptionSelector,
         private _shippingStrategy: ShippingStrategySelector

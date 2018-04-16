@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 
-import { mapToInternalCart, mapToInternalLineItems } from '../cart';
+import { mapToInternalLineItems } from '../cart';
 import { Checkout } from '../checkout';
 import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
 

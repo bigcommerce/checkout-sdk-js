@@ -3,12 +3,12 @@ import { CartSelector } from '../cart';
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector, CustomerStrategySelector } from '../customer';
+import { CustomerStrategySelector } from '../customer';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CheckoutErrorSelector from './checkout-error-selector';
 
@@ -18,7 +18,6 @@ describe('CheckoutErrorSelector', () => {
     let config;
     let countries;
     let coupon;
-    let customer;
     let customerStrategy;
     let giftCertificate;
     let instruments;
@@ -28,7 +27,6 @@ describe('CheckoutErrorSelector', () => {
     let paymentMethods;
     let paymentStrategy;
     let quote;
-    let shippingAddress;
     let shippingCountries;
     let shippingOptions;
     let shippingStrategy;
@@ -39,7 +37,6 @@ describe('CheckoutErrorSelector', () => {
         config = new ConfigSelector();
         countries = new CountrySelector();
         coupon = new CouponSelector();
-        customer = new CustomerSelector();
         customerStrategy = new CustomerStrategySelector();
         giftCertificate = new GiftCertificateSelector();
         instruments = new InstrumentSelector();
@@ -47,7 +44,6 @@ describe('CheckoutErrorSelector', () => {
         paymentMethods = new PaymentMethodSelector();
         paymentStrategy = new PaymentStrategySelector();
         quote = new QuoteSelector();
-        shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
         shippingOptions = new ShippingOptionSelector();
         shippingStrategy = new ShippingStrategySelector();
@@ -58,7 +54,6 @@ describe('CheckoutErrorSelector', () => {
             config,
             countries,
             coupon,
-            customer,
             customerStrategy,
             giftCertificate,
             instruments,
@@ -66,7 +61,6 @@ describe('CheckoutErrorSelector', () => {
             paymentMethods,
             paymentStrategy,
             quote,
-            shippingAddress,
             shippingCountries,
             shippingOptions,
             shippingStrategy

@@ -1,6 +1,6 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import { Checkout, CheckoutAction, CheckoutActionType } from '../checkout';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
 
 import Consignment from './consignment';
 import ConsignmentState from './consignment-state';
