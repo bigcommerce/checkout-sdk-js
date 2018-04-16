@@ -9,29 +9,29 @@ import PaymentMethod from './payment-method';
 
 export default interface PaymentRequestBody {
     authToken: string;
-    billingAddress: InternalAddress;
-    cart: InternalCart;
-    customer: InternalCustomer;
-    order: InternalOrder;
-    orderMeta: {
-        deviceFingerprint: string;
-    };
     payment: Payment;
-    paymentMethod: PaymentMethod;
-    quoteMeta: {
-        request: {
-            deviceSessionId: string;
-            geoCountryCode: string;
-            sessionHash: string;
+    billingAddress?: InternalAddress;
+    cart?: InternalCart;
+    customer?: InternalCustomer;
+    order?: InternalOrder;
+    orderMeta?: {
+        deviceFingerprint?: string;
+    };
+    paymentMethod?: PaymentMethod;
+    quoteMeta?: {
+        request?: {
+            deviceSessionId?: string;
+            geoCountryCode?: string;
+            sessionHash?: string;
         };
     };
-    shippingAddress: InternalAddress;
-    shippingOption: InternalShippingOption;
-    source: string;
-    store: {
-        storeHash: string;
-        storeId: string;
-        storeLanguage: string;
-        storeName: string;
+    shippingAddress?: InternalAddress;
+    shippingOption?: InternalShippingOption;
+    source?: string;
+    store?: {
+        storeHash?: string;
+        storeId?: string;
+        storeLanguage?: string;
+        storeName?: string;
     };
 }

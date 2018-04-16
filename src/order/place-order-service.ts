@@ -1,11 +1,7 @@
-import { omit, pick } from 'lodash';
-
 import { CheckoutSelectors, CheckoutStore } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { Payment, PaymentActionCreator, PaymentMethod } from '../payment';
-import { CreditCard, VaultedInstrument } from '../payment/payment';
-import PaymentRequestBody from '../payment/payment-request-body';
+import { Payment, PaymentActionCreator } from '../payment';
 
 import OrderActionCreator from './order-action-creator';
 
@@ -19,77 +15,20 @@ export default class PlaceOrderService {
         private _paymentActionCreator: PaymentActionCreator
     ) {}
 
-    submitPayment(payment: Payment, useStoreCredit: boolean = false, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const payload = this._getPaymentRequestBody(payment);
+    submitPayment(payment: Payment, options?: RequestOptions): Promise<CheckoutSelectors> {
+        return this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+            .then(({ checkout }) => {
+                const order = checkout.getOrder();
 
-        return this._store.dispatch(this._paymentActionCreator.submitPayment(payload))
-            .then(({ checkout }: any) => {
-                const { orderId } = checkout.getOrder();
+                if (!order) {
+                    throw new MissingDataError('Unable to refresh order data because "order" data is missing');
+                }
 
-                return this._store.dispatch(this._orderActionCreator.loadOrder(orderId, options));
+                return this._store.dispatch(this._orderActionCreator.loadOrder(order.orderId, options));
             });
     }
 
-    initializeOffsitePayment(payment: Payment, useStoreCredit: boolean = false): Promise<CheckoutSelectors> {
-        const payload = this._getPaymentRequestBody(payment);
-
-        return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payload));
-    }
-
-    private _getPaymentRequestBody(payment: Payment): PaymentRequestBody {
-        const { checkout } = this._store.getState();
-        const deviceSessionId = payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId || checkout.getCheckoutMeta().deviceSessionId;
-        const checkoutMeta = checkout.getCheckoutMeta();
-        const billingAddress = checkout.getBillingAddress()!;
-        const cart = checkout.getCart()!;
-        const customer = checkout.getCustomer()!;
-        const order = checkout.getOrder()!;
-        const paymentMethod = checkout.getPaymentMethod(payment.name, payment.gateway)!;
-        const shippingAddress = checkout.getShippingAddress()!;
-        const shippingOption = checkout.getSelectedShippingOption()!;
-        const config = checkout.getConfig()!;
-
-        const authToken = payment.paymentData && (payment.paymentData as VaultedInstrument).instrumentId
-            ? `${checkoutMeta.paymentAuthToken}, ${checkoutMeta.vaultAccessToken}`
-            : checkoutMeta.paymentAuthToken;
-
-        if (!paymentMethod) {
-            throw new MissingDataError(`Unable to submit payment because "paymentMethod (${payment.name})" data is missing.`);
-        }
-
-        return {
-            billingAddress,
-            cart,
-            customer,
-            order,
-            paymentMethod: this._getRequestPaymentMethod(paymentMethod),
-            shippingAddress,
-            shippingOption,
-            authToken,
-            orderMeta: pick(checkoutMeta, ['deviceFingerprint']),
-            payment: omit(payment.paymentData, ['deviceSessionId']) as Payment,
-            quoteMeta: {
-                request: {
-                    ...pick(checkoutMeta, [
-                        'geoCountryCode',
-                        'sessionHash',
-                    ]),
-                    deviceSessionId,
-                },
-            },
-            source: payment.source || 'bcapp-checkout-uco',
-            store: pick(config, [
-                'storeHash',
-                'storeId',
-                'storeLanguage',
-                'storeName',
-            ]),
-        };
-    }
-
-    private _getRequestPaymentMethod(paymentMethod: PaymentMethod): PaymentMethod {
-        return (paymentMethod.method === 'multi-option' && !paymentMethod.gateway) ?
-            { ...paymentMethod, gateway: paymentMethod.id } :
-            paymentMethod;
+    initializeOffsitePayment(payment: Payment): Promise<CheckoutSelectors> {
+        return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payment));
     }
 }
