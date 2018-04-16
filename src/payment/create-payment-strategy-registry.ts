@@ -62,6 +62,7 @@ export default function createPaymentStrategyRegistry(
             placeOrderService,
             new CartActionCreator(client),
             orderActionCreator,
+            paymentActionCreator,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             createAfterpayScriptLoader()
@@ -80,7 +81,12 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register('creditcard', () =>
-        new CreditCardPaymentStrategy(store, placeOrderService, orderActionCreator)
+        new CreditCardPaymentStrategy(
+            store,
+            placeOrderService,
+            orderActionCreator,
+            paymentActionCreator
+        )
     );
 
     registry.register('klarna', () =>
@@ -123,7 +129,8 @@ export default function createPaymentStrategyRegistry(
         new PaypalProPaymentStrategy(
             store,
             placeOrderService,
-            orderActionCreator
+            orderActionCreator,
+            paymentActionCreator
         )
     );
 
@@ -150,6 +157,7 @@ export default function createPaymentStrategyRegistry(
             store,
             placeOrderService,
             orderActionCreator,
+            paymentActionCreator,
             createFormPoster()
         )
     );
@@ -176,6 +184,7 @@ export default function createPaymentStrategyRegistry(
             store,
             placeOrderService,
             orderActionCreator,
+            paymentActionCreator,
             paymentMethodActionCreator,
             braintreePaymentProcessor
         )
@@ -186,6 +195,7 @@ export default function createPaymentStrategyRegistry(
             store,
             placeOrderService,
             orderActionCreator,
+            paymentActionCreator,
             paymentMethodActionCreator,
             braintreePaymentProcessor
         )
@@ -196,6 +206,7 @@ export default function createPaymentStrategyRegistry(
             store,
             placeOrderService,
             orderActionCreator,
+            paymentActionCreator,
             paymentMethodActionCreator,
             braintreePaymentProcessor,
             true
@@ -207,6 +218,7 @@ export default function createPaymentStrategyRegistry(
             store,
             placeOrderService,
             orderActionCreator,
+            paymentActionCreator,
             new WepayRiskClient(scriptLoader)
         )
     );

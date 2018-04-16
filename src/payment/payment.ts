@@ -1,6 +1,6 @@
 export default interface Payment {
     name: string;
-    paymentData?: PaymentInstrument;
+    paymentData: PaymentInstrument;
     gateway?: string;
     source?: string;
 }

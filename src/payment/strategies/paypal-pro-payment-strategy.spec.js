@@ -5,32 +5,36 @@ import { createCheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { getOrderRequestBody, getIncompleteOrderState } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
+import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 
 describe('PaypalProPaymentStrategy', () => {
     let orderActionCreator;
+    let paymentActionCreator;
     let placeOrderService;
     let store;
     let strategy;
     let submitOrderAction;
+    let submitPaymentAction;
 
     beforeEach(() => {
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
-
-        placeOrderService = {
-            submitPayment: jest.fn(() => Promise.resolve(store.getState())),
-        };
+        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         orderActionCreator = {
             submitOrder: jest.fn(() => submitOrderAction),
+        };
+
+        paymentActionCreator = {
+            submitPayment: jest.fn(() => submitPaymentAction),
         };
 
         store = createCheckoutStore({
             order: getIncompleteOrderState(),
         });
 
-        strategy = new PaypalProPaymentStrategy(store, placeOrderService, orderActionCreator);
+        strategy = new PaypalProPaymentStrategy(store, placeOrderService, orderActionCreator, paymentActionCreator);
 
         jest.spyOn(store, 'dispatch');
     });
@@ -49,7 +53,8 @@ describe('PaypalProPaymentStrategy', () => {
 
         await strategy.execute(payload);
 
-        expect(placeOrderService.submitPayment).toHaveBeenCalledWith(payload.payment, payload.useStoreCredit, undefined);
+        expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(payload.payment);
+        expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
     });
 
     it('returns checkout state', async () => {
@@ -101,7 +106,8 @@ describe('PaypalProPaymentStrategy', () => {
 
             await strategy.execute(payload);
 
-            expect(placeOrderService.submitPayment).not.toHaveBeenCalled();
+            expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
         });
     });
 });

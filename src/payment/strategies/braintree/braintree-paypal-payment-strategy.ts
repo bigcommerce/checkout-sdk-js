@@ -1,9 +1,8 @@
-import { omit } from 'lodash';
-
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
-import { MissingDataError, StandardError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../../order';
 import Payment from '../../payment';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentStrategy, { InitializeOptions } from '../payment-strategy';
 
@@ -14,6 +13,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor,
         private _credit: boolean = false
@@ -45,15 +45,19 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     }
 
     execute(orderRequest: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
-        const { payment, useStoreCredit } = orderRequest;
+        const { payment, ...order } = orderRequest;
+
+        if (!payment) {
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+        }
 
         return Promise.all([
                 payment ? this._preparePaymentData(payment) : Promise.resolve(payment),
-                this._store.dispatch(
-                    this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), true, options)
-                ),
+                this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options)),
             ])
-            .then(([payment]) => this._placeOrderService.submitPayment(payment, useStoreCredit, options))
+            .then(([payment]) =>
+                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+            )
             .catch((error: Error) => this._handleError(error));
     }
 

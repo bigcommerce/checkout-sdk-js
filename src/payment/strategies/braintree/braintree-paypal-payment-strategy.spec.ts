@@ -11,6 +11,8 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
 import PlaceOrderService from '../../../order/place-order-service';
+import PaymentActionCreator from '../../payment-action-creator';
+import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getBraintreePaypal } from '../../payment-methods.mock';
@@ -21,6 +23,7 @@ import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy'
 
 describe('BraintreePaypalPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let placeOrderService: PlaceOrderService;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
@@ -29,6 +32,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
     let checkoutMock: CheckoutSelector;
     let store: CheckoutStore;
     let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
 
     beforeEach(() => {
         braintreePaymentProcessorMock = {} as BraintreePaymentProcessor;
@@ -40,6 +44,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         checkoutMock = {} as CheckoutSelector;
         checkoutMock.isPaymentDataRequired = jest.fn((useStoreCredit: boolean) => true);
@@ -48,13 +53,22 @@ describe('BraintreePaypalPaymentStrategy', () => {
         store.getState = jest.fn(() => ({ checkout: checkoutMock }));
 
         placeOrderService = {} as PlaceOrderService;
-        placeOrderService.submitPayment = jest.fn(() => Promise.resolve());
 
         orderActionCreator = {} as OrderActionCreator;
         orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
+        paymentActionCreator = {} as PaymentActionCreator;
+        paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
+
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
-        braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, orderActionCreator, paymentMethodActionCreator, braintreePaymentProcessorMock);
+        braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(
+            store,
+            placeOrderService,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessorMock
+        );
     });
 
     it('creates an instance of the braintree payment strategy', () => {
@@ -144,8 +158,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', false);
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(expected, false, options);
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
         it('does not call paypal if a nonce is present', async () => {
@@ -161,8 +175,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(braintreePaymentProcessorMock.paypal).not.toHaveBeenCalled();
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(expected, false, options);
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
         it('converts any error returned by braintree in a StandardError', async () => {
@@ -172,7 +186,15 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         describe('if paypal credit', () => {
             beforeEach(() => {
-                braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, orderActionCreator, paymentMethodActionCreator, braintreePaymentProcessorMock, true);
+                braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(
+                    store,
+                    placeOrderService,
+                    orderActionCreator,
+                    paymentActionCreator,
+                    paymentMethodActionCreator,
+                    braintreePaymentProcessorMock,
+                    true
+                );
             });
 
             it('submitPayment with the right information and sets credit to true', async () => {
@@ -190,8 +212,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
                 expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', true);
-                expect(placeOrderService.submitPayment)
-                    .toHaveBeenCalledWith(expected, false, options);
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+                expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
             });
         });
     });

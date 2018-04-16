@@ -16,9 +16,12 @@ import { getAfterpay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import PaymentActionCreator from '../payment-action-creator';
+import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../payment-method-action-types';
+import PaymentRequestSender from '../payment-request-sender';
 
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 
@@ -29,12 +32,14 @@ describe('AfterpayPaymentStrategy', () => {
     let loadPaymentMethodAction: Observable<Action>;
     let orderActionCreator: OrderActionCreator;
     let payload: OrderRequestBody;
+    let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let placeOrderService: PlaceOrderService;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AfterpayScriptLoader;
     let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
     let store: CheckoutStore;
     let strategy: AfterpayPaymentStrategy;
     let verifyCartAction: Observable<Action>;
@@ -51,6 +56,10 @@ describe('AfterpayPaymentStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         cartActionCreator = new CartActionCreator(client);
         placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator
+        );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );
@@ -60,6 +69,7 @@ describe('AfterpayPaymentStrategy', () => {
             placeOrderService,
             cartActionCreator,
             orderActionCreator,
+            paymentActionCreator,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
@@ -77,6 +87,7 @@ describe('AfterpayPaymentStrategy', () => {
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod }, { methodId: paymentMethod.gateway }));
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
         verifyCartAction = Observable.of(createAction(VERIFY_CART_REQUESTED));
 
         payload = merge({}, getOrderRequestBody(), {
@@ -100,9 +111,8 @@ describe('AfterpayPaymentStrategy', () => {
         jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
             .mockReturnValue(initializePaymentAction);
 
-        jest.spyOn(placeOrderService, 'submitPayment').mockImplementation(() => {
-            return Promise.resolve();
-        });
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
 
         jest.spyOn(scriptLoader, 'load')
             .mockReturnValue(Promise.resolve(afterpaySdk));
@@ -200,6 +210,7 @@ describe('AfterpayPaymentStrategy', () => {
             await strategy.finalize({ nonce });
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 { useStoreCredit: false, customerMessage: 'foo' },
@@ -207,10 +218,10 @@ describe('AfterpayPaymentStrategy', () => {
                 { nonce }
             );
 
-            expect(placeOrderService.submitPayment).toHaveBeenCalledWith({
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                 name: paymentMethod.id,
                 paymentData: { nonce },
-            }, false, {});
+            });
         });
 
         it('throws error if unable to finalize order due to missing data', async () => {

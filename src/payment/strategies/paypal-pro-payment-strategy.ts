@@ -1,9 +1,10 @@
-import { omit, pick } from 'lodash';
+import { pick } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { MissingDataError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
 import Payment from '../payment';
+import PaymentActionCreator from '../payment-action-creator';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -12,7 +13,8 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
-        private _orderActionCreator: OrderActionCreator
+        private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator
     ) {
         super(store, placeOrderService);
     }
@@ -27,9 +29,15 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
             );
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(omit(payload, 'payment'), true, options))
+        const { payment, ...order } = payload;
+
+        if (!payment) {
+            throw new InvalidArgumentError();
+        }
+
+        return this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options))
             .then(() =>
-                this._placeOrderService.submitPayment(payload.payment, payload.useStoreCredit, options)
+                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
             );
     }
 

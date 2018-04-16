@@ -1,5 +1,4 @@
 /// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
-import { omit } from 'lodash';
 
 import { CartActionCreator } from '../../cart';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
@@ -7,6 +6,7 @@ import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../
 import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
+import PaymentActionCreator from '../payment-action-creator';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
 
@@ -20,6 +20,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         placeOrderService: PlaceOrderService,
         private _cartActionCreator: CartActionCreator,
         private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
@@ -80,7 +81,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         const customer = checkout.getCustomer();
         const order = checkout.getOrder();
 
-        if (!order || !customer) {
+        if (!order || !order.payment.id || !customer) {
             throw new MissingDataError('Unable to finalize order because "order" or "customer" data is missing.');
         }
 
@@ -93,7 +94,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, true, options))
             .then(() =>
-                this._placeOrderService.submitPayment(paymentPayload, useStoreCredit, omit(options, 'nonce'))
+                this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
             );
     }
 

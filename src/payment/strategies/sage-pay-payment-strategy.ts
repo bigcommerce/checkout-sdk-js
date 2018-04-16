@@ -1,8 +1,9 @@
-import { omit, some } from 'lodash';
+import { some } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { MissingDataError, RequestError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, RequestError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import PaymentActionCreator from '../payment-action-creator';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -12,28 +13,33 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
         private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
         private _formPoster: any
     ) {
         super(store, placeOrderService);
     }
 
     execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
-        return this._store.dispatch(this._orderActionCreator.submitOrder(omit(payload, 'payment'), true, options))
-            .then(() =>
-                this._placeOrderService.submitPayment(payload.payment, payload.useStoreCredit, options)
-            )
-            .catch((error: RequestError) => {
-                const { body } = error;
+        const { payment, ...order } = payload;
 
-                if (!some(body.errors, { code: 'three_d_secure_required' })) {
+        if (!payment) {
+            throw new InvalidArgumentError();
+        }
+
+        return this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options))
+            .then(() =>
+                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+            )
+            .catch(error => {
+                if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
                     return Promise.reject(error);
                 }
 
                 return new Promise(() => {
-                    this._formPoster.postForm(body.three_ds_result.acs_url, {
-                        PaReq: body.three_ds_result.payer_auth_request,
-                        TermUrl: body.three_ds_result.callback_url,
-                        MD: body.three_ds_result.merchant_data,
+                    this._formPoster.postForm(error.body.three_ds_result.acs_url, {
+                        PaReq: error.body.three_ds_result.payer_auth_request,
+                        TermUrl: error.body.three_ds_result.callback_url,
+                        MD: error.body.three_ds_result.merchant_data,
                     });
                 });
             });
