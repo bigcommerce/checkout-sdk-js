@@ -1,4 +1,3 @@
-import { ReadableDataStore } from '@bigcommerce/data-store';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
@@ -6,7 +5,7 @@ import { WepayRiskClient } from '../../remote-checkout/methods/wepay';
 import { CreditCard } from '../payment';
 
 import { CreditCardPaymentStrategy } from '.';
-import PaymentStrategy, { InitializeOptions } from './payment-strategy';
+import { InitializeOptions } from './payment-strategy';
 
 export default class WepayPaymentStrategy extends CreditCardPaymentStrategy {
 

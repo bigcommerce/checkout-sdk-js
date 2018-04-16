@@ -45,7 +45,7 @@ describe('CheckoutSelector', () => {
             shippingCountries: getShippingCountriesState(),
         };
 
-        orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+        orderSelector = new OrderSelector(state.order, state.customer, state.cart);
         formSelector = new FormSelector(state.config);
 
         selector = new CheckoutSelector(

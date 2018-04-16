@@ -2,8 +2,6 @@
 
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethod } from '../../../payment';
-
 const SDK_URL = '//credit.klarnacdn.net/lib/v1/api.js';
 
 export default class KlarnaScriptLoader {

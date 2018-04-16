@@ -3,12 +3,11 @@ import { CartSelector } from '../cart';
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector } from '../customer';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import CheckoutStatusSelector from './checkout-status-selector';
 import CustomerStrategySelector from '../customer/customer-strategy-selector';
 
@@ -18,7 +17,6 @@ describe('CheckoutStatusSelector', () => {
     let config;
     let countries;
     let coupon;
-    let customer;
     let customerStrategy;
     let giftCertificate;
     let instruments;
@@ -26,7 +24,6 @@ describe('CheckoutStatusSelector', () => {
     let paymentMethods;
     let paymentStrategy;
     let quote;
-    let shippingAddress;
     let shippingCountries;
     let shippingOption;
     let shippingStrategy;
@@ -38,7 +35,6 @@ describe('CheckoutStatusSelector', () => {
         config = new ConfigSelector();
         countries = new CountrySelector();
         coupon = new CouponSelector();
-        customer = new CustomerSelector();
         customerStrategy = new CustomerStrategySelector();
         giftCertificate = new GiftCertificateSelector();
         order = new OrderSelector();
@@ -46,7 +42,6 @@ describe('CheckoutStatusSelector', () => {
         paymentStrategy = new PaymentStrategySelector();
         instruments = new InstrumentSelector();
         quote = new QuoteSelector();
-        shippingAddress = new ShippingAddressSelector();
         shippingCountries = new ShippingCountrySelector();
         shippingOption = new ShippingOptionSelector();
         shippingStrategy = new ShippingStrategySelector();
@@ -57,7 +52,6 @@ describe('CheckoutStatusSelector', () => {
             config,
             countries,
             coupon,
-            customer,
             customerStrategy,
             giftCertificate,
             instruments,
@@ -65,7 +59,6 @@ describe('CheckoutStatusSelector', () => {
             paymentMethods,
             paymentStrategy,
             quote,
-            shippingAddress,
             shippingCountries,
             shippingOption,
             shippingStrategy

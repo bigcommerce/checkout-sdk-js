@@ -36,7 +36,7 @@
     "docs": "typedoc --theme markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected --mdHideSources dist/checkout-sdk.d.ts",
     "lint": "yarn lint:js && yarn lint:ts",
     "lint:js": "eslint src --config eslintrc.json",
-    "lint:ts": "tslint 'src/**/*.ts' --config tslint.json && tsc --noEmit",
+    "lint:ts": "tslint 'src/**/*.ts' --config tslint.json --project tsconfig.json && tsc --noEmit",
     "prerelease": "git fetch --tags && yarn validate-dependencies && yarn validate-commits && yarn build && yarn docs",
     "release": "git add dist docs && standard-version -a",
     "test": "jest --config jest-config.js",

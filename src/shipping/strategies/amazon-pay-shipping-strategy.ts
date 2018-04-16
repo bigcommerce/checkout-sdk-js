@@ -20,9 +20,7 @@ import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 import ShippingStrategy from './shipping-strategy';
 
 export default class AmazonPayShippingStrategy extends ShippingStrategy {
-    private _addressBook?: OffAmazonPayments.Widgets.AddressBook;
     private _paymentMethod?: PaymentMethod;
-    private _window: OffAmazonPayments.HostWindow;
 
     constructor(
         store: CheckoutStore,
@@ -33,8 +31,6 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store);
-
-        this._window = window;
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
@@ -48,10 +44,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
                 const onReady = () => {
                     this._createAddressBook(options)
-                        .then(addressBook => {
-                            this._addressBook = addressBook;
-                            resolve();
-                        })
+                        .then(resolve)
                         .catch(reject);
                 };
 
@@ -66,7 +59,6 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             return super.deinitialize(options);
         }
 
-        this._addressBook = undefined;
         this._paymentMethod = undefined;
 
         return super.deinitialize(options);
