@@ -1,9 +1,14 @@
+import 'rxjs/add/observable/defer';
+import 'rxjs/add/operator/concat';
+
 import { createAction, createErrorAction, Action, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
 import { omit, pick } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { CheckoutSelector, CheckoutSelectors } from '../checkout';
+import { MissingDataError } from '../common/error/errors';
+import { OrderActionCreator } from '../order';
 
 import Payment, { CreditCard, VaultedInstrument } from './payment';
 import * as actionTypes from './payment-action-types';
@@ -16,7 +21,8 @@ import PaymentRequestSender from './payment-request-sender';
  */
 export default class PaymentActionCreator {
     constructor(
-        private _paymentRequestSender: PaymentRequestSender
+        private _paymentRequestSender: PaymentRequestSender,
+        private _orderActionCreator: OrderActionCreator
     ) {}
 
     submitPayment(payment: Payment): ThunkAction<Action> {
@@ -34,7 +40,17 @@ export default class PaymentActionCreator {
                     .catch(response => {
                         observer.error(createErrorAction(actionTypes.SUBMIT_PAYMENT_FAILED, response));
                     });
-            });
+            })
+                .concat(Observable.defer(() => {
+                    const { checkout: { getOrder } } = store.getState();
+                    const order = getOrder();
+
+                    if (!order || !order.orderId) {
+                        throw new MissingDataError('Unable to reload order data because "order.orderId" is missing');
+                    }
+
+                    return this._orderActionCreator.loadOrder(order.orderId);
+                }));
     }
 
     initializeOffsitePayment(payment: Payment): ThunkAction<Action> {
@@ -62,7 +78,7 @@ export default class PaymentActionCreator {
         const cart = checkout.getCart();
         const customer = checkout.getCustomer();
         const order = checkout.getOrder();
-        const paymentMethod = checkout.getPaymentMethod(payment.name, payment.gateway);
+        const paymentMethod = this._getPaymentMethod(payment, checkout);
         const shippingAddress = checkout.getShippingAddress();
         const shippingOption = checkout.getSelectedShippingOption();
         const config = checkout.getConfig();
@@ -76,7 +92,7 @@ export default class PaymentActionCreator {
             cart,
             customer,
             order,
-            paymentMethod: paymentMethod ? this._getRequestPaymentMethod(paymentMethod) : undefined,
+            paymentMethod,
             shippingAddress,
             shippingOption,
             authToken,
@@ -101,8 +117,10 @@ export default class PaymentActionCreator {
         };
     }
 
-    private _getRequestPaymentMethod(paymentMethod: PaymentMethod): PaymentMethod {
-        return (paymentMethod.method === 'multi-option' && !paymentMethod.gateway) ?
+    private _getPaymentMethod(payment: Payment, checkout: CheckoutSelector): PaymentMethod | undefined {
+        const paymentMethod = checkout.getPaymentMethod(payment.name, payment.gateway);
+
+        return (paymentMethod && paymentMethod.method === 'multi-option' && !paymentMethod.gateway) ?
             { ...paymentMethod, gateway: paymentMethod.id } :
             paymentMethod;
     }

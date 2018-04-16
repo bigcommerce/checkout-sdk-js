@@ -11,7 +11,9 @@ export default function createPlaceOrderService(
 ): PlaceOrderService {
     return new PlaceOrderService(
         store,
-        new OrderActionCreator(client),
-        new PaymentActionCreator(new PaymentRequestSender(paymentClient))
+        new PaymentActionCreator(
+            new PaymentRequestSender(paymentClient),
+            new OrderActionCreator(client)
+        )
     );
 }
