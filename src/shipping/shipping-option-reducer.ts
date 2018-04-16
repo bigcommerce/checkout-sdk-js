@@ -3,7 +3,7 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 
 import mapToInternalShippingOptions from './map-to-internal-shipping-options';
@@ -33,12 +33,12 @@ export default function shippingOptionReducer(state: any = {}, action: Action): 
 function dataReducer(data: any, action: Action): any {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
         return { ...data, ...mapToInternalShippingOptions(action.payload.consignments, data) };
 
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
     case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
         return action.payload ? action.payload.shippingOptions : data;

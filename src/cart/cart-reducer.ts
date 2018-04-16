@@ -7,7 +7,7 @@ import * as couponActionTypes from '../coupon/coupon-action-types';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 
 import Cart from './cart';
@@ -35,6 +35,7 @@ export default function cartReducer(state: any = {}, action: Action): any {
 function dataReducer(data: InternalCart, action: Action): InternalCart {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
     case couponActionTypes.APPLY_COUPON_SUCCEEDED:
     case couponActionTypes.REMOVE_COUPON_SUCCEEDED:
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
@@ -46,7 +47,6 @@ function dataReducer(data: InternalCart, action: Action): InternalCart {
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
     case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.cart } : data;

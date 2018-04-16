@@ -2,7 +2,7 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { InternalAddress } from '../address';
+import { Address } from '../address';
 import { Registry } from '../common/registry';
 
 import {
@@ -19,7 +19,7 @@ export default class ShippingStrategyActionCreator {
         private _strategyRegistry: Registry<ShippingStrategy>
     ) {}
 
-    updateAddress(address: InternalAddress, options: ShippingActionOptions = {}): ThunkAction<ShippingStrategyUpdateAddressAction> {
+    updateAddress(address: Address, options: ShippingActionOptions = {}): ThunkAction<ShippingStrategyUpdateAddressAction> {
         return store => Observable.create((observer: Observer<ShippingStrategyUpdateAddressAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
             const methodId = options.methodId || remote.provider;

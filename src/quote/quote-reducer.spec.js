@@ -1,14 +1,14 @@
-import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
-import { getCustomerResponseBody } from '../customer/internal-customers.mock';
-import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuote } from './internal-quotes.mock';
-import { getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
+import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
+import { getCheckout } from '../checkout/checkouts.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
-import * as quoteActionTypes from './quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+import { getQuote } from './internal-quotes.mock';
+import * as quoteActionTypes from './quote-action-types';
 import quoteReducer from './quote-reducer';
 
 describe('quoteReducer()', () => {
@@ -104,14 +104,13 @@ describe('quoteReducer()', () => {
 
     describe('when updating shipping address', () => {
         it('saves the payload when update succeeds', () => {
-            const response = getShippingAddressResponseBody();
             const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-                payload: response.data,
+                type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
+                payload: getCheckout(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                data: action.payload.quote,
+                data: getQuote(),
             }));
         });
     });

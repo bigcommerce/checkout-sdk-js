@@ -1,5 +1,5 @@
 export default interface Address {
-    id: string;
+    id?: string;
     firstName: string;
     lastName: string;
     company: string;

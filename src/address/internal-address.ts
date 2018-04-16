@@ -1,5 +1,5 @@
 export default interface InternalAddress {
-    id: string;
+    id?: string;
     firstName: string;
     lastName: string;
     company: string;

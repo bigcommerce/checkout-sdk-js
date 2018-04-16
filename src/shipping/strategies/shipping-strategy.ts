@@ -1,4 +1,4 @@
-import { InternalAddress } from '../../address';
+import { Address } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 
 export default abstract class ShippingStrategy {
@@ -8,7 +8,7 @@ export default abstract class ShippingStrategy {
         protected _store: CheckoutStore
     ) {}
 
-    abstract updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors>;
+    abstract updateAddress(address: Address, options?: any): Promise<CheckoutSelectors>;
 
     abstract selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors>;
 

@@ -4,7 +4,6 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import { getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import * as cartActionTypes from '../cart/cart-action-types';
@@ -12,7 +11,7 @@ import * as couponActionTypes from '../coupon/coupon-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 import cartReducer from './cart-reducer';
 
@@ -164,12 +163,12 @@ describe('cartReducer()', () => {
 
     it('returns new data when shipping address gets updated', () => {
         const action = {
-            type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-            payload: getShippingAddressResponseBody().data,
+            type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
+            payload: getCheckout(),
         };
 
         expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
+            data: getCart(),
         }));
     });
 

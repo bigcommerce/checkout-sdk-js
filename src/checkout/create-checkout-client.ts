@@ -9,18 +9,21 @@ import { CountryRequestSender } from '../geography';
 import { OrderRequestSender } from '../order';
 import { PaymentMethodRequestSender } from '../payment';
 import { QuoteRequestSender } from '../quote';
-import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
+import { ConsignmentRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
 
 import CheckoutClient from './checkout-client';
 import CheckoutRequestSender from './checkout-request-sender';
 
 export default function createCheckoutClient(config: { locale?: string } = {}): CheckoutClient {
     const requestSender = createRequestSender();
+
+    const billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
     const cartRequestSender = new CartRequestSender(requestSender);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const configRequestSender = new ConfigRequestSender(requestSender);
-    const couponRequestSender = new CouponRequestSender(requestSender);
+    const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const countryRequestSender = new CountryRequestSender(requestSender, config);
+    const couponRequestSender = new CouponRequestSender(requestSender);
     const customerRequestSender = new CustomerRequestSender(requestSender);
     const giftCertificateRequestSender = new GiftCertificateRequestSender(requestSender);
     const orderRequestSender = new OrderRequestSender(requestSender);
@@ -28,14 +31,13 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
     const quoteRequestSender = new QuoteRequestSender(requestSender);
     const shippingCountryRequestSender = new ShippingCountryRequestSender(requestSender, config);
     const shippingOptionRequestSender = new ShippingOptionRequestSender(requestSender);
-    const billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
-    const shippingAddressRequestSender = new ShippingAddressRequestSender(requestSender);
 
     return new CheckoutClient(
         billingAddressRequestSender,
         cartRequestSender,
         checkoutRequestSender,
         configRequestSender,
+        consignmentRequestSender,
         countryRequestSender,
         couponRequestSender,
         customerRequestSender,
@@ -43,7 +45,6 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
         orderRequestSender,
         paymentMethodRequestSender,
         quoteRequestSender,
-        shippingAddressRequestSender,
         shippingCountryRequestSender,
         shippingOptionRequestSender
     );

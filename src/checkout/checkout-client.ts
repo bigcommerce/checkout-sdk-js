@@ -11,7 +11,12 @@ import { CountryRequestSender } from '../geography';
 import { OrderRequestBody, OrderRequestSender } from '../order';
 import { PaymentMethodRequestSender } from '../payment';
 import { QuoteRequestSender } from '../quote';
-import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
+import {
+    ConsignmentRequestSender,
+    ShippingCountryRequestSender,
+    ShippingOptionRequestSender,
+} from '../shipping';
+import { ConsignmentsRequestBody } from '../shipping/consignment';
 
 import CheckoutRequestSender from './checkout-request-sender';
 
@@ -26,6 +31,7 @@ export default class CheckoutClient {
         private _cartRequestSender: CartRequestSender,
         private _checkoutRequestSender: CheckoutRequestSender,
         private _configRequestSender: ConfigRequestSender,
+        private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
         private _couponRequestSender: CouponRequestSender,
         private _customerRequestSender: CustomerRequestSender,
@@ -33,7 +39,6 @@ export default class CheckoutClient {
         private _orderRequestSender: OrderRequestSender,
         private _paymentMethodRequestSender: PaymentMethodRequestSender,
         private _quoteRequestSender: QuoteRequestSender,
-        private _shippingAddressRequestSender: ShippingAddressRequestSender,
         private _shippingCountryRequestSender: ShippingCountryRequestSender,
         private _shippingOptionRequestSender: ShippingOptionRequestSender
     ) {}
@@ -86,8 +91,8 @@ export default class CheckoutClient {
         return this._billingAddressRequestSender.updateAddress(address, options);
     }
 
-    updateShippingAddress(address: InternalAddress, options?: RequestOptions): Promise<Response> {
-        return this._shippingAddressRequestSender.updateAddress(address, options);
+    createConsignments(checkoutId: string, consignments: ConsignmentsRequestBody, options?: RequestOptions): Promise<Response> {
+        return this._consignmentRequestSender.createConsignments(checkoutId, consignments, options);
     }
 
     loadShippingOptions(options?: RequestOptions): Promise<Response> {

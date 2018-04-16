@@ -9,9 +9,9 @@ import { getCountries } from '../geography/countries.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
 import { getQuote } from '../quote/internal-quotes.mock';
-import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import CheckoutClient from './checkout-client';
+import { getConsignmentRequestBody } from '../shipping/consignments.mock';
 
 describe('CheckoutClient', () => {
     let client;
@@ -26,7 +26,7 @@ describe('CheckoutClient', () => {
     let orderRequestSender;
     let paymentMethodRequestSender;
     let quoteRequestSender;
-    let shippingAddressRequestSender;
+    let consignmentRequestSender;
     let shippingCountryRequestSender;
     let shippingOptionRequestSender;
 
@@ -91,8 +91,8 @@ describe('CheckoutClient', () => {
             loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
         };
 
-        shippingAddressRequestSender = {
-            updateAddress: jest.fn(() => Promise.resolve(getResponse(getShippingAddress()))),
+        consignmentRequestSender = {
+            createConsignments: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
         };
 
         shippingOptionRequestSender = {
@@ -112,7 +112,7 @@ describe('CheckoutClient', () => {
             orderRequestSender,
             paymentMethodRequestSender,
             quoteRequestSender,
-            shippingAddressRequestSender,
+            consignmentRequestSender,
             shippingCountryRequestSender,
             shippingOptionRequestSender,
         );
@@ -273,28 +273,29 @@ describe('CheckoutClient', () => {
         });
     });
 
-    describe('#updateShippingAddress()', () => {
-        let address;
+    describe('#createConsignments()', () => {
+        const checkoutId = 'foo';
+        let consignments;
         let options;
 
         beforeEach(() => {
-            address = getShippingAddress();
+            consignments = [getConsignmentRequestBody()];
             options = {
                 timeout: createTimeout(),
             };
         });
 
-        it('updates the shipping address', async () => {
-            await client.updateShippingAddress(address, options);
+        it('calls consignment request sender', async () => {
+            await client.createConsignments(checkoutId, consignments, options);
 
-            expect(shippingAddressRequestSender.updateAddress)
-                .toHaveBeenCalledWith(address, options);
+            expect(consignmentRequestSender.createConsignments)
+                .toHaveBeenCalledWith(checkoutId, consignments, options);
         });
 
         it('returns the shipping address', async () => {
-            const output = await client.updateShippingAddress(address, options);
+            const output = await client.createConsignments(checkoutId, consignments, options);
 
-            expect(output).toEqual(getResponse(address));
+            expect(output).toEqual(getResponse(getCheckout()));
         });
     });
 

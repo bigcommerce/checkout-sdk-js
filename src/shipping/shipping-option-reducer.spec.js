@@ -1,11 +1,11 @@
-import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { getCheckout } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import { getShippingAddressResponseBody } from './internal-shipping-addresses.mock';
-import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as quoteActionTypes from '../quote/quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { getShippingOptionResponseBody, getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 import shippingOptionReducer from './shipping-option-reducer';
 
@@ -100,14 +100,13 @@ describe('shippingOptionReducer()', () => {
     });
 
     it('returns a new state when updating shipping address', () => {
-        const response = getShippingAddressResponseBody();
         const action = {
-            type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-            payload: response.data,
+            type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
+            payload: getCheckout(),
         };
 
         expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.shippingOptions,
+            data: getShippingOptions(),
         }));
     });
 });

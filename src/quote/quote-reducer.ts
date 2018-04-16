@@ -3,7 +3,7 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 
 import InternalQuote from './internal-quote';
@@ -30,13 +30,13 @@ export default function quoteReducer(state: any = {}, action: Action): any {
 function dataReducer(data: InternalQuote, action: Action): InternalQuote {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
         return { ...data, ...mapToInternalQuote(action.payload) };
 
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
     case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
     case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.quote } : data;

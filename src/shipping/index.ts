@@ -3,8 +3,8 @@ export { default as createShippingStrategyRegistry } from './create-shipping-str
 export { default as Consignment } from './consignment';
 export { default as consignmentReducer } from './consignment-reducer';
 
-export { default as ShippingAddressActionCreator } from './shipping-address-action-creator';
-export { default as ShippingAddressRequestSender } from './shipping-address-request-sender';
+export { default as ConsignmentActionCreator } from './consignment-action-creator';
+export { default as ConsignmentRequestSender } from './consignment-request-sender';
 export { default as ShippingAddressSelector } from './shipping-address-selector';
 
 export { default as ShippingCountryActionCreator } from './shipping-country-action-creator';
