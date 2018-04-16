@@ -13,8 +13,4 @@ export default class PlaceOrderService {
     submitPayment(payment: Payment): Promise<CheckoutSelectors> {
         return this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
     }
-
-    initializeOffsitePayment(payment: Payment): Promise<CheckoutSelectors> {
-        return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payment));
-    }
 }

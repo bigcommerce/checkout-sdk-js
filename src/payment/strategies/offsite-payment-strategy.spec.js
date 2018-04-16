@@ -1,19 +1,27 @@
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 import { merge, omit } from 'lodash';
+
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { FINALIZE_ORDER_REQUESTED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { OrderActionCreator } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
+import PaymentActionCreator from '../payment-action-creator';
+import { INITIALIZE_OFFSITE_PAYMENT_REQUESTED } from '../payment-action-types';
+import PaymentRequestSender from '../payment-request-sender';
 import * as paymentStatusTypes from '../payment-status-types';
+
 import OffsitePaymentStrategy from './offsite-payment-strategy';
 
 describe('OffsitePaymentStrategy', () => {
     let finalizeOrderAction;
+    let initializeOffsitePaymentAction;
     let placeOrderService;
     let orderActionCreator;
+    let paymentActionCreator;
     let store;
     let strategy;
     let submitOrderAction;
@@ -21,10 +29,13 @@ describe('OffsitePaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
-        placeOrderService = {
-            initializeOffsitePayment: jest.fn(() => Promise.resolve(store.getState())),
-        };
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator
+        );
+        placeOrderService = {};
         finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
+        initializeOffsitePaymentAction = Observable.of(createAction(INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
 
         jest.spyOn(store, 'dispatch');
@@ -35,7 +46,10 @@ describe('OffsitePaymentStrategy', () => {
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
 
-        strategy = new OffsitePaymentStrategy(store, placeOrderService, orderActionCreator);
+        jest.spyOn(paymentActionCreator, 'initializeOffsitePayment')
+            .mockReturnValue(initializeOffsitePaymentAction);
+
+        strategy = new OffsitePaymentStrategy(store, placeOrderService, orderActionCreator, paymentActionCreator);
     });
 
     it('submits order without payment data', async () => {
@@ -66,7 +80,8 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(placeOrderService.initializeOffsitePayment).toHaveBeenCalledWith(payload.payment, payload.useStoreCredit, options);
+        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(payload.payment);
+        expect(store.dispatch).toHaveBeenCalledWith(initializeOffsitePaymentAction);
     });
 
     it('finalizes order if order is created and payment is acknowledged', async () => {

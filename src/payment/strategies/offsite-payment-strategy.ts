@@ -1,8 +1,9 @@
 import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { MissingDataError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import PaymentActionCreator from '../payment-action-creator';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -11,7 +12,8 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         placeOrderService: PlaceOrderService,
-        private _orderActionCreator: OrderActionCreator
+        private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator
     ) {
         super(store, placeOrderService);
     }
@@ -21,9 +23,13 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
         const orderPayload = gateway === 'adyen' ? payload : omit(payload, 'payment');
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, true, options))
-            .then(() =>
-                this._placeOrderService.initializeOffsitePayment(payload.payment, payload.useStoreCredit, options)
-            );
+            .then(() => {
+                if (!payload.payment) {
+                    throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+                }
+
+                return this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payload.payment));
+            });
     }
 
     finalize(options: any): Promise<CheckoutSelectors> {

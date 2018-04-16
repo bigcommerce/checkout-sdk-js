@@ -10,7 +10,6 @@ describe('PlaceOrderService', () => {
 
     beforeEach(() => {
         paymentActionCreator = {
-            initializeOffsitePayment: jest.fn(() => createAction('INITALIZE_OFFSITE_PAYMENT')),
             submitPayment: jest.fn(() => createAction('SUBMIT_PAYMENT')),
         };
 
@@ -31,23 +30,6 @@ describe('PlaceOrderService', () => {
 
         it('returns checkout state', async () => {
             const output = await placeOrderService.submitPayment(getPayment());
-
-            expect(output).toEqual(store.getState());
-        });
-    });
-
-    describe('#initializeOffsitePayment()', () => {
-        it('dispatches initialize payment action', async () => {
-            jest.spyOn(store, 'dispatch');
-
-            await placeOrderService.initializeOffsitePayment(getPayment(), false);
-
-            expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(getPayment());
-            expect(store.dispatch).toHaveBeenCalledWith(createAction('INITALIZE_OFFSITE_PAYMENT'));
-        });
-
-        it('returns checkout state', async () => {
-            const output = await placeOrderService.initializeOffsitePayment(getPayment(), false);
 
             expect(output).toEqual(store.getState());
         });

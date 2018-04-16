@@ -13,7 +13,9 @@ import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
 import { WepayRiskClient } from '../remote-checkout/methods/wepay';
 
+import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
+import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import {
     AfterpayPaymentStrategy,
@@ -45,6 +47,10 @@ export default function createPaymentStrategyRegistry(
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const orderActionCreator = new OrderActionCreator(client);
+    const paymentActionCreator = new PaymentActionCreator(
+        new PaymentRequestSender(paymentClient),
+        new OrderActionCreator(client)
+    );
     const paymentMethodActionCreator = new PaymentMethodActionCreator(client);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
         new RemoteCheckoutRequestSender(createRequestSender())
@@ -108,7 +114,8 @@ export default function createPaymentStrategyRegistry(
         new OffsitePaymentStrategy(
             store,
             placeOrderService,
-            orderActionCreator
+            orderActionCreator,
+            paymentActionCreator
         )
     );
 
