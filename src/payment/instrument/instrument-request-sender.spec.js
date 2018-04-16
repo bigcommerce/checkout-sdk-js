@@ -21,7 +21,7 @@ describe('InstrumentMethodRequestSender', () => {
 
         client = {
             getVaultAccessToken: jest.fn((payload, callback) => callback()),
-            getShopperInstruments: jest.fn((payload, callback) => callback()),
+            postTrustedShippingAddress: jest.fn((payload, callback) => callback()),
             postShopperInstrument: jest.fn((payload, callback) => callback()),
             deleteShopperInstrument: jest.fn((payload, callback) => callback()),
         };
@@ -56,7 +56,7 @@ describe('InstrumentMethodRequestSender', () => {
 
     describe('#getInstruments()', () => {
         it('returns instruments if request is successful', async () => {
-            client.getShopperInstruments = jest.fn((payload, callback) => callback(null, {
+            client.postTrustedShippingAddress = jest.fn((payload, callback) => callback(null, {
                 data: getInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
@@ -73,7 +73,7 @@ describe('InstrumentMethodRequestSender', () => {
         });
 
         it('returns error response if request is unsuccessful', async () => {
-            client.getShopperInstruments = jest.fn((payload, callback) => callback({
+            client.postTrustedShippingAddress = jest.fn((payload, callback) => callback({
                 data: getErrorInstrumentResponseBody(),
                 status: 400,
                 statusText: 'Bad Request',

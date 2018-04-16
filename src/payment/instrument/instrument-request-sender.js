@@ -23,13 +23,19 @@ export default class InstrumentRequestSender {
      * @param {string} storeId
      * @param {string} shopperId
      * @param {string} authToken
+     * @param {InternalAddress} shippingAddress
      * @return {Promise<Response<InstrumentsResponseBody>>}
      */
-    getInstruments(storeId, shopperId, authToken) {
-        const payload = { storeId, shopperId, authToken };
+    getInstruments(storeId, shopperId, authToken, shippingAddress) {
+        const payload = {
+            storeId,
+            shopperId,
+            authToken,
+            shippingAddress,
+        };
 
         return new Promise((resolve, reject) => {
-            this._client.getShopperInstruments(payload, (error, response) => {
+            this._client.postTrustedShippingAddress(payload, (error, response) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {

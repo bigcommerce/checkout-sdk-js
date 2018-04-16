@@ -8,6 +8,7 @@
  * @property {string} expiry_year
  * @property {string} brand
  * @property {boolean} default_instrument
+ * @property {boolean} trusted_shipping_address
  */
 
  /**

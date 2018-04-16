@@ -400,11 +400,13 @@ export default class CheckoutService {
      */
     loadInstruments() {
         const { storeId, customerId, token } = this._getInstrumentState();
+        const shippingAddress = this._getShippingAddress();
 
         const action = this._instrumentActionCreator.loadInstruments(
             storeId,
             customerId,
-            token
+            token,
+            shippingAddress
         );
 
         return this._store.dispatch(action);
@@ -442,6 +444,17 @@ export default class CheckoutService {
         );
 
         return this._store.dispatch(action);
+    }
+
+    _getShippingAddress() {
+        const { checkout } = this._store.getState();
+        const shippingAddress = checkout.getShippingAddress()
+
+        if (!shippingAddress) {
+            throw new MissingDataError();
+        }
+
+        return shippingAddress;
     }
 
     /**

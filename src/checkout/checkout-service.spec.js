@@ -724,6 +724,7 @@ describe('CheckoutService', () => {
 
     describe('#loadInstruments()', () => {
         it('loads instruments', async () => {
+            const address = getShippingAddress();
             const { storeId } = getAppConfig();
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
@@ -732,7 +733,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadInstruments();
 
             expect(checkoutClient.getInstruments)
-                .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken);
+                .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken, address);
         });
 
         it('throws error if customer data is missing', () => {

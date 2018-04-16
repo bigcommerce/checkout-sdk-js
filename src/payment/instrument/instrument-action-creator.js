@@ -16,15 +16,16 @@ export default class InstrumentActionCreator {
      * @param {string} storeId
      * @param {string} shopperId
      * @param {?VaultAccessToken} accessToken
+     * @param {InternalAddress} shippingAddress
      * @return {Observable<Action>}
      */
-    loadInstruments(storeId, shopperId, accessToken) {
+    loadInstruments(storeId, shopperId, accessToken, shippingAddress) {
         return Observable.create((observer) => {
             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_REQUESTED));
 
             this._getValidAccessToken(accessToken)
                 .then(currentToken =>
-                    this._instrumentRequestSender.getInstruments(storeId, shopperId, currentToken.vaultAccessToken)
+                    this._instrumentRequestSender.getInstruments(storeId, shopperId, currentToken.vaultAccessToken, shippingAddress)
                         .then(({ body } = {}) => {
                             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, body, currentToken));
                             observer.complete();

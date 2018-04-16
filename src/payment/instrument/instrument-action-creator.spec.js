@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { addMinutes } from '../../common/date-time';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
+import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
 import * as actionTypes from './instrument-action-types';
 import InstrumentActionCreator from './instrument-action-creator';
 import {
@@ -22,6 +23,7 @@ describe('InstrumentActionCreator', () => {
     let shopperId;
     let instrumentId;
     let vaultAccessToken;
+    let shippingAddress;
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
@@ -43,24 +45,27 @@ describe('InstrumentActionCreator', () => {
         shopperId = '2';
         instrumentId = '123';
         vaultAccessToken = getVaultAccessTokenResponse.body.data.token;
+        shippingAddress = getShippingAddress();
     });
 
     describe('#getInstruments()', () => {
         it('sends a request to get a list of instruments', async () => {
-            await instrumentActionCreator.loadInstruments(storeId, shopperId).toPromise();
+            await instrumentActionCreator.loadInstruments(storeId, shopperId, null, shippingAddress).toPromise();
 
             expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
-            expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, shopperId, vaultAccessToken);
+            expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, shopperId, vaultAccessToken, shippingAddress);
         });
 
         it('does not send a request to get a list of instruments if valid token is supplied', async () => {
-            await instrumentActionCreator.loadInstruments(storeId, shopperId, {
+            const vaultAccessToken = {
                 vaultAccessToken: '321',
                 vaultAccessExpiry: addMinutes(new Date(), 5),
-            }).toPromise();
+            };
+
+            await instrumentActionCreator.loadInstruments(storeId, shopperId, vaultAccessToken, shippingAddress).toPromise();
 
             expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
-            expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, shopperId, '321');
+            expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, shopperId, '321', shippingAddress);
         });
 
         it('emits actions if able to load instruments', () => {
