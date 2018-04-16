@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -15,11 +15,10 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
         private _orderActionCreator: OrderActionCreator,
         private _scriptLoader: ScriptLoader
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options?: any): Promise<CheckoutSelectors> {

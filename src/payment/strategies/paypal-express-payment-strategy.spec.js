@@ -16,7 +16,6 @@ describe('PaypalExpressPaymentStrategy', () => {
     let orderActionCreator;
     let paymentMethod;
     let paypalSdk;
-    let placeOrderService;
     let scriptLoader;
     let store;
     let strategy;
@@ -24,11 +23,6 @@ describe('PaypalExpressPaymentStrategy', () => {
 
     beforeEach(() => {
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
-
-        placeOrderService = {
-            verifyCart: jest.fn(() => Promise.resolve(store.getState())),
-            submitPayment: jest.fn(() => Promise.resolve(store.getState())),
-        };
 
         paypalSdk = {
             checkout: {
@@ -72,7 +66,7 @@ describe('PaypalExpressPaymentStrategy', () => {
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
 
-        strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader);
+        strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
     });
 
     afterEach(() => {
@@ -163,7 +157,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                     }),
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader);
+                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -179,7 +173,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                     }),
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader);
+                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -196,15 +190,6 @@ describe('PaypalExpressPaymentStrategy', () => {
 
                 expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
                 expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-            });
-
-            it('does not submit payment data separately', async () => {
-                const options = {};
-
-                strategy.execute(payload, options);
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(placeOrderService.submitPayment).not.toHaveBeenCalledWith(options);
             });
 
             it('does not redirect shopper directly if order submission is successful', async () => {
@@ -246,13 +231,6 @@ describe('PaypalExpressPaymentStrategy', () => {
                 expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             });
 
-            it('does not submit payment data separately', async () => {
-                strategy.execute(payload);
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(placeOrderService.submitPayment).not.toHaveBeenCalled();
-            });
-
             it('redirects shopper directly if order submission is successful', async () => {
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -267,7 +245,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                     }),
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader);
+                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -282,7 +260,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                     }),
                 });
 
-                strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader);
+                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));

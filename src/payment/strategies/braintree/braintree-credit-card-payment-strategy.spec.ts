@@ -10,7 +10,6 @@ import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
-import PlaceOrderService from '../../../order/place-order-service';
 import Payment, { CreditCard, VaultedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
@@ -25,7 +24,6 @@ import BraintreePaymentProcessor, { BraintreeCreditCardInitializeOptions } from 
 describe('BraintreeCreditCardPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let placeOrderService: PlaceOrderService;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
     let braintreeCreditCardPaymentStrategy: BraintreeCreditCardPaymentStrategy;
     let paymentActionCreator: PaymentActionCreator;
@@ -52,8 +50,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         store.dispatch = jest.fn(() => Promise.resolve({ checkout: checkoutMock }));
         store.getState = jest.fn(() => ({ checkout: checkoutMock }));
 
-        placeOrderService = {} as PlaceOrderService;
-
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
@@ -74,7 +70,6 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,

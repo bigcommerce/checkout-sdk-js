@@ -3,7 +3,7 @@
 import { CartActionCreator } from '../../cart';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import PaymentActionCreator from '../payment-action-creator';
@@ -17,7 +17,6 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
         private _cartActionCreator: CartActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
@@ -25,7 +24,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {

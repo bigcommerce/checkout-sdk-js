@@ -12,7 +12,6 @@ import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 describe('PaypalProPaymentStrategy', () => {
     let orderActionCreator;
     let paymentActionCreator;
-    let placeOrderService;
     let store;
     let strategy;
     let submitOrderAction;
@@ -34,7 +33,7 @@ describe('PaypalProPaymentStrategy', () => {
             order: getIncompleteOrderState(),
         });
 
-        strategy = new PaypalProPaymentStrategy(store, placeOrderService, orderActionCreator, paymentActionCreator);
+        strategy = new PaypalProPaymentStrategy(store, orderActionCreator, paymentActionCreator);
 
         jest.spyOn(store, 'dispatch');
     });
@@ -65,7 +64,7 @@ describe('PaypalProPaymentStrategy', () => {
 
     it('throws error if order is missing', async () => {
         store = createCheckoutStore();
-        strategy = new PaypalProPaymentStrategy(store, placeOrderService, orderActionCreator);
+        strategy = new PaypalProPaymentStrategy(store, orderActionCreator);
 
         try {
             await strategy.execute(getOrderRequestBody());
@@ -84,7 +83,7 @@ describe('PaypalProPaymentStrategy', () => {
                 }),
             });
 
-            strategy = new PaypalProPaymentStrategy(store, placeOrderService, orderActionCreator);
+            strategy = new PaypalProPaymentStrategy(store, orderActionCreator);
 
             jest.spyOn(store, 'dispatch');
         });

@@ -1,7 +1,7 @@
 import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import isCreditCardLike from '../../is-credit-card';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { PaymentInstrument } from '../../payment';
@@ -15,13 +15,12 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: BraintreeCreditCardInitializeOptions): Promise<CheckoutSelectors> {

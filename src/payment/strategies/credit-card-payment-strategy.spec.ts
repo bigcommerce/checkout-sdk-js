@@ -4,7 +4,7 @@ import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { createPlaceOrderService, OrderActionCreator, PlaceOrderService } from '../../order';
+import { OrderActionCreator } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import PaymentActionCreator from '../payment-action-creator';
@@ -16,7 +16,6 @@ import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 describe('CreditCardPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
-    let placeOrderService: PlaceOrderService;
     let store: CheckoutStore;
     let strategy: CreditCardPaymentStrategy;
     let submitOrderAction: Observable<Action>;
@@ -30,18 +29,12 @@ describe('CreditCardPaymentStrategy', () => {
             orderActionCreator
         );
 
-        placeOrderService = createPlaceOrderService(
-            store,
-            createCheckoutClient(),
-            createPaymentClient()
-        );
-
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
 
-        strategy = new CreditCardPaymentStrategy(store, placeOrderService, orderActionCreator, paymentActionCreator);
+        strategy = new CreditCardPaymentStrategy(store, orderActionCreator, paymentActionCreator);
 
         jest.spyOn(store, 'dispatch');
 

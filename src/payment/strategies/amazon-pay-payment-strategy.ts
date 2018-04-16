@@ -5,7 +5,7 @@ import { isAddressEqual, InternalAddress } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, NotInitializedError, RequestError } from '../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError, RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
@@ -19,13 +19,12 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
         private _orderActionCreator: OrderActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {

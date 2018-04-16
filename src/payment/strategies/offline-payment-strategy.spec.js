@@ -8,7 +8,6 @@ import OfflinePaymentStrategy from './offline-payment-strategy';
 
 describe('OfflinePaymentStrategy', () => {
     let orderActionCreator;
-    let placeOrderService;
     let store;
     let strategy;
     let submitOrderAction;
@@ -16,9 +15,6 @@ describe('OfflinePaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
-        placeOrderService = {
-            initializeOffsitePayment: jest.fn(() => Promise.resolve(store.getState())),
-        };
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
@@ -26,7 +22,7 @@ describe('OfflinePaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        strategy = new OfflinePaymentStrategy(store, placeOrderService, orderActionCreator);
+        strategy = new OfflinePaymentStrategy(store, orderActionCreator);
     });
 
     it('submits order without payment data', async () => {

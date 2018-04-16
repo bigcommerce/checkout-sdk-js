@@ -1,6 +1,6 @@
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -11,14 +11,13 @@ import BraintreePaymentProcessor from './braintree-payment-processor';
 export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor,
         private _credit: boolean = false
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {

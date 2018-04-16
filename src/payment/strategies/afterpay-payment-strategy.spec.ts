@@ -9,7 +9,7 @@ import { CartActionCreator } from '../../cart';
 import { VERIFY_CART_REQUESTED } from '../../cart/cart-action-types';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
-import { createPlaceOrderService, OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import { createPlaceOrderService, OrderActionCreator, OrderRequestBody } from '../../order';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getAfterpay } from '../../payment/payment-methods.mock';
@@ -35,7 +35,6 @@ describe('AfterpayPaymentStrategy', () => {
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let placeOrderService: PlaceOrderService;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AfterpayScriptLoader;
     let submitOrderAction: Observable<Action>;
@@ -55,7 +54,6 @@ describe('AfterpayPaymentStrategy', () => {
         orderActionCreator = new OrderActionCreator(client);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         cartActionCreator = new CartActionCreator(client);
-        placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator
@@ -66,7 +64,6 @@ describe('AfterpayPaymentStrategy', () => {
         scriptLoader = new AfterpayScriptLoader(createScriptLoader());
         strategy = new AfterpayPaymentStrategy(
             store,
-            placeOrderService,
             cartActionCreator,
             orderActionCreator,
             paymentActionCreator,

@@ -8,7 +8,6 @@ import LegacyPaymentStrategy from './legacy-payment-strategy';
 
 describe('LegacyPaymentStrategy', () => {
     let orderActionCreator;
-    let placeOrderService;
     let store;
     let strategy;
     let submitOrderAction;
@@ -16,9 +15,6 @@ describe('LegacyPaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
-        placeOrderService = {
-            submitPayment: jest.fn(() => Promise.resolve(store.getState())),
-        };
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
@@ -26,7 +22,7 @@ describe('LegacyPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        strategy = new LegacyPaymentStrategy(store, placeOrderService, orderActionCreator);
+        strategy = new LegacyPaymentStrategy(store, orderActionCreator);
     });
 
     it('submits order with payment data', async () => {
@@ -34,12 +30,6 @@ describe('LegacyPaymentStrategy', () => {
 
         expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(getOrderRequestBody(), true, undefined);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-    });
-
-    it('does not submit payment data separately', async () => {
-        await strategy.execute(getOrderRequestBody());
-
-        expect(placeOrderService.submitPayment).not.toHaveBeenCalled();
     });
 
     it('returns checkout state', async () => {

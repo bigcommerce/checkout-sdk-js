@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import CheckoutClient from '../../checkout/checkout-client';
-import { createPlaceOrderService, OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getWepay } from '../../payment/payment-methods.mock';
@@ -28,7 +28,6 @@ describe('WepayPaymentStrategy', () => {
     let paymentActionCreator: PaymentActionCreator;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
-    let placeOrderService: PlaceOrderService;
     let store: CheckoutStore;
     let strategy: WepayPaymentStrategy;
     let submitOrderAction: Observable<Action>;
@@ -39,13 +38,6 @@ describe('WepayPaymentStrategy', () => {
         store = createCheckoutStore();
         scriptLoader = createScriptLoader();
         wepayRiskClient = new WepayRiskClient(scriptLoader);
-
-        placeOrderService = createPlaceOrderService(
-            store,
-            client,
-            createPaymentClient()
-        );
-
         orderActionCreator = new OrderActionCreator(client);
 
         paymentActionCreator = new PaymentActionCreator(
@@ -55,7 +47,6 @@ describe('WepayPaymentStrategy', () => {
 
         strategy = new WepayPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator,
             wepayRiskClient
@@ -103,7 +94,6 @@ describe('WepayPaymentStrategy', () => {
 
     describe('#execute', () => {
         it('should submit the payment with the risk token', async () => {
-            jest.spyOn(placeOrderService, 'submitPayment');
             await strategy.initialize({ paymentMethod });
             await strategy.execute(payload);
 

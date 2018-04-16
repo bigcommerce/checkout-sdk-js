@@ -6,7 +6,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
-import { createPlaceOrderService, OrderActionCreator } from '../order';
+import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
@@ -43,7 +43,6 @@ export default function createPaymentStrategyRegistry(
     paymentClient: any
 ) {
     const registry = new PaymentStrategyRegistry(store.getState().checkout.getConfig());
-    const placeOrderService = createPlaceOrderService(store, client, paymentClient);
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const orderActionCreator = new OrderActionCreator(client);
@@ -59,7 +58,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('afterpay', () =>
         new AfterpayPaymentStrategy(
             store,
-            placeOrderService,
             new CartActionCreator(client),
             orderActionCreator,
             paymentActionCreator,
@@ -72,7 +70,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('amazon', () =>
         new AmazonPayPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             new BillingAddressActionCreator(client),
             remoteCheckoutActionCreator,
@@ -83,7 +80,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('creditcard', () =>
         new CreditCardPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator
         )
@@ -92,7 +88,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('klarna', () =>
         new KlarnaPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
@@ -103,7 +98,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('legacy', () =>
         new LegacyPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator
         )
     );
@@ -111,7 +105,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('offline', () =>
         new OfflinePaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator
         )
     );
@@ -119,7 +112,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('offsite', () =>
         new OffsitePaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator
         )
@@ -128,7 +120,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('paypal', () =>
         new PaypalProPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator
         )
@@ -137,7 +128,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('paypalexpress', () =>
         new PaypalExpressPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             scriptLoader
         )
@@ -146,7 +136,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('paypalexpresscredit', () =>
         new PaypalExpressPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             scriptLoader
         )
@@ -155,7 +144,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('sagepay', () =>
         new SagePayPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator,
             createFormPoster()
@@ -165,7 +153,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('squarev2', () =>
         new SquarePaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             new SquareScriptLoader(scriptLoader)
         )
@@ -174,7 +161,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('nopaymentdatarequired', () =>
         new NoPaymentDataRequiredPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator
         )
     );
@@ -182,7 +168,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('braintree', () =>
         new BraintreeCreditCardPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
@@ -193,7 +178,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('braintreepaypal', () =>
         new BraintreePaypalPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
@@ -204,7 +188,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('braintreepaypalcredit', () =>
         new BraintreePaypalPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
@@ -216,7 +199,6 @@ export default function createPaymentStrategyRegistry(
     registry.register('wepay', () =>
         new WepayPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator,
             new WepayRiskClient(scriptLoader)

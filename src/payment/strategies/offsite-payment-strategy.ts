@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import PaymentActionCreator from '../payment-action-creator';
 import * as paymentStatusTypes from '../payment-status-types';
 
@@ -11,11 +11,10 @@ import PaymentStrategy from './payment-strategy';
 export default class OffsitePaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {

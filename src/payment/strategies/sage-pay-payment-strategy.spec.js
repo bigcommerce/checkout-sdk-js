@@ -23,7 +23,6 @@ describe('SagePayPaymentStrategy', () => {
     let formPoster;
     let orderActionCreator;
     let paymentActionCreator;
-    let placeOrderService;
     let store;
     let strategy;
     let submitOrderAction;
@@ -35,7 +34,6 @@ describe('SagePayPaymentStrategy', () => {
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator
         );
-        placeOrderService = {};
 
         formPoster = {
             postForm: jest.fn((url, data, callback = () => {}) => callback()),
@@ -60,7 +58,6 @@ describe('SagePayPaymentStrategy', () => {
 
         strategy = new SagePayPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentActionCreator,
             formPoster

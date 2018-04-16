@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, NotInitializedError, StandardError, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentMethod from '../../payment-method';
 import PaymentStrategy from '../payment-strategy';
 
@@ -15,11 +15,10 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
         private _orderActionCreator: OrderActionCreator,
         private _scriptLoader: SquareScriptLoader
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {

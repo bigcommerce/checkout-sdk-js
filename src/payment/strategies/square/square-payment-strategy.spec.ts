@@ -6,7 +6,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../../checkout';
-import { createPlaceOrderService, OrderActionCreator, PlaceOrderService } from '../../../order';
+import { OrderActionCreator } from '../../../order';
 import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
 import { getSquare } from '../../../payment/payment-methods.mock';
 import PaymentMethod from '../../payment-method';
@@ -21,7 +21,6 @@ describe('SquarePaymentStrategy', () => {
     let strategy: SquarePaymentStrategy;
     let orderActionCreator: OrderActionCreator;
     let paymentMethod: PaymentMethod;
-    let placeOrderService: PlaceOrderService;
     let callbacks: Square.FormCallbacks;
     let submitOrderAction: Observable<Action>;
 
@@ -38,11 +37,10 @@ describe('SquarePaymentStrategy', () => {
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore();
-        placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
         paymentMethod = getSquare();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
         scriptLoader = new SquareScriptLoader(createScriptLoader());
-        strategy = new SquarePaymentStrategy(store, placeOrderService, orderActionCreator, scriptLoader);
+        strategy = new SquarePaymentStrategy(store, orderActionCreator, scriptLoader);
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED);
 
         jest.spyOn(orderActionCreator, 'submitOrder')

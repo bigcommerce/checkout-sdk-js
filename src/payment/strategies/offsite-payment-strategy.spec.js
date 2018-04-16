@@ -19,7 +19,6 @@ import OffsitePaymentStrategy from './offsite-payment-strategy';
 describe('OffsitePaymentStrategy', () => {
     let finalizeOrderAction;
     let initializeOffsitePaymentAction;
-    let placeOrderService;
     let orderActionCreator;
     let paymentActionCreator;
     let store;
@@ -33,7 +32,6 @@ describe('OffsitePaymentStrategy', () => {
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator
         );
-        placeOrderService = {};
         finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
         initializeOffsitePaymentAction = Observable.of(createAction(INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
@@ -49,7 +47,7 @@ describe('OffsitePaymentStrategy', () => {
         jest.spyOn(paymentActionCreator, 'initializeOffsitePayment')
             .mockReturnValue(initializeOffsitePaymentAction);
 
-        strategy = new OffsitePaymentStrategy(store, placeOrderService, orderActionCreator, paymentActionCreator);
+        strategy = new OffsitePaymentStrategy(store, orderActionCreator, paymentActionCreator);
     });
 
     it('submits order without payment data', async () => {

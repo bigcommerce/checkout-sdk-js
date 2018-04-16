@@ -11,7 +11,7 @@ import { getCartState } from '../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/internal-customers.mock';
-import { createPlaceOrderService, OrderActionCreator } from '../order';
+import { OrderActionCreator } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getCompleteOrderState, getIncompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
 
@@ -41,12 +41,10 @@ describe('PaymentStrategyActionCreator', () => {
         registry = createPaymentStrategyRegistry(store, client, paymentClient);
         strategy = new CreditCardPaymentStrategy(
             store,
-            createPlaceOrderService(store, client, paymentClient),
             new OrderActionCreator(client)
         );
         noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(
             store,
-            createPlaceOrderService(store, client, paymentClient),
             new OrderActionCreator(client)
         );
 

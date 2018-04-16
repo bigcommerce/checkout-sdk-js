@@ -15,7 +15,7 @@ import { getCheckoutMeta } from '../../checkout/checkouts.mock';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
-import { createPlaceOrderService, OrderActionCreator, PlaceOrderService } from '../../order';
+import { OrderActionCreator } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_FAILED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
@@ -39,7 +39,6 @@ describe('AmazonPayPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let orderReference: OffAmazonPayments.Widgets.OrderReference;
     let paymentMethod: PaymentMethod;
-    let placeOrderService: PlaceOrderService;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AmazonPayScriptLoader;
     let submitOrderAction: Observable<Action>;
@@ -83,7 +82,6 @@ describe('AmazonPayPaymentStrategy', () => {
             },
             remoteCheckout: getRemoteCheckoutState(),
         });
-        placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
         billingAddressActionCreator = new BillingAddressActionCreator(client);
         orderActionCreator = new OrderActionCreator(client);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
@@ -92,7 +90,6 @@ describe('AmazonPayPaymentStrategy', () => {
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
         strategy = new AmazonPayPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
@@ -171,7 +168,6 @@ describe('AmazonPayPaymentStrategy', () => {
 
         strategy = new AmazonPayPaymentStrategy(
             createCheckoutStore({ remoteCheckout: {} }),
-            placeOrderService,
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
@@ -194,7 +190,6 @@ describe('AmazonPayPaymentStrategy', () => {
     it('sets order reference id when order reference gets created', async () => {
         strategy = new AmazonPayPaymentStrategy(
             createCheckoutStore({ remoteCheckout: {} }),
-            placeOrderService,
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
@@ -329,7 +324,6 @@ describe('AmazonPayPaymentStrategy', () => {
 
         strategy = new AmazonPayPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
@@ -364,7 +358,6 @@ describe('AmazonPayPaymentStrategy', () => {
 
         strategy = new AmazonPayPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,

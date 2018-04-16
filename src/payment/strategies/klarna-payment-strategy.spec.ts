@@ -6,7 +6,7 @@ import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
-import { createPlaceOrderService, OrderActionCreator, OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getKlarna } from '../../payment/payment-methods.mock';
@@ -28,7 +28,6 @@ describe('KlarnaPaymentStrategy', () => {
     let paymentMethod: PaymentMethod;
     let orderActionCreator: OrderActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let placeOrderService: PlaceOrderService;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: KlarnaScriptLoader;
     let submitOrderAction: Observable<Action>;
@@ -38,7 +37,6 @@ describe('KlarnaPaymentStrategy', () => {
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore();
-        placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
         orderActionCreator = new OrderActionCreator(client);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
@@ -47,7 +45,6 @@ describe('KlarnaPaymentStrategy', () => {
         scriptLoader = new KlarnaScriptLoader(createScriptLoader());
         strategy = new KlarnaPaymentStrategy(
             store,
-            placeOrderService,
             orderActionCreator,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
