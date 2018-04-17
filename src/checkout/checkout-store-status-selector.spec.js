@@ -3,12 +3,12 @@ import { CartSelector } from '../cart';
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector, CustomerStrategySelector } from '../customer';
+import { CustomerStrategySelector } from '../customer';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { ShippingCountrySelector, ShippingAddressSelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import { getCheckoutStoreState } from './checkouts.mock';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 import CheckoutSelector from './checkout-selector';
@@ -20,7 +20,6 @@ describe('CheckoutStoreStatusSelector', () => {
     let config;
     let countries;
     let coupon;
-    let customer;
     let customerStrategy;
     let giftCertificate;
     let instruments;
@@ -28,7 +27,6 @@ describe('CheckoutStoreStatusSelector', () => {
     let paymentMethods;
     let paymentStrategy;
     let quote;
-    let shippingAddress;
     let shippingCountries;
     let shippingOptions;
     let shippingStrategy;
@@ -43,7 +41,6 @@ describe('CheckoutStoreStatusSelector', () => {
         config = new ConfigSelector(state.config);
         countries = new CountrySelector(state.countries);
         coupon = new CouponSelector(state.coupons);
-        customer = new CustomerSelector(state.customer);
         customerStrategy = new CustomerStrategySelector();
         giftCertificate = new GiftCertificateSelector(state.giftCertificates);
         order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
@@ -51,7 +48,6 @@ describe('CheckoutStoreStatusSelector', () => {
         paymentStrategy = new PaymentStrategySelector();
         instruments = new InstrumentSelector(state.instruments);
         quote = new QuoteSelector(state.quote);
-        shippingAddress = new ShippingAddressSelector(state.quote);
         shippingCountries = new ShippingCountrySelector(state.shippingCountries);
         shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
         shippingStrategy = new ShippingStrategySelector();
@@ -63,7 +59,6 @@ describe('CheckoutStoreStatusSelector', () => {
             config,
             countries,
             coupon,
-            customer,
             customerStrategy,
             giftCertificate,
             instruments,
@@ -71,7 +66,6 @@ describe('CheckoutStoreStatusSelector', () => {
             paymentMethods,
             paymentStrategy,
             quote,
-            shippingAddress,
             shippingCountries,
             shippingOptions,
             shippingStrategy

@@ -16,7 +16,7 @@ import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingO
 import { MissingDataError } from '../common/error/errors';
 import { getAppConfig } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
-import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
+import { getCartResponseBody } from '../cart/internal-carts.mock';
 import { getCheckout, getCheckoutState } from './checkouts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } from '../order/internal-orders.mock';
@@ -36,7 +36,6 @@ import CheckoutService from './checkout-service';
 describe('CheckoutService', () => {
     let checkoutClient;
     let checkoutService;
-    let cartRequestSender;
     let customerStrategyRegistry;
     let paymentStrategy;
     let paymentStrategyRegistry;
@@ -150,16 +149,6 @@ describe('CheckoutService', () => {
             ),
         };
 
-        cartRequestSender = {
-            loadCart: jest.fn(() =>
-                Promise.resolve(getResponse(getCartResponseBody()))
-            ),
-
-            loadCarts: jest.fn(() =>
-                Promise.resolve(getResponse([getCart()]))
-            ),
-        };
-
         store = createCheckoutStore({
             checkout: getCheckoutState(),
             config: { data: getAppConfig() },
@@ -186,7 +175,7 @@ describe('CheckoutService', () => {
             store,
             new BillingAddressActionCreator(checkoutClient),
             new CartActionCreator(checkoutClient),
-            new CheckoutActionCreator(checkoutClient, cartRequestSender),
+            new CheckoutActionCreator(checkoutClient),
             new ConfigActionCreator(checkoutClient),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(checkoutClient),

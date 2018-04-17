@@ -1,5 +1,5 @@
 import isVaultedInstrument from './is-vaulted-instrument';
-import { CreditCard, PaymentInstrument, VaultedInstrument } from './payment';
+import { CreditCard, PaymentInstrument } from './payment';
 
 export default function isCreditCardLike(creditCard: PaymentInstrument): creditCard is CreditCard {
     const card = creditCard as CreditCard;

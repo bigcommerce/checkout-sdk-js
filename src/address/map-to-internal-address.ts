@@ -1,4 +1,3 @@
-import { Checkout } from '../checkout';
 
 import Address from './address';
 import InternalAddress from './internal-address';

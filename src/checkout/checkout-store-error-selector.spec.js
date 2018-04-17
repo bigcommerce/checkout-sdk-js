@@ -3,12 +3,12 @@ import { CartSelector } from '../cart';
 import { ConfigSelector } from '../config';
 import { CountrySelector } from '../geography';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerSelector, CustomerStrategySelector } from '../customer';
+import { CustomerStrategySelector } from '../customer';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 import { getCheckoutStoreState } from './checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CheckoutSelector from './checkout-selector';
@@ -21,7 +21,6 @@ describe('CheckoutStoreErrorSelector', () => {
     let config;
     let countries;
     let coupon;
-    let customer;
     let customerStrategy;
     let giftCertificate;
     let instruments;
@@ -31,7 +30,6 @@ describe('CheckoutStoreErrorSelector', () => {
     let paymentMethods;
     let paymentStrategy;
     let quote;
-    let shippingAddress;
     let shippingCountries;
     let shippingOptions;
     let shippingStrategy;
@@ -45,7 +43,6 @@ describe('CheckoutStoreErrorSelector', () => {
         config = new ConfigSelector(state.config);
         countries = new CountrySelector(state.countries);
         coupon = new CouponSelector(state.coupons);
-        customer = new CustomerSelector(state.customer);
         customerStrategy = new CustomerStrategySelector(state.customerStrategy);
         giftCertificate = new GiftCertificateSelector(state.giftCertificates);
         instruments = new InstrumentSelector(state.instruments);
@@ -53,7 +50,6 @@ describe('CheckoutStoreErrorSelector', () => {
         paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
         paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
         quote = new QuoteSelector(state.quote);
-        shippingAddress = new ShippingAddressSelector(state.quote);
         shippingCountries = new ShippingCountrySelector(state.shippingCountries);
         shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
         shippingStrategy = new ShippingStrategySelector(state.shippingStrategy);
@@ -65,7 +61,6 @@ describe('CheckoutStoreErrorSelector', () => {
             config,
             countries,
             coupon,
-            customer,
             customerStrategy,
             giftCertificate,
             instruments,
@@ -73,7 +68,6 @@ describe('CheckoutStoreErrorSelector', () => {
             paymentMethods,
             paymentStrategy,
             quote,
-            shippingAddress,
             shippingCountries,
             shippingOptions,
             shippingStrategy

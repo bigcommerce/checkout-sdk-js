@@ -1,4 +1,11 @@
-import { getInstruments, getInstrumentsMeta, getInstrumentsResponseBody, vaultInstrumentResponseBody } from './instrument.mock';
+import {
+    deleteInstrumentResponseBody,
+    getInstruments,
+    getInstrumentsMeta,
+    getInstrumentsResponseBody,
+    vaultInstrumentResponseBody,
+} from './instrument.mock';
+
 import { getErrorResponse } from '../../common/http-request/responses.mock';
 import instrumentReducer from './instrument-reducer';
 import * as actionTypes from './instrument-action-types';
@@ -122,10 +129,11 @@ describe('instrumentReducer()', () => {
 
         const action = {
             type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED,
-            meta: getInstrumentsMeta(),
-            payload: {
+            meta: {
+                ...getInstrumentsMeta(),
                 instrumentId: initialInstruments[0].bigpay_token,
             },
+            payload: deleteInstrumentResponseBody(),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({

@@ -1,7 +1,7 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressActionCreator } from '../billing';
-import { CartActionCreator, CartRequestSender } from '../cart';
+import { CartActionCreator } from '../cart';
 import { CheckoutService } from '../checkout';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
@@ -38,7 +38,7 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
         store,
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
-        new CheckoutActionCreator(client, new CartRequestSender(requestSender)),
+        new CheckoutActionCreator(client),
         new ConfigActionCreator(client),
         new CountryActionCreator(client),
         new CouponActionCreator(client),

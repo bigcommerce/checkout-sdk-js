@@ -11,13 +11,11 @@ export default class OrderSelector {
     /**
      * @constructor
      * @param {OrderState} order
-     * @param {PaymentState} payment
      * @param {CustomerState} customer
      * @param {CartState} cart
      */
     constructor(
         private _order: any = {},
-        private _payment: any = {},
         private _customer: any = {},
         private _cart: any = {}
     ) {}

@@ -25,7 +25,7 @@ describe('CheckoutStoreSelector', () => {
 
     beforeEach(() => {
         state = getCheckoutStoreState();
-        orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+        orderSelector = new OrderSelector(state.order, state.payment, state.cart);
         formSelector = new FormSelector(state.config);
 
         selector = new CheckoutStoreSelector(

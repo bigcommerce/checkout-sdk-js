@@ -1,4 +1,4 @@
-import { find, reduce } from 'lodash';
+import { reduce } from 'lodash';
 
 import { Checkout } from '../checkout';
 import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';

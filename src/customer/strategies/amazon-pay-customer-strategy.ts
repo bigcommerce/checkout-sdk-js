@@ -2,7 +2,6 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
 import 'rxjs/add/observable/empty';
-import { Observable } from 'rxjs/Observable';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { NotImplementedError, NotInitializedError } from '../../common/error/errors';
@@ -16,8 +15,6 @@ import CustomerStrategy from './customer-strategy';
 
 export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
-    private _signInButton?: OffAmazonPayments.Button;
-    private _window: OffAmazonPayments.HostWindow;
 
     constructor(
         store: CheckoutStore,
@@ -27,8 +24,6 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store);
-
-        this._window = window;
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
@@ -42,7 +37,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
                 const { onError = () => {} } = options;
                 const onReady = () => {
-                    this._signInButton = this._createSignInButton({
+                    this._createSignInButton({
                         ...options as InitializeWidgetOptions,
                         onError: error => {
                             reject(error);
@@ -64,7 +59,6 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             return super.deinitialize(options);
         }
 
-        this._signInButton = undefined;
         this._paymentMethod = undefined;
 
         return super.deinitialize(options);

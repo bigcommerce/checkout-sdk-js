@@ -98,7 +98,7 @@ function createCheckoutSelectors(state: any, options: CheckoutStoreOptions = {})
     const form = new FormSelector(state.config);
     const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
-    const order = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+    const order = new OrderSelector(state.order, state.customer, state.cart);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
     const paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
     const quote = new QuoteSelector(state.quote);
@@ -133,7 +133,6 @@ function createCheckoutSelectors(state: any, options: CheckoutStoreOptions = {})
         config,
         countries,
         coupon,
-        customer,
         customerStrategy,
         giftCertificate,
         instruments,
@@ -141,7 +140,6 @@ function createCheckoutSelectors(state: any, options: CheckoutStoreOptions = {})
         paymentMethods,
         paymentStrategy,
         quote,
-        shippingAddress,
         shippingCountries,
         shippingOptions,
         shippingStrategy
@@ -154,7 +152,6 @@ function createCheckoutSelectors(state: any, options: CheckoutStoreOptions = {})
         config,
         countries,
         coupon,
-        customer,
         customerStrategy,
         giftCertificate,
         instruments,
@@ -162,7 +159,6 @@ function createCheckoutSelectors(state: any, options: CheckoutStoreOptions = {})
         paymentMethods,
         paymentStrategy,
         quote,
-        shippingAddress,
         shippingCountries,
         shippingOptions,
         shippingStrategy

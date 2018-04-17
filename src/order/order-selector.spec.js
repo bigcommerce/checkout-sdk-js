@@ -25,7 +25,7 @@ describe('OrderSelector', () => {
 
     describe('#getOrder()', () => {
         it('returns the current order', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
 
             expect(orderSelector.getOrder()).toEqual(order);
         });
@@ -33,7 +33,7 @@ describe('OrderSelector', () => {
 
     describe('#getOrderMeta()', () => {
         it('returns order meta', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
 
             expect(orderSelector.getOrderMeta()).toEqual({
                 deviceFingerprint: 'a084205e-1b1f-487d-9087-e072d20747e5',
@@ -54,7 +54,7 @@ describe('OrderSelector', () => {
         });
 
         it('does not returns error if able to load', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
 
             expect(orderSelector.getLoadError()).toBeUndefined();
         });
@@ -71,7 +71,7 @@ describe('OrderSelector', () => {
         });
 
         it('returns false if not loading order', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
 
             expect(orderSelector.isLoading()).toEqual(false);
         });
@@ -79,13 +79,13 @@ describe('OrderSelector', () => {
 
     describe('#isPaymentDataRequired()', () => {
         it('returns true if payment is required', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
 
             expect(orderSelector.isPaymentDataRequired()).toEqual(true);
         });
 
         it('returns false if store credit exceeds grand total', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, merge({}, state.customer, {
+            orderSelector = new OrderSelector(state.order, merge({}, state.customer, {
                 data: { storeCredit: 100000000000 },
             }), state.cart);
 
@@ -93,7 +93,7 @@ describe('OrderSelector', () => {
         });
 
         it('returns true if store credit exceeds grand total but not using store credit', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, merge({}, state.customer, {
+            orderSelector = new OrderSelector(state.order, merge({}, state.customer, {
                 data: { storeCredit: 100000000000 },
             }), state.cart);
 
@@ -105,7 +105,7 @@ describe('OrderSelector', () => {
         it('returns true if payment is tokenized', () => {
             const paymentMethod = { ...getPaymentMethod(), nonce: '8903d867-6f7b-475c-8ab2-0b47ec6e000d' };
 
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
 
             expect(orderSelector.isPaymentDataSubmitted(paymentMethod)).toEqual(true);
         });
@@ -127,7 +127,7 @@ describe('OrderSelector', () => {
         });
 
         it('returns false if payment is not tokenized, acknowledged or finalized', () => {
-            orderSelector = new OrderSelector(state.order, state.payment, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
 
             expect(orderSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(false);
         });
