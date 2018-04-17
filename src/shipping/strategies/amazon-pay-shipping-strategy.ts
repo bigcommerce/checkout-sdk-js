@@ -201,7 +201,7 @@ export interface InitializeOptions extends InitializeWidgetOptions {
 
 export interface InitializeWidgetOptions {
     container: string;
-    onAddressSelect?: (address: InternalAddress) => void;
-    onError?: (error: Error) => void;
-    onReady?: () => void;
+    onAddressSelect?(address: InternalAddress): void;
+    onError?(error: Error): void;
+    onReady?(): void;
 }

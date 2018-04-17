@@ -8,8 +8,8 @@ declare namespace OffAmazonPayments {
         color: string;
         size: string;
         useAmazonAddressBook: boolean;
-        authorization?: () => void;
-        onError?: (error: ButtonError) => void;
+        authorization?(): void;
+        onError?(error: ButtonError): void;
     }
 
     interface ButtonError extends Error {
@@ -17,9 +17,9 @@ declare namespace OffAmazonPayments {
     }
 
     interface HostWindow extends Window {
-        onAmazonPaymentsReady?: () => void;
         OffAmazonPayments?: {
             Button: Button,
         };
+        onAmazonPaymentsReady?(): void;
     }
 }

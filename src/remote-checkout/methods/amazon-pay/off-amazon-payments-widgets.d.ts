@@ -16,10 +16,10 @@ declare namespace OffAmazonPayments.Widgets {
         };
         scope: string;
         sellerId: string;
-        onAddressSelect: (orderReference: OrderReference) => void;
-        onError: (error: WidgetError) => void;
-        onReady: (orderReference: OrderReference) => void;
-        onOrderReferenceCreate: (orderReference: OrderReference) => void;
+        onAddressSelect(orderReference: OrderReference): void;
+        onError(error: WidgetError): void;
+        onReady(orderReference: OrderReference): void;
+        onOrderReferenceCreate(orderReference: OrderReference): void;
     }
 
     interface WalletOptions {
@@ -28,11 +28,11 @@ declare namespace OffAmazonPayments.Widgets {
         };
         scope: string;
         sellerId: string;
-        onError: (error: WidgetError) => void;
-        onReady: (orderReference: OrderReference) => void;
-        onPaymentSelect: (orderReference: OrderReference) => void;
         amazonOrderReferenceId?: string;
-        onOrderReferenceCreate?: (orderReference: OrderReference) => void;
+        onError(error: WidgetError): void;
+        onReady(orderReference: OrderReference): void;
+        onPaymentSelect(orderReference: OrderReference): void;
+        onOrderReferenceCreate?(orderReference: OrderReference): void;
     }
 
     interface OrderReference {

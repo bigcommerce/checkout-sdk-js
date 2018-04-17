@@ -197,7 +197,7 @@ export interface InitializeOptions extends InitializeWidgetOptions {
 export interface InitializeWidgetOptions {
     container: string;
     amazonOrderReferenceId?: string;
-    onPaymentSelect?: (address?: InternalAddress) => void;
-    onError?: (error: Error) => void;
-    onReady?: () => void;
+    onPaymentSelect?(address?: InternalAddress): void;
+    onError?(error: Error): void;
+    onReady?(): void;
 }

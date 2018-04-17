@@ -33,8 +33,8 @@ declare namespace Square {
     }
 
     interface FormCallbacks {
-        paymentFormLoaded?: (form: Square.PaymentForm) => void;
-        unsupportedBrowserDetected?: () => void;
-        cardNonceResponseReceived?: (errors: any, nonce: string) => void;
+        paymentFormLoaded?(form: Square.PaymentForm): void;
+        unsupportedBrowserDetected?(): void;
+        cardNonceResponseReceived?(errors: any, nonce: string): void;
     }
 }

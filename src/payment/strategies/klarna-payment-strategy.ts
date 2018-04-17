@@ -113,7 +113,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
 export interface InitializeWidgetOptions {
     container: string;
-    loadCallback?: () => Klarna.LoadResponse;
+    loadCallback?(): Klarna.LoadResponse;
 }
 
 export interface InitializeOptions extends InitializeWidgetOptions {

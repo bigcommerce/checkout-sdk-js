@@ -139,7 +139,7 @@ export interface InitializeWidgetOptions {
     container: string;
     color?: string;
     size?: string;
-    onError?: (error: Error) => void;
+    onError?(error: Error): void;
 }
 
 interface AuthorizationOptions {

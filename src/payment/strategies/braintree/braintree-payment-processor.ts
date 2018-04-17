@@ -126,7 +126,7 @@ export interface BraintreeCreditCardInitializeOptions extends InitializeOptions 
 }
 
 export interface ModalHandler {
-    addFrame: () => {};
-    removeFrame: () => {};
-    onRemoveFrame: (callback: () => void) => void;
+    addFrame(): void;
+    removeFrame(): void;
+    onRemoveFrame(callback: () => void): void;
 }
