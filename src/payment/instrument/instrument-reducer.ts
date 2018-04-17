@@ -35,7 +35,7 @@ function dataReducer(data: any, action: Action): any {
 
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
         return (data || []).filter((instrument: any) =>
-            instrument.bigpay_token !== action.payload.instrumentId
+            instrument.bigpay_token !== action.meta.instrumentId
         );
 
     default:
