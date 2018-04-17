@@ -5,7 +5,7 @@ import { CheckoutStore } from '../checkout';
 import LegacyConfig from '../config/legacy-config';
 
 export default function createPaymentClient(store: CheckoutStore): any {
-    const paymentClient: any = createBigpayClient();
+    const paymentClient: any = createBigpayClient(store);
 
     store.subscribe(
         ({ checkout: { getConfig } }) => {
