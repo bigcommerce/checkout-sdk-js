@@ -21,7 +21,6 @@ export default function quoteReducer(state: any = {}, action: Action): any {
     const reducer = combineReducers<any>({
         data: dataReducer,
         errors: errorsReducer,
-        meta: metaReducer,
         statuses: statusesReducer,
     });
 
@@ -31,7 +30,7 @@ export default function quoteReducer(state: any = {}, action: Action): any {
 function dataReducer(data: InternalQuote, action: Action): InternalQuote {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...data, ...mapToInternalQuote(action.payload, data) };
+        return { ...data, ...mapToInternalQuote(action.payload) };
 
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
@@ -44,22 +43,6 @@ function dataReducer(data: InternalQuote, action: Action): InternalQuote {
 
     default:
         return data;
-    }
-}
-
-/**
- * @private
- * @param {?Object} meta
- * @param {Action} action
- * @return {?Object}
- */
-function metaReducer(meta: any, action: Action): any {
-    switch (action.type) {
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-        return action.meta ? { ...meta, ...action.meta } : meta;
-
-    default:
-        return meta;
     }
 }
 

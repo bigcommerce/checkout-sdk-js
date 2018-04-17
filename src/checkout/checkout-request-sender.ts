@@ -13,7 +13,10 @@ export default class CheckoutRequestSender {
 
     loadCheckout(id: string, { timeout }: RequestOptions = {}): Promise<Response> {
         const url = `/api/storefront/checkout/${id}`;
+        const params = {
+            include: 'customer',
+        };
 
-        return this._requestSender.get(url, { timeout });
+        return this._requestSender.get(url, { params, timeout });
     }
 }

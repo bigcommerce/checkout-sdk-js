@@ -10,14 +10,14 @@ export default class GiftCertificateRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    applyGiftCertificate(couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
-        const url = '/internalapi/v1/checkout/coupon';
+    applyGiftCertificate(checkoutId: string, giftCertificateCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
+        const url = `/api/storefront/checkouts/${checkoutId}/gift-certificates`;
 
-        return this._requestSender.post(url, { timeout, body: { couponCode } });
+        return this._requestSender.post(url, { timeout, body: { giftCertificateCode } });
     }
 
-    removeGiftCertificate(couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
-        const url = `/internalapi/v1/checkout/coupon/${couponCode}`;
+    removeGiftCertificate(checkoutId: string, giftCertificateCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
+        const url = `/api/storefront/checkouts/${checkoutId}/gift-certificates/${giftCertificateCode}`;
 
         return this._requestSender.delete(url, { timeout });
     }

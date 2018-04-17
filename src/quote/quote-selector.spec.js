@@ -1,20 +1,18 @@
-import { getQuote, getQuoteMeta } from './internal-quotes.mock';
+import { getQuote } from './internal-quotes.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import QuoteSelector from './quote-selector';
 
 describe('QuoteSelector', () => {
     let quote;
-    let quoteMeta;
     let quoteSelector;
     let state;
 
     beforeEach(() => {
         quote = getQuote();
-        quoteMeta = getQuoteMeta();
         state = {
             quote: {
                 data: quote,
-                meta: quoteMeta,
+                meta: {},
             },
         };
     });
@@ -24,14 +22,6 @@ describe('QuoteSelector', () => {
             quoteSelector = new QuoteSelector(state.quote);
 
             expect(quoteSelector.getQuote()).toEqual(quote);
-        });
-    });
-
-    describe('#getQuoteMeta()', () => {
-        it('returns quote metadata', () => {
-            quoteSelector = new QuoteSelector(state.quote);
-
-            expect(quoteSelector.getQuoteMeta()).toEqual(quoteMeta);
         });
     });
 

@@ -16,10 +16,6 @@ export default class QuoteSelector {
         return this._quote.data;
     }
 
-    getQuoteMeta(): any {
-        return this._quote.meta;
-    }
-
     getLoadError(): Error | undefined {
         return this._quote.errors && this._quote.errors.loadError;
     }

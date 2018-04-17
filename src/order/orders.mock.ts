@@ -1,9 +1,8 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { getPhysicalItem } from '../cart/line-items.mock';
 import { getCoupon } from '../coupon/coupons.mock';
 import { getCurrency } from '../currency/currencies.mock';
-import { getDiscount } from '../discount/discounts.mock';
 
+import { getPhysicalItem } from './line-items.mock';
 import Order from './order';
 
 export function getOrder(): Order {
@@ -11,6 +10,9 @@ export function getOrder(): Order {
         baseAmount: 200,
         billingAddress: getBillingAddress(),
         cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+        coupons: [
+            getCoupon(),
+        ],
         currency: getCurrency(),
         customerCreated: false,
         customerId: 0,

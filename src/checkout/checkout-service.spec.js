@@ -17,19 +17,20 @@ import { MissingDataError } from '../common/error/errors';
 import { getAppConfig } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
 import { getCartResponseBody } from '../cart/internal-carts.mock';
+import { getCheckout, getCheckoutState } from './checkouts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
-import { getCouponResponseBody } from '../coupon/internal-coupons.mock';
 import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } from '../order/internal-orders.mock';
 import { getCustomerResponseBody, getGuestCustomer } from '../customer/internal-customers.mock';
 import { getFormFields } from '../form/form.mocks';
-import { getGiftCertificateResponseBody } from '../coupon/internal-gift-certificates.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
+import { getOrder } from '../order/orders.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody, getPaymentMethod } from '../payment/payment-methods.mock';
 import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from './create-checkout-store';
+import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
 
 describe('CheckoutService', () => {
@@ -56,6 +57,10 @@ describe('CheckoutService', () => {
             ),
 
             loadOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getOrder()))
+            ),
+
+            loadInternalOrder: jest.fn(() =>
                 Promise.resolve(getResponse(getCompleteOrderResponseBody()))
             ),
 
@@ -76,6 +81,10 @@ describe('CheckoutService', () => {
             ),
 
             loadCheckout: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout()))
+            ),
+
+            loadQuote: jest.fn(() =>
                 Promise.resolve(getResponse(getQuoteResponseBody()))
             ),
 
@@ -108,19 +117,19 @@ describe('CheckoutService', () => {
             ),
 
             applyCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCouponResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             removeCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCouponResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             applyGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getGiftCertificateResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             removeGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getGiftCertificateResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             getVaultAccessToken: jest.fn(() =>
@@ -141,6 +150,7 @@ describe('CheckoutService', () => {
         };
 
         store = createCheckoutStore({
+            checkout: getCheckoutState(),
             config: { data: getAppConfig() },
         });
 
@@ -165,6 +175,7 @@ describe('CheckoutService', () => {
             store,
             new BillingAddressActionCreator(checkoutClient),
             new CartActionCreator(checkoutClient),
+            new CheckoutActionCreator(checkoutClient),
             new ConfigActionCreator(checkoutClient),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(checkoutClient),
@@ -194,11 +205,20 @@ describe('CheckoutService', () => {
     });
 
     describe('#loadCheckout()', () => {
+        const { id } = getCheckout();
+
         it('loads quote data', async () => {
-            const { checkout } = await checkoutService.loadCheckout();
+            const { checkout } = await checkoutService.loadCheckout(id);
+
+            expect(checkoutClient.loadQuote).toHaveBeenCalled();
+            expect(checkout.getQuote()).toEqual(getQuoteResponseBody().data.quote);
+        });
+
+        it('loads checkout data', async () => {
+            const { checkout } = await checkoutService.loadCheckout(id);
 
             expect(checkoutClient.loadCheckout).toHaveBeenCalled();
-            expect(checkout.getQuote()).toEqual(getQuoteResponseBody().data.quote);
+            expect(checkout.getCheckout()).toEqual(getCheckout());
         });
     });
 
@@ -308,7 +328,7 @@ describe('CheckoutService', () => {
 
     describe('#finalizeOrderIfNeeded()', () => {
         beforeEach(() => {
-            jest.spyOn(checkoutClient, 'loadCheckout').mockReturnValue(
+            jest.spyOn(checkoutClient, 'loadQuote').mockReturnValue(
                 Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
                     data: { order: getSubmittedOrder() },
                 })))
@@ -686,7 +706,7 @@ describe('CheckoutService', () => {
             await checkoutService.applyCoupon(code, options);
 
             expect(checkoutClient.applyCoupon)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -697,7 +717,7 @@ describe('CheckoutService', () => {
             await checkoutService.removeCoupon(code, options);
 
             expect(checkoutClient.removeCoupon)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -708,7 +728,7 @@ describe('CheckoutService', () => {
             await checkoutService.applyGiftCertificate(code, options);
 
             expect(checkoutClient.applyGiftCertificate)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -719,7 +739,7 @@ describe('CheckoutService', () => {
             await checkoutService.removeGiftCertificate(code, options);
 
             expect(checkoutClient.removeGiftCertificate)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
