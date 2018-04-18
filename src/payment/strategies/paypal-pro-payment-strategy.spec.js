@@ -1,6 +1,7 @@
-import { omit } from 'lodash';
+import { merge, omit } from 'lodash';
 import { createCheckoutStore } from '../../checkout';
-import { getOrderRequestBody, getIncompleteOrder } from '../../order/internal-orders.mock';
+import { MissingDataError } from '../../common/error/errors';
+import { getOrderRequestBody, getIncompleteOrderState } from '../../order/internal-orders.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 
@@ -15,11 +16,11 @@ describe('PaypalProPaymentStrategy', () => {
             submitPayment: jest.fn(() => Promise.resolve(store.getState())),
         };
 
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            order: getIncompleteOrderState(),
+        });
 
         strategy = new PaypalProPaymentStrategy(store, placeOrderService);
-
-        jest.spyOn(store.getState().checkout, 'getOrder').mockReturnValue(getIncompleteOrder());
     });
 
     it('submits order without payment data', async () => {
@@ -44,14 +45,28 @@ describe('PaypalProPaymentStrategy', () => {
         expect(output).toEqual(store.getState());
     });
 
+    it('throws error if order is missing', async () => {
+        store = createCheckoutStore();
+        strategy = new PaypalProPaymentStrategy(store, placeOrderService);
+
+        try {
+            await strategy.execute(getOrderRequestBody());
+        } catch (error) {
+            expect(error).toBeInstanceOf(MissingDataError);
+        }
+    });
+
     describe('if payment is acknowledged', () => {
         beforeEach(() => {
-            const { checkout } = store.getState();
-
-            jest.spyOn(checkout, 'getOrder').mockReturnValue({
-                ...getIncompleteOrder(),
-                payment: { status: paymentStatusTypes.ACKNOWLEDGE },
+            store = createCheckoutStore({
+                order: merge({}, getIncompleteOrderState(), {
+                    data: {
+                        payment: { status: paymentStatusTypes.ACKNOWLEDGE },
+                    },
+                }),
             });
+
+            strategy = new PaypalProPaymentStrategy(store, placeOrderService);
         });
 
         it('submits order with payment method name', async () => {

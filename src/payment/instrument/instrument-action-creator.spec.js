@@ -21,6 +21,7 @@ describe('InstrumentActionCreator', () => {
     let storeId;
     let shopperId;
     let instrumentId;
+    let vaultAccessExpiry;
     let vaultAccessToken;
 
     beforeEach(() => {
@@ -42,6 +43,7 @@ describe('InstrumentActionCreator', () => {
         storeId = '1';
         shopperId = '2';
         instrumentId = '123';
+        vaultAccessExpiry = getVaultAccessTokenResponse.body.data.expires_at;
         vaultAccessToken = getVaultAccessTokenResponse.body.data.token;
     });
 
@@ -63,32 +65,37 @@ describe('InstrumentActionCreator', () => {
             expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, shopperId, '321');
         });
 
-        it('emits actions if able to load instruments', () => {
-            instrumentActionCreator.loadInstruments()
+        it('emits actions if able to load instruments', async () => {
+            const actions = await instrumentActionCreator.loadInstruments()
                 .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: actionTypes.LOAD_INSTRUMENTS_REQUESTED },
-                        { type: actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, payload: getInstrumentsResponse.body.data },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                {
+                    type: actionTypes.LOAD_INSTRUMENTS_REQUESTED,
+                },
+                {
+                    type: actionTypes.LOAD_INSTRUMENTS_SUCCEEDED,
+                    meta: { vaultAccessExpiry, vaultAccessToken },
+                    payload: getInstrumentsResponse.body,
+                },
+            ]);
         });
 
-        it('emits error actions if unable to load instruments', () => {
+        it('emits error actions if unable to load instruments', async () => {
             checkoutClient.getInstruments.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            instrumentActionCreator.loadInstruments()
+            const actions = await instrumentActionCreator.loadInstruments()
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: actionTypes.LOAD_INSTRUMENTS_REQUESTED },
-                        { type: actionTypes.LOAD_INSTRUMENTS_FAILED, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: actionTypes.LOAD_INSTRUMENTS_REQUESTED },
+                { type: actionTypes.LOAD_INSTRUMENTS_FAILED, payload: errorResponse, error: true },
+            ]);
         });
     });
 
@@ -120,32 +127,37 @@ describe('InstrumentActionCreator', () => {
             );
         });
 
-        it('emits actions if able to post instrument', () => {
-            instrumentActionCreator.vaultInstrument()
+        it('emits actions if able to post instrument', async () => {
+            const actions = await instrumentActionCreator.vaultInstrument()
                 .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: actionTypes.VAULT_INSTRUMENT_REQUESTED },
-                        { type: actionTypes.VAULT_INSTRUMENT_SUCCEEDED, payload: getInstrumentsResponse.body.data },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                {
+                    type: actionTypes.VAULT_INSTRUMENT_REQUESTED,
+                },
+                {
+                    type: actionTypes.VAULT_INSTRUMENT_SUCCEEDED,
+                    meta: { vaultAccessExpiry, vaultAccessToken },
+                    payload: vaultInstrumentResponse.body,
+                },
+            ]);
         });
 
-        it('emits error actions if unable to post instrument', () => {
+        it('emits error actions if unable to post instrument', async () => {
             checkoutClient.vaultInstrument.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            instrumentActionCreator.vaultInstrument()
+            const actions = await instrumentActionCreator.vaultInstrument()
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: actionTypes.VAULT_INSTRUMENT_REQUESTED },
-                        { type: actionTypes.VAULT_INSTRUMENT_FAILED, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: actionTypes.VAULT_INSTRUMENT_REQUESTED },
+                { type: actionTypes.VAULT_INSTRUMENT_FAILED, payload: errorResponse, error: true },
+            ]);
         });
     });
 
@@ -177,36 +189,42 @@ describe('InstrumentActionCreator', () => {
             );
         });
 
-        it('emits actions if able to delete an instrument', (done) => {
-            instrumentActionCreator.deleteInstrument(storeId, shopperId, vaultAccessToken, instrumentId)
+        it('emits actions if able to delete an instrument', async () => {
+            const actions = await instrumentActionCreator.deleteInstrument(storeId, shopperId, vaultAccessToken, instrumentId)
                 .toArray()
-                .subscribe((actions) => {
-                    done();
+                .toPromise();
 
-                    expect(actions).toEqual([
-                        { type: actionTypes.DELETE_INSTRUMENT_REQUESTED, meta: { instrumentId } },
-                        { type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED, meta: { instrumentId }, payload: getInstrumentsResponse.body.data },
-                    ]);
-                });
+            expect(actions).toEqual([
+                {
+                    type: actionTypes.DELETE_INSTRUMENT_REQUESTED,
+                    meta: { instrumentId },
+                },
+                {
+                    type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED,
+                    meta: { instrumentId, vaultAccessExpiry, vaultAccessToken },
+                    payload: getInstrumentsResponse.body.data,
+                },
+            ]);
         });
 
-        it('emits error actions if unable to delete an instrument', (done) => {
+        it('emits error actions if unable to delete an instrument', async () => {
             checkoutClient.deleteInstrument.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            instrumentActionCreator.deleteInstrument(storeId, shopperId, vaultAccessToken, instrumentId)
+            const actions = await instrumentActionCreator.deleteInstrument(storeId, shopperId, vaultAccessToken, instrumentId)
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    done();
+                .toPromise();
 
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: actionTypes.DELETE_INSTRUMENT_REQUESTED, meta: { instrumentId } },
-                        { type: actionTypes.DELETE_INSTRUMENT_FAILED, meta: { instrumentId }, payload: errorResponse, error: true },
-                    ]);
-                });
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                {
+                    type: actionTypes.DELETE_INSTRUMENT_REQUESTED, meta: { instrumentId },
+                },
+                {
+                    type: actionTypes.DELETE_INSTRUMENT_FAILED, meta: { instrumentId }, payload: errorResponse, error: true,
+                },
+            ]);
         });
     });
 });

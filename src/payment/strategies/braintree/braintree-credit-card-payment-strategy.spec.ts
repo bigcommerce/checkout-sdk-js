@@ -3,6 +3,7 @@ import { omit } from 'lodash';
 import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
 import { getCart } from '../../../cart/internal-carts.mock';
 import { CheckoutSelector, CheckoutStore } from '../../../checkout';
+import { MissingDataError } from '../../../common/error/errors';
 import { OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import PlaceOrderService from '../../../order/place-order-service';
@@ -55,6 +56,18 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             options.paymentMethod = getBraintree();
             await braintreeCreditCardPaymentStrategy.initialize(options);
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken', options);
+        });
+
+        it('throws error if client token is missing', async () => {
+            const paymentMethod = { ...getBraintree(), clientToken: '' };
+
+            checkoutMock.getPaymentMethod = jest.fn(() => paymentMethod);
+
+            try {
+                await braintreeCreditCardPaymentStrategy.initialize({ paymentMethod });
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
     });
 
@@ -142,6 +155,17 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             expect(braintreePaymentProcessorMock.verifyCard).toHaveBeenCalledWith(orderRequestBody.payment, getBillingAddress(), 190);
             expect(placeOrderService.submitPayment)
                 .toHaveBeenCalledWith(expected, false, options);
+        });
+
+        it('throws error if unable to submit payment due to missing data', async () => {
+            checkoutMock.getCart = jest.fn(() => undefined);
+            checkoutMock.getBillingAddress = jest.fn(() => undefined);
+
+            try {
+                await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
     });
 

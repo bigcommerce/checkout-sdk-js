@@ -288,13 +288,15 @@ export default class CheckoutService {
 
     private _getInstrumentState(): any {
         const { checkout } = this._store.getState();
+        const config = checkout.getConfig();
+        const customer = checkout.getCustomer();
 
-        if (!checkout.getConfig() || !checkout.getCustomer() || !checkout.getCheckoutMeta()) {
-            throw new MissingDataError();
+        if (!config || !customer) {
+            throw new MissingDataError('Unable to proceed because "config" or "customer" data is missing.');
         }
 
-        const { customerId } = checkout.getCustomer()!;
-        const { storeId } = checkout.getConfig()!;
+        const { customerId } = customer;
+        const { storeId } = config;
         const { vaultAccessToken, vaultAccessExpiry } = checkout.getCheckoutMeta();
 
         return {

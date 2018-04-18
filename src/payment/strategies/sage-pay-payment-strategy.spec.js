@@ -1,5 +1,6 @@
 import { merge, omit } from 'lodash';
 import { createCheckoutStore } from '../../checkout';
+import { MissingDataError } from '../../common/error/errors';
 import { getErrorPaymentResponseBody } from '../payments.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { getResponse } from '../../common/http-request/responses.mock';
@@ -135,6 +136,18 @@ describe('SagePayPaymentStrategy', () => {
         } catch (error) {
             expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
             expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+        }
+    });
+
+    it('throws error if order is missing', async () => {
+        const { checkout } = store.getState();
+
+        jest.spyOn(checkout, 'getOrder').mockReturnValue();
+
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(MissingDataError);
         }
     });
 });

@@ -106,21 +106,20 @@ describe('OrderActionCreator', () => {
                 });
         });
 
-        it('emits error actions if unable to submit order', () => {
+        it('emits error actions if unable to submit order', async () => {
             checkoutClient.submitOrder.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            orderActionCreator.submitOrder(getOrderRequestBody())
+            const actions = await orderActionCreator.submitOrder(getOrderRequestBody())
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: actionTypes.SUBMIT_ORDER_REQUESTED },
-                        { type: actionTypes.SUBMIT_ORDER_FAILED, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: actionTypes.SUBMIT_ORDER_REQUESTED },
+                { type: actionTypes.SUBMIT_ORDER_FAILED, payload: errorResponse, error: true },
+            ]);
         });
 
         it('verifies cart content', async () => {

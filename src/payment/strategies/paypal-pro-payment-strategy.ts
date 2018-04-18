@@ -1,6 +1,7 @@
 import { omit, pick } from 'lodash';
 
 import { CheckoutSelectors } from '../../checkout';
+import { MissingDataError } from '../../common/error/errors';
 import { OrderRequestBody } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
 
@@ -23,8 +24,12 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
 
     private _isPaymentAcknowledged(): boolean {
         const { checkout } = this._store.getState();
-        const { payment = {} } = checkout.getOrder()!;
+        const order = checkout.getOrder();
 
-        return payment.status === paymentStatusTypes.ACKNOWLEDGE;
+        if (!order) {
+            throw new MissingDataError('Unable to determine payment status because "order" data is missing.');
+        }
+
+        return order.payment && order.payment.status === paymentStatusTypes.ACKNOWLEDGE;
     }
 }

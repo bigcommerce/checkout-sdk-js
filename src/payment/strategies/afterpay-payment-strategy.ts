@@ -2,10 +2,10 @@
 import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderRequestBody, PlaceOrderService } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
-import { PaymentMethodMissingDataError, PaymentMethodUninitializedError } from '../errors';
 
 import PaymentStrategy, { InitializeOptions } from './payment-strategy';
 
@@ -33,7 +33,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: any): Promise<CheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -51,7 +51,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         const customerMessage = payload.customerMessage ? payload.customerMessage : '';
 
         if (!paymentId) {
-            throw new PaymentMethodMissingDataError('gateway');
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.gateway" argument is not provided.');
         }
 
         return this._store.dispatch(
@@ -66,12 +66,18 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     finalize(options: any): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
-        const { useStoreCredit, customerMessage } = checkout.getCustomer()!.remote;
+        const customer = checkout.getCustomer();
         const order = checkout.getOrder();
+
+        if (!order || !customer) {
+            throw new MissingDataError('Unable to finalize order because "order" or "customer" data is missing.');
+        }
+
+        const { useStoreCredit, customerMessage } = customer.remote;
 
         const payload = {
             payment: {
-                name: order!.payment.id,
+                name: order.payment.id,
                 paymentData: { nonce: options.nonce },
             },
         };
@@ -87,7 +93,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
      */
     private _displayModal(token: string): void {
         if (!this._afterpaySdk || !token) {
-            throw new PaymentMethodUninitializedError('afterpay');
+            throw new NotInitializedError('Unable to display payment modal because payment method has not been initialized.');
         }
 
         this._afterpaySdk.init();

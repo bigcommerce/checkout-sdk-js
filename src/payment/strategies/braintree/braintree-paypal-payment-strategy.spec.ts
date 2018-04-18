@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
 import { getCart } from '../../../cart/internal-carts.mock';
 import { CheckoutSelector, CheckoutStore } from '../../../checkout';
-import { StandardError } from '../../../common/error/errors';
+import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { getLegacyAppConfig } from '../../../config/configs.mock.js';
 import { OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -77,6 +77,17 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             expect(braintreePaymentProcessorMock.preloadPaypal).not.toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.initialize).not.toHaveBeenCalled();
+        });
+
+        it('throws error if unable to initialize', async () => {
+            const paymentMethod = getBraintreePaypal();
+            checkoutMock.getPaymentMethod = jest.fn(() => paymentMethod);
+
+            try {
+                await braintreePaypalPaymentStrategy.initialize({ paymentMethod });
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
     });
 

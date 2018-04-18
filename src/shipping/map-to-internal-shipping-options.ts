@@ -8,6 +8,7 @@ export default function mapToInternalShippingOptions(consignments: Consignment[]
     return consignments.reduce((result, consignment) => ({
         ...result,
         [consignment.shippingAddress.id]: (consignment.availableShippingOptions || []).map(option =>
+            // tslint:disable-next-line:no-non-null-assertion
             mapToInternalShippingOption(option, find(existingOptions[consignment.shippingAddress.id], { id: option.id })!)
         ),
     }), {});
