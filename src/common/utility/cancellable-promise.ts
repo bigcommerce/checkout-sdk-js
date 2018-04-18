@@ -7,6 +7,6 @@ export default class CancellablePromise<T> {
             this.cancel = reject;
         });
 
-        this.promise = Promise.race([promise, cancellable]) as Promise<T>;
+        this.promise = Promise.race([promise, cancellable]);
     }
 }
