@@ -101,8 +101,8 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 }
 
 export interface DeferredPromise {
-    resolve: (resolution?: any) => void;
-    reject: (reason?: any) => void;
+    resolve(resolution?: any): void;
+    reject(reason?: any): void;
 }
 
 export interface InitializeOptions {

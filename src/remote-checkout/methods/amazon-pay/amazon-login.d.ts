@@ -15,6 +15,6 @@ declare namespace amazon {
         amazon?: {
             Login: Login,
         };
-        onAmazonLoginReady?: () => void;
+        onAmazonLoginReady?(): void;
     }
 }
