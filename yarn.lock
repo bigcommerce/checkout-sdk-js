@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@bigcommerce/bigpay-client@git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#2.11.0":
-  version "2.11.0"
-  resolved "git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#1e8102eeeb6756b0c99da3cf8155e3a394232f96"
+"@bigcommerce/bigpay-client@git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#2.11.1":
+  version "2.11.1"
+  resolved "git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#bc0e3dc919561af15dd618f0b7410d0a8bed1799"
   dependencies:
     "@bigcommerce/form-poster" "git+ssh://git@github.com/bigcommerce/form-poster-js.git#1.1.2"
     deep-assign "^2.0.0"
