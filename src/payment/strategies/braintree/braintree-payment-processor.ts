@@ -61,7 +61,7 @@ export default class BraintreePaymentProcessor {
             this.tokenizeCard(payment, billingAddress),
             this._braintreeSDKCreator.get3DS(),
         ]).then(([paymentData, threeDSecure]) => {
-            const { nonce } = paymentData as TokenizedCreditCard;
+            const { nonce } = paymentData;
 
             const verification = threeDSecure.verifyCard({
                 ...modalHandler,

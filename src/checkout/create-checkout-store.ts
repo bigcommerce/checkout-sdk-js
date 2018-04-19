@@ -38,7 +38,7 @@ export default function createCheckoutStore(initialState = {}, options?: Checkou
     const stateTransformer = (state: any) => createCheckoutSelectors(state, options);
 
     return createDataStore(
-        createCheckoutReducers() as any,
+        createCheckoutReducers(),
         initialState,
         { actionTransformer, stateTransformer, ...options }
     );
