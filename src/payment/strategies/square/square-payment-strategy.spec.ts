@@ -41,6 +41,9 @@ describe('SquarePaymentStrategy', () => {
         jest.spyOn(placeOrderService, 'submitOrder')
             .mockImplementation(() => Promise.resolve({ foo: 'bar' }));
 
+        jest.spyOn(placeOrderService, 'submitPayment')
+            .mockImplementation(() => Promise.resolve({ foo2: 'bar2' }));
+
         jest.spyOn(store, 'getState')
             .mockImplementation(() => {
                 return {
@@ -114,7 +117,7 @@ describe('SquarePaymentStrategy', () => {
     describe('#execute()', () => {
         describe('when form has not been initialized', () => {
             it('rejects the promise', () => {
-                strategy.execute()
+                strategy.execute({})
                     .catch((e) => expect(e.type).toEqual('payment_method_uninitialized'));
 
                 expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
@@ -153,7 +156,7 @@ describe('SquarePaymentStrategy', () => {
                 let promise;
 
                 beforeEach(() => {
-                    promise = strategy.execute({ payment: '', x: 'y' }, { b: 'f' });
+                    promise = strategy.execute({ payment: { id: 'square' }, useStoreCredit: true, x: 'y' }, { b: 'f' });
                     callbacks.cardNonceResponseReceived(null, 'nonce');
                 });
 
@@ -161,8 +164,21 @@ describe('SquarePaymentStrategy', () => {
                     expect(placeOrderService.submitOrder).toHaveBeenCalledWith({ x: 'y' }, true, { b: 'f' });
                 });
 
-                it('resolves to what is returned by submitOrder', async () => {
-                    await promise.then((response) => expect(response).toMatchObject({ foo: 'bar' }));
+                it('submits the payment  with the right arguments', () => {
+                    expect(placeOrderService.submitPayment).toHaveBeenCalledWith(
+                        {
+                            id: 'square',
+                            paymentData: {
+                                nonce: 'nonce',
+                            },
+                        },
+                        true,
+                        { b: 'f' }
+                    );
+                });
+
+                it('resolves to what is returned by submitPayment', async () => {
+                    await promise.then((response) => expect(response).toMatchObject({ foo2: 'bar2' }));
                 });
             });
 
@@ -176,6 +192,10 @@ describe('SquarePaymentStrategy', () => {
 
                 it('does not place the order', () => {
                     expect(placeOrderService.submitOrder).toHaveBeenCalledTimes(0);
+                });
+
+                it('does not submit payment', () => {
+                    expect(placeOrderService.submitPayment).toHaveBeenCalledTimes(0);
                 });
 
                 it('rejects the promise', async () => {
