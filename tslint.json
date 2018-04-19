@@ -3,9 +3,11 @@
     "rules": {
         "max-line-length": false,
         "no-empty": false,
+        "no-non-null-assertion": true,
         "no-reference": false,
         "no-shadowed-variable": false,
         "no-unused-variable": true,
-        "object-literal-sort-keys": false
+        "object-literal-sort-keys": false,
+        "prefer-method-signature": true
     }
 }

@@ -1,12 +1,11 @@
-import { omit } from 'lodash';
-
-import { Payment } from '../..';
+import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
-import { StandardError } from '../../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../../order';
+import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import isCreditCardLike from '../../is-credit-card';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { PaymentInstrument } from '../../payment';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
 import BraintreePaymentProcessor, { BraintreeCreditCardInitializeOptions } from './braintree-payment-processor';
@@ -16,20 +15,27 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: BraintreeCreditCardInitializeOptions): Promise<CheckoutSelectors> {
         const { id: paymentId } = options.paymentMethod;
 
-        return this._placeOrderService.loadPaymentMethod(paymentId)
-            .then(({ checkout }: CheckoutSelectors) => {
-                const { clientToken, config } = checkout.getPaymentMethod(paymentId)!;
-                this._braintreePaymentProcessor.initialize(clientToken!, options);
-                this._is3dsEnabled = config.is3dsEnabled;
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
+            .then(({ checkout }) => {
+                this._paymentMethod = checkout.getPaymentMethod(paymentId);
+
+                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                    throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');
+                }
+
+                this._braintreePaymentProcessor.initialize(this._paymentMethod.clientToken, options);
+                this._is3dsEnabled = this._paymentMethod.config.is3dsEnabled;
 
                 return super.initialize(options);
             })
@@ -37,18 +43,23 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
     }
 
     execute(orderRequest: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
-        const { payment, useStoreCredit } = orderRequest;
+        const { payment, ...order } = orderRequest;
         const { checkout } = this._store.getState();
 
-        return this._placeOrderService
-            .submitOrder(omit(orderRequest, 'payment'), true, options)
+        if (!payment) {
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+        }
+
+        return this._store.dispatch(
+            this._orderActionCreator.submitOrder(order, true, options)
+        )
             .then(() =>
-                checkout.isPaymentDataRequired(useStoreCredit) ?
+                checkout.isPaymentDataRequired(order.useStoreCredit) && payment ?
                     this._preparePaymentData(payment) :
                     Promise.resolve(payment)
             )
-            .then((processedPayment: PaymentInstrument) =>
-                this._placeOrderService.submitPayment(processedPayment, useStoreCredit, options)
+            .then(payment =>
+                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
             )
             .catch((error: Error) => this._handleError(error));
     }
@@ -58,7 +69,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         .then(() => super.deinitialize(options));
     }
 
-    private _handleError(error: Error): void {
+    private _handleError(error: Error): never {
         if (error.name === 'BraintreeError') {
             throw new StandardError(error.message);
         }
@@ -82,12 +93,16 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
             return Promise.resolve(payment);
         }
 
-        const { amount } = checkout.getCart()!.grandTotal;
+        const cart = checkout.getCart();
         const billingAddress = checkout.getBillingAddress();
 
+        if (!cart || !billingAddress) {
+            throw new MissingDataError('Unable to prepare payment data because "cart" and "billingAddress" data is missing.');
+        }
+
         const tokenizedCard = this._is3dsEnabled ?
-            this._braintreePaymentProcessor.verifyCard(payment, billingAddress!, amount) :
-            this._braintreePaymentProcessor.tokenizeCard(payment, billingAddress!);
+            this._braintreePaymentProcessor.verifyCard(payment, billingAddress, cart.grandTotal.amount) :
+            this._braintreePaymentProcessor.tokenizeCard(payment, billingAddress);
 
         return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
             .then(paymentData => ({ ...payment, paymentData }));

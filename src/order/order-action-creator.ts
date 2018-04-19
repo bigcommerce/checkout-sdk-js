@@ -1,10 +1,11 @@
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { CartComparator, InternalCart } from '../cart';
 import { CartChangedError } from '../cart/errors';
 import { CheckoutClient } from '../checkout';
+import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import * as actionTypes from './order-action-types';
@@ -52,11 +53,21 @@ export default class OrderActionCreator {
         });
     }
 
-    submitOrder(payload: OrderRequestBody, cart?: InternalCart, options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
+    /**
+     * @todo Remove `shouldVerifyCart` flag in the future. Always verify cart by default
+     */
+    submitOrder(payload: OrderRequestBody, shouldVerifyCart: boolean = false, options?: RequestOptions): ThunkAction<Action> {
+        return store => Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.SUBMIT_ORDER_REQUESTED));
 
-            this._verifyCart(cart, options)
+            const { checkout } = store.getState();
+            const cart = checkout.getCart();
+
+            if (!cart) {
+                throw new MissingDataError();
+            }
+
+            (shouldVerifyCart ? this._verifyCart(cart, options) : Promise.resolve(true))
                 .then(() => this._checkoutClient.submitOrder(payload, options))
                 .then(({ body = {}, headers = {} }) => {
                     observer.next(createAction(actionTypes.SUBMIT_ORDER_SUCCEEDED, body.data, { ...body.meta, token: headers.token }));
@@ -83,11 +94,7 @@ export default class OrderActionCreator {
         });
     }
 
-    private _verifyCart(existingCart?: InternalCart, options?: RequestOptions): Promise<boolean> {
-        if (!existingCart) {
-            return Promise.resolve(true);
-        }
-
+    private _verifyCart(existingCart: InternalCart, options?: RequestOptions): Promise<boolean> {
         return this._checkoutClient.loadCart(options)
             .then(({ body = {} }) =>
                 this._cartComparator.isEqual(existingCart, body.data.cart) ? Promise.resolve(true) : Promise.reject(false)

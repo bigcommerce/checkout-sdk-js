@@ -226,7 +226,7 @@ export function getAfterpay() {
         type: 'PAYMENT_TYPE_API',
         nonce: null,
         initializationData: null,
-        clientToken: null,
+        clientToken: 'foo',
         returnUrl: null,
     };
 }

@@ -4,7 +4,7 @@
 import 'rxjs/add/observable/empty';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { NotImplementedError, NotInitializedError } from '../../common/error/errors';
+import { MissingDataError, NotImplementedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
@@ -35,6 +35,10 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             .then(({ checkout }) => new Promise((resolve, reject) => {
                 this._paymentMethod = checkout.getPaymentMethod(options.methodId);
 
+                if (!this._paymentMethod) {
+                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
+                }
+
                 const { onError = () => {} } = options;
                 const onReady = () => {
                     this._createSignInButton({
@@ -48,7 +52,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
                     resolve();
                 };
 
-                this._scriptLoader.loadWidget(this._paymentMethod!, onReady)
+                this._scriptLoader.loadWidget(this._paymentMethod, onReady)
                     .catch(reject);
             }))
             .then(() => super.initialize(options));
@@ -84,14 +88,14 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     }
 
     private _createSignInButton(options: InitializeWidgetOptions): OffAmazonPayments.Button {
-        if (!this._paymentMethod) {
-            throw new NotInitializedError();
+        if (!this._paymentMethod || !this._paymentMethod.config.merchantId) {
+            throw new MissingDataError('Unable to create sign-in button because "paymentMethod.config.merchantId" field is missing.');
         }
 
         const { onError = () => {} } = options;
-        const { config, initializationData } = this._paymentMethod;
+        const { initializationData } = this._paymentMethod;
 
-        return new OffAmazonPayments.Button(options.container, config.merchantId!, {
+        return new OffAmazonPayments.Button(options.container, this._paymentMethod.config.merchantId, {
             color: options.color || 'Gold',
             size: options.size || 'small',
             type: 'PwA',
@@ -135,7 +139,7 @@ export interface InitializeWidgetOptions {
     container: string;
     color?: string;
     size?: string;
-    onError?: (error: Error) => void;
+    onError?(error: Error): void;
 }
 
 interface AuthorizationOptions {

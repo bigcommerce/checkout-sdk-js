@@ -14,6 +14,7 @@ export default function mapToInternalLineItems(
         .reduce((result, key) => [
             ...result,
             ...(itemMap[key] as LineItem[]).map((item: any) => {
+                // tslint:disable-next-line:no-non-null-assertion
                 const existingItem = find(existingItems, { id: item[idKey] })!;
 
                 return mapToInternalLineItem(

@@ -8,8 +8,7 @@ export default abstract class PaymentStrategy {
     protected _paymentMethod?: PaymentMethod;
 
     constructor(
-        protected _store: CheckoutStore,
-        protected _placeOrderService: any
+        protected _store: CheckoutStore
     ) {}
 
     abstract execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors>;

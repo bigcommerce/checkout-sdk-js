@@ -229,42 +229,30 @@ export default class CheckoutService {
     }
 
     applyCoupon(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const checkoutId = checkout.getCheckout()!.id;
-
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._couponActionCreator.applyCoupon(checkoutId, code, options)),
+            this._store.dispatch(this._couponActionCreator.applyCoupon(code, options)),
         ]).then(() => this._store.getState());
     }
 
     removeCoupon(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const checkoutId = checkout.getCheckout()!.id;
-
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._couponActionCreator.removeCoupon(checkoutId, code, options)),
+            this._store.dispatch(this._couponActionCreator.removeCoupon(code, options)),
         ]).then(() => this._store.getState());
     }
 
     applyGiftCertificate(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const checkoutId = checkout.getCheckout()!.id;
-
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._giftCertificateActionCreator.applyGiftCertificate(checkoutId, code, options)),
+            this._store.dispatch(this._giftCertificateActionCreator.applyGiftCertificate(code, options)),
         ]).then(() => this._store.getState());
     }
 
     removeGiftCertificate(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const checkoutId = checkout.getCheckout()!.id;
-
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._giftCertificateActionCreator.removeGiftCertificate(checkoutId, code, options)),
+            this._store.dispatch(this._giftCertificateActionCreator.removeGiftCertificate(code, options)),
         ]).then(() => this._store.getState());
     }
 
@@ -308,13 +296,15 @@ export default class CheckoutService {
 
     private _getInstrumentState(): any {
         const { checkout } = this._store.getState();
+        const config = checkout.getConfig();
+        const customer = checkout.getCustomer();
 
-        if (!checkout.getConfig() || !checkout.getCustomer() || !checkout.getCheckoutMeta()) {
-            throw new MissingDataError();
+        if (!config || !customer) {
+            throw new MissingDataError('Unable to proceed because "config" or "customer" data is missing.');
         }
 
-        const { customerId } = checkout.getCustomer()!;
-        const { storeId } = checkout.getConfig()!;
+        const { customerId } = customer;
+        const { storeId } = config;
         const { vaultAccessToken, vaultAccessExpiry } = checkout.getCheckoutMeta();
 
         return {

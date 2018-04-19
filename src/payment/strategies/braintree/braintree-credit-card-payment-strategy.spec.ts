@@ -1,24 +1,37 @@
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction, Action } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
+import { Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
 import { getCart } from '../../../cart/internal-carts.mock';
-import { CheckoutSelector, CheckoutStore } from '../../../checkout';
-import { OrderRequestBody } from '../../../order';
+import { createCheckoutClient, CheckoutSelector, CheckoutStore } from '../../../checkout';
+import { MissingDataError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import PlaceOrderService from '../../../order/place-order-service';
+import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
 import Payment, { CreditCard, VaultedInstrument } from '../../payment';
+import PaymentActionCreator from '../../payment-action-creator';
+import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getBraintree } from '../../payment-methods.mock';
+import PaymentRequestSender from '../../payment-request-sender';
 
 import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 import BraintreePaymentProcessor, { BraintreeCreditCardInitializeOptions } from './braintree-payment-processor';
 
 describe('BraintreeCreditCardPaymentStrategy', () => {
-    let placeOrderService: PlaceOrderService;
+    let orderActionCreator: OrderActionCreator;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
     let braintreeCreditCardPaymentStrategy: BraintreeCreditCardPaymentStrategy;
+    let paymentActionCreator: PaymentActionCreator;
     let paymentMethodMock: PaymentMethod;
     let checkoutMock: CheckoutSelector;
+    let store: CheckoutStore;
+    let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
 
     beforeEach(() => {
         braintreePaymentProcessorMock = {} as BraintreePaymentProcessor;
@@ -32,16 +45,36 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         checkoutMock = {} as CheckoutSelector;
         checkoutMock.isPaymentDataRequired = jest.fn((useStoreCredit: boolean) => true);
-        const store = {} as CheckoutStore;
+
+        store = {} as CheckoutStore;
+        store.dispatch = jest.fn(() => Promise.resolve({ checkout: checkoutMock }));
         store.getState = jest.fn(() => ({ checkout: checkoutMock }));
 
-        placeOrderService = {} as PlaceOrderService;
-        placeOrderService.submitPayment = jest.fn(() => Promise.resolve());
-        placeOrderService.submitOrder = jest.fn(() => Promise.resolve());
-        placeOrderService.verifyCart = jest.fn(() => Promise.resolve());
-        placeOrderService.loadPaymentMethod = jest.fn(() => Promise.resolve(store.getState()));
+        orderActionCreator = new OrderActionCreator(createCheckoutClient());
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator
+        );
+        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
 
-        braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(store, placeOrderService, braintreePaymentProcessorMock);
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
+
+        braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessorMock
+        );
     });
 
     it('creates an instance of the braintree payment strategy', () => {
@@ -55,6 +88,18 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             options.paymentMethod = getBraintree();
             await braintreeCreditCardPaymentStrategy.initialize(options);
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken', options);
+        });
+
+        it('throws error if client token is missing', async () => {
+            const paymentMethod = { ...getBraintree(), clientToken: '' };
+
+            checkoutMock.getPaymentMethod = jest.fn(() => paymentMethod);
+
+            try {
+                await braintreeCreditCardPaymentStrategy.initialize({ paymentMethod });
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
     });
 
@@ -72,17 +117,18 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         it('calls submit order with the order request information', async () => {
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Boolean), expect.any(Object));
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Boolean), expect.any(Object));
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
         it('asks for cart verification', async () => {
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
         });
 
         it('pass the options to submitOrder', async () => {
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(expect.any(Object), expect.any(Boolean), options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), expect.any(Boolean), options);
         });
 
         it('does not touch the card if it is going to be saved in the vault (shouldSaveInstrument: true)', async () => {
@@ -91,8 +137,8 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             paymentData.shouldSaveInstrument = true;
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(orderRequestBody.payment, false, options);
+            expect(paymentActionCreator.submitPayment)
+                .toHaveBeenCalledWith(orderRequestBody.payment);
         });
 
         it('does nothing to VaultedInstruments', async () => {
@@ -101,17 +147,8 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(orderRequestBody.payment, false, options);
-        });
-
-        it('flags the use of store credit to PlaceOrderService', async () => {
-            orderRequestBody.useStoreCredit = true;
-
-            await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
-
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
+            expect(paymentActionCreator.submitPayment)
+                .toHaveBeenCalledWith(orderRequestBody.payment);
         });
 
         it('tokenizes the card', async () => {
@@ -123,8 +160,8 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
             expect(braintreePaymentProcessorMock.tokenizeCard).toHaveBeenCalledWith(orderRequestBody.payment, getBillingAddress());
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(expected, false, options);
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
         it('verifies the card if 3ds is enabled', async () => {
@@ -140,8 +177,19 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
             expect(braintreePaymentProcessorMock.verifyCard).toHaveBeenCalledWith(orderRequestBody.payment, getBillingAddress(), 190);
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(expected, false, options);
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
+        });
+
+        it('throws error if unable to submit payment due to missing data', async () => {
+            checkoutMock.getCart = jest.fn(() => undefined);
+            checkoutMock.getBillingAddress = jest.fn(() => undefined);
+
+            try {
+                await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
     });
 

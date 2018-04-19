@@ -1,9 +1,9 @@
-import { omit } from 'lodash';
-
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
-import { StandardError } from '../../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../../order';
+import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import Payment from '../../payment';
+import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentStrategy, { InitializeOptions } from '../payment-strategy';
 
 import BraintreePaymentProcessor from './braintree-payment-processor';
@@ -11,11 +11,13 @@ import BraintreePaymentProcessor from './braintree-payment-processor';
 export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor,
         private _credit: boolean = false
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
@@ -25,11 +27,16 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        return this._placeOrderService.loadPaymentMethod(paymentId)
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
             .then(({ checkout }: CheckoutSelectors) => {
-                const { clientToken } = checkout.getPaymentMethod(paymentId)!;
+                this._paymentMethod = checkout.getPaymentMethod(paymentId);
 
-                this._braintreePaymentProcessor.initialize(clientToken!, options);
+                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                    throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');
+                }
+
+                this._braintreePaymentProcessor.initialize(this._paymentMethod.clientToken, options);
+
                 return this._braintreePaymentProcessor.preloadPaypal();
             })
             .then(() => super.initialize(options))
@@ -37,13 +44,19 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     }
 
     execute(orderRequest: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
-        const { payment, useStoreCredit } = orderRequest;
+        const { payment, ...order } = orderRequest;
+
+        if (!payment) {
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+        }
 
         return Promise.all([
-                this._preparePaymentData(payment),
-                this._placeOrderService.submitOrder(omit(orderRequest, 'payment'), true, options),
+                payment ? this._preparePaymentData(payment) : Promise.resolve(payment),
+                this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options)),
             ])
-            .then(([payment]) => this._placeOrderService.submitPayment(payment, useStoreCredit, options))
+            .then(([payment]) =>
+                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+            )
             .catch((error: Error) => this._handleError(error));
     }
 
@@ -52,7 +65,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
             .then(() => super.deinitialize(options));
     }
 
-    private _handleError(error: Error): void {
+    private _handleError(error: Error): never {
         if (error.name === 'BraintreeError') {
             throw new StandardError(error.message);
         }
@@ -62,9 +75,16 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
     private _preparePaymentData(payment: Payment): Promise<Payment> {
         const { checkout } = this._store.getState();
-        const { amount } = checkout.getCart()!.grandTotal;
-        const { currency, storeLanguage } = checkout.getConfig()!;
-        const { method, nonce } = this._paymentMethod!;
+        const cart = checkout.getCart();
+        const config = checkout.getConfig();
+
+        if (!cart || !config || !this._paymentMethod) {
+            throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (${payment.name})" data is missing.`);
+        }
+
+        const { amount } = cart.grandTotal;
+        const { currency, storeLanguage } = config;
+        const { method, nonce } = this._paymentMethod;
 
         if (nonce) {
             return Promise.resolve({ ...payment, paymentData: { nonce, method } });

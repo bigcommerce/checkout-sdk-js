@@ -3,7 +3,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { isAddressEqual, InternalAddress } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { NotInitializedError } from '../../common/error/errors';
+import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import {
@@ -42,13 +42,17 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             .then(({ checkout }) => new Promise((resolve, reject) => {
                 this._paymentMethod = checkout.getPaymentMethod(options.methodId);
 
+                if (!this._paymentMethod) {
+                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
+                }
+
                 const onReady = () => {
                     this._createAddressBook(options)
                         .then(resolve)
                         .catch(reject);
                 };
 
-                this._scriptLoader.loadWidget(this._paymentMethod!, onReady)
+                this._scriptLoader.loadWidget(this._paymentMethod, onReady)
                     .catch(reject);
             }))
             .then(() => super.initialize(options));
@@ -128,12 +132,13 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             ))
             .then(({ checkout }) => {
                 const { remoteCheckout = {} } = checkout.getCheckoutMeta();
+                const address = checkout.getShippingAddress();
 
                 if (remoteCheckout.shippingAddress === false) {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (isAddressEqual(remoteCheckout.shippingAddress, checkout.getShippingAddress()!)) {
+                if (isAddressEqual(remoteCheckout.shippingAddress, address || {})) {
                     return this._store.getState();
                 }
 
@@ -156,7 +161,11 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
     ): void {
         this._synchronizeShippingAddress()
             .then(({ checkout }: CheckoutSelectors) => {
-                callback(checkout.getShippingAddress()!);
+                const address = checkout.getShippingAddress();
+
+                if (address) {
+                    callback(address);
+                }
             })
             .catch((error: Error) => {
                 errorCallback(error);
@@ -192,7 +201,7 @@ export interface InitializeOptions extends InitializeWidgetOptions {
 
 export interface InitializeWidgetOptions {
     container: string;
-    onAddressSelect?: (address: InternalAddress) => void;
-    onError?: (error: Error) => void;
-    onReady?: () => void;
+    onAddressSelect?(address: InternalAddress): void;
+    onError?(error: Error): void;
+    onReady?(): void;
 }

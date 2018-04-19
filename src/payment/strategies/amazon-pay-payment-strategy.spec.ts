@@ -1,6 +1,6 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
@@ -15,8 +15,9 @@ import { getCheckoutMeta } from '../../checkout/checkouts.mock';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
-import { createPlaceOrderService, PlaceOrderService } from '../../order';
+import { OrderActionCreator } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
+import { SUBMIT_ORDER_FAILED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { getQuoteState } from '../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
@@ -35,11 +36,12 @@ describe('AmazonPayPaymentStrategy', () => {
     let hostWindow: OffAmazonPayments.HostWindow;
     let initializeBillingAction: Observable<Action>;
     let initializePaymentAction: Observable<Action>;
+    let orderActionCreator: OrderActionCreator;
     let orderReference: OffAmazonPayments.Widgets.OrderReference;
     let paymentMethod: PaymentMethod;
-    let placeOrderService: PlaceOrderService;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AmazonPayScriptLoader;
+    let submitOrderAction: Observable<Action>;
     let store: CheckoutStore;
     let strategy: AmazonPayPaymentStrategy;
     let updateAddressAction: Observable<Action>;
@@ -80,15 +82,15 @@ describe('AmazonPayPaymentStrategy', () => {
             },
             remoteCheckout: getRemoteCheckoutState(),
         });
-        placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
         billingAddressActionCreator = new BillingAddressActionCreator(client);
+        orderActionCreator = new OrderActionCreator(client);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
         strategy = new AmazonPayPaymentStrategy(
             store,
-            placeOrderService,
+            orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
@@ -105,6 +107,7 @@ describe('AmazonPayPaymentStrategy', () => {
         initializeBillingAction = Observable.of(createAction(INITIALIZE_REMOTE_BILLING_REQUESTED));
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         updateAddressAction = Observable.of(createAction(UPDATE_BILLING_ADDRESS_REQUESTED));
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
 
         container.setAttribute('id', 'wallet');
         document.body.appendChild(container);
@@ -120,6 +123,9 @@ describe('AmazonPayPaymentStrategy', () => {
         jest.spyOn(client, 'loadCart')
             .mockReturnValue(Promise.resolve(getResponse(getCartResponseBody())));
 
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
         jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
             .mockReturnValue(initializePaymentAction);
 
@@ -128,9 +134,6 @@ describe('AmazonPayPaymentStrategy', () => {
 
         jest.spyOn(billingAddressActionCreator, 'updateAddress')
             .mockReturnValue(updateAddressAction);
-
-        jest.spyOn(placeOrderService, 'submitOrder')
-            .mockReturnValue(Promise.resolve(store.getState()));
     });
 
     afterEach(() => {
@@ -165,7 +168,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         strategy = new AmazonPayPaymentStrategy(
             createCheckoutStore({ remoteCheckout: {} }),
-            placeOrderService,
+            orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
@@ -187,7 +190,7 @@ describe('AmazonPayPaymentStrategy', () => {
     it('sets order reference id when order reference gets created', async () => {
         strategy = new AmazonPayPaymentStrategy(
             createCheckoutStore({ remoteCheckout: {} }),
-            placeOrderService,
+            orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
@@ -241,24 +244,27 @@ describe('AmazonPayPaymentStrategy', () => {
         const options = {};
         const { referenceId } = getCheckoutMeta().remoteCheckout.amazon;
 
+        jest.spyOn(store, 'dispatch');
+
         await strategy.initialize({ container: 'wallet', paymentMethod });
         await strategy.execute(payload, options);
 
         expect(remoteCheckoutActionCreator.initializePayment)
             .toHaveBeenCalledWith(payload.payment.name, { referenceId, useStoreCredit: false });
 
-        expect(placeOrderService.submitOrder)
+        expect(orderActionCreator.submitOrder)
             .toHaveBeenCalledWith({
                 ...payload,
                 payment: omit(payload.payment, 'paymentData'),
             }, true, options);
+
+        expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('refreshes wallet when there is provider widget error', async () => {
-        jest.spyOn(placeOrderService, 'submitOrder')
-            .mockReturnValue(Promise.reject(
-                new RequestError(getErrorResponse({ type: 'provider_widget_error' }))
-            ));
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(createErrorAction(SUBMIT_ORDER_FAILED, getErrorResponse({ type: 'provider_widget_error' })));
 
         await strategy.initialize({ container: 'wallet', paymentMethod });
 
@@ -272,17 +278,17 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('returns error response if order submission fails', async () => {
-        const expected = new RequestError(getErrorResponse());
+        const response = getErrorResponse();
 
-        jest.spyOn(placeOrderService, 'submitOrder')
-            .mockReturnValue(Promise.reject(expected));
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(createErrorAction(SUBMIT_ORDER_FAILED, response));
 
         await strategy.initialize({ container: 'wallet', paymentMethod });
 
         try {
             await strategy.execute(getOrderRequestBody());
         } catch (error) {
-            expect(error).toEqual(expected);
+            expect(error).toEqual(new RequestError(response));
         }
     });
 
@@ -318,7 +324,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         strategy = new AmazonPayPaymentStrategy(
             store,
-            placeOrderService,
+            orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
@@ -352,7 +358,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         strategy = new AmazonPayPaymentStrategy(
             store,
-            placeOrderService,
+            orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader

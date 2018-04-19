@@ -1,26 +1,28 @@
+import { createAction } from '@bigcommerce/data-store';
+import { Observable } from 'rxjs';
 import { merge } from 'lodash';
-import { createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
+import { getOrderRequestBody, getIncompleteOrder, getIncompleteOrderState, getSubmittedOrder } from '../../order/internal-orders.mock';
+import { FINALIZE_ORDER_REQUESTED, SUBMIT_ORDER_SUCCEEDED } from '../../order/order-action-types';
+import { OrderActionCreator } from '../../order';
 import { getPaypalExpress } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalExpressPaymentStrategy from './paypal-express-payment-strategy';
 
 describe('PaypalExpressPaymentStrategy', () => {
+    let finalizeOrderAction;
+    let order;
+    let orderActionCreator;
     let paymentMethod;
     let paypalSdk;
-    let placeOrderService;
     let scriptLoader;
     let store;
     let strategy;
+    let submitOrderAction;
 
     beforeEach(() => {
-        placeOrderService = {
-            finalizeOrder: jest.fn(() => Promise.resolve(store.getState())),
-            verifyCart: jest.fn(() => Promise.resolve(store.getState())),
-            submitOrder: jest.fn(() => Promise.resolve(store.getState())),
-            submitPayment: jest.fn(() => Promise.resolve(store.getState())),
-        };
+        orderActionCreator = new OrderActionCreator(createCheckoutClient());
 
         paypalSdk = {
             checkout: {
@@ -39,13 +41,32 @@ describe('PaypalExpressPaymentStrategy', () => {
             }),
         };
 
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            order: getIncompleteOrderState(),
+        });
 
         paymentMethod = getPaypalExpress();
+        finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_SUCCEEDED, { order }));
+
+        order = merge({}, getSubmittedOrder(), {
+            payment: {
+                id: 'paypalexpress',
+                redirectUrl: 'https://s1504075966.bcapp.dev/checkout',
+            },
+        });
 
         jest.spyOn(window.location, 'assign').mockImplementation(() => {});
 
-        strategy = new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader);
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'finalizeOrder')
+            .mockReturnValue(finalizeOrderAction);
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
+        strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
     });
 
     afterEach(() => {
@@ -102,22 +123,12 @@ describe('PaypalExpressPaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
-        let order;
         let payload;
 
         beforeEach(() => {
             payload = merge({}, getOrderRequestBody(), {
                 payment: { name: paymentMethod.id },
             });
-
-            order = merge({}, getSubmittedOrder(), {
-                payment: {
-                    id: 'paypalexpress',
-                    redirectUrl: 'https://s1504075966.bcapp.dev/checkout',
-                },
-            });
-
-            jest.spyOn(store.getState().checkout, 'getOrder').mockReturnValue(order);
         });
 
         describe('if in-context checkout is enabled', () => {
@@ -140,7 +151,13 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('does not open in-context modal if payment is already acknowledged', async () => {
-                order.payment.status = paymentStatusTypes.ACKNOWLEDGE;
+                store = createCheckoutStore({
+                    order: merge(getIncompleteOrderState(), {
+                        data: { payment: { status: paymentStatusTypes.ACKNOWLEDGE } },
+                    }),
+                });
+
+                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -150,7 +167,13 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('does not open in-context modal if payment is already finalized', async () => {
-                order.payment.status = paymentStatusTypes.FINALIZE;
+                store = createCheckoutStore({
+                    order: merge(getIncompleteOrderState(), {
+                        data: { payment: { status: paymentStatusTypes.FINALIZE } },
+                    }),
+                });
+
+                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -165,16 +188,8 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload, options);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(placeOrderService.submitOrder).toHaveBeenCalledWith(payload, true, options);
-            });
-
-            it('does not submit payment data separately', async () => {
-                const options = {};
-
-                strategy.execute(payload, options);
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(placeOrderService.submitPayment).not.toHaveBeenCalledWith(options);
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
+                expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             });
 
             it('does not redirect shopper directly if order submission is successful', async () => {
@@ -212,14 +227,8 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload, options);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(placeOrderService.submitOrder).toHaveBeenCalledWith(payload, true, options);
-            });
-
-            it('does not submit payment data separately', async () => {
-                strategy.execute(payload);
-                await new Promise((resolve) => process.nextTick(resolve));
-
-                expect(placeOrderService.submitPayment).not.toHaveBeenCalled();
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
+                expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             });
 
             it('redirects shopper directly if order submission is successful', async () => {
@@ -230,7 +239,13 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('does not redirect shopper if payment is already acknowledged', async () => {
-                order.payment.status = paymentStatusTypes.ACKNOWLEDGE;
+                store = createCheckoutStore({
+                    order: merge(getIncompleteOrderState(), {
+                        data: { payment: { status: paymentStatusTypes.ACKNOWLEDGE } },
+                    }),
+                });
+
+                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -239,7 +254,13 @@ describe('PaypalExpressPaymentStrategy', () => {
             });
 
             it('does not redirect shopper if payment is already finalized', async () => {
-                order.payment.status = paymentStatusTypes.FINALIZE;
+                store = createCheckoutStore({
+                    order: merge(getIncompleteOrderState(), {
+                        data: { payment: { status: paymentStatusTypes.FINALIZE } },
+                    }),
+                });
+
+                strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
                 strategy.execute(payload);
                 await new Promise((resolve) => process.nextTick(resolve));
@@ -270,7 +291,8 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             await strategy.finalize();
 
-            expect(placeOrderService.finalizeOrder).toHaveBeenCalled();
+            expect(orderActionCreator.finalizeOrder).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
         });
 
         it('finalizes order if order is created and payment is finalized', async () => {
@@ -278,7 +300,8 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             await strategy.finalize();
 
-            expect(placeOrderService.finalizeOrder).toHaveBeenCalled();
+            expect(orderActionCreator.finalizeOrder).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
         });
 
         it('does not finalize order if order is not created', async () => {
@@ -288,7 +311,8 @@ describe('PaypalExpressPaymentStrategy', () => {
                 await strategy.finalize();
             } catch (error) {
                 expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-                expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+                expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
+                expect(store.dispatch).not.toHaveBeenCalledWith(finalizeOrderAction);
             }
         });
 
@@ -297,7 +321,8 @@ describe('PaypalExpressPaymentStrategy', () => {
                 await strategy.finalize();
             } catch (error) {
                 expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-                expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+                expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
+                expect(store.dispatch).not.toHaveBeenCalledWith(finalizeOrderAction);
             }
         });
     });

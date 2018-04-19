@@ -1,16 +1,17 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/amazon-login.d.ts" />
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
-import { createAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import 'rxjs/add/observable/of';
 import { Observable } from 'rxjs/Observable';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { getResponse } from '../../common/http-request/responses.mock';
+import { MissingDataError } from '../../common/error/errors';
+import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
+import { LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
@@ -115,6 +116,19 @@ describe('AmazonPayCustomerStrategy', () => {
         expect(store.dispatch).toHaveBeenCalledWith(action);
     });
 
+    it('throws error if payment method is unavailable', async () => {
+        const response = getErrorResponse();
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(Observable.of(createErrorAction(LOAD_PAYMENT_METHOD_FAILED, response)));
+
+        try {
+            await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        } catch (error) {
+            expect(error).toEqual(response);
+        }
+    });
+
     it('loads widget script', async () => {
         await strategy.initialize({ container: 'login', methodId: 'amazon' });
 
@@ -132,6 +146,19 @@ describe('AmazonPayCustomerStrategy', () => {
             type: 'PwA',
             useAmazonAddressBook: true,
         });
+    });
+
+    it('throws error if unable to create login button', async () => {
+        paymentMethod = { ...paymentMethod, config: { merchantId: undefined } };
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
+
+        try {
+            await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        } catch (error) {
+            expect(error).toBeInstanceOf(MissingDataError);
+        }
     });
 
     it('only initializes widget once until deinitialization', async () => {

@@ -2,9 +2,8 @@
 import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
-import { TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../../order';
-import { PaymentMethodMissingDataError, PaymentMethodUninitializedError } from '../../errors';
+import { InvalidArgumentError, NotInitializedError, StandardError, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentMethod from '../../payment-method';
 import PaymentStrategy from '../payment-strategy';
 
@@ -16,10 +15,10 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _scriptLoader: SquareScriptLoader
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
@@ -29,6 +28,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                     this._paymentForm = createSquareForm(
                         this._getFormOptions(options, { resolve, reject })
                     );
+
                     this._paymentForm.build();
                 }))
             .then(() => super.initialize(options));
@@ -37,7 +37,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
         return new Promise((resolve, reject) => {
             if (!this._paymentForm) {
-                throw new PaymentMethodUninitializedError('Square');
+                throw new NotInitializedError('Unable to submit payment because the choosen payment method has not been initialized.');
             }
 
             if (this._deferredRequestNonce) {
@@ -45,18 +45,19 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             }
 
             this._deferredRequestNonce = { resolve, reject };
+
             this._paymentForm.requestCardNonce();
         })
-        .then(paymentData => this._placeOrderService.submitOrder(
-            omit(payload, 'payment'), true, options)
-        );
+        .then(paymentData => this._store.dispatch(
+            this._orderActionCreator.submitOrder(omit(payload, 'payment'), true, options)
+        ));
     }
 
     private _getFormOptions(options: InitializeOptions, deferred: DeferredPromise): Square.FormOptions {
         const { paymentMethod, widgetConfig } = options;
 
         if (!widgetConfig) {
-            throw new PaymentMethodMissingDataError('widgetConfig');
+            throw new InvalidArgumentError('Unable to proceed because "options.widgetConfig" argument is not provided.');
         }
 
         return {
@@ -66,12 +67,15 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 paymentFormLoaded: () => {
                     deferred.resolve();
 
-                    const state = this._store.getState();
+                    const { checkout } = this._store.getState();
+                    const billingAddress = checkout.getBillingAddress();
 
-                    const billingAddress = state.checkout.getBillingAddress();
+                    if (!this._paymentForm) {
+                        throw new NotInitializedError();
+                    }
 
                     if (billingAddress && billingAddress.postCode) {
-                        this._paymentForm!.setPostalCode(billingAddress.postCode);
+                        this._paymentForm.setPostalCode(billingAddress.postCode);
                     }
                 },
                 unsupportedBrowserDetected: () => {
@@ -85,17 +89,21 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     }
 
     private _cardNonceResponseReceived(errors: any, nonce: string): void {
+        if (!this._deferredRequestNonce) {
+            throw new StandardError();
+        }
+
         if (errors) {
-            this._deferredRequestNonce!.reject(errors);
+            this._deferredRequestNonce.reject(errors);
         } else {
-            this._deferredRequestNonce!.resolve({ nonce });
+            this._deferredRequestNonce.resolve({ nonce });
         }
     }
 }
 
 export interface DeferredPromise {
-    resolve: (resolution?: any) => void;
-    reject: (reason?: any) => void;
+    resolve(resolution?: any): void;
+    reject(reason?: any): void;
 }
 
 export interface InitializeOptions {

@@ -9,7 +9,7 @@ declare namespace Braintree {
     }
 
     interface ModuleCreator<T> {
-        create: (config: ModuleCreatorConfig) => Promise<T>;
+        create(config: ModuleCreatorConfig): Promise<T>;
     }
 
     interface ModuleCreatorConfig {
@@ -24,25 +24,25 @@ declare namespace Braintree {
     interface PaypalCreator extends ModuleCreator<Paypal> {}
 
     interface Module {
-        teardown: () => Promise<void>;
+        teardown(): Promise<void>;
     }
 
     interface Client {
-        request: (payload: RequestData) => Promise<TokenizeResponse>;
-        getVersion: () => string | void;
+        request(payload: RequestData): Promise<TokenizeResponse>;
+        getVersion(): string | void;
     }
 
     interface ThreeDSecure extends Module {
-        verifyCard: (options: ThreeDSecureOptions, callback?: () => void) => Promise<TokenizedCreditCard>;
-        cancelVerifyCard: (callback?: () => void) => Promise<void>;
+        verifyCard(options: ThreeDSecureOptions, callback?: () => void): Promise<TokenizedCreditCard>;
+        cancelVerifyCard(callback?: () => void): Promise<void>;
     }
 
     interface ThreeDSecureOptions {
         nonce: string;
         amount: number;
-        addFrame: () => void;
-        removeFrame: () => void;
         showLoader?: boolean;
+        addFrame(): void;
+        removeFrame(): void;
     }
 
     interface DataCollector extends Module {
@@ -50,14 +50,14 @@ declare namespace Braintree {
     }
 
     interface Paypal {
-        closeWindow: () => void;
-        focusWindow: () => void;
-        tokenize: (options: PaypalRequest) => Promise<TokenizePayload>;
+        closeWindow(): void;
+        focusWindow(): void;
+        tokenize(options: PaypalRequest): Promise<TokenizePayload>;
     }
 
     interface TokenizeReturn {
-        close: () => void;
-        focus: () => void;
+        close(): void;
+        focus(): void;
     }
 
     interface HostWindow extends Window {

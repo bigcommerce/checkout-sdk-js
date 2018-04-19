@@ -1,37 +1,40 @@
+import { merge } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { WepayRiskClient } from '../../remote-checkout/methods/wepay';
-import { CreditCard } from '../payment';
+import PaymentActionCreator from '../payment-action-creator';
 
-import { CreditCardPaymentStrategy } from '.';
+import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 import { InitializeOptions } from './payment-strategy';
 
 export default class WepayPaymentStrategy extends CreditCardPaymentStrategy {
-
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
+        orderActionCreator: OrderActionCreator,
+        paymentActionCreator: PaymentActionCreator,
         private _wepayRiskClient: WepayRiskClient
     ) {
-        super(store, placeOrderService);
+        super(store, orderActionCreator, paymentActionCreator);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
         this._wepayRiskClient.initialize();
+
         return super.initialize(options);
     }
 
-    execute(
-        payload: OrderRequestBody,
-        options?: any
-    ): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
         const token = this._wepayRiskClient.getRiskToken();
-        const payloadWithToken = { ...payload };
-
-        (payloadWithToken.payment.paymentData as CreditCard).extraData = {
-            riskToken: token,
-        };
+        const payloadWithToken = merge({}, payload, {
+            payment: {
+                paymentData: {
+                    extraData: {
+                        riskToken: token,
+                    },
+                },
+            },
+        });
 
         return super.execute(payloadWithToken, options);
     }

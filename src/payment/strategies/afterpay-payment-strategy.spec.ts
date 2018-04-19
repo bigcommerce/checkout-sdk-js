@@ -1,33 +1,48 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import CheckoutClient from '../../checkout/checkout-client';
-import { createPlaceOrderService, OrderRequestBody, PlaceOrderService } from '../../order';
+import { CartActionCreator } from '../../cart';
+import { VERIFY_CART_REQUESTED } from '../../cart/cart-action-types';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
+import { MissingDataError, NotInitializedError } from '../../common/error/errors';
+import { createPlaceOrderService, OrderActionCreator, OrderRequestBody } from '../../order';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
+import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getAfterpay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import PaymentActionCreator from '../payment-action-creator';
+import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
 import PaymentMethod from '../payment-method';
+import PaymentMethodActionCreator from '../payment-method-action-creator';
+import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../payment-method-action-types';
+import PaymentRequestSender from '../payment-request-sender';
 
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 
 describe('AfterpayPaymentStrategy', () => {
+    let cartActionCreator: CartActionCreator;
     let client: CheckoutClient;
+    let initializePaymentAction: Observable<Action>;
+    let loadPaymentMethodAction: Observable<Action>;
+    let orderActionCreator: OrderActionCreator;
     let payload: OrderRequestBody;
+    let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
-    let placeOrderService: PlaceOrderService;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AfterpayScriptLoader;
+    let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
     let store: CheckoutStore;
     let strategy: AfterpayPaymentStrategy;
+    let verifyCartAction: Observable<Action>;
 
-    const clientToken: string = 'foo';
     const afterpaySdk = {
         init: () => {},
         display: () => {},
@@ -36,49 +51,28 @@ describe('AfterpayPaymentStrategy', () => {
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore();
-        placeOrderService = createPlaceOrderService(store, client, createPaymentClient());
+        orderActionCreator = new OrderActionCreator(client);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(client);
+        cartActionCreator = new CartActionCreator(client);
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator
+        );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );
         scriptLoader = new AfterpayScriptLoader(createScriptLoader());
         strategy = new AfterpayPaymentStrategy(
             store,
-            placeOrderService,
+            cartActionCreator,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
         );
 
-        jest.spyOn(placeOrderService, 'verifyCart').mockImplementation(() => {});
-        jest.spyOn(placeOrderService, 'loadPaymentMethod').mockImplementation(() => {
-            return Promise.resolve({
-                checkout: {
-                    getPaymentMethod: () => {
-                        return { clientToken };
-                    },
-                },
-            });
-        });
-
-        jest.spyOn(placeOrderService, 'submitOrder').mockImplementation(() => {
-            return Promise.resolve();
-        });
-
-        jest.spyOn(placeOrderService, 'submitPayment').mockImplementation(() => {
-            return Promise.resolve();
-        });
-
-        jest.spyOn(scriptLoader, 'load').mockImplementation(() => {
-            return Promise.resolve(afterpaySdk);
-        });
-
-        jest.spyOn(afterpaySdk, 'init').mockImplementation(() => {});
-        jest.spyOn(afterpaySdk, 'display').mockImplementation(() => {});
-
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment').mockImplementation(() => {
-            return Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
-        });
-
-        paymentMethod = getAfterpay();
+        paymentMethod = { ...getAfterpay(), id: 'afterpay' };
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
@@ -86,6 +80,42 @@ describe('AfterpayPaymentStrategy', () => {
                 gateway: paymentMethod.gateway,
             },
         });
+
+        initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
+        loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod }, { methodId: paymentMethod.gateway }));
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+        verifyCartAction = Observable.of(createAction(VERIFY_CART_REQUESTED));
+
+        payload = merge({}, getOrderRequestBody(), {
+            payment: {
+                name: paymentMethod.id,
+                gateway: paymentMethod.gateway,
+            },
+        });
+
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(cartActionCreator, 'verifyCart')
+            .mockReturnValue(verifyCartAction);
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(loadPaymentMethodAction);
+
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
+            .mockReturnValue(initializePaymentAction);
+
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
+
+        jest.spyOn(scriptLoader, 'load')
+            .mockReturnValue(Promise.resolve(afterpaySdk));
+
+        jest.spyOn(afterpaySdk, 'init').mockImplementation(() => {});
+        jest.spyOn(afterpaySdk, 'display').mockImplementation(() => {});
     });
 
     describe('#initialize()', () => {
@@ -109,15 +139,17 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('displays the afterpay modal', () => {
             expect(afterpaySdk.init).toHaveBeenCalled();
-            expect(afterpaySdk.display).toHaveBeenCalledWith({ token: clientToken });
+            expect(afterpaySdk.display).toHaveBeenCalledWith({ token: paymentMethod.clientToken });
         });
 
         it('notifies store credit usage to remote checkout service', () => {
             expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false, customerMessage: '' });
+            expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
         });
 
         it('verifies the cart', () => {
-            expect(placeOrderService.verifyCart).toHaveBeenCalled();
+            expect(cartActionCreator.verifyCart).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(verifyCartAction);
         });
 
         it('does not resolve if execution is successful', () => {
@@ -135,6 +167,21 @@ describe('AfterpayPaymentStrategy', () => {
             await new Promise(resolve => process.nextTick(resolve));
 
             expect(errorHandler).toHaveBeenCalled();
+        });
+
+        it('throws error if trying to execute before initialization', async () => {
+            await strategy.deinitialize();
+
+            try {
+                await strategy.execute(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotInitializedError);
+            }
+        });
+
+        it('loads payment client token', () => {
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(paymentMethod.gateway, undefined);
+            expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
         });
     });
 
@@ -159,16 +206,27 @@ describe('AfterpayPaymentStrategy', () => {
 
             await strategy.finalize({ nonce });
 
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
+
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 { useStoreCredit: false, customerMessage: 'foo' },
                 true,
                 { nonce }
             );
 
-            expect(placeOrderService.submitPayment).toHaveBeenCalledWith({
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                 name: paymentMethod.id,
                 paymentData: { nonce },
-            }, false, {});
+            });
+        });
+
+        it('throws error if unable to finalize order due to missing data', async () => {
+            try {
+                await strategy.finalize({ nonce });
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
     });
 });
