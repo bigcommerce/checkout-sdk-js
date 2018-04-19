@@ -8,28 +8,20 @@ describe('ConsignmentRequestSender', () => {
     let requestSender;
 
     const checkoutId = 'foo';
-    const consignments = [
-        getConsignmentRequestBody(),
-    ];
+    const consignment = getConsignmentRequestBody();
+    const consignments = [consignment];
+    const options = { timeout: createTimeout() };
 
     beforeEach(() => {
         requestSender = {
-            post: jest.fn(() => Promise.resolve()),
+            post: jest.fn(() => Promise.resolve({ body: getCheckout() })),
+            put: jest.fn(() => Promise.resolve({ body: getCheckout() })),
         };
 
         consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     });
 
     describe('#createConsignments()', () => {
-        let response;
-        beforeEach(() => {
-            response = {
-                body: getCheckout(),
-            };
-
-            requestSender.post.mockReturnValue(Promise.resolve(response));
-        });
-
         it('creates consignments', async () => {
             await consignmentRequestSender.createConsignments(checkoutId, consignments);
 
@@ -42,12 +34,38 @@ describe('ConsignmentRequestSender', () => {
         });
 
         it('creates consignments with timeout', async () => {
-            const options = { timeout: createTimeout() };
             await consignmentRequestSender.createConsignments(checkoutId, consignments, options);
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/foo/consignments', {
                 ...options,
                 body: consignments,
+                params: {
+                    include: 'consignments.availableShippingOptions',
+                },
+            });
+        });
+    });
+
+    describe('#updateConsignment()', () => {
+        const { id, ...body } = consignment;
+
+        it('updates a consignment', async () => {
+            await consignmentRequestSender.updateConsignment(checkoutId, consignment);
+
+            expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${id}`, {
+                body,
+                params: {
+                    include: 'consignments.availableShippingOptions',
+                },
+            });
+        });
+
+        it('updates a consignment with timeout', async () => {
+            await consignmentRequestSender.updateConsignment(checkoutId, consignment, options);
+
+            expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${id}`, {
+                ...options,
+                body,
                 params: {
                     include: 'consignments.availableShippingOptions',
                 },

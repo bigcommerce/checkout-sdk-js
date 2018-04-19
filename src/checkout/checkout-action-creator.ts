@@ -2,6 +2,8 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
+import { RequestOptions } from '../common/http-request';
+
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
 import CheckoutClient from './checkout-client';
 
@@ -10,7 +12,7 @@ export default class CheckoutActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    loadCheckout(id: string, options?: any): Observable<CheckoutAction> {
+    loadCheckout(id: string, options?: RequestOptions): Observable<CheckoutAction> {
         return Observable.create((observer: Observer<CheckoutAction>) => {
             observer.next(createAction(CheckoutActionType.LoadCheckoutRequested));
 

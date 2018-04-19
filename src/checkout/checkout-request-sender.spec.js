@@ -30,4 +30,19 @@ describe('CheckoutRequestSender', () => {
             { params: { include: 'customer', timeout: undefined } },
         );
     });
+
+    it('appends passed params when loading checkout', async () => {
+        const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+
+        await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+            params: {
+                include: ['foo'],
+            },
+        });
+
+        expect(requestSender.get).toHaveBeenCalledWith(
+            '/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
+            { params: { include: 'customer,foo', timeout: undefined } },
+        );
+    });
 });

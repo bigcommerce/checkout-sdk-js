@@ -4,7 +4,6 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
 import * as cartActionTypes from '../cart/cart-action-types';
 import * as couponActionTypes from '../coupon/coupon-action-types';
@@ -12,8 +11,8 @@ import * as customerActionTypes from '../customer/customer-action-types';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 import cartReducer from './cart-reducer';
+import { CheckoutActionType } from '../checkout';
 
 describe('cartReducer()', () => {
     let initialState;
@@ -52,32 +51,6 @@ describe('cartReducer()', () => {
         const action = {
             type: customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED,
             payload: getCustomerResponseBody().data,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
-        }));
-    });
-
-    it('returns new data when shipping options gets updated', () => {
-        const response = getShippingOptionResponseBody();
-        const action = {
-            type: shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
-        }));
-    });
-
-    it('returns new data when shipping options gets selected', () => {
-        const response = getShippingOptionResponseBody();
-        const action = {
-            type: shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
         };
 
         expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -161,7 +134,29 @@ describe('cartReducer()', () => {
         }));
     });
 
-    it('returns new data when shipping address gets updated', () => {
+    it('returns new data when checkout is loaded', () => {
+        const action = {
+            type: CheckoutActionType.LoadCheckoutSucceeded,
+            payload: getCheckout(),
+        };
+
+        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getCart(),
+        }));
+    });
+
+    it('returns new data when a consignment is updated', () => {
+        const action = {
+            type: ConsignmentActionTypes.UpdateConsignmentSucceeded,
+            payload: getCheckout(),
+        };
+
+        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getCart(),
+        }));
+    });
+
+    it('returns new data when consignments are created', () => {
         const action = {
             type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
             payload: getCheckout(),

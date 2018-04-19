@@ -16,12 +16,8 @@ import {
 } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import {
-    createShippingStrategyRegistry,
-    ShippingCountryActionCreator,
-    ShippingOptionActionCreator,
-    ShippingStrategyActionCreator,
-} from '../shipping';
+import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import ConsignmentActionCreator from '../shipping/consignment-action-creator';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutClient from './checkout-client';
@@ -40,6 +36,7 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
         new CartActionCreator(client),
         new CheckoutActionCreator(client),
         new ConfigActionCreator(client),
+        new ConsignmentActionCreator(client),
         new CountryActionCreator(client),
         new CouponActionCreator(client),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
@@ -50,7 +47,6 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
         new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
         new QuoteActionCreator(client),
         new ShippingCountryActionCreator(client),
-        new ShippingOptionActionCreator(client),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, client))
     );
 }

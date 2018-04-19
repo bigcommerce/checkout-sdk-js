@@ -9,7 +9,6 @@ import { getCountries } from '../geography/countries.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
 import { getQuote } from '../quote/internal-quotes.mock';
-import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import CheckoutClient from './checkout-client';
 import { getConsignmentRequestBody } from '../shipping/consignments.mock';
 
@@ -28,7 +27,6 @@ describe('CheckoutClient', () => {
     let quoteRequestSender;
     let consignmentRequestSender;
     let shippingCountryRequestSender;
-    let shippingOptionRequestSender;
 
     beforeEach(() => {
         billingAddressRequestSender = {
@@ -95,16 +93,12 @@ describe('CheckoutClient', () => {
             createConsignments: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
         };
 
-        shippingOptionRequestSender = {
-            loadShippingOptions: jest.fn(() => Promise.resolve(getShippingOptions())),
-            selectShippingOption: jest.fn(() => Promise.resolve(getShippingOptions())),
-        };
-
         client = new CheckoutClient(
             billingAddressRequestSender,
             cartRequestSender,
             checkoutRequestSender,
             configRequestSender,
+            consignmentRequestSender,
             countryRequestSender,
             couponRequestSender,
             customerRequestSender,
@@ -112,9 +106,7 @@ describe('CheckoutClient', () => {
             orderRequestSender,
             paymentMethodRequestSender,
             quoteRequestSender,
-            consignmentRequestSender,
-            shippingCountryRequestSender,
-            shippingOptionRequestSender,
+            shippingCountryRequestSender
         );
     });
 
@@ -357,27 +349,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getCustomerResponseBody());
             expect(customerRequestSender.signOutCustomer).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#loadShippingOptions()', () => {
-        it('loads available shipping options', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.loadShippingOptions(options);
-
-            expect(output).toEqual(getShippingOptions());
-            expect(shippingOptionRequestSender.loadShippingOptions).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#selectShippingOption()', () => {
-        it('selects shipping option', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.selectShippingOption('addressId', 'shippingOptionId', options);
-
-            expect(output).toEqual(getShippingOptions());
-            expect(shippingOptionRequestSender.selectShippingOption)
-                .toHaveBeenCalledWith('addressId', 'shippingOptionId', options);
         });
     });
 

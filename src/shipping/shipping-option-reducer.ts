@@ -4,7 +4,6 @@ import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 
 import mapToInternalShippingOptions from './map-to-internal-shipping-options';
 
@@ -34,13 +33,11 @@ function dataReducer(data: any, action: Action): any {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionTypes.CreateConsignmentsSucceeded:
+    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
         return { ...data, ...mapToInternalShippingOptions(action.payload.consignments, data) };
 
-    case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
         return action.payload ? action.payload.shippingOptions : data;
 
     default:
@@ -50,11 +47,11 @@ function dataReducer(data: any, action: Action): any {
 
 function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_REQUESTED:
+    case CheckoutActionType.LoadCheckoutRequested:
         return { ...statuses, isLoading: true };
 
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_FAILED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
+    case CheckoutActionType.LoadCheckoutFailed:
+    case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...statuses, isLoading: false };
 
     default:
@@ -64,11 +61,11 @@ function statusesReducer(statuses: any = {}, action: Action): any {
 
 function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_REQUESTED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
+    case CheckoutActionType.LoadCheckoutRequested:
+    case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...errors, loadError: undefined };
 
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_FAILED:
+    case CheckoutActionType.LoadCheckoutFailed:
         return { ...errors, loadError: action.payload };
 
     default:

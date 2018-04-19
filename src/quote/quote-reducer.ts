@@ -4,7 +4,6 @@ import * as billingAddressActionTypes from '../billing/billing-address-action-ty
 import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 
 import InternalQuote from './internal-quote';
 import mapToInternalQuote from './map-to-internal-quote';
@@ -31,14 +30,13 @@ function dataReducer(data: InternalQuote, action: Action): InternalQuote {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionTypes.CreateConsignmentsSucceeded:
+    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
         return { ...data, ...mapToInternalQuote(action.payload) };
 
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.quote } : data;
 
     default:
