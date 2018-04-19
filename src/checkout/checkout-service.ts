@@ -229,58 +229,30 @@ export default class CheckoutService {
     }
 
     applyCoupon(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const { checkout: { getCheckout } } = this._store.getState();
-        const checkout = getCheckout();
-
-        if (!checkout) {
-            throw new MissingDataError('Unable to apply coupon because "checkout" data is missing.');
-        }
-
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._couponActionCreator.applyCoupon(checkout.id, code, options)),
+            this._store.dispatch(this._couponActionCreator.applyCoupon(code, options)),
         ]).then(() => this._store.getState());
     }
 
     removeCoupon(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const { checkout: { getCheckout } } = this._store.getState();
-        const checkout = getCheckout();
-
-        if (!checkout) {
-            throw new MissingDataError('Unable to apply coupon because "checkout" data is missing.');
-        }
-
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._couponActionCreator.removeCoupon(checkout.id, code, options)),
+            this._store.dispatch(this._couponActionCreator.removeCoupon(code, options)),
         ]).then(() => this._store.getState());
     }
 
     applyGiftCertificate(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const { checkout: { getCheckout } } = this._store.getState();
-        const checkout = getCheckout();
-
-        if (!checkout) {
-            throw new MissingDataError('Unable to apply coupon because "checkout" data is missing.');
-        }
-
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._giftCertificateActionCreator.applyGiftCertificate(checkout.id, code, options)),
+            this._store.dispatch(this._giftCertificateActionCreator.applyGiftCertificate(code, options)),
         ]).then(() => this._store.getState());
     }
 
     removeGiftCertificate(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const { checkout: { getCheckout } } = this._store.getState();
-        const checkout = getCheckout();
-
-        if (!checkout) {
-            throw new MissingDataError('Unable to apply coupon because "checkout" data is missing.');
-        }
-
         return Promise.all([
             this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._giftCertificateActionCreator.removeGiftCertificate(checkout.id, code, options)),
+            this._store.dispatch(this._giftCertificateActionCreator.removeGiftCertificate(code, options)),
         ]).then(() => this._store.getState());
     }
 
