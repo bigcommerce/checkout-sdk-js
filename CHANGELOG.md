@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.17.2"></a>
+## [0.17.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.17.1...v0.17.2) (2018-04-19)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-2926 Send Square payment data ([0cc5aec](https://github.com/bigcommerce/checkout-sdk-js/commit/0cc5aec))
+
+
+
 <a name="0.17.1"></a>
 ## [0.17.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.17.0...v0.17.1) (2018-04-10)
 

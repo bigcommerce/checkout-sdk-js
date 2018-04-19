@@ -12,7 +12,7 @@
 
 **●  defaultTranslations**:  *[Translations](translations.md)* 
 
-*Defined in [checkout-sdk.d.ts:552](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L552)*
+*Defined in [checkout-sdk.d.ts:552](https://github.com/bigcommerce/checkout-sdk-js/blob/1f51420/dist/checkout-sdk.d.ts#L552)*
 
 
 
@@ -26,7 +26,7 @@ ___
 
 **●  locale**:  *`string`* 
 
-*Defined in [checkout-sdk.d.ts:553](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L553)*
+*Defined in [checkout-sdk.d.ts:553](https://github.com/bigcommerce/checkout-sdk-js/blob/1f51420/dist/checkout-sdk.d.ts#L553)*
 
 
 
@@ -40,7 +40,7 @@ ___
 
 **●  locales**:  *[Locales](locales.md)* 
 
-*Defined in [checkout-sdk.d.ts:554](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L554)*
+*Defined in [checkout-sdk.d.ts:554](https://github.com/bigcommerce/checkout-sdk-js/blob/1f51420/dist/checkout-sdk.d.ts#L554)*
 
 
 
@@ -54,7 +54,7 @@ ___
 
 **●  translations**:  *[Translations](translations.md)* 
 
-*Defined in [checkout-sdk.d.ts:555](https://github.com/bigcommerce/checkout-sdk-js/blob/76e2d49/dist/checkout-sdk.d.ts#L555)*
+*Defined in [checkout-sdk.d.ts:555](https://github.com/bigcommerce/checkout-sdk-js/blob/1f51420/dist/checkout-sdk.d.ts#L555)*
 
 
 
