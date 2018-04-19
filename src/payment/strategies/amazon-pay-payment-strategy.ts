@@ -4,8 +4,8 @@ import { noop, omit } from 'lodash';
 import { isAddressEqual, InternalAddress } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { NotInitializedError, RequestError } from '../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { InvalidArgumentError, NotInitializedError, RequestError } from '../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError, RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
@@ -19,12 +19,12 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
@@ -66,15 +66,19 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             throw new NotInitializedError('Unable to submit payment without order reference ID');
         }
 
+        if (!payload.payment) {
+            throw new InvalidArgumentError('Unable to proceed because "payload.payment.name" argument is not provided.');
+        }
+
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(payload.payment.name, { referenceId, useStoreCredit })
         )
-            .then(() =>
-                this._placeOrderService.submitOrder({
+            .then(() => this._store.dispatch(
+                this._orderActionCreator.submitOrder({
                     ...payload,
                     payment: omit(payload.payment, 'paymentData') as Payment,
                 }, true, options)
-            )
+            ))
             .catch(error => {
                 if (error instanceof RequestError && error.body.type === 'provider_widget_error' && this._walletOptions) {
                     return this._createWallet(this._walletOptions)

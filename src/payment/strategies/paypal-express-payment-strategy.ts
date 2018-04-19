@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
-import { PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -13,18 +13,12 @@ import PaymentStrategy from './payment-strategy';
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     private _paypalSdk: any;
 
-    /**
-     * @constructor
-     * @param {CheckoutStore} store
-     * @param {PlaceOrderService} placeOrderService
-     * @param {ScriptLoader} scriptLoader
-     */
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
         private _scriptLoader: ScriptLoader
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options?: any): Promise<CheckoutSelectors> {
@@ -63,35 +57,43 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         return super.deinitialize();
     }
 
-    execute(payload: any, options: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
         if (this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
             this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
-            return this._placeOrderService.submitOrder(payload, true);
+            return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options));
         }
 
         if (!this._isInContextEnabled()) {
-            return this._placeOrderService.submitOrder(payload, true, options)
-                .then((state: any) => {
-                    window.location.assign(state.checkout.getOrder().payment.redirectUrl);
+            return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options))
+                .then(({ checkout }) => {
+                    const order = checkout.getOrder();
+
+                    if (order && order.payment.redirectUrl) {
+                        window.location.assign(order.payment.redirectUrl);
+                    }
 
                     // We need to hold execution so the consumer does not redirect us somewhere else
-                    return new Promise(() => {});
+                    return new Promise<never>(() => {});
                 });
         }
 
         this._paypalSdk.checkout.initXO();
 
-        return this._placeOrderService.submitOrder(payload, true, options)
-            .then((state: any) => {
-                this._paypalSdk.checkout.startFlow(state.checkout.getOrder().payment.redirectUrl);
+        return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options))
+            .then(({ checkout }) => {
+                const order = checkout.getOrder();
+
+                if (order && order.payment.redirectUrl) {
+                    this._paypalSdk.checkout.startFlow(order.payment.redirectUrl);
+                }
 
                 // We need to hold execution so the consumer does not redirect us somewhere else
-                return new Promise(() => {});
+                return new Promise<never>(() => {});
             })
-            .catch((state: any) => {
+            .catch(error => {
                 this._paypalSdk.checkout.closeFlow();
 
-                return Promise.reject(state);
+                return Promise.reject(error);
             });
     }
 
@@ -106,7 +108,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         if (order.orderId &&
             this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
             this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
-            return this._placeOrderService.finalizeOrder(order.orderId, options);
+            return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
         }
 
         return super.finalize();

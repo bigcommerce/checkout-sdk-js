@@ -1,11 +1,14 @@
 /// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
-import { omit } from 'lodash';
 
+import { CartActionCreator } from '../../cart';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
+import PaymentActionCreator from '../payment-action-creator';
+import PaymentMethod from '../payment-method';
+import PaymentMethodActionCreator from '../payment-method-action-creator';
 
 import PaymentStrategy, { InitializeOptions } from './payment-strategy';
 
@@ -14,11 +17,14 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
+        private _cartActionCreator: CartActionCreator,
+        private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
@@ -46,20 +52,25 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
-        const paymentId = payload.payment.gateway;
-        const useStoreCredit = !!payload.useStoreCredit;
-        const customerMessage = payload.customerMessage ? payload.customerMessage : '';
+        const paymentId = payload.payment && payload.payment.gateway;
 
         if (!paymentId) {
             throw new InvalidArgumentError('Unable to submit payment because "payload.payment.gateway" argument is not provided.');
         }
 
+        const useStoreCredit = !!payload.useStoreCredit;
+        const customerMessage = payload.customerMessage ? payload.customerMessage : '';
+
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
         )
-            .then(() => this._placeOrderService.verifyCart())
-            .then(() => this._placeOrderService.loadPaymentMethod(paymentId))
-            .then((resp: any) => this._displayModal(resp.checkout.getPaymentMethod(paymentId).clientToken))
+            .then(({ checkout }) => this._store.dispatch(
+                this._cartActionCreator.verifyCart(checkout.getCart(), options)
+            ))
+            .then(() => this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
+            ))
+            .then(({ checkout }) => this._displayModal(checkout.getPaymentMethod(paymentId)))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
             .then(() => new Promise<never>(() => {}));
     }
@@ -69,34 +80,29 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         const customer = checkout.getCustomer();
         const order = checkout.getOrder();
 
-        if (!order || !customer) {
+        if (!order || !order.payment.id || !customer) {
             throw new MissingDataError('Unable to finalize order because "order" or "customer" data is missing.');
         }
 
         const { useStoreCredit, customerMessage } = customer.remote;
-
-        const payload = {
-            payment: {
-                name: order.payment.id,
-                paymentData: { nonce: options.nonce },
-            },
+        const orderPayload = { useStoreCredit, customerMessage };
+        const paymentPayload = {
+            name: order.payment.id,
+            paymentData: { nonce: options.nonce },
         };
 
-        return this._placeOrderService.submitOrder({ useStoreCredit, customerMessage }, true, options)
+        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, true, options))
             .then(() =>
-                this._placeOrderService.submitPayment(payload.payment, useStoreCredit, omit(options, 'nonce'))
+                this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
             );
     }
 
-    /**
-     * @param token the token returned by afterpay API
-     */
-    private _displayModal(token: string): void {
-        if (!this._afterpaySdk || !token) {
+    private _displayModal(paymentMethod?: PaymentMethod): void {
+        if (!this._afterpaySdk || !paymentMethod || !paymentMethod.clientToken) {
             throw new NotInitializedError('Unable to display payment modal because payment method has not been initialized.');
         }
 
         this._afterpaySdk.init();
-        this._afterpaySdk.display({ token });
+        this._afterpaySdk.display({ token: paymentMethod.clientToken });
     }
 }

@@ -4,14 +4,18 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator } from '../billing';
+import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
-import { createPlaceOrderService } from '../order';
+import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
 import { WepayRiskClient } from '../remote-checkout/methods/wepay';
 
+import PaymentActionCreator from './payment-action-creator';
+import PaymentMethodActionCreator from './payment-method-action-creator';
+import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import {
     AfterpayPaymentStrategy,
@@ -38,23 +42,35 @@ export default function createPaymentStrategyRegistry(
     client: CheckoutClient,
     paymentClient: any
 ) {
-    const { checkout } = store.getState();
-    const registry = new PaymentStrategyRegistry(checkout.getConfig());
-    const placeOrderService = createPlaceOrderService(store, client, paymentClient);
+    const registry = new PaymentStrategyRegistry(store.getState().checkout.getConfig());
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
+    const orderActionCreator = new OrderActionCreator(client);
+    const paymentActionCreator = new PaymentActionCreator(
+        new PaymentRequestSender(paymentClient),
+        new OrderActionCreator(client)
+    );
+    const paymentMethodActionCreator = new PaymentMethodActionCreator(client);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
         new RemoteCheckoutRequestSender(createRequestSender())
     );
 
     registry.register('afterpay', () =>
-        new AfterpayPaymentStrategy(store, placeOrderService, remoteCheckoutActionCreator, createAfterpayScriptLoader())
+        new AfterpayPaymentStrategy(
+            store,
+            new CartActionCreator(client),
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            remoteCheckoutActionCreator,
+            createAfterpayScriptLoader()
+        )
     );
 
     registry.register('amazon', () =>
         new AmazonPayPaymentStrategy(
             store,
-            placeOrderService,
+            orderActionCreator,
             new BillingAddressActionCreator(client),
             remoteCheckoutActionCreator,
             new AmazonPayScriptLoader(scriptLoader)
@@ -62,63 +78,131 @@ export default function createPaymentStrategyRegistry(
     );
 
     registry.register('creditcard', () =>
-        new CreditCardPaymentStrategy(store, placeOrderService)
+        new CreditCardPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator
+        )
     );
 
     registry.register('klarna', () =>
-        new KlarnaPaymentStrategy(store, placeOrderService, remoteCheckoutActionCreator, new KlarnaScriptLoader(scriptLoader))
+        new KlarnaPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentMethodActionCreator,
+            remoteCheckoutActionCreator,
+            new KlarnaScriptLoader(scriptLoader)
+        )
     );
 
     registry.register('legacy', () =>
-        new LegacyPaymentStrategy(store, placeOrderService)
+        new LegacyPaymentStrategy(
+            store,
+            orderActionCreator
+        )
     );
 
     registry.register('offline', () =>
-        new OfflinePaymentStrategy(store, placeOrderService)
+        new OfflinePaymentStrategy(
+            store,
+            orderActionCreator
+        )
     );
 
     registry.register('offsite', () =>
-        new OffsitePaymentStrategy(store, placeOrderService)
+        new OffsitePaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator
+        )
     );
 
     registry.register('paypal', () =>
-        new PaypalProPaymentStrategy(store, placeOrderService)
+        new PaypalProPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator
+        )
     );
 
     registry.register('paypalexpress', () =>
-        new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader)
+        new PaypalExpressPaymentStrategy(
+            store,
+            orderActionCreator,
+            scriptLoader
+        )
     );
 
     registry.register('paypalexpresscredit', () =>
-        new PaypalExpressPaymentStrategy(store, placeOrderService, scriptLoader)
+        new PaypalExpressPaymentStrategy(
+            store,
+            orderActionCreator,
+            scriptLoader
+        )
     );
 
     registry.register('sagepay', () =>
-        new SagePayPaymentStrategy(store, placeOrderService, createFormPoster())
+        new SagePayPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            createFormPoster()
+        )
     );
 
     registry.register('squarev2', () =>
-        new SquarePaymentStrategy(store, placeOrderService, new SquareScriptLoader(scriptLoader))
+        new SquarePaymentStrategy(
+            store,
+            orderActionCreator,
+            new SquareScriptLoader(scriptLoader)
+        )
     );
 
     registry.register('nopaymentdatarequired', () =>
-        new NoPaymentDataRequiredPaymentStrategy(store, placeOrderService)
+        new NoPaymentDataRequiredPaymentStrategy(
+            store,
+            orderActionCreator
+        )
     );
 
     registry.register('braintree', () =>
-        new BraintreeCreditCardPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+        new BraintreeCreditCardPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessor
+        )
     );
 
     registry.register('braintreepaypal', () =>
-        new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessor)
+        new BraintreePaypalPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessor
+        )
     );
 
     registry.register('braintreepaypalcredit', () =>
-        new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessor, true)
+        new BraintreePaypalPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessor,
+            true
+        )
     );
 
     registry.register('wepay', () =>
-        new WepayPaymentStrategy(store, placeOrderService, new WepayRiskClient(scriptLoader))
+        new WepayPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            new WepayRiskClient(scriptLoader)
+        )
     );
 
     return registry;

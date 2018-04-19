@@ -1,14 +1,19 @@
+import { createAction, Action } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
+import { Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
 import { getCart } from '../../../cart/internal-carts.mock';
-import { CheckoutSelector, CheckoutStore } from '../../../checkout';
+import { createCheckoutClient, CheckoutSelector, CheckoutStore } from '../../../checkout';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { getLegacyAppConfig } from '../../../config/configs.mock.js';
-import { OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import PlaceOrderService from '../../../order/place-order-service';
+import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
+import PaymentActionCreator from '../../payment-action-creator';
+import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getBraintreePaypal } from '../../payment-methods.mock';
 import { InitializeOptions } from '../payment-strategy';
 
@@ -16,12 +21,16 @@ import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
 
 describe('BraintreePaypalPaymentStrategy', () => {
-    let placeOrderService: PlaceOrderService;
+    let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
     let braintreePaypalPaymentStrategy: BraintreePaypalPaymentStrategy;
     let paymentMethodMock: PaymentMethod;
     let checkoutMock: CheckoutSelector;
     let store: CheckoutStore;
+    let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
 
     beforeEach(() => {
         braintreePaymentProcessorMock = {} as BraintreePaymentProcessor;
@@ -32,19 +41,29 @@ describe('BraintreePaypalPaymentStrategy', () => {
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
         paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         checkoutMock = {} as CheckoutSelector;
         checkoutMock.isPaymentDataRequired = jest.fn((useStoreCredit: boolean) => true);
         store = {} as CheckoutStore;
+        store.dispatch = jest.fn(() => Promise.resolve({ checkout: checkoutMock }));
         store.getState = jest.fn(() => ({ checkout: checkoutMock }));
 
-        placeOrderService = {} as PlaceOrderService;
-        placeOrderService.submitPayment = jest.fn(() => Promise.resolve());
-        placeOrderService.submitOrder = jest.fn(() => Promise.resolve());
-        placeOrderService.verifyCart = jest.fn(() => Promise.resolve());
-        placeOrderService.loadPaymentMethod = jest.fn(() => Promise.resolve(store.getState()));
+        orderActionCreator = {} as OrderActionCreator;
+        orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
-        braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessorMock);
+        paymentActionCreator = {} as PaymentActionCreator;
+        paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
+
+        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            braintreePaymentProcessorMock
+        );
     });
 
     it('creates an instance of the braintree payment strategy', () => {
@@ -107,17 +126,18 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         it('calls submit order with the order request information', async () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Boolean), expect.any(Object));
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Boolean), expect.any(Object));
+            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
         it('asks for cart verification', async () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
         });
 
         it('pass the options to submitOrder', async () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
-            expect(placeOrderService.submitOrder).toHaveBeenCalledWith(expect.any(Object), expect.any(Boolean), options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), expect.any(Boolean), options);
         });
 
         it('submitPayment with the right information', async () => {
@@ -133,8 +153,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', false);
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(expected, false, options);
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
         it('does not call paypal if a nonce is present', async () => {
@@ -150,8 +170,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(braintreePaymentProcessorMock.paypal).not.toHaveBeenCalled();
-            expect(placeOrderService.submitPayment)
-                .toHaveBeenCalledWith(expected, false, options);
+            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+            expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
         it('converts any error returned by braintree in a StandardError', async () => {
@@ -161,7 +181,14 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         describe('if paypal credit', () => {
             beforeEach(() => {
-                braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(store, placeOrderService, braintreePaymentProcessorMock, true);
+                braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(
+                    store,
+                    orderActionCreator,
+                    paymentActionCreator,
+                    paymentMethodActionCreator,
+                    braintreePaymentProcessorMock,
+                    true
+                );
             });
 
             it('submitPayment with the right information and sets credit to true', async () => {
@@ -179,8 +206,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
                 expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', true);
-                expect(placeOrderService.submitPayment)
-                    .toHaveBeenCalledWith(expected, false, options);
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
+                expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
             });
         });
     });

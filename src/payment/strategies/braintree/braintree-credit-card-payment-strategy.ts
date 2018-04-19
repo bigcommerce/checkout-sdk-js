@@ -1,12 +1,11 @@
-import { omit } from 'lodash';
-
-import { Payment } from '../..';
+import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
-import { MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderRequestBody, PlaceOrderService } from '../../../order';
+import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import isCreditCardLike from '../../is-credit-card';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { PaymentInstrument } from '../../payment';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
 import BraintreePaymentProcessor, { BraintreeCreditCardInitializeOptions } from './braintree-payment-processor';
@@ -16,17 +15,19 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
 
     constructor(
         store: CheckoutStore,
-        placeOrderService: PlaceOrderService,
+        private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor
     ) {
-        super(store, placeOrderService);
+        super(store);
     }
 
     initialize(options: BraintreeCreditCardInitializeOptions): Promise<CheckoutSelectors> {
         const { id: paymentId } = options.paymentMethod;
 
-        return this._placeOrderService.loadPaymentMethod(paymentId)
-            .then(({ checkout }: CheckoutSelectors) => {
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
+            .then(({ checkout }) => {
                 this._paymentMethod = checkout.getPaymentMethod(paymentId);
 
                 if (!this._paymentMethod || !this._paymentMethod.clientToken) {
@@ -42,18 +43,23 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
     }
 
     execute(orderRequest: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
-        const { payment, useStoreCredit } = orderRequest;
+        const { payment, ...order } = orderRequest;
         const { checkout } = this._store.getState();
 
-        return this._placeOrderService
-            .submitOrder(omit(orderRequest, 'payment'), true, options)
+        if (!payment) {
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+        }
+
+        return this._store.dispatch(
+            this._orderActionCreator.submitOrder(order, true, options)
+        )
             .then(() =>
-                checkout.isPaymentDataRequired(useStoreCredit) ?
+                checkout.isPaymentDataRequired(order.useStoreCredit) && payment ?
                     this._preparePaymentData(payment) :
                     Promise.resolve(payment)
             )
-            .then((processedPayment: PaymentInstrument) =>
-                this._placeOrderService.submitPayment(processedPayment, useStoreCredit, options)
+            .then(payment =>
+                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
             )
             .catch((error: Error) => this._handleError(error));
     }

@@ -1,33 +1,48 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction, Action } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
+import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { createPlaceOrderService, PlaceOrderService } from '../../order';
+import { OrderActionCreator } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
+import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
+import PaymentActionCreator from '../payment-action-creator';
+import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
+import PaymentRequestSender from '../payment-request-sender';
 
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 
 describe('CreditCardPaymentStrategy', () => {
-    let placeOrderService: PlaceOrderService;
+    let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
     let store: CheckoutStore;
     let strategy: CreditCardPaymentStrategy;
+    let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
 
     beforeEach(() => {
         store = createCheckoutStore();
 
-        placeOrderService = createPlaceOrderService(
-            store,
-            createCheckoutClient(),
-            createPaymentClient()
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator
         );
 
-        strategy = new CreditCardPaymentStrategy(store, placeOrderService);
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
-        jest.spyOn(placeOrderService, 'submitOrder')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        orderActionCreator = new OrderActionCreator(createCheckoutClient());
 
-        jest.spyOn(placeOrderService, 'submitPayment')
-            .mockReturnValue(Promise.resolve(store.getState()));
+        strategy = new CreditCardPaymentStrategy(store, orderActionCreator, paymentActionCreator);
+
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
     });
 
     it('submits order without payment data', async () => {
@@ -35,7 +50,8 @@ describe('CreditCardPaymentStrategy', () => {
 
         await strategy.execute(payload);
 
-        expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), undefined);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, undefined);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('submits payment separately', async () => {
@@ -43,7 +59,8 @@ describe('CreditCardPaymentStrategy', () => {
 
         await strategy.execute(payload);
 
-        expect(placeOrderService.submitPayment).toHaveBeenCalledWith(payload.payment, payload.useStoreCredit, undefined);
+        expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(payload.payment);
+        expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
     });
 
     it('returns checkout state', async () => {

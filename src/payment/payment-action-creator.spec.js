@@ -1,25 +1,58 @@
 import { Observable } from 'rxjs';
-import { getPayment, getErrorPaymentResponseBody, getPaymentResponseBody } from './payments.mock';
+
+import { getCartState } from '../cart/internal-carts.mock';
+import { createCheckoutStore } from '../checkout';
 import { getResponse } from '../common/http-request/responses.mock';
-import * as actionTypes from './payment-action-types';
+import { getConfigState } from '../config/configs.mock';
+import { getCustomerState } from '../customer/internal-customers.mock';
+import { OrderActionCreator } from '../order';
+import * as orderActionTypes from '../order/order-action-types';
+import { getCompleteOrderResponseBody, getSubmittedOrderState } from '../order/internal-orders.mock';
+import { getInstrumentsState } from '../payment/instrument/instrument.mock';
+import { getPaymentMethodsState } from '../payment/payment-methods.mock';
+import { getQuoteState } from '../quote/internal-quotes.mock';
+import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
+
 import PaymentActionCreator from './payment-action-creator';
+import * as actionTypes from './payment-action-types';
+import { getErrorPaymentResponseBody, getPayment, getPaymentResponseBody } from './payments.mock';
 
 describe('PaymentActionCreator', () => {
+    let client;
+    let orderActionCreator;
     let paymentActionCreator;
     let paymentRequestSender;
+    let store;
 
     beforeEach(() => {
+        client = {
+            loadOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrderResponseBody()))),
+        };
+
         paymentRequestSender = {
             initializeOffsitePayment: jest.fn(() => Promise.resolve()),
             submitPayment: jest.fn(() => Promise.resolve(getResponse(getPaymentResponseBody()))),
         };
 
-        paymentActionCreator = new PaymentActionCreator(paymentRequestSender);
+        orderActionCreator = new OrderActionCreator(client);
+
+        store = createCheckoutStore({
+            cart: getCartState(),
+            config: getConfigState(),
+            customer: getCustomerState(),
+            instruments: getInstrumentsState(),
+            order: getSubmittedOrderState(),
+            quote: getQuoteState(),
+            paymentMethods: getPaymentMethodsState(),
+            shippingOptions: getShippingOptionsState(),
+        });
+
+        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
     });
 
     describe('#submitPayment()', () => {
         it('dispatches actions to data store', async () => {
-            const actions = await paymentActionCreator.submitPayment(getPayment())
+            const actions = await paymentActionCreator.submitPayment(getPayment())(store)
                 .toArray()
                 .toPromise();
 
@@ -31,6 +64,13 @@ describe('PaymentActionCreator', () => {
                     type: actionTypes.SUBMIT_PAYMENT_SUCCEEDED,
                     payload: getPaymentResponseBody(),
                 },
+                {
+                    type: orderActionTypes.LOAD_ORDER_REQUESTED,
+                },
+                {
+                    type: orderActionTypes.LOAD_ORDER_SUCCEEDED,
+                    payload: getCompleteOrderResponseBody().data,
+                },
             ]);
         });
 
@@ -40,7 +80,7 @@ describe('PaymentActionCreator', () => {
             );
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await paymentActionCreator.submitPayment(getPayment())
+            const actions = await paymentActionCreator.submitPayment(getPayment())(store)
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -61,7 +101,7 @@ describe('PaymentActionCreator', () => {
 
     describe('#initializeOffsitePayment()', () => {
         it('dispatches actions to data store', async () => {
-            const actions = await paymentActionCreator.initializeOffsitePayment(getPayment())
+            const actions = await paymentActionCreator.initializeOffsitePayment(getPayment())(store)
                 .toArray()
                 .toPromise();
 
@@ -77,7 +117,7 @@ describe('PaymentActionCreator', () => {
             );
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await paymentActionCreator.initializeOffsitePayment(getPayment())
+            const actions = await paymentActionCreator.initializeOffsitePayment(getPayment())(store)
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();

@@ -1,25 +1,53 @@
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction } from '@bigcommerce/data-store';
+import { Observable } from 'rxjs';
 import { merge, omit } from 'lodash';
-import { createCheckoutStore } from '../../checkout';
+
+import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
+import { FINALIZE_ORDER_REQUESTED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
+import { OrderActionCreator } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
+import PaymentActionCreator from '../payment-action-creator';
+import { INITIALIZE_OFFSITE_PAYMENT_REQUESTED } from '../payment-action-types';
+import PaymentRequestSender from '../payment-request-sender';
 import * as paymentStatusTypes from '../payment-status-types';
+
 import OffsitePaymentStrategy from './offsite-payment-strategy';
 
 describe('OffsitePaymentStrategy', () => {
-    let placeOrderService;
+    let finalizeOrderAction;
+    let initializeOffsitePaymentAction;
+    let orderActionCreator;
+    let paymentActionCreator;
     let store;
     let strategy;
+    let submitOrderAction;
 
     beforeEach(() => {
         store = createCheckoutStore();
-        placeOrderService = {
-            submitOrder: jest.fn(() => Promise.resolve(store.getState())),
-            finalizeOrder: jest.fn(() => Promise.resolve(store.getState())),
-            initializeOffsitePayment: jest.fn(() => Promise.resolve(store.getState())),
-        };
+        orderActionCreator = new OrderActionCreator(createCheckoutClient());
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator
+        );
+        finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
+        initializeOffsitePaymentAction = Observable.of(createAction(INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
 
-        strategy = new OffsitePaymentStrategy(store, placeOrderService);
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'finalizeOrder')
+            .mockReturnValue(finalizeOrderAction);
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
+        jest.spyOn(paymentActionCreator, 'initializeOffsitePayment')
+            .mockReturnValue(initializeOffsitePaymentAction);
+
+        strategy = new OffsitePaymentStrategy(store, orderActionCreator, paymentActionCreator);
     });
 
     it('submits order without payment data', async () => {
@@ -28,7 +56,8 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(placeOrderService.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, options);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('submits order with payment data if payment gateway is "adyen"', async () => {
@@ -39,7 +68,8 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(placeOrderService.submitOrder).toHaveBeenCalledWith(payload, options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
     it('initializes offsite payment flow', async () => {
@@ -48,7 +78,8 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(placeOrderService.initializeOffsitePayment).toHaveBeenCalledWith(payload.payment, payload.useStoreCredit, options);
+        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(payload.payment);
+        expect(store.dispatch).toHaveBeenCalledWith(initializeOffsitePaymentAction);
     });
 
     it('finalizes order if order is created and payment is acknowledged', async () => {
@@ -63,7 +94,8 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.finalize(options);
 
-        expect(placeOrderService.finalizeOrder).toHaveBeenCalledWith(checkout.getOrder().orderId, options);
+        expect(orderActionCreator.finalizeOrder).toHaveBeenCalledWith(checkout.getOrder().orderId, options);
+        expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
     });
 
     it('finalizes order if order is created and payment is finalized', async () => {
@@ -78,7 +110,8 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.finalize(options);
 
-        expect(placeOrderService.finalizeOrder).toHaveBeenCalledWith(checkout.getOrder().orderId, options);
+        expect(orderActionCreator.finalizeOrder).toHaveBeenCalledWith(checkout.getOrder().orderId, options);
+        expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
     });
 
     it('does not finalize order if order is not created', async () => {
@@ -90,7 +123,8 @@ describe('OffsitePaymentStrategy', () => {
             await strategy.finalize();
         } catch (error) {
             expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-            expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+            expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalledWith(finalizeOrderAction);
         }
     });
 
@@ -107,7 +141,8 @@ describe('OffsitePaymentStrategy', () => {
             await strategy.finalize();
         } catch (error) {
             expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-            expect(placeOrderService.finalizeOrder).not.toHaveBeenCalled();
+            expect(orderActionCreator.finalizeOrder).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalledWith(finalizeOrderAction);
         }
     });
 
