@@ -154,6 +154,7 @@ export default function createPaymentStrategyRegistry(
         new SquarePaymentStrategy(
             store,
             orderActionCreator,
+            paymentActionCreator,
             new SquareScriptLoader(scriptLoader)
         )
     );

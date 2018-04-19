@@ -1,9 +1,16 @@
 /// <reference path="./square-form.d.ts" />
-import { omit } from 'lodash';
-
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
-import { InvalidArgumentError, NotInitializedError, StandardError, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+    StandardError,
+    TimeoutError,
+    UnsupportedBrowserError,
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { TokenizedCreditCard } from '../../payment';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentStrategy from '../payment-strategy';
 
@@ -16,6 +23,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
         private _scriptLoader: SquareScriptLoader
     ) {
         super(store);
@@ -35,7 +43,15 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
-        return new Promise((resolve, reject) => {
+        const { payment, ...order } = payload;
+
+        if (!payment || !payment.name) {
+            throw new MissingDataError('Unable to submit payment because "payload.payment.name" argument is not provided.');
+        }
+
+        const paymentName = payment.name;
+
+        return new Promise<TokenizedCreditCard>((resolve, reject) => {
             if (!this._paymentForm) {
                 throw new NotInitializedError('Unable to submit payment because the choosen payment method has not been initialized.');
             }
@@ -45,12 +61,19 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             }
 
             this._deferredRequestNonce = { resolve, reject };
-
             this._paymentForm.requestCardNonce();
         })
-        .then(paymentData => this._store.dispatch(
-            this._orderActionCreator.submitOrder(omit(payload, 'payment'), true, options)
-        ));
+        .then(paymentData => {
+            const paymentPayload = {
+                name: paymentName,
+                paymentData,
+            };
+
+            return this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options))
+                .then(() =>
+                    this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
+                );
+        });
     }
 
     private _getFormOptions(options: InitializeOptions, deferred: DeferredPromise): Square.FormOptions {
@@ -102,7 +125,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 }
 
 export interface DeferredPromise {
-    resolve(resolution?: any): void;
+    resolve(resolution?: TokenizedCreditCard): void;
     reject(reason?: any): void;
 }
 
