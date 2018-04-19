@@ -35,6 +35,8 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
+        const { payment, useStoreCredit, ...order } = payload;
+
         return new Promise((resolve, reject) => {
             if (!this._paymentForm) {
                 throw new PaymentMethodUninitializedError('Square');
@@ -45,11 +47,12 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             }
 
             this._deferredRequestNonce = { resolve, reject };
-            this._paymentForm.requestCardNonce();
+            this._paymentForm!.requestCardNonce();
         })
-        .then((paymentData) => this._placeOrderService.submitOrder(
-            omit(payload, 'payment'), true, options)
-        );
+        .then((paymentData) => (
+            this._placeOrderService.submitOrder(order, true, options)
+                .then(() => this._placeOrderService.submitPayment({ ...payment, paymentData}, useStoreCredit, options))
+        ));
     }
 
     private _getFormOptions(options: InitializeOptions, deferred: DeferredPromise): Square.FormOptions {
