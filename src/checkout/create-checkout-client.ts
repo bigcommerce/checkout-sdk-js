@@ -12,10 +12,12 @@ import { QuoteRequestSender } from '../quote';
 import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
 
 import CheckoutClient from './checkout-client';
+import CheckoutRequestSender from './checkout-request-sender';
 
 export default function createCheckoutClient(config: { locale?: string } = {}): CheckoutClient {
     const requestSender = createRequestSender();
     const cartRequestSender = new CartRequestSender(requestSender);
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const configRequestSender = new ConfigRequestSender(requestSender);
     const couponRequestSender = new CouponRequestSender(requestSender);
     const countryRequestSender = new CountryRequestSender(requestSender, config);
@@ -32,6 +34,7 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
     return new CheckoutClient(
         billingAddressRequestSender,
         cartRequestSender,
+        checkoutRequestSender,
         configRequestSender,
         countryRequestSender,
         couponRequestSender,

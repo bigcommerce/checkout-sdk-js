@@ -16,7 +16,6 @@ export function getBillingAddress() {
         country: 'United States',
         countryCode: 'US',
         phone: '555-555-5555',
-        type: 'residential',
         customFields: [],
     };
 }
@@ -28,5 +27,12 @@ export function getBillingAddressResponseBody() {
             cart: getCart(),
             billingAddress: getBillingAddress(),
         },
+    };
+}
+
+export function getBillingAddressState() {
+    return {
+        data: getBillingAddress(),
+        meta: {},
     };
 }

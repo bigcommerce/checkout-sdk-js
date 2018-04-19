@@ -6,7 +6,7 @@ import { omit, pick } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutSelector, CheckoutSelectors } from '../checkout';
+import { CheckoutSelectors, CheckoutStoreSelector } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { OrderActionCreator } from '../order';
 
@@ -71,7 +71,7 @@ export default class PaymentActionCreator {
             });
     }
 
-    private _getPaymentRequestBody(payment: Payment, checkout: CheckoutSelector): PaymentRequestBody {
+    private _getPaymentRequestBody(payment: Payment, checkout: CheckoutStoreSelector): PaymentRequestBody {
         const deviceSessionId = payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId || checkout.getCheckoutMeta().deviceSessionId;
         const checkoutMeta = checkout.getCheckoutMeta();
         const billingAddress = checkout.getBillingAddress();
@@ -117,7 +117,7 @@ export default class PaymentActionCreator {
         };
     }
 
-    private _getPaymentMethod(payment: Payment, checkout: CheckoutSelector): PaymentMethod | undefined {
+    private _getPaymentMethod(payment: Payment, checkout: CheckoutStoreSelector): PaymentMethod | undefined {
         const paymentMethod = checkout.getPaymentMethod(payment.name, payment.gateway);
 
         return (paymentMethod && paymentMethod.method === 'multi-option' && !paymentMethod.gateway) ?

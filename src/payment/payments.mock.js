@@ -2,8 +2,8 @@ import { getCart } from '../cart/internal-carts.mock';
 import { getSubmittedOrder } from '../order/internal-orders.mock';
 import { getFlatRateOption } from '../shipping/internal-shipping-options.mock';
 import { getGuestCustomer } from '../customer/internal-customers.mock';
-import { getAuthorizenet } from './payment-methods.mock';
-import { getQuote, getQuoteMeta } from '../quote/internal-quotes.mock';
+import { getAuthorizenet, getPaymentMethodsMeta } from './payment-methods.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
 
 export function getPayment() {
     return {
@@ -32,7 +32,7 @@ export function getPaymentRequestBody() {
         order: getSubmittedOrder(),
         payment: getPayment().paymentData,
         paymentMethod: getAuthorizenet(),
-        quoteMeta: getQuoteMeta(),
+        quoteMeta: getPaymentMethodsMeta(),
         shippingAddress: getQuote().shippingAddress,
         shippingOption: getFlatRateOption(),
         source: 'bcapp-checkout-uco',

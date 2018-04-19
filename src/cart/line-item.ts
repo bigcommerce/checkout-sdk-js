@@ -32,7 +32,7 @@ export interface GiftCertificateItem {
 }
 
 export interface LineItem {
-    id: string;
+    id: string | number;
     variantId: number;
     productId: number;
     sku: string;

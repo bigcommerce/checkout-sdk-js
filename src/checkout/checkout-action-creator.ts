@@ -2,37 +2,24 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { Cart, CartRequestSender } from '../cart';
-import { CartUnavailableError } from '../cart/errors';
-
-import Checkout from './checkout';
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
-import CheckoutRequestSender from './checkout-request-sender';
+import CheckoutClient from './checkout-client';
 
 export default class CheckoutActionCreator {
     constructor(
-        private _checkoutRequestSender: CheckoutRequestSender,
-        private _cartRequestSender: CartRequestSender
+        private _checkoutClient: CheckoutClient
     ) {}
 
-    loadCheckout(options?: any): Observable<CheckoutAction> {
+    loadCheckout(id: string, options?: any): Observable<CheckoutAction> {
         return Observable.create((observer: Observer<CheckoutAction>) => {
             observer.next(createAction(CheckoutActionType.LoadCheckoutRequested));
 
-            this._cartRequestSender.loadCarts(options)
-                .then(({ body: [cart] }: { body: Cart[] }) => {
-                    if (!cart) {
-                        throw new CartUnavailableError();
-                    }
-
-                    return cart.id;
-                })
-                .then((id: string) => this._checkoutRequestSender.loadCheckout(id, options))
-                .then(({ body }: { body: Checkout }) => {
+            this._checkoutClient.loadCheckout(id, options)
+                .then(({ body }) => {
                     observer.next(createAction(CheckoutActionType.LoadCheckoutSucceeded, body));
                     observer.complete();
                 })
-                .catch((response: any) => {
+                .catch(response => {
                     observer.error(createErrorAction(CheckoutActionType.LoadCheckoutFailed, response));
                 });
         });

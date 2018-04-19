@@ -84,8 +84,11 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             throw new MissingDataError('Unable to finalize order because "order" or "customer" data is missing.');
         }
 
-        const { useStoreCredit, customerMessage } = customer.remote;
-        const orderPayload = { useStoreCredit, customerMessage };
+        const orderPayload = {
+            useStoreCredit: customer.remote && customer.remote.useStoreCredit,
+            customerMessage: customer.remote && customer.remote.customerMessage,
+        };
+
         const paymentPayload = {
             name: order.payment.id,
             paymentData: { nonce: options.nonce },

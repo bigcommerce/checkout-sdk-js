@@ -23,6 +23,7 @@ import {
     ShippingStrategyActionCreator,
 } from '../shipping';
 
+import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutClient from './checkout-client';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
@@ -31,19 +32,19 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
     const client = options.client || createCheckoutClient({ locale: options.locale });
     const store = createCheckoutStore({}, { shouldWarnMutation: options.shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
-
-    const instrumentRequestSender = new InstrumentRequestSender(paymentClient, createRequestSender());
+    const requestSender = createRequestSender();
 
     return new CheckoutService(
         store,
         new BillingAddressActionCreator(client),
         new CartActionCreator(client),
+        new CheckoutActionCreator(client),
         new ConfigActionCreator(client),
         new CountryActionCreator(client),
         new CouponActionCreator(client),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
         new GiftCertificateActionCreator(client),
-        new InstrumentActionCreator(instrumentRequestSender),
+        new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
         new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
