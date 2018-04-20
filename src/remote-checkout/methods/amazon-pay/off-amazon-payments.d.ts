@@ -20,7 +20,8 @@ declare namespace OffAmazonPayments {
         OffAmazonPayments?: {
             Button?: Button;
             Widgets?: {
-                Wallet: Widgets.Wallet;
+                AddressBook?: Widgets.AddressBook;
+                Wallet?: Widgets.Wallet;
             };
         };
         onAmazonPaymentsReady?(): void;

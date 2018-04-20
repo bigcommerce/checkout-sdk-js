@@ -11,7 +11,13 @@ import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import { ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import {
+    ShippingCountryActionCreator,
+    ShippingInitializeOptions,
+    ShippingOptionActionCreator,
+    ShippingRequestOptions,
+    ShippingStrategyActionCreator,
+} from '../shipping';
 
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
@@ -190,25 +196,25 @@ export default class CheckoutService {
         return this._store.dispatch(action);
     }
 
-    initializeShipping(options?: any): Promise<CheckoutSelectors> {
+    initializeShipping(options?: ShippingInitializeOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.initialize(options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    deinitializeShipping(options?: any): Promise<CheckoutSelectors> {
+    deinitializeShipping(options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.deinitialize(options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: any): Promise<CheckoutSelectors> {
+    selectShippingOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.selectOption(addressId, shippingOptionId, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    updateShippingAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
+    updateShippingAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });

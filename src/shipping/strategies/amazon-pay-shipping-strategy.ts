@@ -3,7 +3,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { isAddressEqual, InternalAddress } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { MissingDataError, NotInitializedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import {
@@ -15,6 +15,7 @@ import {
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import ShippingAddressActionCreator from '../shipping-address-action-creator';
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
+import { ShippingInitializeOptions, ShippingRequestOptions } from '../shipping-request-options';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 
 import ShippingStrategy from './shipping-strategy';
@@ -33,21 +34,27 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         super(store);
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: ShippingInitializeOptions): Promise<CheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
+        const { amazon: amazonOptions, methodId } = options;
+
+        if (!amazonOptions || !methodId) {
+            throw new InvalidArgumentError('Unable to proceed because "options.amazon" argument is not provided.');
+        }
+
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(({ checkout }) => new Promise((resolve, reject) => {
-                this._paymentMethod = checkout.getPaymentMethod(options.methodId);
+                this._paymentMethod = checkout.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
-                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
+                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
                 }
 
                 const onReady = () => {
-                    this._createAddressBook(options)
+                    this._createAddressBook(amazonOptions)
                         .then(resolve)
                         .catch(reject);
                 };
@@ -58,7 +65,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options?: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -68,7 +75,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return super.deinitialize(options);
     }
 
-    updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
+    updateAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
@@ -78,7 +85,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         );
     }
 
-    private _createAddressBook(options: InitializeWidgetOptions): Promise<OffAmazonPayments.Widgets.AddressBook> {
+    private _createAddressBook(options: AmazonPayShippingInitializeOptions): Promise<OffAmazonPayments.Widgets.AddressBook> {
         return new Promise((resolve, reject) => {
             const { container, onAddressSelect = () => {}, onError = () => {}, onReady = () => {} } = options;
             const merchantId = this._paymentMethod && this._paymentMethod.config.merchantId;
@@ -195,11 +202,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
     }
 }
 
-export interface InitializeOptions extends InitializeWidgetOptions {
-    methodId: string;
-}
-
-export interface InitializeWidgetOptions {
+export interface AmazonPayShippingInitializeOptions {
     container: string;
     onAddressSelect?(address: InternalAddress): void;
     onError?(error: Error): void;
