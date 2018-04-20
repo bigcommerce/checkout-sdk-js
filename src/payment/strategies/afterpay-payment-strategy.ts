@@ -9,8 +9,9 @@ import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
 import PaymentActionCreator from '../payment-action-creator';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
+import { PaymentInitializeOptions } from '../payment-request-options';
 
-import PaymentStrategy, { InitializeOptions } from './payment-strategy';
+import PaymentStrategy from './payment-strategy';
 
 export default class AfterpayPaymentStrategy extends PaymentStrategy {
     private _afterpaySdk?: Afterpay.Sdk;
@@ -27,9 +28,13 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
+        }
+
+        if (!options.paymentMethod) {
+            throw new InvalidArgumentError();
         }
 
         return this._afterpayScriptLoader.load(options.paymentMethod)

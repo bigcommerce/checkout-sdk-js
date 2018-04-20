@@ -10,12 +10,12 @@ import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError, RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import Payment from '../payment';
-import PaymentMethod from '../payment-method';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
 import PaymentStrategy from './payment-strategy';
 
 export default class AmazonPayPaymentStrategy extends PaymentStrategy {
-    private _walletOptions?: InitializeWidgetOptions;
+    private _walletOptions?: AmazonPayPaymentInitializeOptions;
 
     constructor(
         store: CheckoutStore,
@@ -27,28 +27,34 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
         }
 
-        this._walletOptions = options;
-        this._paymentMethod = options.paymentMethod;
+        const { amazon: amazonOptions, paymentMethod } = options;
+
+        if (!amazonOptions || !paymentMethod) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.amazon" argument is not provided.');
+        }
+
+        this._walletOptions = amazonOptions;
+        this._paymentMethod = paymentMethod;
 
         return new Promise((resolve, reject) => {
             const onReady = () => {
-                this._createWallet(options)
+                this._createWallet(amazonOptions)
                     .then(resolve)
                     .catch(reject);
             };
 
-            this._scriptLoader.loadWidget(options.paymentMethod, onReady)
+            this._scriptLoader.loadWidget(paymentMethod, onReady)
                 .catch(reject);
         })
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -58,7 +64,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return super.deinitialize(options);
     }
 
-    execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const { useStoreCredit = false } = payload;
         const referenceId = this._getOrderReferenceId();
 
@@ -100,7 +106,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return amazon.referenceId;
     }
 
-    private _createWallet(options: InitializeWidgetOptions): Promise<OffAmazonPayments.Widgets.Wallet> {
+    private _createWallet(options: AmazonPayPaymentInitializeOptions): Promise<OffAmazonPayments.Widgets.Wallet> {
         return new Promise((resolve, reject) => {
             const { container, onError = noop, onPaymentSelect = noop, onReady = noop } = options;
             const referenceId = this._getOrderReferenceId();
@@ -194,11 +200,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     }
 }
 
-export interface InitializeOptions extends InitializeWidgetOptions {
-    paymentMethod: PaymentMethod;
-}
-
-export interface InitializeWidgetOptions {
+export interface AmazonPayPaymentInitializeOptions {
     container: string;
     amazonOrderReferenceId?: string;
     onPaymentSelect?(address?: InternalAddress): void;

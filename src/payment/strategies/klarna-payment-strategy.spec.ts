@@ -90,7 +90,7 @@ describe('KlarnaPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ container: '#container', paymentMethod });
+            await strategy.initialize({ paymentMethod, klarna: { container: '#container' } });
         });
 
         it('loads script when initializing strategy', () => {
@@ -110,7 +110,7 @@ describe('KlarnaPaymentStrategy', () => {
 
     describe('#execute()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ container: '#container', paymentMethod });
+            await strategy.initialize({ paymentMethod, klarna: { container: '#container' } });
         });
 
         it('authorizes against klarna', () => {

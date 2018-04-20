@@ -8,7 +8,7 @@ import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
-import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
+import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import {
@@ -134,13 +134,13 @@ export default class CheckoutService {
         return this._store.dispatch(action, { queueId: 'paymentMethods' });
     }
 
-    initializePaymentMethod(methodId: string, gatewayId?: string, options?: any): Promise<CheckoutSelectors> {
+    initializePaymentMethod(methodId: string, gatewayId?: string, options?: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.initialize(methodId, gatewayId, options);
 
         return this._store.dispatch(action, { queueId: 'paymentStrategy' });
     }
 
-    deinitializePaymentMethod(methodId: string, gatewayId?: string, options?: any): Promise<CheckoutSelectors> {
+    deinitializePaymentMethod(methodId: string, gatewayId?: string, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.deinitialize(methodId, gatewayId, options);
 
         return this._store.dispatch(action, { queueId: 'paymentStrategy' });

@@ -82,7 +82,9 @@ describe('SquarePaymentStrategy', () => {
                     paymentMethod: { ...paymentMethod,
                         initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
                     },
-                    widgetConfig: {},
+                    square: {
+                        widgetConfig: {},
+                    },
                 };
 
                 await strategy.initialize(initOptions);
@@ -94,6 +96,9 @@ describe('SquarePaymentStrategy', () => {
                 const initOptions = {
                     paymentMethod: { ...paymentMethod,
                         initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
+                    },
+                    square: {
+                        widgetConfig: {},
                     },
                 };
 
@@ -119,7 +124,9 @@ describe('SquarePaymentStrategy', () => {
                     paymentMethod: { ...paymentMethod,
                         initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
                     },
-                    widgetConfig: {},
+                    square: {
+                        widgetConfig: {},
+                    },
                 };
 
                 strategy.initialize(initOptions)
@@ -153,7 +160,9 @@ describe('SquarePaymentStrategy', () => {
                     paymentMethod: { ...paymentMethod,
                         initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
                     },
-                    widgetConfig: {},
+                    square: {
+                        widgetConfig: {},
+                    },
                 };
 
                 await strategy.initialize(initOptions);

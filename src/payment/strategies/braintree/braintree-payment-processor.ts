@@ -4,8 +4,6 @@ import { NotInitializedError } from '../../../common/error/errors';
 import { CancellablePromise } from '../../../common/utility';
 import { PaymentMethodCancelledError } from '../../errors';
 import { CreditCard, TokenizedCreditCard } from '../../payment';
-import PaymentMethod from '../../payment-method';
-import { InitializeOptions } from '../payment-strategy';
 
 import { Braintree } from './braintree';
 import BraintreeSDKCreator from './braintree-sdk-creator';
@@ -17,9 +15,9 @@ export default class BraintreePaymentProcessor {
         private _braintreeSDKCreator: BraintreeSDKCreator
     ) {}
 
-    initialize(clientToken: string, options: BraintreeCreditCardInitializeOptions): void {
+    initialize(clientToken: string, options?: BraintreeCreditCardPaymentInitializeOptions): void {
         this._braintreeSDKCreator.initialize(clientToken);
-        this._modalHandler = options.modalHandler;
+        this._modalHandler = options && options.modalHandler;
     }
 
     preloadPaypal(): Promise<Braintree.Paypal> {
@@ -55,7 +53,7 @@ export default class BraintreePaymentProcessor {
             throw new NotInitializedError('Unable to verify card because the choosen payment method has not been initialized.');
         }
 
-        const { onRemoveFrame, ...modalHandler} = this._modalHandler;
+        const { onRemoveFrame, ...modalHandler } = this._modalHandler;
 
         return Promise.all([
             this.tokenizeCard(payment, billingAddress),
@@ -120,8 +118,7 @@ export default class BraintreePaymentProcessor {
     }
 }
 
-export interface BraintreeCreditCardInitializeOptions extends InitializeOptions {
-    paymentMethod: PaymentMethod;
+export interface BraintreeCreditCardPaymentInitializeOptions {
     modalHandler?: ModalHandler;
 }
 

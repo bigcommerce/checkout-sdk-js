@@ -7,6 +7,7 @@ import { OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import Payment from './payment';
+import { PaymentInitializeOptions } from './payment-request-options';
 import {
     PaymentStrategyActionType,
     PaymentStrategyDeinitializeAction,
@@ -15,7 +16,7 @@ import {
     PaymentStrategyInitializeAction,
 } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
-import PaymentStrategy, { InitializeOptions } from './strategies/payment-strategy';
+import { PaymentStrategy } from './strategies';
 
 export default class PaymentStrategyActionCreator {
     constructor(
@@ -86,7 +87,7 @@ export default class PaymentStrategyActionCreator {
         });
     }
 
-    initialize(methodId: string, gatewayId?: string, options?: InitializeOptions): ThunkAction<PaymentStrategyInitializeAction> {
+    initialize(methodId: string, gatewayId?: string, options?: PaymentInitializeOptions): ThunkAction<PaymentStrategyInitializeAction> {
         return store => Observable.create((observer: Observer<PaymentStrategyInitializeAction>) => {
             const { checkout } = store.getState();
             const method = checkout.getPaymentMethod(methodId, gatewayId);
@@ -98,7 +99,7 @@ export default class PaymentStrategyActionCreator {
             observer.next(createAction(PaymentStrategyActionType.InitializeRequested, undefined, { methodId }));
 
             this._strategyRegistry.getByMethod(method)
-                .initialize({ ...options, paymentMethod: method })
+                .initialize({ ...options, paymentMethod: method } as PaymentInitializeOptions)
                 .then(() => {
                     observer.next(createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, { methodId }));
                     observer.complete();
@@ -109,7 +110,7 @@ export default class PaymentStrategyActionCreator {
         });
     }
 
-    deinitialize(methodId: string, gatewayId?: string, options?: any): ThunkAction<PaymentStrategyDeinitializeAction> {
+    deinitialize(methodId: string, gatewayId?: string, options?: PaymentInitializeOptions): ThunkAction<PaymentStrategyDeinitializeAction> {
         return store => Observable.create((observer: Observer<PaymentStrategyDeinitializeAction>) => {
             const { checkout } = store.getState();
             const method = checkout.getPaymentMethod(methodId, gatewayId);

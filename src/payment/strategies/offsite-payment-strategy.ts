@@ -4,6 +4,7 @@ import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import PaymentActionCreator from '../payment-action-creator';
+import { PaymentRequestOptions } from '../payment-request-options';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -17,7 +18,7 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const { payment: { gateway = '' } = {} } = payload;
         const orderPayload = gateway === 'adyen' ? payload : omit(payload, 'payment');
 
@@ -31,7 +32,7 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
             });
     }
 
-    finalize(options: any): Promise<CheckoutSelectors> {
+    finalize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const order = checkout.getOrder();
 

@@ -15,7 +15,7 @@ import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getBraintreePaypal } from '../../payment-methods.mock';
-import { InitializeOptions } from '../payment-strategy';
+import { PaymentInitializeOptions } from '../../payment-request-options';
 
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
@@ -73,16 +73,15 @@ describe('BraintreePaypalPaymentStrategy', () => {
     describe('#initialize()', () => {
         it('initializes the braintree payment processor with the client token and the set of options', async () => {
             checkoutMock.getPaymentMethod = jest.fn(() => ({ ...getBraintreePaypal(), clientToken: 'myToken' }));
-            const options = {} as InitializeOptions;
-            options.paymentMethod = getBraintreePaypal();
+            const options = { paymentMethod: getBraintreePaypal(), braintree: {} };
             await braintreePaypalPaymentStrategy.initialize(options);
 
-            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken', options);
+            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken', options.braintree);
         });
 
         it('preloads paypal', async () => {
             checkoutMock.getPaymentMethod = jest.fn(() => ({ ...getBraintreePaypal(), clientToken: 'myToken' }));
-            const options = {} as InitializeOptions;
+            const options = {} as PaymentStrategyInitializeOptions;
             options.paymentMethod = getBraintreePaypal();
             await braintreePaypalPaymentStrategy.initialize(options);
 
@@ -90,7 +89,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('skips all initialization if a nonce is present in the paymentProvider', async () => {
-            const options = {} as InitializeOptions;
+            const options = {} as PaymentStrategyInitializeOptions;
             options.paymentMethod = { ...getBraintreePaypal(), nonce: 'some-nonce' };
             await braintreePaypalPaymentStrategy.initialize(options);
 
@@ -112,7 +111,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
     describe('#execute()', () => {
         let orderRequestBody: OrderRequestBody;
-        let options: InitializeOptions;
+        let options: PaymentInitializeOptions;
 
         beforeEach(() => {
             orderRequestBody = getOrderRequestBody();
