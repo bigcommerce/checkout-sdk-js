@@ -5,7 +5,7 @@ import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerCredentials, CustomerStrategyActionCreator } from '../customer';
+import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
@@ -160,32 +160,28 @@ export default class CheckoutService {
         return this.loadShippingCountries(options);
     }
 
-    initializeCustomer(options: any = {}): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerStrategyActionCreator.initialize(options),
-            { queueId: 'customerStrategy' }
-        );
+    initializeCustomer(options?: CustomerInitializeOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.initialize(options);
+
+        return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
-    deinitializeCustomer(options: any = {}): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerStrategyActionCreator.deinitialize(options),
-            { queueId: 'customerStrategy' }
-        );
+    deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.deinitialize(options);
+
+        return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
-    signInCustomer(credentials: CustomerCredentials, options: any = {}): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerStrategyActionCreator.signIn(credentials, options),
-            { queueId: 'customerStrategy' }
-        );
+    signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.signIn(credentials, options);
+
+        return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
-    signOutCustomer(options: any = {}): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerStrategyActionCreator.signOut(options),
-            { queueId: 'customerStrategy' }
-        );
+    signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.signOut(options);
+
+        return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
     loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors> {
