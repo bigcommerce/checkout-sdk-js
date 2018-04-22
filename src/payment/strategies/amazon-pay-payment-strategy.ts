@@ -4,17 +4,19 @@ import { noop, omit } from 'lodash';
 import { isAddressEqual, InternalAddress } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { InvalidArgumentError, NotInitializedError, RequestError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError, RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import Payment from '../payment';
+import PaymentMethod from '../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
 import PaymentStrategy from './payment-strategy';
 
 export default class AmazonPayPaymentStrategy extends PaymentStrategy {
+    private _paymentMethod?: PaymentMethod;
     private _walletOptions?: AmazonPayPaymentInitializeOptions;
 
     constructor(
@@ -32,10 +34,16 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        const { amazon: amazonOptions, paymentMethod } = options;
+        const { amazon: amazonOptions, methodId } = options;
+        const { checkout } = this._store.getState();
+        const paymentMethod = checkout.getPaymentMethod(methodId);
 
-        if (!amazonOptions || !paymentMethod) {
+        if (!amazonOptions) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.amazon" argument is not provided.');
+        }
+
+        if (!paymentMethod) {
+            throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
         }
 
         this._walletOptions = amazonOptions;

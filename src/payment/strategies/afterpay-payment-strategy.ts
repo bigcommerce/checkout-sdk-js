@@ -33,11 +33,14 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        if (!options.paymentMethod) {
-            throw new InvalidArgumentError();
+        const { checkout } = this._store.getState();
+        const paymentMethod = checkout.getPaymentMethod(options.methodId, options.gatewayId);
+
+        if (!paymentMethod) {
+            throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
         }
 
-        return this._afterpayScriptLoader.load(options.paymentMethod)
+        return this._afterpayScriptLoader.load(paymentMethod)
             .then(afterpaySdk => {
                 this._afterpaySdk = afterpaySdk;
             })

@@ -78,16 +78,15 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     }
 
     private _loadWidget(options: PaymentInitializeOptions): Promise<void> {
-        if (!options.klarna || !options.paymentMethod) {
+        if (!options.klarna) {
             throw new InvalidArgumentError('Unable to load widget because "options.klarna" argument is not provided.');
         }
 
-        const { container, loadCallback } = options.klarna;
-        const { id: paymentId } = options.paymentMethod;
+        const { methodId, klarna: { container, loadCallback } } = options;
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(({ checkout }) => {
-                const paymentMethod = checkout.getPaymentMethod(paymentId);
+                const paymentMethod = checkout.getPaymentMethod(methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to load payment widget because "paymentMethod.clientToken" field is missing.');

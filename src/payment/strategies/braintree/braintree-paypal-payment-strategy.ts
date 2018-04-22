@@ -3,6 +3,7 @@ import { InvalidArgumentError, MissingDataError, StandardError } from '../../../
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -10,6 +11,8 @@ import PaymentStrategy from '../payment-strategy';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 
 export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
+    private _paymentMethod?: PaymentMethod;
+
     constructor(
         store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
@@ -22,21 +25,16 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     }
 
     initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
-        const { braintree: braintreeOptions, paymentMethod } = options;
-
-        if (!paymentMethod) {
-            throw new InvalidArgumentError();
-        }
-
-        const { id: paymentId, nonce } = paymentMethod;
+        const { braintree: braintreeOptions, methodId } = options;
+        const { nonce } = this._store.getState().checkout.getPaymentMethod(methodId) || { nonce: undefined };
 
         if (nonce) {
             return super.initialize(options);
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(({ checkout }: CheckoutSelectors) => {
-                this._paymentMethod = checkout.getPaymentMethod(paymentId);
+                this._paymentMethod = checkout.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod || !this._paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');

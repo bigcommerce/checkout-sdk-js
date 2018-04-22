@@ -290,19 +290,28 @@ describe('CheckoutService', () => {
         });
 
         it('executes payment strategy', async () => {
-            await checkoutService.loadPaymentMethods();
-            await checkoutService.submitOrder(getOrderRequestBody());
+            const payload = getOrderRequestBody();
 
-            expect(paymentStrategy.execute).toHaveBeenCalledWith(getOrderRequestBody(), undefined);
+            await checkoutService.loadPaymentMethods();
+            await checkoutService.submitOrder(payload);
+
+            expect(paymentStrategy.execute).toHaveBeenCalledWith(
+                getOrderRequestBody(),
+                { methodId: payload.payment.name, gatewayId: payload.payment.gateway }
+            );
         });
 
         it('executes payment strategy with timeout', async () => {
+            const payload = getOrderRequestBody();
             const options = { timeout: createTimeout() };
 
             await checkoutService.loadPaymentMethods();
-            await checkoutService.submitOrder(getOrderRequestBody(), options);
+            await checkoutService.submitOrder(payload, options);
 
-            expect(paymentStrategy.execute).toHaveBeenCalledWith(getOrderRequestBody(), options);
+            expect(paymentStrategy.execute).toHaveBeenCalledWith(
+                payload,
+                { ...options, methodId: payload.payment.name, gatewayId: payload.payment.gateway }
+            );
         });
     });
 
@@ -328,7 +337,10 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.finalizeOrderIfNeeded();
 
-            expect(paymentStrategy.finalize).toHaveBeenCalledWith(undefined);
+            expect(paymentStrategy.finalize).toHaveBeenCalledWith({
+                methodId: getAuthorizenet().id,
+                gatewayId: null,
+            });
         });
 
         it('finalizes order with timeout', async () => {
@@ -338,7 +350,11 @@ describe('CheckoutService', () => {
             await checkoutService.loadPaymentMethods();
             await checkoutService.finalizeOrderIfNeeded(options);
 
-            expect(paymentStrategy.finalize).toHaveBeenCalledWith(options);
+            expect(paymentStrategy.finalize).toHaveBeenCalledWith({
+                ...options,
+                methodId: getAuthorizenet().id,
+                gatewayId: null,
+            });
         });
     });
 
@@ -415,7 +431,8 @@ describe('CheckoutService', () => {
             await checkoutService.initializePaymentMethod('braintree');
 
             expect(paymentStrategy.initialize).toHaveBeenCalledWith({
-                paymentMethod: getBraintree(),
+                methodId: getBraintree().id,
+                gatewayId: undefined,
             });
         });
     });

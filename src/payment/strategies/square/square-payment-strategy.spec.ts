@@ -9,7 +9,7 @@ import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStor
 import { MissingDataError, TimeoutError } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
 import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
-import { getSquare } from '../../../payment/payment-methods.mock';
+import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
 
@@ -41,7 +41,9 @@ describe('SquarePaymentStrategy', () => {
 
     beforeEach(() => {
         client = createCheckoutClient();
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            paymentMethods: getPaymentMethodsState(),
+        });
         paymentMethod = getSquare();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
         paymentActionCreator = new PaymentActionCreator(
@@ -60,10 +62,6 @@ describe('SquarePaymentStrategy', () => {
             .mockReturnValue(submitPaymentAction);
 
         jest.spyOn(store, 'dispatch');
-        jest.spyOn(store, 'getState')
-            .mockReturnValue({
-                getBillingAddress: () => {},
-            });
 
         jest.spyOn(scriptLoader, 'load')
             .mockReturnValue(Promise.resolve(formFactory));
@@ -79,9 +77,7 @@ describe('SquarePaymentStrategy', () => {
         describe('when form loads successfully', () => {
             it('loads script when initializing strategy with required params', async () => {
                 const initOptions = {
-                    paymentMethod: { ...paymentMethod,
-                        initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
-                    },
+                    methodId: paymentMethod.id,
                     square: {
                         widgetConfig: {},
                     },
@@ -94,9 +90,7 @@ describe('SquarePaymentStrategy', () => {
 
             it('fails to initialize when widget config is missing', async () => {
                 const initOptions = {
-                    paymentMethod: { ...paymentMethod,
-                        initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
-                    },
+                    methodId: paymentMethod.id,
                     square: {
                         widgetConfig: {},
                     },
@@ -121,9 +115,7 @@ describe('SquarePaymentStrategy', () => {
 
             it('rejects the promise', () => {
                 const initOptions = {
-                    paymentMethod: { ...paymentMethod,
-                        initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
-                    },
+                    methodId: paymentMethod.id,
                     square: {
                         widgetConfig: {},
                     },
@@ -157,9 +149,7 @@ describe('SquarePaymentStrategy', () => {
         describe('when the form has been initialized', () => {
             beforeEach(async () => {
                 const initOptions = {
-                    paymentMethod: { ...paymentMethod,
-                        initializationData: { locationId: 'foo', env: 'bar', applicationId: 'test' },
-                    },
+                    methodId: paymentMethod.id,
                     square: {
                         widgetConfig: {},
                     },

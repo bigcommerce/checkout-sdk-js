@@ -3,6 +3,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
+import PaymentMethod from '../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 import * as paymentStatusTypes from '../payment-status-types';
 
@@ -13,6 +14,7 @@ import PaymentStrategy from './payment-strategy';
  */
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     private _paypalSdk: any;
+    private _paymentMethod?: PaymentMethod;
 
     constructor(
         store: CheckoutStore,
@@ -23,7 +25,9 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     }
 
     initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
-        this._paymentMethod = options.paymentMethod;
+        const { checkout } = this._store.getState();
+
+        this._paymentMethod = checkout.getPaymentMethod(options.methodId);
 
         if (!this._isInContextEnabled() || this._isInitialized) {
             return super.initialize(options);

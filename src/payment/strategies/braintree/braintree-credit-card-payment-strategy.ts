@@ -25,22 +25,16 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
     }
 
     initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
-        if (!options.paymentMethod) {
-            throw new InvalidArgumentError();
-        }
-
-        const { id: paymentId } = options.paymentMethod;
-
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
             .then(({ checkout }) => {
-                this._paymentMethod = checkout.getPaymentMethod(paymentId);
+                const paymentMethod = checkout.getPaymentMethod(options.methodId);
 
-                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');
                 }
 
-                this._braintreePaymentProcessor.initialize(this._paymentMethod.clientToken, options.braintree);
-                this._is3dsEnabled = this._paymentMethod.config.is3dsEnabled;
+                this._braintreePaymentProcessor.initialize(paymentMethod.clientToken, options.braintree);
+                this._is3dsEnabled = paymentMethod.config.is3dsEnabled;
 
                 return super.initialize(options);
             })

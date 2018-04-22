@@ -16,7 +16,9 @@ import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getCompleteOrderState, getIncompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
+import PaymentActionCreator from './payment-action-creator';
 import { getPaymentMethod, getPaymentMethodsState } from './payment-methods.mock';
+import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
@@ -41,7 +43,11 @@ describe('PaymentStrategyActionCreator', () => {
         registry = createPaymentStrategyRegistry(store, client, paymentClient);
         strategy = new CreditCardPaymentStrategy(
             store,
-            new OrderActionCreator(client)
+            new OrderActionCreator(client),
+            new PaymentActionCreator(
+                new PaymentRequestSender(createPaymentClient()),
+                new OrderActionCreator(client)
+            )
         );
         noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(
             store,
@@ -75,7 +81,7 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.initialize(method.id, method.gateway)(store))
                 .toPromise();
 
-            expect(strategy.initialize).toHaveBeenCalledWith({ paymentMethod: method });
+            expect(strategy.initialize).toHaveBeenCalledWith({ methodId: method.id, gatewayId: method.gateway });
         });
 
         it('emits action to notify initialization progress', async () => {
@@ -220,7 +226,10 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.execute(payload)(store))
                 .toPromise();
 
-            expect(strategy.execute).toHaveBeenCalledWith(payload, undefined);
+            expect(strategy.execute).toHaveBeenCalledWith(
+                payload,
+                { methodId: payload.payment.name, gatewayId: payload.payment.gateway }
+            );
         });
 
         it('emits action to notify execution progress', async () => {
@@ -291,7 +300,10 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith('nopaymentdatarequired');
-            expect(noPaymentDataStrategy.execute).toHaveBeenCalledWith(payload, undefined);
+            expect(noPaymentDataStrategy.execute).toHaveBeenCalledWith(
+                payload,
+                { methodId: payload.payment.name, gatewayId: payload.payment.gateway }
+            );
         });
     });
 
@@ -305,7 +317,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
 
-            await Observable.from(actionCreator.finalize(getOrderRequestBody())(store))
+            await Observable.from(actionCreator.finalize()(store))
                 .toPromise();
 
             expect(registry.getByMethod).toHaveBeenCalledWith(method);

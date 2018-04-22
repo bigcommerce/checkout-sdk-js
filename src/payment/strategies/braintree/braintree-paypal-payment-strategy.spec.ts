@@ -45,7 +45,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         checkoutMock = {} as CheckoutSelector;
+        checkoutMock.getPaymentMethod = jest.fn(() => paymentMethodMock);
         checkoutMock.isPaymentDataRequired = jest.fn((useStoreCredit: boolean) => true);
+
         store = {} as CheckoutStore;
         store.dispatch = jest.fn(() => Promise.resolve({ checkout: checkoutMock }));
         store.getState = jest.fn(() => ({ checkout: checkoutMock }));
@@ -72,37 +74,33 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         it('initializes the braintree payment processor with the client token and the set of options', async () => {
-            checkoutMock.getPaymentMethod = jest.fn(() => ({ ...getBraintreePaypal(), clientToken: 'myToken' }));
-            const options = { paymentMethod: getBraintreePaypal(), braintree: {} };
+            const options = { methodId: paymentMethodMock.id, braintree: {} };
+
             await braintreePaypalPaymentStrategy.initialize(options);
 
             expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken', options.braintree);
         });
 
         it('preloads paypal', async () => {
-            checkoutMock.getPaymentMethod = jest.fn(() => ({ ...getBraintreePaypal(), clientToken: 'myToken' }));
-            const options = {} as PaymentStrategyInitializeOptions;
-            options.paymentMethod = getBraintreePaypal();
-            await braintreePaypalPaymentStrategy.initialize(options);
+            await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
 
             expect(braintreePaymentProcessorMock.preloadPaypal).toHaveBeenCalled();
         });
 
         it('skips all initialization if a nonce is present in the paymentProvider', async () => {
-            const options = {} as PaymentStrategyInitializeOptions;
-            options.paymentMethod = { ...getBraintreePaypal(), nonce: 'some-nonce' };
-            await braintreePaypalPaymentStrategy.initialize(options);
+            paymentMethodMock.nonce = 'some-nonce';
+
+            await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
 
             expect(braintreePaymentProcessorMock.preloadPaypal).not.toHaveBeenCalled();
             expect(braintreePaymentProcessorMock.initialize).not.toHaveBeenCalled();
         });
 
         it('throws error if unable to initialize', async () => {
-            const paymentMethod = getBraintreePaypal();
-            checkoutMock.getPaymentMethod = jest.fn(() => paymentMethod);
+            paymentMethodMock.clientToken = undefined;
 
             try {
-                await braintreePaypalPaymentStrategy.initialize({ paymentMethod });
+                await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -115,27 +113,31 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         beforeEach(() => {
             orderRequestBody = getOrderRequestBody();
-            options = { paymentMethod: getBraintreePaypal() };
+            options = { methodId: getBraintreePaypal().id };
+
             checkoutMock.getCart = jest.fn(() => getCart());
             checkoutMock.getBillingAddress = jest.fn(() => getBillingAddress());
-            checkoutMock.getPaymentMethod = jest.fn(() => paymentMethodMock);
             checkoutMock.getConfig = jest.fn(() => getLegacyAppConfig());
+
             return braintreePaypalPaymentStrategy.initialize(options);
         });
 
         it('calls submit order with the order request information', async () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Boolean), expect.any(Object));
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
         it('asks for cart verification', async () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
         });
 
         it('pass the options to submitOrder', async () => {
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), expect.any(Boolean), options);
         });
 
@@ -157,8 +159,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('does not call paypal if a nonce is present', async () => {
-            options.paymentMethod = { ...getBraintreePaypal(), nonce: 'some-nonce' };
-            await braintreePaypalPaymentStrategy.initialize(options);
+            paymentMethodMock.nonce = 'some-nonce';
+
             const expected = expect.objectContaining({
                 paymentData: {
                     method: 'paypal',
@@ -166,6 +168,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 },
             });
 
+            await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(braintreePaymentProcessorMock.paypal).not.toHaveBeenCalled();
@@ -175,6 +178,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
         it('converts any error returned by braintree in a StandardError', async () => {
             braintreePaymentProcessorMock.paypal = () => Promise.reject({ name: 'BraintreeError', message: 'my_message'});
+
             await expect(braintreePaypalPaymentStrategy.execute(orderRequestBody, options)).rejects.toEqual(expect.any(StandardError));
         });
 
@@ -191,8 +195,6 @@ describe('BraintreePaypalPaymentStrategy', () => {
             });
 
             it('submitPayment with the right information and sets credit to true', async () => {
-                options.paymentMethod = getBraintreePaypal();
-                await braintreePaypalPaymentStrategy.initialize(options);
                 const expected = {
                     ...orderRequestBody.payment,
                     paymentData: {
@@ -202,6 +204,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     },
                 };
 
+                await braintreePaypalPaymentStrategy.initialize(options);
                 await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
                 expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', true);
@@ -214,7 +217,9 @@ describe('BraintreePaypalPaymentStrategy', () => {
     describe('#deinitialize()', () => {
         it('calls deinitialize in the braintree payment processor', async () => {
             braintreePaymentProcessorMock.deinitialize = jest.fn(() => Promise.resolve());
-            await braintreePaypalPaymentStrategy.deinitialize({});
+
+            await braintreePaypalPaymentStrategy.deinitialize({ methodId: paymentMethodMock.id });
+
             expect(braintreePaymentProcessorMock.deinitialize).toHaveBeenCalled();
         });
     });

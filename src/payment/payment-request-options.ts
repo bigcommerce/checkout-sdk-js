@@ -1,6 +1,5 @@
 import { RequestOptions } from '../common/http-request';
 
-import PaymentMethod from './payment-method';
 import {
     AmazonPayPaymentInitializeOptions,
     BraintreeCreditCardPaymentInitializeOptions,
@@ -9,7 +8,8 @@ import {
 } from './strategies';
 
 export interface PaymentRequestOptions extends RequestOptions {
-    paymentMethod?: PaymentMethod;
+    methodId: string;
+    gatewayId?: string;
 }
 
 export interface PaymentInitializeOptions extends PaymentRequestOptions {

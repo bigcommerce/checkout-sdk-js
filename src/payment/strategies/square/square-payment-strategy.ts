@@ -77,7 +77,9 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     }
 
     private _getFormOptions(options: PaymentInitializeOptions, deferred: DeferredPromise): Square.FormOptions {
-        const { square: squareOptions, paymentMethod } = options;
+        const { square: squareOptions, methodId } = options;
+        const { checkout } = this._store.getState();
+        const paymentMethod = checkout.getPaymentMethod(methodId);
 
         if (!squareOptions || !squareOptions.widgetConfig || !paymentMethod) {
             throw new InvalidArgumentError('Unable to proceed because "options.square" argument is not provided.');

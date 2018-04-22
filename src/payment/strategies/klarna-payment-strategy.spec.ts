@@ -9,7 +9,7 @@ import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStor
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
-import { getKlarna } from '../../payment/payment-methods.mock';
+import { getKlarna, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
@@ -36,7 +36,9 @@ describe('KlarnaPaymentStrategy', () => {
 
     beforeEach(() => {
         client = createCheckoutClient();
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            paymentMethods: getPaymentMethodsState(),
+        });
         orderActionCreator = new OrderActionCreator(client);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
@@ -90,7 +92,7 @@ describe('KlarnaPaymentStrategy', () => {
 
     describe('#initialize()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ paymentMethod, klarna: { container: '#container' } });
+            await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container' } });
         });
 
         it('loads script when initializing strategy', () => {
@@ -110,7 +112,7 @@ describe('KlarnaPaymentStrategy', () => {
 
     describe('#execute()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ paymentMethod, klarna: { container: '#container' } });
+            await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container' } });
         });
 
         it('authorizes against klarna', () => {

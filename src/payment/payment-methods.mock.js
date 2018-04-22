@@ -287,7 +287,11 @@ export function getSquare() {
         },
         type: 'PAYMENT_TYPE_API',
         nonce: null,
-        initializationData: null,
+        initializationData: {
+            applicationId: 'test',
+            env: 'bar',
+            locationId: 'foo',
+        },
         clientToken: null,
         returnUrl: null,
     };
@@ -336,6 +340,10 @@ export function getPaymentMethods() {
         getAdyenAmex(),
         getAuthorizenet(),
         getPaypalExpress(),
+        getAfterpay(),
+        getAmazonPay(),
+        getKlarna(),
+        getSquare(),
     ];
 }
 
