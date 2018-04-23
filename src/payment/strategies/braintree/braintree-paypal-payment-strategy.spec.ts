@@ -6,7 +6,7 @@ import { getBillingAddress } from '../../../billing/internal-billing-addresses.m
 import { getCart } from '../../../cart/internal-carts.mock';
 import { createCheckoutClient, CheckoutSelector, CheckoutStore } from '../../../checkout';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
-import { getLegacyAppConfig } from '../../../config/configs.mock.js';
+import { getAppConfig } from '../../../config/configs.mock.js';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
@@ -117,7 +117,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             checkoutMock.getCart = jest.fn(() => getCart());
             checkoutMock.getBillingAddress = jest.fn(() => getBillingAddress());
-            checkoutMock.getConfig = jest.fn(() => getLegacyAppConfig());
+            checkoutMock.getConfig = jest.fn(() => getAppConfig().storeConfig);
 
             return braintreePaypalPaymentStrategy.initialize(options);
         });

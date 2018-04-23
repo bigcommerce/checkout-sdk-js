@@ -14,7 +14,7 @@ import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import { MissingDataError } from '../common/error/errors';
-import { getAppConfig, getLegacyAppConfig } from '../config/configs.mock';
+import { getAppConfig, getConfigState } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
 import { getCartResponseBody } from '../cart/internal-carts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -141,14 +141,7 @@ describe('CheckoutService', () => {
         };
 
         store = createCheckoutStore({
-            config: {
-                data: {
-                    ...getLegacyAppConfig(),
-                    storeConfig: {
-                        formFields: getAppConfig().storeConfig.formFields,
-                    },
-                },
-            },
+            config: getConfigState(),
         });
 
         paymentStrategy = {
@@ -214,12 +207,7 @@ describe('CheckoutService', () => {
             const { checkout } = await checkoutService.loadConfig();
 
             expect(checkoutClient.loadConfig).toHaveBeenCalled();
-            expect(checkout.getConfig()).toEqual({
-                ...getLegacyAppConfig(),
-                storeConfig: {
-                    formFields: getAppConfig().storeConfig.formFields,
-                },
-            });
+            expect(checkout.getConfig()).toEqual(getAppConfig().storeConfig);
         });
 
         it('dispatches load config action with queue id', async () => {

@@ -59,7 +59,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
             throw new NotInitializedError('Config data is missing');
         }
 
-        const { clientSidePaymentProviders } = config;
+        const { clientSidePaymentProviders } = config.paymentSettings;
 
         if (!clientSidePaymentProviders || paymentMethod.gateway === 'adyen') {
             return false;

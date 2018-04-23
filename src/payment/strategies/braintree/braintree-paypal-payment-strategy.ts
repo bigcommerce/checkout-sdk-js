@@ -88,7 +88,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         }
 
         const { amount } = cart.grandTotal;
-        const { currency, storeLanguage } = config;
+        const { currency, storeProfile: { storeLanguage } } = config;
         const { method, nonce } = this._paymentMethod;
 
         if (nonce) {
