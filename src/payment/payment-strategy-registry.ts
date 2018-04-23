@@ -1,6 +1,7 @@
 import { some } from 'lodash';
 
 import { Registry } from '../common/registry';
+import { RegistryOptions } from '../common/registry/registry';
 
 import PaymentMethod from './payment-method';
 import * as paymentMethodTypes from './payment-method-types';
@@ -9,13 +10,17 @@ import PaymentStrategy from './strategies/payment-strategy';
 export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
     private _clientSidePaymentProviders?: string[];
 
-    constructor(options: RegistryOptions = {}) {
-        super();
+    constructor(options?: PaymentStrategyRegistryOptions) {
+        super(options);
 
-        this._clientSidePaymentProviders = options.clientSidePaymentProviders;
+        this._clientSidePaymentProviders = options && options.clientSidePaymentProviders;
     }
 
-    getByMethod(paymentMethod: PaymentMethod): PaymentStrategy {
+    getByMethod(paymentMethod?: PaymentMethod): PaymentStrategy {
+        if (!paymentMethod) {
+            return this.get();
+        }
+
         const token = this._getToken(paymentMethod);
         const cacheToken = paymentMethod.gateway || paymentMethod.id;
 
@@ -55,6 +60,6 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
     }
 }
 
-export interface RegistryOptions {
+export interface PaymentStrategyRegistryOptions extends RegistryOptions {
     clientSidePaymentProviders?: string[];
 }
