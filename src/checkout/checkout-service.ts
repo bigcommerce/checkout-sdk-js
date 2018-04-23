@@ -134,13 +134,13 @@ export default class CheckoutService {
         return this._store.dispatch(action, { queueId: 'paymentMethods' });
     }
 
-    initializePaymentMethod(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
+    initializePayment(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.initialize(options);
 
         return this._store.dispatch(action, { queueId: 'paymentStrategy' });
     }
 
-    deinitializePaymentMethod(options: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    deinitializePayment(options: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.deinitialize(options);
 
         return this._store.dispatch(action, { queueId: 'paymentStrategy' });
