@@ -39,6 +39,13 @@ describe('SquarePaymentStrategy', () => {
         requestCardNonce: () => {},
     };
 
+    const squareOptions = {
+        cardNumber: { elementId: 'cardNumber' },
+        cvv: { elementId: 'cvv' },
+        expirationDate: { elementId: 'expirationDate' },
+        postalCode: { elementId: 'postalCode' },
+    };
+
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore({
@@ -78,9 +85,7 @@ describe('SquarePaymentStrategy', () => {
             it('loads script when initializing strategy with required params', async () => {
                 const initOptions = {
                     methodId: paymentMethod.id,
-                    square: {
-                        widgetConfig: {},
-                    },
+                    square: squareOptions,
                 };
 
                 await strategy.initialize(initOptions);
@@ -91,13 +96,11 @@ describe('SquarePaymentStrategy', () => {
             it('fails to initialize when widget config is missing', async () => {
                 const initOptions = {
                     methodId: paymentMethod.id,
-                    square: {
-                        widgetConfig: {},
-                    },
+                    square: squareOptions,
                 };
 
                 try {
-                    await strategy.initialize({ paymentMethod });
+                    await strategy.initialize({ methodId: paymentMethod.id });
                 } catch (error) {
                     expect(error.type).toEqual('invalid_argument');
                 }
@@ -116,9 +119,7 @@ describe('SquarePaymentStrategy', () => {
             it('rejects the promise', () => {
                 const initOptions = {
                     methodId: paymentMethod.id,
-                    square: {
-                        widgetConfig: {},
-                    },
+                    square: squareOptions,
                 };
 
                 strategy.initialize(initOptions)
@@ -150,9 +151,7 @@ describe('SquarePaymentStrategy', () => {
             beforeEach(async () => {
                 const initOptions = {
                     methodId: paymentMethod.id,
-                    square: {
-                        widgetConfig: {},
-                    },
+                    square: squareOptions,
                 };
 
                 await strategy.initialize(initOptions);
