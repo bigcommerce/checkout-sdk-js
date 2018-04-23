@@ -421,14 +421,14 @@ describe('CheckoutService', () => {
     describe('#initializePaymentMethod()', () => {
         it('finds payment strategy', async () => {
             await checkoutService.loadPaymentMethods();
-            await checkoutService.initializePaymentMethod('braintree');
+            await checkoutService.initializePaymentMethod({ methodId: 'braintree' });
 
             expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getBraintree());
         });
 
         it('initializes payment strategy', async () => {
             await checkoutService.loadPaymentMethods();
-            await checkoutService.initializePaymentMethod('braintree');
+            await checkoutService.initializePaymentMethod({ methodId: 'braintree' });
 
             expect(paymentStrategy.initialize).toHaveBeenCalledWith({
                 methodId: getBraintree().id,
@@ -440,14 +440,14 @@ describe('CheckoutService', () => {
     describe('#deinitializePaymentMethod()', () => {
         it('finds payment strategy', async () => {
             await checkoutService.loadPaymentMethods();
-            await checkoutService.deinitializePaymentMethod('braintree');
+            await checkoutService.deinitializePaymentMethod({ methodId: 'braintree' });
 
             expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getBraintree());
         });
 
         it('deinitializes payment strategy', async () => {
             await checkoutService.loadPaymentMethods();
-            await checkoutService.deinitializePaymentMethod('braintree');
+            await checkoutService.deinitializePaymentMethod({ methodId: 'braintree' });
 
             expect(paymentStrategy.deinitialize).toHaveBeenCalled();
         });

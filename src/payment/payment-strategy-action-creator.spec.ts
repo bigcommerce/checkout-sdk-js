@@ -68,7 +68,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
 
-            await Observable.from(actionCreator.initialize(method.id, method.gateway)(store))
+            await Observable.from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toPromise();
 
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
@@ -78,7 +78,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
 
-            await Observable.from(actionCreator.initialize(method.id, method.gateway)(store))
+            await Observable.from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toPromise();
 
             expect(strategy.initialize).toHaveBeenCalledWith({ methodId: method.id, gatewayId: method.gateway });
@@ -87,7 +87,7 @@ describe('PaymentStrategyActionCreator', () => {
         it('emits action to notify initialization progress', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
-            const actions = await Observable.from(actionCreator.initialize(method.id, method.gateway)(store))
+            const actions = await Observable.from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toArray()
                 .toPromise();
 
@@ -106,7 +106,7 @@ describe('PaymentStrategyActionCreator', () => {
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.reject(initializeError));
 
-            const actions = await Observable.from(actionCreator.initialize(method.id, method.gateway)(store))
+            const actions = await Observable.from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -122,7 +122,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
 
             try {
-                await Observable.from(actionCreator.initialize('unknown')(store)).toPromise();
+                await Observable.from(actionCreator.initialize({ methodId: 'unknown' })(store)).toPromise();
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
@@ -139,7 +139,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
 
-            await Observable.from(actionCreator.deinitialize(method.id, method.gateway)(store))
+            await Observable.from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toPromise();
 
             expect(registry.getByMethod).toHaveBeenCalledWith(method);
@@ -149,7 +149,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
 
-            await Observable.from(actionCreator.deinitialize(method.id, method.gateway)(store))
+            await Observable.from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toPromise();
 
             expect(strategy.deinitialize).toHaveBeenCalled();
@@ -158,7 +158,7 @@ describe('PaymentStrategyActionCreator', () => {
         it('emits action to notify deinitialization progress', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
             const method = getPaymentMethod();
-            const actions = await Observable.from(actionCreator.deinitialize(method.id, method.gateway)(store))
+            const actions = await Observable.from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toArray()
                 .toPromise();
 
@@ -177,7 +177,7 @@ describe('PaymentStrategyActionCreator', () => {
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.reject(deinitializeError));
 
-            const actions = await Observable.from(actionCreator.deinitialize(method.id, method.gateway)(store))
+            const actions = await Observable.from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -193,7 +193,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry);
 
             try {
-                await Observable.from(actionCreator.initialize('unknown')(store)).toPromise();
+                await Observable.from(actionCreator.initialize({ methodId: 'unknown' })(store)).toPromise();
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
