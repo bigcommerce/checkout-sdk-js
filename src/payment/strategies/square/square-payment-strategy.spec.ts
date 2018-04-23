@@ -1,18 +1,21 @@
 /// <reference path="./square-form.d.ts" />
-
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
+import { PaymentActionCreator, PaymentRequestSender } from '../..';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../../checkout';
+import { MissingDataError, TimeoutError } from '../../../common/error/errors';
 import { OrderActionCreator } from '../../../order';
 import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
 import { getSquare } from '../../../payment/payment-methods.mock';
+import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
 
 import SquarePaymentStrategy from './square-payment-strategy';
 import SquareScriptLoader from './square-script-loader';
+
 
 describe('SquarePaymentStrategy', () => {
     let client: CheckoutClient;
@@ -20,9 +23,11 @@ describe('SquarePaymentStrategy', () => {
     let store: CheckoutStore;
     let strategy: SquarePaymentStrategy;
     let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
     let callbacks: Square.FormCallbacks;
     let submitOrderAction: Observable<Action>;
+    let submitPaymentAction: Observable<Action>;
 
     const formFactory = options => {
         callbacks = options.callbacks;
@@ -39,12 +44,20 @@ describe('SquarePaymentStrategy', () => {
         store = createCheckoutStore();
         paymentMethod = getSquare();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator
+        );
         scriptLoader = new SquareScriptLoader(createScriptLoader());
-        strategy = new SquarePaymentStrategy(store, orderActionCreator, scriptLoader);
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED);
+        strategy = new SquarePaymentStrategy(store, orderActionCreator, paymentActionCreator, scriptLoader);
+        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
+
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
 
         jest.spyOn(store, 'dispatch');
         jest.spyOn(store, 'getState')
@@ -119,9 +132,15 @@ describe('SquarePaymentStrategy', () => {
     });
 
     describe('#execute()', () => {
+        const payload = {
+            payment: {
+                name: 'foo',
+            },
+        };
+
         describe('when form has not been initialized', () => {
             it('rejects the promise', () => {
-                strategy.execute()
+                strategy.execute(payload)
                     .catch(e => expect(e.type).toEqual('not_initialized'));
 
                 expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
@@ -140,39 +159,56 @@ describe('SquarePaymentStrategy', () => {
                 await strategy.initialize(initOptions);
             });
 
+            it('fails if payment name is not passed', () => {
+                try {
+                    strategy.execute({});
+                } catch (error) {
+                    expect(error).toBeInstanceOf(MissingDataError);
+                    expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
+                }
+            });
+
             it('requests the nonce', () => {
-                strategy.execute({});
+                strategy.execute(payload);
                 expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(1);
             });
 
-            it('cancels the first request', async () => {
-                strategy.execute({})
-                    .catch(e => expect(e.type).toEqual('timeout'));
+            it('cancels the first request when a newer is made', async () => {
+                strategy.execute(payload).catch(e => expect(e).toBeInstanceOf(TimeoutError));
 
                 setTimeout(() => {
                     callbacks.cardNonceResponseReceived(null, 'nonce');
                 }, 0);
 
-                await strategy.execute({});
+                await strategy.execute(payload);
             });
 
             describe('when the nonce is received', () => {
                 let promise;
 
                 beforeEach(() => {
-                    promise = strategy.execute({ payment: '', x: 'y' }, { b: 'f' });
+                    promise = strategy.execute({ payment: { name: 'square' }, useStoreCredit: true, x: 'y' }, { b: 'f' });
                     callbacks.cardNonceResponseReceived(null, 'nonce');
                 });
 
                 it('places the order with the right arguments', () => {
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ x: 'y' }, true, { b: 'f' });
+                    expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ x: 'y', useStoreCredit: true }, true, { b: 'f' });
                     expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
                 });
 
-                it('resolves to what is returned by submitOrder', async () => {
+                it('resolves to what is returned by submitPayment', async () => {
                     const value = await promise;
 
                     expect(value).toEqual(store.getState());
+                });
+
+                it('submits the payment  with the right arguments', () => {
+                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                        name: 'square',
+                        paymentData: {
+                            nonce: 'nonce',
+                        },
+                    });
                 });
             });
 
@@ -180,13 +216,17 @@ describe('SquarePaymentStrategy', () => {
                 let promise;
 
                 beforeEach(() => {
-                    promise = strategy.execute({});
+                    promise = strategy.execute(payload);
                     callbacks.cardNonceResponseReceived({}, 'nonce');
                 });
 
                 it('does not place the order', () => {
                     expect(orderActionCreator.submitOrder).toHaveBeenCalledTimes(0);
                     expect(store.dispatch).not.toHaveBeenCalledWith(submitOrderAction);
+                });
+
+                it('does not submit payment', () => {
+                    expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(0);
                 });
 
                 it('rejects the promise', async () => {

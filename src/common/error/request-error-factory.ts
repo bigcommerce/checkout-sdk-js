@@ -1,6 +1,7 @@
 import { Response } from '@bigcommerce/request-sender';
 import { last } from 'lodash';
 
+import ErrorResponseBody from './error-response-body';
 import { RequestError, TimeoutError } from './errors';
 
 export default class RequestErrorFactory {
@@ -21,18 +22,18 @@ export default class RequestErrorFactory {
         return factoryMethod(response, message);
     }
 
-    private _getType(response: Response): string {
+    private _getType(response: Response<ErrorResponseBody>): string {
         if (response.status === 0) {
             return 'timeout';
         }
 
-        const { body = {} } = response;
-
-        if (typeof body.type === 'string') {
-            return last(body.type.split('/')) || 'default';
+        if (response.body && typeof response.body.type === 'string') {
+            return last(response.body.type.split('/')) || 'default';
         }
 
-        return ((last(body.errors) || {}) as any).code || 'default';
+        const error = last(response.body && response.body.errors);
+
+        return error && error.code ? error.code : 'default';
     }
 }
 
