@@ -1,13 +1,13 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 import { noop, omit } from 'lodash';
 
-import { isAddressEqual, InternalAddress } from '../../address';
+import { isAddressEqual } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError, StandardError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError, RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
+import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import Payment from '../payment';
 import PaymentMethod from '../payment-method';
@@ -130,14 +130,16 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 sellerId: merchantId,
                 onError: error => {
                     reject(error);
-                    this._handleError(error, onError);
+                    onError(error);
                 },
                 onPaymentSelect: orderReference => {
-                    this._handlePaymentSelect(orderReference, onPaymentSelect);
+                    this._synchronizeBillingAddress()
+                        .then(() => onPaymentSelect(orderReference))
+                        .catch(onError);
                 },
-                onReady: () => {
+                onReady: orderReference => {
                     resolve();
-                    onReady();
+                    onReady(orderReference);
                 },
             };
 
@@ -193,25 +195,11 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 );
             });
     }
-
-    private _handlePaymentSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address?: InternalAddress) => void): void {
-        this._synchronizeBillingAddress()
-            .then(({ checkout }: CheckoutSelectors) => callback(checkout.getBillingAddress()));
-    }
-
-    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
-        if (error.getErrorCode() === 'BuyerSessionExpired') {
-            callback(new RemoteCheckoutSessionError(error));
-        } else {
-            callback(new RemoteCheckoutPaymentError(error));
-        }
-    }
 }
 
 export interface AmazonPayPaymentInitializeOptions {
     container: string;
-    amazonOrderReferenceId?: string;
-    onPaymentSelect?(address?: InternalAddress): void;
-    onError?(error: Error): void;
-    onReady?(): void;
+    onError?(error: OffAmazonPayments.Widgets.WidgetError | StandardError): void;
+    onPaymentSelect?(reference: OffAmazonPayments.Widgets.OrderReference): void;
+    onReady?(reference: OffAmazonPayments.Widgets.OrderReference): void;
 }

@@ -21,9 +21,8 @@ import { SUBMIT_ORDER_FAILED, SUBMIT_ORDER_REQUESTED } from '../../order/order-a
 import { getAmazonPay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { getQuoteState } from '../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import { INITIALIZE_REMOTE_BILLING_REQUESTED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import { INITIALIZE_REMOTE_BILLING_FAILED, INITIALIZE_REMOTE_BILLING_REQUESTED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import PaymentMethod from '../payment-method';
 
@@ -235,10 +234,28 @@ describe('AmazonPayPaymentStrategy', () => {
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError } });
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
-        expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutSessionError));
+        expect(onError).toHaveBeenCalledWith(expect.any(Error));
+
+        onError.mockReset();
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'PeriodicAmountExceeded' } }));
-        expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutPaymentError));
+        expect(onError).toHaveBeenCalledWith(expect.any(Error));
+    });
+
+    it('passes error to callback if unable to synchronize address data', async () => {
+        const onError = jest.fn();
+        const element = document.getElementById('wallet');
+
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError } });
+
+        jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling')
+            .mockReturnValue(Observable.of(createErrorAction(INITIALIZE_REMOTE_BILLING_FAILED, new Error())));
+
+        element.dispatchEvent(new CustomEvent('paymentSelect'));
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(onError).toHaveBeenCalledWith(expect.any(Error));
     });
 
     it('reinitializes payment method before submitting order', async () => {

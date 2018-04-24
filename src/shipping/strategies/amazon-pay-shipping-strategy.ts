@@ -3,15 +3,10 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { isAddressEqual, InternalAddress } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import {
-    RemoteCheckoutAccountInvalidError,
-    RemoteCheckoutSessionError,
-    RemoteCheckoutShippingError,
-    RemoteCheckoutSynchronizationError,
-} from '../../remote-checkout/errors';
+import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import ShippingAddressActionCreator from '../shipping-address-action-creator';
 import ShippingOptionActionCreator from '../shipping-option-action-creator';
@@ -101,11 +96,13 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 scope: 'payments:billing_address payments:shipping_address payments:widget profile',
                 sellerId: merchantId,
                 onAddressSelect: orderReference => {
-                    this._handleAddressSelect(orderReference, onAddressSelect, onError);
+                    this._synchronizeShippingAddress()
+                        .then(() => onAddressSelect(orderReference))
+                        .catch(onError);
                 },
                 onError: error => {
                     reject(error);
-                    this._handleError(error, onError);
+                    onError(error);
                 },
                 onOrderReferenceCreate: orderReference => {
                     this._handleOrderReferenceCreate(orderReference);
@@ -161,24 +158,6 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             ));
     }
 
-    private _handleAddressSelect(
-        orderReference: OffAmazonPayments.Widgets.OrderReference,
-        callback: (address: InternalAddress) => void,
-        errorCallback: (error: Error) => void
-    ): void {
-        this._synchronizeShippingAddress()
-            .then(({ checkout }: CheckoutSelectors) => {
-                const address = checkout.getShippingAddress();
-
-                if (address) {
-                    callback(address);
-                }
-            })
-            .catch((error: Error) => {
-                errorCallback(error);
-            });
-    }
-
     private _handleOrderReferenceCreate(orderReference: OffAmazonPayments.Widgets.OrderReference): void {
         if (!this._paymentMethod) {
             throw new NotInitializedError();
@@ -190,21 +169,11 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             })
         );
     }
-
-    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
-        if (error.getErrorCode() === 'BuyerSessionExpired') {
-            callback(new RemoteCheckoutSessionError(error));
-        } else if (error.getErrorCode() === 'InvalidAccountStatus') {
-            callback(new RemoteCheckoutAccountInvalidError(error));
-        } else {
-            callback(new RemoteCheckoutShippingError(error));
-        }
-    }
 }
 
 export interface AmazonPayShippingInitializeOptions {
     container: string;
-    onAddressSelect?(address: InternalAddress): void;
-    onError?(error: Error): void;
+    onAddressSelect?(reference: OffAmazonPayments.Widgets.OrderReference): void;
+    onError?(error: OffAmazonPayments.Widgets.WidgetError | StandardError): void;
     onReady?(): void;
 }

@@ -2,10 +2,9 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotImplementedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotImplementedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import CustomerCredentials from '../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
@@ -97,7 +96,6 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             throw new MissingDataError('Unable to create sign-in button because "paymentMethod.config.merchantId" field is missing.');
         }
 
-        const { onError = () => {} } = options;
         const { initializationData } = this._paymentMethod;
 
         return new OffAmazonPayments.Button(options.container, this._paymentMethod.config.merchantId, {
@@ -105,11 +103,9 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             size: options.size || 'small',
             type: 'PwA',
             useAmazonAddressBook: true,
+            onError: options.onError,
             authorization: () => {
                 this._handleAuthorization(initializationData);
-            },
-            onError: error => {
-                this._handleError(error, onError);
             },
         });
     }
@@ -126,21 +122,13 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
                 this._remoteCheckoutRequestSender.trackAuthorizationEvent();
             });
     }
-
-    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
-        if (!error) {
-            return;
-        }
-
-        callback(new RemoteCheckoutCustomerError(error));
-    }
 }
 
 export interface AmazonPayCustomerInitializeOptions {
     container: string;
     color?: string;
     size?: string;
-    onError?(error: Error): void;
+    onError?(error: OffAmazonPayments.Widgets.WidgetError | StandardError): void;
 }
 
 interface AuthorizationOptions {

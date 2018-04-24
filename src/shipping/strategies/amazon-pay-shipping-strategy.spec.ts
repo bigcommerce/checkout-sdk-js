@@ -13,7 +13,6 @@ import { PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { RemoteCheckoutAccountInvalidError, RemoteCheckoutSessionError, RemoteCheckoutShippingError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
@@ -233,13 +232,7 @@ describe('AmazonPayShippingStrategy', () => {
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook', onError } });
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
-        expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutSessionError));
-
-        element.dispatchEvent(new CustomEvent('error', { detail: { code: 'InvalidAccountStatus' } }));
-        expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutAccountInvalidError));
-
-        element.dispatchEvent(new CustomEvent('error', { detail: { code: 'InvalidOrderReferenceId' } }));
-        expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutShippingError));
+        expect(onError).toHaveBeenCalledWith(expect.any(Error));
     });
 
     it('passes error to callback if unable to synchronize address data', async () => {
