@@ -2,7 +2,7 @@ import { RequestOptions } from '../common/http-request';
 
 import {
     AmazonPayPaymentInitializeOptions,
-    BraintreeCreditCardPaymentInitializeOptions,
+    BraintreePaymentInitializeOptions,
     KlarnaPaymentInitializeOptions,
     SquarePaymentInitializeOptions,
 } from './strategies';
@@ -14,7 +14,7 @@ export interface PaymentRequestOptions extends RequestOptions {
 
 export interface PaymentInitializeOptions extends PaymentRequestOptions {
     amazon?: AmazonPayPaymentInitializeOptions;
-    braintree?: BraintreeCreditCardPaymentInitializeOptions;
+    braintree?: BraintreePaymentInitializeOptions;
     klarna?: KlarnaPaymentInitializeOptions;
     square?: SquarePaymentInitializeOptions;
 }

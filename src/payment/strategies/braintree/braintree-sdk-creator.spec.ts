@@ -7,7 +7,7 @@ import {
     getDataCollectorMock,
     getModuleCreatorMock,
     getThreeDSecureMock,
-} from './braintree.mocks';
+} from './braintree.mock';
 
 describe('Braintree SDK Creator', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;

@@ -1,8 +1,8 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { Braintree } from './braintree';
+import * as Braintree from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
-import { getClientMock, getDataCollectorMock, getModuleCreatorMock, getThreeDSecureMock } from './braintree.mocks';
+import { getClientMock, getDataCollectorMock, getModuleCreatorMock, getThreeDSecureMock } from './braintree.mock';
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
