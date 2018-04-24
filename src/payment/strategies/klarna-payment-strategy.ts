@@ -77,15 +77,15 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             ));
     }
 
-    private _loadWidget(options: PaymentInitializeOptions): Promise<void> {
+    private _loadWidget(options: PaymentInitializeOptions): Promise<Klarna.LoadResponse> {
         if (!options.klarna) {
             throw new InvalidArgumentError('Unable to load widget because "options.klarna" argument is not provided.');
         }
 
-        const { methodId, klarna: { container, loadCallback } } = options;
+        const { methodId, klarna: { container, onLoad } } = options;
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(({ checkout }) => {
+            .then(({ checkout }) => new Promise<Klarna.LoadResponse>((resolve, reject) => {
                 const paymentMethod = checkout.getPaymentMethod(methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
@@ -97,8 +97,19 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                 }
 
                 this._klarnaSdk.init({ client_token: paymentMethod.clientToken });
-                this._klarnaSdk.load({ container }, loadCallback);
-            });
+
+                this._klarnaSdk.load({ container }, response => {
+                    if (onLoad) {
+                        onLoad(response);
+                    }
+
+                    if (!response.show_form) {
+                        reject(response);
+                    } else {
+                        resolve(response);
+                    }
+                });
+            }));
     }
 
     private _authorize(): Promise<any> {
@@ -120,5 +131,5 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
 export interface KlarnaPaymentInitializeOptions {
     container: string;
-    loadCallback?(): Klarna.LoadResponse;
+    onLoad?(response: Klarna.LoadResponse): void;
 }

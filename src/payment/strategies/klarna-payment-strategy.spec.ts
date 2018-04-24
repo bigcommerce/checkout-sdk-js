@@ -54,9 +54,9 @@ describe('KlarnaPaymentStrategy', () => {
         );
 
         klarnaSdk = {
-            authorize: jest.fn((a, b) => Promise.resolve({ approved: true })),
-            init: jest.fn(() => Promise.resolve()),
-            load: jest.fn(() => Promise.resolve()),
+            authorize: jest.fn((params, callback) => callback({ approved: true, authorization_token: 'bar' })),
+            init: jest.fn(() => {}),
+            load: jest.fn((options, callback) => callback({ show_form: true })),
         };
 
         paymentMethod = getKlarna();
@@ -91,8 +91,10 @@ describe('KlarnaPaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
+        const onLoad = jest.fn();
+
         beforeEach(async () => {
-            await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container' } });
+            await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container', onLoad } });
         });
 
         it('loads script when initializing strategy', () => {
@@ -108,6 +110,10 @@ describe('KlarnaPaymentStrategy', () => {
             expect(klarnaSdk.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaSdk.load).toHaveBeenCalledTimes(1);
         });
+
+        it('triggers callback with response', () => {
+            expect(onLoad).toHaveBeenCalledWith({ show_form: true });
+        });
     });
 
     describe('#execute()', () => {
@@ -121,18 +127,10 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         it('submits authorization token', async () => {
-            const authorizationToken = 'bar';
-
-            jest.spyOn(klarnaSdk, 'authorize')
-                .mockImplementation((params, callback) => callback({
-                    approved: true,
-                    authorization_token: authorizationToken,
-                }));
-
             await strategy.execute(payload);
 
             expect(remoteCheckoutActionCreator.initializePayment)
-                .toHaveBeenCalledWith('klarna', { authorizationToken });
+                .toHaveBeenCalledWith('klarna', { authorizationToken: 'bar' });
 
             expect(orderActionCreator.submitOrder)
                 .toHaveBeenCalledWith({ ...payload, payment: omit(payload.payment, 'paymentData'), useStoreCredit: false }, true, undefined);
