@@ -7,12 +7,14 @@ export default interface Consignment {
     shippingCost: number;
     shippingAddress: Address;
     availableShippingOptions: ShippingOption[];
-    selectedShippingOptionId: string;
+    selectedShippingOptionId?: string;
     lineItemIds?: string[];
 }
 
 export interface ConsignmentRequestBody {
-    shippingAddress: Address;
+    id?: string;
+    shippingOptionId?: string;
+    shippingAddress?: Address;
     lineItems?: ConsignmentLineItem[];
 }
 

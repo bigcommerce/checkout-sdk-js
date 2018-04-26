@@ -14,8 +14,6 @@ export { default as shippingCountryReducer } from './shipping-country-reducer';
 
 export { default as ShippingOption } from './shipping-option';
 export { default as InternalShippingOption, InternalShippingOptionList } from './internal-shipping-option';
-export { default as ShippingOptionActionCreator } from './shipping-option-action-creator';
-export { default as ShippingOptionRequestSender } from './shipping-option-request-sender';
 export { default as ShippingOptionSelector } from './shipping-option-selector';
 export { default as shippingOptionReducer } from './shipping-option-reducer';
 

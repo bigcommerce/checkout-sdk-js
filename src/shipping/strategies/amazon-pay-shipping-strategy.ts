@@ -14,7 +14,6 @@ import {
 } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import ConsignmentActionCreator from '../consignment-action-creator';
-import ShippingOptionActionCreator from '../shipping-option-action-creator';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 
 import ShippingStrategy from './shipping-strategy';
@@ -25,7 +24,6 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
     constructor(
         store: CheckoutStore,
         private _consignmentActionCreator: ConsignmentActionCreator,
-        private _optionActionCreator: ShippingOptionActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _scriptLoader: AmazonPayScriptLoader
@@ -72,9 +70,9 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
+    selectOption(optionId: string, options?: any): Promise<CheckoutSelectors> {
         return this._store.dispatch(
-            this._optionActionCreator.selectShippingOption(addressId, optionId, options)
+            this._consignmentActionCreator.selectShippingOption(optionId, options)
         );
     }
 

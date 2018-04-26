@@ -8,7 +8,6 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../rem
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 
 import ConsignmentActionCreator from './consignment-action-creator';
-import ShippingOptionActionCreator from './shipping-option-action-creator';
 import { AmazonPayShippingStrategy, DefaultShippingStrategy, ShippingStrategy } from './strategies';
 
 export default function createShippingStrategyRegistry(
@@ -21,7 +20,6 @@ export default function createShippingStrategyRegistry(
         new AmazonPayShippingStrategy(
             store,
             new ConsignmentActionCreator(client),
-            new ShippingOptionActionCreator(client),
             new PaymentMethodActionCreator(client),
             new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(createRequestSender())),
             new AmazonPayScriptLoader(getScriptLoader())
@@ -31,8 +29,7 @@ export default function createShippingStrategyRegistry(
     registry.register('default', () =>
         new DefaultShippingStrategy(
             store,
-            new ConsignmentActionCreator(client),
-            new ShippingOptionActionCreator(client)
+            new ConsignmentActionCreator(client)
         )
     );
 

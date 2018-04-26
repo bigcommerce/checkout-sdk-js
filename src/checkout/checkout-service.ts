@@ -11,7 +11,8 @@ import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import { ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import { ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import ConsignmentActionCreator from '../shipping/consignment-action-creator';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutSelectors from './checkout-selectors';
@@ -31,6 +32,7 @@ export default class CheckoutService {
         private _cartActionCreator: CartActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator,
         private _countryActionCreator: CountryActionCreator,
         private _couponActionCreator: CouponActionCreator,
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
@@ -41,7 +43,6 @@ export default class CheckoutService {
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _quoteActionCreator: QuoteActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
-        private _shippingOptionActionCreator: ShippingOptionActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator
     ) {}
 
@@ -192,8 +193,8 @@ export default class CheckoutService {
         );
     }
 
-    loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._shippingOptionActionCreator.loadShippingOptions(options);
+    loadShippingOptions(options: RequestOptions = {}): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.loadShippingOptions(options);
 
         return this._store.dispatch(action);
     }
@@ -210,8 +211,8 @@ export default class CheckoutService {
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: any): Promise<CheckoutSelectors> {
-        const action = this._shippingStrategyActionCreator.selectOption(addressId, shippingOptionId, options);
+    selectShippingOption(shippingOptionId: string, options?: any): Promise<CheckoutSelectors> {
+        const action = this._shippingStrategyActionCreator.selectOption(shippingOptionId, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }

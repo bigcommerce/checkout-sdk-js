@@ -25,8 +25,6 @@ import ConsignmentActionCreator from '../consignment-action-creator';
 import { ConsignmentActionTypes } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
 import { getShippingAddress } from '../shipping-addresses.mock';
-import ShippingOptionActionCreator from '../shipping-option-action-creator';
-import { SELECT_SHIPPING_OPTION_REQUESTED } from '../shipping-option-action-types';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 
 import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
@@ -39,7 +37,6 @@ describe('AmazonPayShippingStrategy', () => {
     let orderReference: OffAmazonPayments.Widgets.OrderReference;
     let store: CheckoutStore;
     let scriptLoader: AmazonPayScriptLoader;
-    let optionActionCreator: ShippingOptionActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
 
@@ -82,7 +79,6 @@ describe('AmazonPayShippingStrategy', () => {
         });
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(createRequestSender()));
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
-        optionActionCreator = new ShippingOptionActionCreator(createCheckoutClient());
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
 
         orderReference = {
@@ -110,7 +106,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('loads widget script during initialization', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
         await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
@@ -119,7 +115,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('only initializes widget once until deinitialization', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
         await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
@@ -134,7 +130,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('rejects with error if initialization fails', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = { ...getAmazonPay(), config: { merchantId: undefined } };
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
@@ -148,7 +144,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('rejects with error if initialization fails because of invalid container', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
         try {
@@ -159,7 +155,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('synchronizes checkout address when selecting new address', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
         const initializeShippingAction = Observable.of(createAction(INITIALIZE_REMOTE_SHIPPING_REQUESTED));
         const updateAddressAction = Observable.of(createAction(ConsignmentActionTypes.CreateConsignmentsRequested));
@@ -191,7 +187,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('tracks strategy execution while synchronizing checkout address', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
@@ -213,7 +209,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('sets order reference id when order reference gets created', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
         jest.spyOn(remoteCheckoutActionCreator, 'setCheckoutMeta');
@@ -229,7 +225,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('passes error to callback when address book encounters error', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
         const onError = jest.fn();
         const element = document.getElementById('addressBook');
@@ -247,7 +243,7 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('passes error to callback if unable to synchronize address data', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
         const onError = jest.fn();
         const error = new Error();
@@ -266,20 +262,19 @@ describe('AmazonPayShippingStrategy', () => {
     });
 
     it('selects shipping option', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, optionActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
-        const address = getShippingAddress();
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const method = getFlatRateOption();
         const options = {};
-        const action = Observable.of(createAction(SELECT_SHIPPING_OPTION_REQUESTED));
+        const action = Observable.of(createAction(ConsignmentActionTypes.UpdateConsignmentRequested));
 
-        jest.spyOn(optionActionCreator, 'selectShippingOption')
+        jest.spyOn(consignmentActionCreator, 'selectShippingOption')
             .mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
 
-        const output = await strategy.selectOption(address.id, method.id, options);
+        const output = await strategy.selectOption(method.id, options);
 
-        expect(optionActionCreator.selectShippingOption).toHaveBeenCalledWith(address.id, method.id, options);
+        expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(method.id, options);
         expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });

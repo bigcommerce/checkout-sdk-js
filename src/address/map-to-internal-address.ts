@@ -1,9 +1,9 @@
 import Address from './address';
 import InternalAddress from './internal-address';
 
-export default function mapToInternalAddress(address: Address): InternalAddress {
+export default function mapToInternalAddress(address: Address, id?: string): InternalAddress {
     return {
-        id: address.id,
+        id: id ? id : address.id,
         firstName: address.firstName,
         lastName: address.lastName,
         company: address.company,

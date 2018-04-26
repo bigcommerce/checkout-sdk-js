@@ -13,11 +13,11 @@ import { PaymentMethodRequestSender } from '../payment';
 import { QuoteRequestSender } from '../quote';
 import {
     ConsignmentRequestSender,
-    ShippingCountryRequestSender,
-    ShippingOptionRequestSender,
+    ShippingCountryRequestSender
 } from '../shipping';
-import { ConsignmentsRequestBody } from '../shipping/consignment';
+import { ConsignmentsRequestBody, ConsignmentRequestBody } from '../shipping/consignment';
 
+import { CheckoutParams } from './checkout-params';
 import CheckoutRequestSender from './checkout-request-sender';
 
 // Convert this file into TypeScript properly
@@ -39,11 +39,10 @@ export default class CheckoutClient {
         private _orderRequestSender: OrderRequestSender,
         private _paymentMethodRequestSender: PaymentMethodRequestSender,
         private _quoteRequestSender: QuoteRequestSender,
-        private _shippingCountryRequestSender: ShippingCountryRequestSender,
-        private _shippingOptionRequestSender: ShippingOptionRequestSender
+        private _shippingCountryRequestSender: ShippingCountryRequestSender
     ) {}
 
-    loadCheckout(id: string, options?: RequestOptions): Promise<Response> {
+    loadCheckout(id: string, options?: RequestOptions<CheckoutParams>): Promise<Response> {
         return this._checkoutRequestSender.loadCheckout(id, options);
     }
 
@@ -95,12 +94,8 @@ export default class CheckoutClient {
         return this._consignmentRequestSender.createConsignments(checkoutId, consignments, options);
     }
 
-    loadShippingOptions(options?: RequestOptions): Promise<Response> {
-        return this._shippingOptionRequestSender.loadShippingOptions(options);
-    }
-
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: RequestOptions): Promise<Response> {
-        return this._shippingOptionRequestSender.selectShippingOption(addressId, shippingOptionId, options);
+    updateConsignment(checkoutId: string, consignment: ConsignmentRequestBody, options?: RequestOptions): Promise<Response> {
+        return this._consignmentRequestSender.updateConsignment(checkoutId, consignment, options);
     }
 
     signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Promise<Response> {
