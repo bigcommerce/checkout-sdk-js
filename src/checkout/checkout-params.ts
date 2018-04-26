@@ -1,3 +1,3 @@
-export interface CheckoutParams {
+export default interface CheckoutParams {
     include?: Array<'consignments.availableShippingOptions'>;
 }

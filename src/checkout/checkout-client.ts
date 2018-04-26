@@ -8,17 +8,18 @@ import { ConfigRequestSender } from '../config';
 import { CouponRequestSender, GiftCertificateRequestSender } from '../coupon';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender } from '../geography';
-import { OrderRequestBody, OrderRequestSender } from '../order';
+import { OrderParams, OrderRequestBody, OrderRequestSender } from '../order';
 import { PaymentMethodRequestSender } from '../payment';
 import { QuoteRequestSender } from '../quote';
 import {
+    ConsignmentsRequestBody,
+    ConsignmentRequestBody,
     ConsignmentRequestSender,
     ShippingCountryRequestSender
 } from '../shipping';
-import { ConsignmentsRequestBody, ConsignmentRequestBody } from '../shipping/consignment';
 
 import Checkout from './checkout';
-import { CheckoutParams } from './checkout-params';
+import CheckoutParams from './checkout-params';
 import CheckoutRequestSender from './checkout-request-sender';
 
 // Convert this file into TypeScript properly
@@ -55,7 +56,7 @@ export default class CheckoutClient {
         return this._cartRequestSender.loadCart(options);
     }
 
-    loadOrder(orderId: number, options?: RequestOptions): Promise<Response> {
+    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Promise<Response> {
         return this._orderRequestSender.loadOrder(orderId, options);
     }
 

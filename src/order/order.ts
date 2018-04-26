@@ -23,5 +23,28 @@ export default interface Order {
     };
     orderAmount: number;
     orderId: number;
+    payment: OrderPayment;
     status: string;
+}
+
+export type OrderPayment = Array<DefaultOrderPaymentItem | GiftCertificateOrderPaymentItem>;
+
+export interface OrderPaymentItem {
+    providerId: string;
+    description: string;
+    amount: number;
+}
+
+export interface DefaultOrderPaymentItem extends OrderPaymentItem {
+    detail: {
+        step: string;
+        instructions: string;
+    };
+}
+
+export interface GiftCertificateOrderPaymentItem extends OrderPaymentItem {
+    detail: {
+        code: string;
+        remaining: number;
+    };
 }

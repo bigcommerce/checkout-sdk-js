@@ -37,7 +37,10 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
-        new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
+        new PaymentStrategyActionCreator(
+            createPaymentStrategyRegistry(store, client, paymentClient),
+            new OrderActionCreator(client)
+        ),
         new QuoteActionCreator(client),
         new ShippingCountryActionCreator(client),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, client))

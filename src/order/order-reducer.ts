@@ -6,8 +6,8 @@ import * as quoteActionTypes from '../quote/quote-action-types';
 
 import InternalIncompleteOrder from './internal-incomplete-order';
 import InternalOrder from './internal-order';
-import mapFromOrderToInternal from './map-from-order-to-internal';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import mapToInternalOrder from './map-to-internal-order';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 
 const DEFAULT_STATE: OrderState = {
@@ -37,7 +37,7 @@ function dataReducer(data: InternalOrder | InternalIncompleteOrder | undefined, 
         return data ? { ...data, ...mapToInternalIncompleteOrder(action.payload, data) } : data;
 
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
-        return data ? mapFromOrderToInternal(action.payload, data as InternalOrder) : data;
+        return data ? mapToInternalOrder(action.payload, data as InternalOrder) : data;
 
     case orderActionTypes.LOAD_INTERNAL_ORDER_SUCCEEDED:
     case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:

@@ -2,6 +2,7 @@ export * from './checkout-actions';
 
 export { default as Checkout, CheckoutPayment } from './checkout';
 export { default as CheckoutClient } from './checkout-client';
+export { default as CheckoutParams } from './checkout-params';
 export { default as CheckoutSelectors } from './checkout-selectors';
 export { default as CheckoutService } from './checkout-service';
 export { default as CheckoutState } from './checkout-state';

@@ -1,10 +1,12 @@
 import { find } from 'lodash';
 
+import { selector } from '../common/selector';
 import { HOSTED } from '../payment/payment-method-types';
 
 import Checkout, { CheckoutPayment } from './checkout';
 import CheckoutState from './checkout-state';
 
+@selector
 export default class CheckoutSelector {
     constructor(
         private _checkout: CheckoutState

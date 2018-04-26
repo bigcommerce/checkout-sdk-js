@@ -9,6 +9,7 @@ import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import * as actionTypes from './order-action-types';
+import OrderParams from './order-params';
 import OrderRequestBody from './order-request-body';
 
 /**
@@ -23,7 +24,7 @@ export default class OrderActionCreator {
         this._cartComparator = new CartComparator();
     }
 
-    loadOrder(orderId: number, options?: RequestOptions): Observable<Action> {
+    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.LOAD_ORDER_REQUESTED));
 

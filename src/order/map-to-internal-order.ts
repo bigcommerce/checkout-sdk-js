@@ -1,64 +1,85 @@
-import { reduce } from 'lodash';
+import { find } from 'lodash';
 
 import { mapToInternalLineItems } from '../cart';
-import { Checkout } from '../checkout';
-import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
+import { mapToInternalCoupon } from '../coupon';
 
-import InternalOrder from './internal-order';
-import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
-import Order from './order';
+import InternalOrder, { InternalOrderPayment } from './internal-order';
+import Order, { DefaultOrderPaymentItem, OrderPayment, OrderPaymentItem } from './order';
 
-export default function mapToInternalOrder(checkout: Checkout, order: Order, existingOrder: InternalOrder): InternalOrder {
+export default function mapToInternalOrder(order: Order, fallbackOrder: InternalOrder): InternalOrder {
     return {
-        ...mapToInternalIncompleteOrder(checkout, existingOrder),
         id: order.orderId,
         items: mapToInternalLineItems(order.lineItems, order.currency.decimalPlaces, 'productId'),
+        orderId: order.orderId,
         currency: order.currency.code,
-        customerCanBeCreated: existingOrder.customerCanBeCreated,
+        customerCanBeCreated: fallbackOrder.customerCanBeCreated,
+        token: fallbackOrder.token,
+        payment: mapToInteralOrderPayment(order.payment),
+        socialData: fallbackOrder.socialData,
+        customerCreated: order.customerCreated,
+        hasDigitalItems: order.hasDigitalItems,
+        isDownloadable: order.isDownloadable,
+        isComplete: order.isComplete,
+        callbackUrl: fallbackOrder.callbackUrl,
+        status: fallbackOrder.status,
         subtotal: {
-            amount: existingOrder.subtotal.amount,
-            integerAmount: existingOrder.subtotal.integerAmount,
+            amount: fallbackOrder.subtotal.amount,
+            integerAmount: fallbackOrder.subtotal.integerAmount,
         },
         coupon: {
-            discountedAmount: reduce(checkout.cart.coupons, (sum, coupon) => {
-                return sum + coupon.discountedAmount;
-            }, 0),
-            coupons: checkout.cart.coupons.map(mapToInternalCoupon),
+            discountedAmount: fallbackOrder.coupon.discountedAmount,
+            coupons: order.coupons.map(mapToInternalCoupon),
         },
         discount: {
             amount: order.discountAmount,
-            integerAmount: existingOrder.discount.integerAmount,
+            integerAmount: fallbackOrder.discount.integerAmount,
         },
-        discountNotifications: existingOrder.discountNotifications,
+        discountNotifications: fallbackOrder.discountNotifications,
         giftCertificate: {
-            totalDiscountedAmount: reduce(checkout.giftCertificates, (sum, certificate) => {
-                return sum + certificate.used;
-            }, 0),
-            appliedGiftCertificates: checkout.giftCertificates.map(mapToInternalGiftCertificate),
+            totalDiscountedAmount: fallbackOrder.giftCertificate.totalDiscountedAmount,
+            appliedGiftCertificates: fallbackOrder.giftCertificate.appliedGiftCertificates,
         },
         shipping: {
-            amount: existingOrder.shipping.amount,
-            integerAmount: existingOrder.shipping.integerAmount,
-            amountBeforeDiscount: existingOrder.shipping.amountBeforeDiscount,
-            integerAmountBeforeDiscount: existingOrder.shipping.integerAmountBeforeDiscount,
-            required: existingOrder.shipping.required,
+            amount: fallbackOrder.shipping.amount,
+            integerAmount: fallbackOrder.shipping.integerAmount,
+            amountBeforeDiscount: fallbackOrder.shipping.amountBeforeDiscount,
+            integerAmountBeforeDiscount: fallbackOrder.shipping.integerAmountBeforeDiscount,
+            required: fallbackOrder.shipping.required,
         },
         storeCredit: {
-            amount: checkout.storeCredit,
+            amount: fallbackOrder.storeCredit.amount,
         },
-        taxSubtotal: existingOrder.taxSubtotal,
-        taxes: existingOrder.taxes,
+        taxSubtotal: fallbackOrder.taxSubtotal,
+        taxes: fallbackOrder.taxes,
         taxTotal: {
-            amount: checkout.taxTotal,
-            integerAmount: existingOrder.taxTotal.integerAmount,
+            amount: fallbackOrder.taxTotal.amount,
+            integerAmount: fallbackOrder.taxTotal.integerAmount,
         },
         handling: {
-            amount: existingOrder.handling.amount,
-            integerAmount: existingOrder.handling.integerAmount,
+            amount: fallbackOrder.handling.amount,
+            integerAmount: fallbackOrder.handling.integerAmount,
         },
         grandTotal: {
-            amount: checkout.grandTotal,
-            integerAmount: existingOrder.grandTotal.integerAmount,
+            amount: order.orderAmount,
+            integerAmount: fallbackOrder.grandTotal.integerAmount,
         },
     };
+}
+
+function mapToInteralOrderPayment(payment: OrderPayment): InternalOrderPayment {
+    const item = find(payment, isDefaultOrderPaymentItem);
+
+    if (!item) {
+        return {};
+    }
+
+    return {
+        id: item.providerId,
+        status: item.detail.step,
+        helpText: item.detail.instructions,
+    };
+}
+
+function isDefaultOrderPaymentItem(item: OrderPaymentItem): item is DefaultOrderPaymentItem {
+    return item.providerId !== 'giftcertificate' && item.providerId !== 'storecredit';
 }

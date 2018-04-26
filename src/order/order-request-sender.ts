@@ -1,7 +1,8 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { ContentType, RequestOptions } from '../common/http-request';
+import { transformParams, ContentType, RequestOptions } from '../common/http-request';
 
+import OrderParams from './order-params';
 import OrderRequestBody from './order-request-body';
 
 /**
@@ -12,11 +13,15 @@ export default class OrderRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    loadOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response> {
+    loadOrder(orderId: number, { timeout, params }: RequestOptions<OrderParams> = {}): Promise<Response> {
         const url = `/api/storefront/orders/${orderId}`;
         const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.get(url, { headers, timeout });
+        return this._requestSender.get(url, {
+            params: transformParams(params),
+            headers,
+            timeout,
+        });
     }
 
     loadInternalOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response> {
