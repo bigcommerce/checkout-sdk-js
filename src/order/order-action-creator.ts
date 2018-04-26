@@ -38,6 +38,10 @@ export default class OrderActionCreator {
         });
     }
 
+    /**
+     * @deprecated
+     * Remove once we fully transition to Storefront API
+     */
     loadInternalOrder(orderId: number, options?: RequestOptions): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.LOAD_INTERNAL_ORDER_REQUESTED));
