@@ -30,7 +30,8 @@ describe('CheckoutClient', () => {
 
     beforeEach(() => {
         billingAddressRequestSender = {
-            updateAddress: jest.fn(() => Promise.resolve(getResponse(getBillingAddress()))),
+            updateAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
+            createAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
         };
 
         cartRequestSender = {
@@ -303,16 +304,41 @@ describe('CheckoutClient', () => {
         });
 
         it('updates the billing address', async () => {
-            await client.updateBillingAddress(address, options);
+            await client.updateBillingAddress('foo', address, options);
 
             expect(billingAddressRequestSender.updateAddress)
-                .toHaveBeenCalledWith(address, options);
+                .toHaveBeenCalledWith('foo', address, options);
         });
 
         it('returns the billing address', async () => {
-            const output = await client.updateBillingAddress(address, options);
+            const output = await client.updateBillingAddress('foo', address, options);
 
-            expect(output).toEqual(getResponse(address));
+            expect(output).toEqual(getResponse(getCheckout()));
+        });
+    });
+
+    describe('#createBillingAddress()', () => {
+        let address;
+        let options;
+
+        beforeEach(() => {
+            address = getBillingAddress();
+            options = {
+                timeout: createTimeout(),
+            };
+        });
+
+        it('creates the billing address', async () => {
+            await client.createBillingAddress('foo', address, options);
+
+            expect(billingAddressRequestSender.createAddress)
+                .toHaveBeenCalledWith('foo', address, options);
+        });
+
+        it('creates the billing address', async () => {
+            const output = await client.createBillingAddress('foo', address, options);
+
+            expect(output).toEqual(getResponse(getCheckout()));
         });
     });
 

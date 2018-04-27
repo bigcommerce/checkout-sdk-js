@@ -1,6 +1,6 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { InternalAddress } from '../address';
+import { Address } from '../address';
 import { BillingAddressRequestSender } from '../billing';
 import { CartRequestSender } from '../cart';
 import { RequestOptions } from '../common/http-request';
@@ -17,6 +17,7 @@ import {
 } from '../shipping';
 import { ConsignmentsRequestBody, ConsignmentRequestBody } from '../shipping/consignment';
 
+import Checkout from './checkout';
 import { CheckoutParams } from './checkout-params';
 import CheckoutRequestSender from './checkout-request-sender';
 
@@ -86,8 +87,12 @@ export default class CheckoutClient {
         return this._shippingCountryRequestSender.loadCountries(options);
     }
 
-    updateBillingAddress(address: InternalAddress, options?: RequestOptions): Promise<Response> {
-        return this._billingAddressRequestSender.updateAddress(address, options);
+    createBillingAddress(checkoutId: string, address: Address, options?: RequestOptions): Promise<Response<Checkout>> {
+        return this._billingAddressRequestSender.createAddress(checkoutId, address, options);
+    }
+
+    updateBillingAddress(checkoutId: string, address: Address, options?: RequestOptions): Promise<Response> {
+        return this._billingAddressRequestSender.updateAddress(checkoutId, address, options);
     }
 
     createConsignments(checkoutId: string, consignments: ConsignmentsRequestBody, options?: RequestOptions): Promise<Response> {

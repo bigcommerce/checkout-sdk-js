@@ -1,5 +1,6 @@
 export default interface Address {
     id?: string;
+    email?: string;
     firstName: string;
     lastName: string;
     company: string;

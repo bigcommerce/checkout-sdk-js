@@ -1,4 +1,4 @@
-import { Address, InternalAddress } from '../address';
+import { Address } from '../address';
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
 import { MissingDataError } from '../common/error/errors';
@@ -223,7 +223,7 @@ export default class CheckoutService {
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    updateBillingAddress(address: InternalAddress, options: RequestOptions = {}): Promise<CheckoutSelectors> {
+    updateBillingAddress(address: Address, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
         return this._store.dispatch(action);

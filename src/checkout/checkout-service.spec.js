@@ -4,7 +4,7 @@ import { map, merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
-import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
+import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { CartActionCreator } from '../cart';
 import { getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
 import { MissingDataError } from '../common/error/errors';
@@ -125,7 +125,7 @@ describe('CheckoutService', () => {
             ),
 
             updateBillingAddress: jest.fn(() =>
-                Promise.resolve(getResponse(getBillingAddressResponseBody())),
+                Promise.resolve(getResponse(getCheckout())),
             ),
 
             updateShippingAddress: jest.fn(() =>
@@ -718,7 +718,7 @@ describe('CheckoutService', () => {
             await checkoutService.updateBillingAddress(address, options);
 
             expect(checkoutClient.updateBillingAddress)
-                .toHaveBeenCalledWith(address, options);
+                .toHaveBeenCalledWith(getCheckout().id, address, options);
         });
     });
 

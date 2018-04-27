@@ -1,18 +1,17 @@
-import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
-import { getCart, getCartResponseBody } from './internal-carts.mock';
-import { getCheckout } from '../checkout/checkouts.mock';
-import { getCustomerResponseBody } from '../customer/internal-customers.mock';
-import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import * as billingAddressActionTypes from '../billing/billing-address-action-types';
+import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import * as cartActionTypes from '../cart/cart-action-types';
+import { CheckoutActionType } from '../checkout';
+import { getCheckout } from '../checkout/checkouts.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as couponActionTypes from '../coupon/coupon-action-types';
-import * as customerActionTypes from '../customer/customer-action-types';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
+import * as customerActionTypes from '../customer/customer-action-types';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import cartReducer from './cart-reducer';
-import { CheckoutActionType } from '../checkout';
+import { getCart, getCartResponseBody } from './internal-carts.mock';
 
 describe('cartReducer()', () => {
     let initialState;
@@ -169,12 +168,12 @@ describe('cartReducer()', () => {
 
     it('returns new data when billing address gets updated', () => {
         const action = {
-            type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED,
-            payload: getBillingAddressResponseBody().data,
+            type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+            payload: getCheckout(),
         };
 
         expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
+            data: getCart(),
         }));
     });
 
