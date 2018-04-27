@@ -11,8 +11,13 @@ import { CountryRequestSender } from '../geography';
 import { OrderRequestBody, OrderRequestSender } from '../order';
 import { PaymentMethodRequestSender } from '../payment';
 import { QuoteRequestSender } from '../quote';
-import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
+import {
+    ConsignmentRequestSender,
+    ShippingCountryRequestSender
+} from '../shipping';
+import { ConsignmentsRequestBody, ConsignmentRequestBody } from '../shipping/consignment';
 
+import { CheckoutParams } from './checkout-params';
 import CheckoutRequestSender from './checkout-request-sender';
 
 // Convert this file into TypeScript properly
@@ -26,6 +31,7 @@ export default class CheckoutClient {
         private _cartRequestSender: CartRequestSender,
         private _checkoutRequestSender: CheckoutRequestSender,
         private _configRequestSender: ConfigRequestSender,
+        private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
         private _couponRequestSender: CouponRequestSender,
         private _customerRequestSender: CustomerRequestSender,
@@ -33,12 +39,10 @@ export default class CheckoutClient {
         private _orderRequestSender: OrderRequestSender,
         private _paymentMethodRequestSender: PaymentMethodRequestSender,
         private _quoteRequestSender: QuoteRequestSender,
-        private _shippingAddressRequestSender: ShippingAddressRequestSender,
-        private _shippingCountryRequestSender: ShippingCountryRequestSender,
-        private _shippingOptionRequestSender: ShippingOptionRequestSender
+        private _shippingCountryRequestSender: ShippingCountryRequestSender
     ) {}
 
-    loadCheckout(id: string, options?: RequestOptions): Promise<Response> {
+    loadCheckout(id: string, options?: RequestOptions<CheckoutParams>): Promise<Response> {
         return this._checkoutRequestSender.loadCheckout(id, options);
     }
 
@@ -86,16 +90,12 @@ export default class CheckoutClient {
         return this._billingAddressRequestSender.updateAddress(address, options);
     }
 
-    updateShippingAddress(address: InternalAddress, options?: RequestOptions): Promise<Response> {
-        return this._shippingAddressRequestSender.updateAddress(address, options);
+    createConsignments(checkoutId: string, consignments: ConsignmentsRequestBody, options?: RequestOptions): Promise<Response> {
+        return this._consignmentRequestSender.createConsignments(checkoutId, consignments, options);
     }
 
-    loadShippingOptions(options?: RequestOptions): Promise<Response> {
-        return this._shippingOptionRequestSender.loadShippingOptions(options);
-    }
-
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: RequestOptions): Promise<Response> {
-        return this._shippingOptionRequestSender.selectShippingOption(addressId, shippingOptionId, options);
+    updateConsignment(checkoutId: string, consignment: ConsignmentRequestBody, options?: RequestOptions): Promise<Response> {
+        return this._consignmentRequestSender.updateConsignment(checkoutId, consignment, options);
     }
 
     signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Promise<Response> {

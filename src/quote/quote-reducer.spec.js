@@ -1,15 +1,14 @@
-import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
-import { getCustomerResponseBody } from '../customer/internal-customers.mock';
-import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuote } from './internal-quotes.mock';
-import { getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as billingAddressActionTypes from '../billing/billing-address-action-types';
+import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
+import { getCheckout } from '../checkout/checkouts.mock';
+import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { getQuote } from './internal-quotes.mock';
 import * as quoteActionTypes from './quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 import quoteReducer from './quote-reducer';
+import { CheckoutActionType } from '../checkout';
 
 describe('quoteReducer()', () => {
     let initialState;
@@ -76,44 +75,37 @@ describe('quoteReducer()', () => {
         }));
     });
 
-    it('returns new data when shipping options gets updated', () => {
-        const response = getShippingOptionResponseBody();
+    it('returns new data when checkout is loaded', () => {
         const action = {
-            type: shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
+            type: CheckoutActionType.LoadCheckoutSucceeded,
+            payload: getCheckout(),
         };
 
         expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.quote,
+            data: getQuote(),
         }));
     });
 
-    it('returns new data when shipping options gets selected', () => {
-        const response = getShippingOptionResponseBody();
+    it('returns new data when creating consignments', () => {
         const action = {
-            type: shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
+            type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
+            payload: getCheckout(),
         };
 
         expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.quote,
+            data: getQuote(),
         }));
     });
 
-    describe('when updating shipping address', () => {
-        it('saves the payload when update succeeds', () => {
-            const response = getShippingAddressResponseBody();
-            const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-                payload: response.data,
-            };
+    it('returns new data when updating a consignment', () => {
+        const action = {
+            type: ConsignmentActionTypes.UpdateConsignmentSucceeded,
+            payload: getCheckout(),
+        };
 
-            expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                data: action.payload.quote,
-            }));
-        });
+        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getQuote(),
+        }));
     });
 
     describe('when updating billing address', () => {

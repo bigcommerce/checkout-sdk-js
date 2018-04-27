@@ -1,18 +1,18 @@
 import Address from './address';
 import InternalAddress from './internal-address';
 
-export default function mapToInternalAddress(address: Address, id?: string): InternalAddress {
+export default function mapFromInternalAddress(address: InternalAddress): Address {
     return {
-        id: id ? id : address.id,
+        id: address.id,
         firstName: address.firstName,
         lastName: address.lastName,
         company: address.company,
-        addressLine1: address.street1,
-        addressLine2: address.street2,
+        street1: address.addressLine1,
+        street2: address.addressLine2,
         city: address.city,
-        province: address.region,
-        provinceCode: address.regionCode,
-        postCode: address.postalCode,
+        region: address.province,
+        regionCode: address.provinceCode,
+        postalCode: address.postCode,
         country: address.country,
         countryCode: address.countryCode,
         phone: address.phone,

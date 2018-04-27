@@ -1,7 +1,7 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
-import { isAddressEqual, InternalAddress } from '../../address';
+import { isAddressEqual, mapFromInternalAddress, Address, InternalAddress } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
@@ -13,8 +13,7 @@ import {
     RemoteCheckoutSynchronizationError,
 } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import ShippingAddressActionCreator from '../shipping-address-action-creator';
-import ShippingOptionActionCreator from '../shipping-option-action-creator';
+import ConsignmentActionCreator from '../consignment-action-creator';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 
 import ShippingStrategy from './shipping-strategy';
@@ -24,8 +23,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     constructor(
         store: CheckoutStore,
-        private _addressActionCreator: ShippingAddressActionCreator,
-        private _optionActionCreator: ShippingOptionActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _scriptLoader: AmazonPayScriptLoader
@@ -68,13 +66,13 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return super.deinitialize(options);
     }
 
-    updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
+    updateAddress(address: Address, options?: any): Promise<CheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
+    selectOption(optionId: string, options?: any): Promise<CheckoutSelectors> {
         return this._store.dispatch(
-            this._optionActionCreator.selectShippingOption(addressId, optionId, options)
+            this._consignmentActionCreator.selectShippingOption(optionId, options)
         );
     }
 
@@ -143,7 +141,9 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 }
 
                 return this._store.dispatch(
-                    this._addressActionCreator.updateAddress(remoteCheckout.shippingAddress)
+                    this._consignmentActionCreator.updateAddress(
+                        mapFromInternalAddress(remoteCheckout.shippingAddress)
+                    )
                 );
             })
             .then(() => this._store.dispatch(
