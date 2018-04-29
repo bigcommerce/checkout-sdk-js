@@ -1,6 +1,6 @@
 import { NotInitializedError } from '../../../common/error/errors';
 
-import { Braintree } from './braintree';
+import * as Braintree from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {

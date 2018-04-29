@@ -15,7 +15,7 @@ declare namespace Klarna {
 
     interface LoadResponse {
         show_form: boolean;
-        error: {
+        error?: {
             invalid_fields: string[];
         };
     }

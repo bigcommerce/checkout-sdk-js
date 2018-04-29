@@ -9,7 +9,7 @@ import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStor
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
-import { getKlarna } from '../../payment/payment-methods.mock';
+import { getKlarna, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
@@ -36,7 +36,9 @@ describe('KlarnaPaymentStrategy', () => {
 
     beforeEach(() => {
         client = createCheckoutClient();
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            paymentMethods: getPaymentMethodsState(),
+        });
         orderActionCreator = new OrderActionCreator(client);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
@@ -52,9 +54,9 @@ describe('KlarnaPaymentStrategy', () => {
         );
 
         klarnaSdk = {
-            authorize: jest.fn((a, b) => Promise.resolve({ approved: true })),
-            init: jest.fn(() => Promise.resolve()),
-            load: jest.fn(() => Promise.resolve()),
+            authorize: jest.fn((params, callback) => callback({ approved: true, authorization_token: 'bar' })),
+            init: jest.fn(() => {}),
+            load: jest.fn((options, callback) => callback({ show_form: true })),
         };
 
         paymentMethod = getKlarna();
@@ -89,8 +91,10 @@ describe('KlarnaPaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
+        const onLoad = jest.fn();
+
         beforeEach(async () => {
-            await strategy.initialize({ container: '#container', paymentMethod });
+            await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container', onLoad } });
         });
 
         it('loads script when initializing strategy', () => {
@@ -106,11 +110,15 @@ describe('KlarnaPaymentStrategy', () => {
             expect(klarnaSdk.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaSdk.load).toHaveBeenCalledTimes(1);
         });
+
+        it('triggers callback with response', () => {
+            expect(onLoad).toHaveBeenCalledWith({ show_form: true });
+        });
     });
 
     describe('#execute()', () => {
         beforeEach(async () => {
-            await strategy.initialize({ container: '#container', paymentMethod });
+            await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container' } });
         });
 
         it('authorizes against klarna', () => {
@@ -119,18 +127,10 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         it('submits authorization token', async () => {
-            const authorizationToken = 'bar';
-
-            jest.spyOn(klarnaSdk, 'authorize')
-                .mockImplementation((params, callback) => callback({
-                    approved: true,
-                    authorization_token: authorizationToken,
-                }));
-
             await strategy.execute(payload);
 
             expect(remoteCheckoutActionCreator.initializePayment)
-                .toHaveBeenCalledWith('klarna', { authorizationToken });
+                .toHaveBeenCalledWith('klarna', { authorizationToken: 'bar' });
 
             expect(orderActionCreator.submitOrder)
                 .toHaveBeenCalledWith({ ...payload, payment: omit(payload.payment, 'paymentData'), useStoreCredit: false }, true, undefined);

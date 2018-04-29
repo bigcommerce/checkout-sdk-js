@@ -30,6 +30,7 @@ declare namespace Square {
 
     interface FormElement {
         elementId: string;
+        placeholder?: string;
     }
 
     interface FormCallbacks {

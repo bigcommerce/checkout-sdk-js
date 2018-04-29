@@ -3,6 +3,8 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
+import PaymentMethod from '../payment-method';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -12,6 +14,7 @@ import PaymentStrategy from './payment-strategy';
  */
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     private _paypalSdk: any;
+    private _paymentMethod?: PaymentMethod;
 
     constructor(
         store: CheckoutStore,
@@ -21,8 +24,10 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    initialize(options?: any): Promise<CheckoutSelectors> {
-        this._paymentMethod = options.paymentMethod;
+    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
+        const { checkout } = this._store.getState();
+
+        this._paymentMethod = checkout.getPaymentMethod(options.methodId);
 
         if (!this._isInContextEnabled() || this._isInitialized) {
             return super.initialize(options);
@@ -57,7 +62,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         return super.deinitialize();
     }
 
-    execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         if (this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
             this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
             return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options));
@@ -97,7 +102,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             });
     }
 
-    finalize(options: any): Promise<CheckoutSelectors> {
+    finalize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const order = checkout.getOrder();
 

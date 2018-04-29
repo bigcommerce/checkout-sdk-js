@@ -1,8 +1,8 @@
 import { Payment } from '../..';
 import { getPayment } from '../../payments.mock';
 
-import { Braintree } from './braintree';
-import { ModalHandler } from './braintree-payment-processor';
+import * as Braintree from './braintree';
+import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
 export function getClientMock(): Braintree.Client {
     return {
@@ -32,11 +32,25 @@ export function getModuleCreatorMock<T>(module: Braintree.Module): Braintree.Mod
     };
 }
 
-export function getTokenizeResponseResponseBody(): Braintree.TokenizeResponse {
+export function getTokenizeResponseBody(): Braintree.TokenizeResponse {
     return {
         creditCards: [
             { nonce: 'demo_nonce' },
         ],
+    };
+}
+
+export function getVerifyPayload(): Braintree.VerifyPayload {
+    return {
+        nonce: 'demo_nonce',
+        details: {
+            cardType: 'visa',
+            lastFour: '0001',
+            lastTwo: '01',
+        },
+        description: '',
+        liabilityShiftPossible: false,
+        liabilityShifted: false,
     };
 }
 
@@ -70,10 +84,9 @@ export function getBraintreePaymentData(): Payment {
     };
 }
 
-export function getModalHandlerMock(): ModalHandler {
+export function getThreeDSecureOptionsMock(): BraintreeThreeDSecureOptions {
     return {
         addFrame: jest.fn(),
         removeFrame: jest.fn(),
-        onRemoveFrame: jest.fn(),
     };
 }

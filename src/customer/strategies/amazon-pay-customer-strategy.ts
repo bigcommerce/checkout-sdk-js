@@ -1,15 +1,13 @@
 /// <reference path="../../remote-checkout/methods/amazon-pay/amazon-login.d.ts" />
 /// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
 
-import 'rxjs/add/observable/empty';
-
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { MissingDataError, NotImplementedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotImplementedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { RemoteCheckoutCustomerError } from '../../remote-checkout/errors';
 import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
 import CustomerCredentials from '../customer-credentials';
+import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
 
 import CustomerStrategy from './customer-strategy';
 
@@ -26,23 +24,29 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         super(store);
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: CustomerInitializeOptions): Promise<CheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
+        const { amazon: amazonOptions, methodId } = options;
+
+        if (!amazonOptions || !methodId) {
+            throw new InvalidArgumentError('Unable to proceed because "options.amazon" argument is not provided.');
+        }
+
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(({ checkout }) => new Promise((resolve, reject) => {
-                this._paymentMethod = checkout.getPaymentMethod(options.methodId);
+                this._paymentMethod = checkout.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
-                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
+                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
                 }
 
-                const { onError = () => {} } = options;
+                const { onError = () => {} } = amazonOptions;
                 const onReady = () => {
                     this._createSignInButton({
-                        ...options as InitializeWidgetOptions,
+                        ...amazonOptions,
                         onError: error => {
                             reject(error);
                             onError(error);
@@ -58,7 +62,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options?: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -68,13 +72,13 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         return super.deinitialize(options);
     }
 
-    signIn(credentials: CustomerCredentials, options?: any): Promise<CheckoutSelectors> {
+    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
         throw new NotImplementedError(
             'In order to sign in via AmazonPay, the shopper must click on "Login with Amazon" button.'
         );
     }
 
-    signOut(options?: any): Promise<CheckoutSelectors> {
+    signOut(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
         const { checkout } = this._store.getState();
         const { remote = { provider: undefined } } = checkout.getCustomer() || {};
 
@@ -87,12 +91,11 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         );
     }
 
-    private _createSignInButton(options: InitializeWidgetOptions): OffAmazonPayments.Button {
+    private _createSignInButton(options: AmazonPayCustomerInitializeOptions): OffAmazonPayments.Button {
         if (!this._paymentMethod || !this._paymentMethod.config.merchantId) {
             throw new MissingDataError('Unable to create sign-in button because "paymentMethod.config.merchantId" field is missing.');
         }
 
-        const { onError = () => {} } = options;
         const { initializationData } = this._paymentMethod;
 
         return new OffAmazonPayments.Button(options.container, this._paymentMethod.config.merchantId, {
@@ -100,11 +103,9 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             size: options.size || 'small',
             type: 'PwA',
             useAmazonAddressBook: true,
+            onError: options.onError,
             authorization: () => {
                 this._handleAuthorization(initializationData);
-            },
-            onError: error => {
-                this._handleError(error, onError);
             },
         });
     }
@@ -121,25 +122,13 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
                 this._remoteCheckoutRequestSender.trackAuthorizationEvent();
             });
     }
-
-    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
-        if (!error) {
-            return;
-        }
-
-        callback(new RemoteCheckoutCustomerError(error));
-    }
 }
 
-export interface InitializeOptions extends InitializeWidgetOptions {
-    methodId: string;
-}
-
-export interface InitializeWidgetOptions {
+export interface AmazonPayCustomerInitializeOptions {
     container: string;
     color?: string;
     size?: string;
-    onError?(error: Error): void;
+    onError?(error: OffAmazonPayments.Widgets.WidgetError | StandardError): void;
 }
 
 interface AuthorizationOptions {

@@ -4,9 +4,9 @@ import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { WepayRiskClient } from '../../remote-checkout/methods/wepay';
 import PaymentActionCreator from '../payment-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
-import { InitializeOptions } from './payment-strategy';
 
 export default class WepayPaymentStrategy extends CreditCardPaymentStrategy {
     constructor(
@@ -18,13 +18,13 @@ export default class WepayPaymentStrategy extends CreditCardPaymentStrategy {
         super(store, orderActionCreator, paymentActionCreator);
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         this._wepayRiskClient.initialize();
 
         return super.initialize(options);
     }
 
-    execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const token = this._wepayRiskClient.getRiskToken();
         const payloadWithToken = merge({}, payload, {
             payment: {

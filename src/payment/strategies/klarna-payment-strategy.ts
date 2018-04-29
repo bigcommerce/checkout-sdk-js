@@ -8,8 +8,8 @@ import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import Payment from '../payment';
-import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
 import PaymentStrategy from './payment-strategy';
 
@@ -27,7 +27,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         return this._klarnaScriptLoader.load()
             .then(klarnaSdk => { this._klarnaSdk = klarnaSdk; })
             .then(() => {
@@ -45,7 +45,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         if (this._unsubscribe) {
             this._unsubscribe();
         }
@@ -53,7 +53,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
         return super.deinitialize(options);
     }
 
-    execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         return this._authorize()
             .then((res: Klarna.AuthorizationResponse) => {
                 const authorizationToken = res.authorization_token;
@@ -77,13 +77,16 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             ));
     }
 
-    private _loadWidget(options: InitializeOptions): Promise<void> {
-        const { container, loadCallback } = options;
-        const { id: paymentId } = options.paymentMethod;
+    private _loadWidget(options: PaymentInitializeOptions): Promise<Klarna.LoadResponse> {
+        if (!options.klarna) {
+            throw new InvalidArgumentError('Unable to load widget because "options.klarna" argument is not provided.');
+        }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(paymentId))
-            .then(({ checkout }) => {
-                const paymentMethod = checkout.getPaymentMethod(paymentId);
+        const { methodId, klarna: { container, onLoad } } = options;
+
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+            .then(({ checkout }) => new Promise<Klarna.LoadResponse>((resolve, reject) => {
+                const paymentMethod = checkout.getPaymentMethod(methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to load payment widget because "paymentMethod.clientToken" field is missing.');
@@ -94,8 +97,19 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                 }
 
                 this._klarnaSdk.init({ client_token: paymentMethod.clientToken });
-                this._klarnaSdk.load({ container }, loadCallback);
-            });
+
+                this._klarnaSdk.load({ container }, response => {
+                    if (onLoad) {
+                        onLoad(response);
+                    }
+
+                    if (!response.show_form) {
+                        reject(response);
+                    } else {
+                        resolve(response);
+                    }
+                });
+            }));
     }
 
     private _authorize(): Promise<any> {
@@ -115,11 +129,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     }
 }
 
-export interface InitializeWidgetOptions {
+export interface KlarnaPaymentInitializeOptions {
     container: string;
-    loadCallback?(): Klarna.LoadResponse;
-}
-
-export interface InitializeOptions extends InitializeWidgetOptions {
-    paymentMethod: PaymentMethod;
+    onLoad?(response: Klarna.LoadResponse): void;
 }

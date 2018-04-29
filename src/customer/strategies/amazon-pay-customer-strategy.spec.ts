@@ -110,7 +110,7 @@ describe('AmazonPayCustomerStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('amazon');
         expect(store.dispatch).toHaveBeenCalledWith(action);
@@ -123,20 +123,20 @@ describe('AmazonPayCustomerStrategy', () => {
             .mockReturnValue(Observable.of(createErrorAction(LOAD_PAYMENT_METHOD_FAILED, response)));
 
         try {
-            await strategy.initialize({ container: 'login', methodId: 'amazon' });
+            await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
         } catch (error) {
             expect(error).toEqual(response);
         }
     });
 
     it('loads widget script', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod, expect.any(Function));
     });
 
     it('creates login button', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(buttonConstructorSpy).toHaveBeenCalledWith('login', paymentMethod.config.merchantId, {
             authorization: expect.any(Function),
@@ -155,26 +155,26 @@ describe('AmazonPayCustomerStrategy', () => {
             .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
 
         try {
-            await strategy.initialize({ container: 'login', methodId: 'amazon' });
+            await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
         } catch (error) {
             expect(error).toBeInstanceOf(MissingDataError);
         }
     });
 
     it('only initializes widget once until deinitialization', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(buttonConstructorSpy).toHaveBeenCalledTimes(1);
 
         await strategy.deinitialize();
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(buttonConstructorSpy).toHaveBeenCalledTimes(2);
     });
 
     it('generates request token', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
@@ -183,7 +183,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('tracks authorization event', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
@@ -194,7 +194,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('sends authorization request', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
@@ -243,7 +243,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('throws error if trying to sign in programmatically', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrow();
     });

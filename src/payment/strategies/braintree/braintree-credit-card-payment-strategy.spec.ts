@@ -16,10 +16,11 @@ import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getBraintree } from '../../payment-methods.mock';
+import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 
 import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
-import BraintreePaymentProcessor, { BraintreeCreditCardInitializeOptions } from './braintree-payment-processor';
+import BraintreePaymentProcessor from './braintree-payment-processor';
 
 describe('BraintreeCreditCardPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
@@ -84,10 +85,10 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
     describe('#initialize()', () => {
         it('initializes the braintree payment processor with the client token and the set of options', async () => {
             checkoutMock.getPaymentMethod = jest.fn(() => ({ ...getBraintree(), clientToken: 'myToken' }));
-            const options = {} as BraintreeCreditCardInitializeOptions;
+            const options = { braintree: {} } as PaymentInitializeOptions;
             options.paymentMethod = getBraintree();
             await braintreeCreditCardPaymentStrategy.initialize(options);
-            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken', options);
+            expect(braintreePaymentProcessorMock.initialize).toHaveBeenCalledWith('myToken', options.braintree);
         });
 
         it('throws error if client token is missing', async () => {
@@ -105,7 +106,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
     describe('#execute()', () => {
         let orderRequestBody: OrderRequestBody;
-        let options: BraintreeCreditCardInitializeOptions;
+        let options: PaymentInitializeOptions;
 
         beforeEach(() => {
             orderRequestBody = getOrderRequestBody();
@@ -165,7 +166,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         });
 
         it('verifies the card if 3ds is enabled', async () => {
-            const options3ds = {} as BraintreeCreditCardInitializeOptions;
+            const options3ds = {} as PaymentInitializeOptions;
             options3ds.paymentMethod = paymentMethodMock;
             options3ds.paymentMethod.config.is3dsEnabled = true;
             await braintreeCreditCardPaymentStrategy.initialize(options3ds);

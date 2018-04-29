@@ -5,13 +5,19 @@ import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerCredentials, CustomerStrategyActionCreator } from '../customer';
+import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
-import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
+import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import { ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import {
+    ShippingCountryActionCreator,
+    ShippingInitializeOptions,
+    ShippingOptionActionCreator,
+    ShippingRequestOptions,
+    ShippingStrategyActionCreator,
+} from '../shipping';
 
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
@@ -128,14 +134,14 @@ export default class CheckoutService {
         return this._store.dispatch(action, { queueId: 'paymentMethods' });
     }
 
-    initializePaymentMethod(methodId: string, gatewayId?: string, options?: any): Promise<CheckoutSelectors> {
-        const action = this._paymentStrategyActionCreator.initialize(methodId, gatewayId, options);
+    initializePayment(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
+        const action = this._paymentStrategyActionCreator.initialize(options);
 
         return this._store.dispatch(action, { queueId: 'paymentStrategy' });
     }
 
-    deinitializePaymentMethod(methodId: string, gatewayId?: string, options?: any): Promise<CheckoutSelectors> {
-        const action = this._paymentStrategyActionCreator.deinitialize(methodId, gatewayId, options);
+    deinitializePayment(options: PaymentRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._paymentStrategyActionCreator.deinitialize(options);
 
         return this._store.dispatch(action, { queueId: 'paymentStrategy' });
     }
@@ -160,32 +166,28 @@ export default class CheckoutService {
         return this.loadShippingCountries(options);
     }
 
-    initializeCustomer(options: any = {}): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerStrategyActionCreator.initialize(options),
-            { queueId: 'customerStrategy' }
-        );
+    initializeCustomer(options?: CustomerInitializeOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.initialize(options);
+
+        return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
-    deinitializeCustomer(options: any = {}): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerStrategyActionCreator.deinitialize(options),
-            { queueId: 'customerStrategy' }
-        );
+    deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.deinitialize(options);
+
+        return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
-    signInCustomer(credentials: CustomerCredentials, options: any = {}): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerStrategyActionCreator.signIn(credentials, options),
-            { queueId: 'customerStrategy' }
-        );
+    signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.signIn(credentials, options);
+
+        return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
-    signOutCustomer(options: any = {}): Promise<CheckoutSelectors> {
-        return this._store.dispatch(
-            this._customerStrategyActionCreator.signOut(options),
-            { queueId: 'customerStrategy' }
-        );
+    signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._customerStrategyActionCreator.signOut(options);
+
+        return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
     loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors> {
@@ -194,25 +196,25 @@ export default class CheckoutService {
         return this._store.dispatch(action);
     }
 
-    initializeShipping(options?: any): Promise<CheckoutSelectors> {
+    initializeShipping(options?: ShippingInitializeOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.initialize(options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    deinitializeShipping(options?: any): Promise<CheckoutSelectors> {
+    deinitializeShipping(options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.deinitialize(options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: any): Promise<CheckoutSelectors> {
+    selectShippingOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.selectOption(addressId, shippingOptionId, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    updateShippingAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
+    updateShippingAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });

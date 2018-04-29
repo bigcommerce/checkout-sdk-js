@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { Braintree } from './braintree';
+import * as Braintree from './braintree';
 
 export default class BraintreeScriptLoader {
     constructor(

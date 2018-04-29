@@ -2,6 +2,7 @@ import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import PaymentActionCreator from '../payment-action-creator';
+import { PaymentRequestOptions } from '../payment-request-options';
 
 import PaymentStrategy from './payment-strategy';
 
@@ -14,7 +15,7 @@ export default class CreditCardPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment) {

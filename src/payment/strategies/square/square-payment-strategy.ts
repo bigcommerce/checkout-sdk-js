@@ -11,7 +11,7 @@ import {
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { TokenizedCreditCard } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import SquareScriptLoader from './square-script-loader';
@@ -29,7 +29,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         return this._scriptLoader.load()
             .then(createSquareForm =>
                 new Promise((resolve, reject) => {
@@ -42,7 +42,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             .then(() => super.initialize(options));
     }
 
-    execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment || !payment.name) {
@@ -76,15 +76,17 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         });
     }
 
-    private _getFormOptions(options: InitializeOptions, deferred: DeferredPromise): Square.FormOptions {
-        const { paymentMethod, widgetConfig } = options;
+    private _getFormOptions(options: PaymentInitializeOptions, deferred: DeferredPromise): Square.FormOptions {
+        const { square: squareOptions, methodId } = options;
+        const { checkout } = this._store.getState();
+        const paymentMethod = checkout.getPaymentMethod(methodId);
 
-        if (!widgetConfig) {
-            throw new InvalidArgumentError('Unable to proceed because "options.widgetConfig" argument is not provided.');
+        if (!squareOptions || !paymentMethod) {
+            throw new InvalidArgumentError('Unable to proceed because "options.square" argument is not provided.');
         }
 
         return {
-            ...widgetConfig,
+            ...squareOptions,
             ...paymentMethod.initializationData,
             callbacks: {
                 paymentFormLoaded: () => {
@@ -129,7 +131,11 @@ export interface DeferredPromise {
     reject(reason?: any): void;
 }
 
-export interface InitializeOptions {
-    paymentMethod: PaymentMethod;
-    widgetConfig?: Square.FormOptions;
+export interface SquarePaymentInitializeOptions {
+    cardNumber: Square.FormElement;
+    cvv: Square.FormElement;
+    expirationDate: Square.FormElement;
+    postalCode: Square.FormElement;
+    inputClass?: string;
+    inputStyles?: Array<{ [key: string]: string }>;
 }
