@@ -5,18 +5,22 @@ import { Observable } from 'rxjs/Observable';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { createCheckoutStore } from '.';
 import CheckoutActionCreator from './checkout-action-creator';
 import { CheckoutActionType } from './checkout-actions';
-import { getCheckout, getCheckoutState } from './checkouts.mock';
+import CheckoutClient from './checkout-client';
+import CheckoutStore from './checkout-store';
+import { getCheckout } from './checkouts.mock';
 import createCheckoutClient from './create-checkout-client';
+import createCheckoutStore from './create-checkout-store';
 
 describe('CheckoutActionCreator', () => {
-    let checkoutClient;
-    let actionCreator;
+    let actionCreator: CheckoutActionCreator;
+    let checkoutClient: CheckoutClient;
+    let store: CheckoutStore;
 
     beforeEach(() => {
         checkoutClient = createCheckoutClient();
+        store = createCheckoutStore();
 
         jest.spyOn(checkoutClient, 'loadCheckout')
             .mockReturnValue(Promise.resolve(getResponse(getCheckout())));

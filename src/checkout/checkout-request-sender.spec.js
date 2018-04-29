@@ -7,10 +7,12 @@ import CheckoutRequestSender from './checkout-request-sender';
 describe('CheckoutRequestSender', () => {
     let requestSender;
     let response;
+
     const defaultIncludes = [
         'cart.lineItems.physicalItems.options',
         'cart.lineItems.digitalItems.options',
         'customer',
+        'payments',
         'promotions.banners',
     ].join(',');
 

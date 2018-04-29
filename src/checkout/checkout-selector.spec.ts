@@ -1,5 +1,7 @@
+import { getPaymentMethod } from '../payment/payment-methods.mock';
+
 import CheckoutSelector from './checkout-selector';
-import { getCheckout, getCheckoutState } from './checkouts.mock';
+import { getCheckout, getCheckoutState, getCheckoutWithPayments } from './checkouts.mock';
 
 describe('CheckoutSelector', () => {
     it('returns checkout', () => {
@@ -25,5 +27,11 @@ describe('CheckoutSelector', () => {
         });
 
         expect(selector.isLoading()).toEqual(true);
+    });
+
+    it('returns payment method used for checkout', () => {
+        const selector = new CheckoutSelector({ ...getCheckoutState(), data: getCheckoutWithPayments() });
+
+        expect(selector.getHostedPayment().providerId).toEqual(getPaymentMethod().id);
     });
 });

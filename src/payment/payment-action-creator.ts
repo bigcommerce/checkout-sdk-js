@@ -100,6 +100,10 @@ export default class PaymentActionCreator {
             throw new MissingDataError('Unable to submit payment because "authToken" is missing.');
         }
 
+        if (!authToken) {
+            throw new MissingDataError('Unable to submit payment because "authToken" is missing.');
+        }
+
         return {
             billingAddress,
             cart,

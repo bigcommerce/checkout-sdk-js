@@ -120,10 +120,9 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
     }
 
     private _synchronizeShippingAddress(): Promise<InternalCheckoutSelectors> {
-        const state = this._store.getState();
-        const meta = state.remoteCheckout.getCheckoutMeta();
         const methodId = this._paymentMethod && this._paymentMethod.id;
-        const referenceId = meta && meta.amazon && meta.amazon.referenceId;
+        const amazon = this._store.getState().remoteCheckout.getCheckout('amazon');
+        const referenceId = amazon ? amazon.referenceId : undefined;
 
         if (!methodId || !referenceId) {
             throw new NotInitializedError();
@@ -136,21 +135,20 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 this._remoteCheckoutActionCreator.initializeShipping(methodId, { referenceId })
             ))
             .then(state => {
-                const remoteCheckout = state.remoteCheckout.getCheckout();
+                const amazon = state.remoteCheckout.getCheckout('amazon');
+                const remoteAddress = amazon && amazon.shipping && amazon.shipping.address;
                 const address = state.shippingAddress.getShippingAddress();
 
-                if (remoteCheckout && remoteCheckout.shippingAddress === false) {
+                if (remoteAddress === false) {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (!remoteCheckout || !remoteCheckout.shippingAddress || isAddressEqual(remoteCheckout.shippingAddress, address || {})) {
+                if (!remoteAddress || isAddressEqual(remoteAddress, address || {})) {
                     return this._store.getState();
                 }
 
                 return this._store.dispatch(
-                    this._consignmentActionCreator.updateAddress(
-                        mapFromInternalAddress(remoteCheckout.shippingAddress)
-                    )
+                    this._consignmentActionCreator.updateAddress(mapFromInternalAddress(remoteAddress))
                 );
             })
             .then(() => this._store.dispatch(
@@ -167,7 +165,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         }
 
         this._store.dispatch(
-            this._remoteCheckoutActionCreator.setCheckoutMeta(this._paymentMethod.id, {
+            this._remoteCheckoutActionCreator.updateCheckout(this._paymentMethod.id as 'amazon', {
                 referenceId: orderReference.getAmazonOrderReferenceId(),
             })
         );

@@ -18,7 +18,7 @@ import {
     AmazonPayWindow,
 } from '../../remote-checkout/methods/amazon-pay';
 import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
-import { getRemoteCheckoutMeta, getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
+import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../remote-checkout/remote-checkout.mock';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ConsignmentActionTypes } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
@@ -81,7 +81,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         orderReference = {
             getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
-            getAmazonOrderReferenceId: () => getRemoteCheckoutMeta().amazon.referenceId,
+            getAmazonOrderReferenceId: () => getRemoteCheckoutStateData().amazon.referenceId,
         };
 
         container.setAttribute('id', 'addressBook');
@@ -174,7 +174,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         expect(remoteCheckoutActionCreator.initializeShipping)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getRemoteCheckoutMeta().amazon.referenceId,
+                referenceId: getRemoteCheckoutStateData().amazon.referenceId,
             });
 
         expect(consignmentActionCreator.updateAddress)
@@ -210,15 +210,15 @@ describe('AmazonPayShippingStrategy', () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
-        jest.spyOn(remoteCheckoutActionCreator, 'setCheckoutMeta');
+        jest.spyOn(remoteCheckoutActionCreator, 'updateCheckout');
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('orderReferenceCreate'));
 
-        expect(remoteCheckoutActionCreator.setCheckoutMeta)
+        expect(remoteCheckoutActionCreator.updateCheckout)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getRemoteCheckoutMeta().amazon.referenceId,
+                referenceId: getRemoteCheckoutStateData().amazon.referenceId,
             });
     });
 

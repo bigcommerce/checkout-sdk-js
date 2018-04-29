@@ -3,16 +3,18 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
+
 import { Observable } from 'rxjs/Observable';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';
+import { getCheckoutState, getCheckoutWithPayments } from '../checkout/checkouts.mock';
 import { Registry } from '../common/registry';
 import { getCustomerState, getGuestCustomer } from '../customer/internal-customers.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
-import { getShippingAddress } from './internal-shipping-addresses.mock';
 import { getShippingOptions } from './internal-shipping-options.mock';
+import { getShippingAddress } from './shipping-addresses.mock';
 import ShippingStrategyActionCreator from './shipping-strategy-action-creator';
 import { ShippingStrategyActionType } from './shipping-strategy-actions';
 import { ShippingStrategy } from './strategies';
@@ -51,11 +53,11 @@ describe('ShippingStrategyActionCreator', () => {
         });
 
         it('finds remote shipping strategy if available', async () => {
-            const customer = { ...getGuestCustomer(), remote: { provider: getPaymentMethod().id } };
             const actionCreator = new ShippingStrategyActionCreator(registry);
+            const methodId = getPaymentMethod().id;
 
             store = createCheckoutStore({
-                customer: { ...getCustomerState(), data: customer },
+                checkout: { ...getCheckoutState(), data: getCheckoutWithPayments() },
             });
 
             jest.spyOn(registry, 'get');
@@ -63,7 +65,7 @@ describe('ShippingStrategyActionCreator', () => {
             await Observable.from(actionCreator.initialize()(store))
                 .toPromise();
 
-            expect(registry.get).toHaveBeenCalledWith(customer.remote.provider);
+            expect(registry.get).toHaveBeenCalledWith(methodId);
         });
 
         it('initializes default shipping strategy by default', async () => {

@@ -81,29 +81,30 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(() => new Promise<never>(() => {}));
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const state = this._store.getState();
-        const customer = state.customer.getCustomer();
-        const order = state.order.getOrder();
-        const config = state.config.getContextConfig();
+    finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(this._remoteCheckoutActionCreator.loadSettings(options.methodId))
+            .then(state => {
+                const order = state.order.getOrder();
+                const config = state.config.getContextConfig();
+                const afterpay = state.remoteCheckout.getCheckout('afterpay');
 
-        if (!order || !order.payment.id || !config || !config.payment.token || !customer) {
-            throw new MissingDataError('Unable to finalize order because "order", "customer" or "token" data is missing.');
-        }
+                if (!order || !order.payment.id || !config || !config.payment.token || !afterpay || !afterpay.settings) {
+                    throw new MissingDataError('Unable to finalize order because "order", "checkoutMeta" or "token" data is missing.');
+                }
 
-        const orderPayload = customer.remote ?
-            { useStoreCredit: customer.remote.useStoreCredit, customerMessage: customer.remote.customerMessage } :
-            {};
+                const orderPayload = {
+                    useStoreCredit: afterpay.settings.useStoreCredit,
+                    customerMessage: afterpay.settings.customerMessage,
+                };
 
-        const paymentPayload = {
-            name: order.payment.id,
-            paymentData: { nonce: config.payment.token },
-        };
+                const paymentPayload = {
+                    name: order.payment.id,
+                    paymentData: { nonce: config.payment.token },
+                };
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
-            .then(() =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
-            );
+                return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
+                    .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload)));
+            });
     }
 
     private _displayModal(paymentMethod?: PaymentMethod): void {
