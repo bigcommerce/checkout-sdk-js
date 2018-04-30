@@ -1,5 +1,3 @@
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
-import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -21,8 +19,18 @@ import { SUBMIT_ORDER_FAILED, SUBMIT_ORDER_REQUESTED } from '../../order/order-a
 import { getAmazonPay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { getQuoteState } from '../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
-import { INITIALIZE_REMOTE_BILLING_FAILED, INITIALIZE_REMOTE_BILLING_REQUESTED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import {
+    AmazonPayOrderReference,
+    AmazonPayScriptLoader,
+    AmazonPayWallet,
+    AmazonPayWalletOptions,
+    AmazonPayWindow,
+} from '../../remote-checkout/methods/amazon-pay';
+import {
+    INITIALIZE_REMOTE_BILLING_FAILED,
+    INITIALIZE_REMOTE_BILLING_REQUESTED,
+    INITIALIZE_REMOTE_PAYMENT_REQUESTED,
+} from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import PaymentMethod from '../payment-method';
 
@@ -32,11 +40,11 @@ describe('AmazonPayPaymentStrategy', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
     let client: CheckoutClient;
     let container: HTMLDivElement;
-    let hostWindow: OffAmazonPayments.HostWindow;
+    let hostWindow: AmazonPayWindow;
     let initializeBillingAction: Observable<Action>;
     let initializePaymentAction: Observable<Action>;
     let orderActionCreator: OrderActionCreator;
-    let orderReference: OffAmazonPayments.Widgets.OrderReference;
+    let orderReference: AmazonPayOrderReference;
     let paymentMethod: PaymentMethod;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AmazonPayScriptLoader;
@@ -46,8 +54,8 @@ describe('AmazonPayPaymentStrategy', () => {
     let updateAddressAction: Observable<Action>;
     let walletSpy: jest.Mock;
 
-    class Wallet implements OffAmazonPayments.Widgets.Wallet {
-        constructor(public options: OffAmazonPayments.Widgets.WalletOptions) {
+    class MockWallet implements AmazonPayWallet {
+        constructor(public options: AmazonPayWalletOptions) {
             walletSpy(options);
 
             options.onReady(orderReference);
@@ -113,7 +121,7 @@ describe('AmazonPayPaymentStrategy', () => {
         document.body.appendChild(container);
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
-            hostWindow.OffAmazonPayments = { Widgets: { Wallet } };
+            hostWindow.OffAmazonPayments = { Widgets: { Wallet: MockWallet } } as any;
 
             onReady();
 

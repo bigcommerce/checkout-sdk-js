@@ -1,29 +1,30 @@
-/// <reference path="./amazon-login.d.ts" />
-/// <reference path="./off-amazon-payments.d.ts" />
-
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
 
+import Login, { LoginOptions } from './amazon-pay-login';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
+import AmazonPayWindow from './amazon-pay-window';
 
 describe('AmazonPayScriptLoader', () => {
     let amazonPayScriptLoader: AmazonPayScriptLoader;
-    let hostWindow: amazon.HostWindow & OffAmazonPayments.HostWindow;
+    let hostWindow: AmazonPayWindow;
     let scriptLoader: ScriptLoader;
     let setClientIdSpy: jest.Mock;
     let setUseCookieSpy: jest.Mock;
 
-    class Login implements amazon.Login {
-        static setClientId(clientId: string): void {
-            setClientIdSpy(clientId);
-        }
+    const MockLogin: Login = {
+        authorize(options: LoginOptions, redirectUrl: string): void {},
 
-        static setUseCookie(useCookie: boolean): void {
+        setClientId(clientId: string): void {
+            setClientIdSpy(clientId);
+        },
+
+        setUseCookie(useCookie: boolean): void {
             setUseCookieSpy(useCookie);
-        }
-    }
+        },
+    };
 
     beforeEach(() => {
         scriptLoader = createScriptLoader();
@@ -34,7 +35,7 @@ describe('AmazonPayScriptLoader', () => {
 
         jest.spyOn(scriptLoader, 'loadScript')
             .mockImplementation(() => {
-                hostWindow.amazon = { Login };
+                hostWindow.amazon = { Login: MockLogin };
 
                 Promise.resolve(new Event('load'));
             });
@@ -104,7 +105,7 @@ describe('AmazonPayScriptLoader', () => {
     });
 
     it('triggers login callback directly if `amazon` module is already loaded', () => {
-        hostWindow.amazon = amazon;
+        hostWindow.amazon = { Login: MockLogin };
 
         amazonPayScriptLoader.loadWidget(getAmazonPay());
 
