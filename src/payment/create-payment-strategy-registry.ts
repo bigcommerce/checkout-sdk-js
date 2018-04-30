@@ -8,7 +8,7 @@ import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
 import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
+import { AfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
 import { WepayRiskClient } from '../remote-checkout/methods/wepay';
@@ -67,7 +67,7 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            createAfterpayScriptLoader()
+            new AfterpayScriptLoader(scriptLoader)
         )
     );
 

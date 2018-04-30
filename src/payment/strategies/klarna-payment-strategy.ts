@@ -1,12 +1,10 @@
-/// <reference path="../../remote-checkout/methods/klarna/klarna-sdk.d.ts" />
-
 import { omit } from 'lodash';
 
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
+import { KlarnaCredit, KlarnaLoadResponse, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import Payment from '../payment';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
@@ -14,7 +12,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-requ
 import PaymentStrategy from './payment-strategy';
 
 export default class KlarnaPaymentStrategy extends PaymentStrategy {
-    private _klarnaSdk?: Klarna.Sdk;
+    private _klarnaCredit?: KlarnaCredit;
     private _unsubscribe?: (() => void);
 
     constructor(
@@ -29,7 +27,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
     initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         return this._klarnaScriptLoader.load()
-            .then(klarnaSdk => { this._klarnaSdk = klarnaSdk; })
+            .then(klarnaCredit => { this._klarnaCredit = klarnaCredit; })
             .then(() => {
                 this._unsubscribe = this._store.subscribe(
                     () => this._loadWidget(options),
@@ -55,7 +53,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         return this._authorize()
-            .then((res: Klarna.AuthorizationResponse) => {
+            .then(res => {
                 const authorizationToken = res.authorization_token;
 
                 if (!payload.payment) {
@@ -77,7 +75,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             ));
     }
 
-    private _loadWidget(options: PaymentInitializeOptions): Promise<Klarna.LoadResponse> {
+    private _loadWidget(options: PaymentInitializeOptions): Promise<KlarnaLoadResponse> {
         if (!options.klarna) {
             throw new InvalidArgumentError('Unable to load widget because "options.klarna" argument is not provided.');
         }
@@ -85,20 +83,20 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
         const { methodId, klarna: { container, onLoad } } = options;
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(({ checkout }) => new Promise<Klarna.LoadResponse>((resolve, reject) => {
+            .then(({ checkout }) => new Promise<KlarnaLoadResponse>((resolve, reject) => {
                 const paymentMethod = checkout.getPaymentMethod(methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to load payment widget because "paymentMethod.clientToken" field is missing.');
                 }
 
-                if (!this._klarnaSdk) {
+                if (!this._klarnaCredit) {
                     throw new NotInitializedError();
                 }
 
-                this._klarnaSdk.init({ client_token: paymentMethod.clientToken });
+                this._klarnaCredit.init({ client_token: paymentMethod.clientToken });
 
-                this._klarnaSdk.load({ container }, response => {
+                this._klarnaCredit.load({ container }, response => {
                     if (onLoad) {
                         onLoad(response);
                     }
@@ -114,11 +112,11 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
     private _authorize(): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (!this._klarnaSdk) {
+            if (!this._klarnaCredit) {
                 throw new NotInitializedError();
             }
 
-            this._klarnaSdk.authorize({}, (res: Klarna.AuthorizationResponse) => {
+            this._klarnaCredit.authorize({}, res => {
                 if (!res.approved) {
                     reject(res);
                 } else {
@@ -131,5 +129,5 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
 export interface KlarnaPaymentInitializeOptions {
     container: string;
-    onLoad?(response: Klarna.LoadResponse): void;
+    onLoad?(response: KlarnaLoadResponse): void;
 }

@@ -1,5 +1,3 @@
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -13,7 +11,13 @@ import { PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import {
+    AmazonPayAddressBook,
+    AmazonPayAddressBookOptions,
+    AmazonPayOrderReference,
+    AmazonPayScriptLoader,
+    AmazonPayWindow,
+} from '../../remote-checkout/methods/amazon-pay';
 import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import { getShippingAddress } from '../internal-shipping-addresses.mock';
@@ -30,16 +34,16 @@ describe('AmazonPayShippingStrategy', () => {
     let addressActionCreator: ShippingAddressActionCreator;
     let addressBookSpy: jest.Mock;
     let container: HTMLDivElement;
-    let hostWindow: OffAmazonPayments.HostWindow;
-    let orderReference: OffAmazonPayments.Widgets.OrderReference;
+    let hostWindow: AmazonPayWindow;
+    let orderReference: AmazonPayOrderReference;
     let store: CheckoutStore;
     let scriptLoader: AmazonPayScriptLoader;
     let optionActionCreator: ShippingOptionActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
 
-    class AddressBook implements OffAmazonPayments.Widgets.AddressBook {
-        constructor(public options: OffAmazonPayments.Widgets.AddressBookOptions) {
+    class MockAddressBook implements AmazonPayAddressBook {
+        constructor(public options: AmazonPayAddressBookOptions) {
             addressBookSpy(options);
 
             options.onReady(orderReference);
@@ -89,7 +93,7 @@ describe('AmazonPayShippingStrategy', () => {
         document.body.appendChild(container);
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
-            hostWindow.OffAmazonPayments = { Widgets: { AddressBook } };
+            hostWindow.OffAmazonPayments = { Widgets: { AddressBook: MockAddressBook } } as any;
 
             onReady();
 

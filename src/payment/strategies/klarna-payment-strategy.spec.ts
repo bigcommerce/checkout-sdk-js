@@ -11,7 +11,7 @@ import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getKlarna, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
+import { KlarnaCredit, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
@@ -22,7 +22,7 @@ import KlarnaPaymentStrategy from './klarna-payment-strategy';
 describe('KlarnaPaymentStrategy', () => {
     let client: CheckoutClient;
     let initializePaymentAction: Observable<Action>;
-    let klarnaSdk: Klarna.Sdk;
+    let klarnaCredit: KlarnaCredit;
     let loadPaymentMethodAction: Observable<Action>;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
@@ -53,7 +53,7 @@ describe('KlarnaPaymentStrategy', () => {
             scriptLoader
         );
 
-        klarnaSdk = {
+        klarnaCredit = {
             authorize: jest.fn((params, callback) => callback({ approved: true, authorization_token: 'bar' })),
             init: jest.fn(() => {}),
             load: jest.fn((options, callback) => callback({ show_form: true })),
@@ -84,7 +84,7 @@ describe('KlarnaPaymentStrategy', () => {
             .mockReturnValue(initializePaymentAction);
 
         jest.spyOn(scriptLoader, 'load')
-            .mockImplementation(() => Promise.resolve(klarnaSdk));
+            .mockImplementation(() => Promise.resolve(klarnaCredit));
 
         jest.spyOn(store, 'subscribe')
             .mockImplementation(() => Promise.resolve());
@@ -107,8 +107,8 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         it('loads widget', () => {
-            expect(klarnaSdk.init).toHaveBeenCalledWith({ client_token: 'foo' });
-            expect(klarnaSdk.load).toHaveBeenCalledTimes(1);
+            expect(klarnaCredit.init).toHaveBeenCalledWith({ client_token: 'foo' });
+            expect(klarnaCredit.load).toHaveBeenCalledTimes(1);
         });
 
         it('triggers callback with response', () => {
@@ -123,7 +123,7 @@ describe('KlarnaPaymentStrategy', () => {
 
         it('authorizes against klarna', () => {
             strategy.execute(payload);
-            expect(klarnaSdk.authorize).toHaveBeenCalledTimes(1);
+            expect(klarnaCredit.authorize).toHaveBeenCalledTimes(1);
         });
 
         it('submits authorization token', async () => {

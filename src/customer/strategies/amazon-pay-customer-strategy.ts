@@ -1,11 +1,8 @@
-/// <reference path="../../remote-checkout/methods/amazon-pay/amazon-login.d.ts" />
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
-
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotImplementedError, StandardError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotImplementedError, NotInitializedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import { AmazonPayLoginButton, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../remote-checkout/methods/amazon-pay';
 import CustomerCredentials from '../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
 
@@ -13,6 +10,7 @@ import CustomerStrategy from './customer-strategy';
 
 export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
+    private _window: AmazonPayWindow;
 
     constructor(
         store: CheckoutStore,
@@ -22,6 +20,8 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store);
+
+        this._window = window;
     }
 
     initialize(options: CustomerInitializeOptions): Promise<CheckoutSelectors> {
@@ -91,14 +91,14 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         );
     }
 
-    private _createSignInButton(options: AmazonPayCustomerInitializeOptions): OffAmazonPayments.Button {
-        if (!this._paymentMethod || !this._paymentMethod.config.merchantId) {
+    private _createSignInButton(options: AmazonPayCustomerInitializeOptions): AmazonPayLoginButton {
+        if (!this._paymentMethod || !this._paymentMethod.config.merchantId || !this._window.OffAmazonPayments) {
             throw new MissingDataError('Unable to create sign-in button because "paymentMethod.config.merchantId" field is missing.');
         }
 
         const { initializationData } = this._paymentMethod;
 
-        return new OffAmazonPayments.Button(options.container, this._paymentMethod.config.merchantId, {
+        return new this._window.OffAmazonPayments.Button(options.container, this._paymentMethod.config.merchantId, {
             color: options.color || 'Gold',
             size: options.size || 'small',
             type: 'PwA',
@@ -113,7 +113,11 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     private _handleAuthorization(options: AuthorizationOptions): void {
         this._remoteCheckoutRequestSender.generateToken()
             .then(({ body }) => {
-                amazon.Login.authorize({
+                if (!this._window.amazon) {
+                    throw new NotInitializedError();
+                }
+
+                this._window.amazon.Login.authorize({
                     popup: false,
                     scope: 'payments:shipping_address payments:billing_address payments:widget profile',
                     state: `${options.tokenPrefix}${body.token}`,
@@ -128,7 +132,7 @@ export interface AmazonPayCustomerInitializeOptions {
     container: string;
     color?: string;
     size?: string;
-    onError?(error: OffAmazonPayments.Widgets.WidgetError | StandardError): void;
+    onError?(error: AmazonPayWidgetError | StandardError): void;
 }
 
 interface AuthorizationOptions {

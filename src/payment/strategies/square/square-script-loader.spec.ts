@@ -18,11 +18,4 @@ describe('SquareScriptLoader', () => {
             '//js.squareup.com/v2/paymentform'
         );
     });
-
-    it('loads widget only once', () => {
-        squareScriptLoader.load();
-        squareScriptLoader.load();
-
-        expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
-    });
 });

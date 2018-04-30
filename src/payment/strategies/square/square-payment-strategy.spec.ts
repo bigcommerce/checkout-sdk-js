@@ -1,4 +1,3 @@
-/// <reference path="./square-form.d.ts" />
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -13,6 +12,7 @@ import { getPaymentMethodsState, getSquare } from '../../../payment/payment-meth
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
 
+import { SquareFormCallbacks } from './square-form';
 import SquarePaymentStrategy from './square-payment-strategy';
 import SquareScriptLoader from './square-script-loader';
 
@@ -25,7 +25,7 @@ describe('SquarePaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
-    let callbacks: Square.FormCallbacks;
+    let callbacks: SquareFormCallbacks;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
 

@@ -1,11 +1,9 @@
-/// <reference path="../../remote-checkout/methods/afterpay/afterpay-sdk.d.ts" />
-
 import { CartActionCreator } from '../../cart';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
+import { AfterpayScriptLoader, AfterpaySdk } from '../../remote-checkout/methods/afterpay';
 import PaymentActionCreator from '../payment-action-creator';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
@@ -14,7 +12,7 @@ import { PaymentInitializeOptions } from '../payment-request-options';
 import PaymentStrategy from './payment-strategy';
 
 export default class AfterpayPaymentStrategy extends PaymentStrategy {
-    private _afterpaySdk?: Afterpay.Sdk;
+    private _afterpaySdk?: AfterpaySdk;
 
     constructor(
         store: CheckoutStore,
