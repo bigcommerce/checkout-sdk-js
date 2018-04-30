@@ -1,4 +1,3 @@
-/// <reference path="./square-form.d.ts" />
 import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -14,10 +13,11 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
+import SquarePaymentForm, { SquareFormElement, SquareFormOptions } from './square-form';
 import SquareScriptLoader from './square-script-loader';
 
 export default class SquarePaymentStrategy extends PaymentStrategy {
-    private _paymentForm?: Square.PaymentForm;
+    private _paymentForm?: SquarePaymentForm;
     private _deferredRequestNonce?: DeferredPromise;
 
     constructor(
@@ -76,7 +76,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         });
     }
 
-    private _getFormOptions(options: PaymentInitializeOptions, deferred: DeferredPromise): Square.FormOptions {
+    private _getFormOptions(options: PaymentInitializeOptions, deferred: DeferredPromise): SquareFormOptions {
         const { square: squareOptions, methodId } = options;
         const { checkout } = this._store.getState();
         const paymentMethod = checkout.getPaymentMethod(methodId);
@@ -132,10 +132,10 @@ export interface DeferredPromise {
 }
 
 export interface SquarePaymentInitializeOptions {
-    cardNumber: Square.FormElement;
-    cvv: Square.FormElement;
-    expirationDate: Square.FormElement;
-    postalCode: Square.FormElement;
+    cardNumber: SquareFormElement;
+    cvv: SquareFormElement;
+    expirationDate: SquareFormElement;
+    postalCode: SquareFormElement;
     inputClass?: string;
     inputStyles?: Array<{ [key: string]: string }>;
 }
