@@ -1,12 +1,14 @@
-/// <reference path="./wepay-risk.d.ts" />
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { NotInitializedError } from '../../../common/error/errors';
 
+import WepayRisk from './wepay-risk';
+import WepayWindow from './wepay-window';
+
 const SCRIPT_SRC = '//static.wepay.com/min/js/risk.1.latest.js';
 
 export default class WepayRiskClient {
-    private _riskClient?: WePay.Risk;
+    private _riskClient?: WepayRisk;
 
     constructor(
         private _scriptLoader: ScriptLoader
@@ -15,7 +17,7 @@ export default class WepayRiskClient {
     initialize(): Promise<WepayRiskClient> {
         return this._scriptLoader
             .loadScript(SCRIPT_SRC)
-            .then(() => this._riskClient = (window as any).WePay.risk as WePay.Risk)
+            .then(() => this._riskClient = (window as WepayWindow).WePay.risk)
             .then(() => this);
     }
 
