@@ -38,9 +38,15 @@
   dependencies:
     tslib "^1.8.0"
 
-"@bigcommerce/tslint-config@git+ssh://git@github.com/bigcommerce/tslint-config.git#1.0.0":
+"@bigcommerce/tslint-config@^1.0.0":
   version "1.0.0"
-  resolved "git+ssh://git@github.com/bigcommerce/tslint-config.git#7684a2be650889f85d57d138998308de756b4d06"
+  resolved "https://registry.yarnpkg.com/@bigcommerce/tslint-config/-/tslint-config-1.0.0.tgz#d0e5abd9d9807c652b307319944157e11abb59c8"
+
+"@bigcommerce/validate-commits@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@bigcommerce/validate-commits/-/validate-commits-2.0.1.tgz#d755c279c2e5cd02c38d0e0f749612d2f1a10055"
+  dependencies:
+    chalk "^2.1.0"
 
 "@microsoft/api-extractor@^5.6.1":
   version "5.6.1"
@@ -5020,12 +5026,6 @@ utils-merge@1.0.1:
 uuid@^3.0.0, uuid@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
-
-"validate-commits@git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.4.0":
-  version "1.4.0"
-  resolved "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#7c8ef0b8a5b7efe7fadee0dd90f8dfa874207291"
-  dependencies:
-    chalk "^2.1.0"
 
 validate-npm-package-license@^3.0.1:
   version "3.0.1"
