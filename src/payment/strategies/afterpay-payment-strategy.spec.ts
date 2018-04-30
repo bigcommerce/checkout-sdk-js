@@ -14,7 +14,7 @@ import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-or
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getAfterpay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import AfterpayScriptLoader from '../../remote-checkout/methods/afterpay';
+import { AfterpayScriptLoader } from '../../remote-checkout/methods/afterpay';
 import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentActionCreator from '../payment-action-creator';
 import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
