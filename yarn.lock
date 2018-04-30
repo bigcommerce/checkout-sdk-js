@@ -42,9 +42,9 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@bigcommerce/tslint-config/-/tslint-config-1.0.0.tgz#d0e5abd9d9807c652b307319944157e11abb59c8"
 
-"@bigcommerce/validate-commits@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@bigcommerce/validate-commits/-/validate-commits-2.0.1.tgz#d755c279c2e5cd02c38d0e0f749612d2f1a10055"
+"@bigcommerce/validate-commits@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@bigcommerce/validate-commits/-/validate-commits-2.0.2.tgz#b94c27ed56d94fe18fcefa677d86458f66fe25af"
   dependencies:
     chalk "^2.1.0"
 
