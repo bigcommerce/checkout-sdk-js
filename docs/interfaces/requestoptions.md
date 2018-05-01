@@ -4,6 +4,29 @@
 
 # Interface: RequestOptions
 
+## Hierarchy
+
+**RequestOptions**
+
+↳  [CustomerRequestOptions](customerrequestoptions.md)
+
+
+
+
+↳  [PaymentRequestOptions](paymentrequestoptions.md)
+
+
+
+
+↳  [ShippingRequestOptions](shippingrequestoptions.md)
+
+
+
+
+
+
+
+
 
 ## Properties
 <a id="timeout"></a>

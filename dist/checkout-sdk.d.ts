@@ -2,6 +2,45 @@ import { createTimeout } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 
+declare interface AmazonPayCustomerInitializeOptions {
+    container: string;
+    color?: string;
+    size?: string;
+    onError?(error: AmazonPayWidgetError | StandardError): void;
+}
+
+declare interface AmazonPayOrderReference {
+    getAmazonBillingAgreementId(): string;
+    getAmazonOrderReferenceId(): string;
+}
+
+declare interface AmazonPayPaymentInitializeOptions {
+    container: string;
+    onError?(error: AmazonPayWidgetError | StandardError): void;
+    onPaymentSelect?(reference: AmazonPayOrderReference): void;
+    onReady?(reference: AmazonPayOrderReference): void;
+}
+
+declare interface AmazonPayShippingInitializeOptions {
+    container: string;
+    onAddressSelect?(reference: AmazonPayOrderReference): void;
+    onError?(error: AmazonPayWidgetError | StandardError): void;
+    onReady?(): void;
+}
+
+declare interface AmazonPayWidgetError extends Error {
+    getErrorCode(): string;
+}
+
+declare interface BraintreePaymentInitializeOptions {
+    threeDSecure?: BraintreeThreeDSecureOptions;
+}
+
+declare interface BraintreeThreeDSecureOptions {
+    addFrame(error: Error | undefined, iframe: HTMLIFrameElement, cancel: () => Promise<VerifyPayload> | undefined): void;
+    removeFrame(): void;
+}
+
 export declare class CheckoutClient {
     private _billingAddressRequestSender;
     private _cartRequestSender;
@@ -44,7 +83,6 @@ declare class CheckoutErrorSelector {
     private _config;
     private _countries;
     private _coupon;
-    private _customer;
     private _customerStrategy;
     private _giftCertificate;
     private _instruments;
@@ -52,7 +90,6 @@ declare class CheckoutErrorSelector {
     private _paymentMethods;
     private _paymentStrategy;
     private _quote;
-    private _shippingAddress;
     private _shippingCountries;
     private _shippingOptions;
     private _shippingStrategy;
@@ -191,21 +228,21 @@ export declare class CheckoutService {
     finalizeOrderIfNeeded(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadPaymentMethod(methodId: string, options: RequestOptions): Promise<CheckoutSelectors>;
-    initializePaymentMethod(methodId: string, gatewayId?: string, options?: any): Promise<CheckoutSelectors>;
-    deinitializePaymentMethod(methodId: string, gatewayId?: string, options?: any): Promise<CheckoutSelectors>;
+    initializePayment(options: PaymentInitializeOptions): Promise<CheckoutSelectors>;
+    deinitializePayment(options: PaymentRequestOptions): Promise<CheckoutSelectors>;
     loadBillingCountries(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadShippingCountries(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadBillingAddressFields(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadShippingAddressFields(options?: RequestOptions): Promise<CheckoutSelectors>;
-    initializeCustomer(options?: any): Promise<CheckoutSelectors>;
-    deinitializeCustomer(options?: any): Promise<CheckoutSelectors>;
-    signInCustomer(credentials: CustomerCredentials, options?: any): Promise<CheckoutSelectors>;
-    signOutCustomer(options?: any): Promise<CheckoutSelectors>;
+    initializeCustomer(options?: CustomerInitializeOptions): Promise<CheckoutSelectors>;
+    deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
+    signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
+    signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
     loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors>;
-    initializeShipping(options?: any): Promise<CheckoutSelectors>;
-    deinitializeShipping(options?: any): Promise<CheckoutSelectors>;
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: any): Promise<CheckoutSelectors>;
-    updateShippingAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors>;
+    initializeShipping(options?: ShippingInitializeOptions): Promise<CheckoutSelectors>;
+    deinitializeShipping(options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    selectShippingOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    updateShippingAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
     updateBillingAddress(address: InternalAddress, options?: RequestOptions): Promise<CheckoutSelectors>;
     applyCoupon(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
     removeCoupon(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
@@ -229,7 +266,6 @@ declare class CheckoutStatusSelector {
     private _config;
     private _countries;
     private _coupon;
-    private _customer;
     private _customerStrategy;
     private _giftCertificate;
     private _instruments;
@@ -237,7 +273,6 @@ declare class CheckoutStatusSelector {
     private _paymentMethods;
     private _paymentStrategy;
     private _quote;
-    private _shippingAddress;
     private _shippingCountries;
     private _shippingOptions;
     private _shippingStrategy;
@@ -296,6 +331,14 @@ declare interface CreditCard {
 declare interface CustomerCredentials {
     email: string;
     password?: string;
+}
+
+declare interface CustomerInitializeOptions extends CustomerRequestOptions {
+    amazon?: AmazonPayCustomerInitializeOptions;
+}
+
+declare interface CustomerRequestOptions extends RequestOptions {
+    methodId?: string;
 }
 
 declare interface DiscountNotification {
@@ -568,6 +611,18 @@ declare interface Item {
     label: string;
 }
 
+declare interface KlarnaLoadResponse {
+    show_form: boolean;
+    error?: {
+        invalid_fields: string[];
+    };
+}
+
+declare interface KlarnaPaymentInitializeOptions {
+    container: string;
+    onLoad?(response: KlarnaLoadResponse): void;
+}
+
 declare interface LanguageConfig {
     defaultTranslations: Translations;
     locale: string;
@@ -666,7 +721,7 @@ declare interface Options {
 }
 
 declare interface OrderRequestBody {
-    payment: Payment;
+    payment?: Payment;
     useStoreCredit?: boolean;
     customerMessage?: string;
 }
@@ -680,9 +735,16 @@ declare interface PasswordRequirements {
 
 declare interface Payment {
     name: string;
-    paymentData?: PaymentInstrument;
+    paymentData: PaymentInstrument;
     gateway?: string;
     source?: string;
+}
+
+declare interface PaymentInitializeOptions extends PaymentRequestOptions {
+    amazon?: AmazonPayPaymentInitializeOptions;
+    braintree?: BraintreePaymentInitializeOptions;
+    klarna?: KlarnaPaymentInitializeOptions;
+    square?: SquarePaymentInitializeOptions;
 }
 
 declare type PaymentInstrument = CreditCard | TokenizedCreditCard | VaultedInstrument;
@@ -710,12 +772,46 @@ declare interface PaymentMethodConfig {
     testMode?: boolean;
 }
 
+declare interface PaymentRequestOptions extends RequestOptions {
+    methodId: string;
+    gatewayId?: string;
+}
+
 declare interface PlaceholderData {
     [key: string]: any;
 }
 
 declare interface RequestOptions {
     timeout?: Timeout;
+}
+
+declare interface ShippingInitializeOptions extends ShippingRequestOptions {
+    amazon?: AmazonPayShippingInitializeOptions;
+}
+
+declare interface ShippingRequestOptions extends RequestOptions {
+    methodId?: string;
+}
+
+declare interface SquareFormElement {
+    elementId: string;
+    placeholder?: string;
+}
+
+declare interface SquarePaymentInitializeOptions {
+    cardNumber: SquareFormElement;
+    cvv: SquareFormElement;
+    expirationDate: SquareFormElement;
+    postalCode: SquareFormElement;
+    inputClass?: string;
+    inputStyles?: Array<{
+        [key: string]: string;
+    }>;
+}
+
+declare class StandardError extends Error {
+    protected type: string;
+    constructor(message?: string);
 }
 
 declare interface TokenizedCreditCard {
@@ -730,4 +826,16 @@ declare interface Translations {
 declare interface VaultedInstrument {
     instrumentId: string;
     cvv?: number;
+}
+
+declare interface VerifyPayload {
+    nonce: string;
+    details: {
+        cardType: string;
+        lastFour: string;
+        lastTwo: string;
+    };
+    description: string;
+    liabilityShiftPossible: boolean;
+    liabilityShifted: boolean;
 }

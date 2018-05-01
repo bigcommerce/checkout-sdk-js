@@ -21,7 +21,7 @@ ___
 
 <a id="payment"></a>
 
-###  payment
+### «Optional» payment
 
 **●  payment**:  *[Payment](payment.md)* 
 

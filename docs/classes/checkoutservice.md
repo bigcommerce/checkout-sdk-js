@@ -14,14 +14,14 @@ TODO: Convert this file into TypeScript properly i.e.: Instrument, InitializePay
 * [applyCoupon](checkoutservice.md#applycoupon)
 * [applyGiftCertificate](checkoutservice.md#applygiftcertificate)
 * [deinitializeCustomer](checkoutservice.md#deinitializecustomer)
-* [deinitializePaymentMethod](checkoutservice.md#deinitializepaymentmethod)
+* [deinitializePayment](checkoutservice.md#deinitializepayment)
 * [deinitializeShipping](checkoutservice.md#deinitializeshipping)
 * [deleteInstrument](checkoutservice.md#deleteinstrument)
 * [finalizeOrder](checkoutservice.md#finalizeorder)
 * [finalizeOrderIfNeeded](checkoutservice.md#finalizeorderifneeded)
 * [getState](checkoutservice.md#getstate)
 * [initializeCustomer](checkoutservice.md#initializecustomer)
-* [initializePaymentMethod](checkoutservice.md#initializepaymentmethod)
+* [initializePayment](checkoutservice.md#initializepayment)
 * [initializeShipping](checkoutservice.md#initializeshipping)
 * [loadBillingAddressFields](checkoutservice.md#loadbillingaddressfields)
 * [loadBillingCountries](checkoutservice.md#loadbillingcountries)
@@ -116,7 +116,7 @@ ___
 
 ###  deinitializeCustomer
 
-► **deinitializeCustomer**(options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **deinitializeCustomer**(options?: *[CustomerRequestOptions](../interfaces/customerrequestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -127,7 +127,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | `any`   |  - |
+| options | [CustomerRequestOptions](../interfaces/customerrequestoptions.md)   |  - |
 
 
 
@@ -141,11 +141,11 @@ ___
 
 ___
 
-<a id="deinitializepaymentmethod"></a>
+<a id="deinitializepayment"></a>
 
-###  deinitializePaymentMethod
+###  deinitializePayment
 
-► **deinitializePaymentMethod**(methodId: *`string`*, gatewayId?: *`undefined`⎮`string`*, options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **deinitializePayment**(options: *[PaymentRequestOptions](../interfaces/paymentrequestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -156,9 +156,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| methodId | `string`   |  - |
-| gatewayId | `undefined`⎮`string`   |  - |
-| options | `any`   |  - |
+| options | [PaymentRequestOptions](../interfaces/paymentrequestoptions.md)   |  - |
 
 
 
@@ -176,7 +174,7 @@ ___
 
 ###  deinitializeShipping
 
-► **deinitializeShipping**(options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **deinitializeShipping**(options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -187,7 +185,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | `any`   |  - |
+| options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md)   |  - |
 
 
 
@@ -317,7 +315,7 @@ ___
 
 ###  initializeCustomer
 
-► **initializeCustomer**(options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **initializeCustomer**(options?: *[CustomerInitializeOptions](../interfaces/customerinitializeoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -328,7 +326,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | `any`   |  - |
+| options | [CustomerInitializeOptions](../interfaces/customerinitializeoptions.md)   |  - |
 
 
 
@@ -342,11 +340,11 @@ ___
 
 ___
 
-<a id="initializepaymentmethod"></a>
+<a id="initializepayment"></a>
 
-###  initializePaymentMethod
+###  initializePayment
 
-► **initializePaymentMethod**(methodId: *`string`*, gatewayId?: *`undefined`⎮`string`*, options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **initializePayment**(options: *[PaymentInitializeOptions](../interfaces/paymentinitializeoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -357,9 +355,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| methodId | `string`   |  - |
-| gatewayId | `undefined`⎮`string`   |  - |
-| options | `any`   |  - |
+| options | [PaymentInitializeOptions](../interfaces/paymentinitializeoptions.md)   |  - |
 
 
 
@@ -377,7 +373,7 @@ ___
 
 ###  initializeShipping
 
-► **initializeShipping**(options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **initializeShipping**(options?: *[ShippingInitializeOptions](../interfaces/shippinginitializeoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -388,7 +384,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | `any`   |  - |
+| options | [ShippingInitializeOptions](../interfaces/shippinginitializeoptions.md)   |  - |
 
 
 
@@ -829,7 +825,7 @@ ___
 
 ###  selectShippingOption
 
-► **selectShippingOption**(addressId: *`string`*, shippingOptionId: *`string`*, options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **selectShippingOption**(addressId: *`string`*, shippingOptionId: *`string`*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -842,7 +838,7 @@ ___
 | ------ | ------ | ------ |
 | addressId | `string`   |  - |
 | shippingOptionId | `string`   |  - |
-| options | `any`   |  - |
+| options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md)   |  - |
 
 
 
@@ -860,7 +856,7 @@ ___
 
 ###  signInCustomer
 
-► **signInCustomer**(credentials: *[CustomerCredentials](../interfaces/customercredentials.md)*, options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **signInCustomer**(credentials: *[CustomerCredentials](../interfaces/customercredentials.md)*, options?: *[CustomerRequestOptions](../interfaces/customerrequestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -872,7 +868,7 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | credentials | [CustomerCredentials](../interfaces/customercredentials.md)   |  - |
-| options | `any`   |  - |
+| options | [CustomerRequestOptions](../interfaces/customerrequestoptions.md)   |  - |
 
 
 
@@ -890,7 +886,7 @@ ___
 
 ###  signOutCustomer
 
-► **signOutCustomer**(options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **signOutCustomer**(options?: *[CustomerRequestOptions](../interfaces/customerrequestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -901,7 +897,7 @@ ___
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| options | `any`   |  - |
+| options | [CustomerRequestOptions](../interfaces/customerrequestoptions.md)   |  - |
 
 
 
@@ -1009,7 +1005,7 @@ ___
 
 ###  updateShippingAddress
 
-► **updateShippingAddress**(address: *[InternalAddress](../interfaces/internaladdress.md)*, options?: *`any`*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+► **updateShippingAddress**(address: *[InternalAddress](../interfaces/internaladdress.md)*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 
 
@@ -1021,7 +1017,7 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | address | [InternalAddress](../interfaces/internaladdress.md)   |  - |
-| options | `any`   |  - |
+| options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md)   |  - |
 
 
 

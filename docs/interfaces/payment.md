@@ -34,7 +34,7 @@ ___
 
 <a id="paymentdata"></a>
 
-### «Optional» paymentData
+###  paymentData
 
 **●  paymentData**:  *[PaymentInstrument](../#paymentinstrument)* 
 
