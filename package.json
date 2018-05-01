@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "private": true,
@@ -59,7 +59,8 @@
     "tslib": "^1.8.0"
   },
   "devDependencies": {
-    "@bigcommerce/tslint-config": "git+ssh://git@github.com/bigcommerce/tslint-config.git#1.0.0",
+    "@bigcommerce/tslint-config": "^1.0.0",
+    "@bigcommerce/validate-commits": "^2.0.2",
     "@microsoft/api-extractor": "^5.6.1",
     "@types/jest": "^21.1.10",
     "@types/node": "^6.0.101",
@@ -76,7 +77,6 @@
     "typescript": "^2.7.1",
     "typescript-eslint-parser": "^9.0.1",
     "uglifyjs-webpack-plugin": "^1.1.1",
-    "validate-commits": "git+ssh://git@github.com/bigcommerce-labs/validate-commits.git#1.4.0",
     "webpack": "^3.8.1",
     "webpack-bundle-analyzer": "^2.9.1",
     "webpack-node-externals": "^1.7.2"

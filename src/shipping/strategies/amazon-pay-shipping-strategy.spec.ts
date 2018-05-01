@@ -1,5 +1,3 @@
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
@@ -14,11 +12,12 @@ import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-acti
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import {
-    RemoteCheckoutAccountInvalidError,
-    RemoteCheckoutSessionError,
-    RemoteCheckoutShippingError,
-} from '../../remote-checkout/errors';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+    AmazonPayAddressBook,
+    AmazonPayAddressBookOptions,
+    AmazonPayOrderReference,
+    AmazonPayScriptLoader,
+    AmazonPayWindow,
+} from '../../remote-checkout/methods/amazon-pay';
 import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import ConsignmentActionCreator from '../consignment-action-creator';
@@ -33,15 +32,15 @@ describe('AmazonPayShippingStrategy', () => {
     let consignmentActionCreator: ConsignmentActionCreator;
     let addressBookSpy: jest.Mock;
     let container: HTMLDivElement;
-    let hostWindow: OffAmazonPayments.HostWindow;
-    let orderReference: OffAmazonPayments.Widgets.OrderReference;
+    let hostWindow: AmazonPayWindow;
+    let orderReference: AmazonPayOrderReference;
     let store: CheckoutStore;
     let scriptLoader: AmazonPayScriptLoader;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
 
-    class AddressBook implements OffAmazonPayments.Widgets.AddressBook {
-        constructor(public options: OffAmazonPayments.Widgets.AddressBookOptions) {
+    class MockAddressBook implements AmazonPayAddressBook {
+        constructor(public options: AmazonPayAddressBookOptions) {
             addressBookSpy(options);
 
             options.onReady(orderReference);
@@ -90,7 +89,7 @@ describe('AmazonPayShippingStrategy', () => {
         document.body.appendChild(container);
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
-            hostWindow.OffAmazonPayments = { Widgets: { AddressBook } };
+            hostWindow.OffAmazonPayments = { Widgets: { AddressBook: MockAddressBook } } as any;
 
             onReady();
 
@@ -109,7 +108,7 @@ describe('AmazonPayShippingStrategy', () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
         expect(scriptLoader.loadWidget).not.toHaveBeenCalledWith(paymentMethod);
     });
@@ -118,13 +117,13 @@ describe('AmazonPayShippingStrategy', () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
 
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
         expect(addressBookSpy).toHaveBeenCalledTimes(1);
 
         await strategy.deinitialize();
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
         expect(addressBookSpy).toHaveBeenCalledTimes(2);
     });
@@ -137,7 +136,7 @@ describe('AmazonPayShippingStrategy', () => {
             .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
 
         try {
-            await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+            await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
         } catch (error) {
             expect(error).toBeInstanceOf(NotInitializedError);
         }
@@ -148,7 +147,7 @@ describe('AmazonPayShippingStrategy', () => {
         const paymentMethod = getAmazonPay();
 
         try {
-            await strategy.initialize({ container: 'addressBook123', methodId: paymentMethod.id });
+            await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook123' } });
         } catch (error) {
             expect(error).toBeInstanceOf(NotInitializedError);
         }
@@ -168,7 +167,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
 
@@ -198,7 +197,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
 
@@ -214,7 +213,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         jest.spyOn(remoteCheckoutActionCreator, 'setCheckoutMeta');
 
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
         document.getElementById('addressBook').dispatchEvent(new CustomEvent('orderReferenceCreate'));
 
@@ -230,16 +229,10 @@ describe('AmazonPayShippingStrategy', () => {
         const onError = jest.fn();
         const element = document.getElementById('addressBook');
 
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id, onError });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook', onError } });
 
         element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
-        expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutSessionError));
-
-        element.dispatchEvent(new CustomEvent('error', { detail: { code: 'InvalidAccountStatus' } }));
-        expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutAccountInvalidError));
-
-        element.dispatchEvent(new CustomEvent('error', { detail: { code: 'InvalidOrderReferenceId' } }));
-        expect(onError).toHaveBeenCalledWith(expect.any(RemoteCheckoutShippingError));
+        expect(onError).toHaveBeenCalledWith(expect.any(Error));
     });
 
     it('passes error to callback if unable to synchronize address data', async () => {
@@ -248,7 +241,7 @@ describe('AmazonPayShippingStrategy', () => {
         const onError = jest.fn();
         const error = new Error();
 
-        await strategy.initialize({ container: 'addressBook', methodId: paymentMethod.id, onError });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook', onError } });
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
             .mockReturnValue(Promise.reject(error));

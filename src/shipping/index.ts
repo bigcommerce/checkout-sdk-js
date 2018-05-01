@@ -1,3 +1,5 @@
+export * from './shipping-request-options';
+
 export { default as createShippingStrategyRegistry } from './create-shipping-strategy-registry';
 
 export { default as Consignment } from './consignment';

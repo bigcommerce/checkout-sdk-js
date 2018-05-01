@@ -37,7 +37,7 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
         });
 
         it('passes the options to submitOrder', async () => {
-            const options = { myOptions: 'option1' };
+            const options = { myOptions: 'option1', methodId: 'testgateway' };
             await noPaymentDataRequiredPaymentStrategy.execute(getOrderRequestBody(), options);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, options);

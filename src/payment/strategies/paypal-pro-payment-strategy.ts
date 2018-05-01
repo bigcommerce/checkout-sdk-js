@@ -5,6 +5,7 @@ import { InvalidArgumentError, MissingDataError } from '../../common/error/error
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import Payment from '../payment';
 import PaymentActionCreator from '../payment-action-creator';
+import { PaymentRequestOptions } from '../payment-request-options';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
@@ -18,7 +19,7 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    execute(payload: OrderRequestBody, options: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         if (this._isPaymentAcknowledged()) {
             return this._store.dispatch(
                 this._orderActionCreator.submitOrder({

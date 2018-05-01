@@ -1,10 +1,8 @@
-/// <reference path="../../remote-checkout/methods/amazon-pay/amazon-login.d.ts" />
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments.d.ts" />
+import 'rxjs/add/observable/of';
 
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import 'rxjs/add/observable/of';
 import { Observable } from 'rxjs/Observable';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
@@ -14,7 +12,14 @@ import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import {
+    AmazonPayLogin,
+    AmazonPayLoginButton,
+    AmazonPayLoginButtonOptions,
+    AmazonPayLoginOptions,
+    AmazonPayScriptLoader,
+    AmazonPayWindow,
+} from '../../remote-checkout/methods/amazon-pay';
 import { SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
 import { getGuestCustomer } from '../internal-customers.mock';
@@ -25,7 +30,7 @@ describe('AmazonPayCustomerStrategy', () => {
     let authorizeSpy: jest.Mock;
     let buttonConstructorSpy: jest.Mock;
     let container: HTMLDivElement;
-    let hostWindow: OffAmazonPayments.HostWindow & amazon.HostWindow;
+    let hostWindow: AmazonPayWindow;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
@@ -34,11 +39,11 @@ describe('AmazonPayCustomerStrategy', () => {
     let strategy: AmazonPayCustomerStrategy;
     let store: CheckoutStore;
 
-    class Button implements OffAmazonPayments.Button {
+    class MockLoginButton implements AmazonPayLoginButton {
         constructor(
             container: string,
             merchantId: string,
-            options: OffAmazonPayments.ButtonOptions
+            options: AmazonPayLoginButtonOptions
         ) {
             const element = document.getElementById(container);
 
@@ -50,12 +55,13 @@ describe('AmazonPayCustomerStrategy', () => {
         }
     }
 
-    // tslint:disable-next-line:max-classes-per-file
-    class Login implements amazon.Login {
-        static authorize(options: amazon.LoginOptions, redirectUrl: string): void {
+    const MockLogin: AmazonPayLogin = {
+        authorize(options: AmazonPayLoginOptions, redirectUrl: string) {
             authorizeSpy(options, redirectUrl);
-        }
-    }
+        },
+        setClientId() {},
+        setUseCookie() {},
+    };
 
     beforeEach(() => {
         authorizeSpy = jest.fn();
@@ -80,8 +86,8 @@ describe('AmazonPayCustomerStrategy', () => {
         document.body.appendChild(container);
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
-            hostWindow.OffAmazonPayments = { Button };
-            hostWindow.amazon = { Login };
+            hostWindow.OffAmazonPayments = { Button: MockLoginButton } as any;
+            hostWindow.amazon = { Login: MockLogin };
 
             onReady();
 
@@ -110,7 +116,7 @@ describe('AmazonPayCustomerStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('amazon');
         expect(store.dispatch).toHaveBeenCalledWith(action);
@@ -123,20 +129,20 @@ describe('AmazonPayCustomerStrategy', () => {
             .mockReturnValue(Observable.of(createErrorAction(LOAD_PAYMENT_METHOD_FAILED, response)));
 
         try {
-            await strategy.initialize({ container: 'login', methodId: 'amazon' });
+            await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
         } catch (error) {
             expect(error).toEqual(response);
         }
     });
 
     it('loads widget script', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(scriptLoader.loadWidget).toHaveBeenCalledWith(paymentMethod, expect.any(Function));
     });
 
     it('creates login button', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(buttonConstructorSpy).toHaveBeenCalledWith('login', paymentMethod.config.merchantId, {
             authorization: expect.any(Function),
@@ -155,26 +161,26 @@ describe('AmazonPayCustomerStrategy', () => {
             .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
 
         try {
-            await strategy.initialize({ container: 'login', methodId: 'amazon' });
+            await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
         } catch (error) {
             expect(error).toBeInstanceOf(MissingDataError);
         }
     });
 
     it('only initializes widget once until deinitialization', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(buttonConstructorSpy).toHaveBeenCalledTimes(1);
 
         await strategy.deinitialize();
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(buttonConstructorSpy).toHaveBeenCalledTimes(2);
     });
 
     it('generates request token', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
@@ -183,7 +189,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('tracks authorization event', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
@@ -194,7 +200,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('sends authorization request', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         document.getElementById('login')
             .dispatchEvent(new CustomEvent('authorize'));
@@ -243,7 +249,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('throws error if trying to sign in programmatically', async () => {
-        await strategy.initialize({ container: 'login', methodId: 'amazon' });
+        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
         expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrow();
     });

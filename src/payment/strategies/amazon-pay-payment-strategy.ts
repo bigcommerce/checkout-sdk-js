@@ -1,21 +1,30 @@
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 import { noop, omit } from 'lodash';
 
-import { isAddressEqual, InternalAddress } from '../../address';
+import { isAddressEqual } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { InvalidArgumentError, NotInitializedError, RequestError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError, StandardError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import { RemoteCheckoutPaymentError, RemoteCheckoutSessionError, RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
+import {
+    AmazonPayOrderReference,
+    AmazonPayScriptLoader,
+    AmazonPayWallet,
+    AmazonPayWalletOptions,
+    AmazonPayWidgetError,
+    AmazonPayWindow,
+} from '../../remote-checkout/methods/amazon-pay';
 import Payment from '../payment';
 import PaymentMethod from '../payment-method';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
 import PaymentStrategy from './payment-strategy';
 
 export default class AmazonPayPaymentStrategy extends PaymentStrategy {
-    private _walletOptions?: InitializeWidgetOptions;
+    private _paymentMethod?: PaymentMethod;
+    private _walletOptions?: AmazonPayPaymentInitializeOptions;
+    private _window: AmazonPayWindow;
 
     constructor(
         store: CheckoutStore,
@@ -25,30 +34,44 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store);
+
+        this._window = window;
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
         }
 
-        this._walletOptions = options;
-        this._paymentMethod = options.paymentMethod;
+        const { amazon: amazonOptions, methodId } = options;
+        const { checkout } = this._store.getState();
+        const paymentMethod = checkout.getPaymentMethod(methodId);
+
+        if (!amazonOptions) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.amazon" argument is not provided.');
+        }
+
+        if (!paymentMethod) {
+            throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
+        }
+
+        this._walletOptions = amazonOptions;
+        this._paymentMethod = paymentMethod;
 
         return new Promise((resolve, reject) => {
             const onReady = () => {
-                this._createWallet(options)
+                this._createWallet(amazonOptions)
                     .then(resolve)
                     .catch(reject);
             };
 
-            this._scriptLoader.loadWidget(options.paymentMethod, onReady)
+            this._scriptLoader.loadWidget(paymentMethod, onReady)
                 .catch(reject);
         })
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -58,7 +81,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return super.deinitialize(options);
     }
 
-    execute(payload: OrderRequestBody, options?: any): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const { useStoreCredit = false } = payload;
         const referenceId = this._getOrderReferenceId();
 
@@ -100,30 +123,32 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return amazon.referenceId;
     }
 
-    private _createWallet(options: InitializeWidgetOptions): Promise<OffAmazonPayments.Widgets.Wallet> {
+    private _createWallet(options: AmazonPayPaymentInitializeOptions): Promise<AmazonPayWallet> {
         return new Promise((resolve, reject) => {
             const { container, onError = noop, onPaymentSelect = noop, onReady = noop } = options;
             const referenceId = this._getOrderReferenceId();
             const merchantId = this._getMerchantId();
 
-            if (!merchantId || !document.getElementById(container)) {
+            if (!merchantId || !document.getElementById(container) || !this._window.OffAmazonPayments) {
                 return reject(new NotInitializedError('Unable to create AmazonPay Wallet widget without valid merchant ID or container ID.'));
             }
 
-            const walletOptions: OffAmazonPayments.Widgets.WalletOptions = {
+            const walletOptions: AmazonPayWalletOptions = {
                 design: { designMode: 'responsive' },
                 scope: 'payments:billing_address payments:shipping_address payments:widget profile',
                 sellerId: merchantId,
                 onError: error => {
                     reject(error);
-                    this._handleError(error, onError);
+                    onError(error);
                 },
                 onPaymentSelect: orderReference => {
-                    this._handlePaymentSelect(orderReference, onPaymentSelect);
+                    this._synchronizeBillingAddress()
+                        .then(() => onPaymentSelect(orderReference))
+                        .catch(onError);
                 },
-                onReady: () => {
+                onReady: orderReference => {
                     resolve();
-                    onReady();
+                    onReady(orderReference);
                 },
             };
 
@@ -143,7 +168,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 };
             }
 
-            const widget = new OffAmazonPayments.Widgets.Wallet(walletOptions);
+            const widget = new this._window.OffAmazonPayments.Widgets.Wallet(walletOptions);
 
             widget.bind(container);
 
@@ -179,29 +204,11 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 );
             });
     }
-
-    private _handlePaymentSelect(orderReference: OffAmazonPayments.Widgets.OrderReference, callback: (address?: InternalAddress) => void): void {
-        this._synchronizeBillingAddress()
-            .then(({ checkout }: CheckoutSelectors) => callback(checkout.getBillingAddress()));
-    }
-
-    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
-        if (error.getErrorCode() === 'BuyerSessionExpired') {
-            callback(new RemoteCheckoutSessionError(error));
-        } else {
-            callback(new RemoteCheckoutPaymentError(error));
-        }
-    }
 }
 
-export interface InitializeOptions extends InitializeWidgetOptions {
-    paymentMethod: PaymentMethod;
-}
-
-export interface InitializeWidgetOptions {
+export interface AmazonPayPaymentInitializeOptions {
     container: string;
-    amazonOrderReferenceId?: string;
-    onPaymentSelect?(address?: InternalAddress): void;
-    onError?(error: Error): void;
-    onReady?(): void;
+    onError?(error: AmazonPayWidgetError | StandardError): void;
+    onPaymentSelect?(reference: AmazonPayOrderReference): void;
+    onReady?(reference: AmazonPayOrderReference): void;
 }

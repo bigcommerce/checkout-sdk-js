@@ -1,3 +1,5 @@
+export * from './customer-request-options';
+
 export { default as InternalCustomer } from './internal-customer';
 export { default as Customer } from './customer';
 

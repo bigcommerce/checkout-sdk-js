@@ -1,6 +1,6 @@
 export default class CancellablePromise<T> {
     promise: Promise<T>;
-    cancel!: (reason?: any) => any;
+    cancel!: (reason?: any) => void;
 
     constructor(promise: Promise<T>) {
         const cancellable = new Promise<T>((resolve, reject) => {

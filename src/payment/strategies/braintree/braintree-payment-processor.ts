@@ -4,22 +4,21 @@ import { NotInitializedError } from '../../../common/error/errors';
 import { CancellablePromise } from '../../../common/utility';
 import { PaymentMethodCancelledError } from '../../errors';
 import { CreditCard, TokenizedCreditCard } from '../../payment';
-import PaymentMethod from '../../payment-method';
-import { InitializeOptions } from '../payment-strategy';
 
-import { Braintree } from './braintree';
+import * as Braintree from './braintree';
+import { BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 
 export default class BraintreePaymentProcessor {
-    private _modalHandler?: ModalHandler;
+    private _threeDSecureOptions?: BraintreeThreeDSecureOptions;
 
     constructor(
         private _braintreeSDKCreator: BraintreeSDKCreator
     ) {}
 
-    initialize(clientToken: string, options: BraintreeCreditCardInitializeOptions): void {
+    initialize(clientToken: string, options?: BraintreePaymentInitializeOptions): void {
         this._braintreeSDKCreator.initialize(clientToken);
-        this._modalHandler = options.modalHandler;
+        this._threeDSecureOptions = options && options.threeDSecure;
     }
 
     preloadPaypal(): Promise<Braintree.Paypal> {
@@ -51,32 +50,36 @@ export default class BraintreePaymentProcessor {
     }
 
     verifyCard(payment: Payment, billingAddress: InternalAddress, amount: number): Promise<TokenizedCreditCard> {
-        if (!this._modalHandler) {
+        if (!this._threeDSecureOptions) {
             throw new NotInitializedError('Unable to verify card because the choosen payment method has not been initialized.');
         }
 
-        const { onRemoveFrame, ...modalHandler} = this._modalHandler;
+        const { addFrame, removeFrame } = this._threeDSecureOptions;
 
         return Promise.all([
             this.tokenizeCard(payment, billingAddress),
             this._braintreeSDKCreator.get3DS(),
         ]).then(([paymentData, threeDSecure]) => {
             const { nonce } = paymentData;
+            const cancelVerifyCard = () => threeDSecure.cancelVerifyCard()
+                .then(response => {
+                    verification.cancel(new PaymentMethodCancelledError());
 
-            const verification = threeDSecure.verifyCard({
-                ...modalHandler,
-                amount,
-                nonce,
-            });
+                    return response;
+                });
 
-            const { promise, cancel } = new CancellablePromise(verification);
+            const verification = new CancellablePromise(
+                threeDSecure.verifyCard({
+                    addFrame: (error, iframe) => {
+                        addFrame(error, iframe, cancelVerifyCard);
+                    },
+                    amount,
+                    nonce,
+                    removeFrame,
+                })
+            );
 
-            onRemoveFrame(() => {
-                threeDSecure.cancelVerifyCard()
-                    .then(() => cancel(new PaymentMethodCancelledError()));
-            });
-
-            return promise;
+            return verification.promise;
         });
     }
 
@@ -118,15 +121,4 @@ export default class BraintreePaymentProcessor {
             method: 'post',
         };
     }
-}
-
-export interface BraintreeCreditCardInitializeOptions extends InitializeOptions {
-    paymentMethod: PaymentMethod;
-    modalHandler?: ModalHandler;
-}
-
-export interface ModalHandler {
-    addFrame(): void;
-    removeFrame(): void;
-    onRemoveFrame(callback: () => void): void;
 }

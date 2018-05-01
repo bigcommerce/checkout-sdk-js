@@ -8,7 +8,7 @@ import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
 import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { createAfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
+import { AfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
 import { WepayRiskClient } from '../remote-checkout/methods/wepay';
@@ -42,7 +42,11 @@ export default function createPaymentStrategyRegistry(
     client: CheckoutClient,
     paymentClient: any
 ) {
-    const registry = new PaymentStrategyRegistry(store.getState().checkout.getConfig());
+    const config = store.getState().checkout.getConfig();
+    const registry = new PaymentStrategyRegistry({
+        clientSidePaymentProviders: config && config.clientSidePaymentProviders,
+        defaultToken: 'creditcard',
+    });
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const orderActionCreator = new OrderActionCreator(client);
@@ -63,7 +67,7 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            createAfterpayScriptLoader()
+            new AfterpayScriptLoader(scriptLoader)
         )
     );
 

@@ -1,25 +1,21 @@
-/// <reference path="../../remote-checkout/methods/amazon-pay/off-amazon-payments-widgets.d.ts" />
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
-import { isAddressEqual, mapFromInternalAddress, Address, InternalAddress } from '../../address';
+import { isAddressEqual, mapFromInternalAddress, Address } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { MissingDataError, NotInitializedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import {
-    RemoteCheckoutAccountInvalidError,
-    RemoteCheckoutSessionError,
-    RemoteCheckoutShippingError,
-    RemoteCheckoutSynchronizationError,
-} from '../../remote-checkout/errors';
-import { AmazonPayScriptLoader } from '../../remote-checkout/methods/amazon-pay';
+import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
+import { AmazonPayAddressBook, AmazonPayOrderReference, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../remote-checkout/methods/amazon-pay';
 import ConsignmentActionCreator from '../consignment-action-creator';
+import { ShippingInitializeOptions, ShippingRequestOptions } from '../shipping-request-options';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 
 import ShippingStrategy from './shipping-strategy';
 
 export default class AmazonPayShippingStrategy extends ShippingStrategy {
     private _paymentMethod?: PaymentMethod;
+    private _window: AmazonPayWindow;
 
     constructor(
         store: CheckoutStore,
@@ -29,23 +25,31 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         private _scriptLoader: AmazonPayScriptLoader
     ) {
         super(store);
+
+        this._window = window;
     }
 
-    initialize(options: InitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: ShippingInitializeOptions): Promise<CheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
+        const { amazon: amazonOptions, methodId } = options;
+
+        if (!amazonOptions || !methodId) {
+            throw new InvalidArgumentError('Unable to proceed because "options.amazon" argument is not provided.');
+        }
+
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(({ checkout }) => new Promise((resolve, reject) => {
-                this._paymentMethod = checkout.getPaymentMethod(options.methodId);
+                this._paymentMethod = checkout.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
-                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
+                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
                 }
 
                 const onReady = () => {
-                    this._createAddressBook(options)
+                    this._createAddressBook(amazonOptions)
                         .then(resolve)
                         .catch(reject);
                 };
@@ -56,7 +60,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options?: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -66,7 +70,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return super.deinitialize(options);
     }
 
-    updateAddress(address: Address, options?: any): Promise<CheckoutSelectors> {
+    updateAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
@@ -76,27 +80,29 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         );
     }
 
-    private _createAddressBook(options: InitializeWidgetOptions): Promise<OffAmazonPayments.Widgets.AddressBook> {
+    private _createAddressBook(options: AmazonPayShippingInitializeOptions): Promise<AmazonPayAddressBook> {
         return new Promise((resolve, reject) => {
             const { container, onAddressSelect = () => {}, onError = () => {}, onReady = () => {} } = options;
             const merchantId = this._paymentMethod && this._paymentMethod.config.merchantId;
 
-            if (!merchantId || !document.getElementById(container)) {
+            if (!merchantId || !document.getElementById(container) || !this._window.OffAmazonPayments) {
                 return reject(new NotInitializedError('Unable to create AmazonPay AddressBook widget without valid merchant ID or container ID.'));
             }
 
-            const widget = new OffAmazonPayments.Widgets.AddressBook({
+            const widget = new this._window.OffAmazonPayments.Widgets.AddressBook({
                 design: {
                     designMode: 'responsive',
                 },
                 scope: 'payments:billing_address payments:shipping_address payments:widget profile',
                 sellerId: merchantId,
                 onAddressSelect: orderReference => {
-                    this._handleAddressSelect(orderReference, onAddressSelect, onError);
+                    this._synchronizeShippingAddress()
+                        .then(() => onAddressSelect(orderReference))
+                        .catch(onError);
                 },
                 onError: error => {
                     reject(error);
-                    this._handleError(error, onError);
+                    onError(error);
                 },
                 onOrderReferenceCreate: orderReference => {
                     this._handleOrderReferenceCreate(orderReference);
@@ -154,25 +160,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             ));
     }
 
-    private _handleAddressSelect(
-        orderReference: OffAmazonPayments.Widgets.OrderReference,
-        callback: (address: InternalAddress) => void,
-        errorCallback: (error: Error) => void
-    ): void {
-        this._synchronizeShippingAddress()
-            .then(({ checkout }: CheckoutSelectors) => {
-                const address = checkout.getShippingAddress();
-
-                if (address) {
-                    callback(address);
-                }
-            })
-            .catch((error: Error) => {
-                errorCallback(error);
-            });
-    }
-
-    private _handleOrderReferenceCreate(orderReference: OffAmazonPayments.Widgets.OrderReference): void {
+    private _handleOrderReferenceCreate(orderReference: AmazonPayOrderReference): void {
         if (!this._paymentMethod) {
             throw new NotInitializedError();
         }
@@ -183,25 +171,11 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             })
         );
     }
-
-    private _handleError(error: OffAmazonPayments.Widgets.WidgetError, callback: (error: Error) => void): void {
-        if (error.getErrorCode() === 'BuyerSessionExpired') {
-            callback(new RemoteCheckoutSessionError(error));
-        } else if (error.getErrorCode() === 'InvalidAccountStatus') {
-            callback(new RemoteCheckoutAccountInvalidError(error));
-        } else {
-            callback(new RemoteCheckoutShippingError(error));
-        }
-    }
 }
 
-export interface InitializeOptions extends InitializeWidgetOptions {
-    methodId: string;
-}
-
-export interface InitializeWidgetOptions {
+export interface AmazonPayShippingInitializeOptions {
     container: string;
-    onAddressSelect?(address: InternalAddress): void;
-    onError?(error: Error): void;
+    onAddressSelect?(reference: AmazonPayOrderReference): void;
+    onError?(error: AmazonPayWidgetError | StandardError): void;
     onReady?(): void;
 }

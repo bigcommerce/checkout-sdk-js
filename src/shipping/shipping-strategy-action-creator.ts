@@ -5,6 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { Address } from '../address';
 import { Registry } from '../common/registry';
 
+import { ShippingInitializeOptions, ShippingRequestOptions } from './shipping-request-options';
 import {
     ShippingStrategyActionType,
     ShippingStrategyDeinitializeAction,
@@ -19,10 +20,10 @@ export default class ShippingStrategyActionCreator {
         private _strategyRegistry: Registry<ShippingStrategy>
     ) {}
 
-    updateAddress(address: Address, options: ShippingActionOptions = {}): ThunkAction<ShippingStrategyUpdateAddressAction> {
+    updateAddress(address: Address, options?: ShippingRequestOptions): ThunkAction<ShippingStrategyUpdateAddressAction> {
         return store => Observable.create((observer: Observer<ShippingStrategyUpdateAddressAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
-            const methodId = options.methodId || remote.provider;
+            const methodId = options && options.methodId || remote.provider;
 
             observer.next(createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId }));
 
@@ -38,10 +39,10 @@ export default class ShippingStrategyActionCreator {
         });
     }
 
-    selectOption(shippingOptionId: string, options: ShippingActionOptions = {}): ThunkAction<ShippingStrategySelectOptionAction> {
+    selectOption(shippingOptionId: string, options?: ShippingRequestOptions): ThunkAction<ShippingStrategySelectOptionAction> {
         return store => Observable.create((observer: Observer<ShippingStrategySelectOptionAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
-            const methodId = options.methodId || remote.provider;
+            const methodId = options && options.methodId || remote.provider;
 
             observer.next(createAction(ShippingStrategyActionType.SelectOptionRequested, undefined, { methodId }));
 
@@ -57,15 +58,16 @@ export default class ShippingStrategyActionCreator {
         });
     }
 
-    initialize(options: ShippingActionOptions = {}): ThunkAction<ShippingStrategyInitializeAction> {
+    initialize(options?: ShippingInitializeOptions): ThunkAction<ShippingStrategyInitializeAction> {
         return store => Observable.create((observer: Observer<ShippingStrategyInitializeAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
-            const methodId = options.methodId || remote.provider;
+            const methodId = options && options.methodId || remote.provider;
+            const mergedOptions = { ...options, methodId };
 
             observer.next(createAction(ShippingStrategyActionType.InitializeRequested, undefined, { methodId }));
 
             this._strategyRegistry.get(methodId)
-                .initialize({ ...options, methodId })
+                .initialize(mergedOptions)
                 .then(() => {
                     observer.next(createAction(ShippingStrategyActionType.InitializeSucceeded, undefined, { methodId }));
                     observer.complete();
@@ -76,10 +78,10 @@ export default class ShippingStrategyActionCreator {
         });
     }
 
-    deinitialize(options: ShippingActionOptions = {}): ThunkAction<ShippingStrategyDeinitializeAction> {
+    deinitialize(options?: ShippingRequestOptions): ThunkAction<ShippingStrategyDeinitializeAction> {
         return store => Observable.create((observer: Observer<ShippingStrategyDeinitializeAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
-            const methodId = options.methodId || remote.provider;
+            const methodId = options && options.methodId || remote.provider;
 
             observer.next(createAction(ShippingStrategyActionType.DeinitializeRequested, undefined, { methodId }));
 
@@ -94,8 +96,4 @@ export default class ShippingStrategyActionCreator {
                 });
         });
     }
-}
-
-export interface ShippingActionOptions {
-    methodId?: string;
 }

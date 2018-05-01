@@ -18,11 +18,4 @@ describe('KlarnaScriptLoader', () => {
             '//credit.klarnacdn.net/lib/v1/api.js'
         );
     });
-
-    it('loads widget only once', () => {
-        klarnaScriptLoader.load();
-        klarnaScriptLoader.load();
-
-        expect(scriptLoader.loadScript).toHaveBeenCalledTimes(1);
-    });
 });

@@ -86,7 +86,7 @@ describe('WepayPaymentStrategy', () => {
         it('should initialize the WePay risk client', () => {
             jest.spyOn(wepayRiskClient, 'initialize');
 
-            strategy.initialize({ paymentMethod });
+            strategy.initialize({ methodId: paymentMethod.id });
 
             expect(wepayRiskClient.initialize).toHaveBeenCalled();
         });
@@ -94,7 +94,7 @@ describe('WepayPaymentStrategy', () => {
 
     describe('#execute', () => {
         it('should submit the payment with the risk token', async () => {
-            await strategy.initialize({ paymentMethod });
+            await strategy.initialize({ methodId: paymentMethod.id });
             await strategy.execute(payload);
 
             const paymentWithToken = { ...payload.payment };

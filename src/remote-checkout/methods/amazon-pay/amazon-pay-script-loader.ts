@@ -1,12 +1,11 @@
-/// <reference path="./amazon-login.d.ts" />
-/// <reference path="./off-amazon-payments.d.ts" />
-
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethod } from '../../../payment';
 
+import AmazonPayWindow from './amazon-pay-window';
+
 export default class AmazonPayScriptLoader {
-    private _window: amazon.HostWindow & OffAmazonPayments.HostWindow;
+    private _window: AmazonPayWindow;
 
     constructor(
         private _scriptLoader: ScriptLoader
@@ -35,8 +34,12 @@ export default class AmazonPayScriptLoader {
 
     private _configureWidget(method: PaymentMethod, onPaymentReady?: () => void): void {
         const onLoginReady = () => {
-            amazon.Login.setClientId(method.initializationData.clientId);
-            amazon.Login.setUseCookie(true);
+            if (!this._window.amazon) {
+                return;
+            }
+
+            this._window.amazon.Login.setClientId(method.initializationData.clientId);
+            this._window.amazon.Login.setUseCookie(true);
         };
 
         if (this._window.amazon && this._window.amazon.Login) {

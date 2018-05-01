@@ -1,6 +1,7 @@
 import { Address } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import { ShippingActionOptions } from '../shipping-strategy-action-creator';
+
+import { ShippingRequestOptions } from '../shipping-request-options';
 
 export default abstract class ShippingStrategy {
     protected _isInitialized = false;
@@ -9,17 +10,17 @@ export default abstract class ShippingStrategy {
         protected _store: CheckoutStore
     ) {}
 
-    abstract updateAddress(address: Address, options?: ShippingActionOptions): Promise<CheckoutSelectors>;
+    abstract updateAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
 
-    abstract selectOption(optionId: string, options?: ShippingActionOptions): Promise<CheckoutSelectors>;
+    abstract selectOption(optionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
 
-    initialize(options?: any): Promise<CheckoutSelectors> {
+    initialize(options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         this._isInitialized = true;
 
         return Promise.resolve(this._store.getState());
     }
 
-    deinitialize(options?: any): Promise<CheckoutSelectors> {
+    deinitialize(options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         this._isInitialized = false;
 
         return Promise.resolve(this._store.getState());

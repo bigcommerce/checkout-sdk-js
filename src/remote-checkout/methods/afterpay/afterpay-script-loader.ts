@@ -1,8 +1,9 @@
-/// <reference path="./afterpay-sdk.d.ts" />
-
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethod } from '../../../payment';
+
+import AfterpaySdk from './afterpay-sdk';
+import AfterpayWindow from './afterpay-window';
 
 const SCRIPT_PROD = '//www.secure-afterpay.com.au/afterpay-async.js';
 const SCRIPT_SANDBOX = '//www-sandbox.secure-afterpay.com.au/afterpay-async.js';
@@ -17,11 +18,11 @@ export default class AfterpayScriptLoader {
      * Loads the appropriate Afterpay SDK depending on the payment method data.
      * @param method the payment method data
      */
-    load(method: PaymentMethod): Promise<Afterpay.Sdk> {
+    load(method: PaymentMethod): Promise<AfterpaySdk> {
         const testMode = method.config.testMode;
         const scriptURI = testMode ? SCRIPT_SANDBOX : SCRIPT_PROD;
 
         return this._scriptLoader.loadScript(scriptURI)
-            .then(() => (window as any).AfterPay as Afterpay.Sdk);
+            .then(() => (window as AfterpayWindow).AfterPay);
     }
 }

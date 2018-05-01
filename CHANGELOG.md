@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.19.0"></a>
+# [0.19.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.18.0...v0.19.0) (2018-05-01)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-2926 Send Square payment data ([476588f](https://github.com/bigcommerce/checkout-sdk-js/commit/476588f))
+* **payment:** PAYMENTS-2122 Ensure instrument Id is accessed via the meta object ([76aaa89](https://github.com/bigcommerce/checkout-sdk-js/commit/76aaa89))
+
+
+### Code Refactoring
+
+* **payment:** CHECKOUT-2951 Define method-specific options for payment initialization. ([80e3c72](https://github.com/bigcommerce/checkout-sdk-js/commit/80e3c72))
+* **payment:** CHECKOUT-2951 Pass methodId and gatewayId as options ([fda9e1c](https://github.com/bigcommerce/checkout-sdk-js/commit/fda9e1c))
+* **payment:** CHECKOUT-2951 Rename initializePayment and deinitializePayment methods ([d9626cd](https://github.com/bigcommerce/checkout-sdk-js/commit/d9626cd))
+* **payment:** CHECKOUT-2951 Update Braintree initialization options ([0b46130](https://github.com/bigcommerce/checkout-sdk-js/commit/0b46130))
+* **payment:** CHECKOUT-2951 Update Klarna initialization options ([802fa61](https://github.com/bigcommerce/checkout-sdk-js/commit/802fa61))
+* **payment:** CHECKOUT-2951 Update Square payment initialization params ([29c3855](https://github.com/bigcommerce/checkout-sdk-js/commit/29c3855))
+* **shipping:** CHECKOUT-2951 Define method-specific options for shipping initialization. ([1ab385d](https://github.com/bigcommerce/checkout-sdk-js/commit/1ab385d))
+* **shopper:** CHECKOUT-2951 Define method-specific options for customer initialization. ([2ac93df](https://github.com/bigcommerce/checkout-sdk-js/commit/2ac93df))
+
+
+### BREAKING CHANGES
+
+* **payment:** `loadCallback` for Klarna Payment has been renamed to
+`onLoad`.
+* **payment:** `modalHanlder` for Braintree initialization has been
+renamed to `threeDSecure`.
+* **payment:** Update initialize options for Square payment.
+`widgetConfig` key is no longer required. It is now flattened with
+`SquarePaymentInitializeOptions`.
+* **payment:** Rename `initializePaymentMethod` to
+`initializePayment`, and `deinitializePaymentMethod` to
+`deinitializePayment`.
+* **payment:** Pass `methodId` and `gatewayId` as an object rather
+than individual parameters when calling `initializePaymentMethod` and
+`deinitializePaymentMethod`.
+* **payment:** Method-specific options need to be passed in under a
+key named after the method when calling `initializePaymentMethod`.
+* **shipping:** Method-specific options need to be passed in under a
+key named after the method when calling `initializeShipping`.
+* **shopper:** Method-specific options need to be passed in under a
+key named after the method when calling `initalizeCustomer`.
+
+
+
 <a name="0.18.0"></a>
 # [0.18.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.17.2...v0.18.0) (2018-04-12)
 
