@@ -3,6 +3,6 @@ export default interface AfterpaySdk {
     display(options: AfterpayDisplayOptions): void;
 }
 
-interface AfterpayDisplayOptions {
+export interface AfterpayDisplayOptions {
     token: string;
 }
