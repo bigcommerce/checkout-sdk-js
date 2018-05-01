@@ -1,7 +1,7 @@
 import { Address } from '../address';
 import { Cart } from '../cart';
 import { Coupon, GiftCertificate } from '../coupon';
-import { Shopper } from '../customer';
+import { Customer } from '../customer';
 import { Discount } from '../discount';
 import { Consignment } from '../shipping';
 import { Tax } from '../tax';
@@ -9,6 +9,8 @@ import { Tax } from '../tax';
 export default interface Checkout {
     id: string;
     cart: Cart;
+    customer: Customer;
+    customerMessage: string;
     billingAddress: Address;
     consignments: Consignment[];
     taxes: Tax[];
@@ -23,5 +25,4 @@ export default interface Checkout {
     balanceDue: number;
     createdTime: string;
     updatedTime: string;
-    shopper?: Shopper;
 }

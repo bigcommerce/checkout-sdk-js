@@ -10,14 +10,14 @@ export default class CouponRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    applyCoupon(couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
-        const url = '/internalapi/v1/checkout/coupon';
+    applyCoupon(checkoutId: string, couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
+        const url = `/api/storefront/checkouts/${checkoutId}/coupons`;
 
         return this._requestSender.post(url, { timeout, body: { couponCode } });
     }
 
-    removeCoupon(couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
-        const url = `/internalapi/v1/checkout/coupon/${couponCode}`;
+    removeCoupon(checkoutId: string, couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
+        const url = `/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`;
 
         return this._requestSender.delete(url, { timeout });
     }

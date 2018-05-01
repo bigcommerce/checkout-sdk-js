@@ -347,6 +347,16 @@ export function getPaymentMethods() {
     ];
 }
 
+export function getPaymentMethodsMeta() {
+    return {
+        request: {
+            geoCountryCode: 'AU',
+            deviceSessionId: 'a37230e9a8e4ea2d7765e2f3e19f7b1d',
+            sessionHash: 'cfbbbac580a920b395571fe086db1e06',
+        },
+    };
+}
+
 export function getPaymentMethodResponseBody() {
     return {
         data: {
@@ -361,13 +371,13 @@ export function getPaymentMethodsResponseBody() {
         data: {
             paymentMethods: getPaymentMethods(),
         },
-        meta: {},
+        meta: getPaymentMethodsMeta(),
     };
 }
 
 export function getPaymentMethodsState() {
     return {
         data: getPaymentMethods(),
-        meta: {},
+        meta: getPaymentMethodsMeta(),
     };
 }

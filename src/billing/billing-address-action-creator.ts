@@ -1,33 +1,56 @@
-/**
- * @todo Convert this file into TypeScript properly
- */
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
+import { Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { InternalAddress } from '../address';
-import { CheckoutClient } from '../checkout';
+import { Address } from '../address';
+import { Checkout, CheckoutClient } from '../checkout';
+import CheckoutSelectors from '../checkout/checkout-selectors';
+import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import * as actionTypes from './billing-address-action-types';
+import { BillingAddressAction, BillingAddressActionTypes } from './billing-address-actions';
 
 export default class BillingAddressActionCreator {
     constructor(
         private _checkoutClient: CheckoutClient
     ) {}
 
-    updateAddress(address: InternalAddress, options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.UPDATE_BILLING_ADDRESS_REQUESTED));
+    updateAddress(address: Address, options?: RequestOptions): ThunkAction<BillingAddressAction, CheckoutSelectors> {
+        return store => Observable.create((observer: Observer<BillingAddressAction>) => {
+            observer.next(createAction(BillingAddressActionTypes.UpdateBillingAddressRequested));
 
-            this._checkoutClient.updateBillingAddress(address, options)
+            this._requestBillingAddressUpdate(store, address, options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED, body.data));
+                    observer.next(createAction(BillingAddressActionTypes.UpdateBillingAddressSucceeded, body));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.UPDATE_BILLING_ADDRESS_FAILED, response));
+                    observer.error(createErrorAction(BillingAddressActionTypes.UpdateBillingAddressFailed, response));
                 });
         });
+    }
+
+    private _requestBillingAddressUpdate(store: ReadableDataStore<CheckoutSelectors>, address: Address, options?: RequestOptions): Promise<Response<Checkout>> {
+        const checkoutSelector = store.getState().checkout;
+        const checkout = checkoutSelector.getCheckout();
+
+        if (!checkout || !checkout.id) {
+            throw new MissingDataError('Unable to update shipping address: "checkout.id" is missing.');
+        }
+
+        const billingAddress = checkoutSelector.getBillingAddress();
+
+        if (!billingAddress || !billingAddress.id) {
+            return this._checkoutClient.createBillingAddress(checkout.id, address, options);
+        }
+
+        const customer = checkoutSelector.getCustomer();
+        const updatedBillingAddress = {
+            ...address,
+            email: customer ? customer.email : undefined,
+            id: billingAddress.id,
+        };
+        return this._checkoutClient.updateBillingAddress(checkout.id, updatedBillingAddress, options);
     }
 }

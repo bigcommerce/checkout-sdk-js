@@ -1,7 +1,6 @@
-import { InternalAddress } from '../../address';
+import { Address } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
-import ShippingAddressActionCreator from '../shipping-address-action-creator';
-import ShippingOptionActionCreator from '../shipping-option-action-creator';
+import ConsignmentActionCreator from '../consignment-action-creator';
 import { ShippingRequestOptions } from '../shipping-request-options';
 
 import ShippingStrategy from './shipping-strategy';
@@ -9,21 +8,20 @@ import ShippingStrategy from './shipping-strategy';
 export default class DefaultShippingStrategy extends ShippingStrategy {
     constructor(
         store: CheckoutStore,
-        private _addressActionCreator: ShippingAddressActionCreator,
-        private _optionActionCreator: ShippingOptionActionCreator
+        private _consignmentActionCreator: ConsignmentActionCreator
     ) {
         super(store);
     }
 
-    updateAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         return this._store.dispatch(
-            this._addressActionCreator.updateAddress(address, options)
+            this._consignmentActionCreator.updateAddress(address, options)
         );
     }
 
-    selectOption(addressId: string, optionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    selectOption(optionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         return this._store.dispatch(
-            this._optionActionCreator.selectShippingOption(addressId, optionId, options)
+            this._consignmentActionCreator.selectShippingOption(optionId, options)
         );
     }
 }

@@ -1,8 +1,9 @@
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutClient } from '../checkout';
+import { CheckoutClient, CheckoutSelectors } from '../checkout';
+import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import * as actionTypes from './coupon-action-types';
@@ -15,13 +16,20 @@ export default class CouponActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    applyCoupon(code: string, options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
+    applyCoupon(code: string, options?: RequestOptions): ThunkAction<Action> {
+        return (store: ReadableDataStore<CheckoutSelectors>) => Observable.create((observer: Observer<Action>) => {
+            const { checkout: { getCheckout } } = store.getState();
+            const checkout = getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError('Unable to apply coupon because "checkout" data is missing.');
+            }
+
             observer.next(createAction(actionTypes.APPLY_COUPON_REQUESTED));
 
-            this._checkoutClient.applyCoupon(code, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.APPLY_COUPON_SUCCEEDED, body.data));
+            this._checkoutClient.applyCoupon(checkout.id, code, options)
+                .then(({ body }) => {
+                    observer.next(createAction(actionTypes.APPLY_COUPON_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch(response => {
@@ -30,13 +38,20 @@ export default class CouponActionCreator {
         });
     }
 
-    removeCoupon(code: string, options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
+    removeCoupon(code: string, options?: RequestOptions): ThunkAction<Action> {
+        return (store: ReadableDataStore<CheckoutSelectors>) => Observable.create((observer: Observer<Action>) => {
+            const { checkout: { getCheckout } } = store.getState();
+            const checkout = getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError('Unable to remove coupon because "checkout" data is missing.');
+            }
+
             observer.next(createAction(actionTypes.REMOVE_COUPON_REQUESTED));
 
-            this._checkoutClient.removeCoupon(code, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.REMOVE_COUPON_SUCCEEDED, body.data));
+            this._checkoutClient.removeCoupon(checkout.id, code, options)
+                .then(({ body }) => {
+                    observer.next(createAction(actionTypes.REMOVE_COUPON_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch(response => {

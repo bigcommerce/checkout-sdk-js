@@ -1,14 +1,13 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
-import { isAddressEqual, InternalAddress } from '../../address';
+import { isAddressEqual, mapFromInternalAddress, Address } from '../../address';
 import { CheckoutSelectors, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
 import { AmazonPayAddressBook, AmazonPayOrderReference, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../remote-checkout/methods/amazon-pay';
-import ShippingAddressActionCreator from '../shipping-address-action-creator';
-import ShippingOptionActionCreator from '../shipping-option-action-creator';
+import ConsignmentActionCreator from '../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../shipping-request-options';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 
@@ -20,8 +19,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     constructor(
         store: CheckoutStore,
-        private _addressActionCreator: ShippingAddressActionCreator,
-        private _optionActionCreator: ShippingOptionActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _scriptLoader: AmazonPayScriptLoader
@@ -72,13 +70,13 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return super.deinitialize(options);
     }
 
-    updateAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
+    selectOption(optionId: string, options?: any): Promise<CheckoutSelectors> {
         return this._store.dispatch(
-            this._optionActionCreator.selectShippingOption(addressId, optionId, options)
+            this._consignmentActionCreator.selectShippingOption(optionId, options)
         );
     }
 
@@ -149,7 +147,9 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 }
 
                 return this._store.dispatch(
-                    this._addressActionCreator.updateAddress(remoteCheckout.shippingAddress)
+                    this._consignmentActionCreator.updateAddress(
+                        mapFromInternalAddress(remoteCheckout.shippingAddress)
+                    )
                 );
             })
             .then(() => this._store.dispatch(

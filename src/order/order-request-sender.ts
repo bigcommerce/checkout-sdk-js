@@ -17,6 +17,12 @@ export default class OrderRequestSender {
     ) {}
 
     loadOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response> {
+        const url = `/api/storefront/orders/${orderId}`;
+
+        return this._requestSender.get(url, { timeout });
+    }
+
+    loadInternalOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response> {
         const url = `/internalapi/v1/checkout/order/${orderId}`;
 
         return this._requestSender.get(url, { timeout });
