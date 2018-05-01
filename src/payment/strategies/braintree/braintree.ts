@@ -1,8 +1,12 @@
+
+import { VisaCheckoutInitOptions, VisaCheckoutPaymentSuccessPayload, VisaCheckoutTokenizedPayload } from './visacheckout';
+
 export interface BraintreeSDK {
     client?: BraintreeClientCreator;
     dataCollector?: BraintreeDataCollectorCreator;
     paypal?: BraintreePaypalCreator;
     threeDSecure?: BraintreeThreeDSecureCreator;
+    visaCheckout?: BraintreeVisaCheckoutCreator;
 }
 
 export interface BraintreeModuleCreator<T> {
@@ -19,6 +23,7 @@ export interface BraintreeClientCreator extends BraintreeModuleCreator<Braintree
 export interface BraintreeDataCollectorCreator extends BraintreeModuleCreator<BraintreeDataCollector> {}
 export interface BraintreeThreeDSecureCreator extends BraintreeModuleCreator<BraintreeThreeDSecure> {}
 export interface BraintreePaypalCreator extends BraintreeModuleCreator<BraintreePaypal> {}
+export interface BraintreeVisaCheckoutCreator extends BraintreeModuleCreator<BraintreeVisaCheckout> {}
 
 export interface BraintreeModule {
     teardown(): Promise<void>;
@@ -50,6 +55,11 @@ export interface BraintreePaypal {
     closeWindow(): void;
     focusWindow(): void;
     tokenize(options: BraintreePaypalRequest): Promise<BraintreeTokenizePayload>;
+}
+
+export interface BraintreeVisaCheckout extends BraintreeModule {
+    tokenize(payment: VisaCheckoutPaymentSuccessPayload): Promise<VisaCheckoutTokenizedPayload>;
+    createInitOptions(options: Partial<VisaCheckoutInitOptions>): VisaCheckoutInitOptions;
 }
 
 export interface BraintreeTokenizeReturn {
