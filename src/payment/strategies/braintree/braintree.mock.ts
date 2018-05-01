@@ -35,7 +35,7 @@ export function getThreeDSecureMock(): BraintreeThreeDSecure {
     };
 }
 
-export function getModuleCreatorMock<T>(module: BraintreeModule): BraintreeModuleCreator<T> {
+export function getModuleCreatorMock<T>(module: BraintreeModule | BraintreeClient): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve(module)),
     };
