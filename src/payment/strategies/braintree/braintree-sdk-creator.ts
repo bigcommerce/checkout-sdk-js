@@ -1,6 +1,13 @@
 import { NotInitializedError } from '../../../common/error/errors';
 
-import { BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreePaypal, BraintreeThreeDSecure } from './braintree';
+import {
+    BraintreeClient,
+    BraintreeDataCollector,
+    BraintreeModule,
+    BraintreePaypal,
+    BraintreeThreeDSecure,
+    BraintreeVisaCheckout,
+} from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {
@@ -9,6 +16,7 @@ export default class BraintreeSDKCreator {
     private _dataCollector?: Promise<BraintreeDataCollector>;
     private _paypal?: Promise<BraintreePaypal>;
     private _clientToken?: string;
+    private _visaCheckout?: Promise<BraintreeVisaCheckout>;
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -74,13 +82,27 @@ export default class BraintreeSDKCreator {
         return this._dataCollector;
     }
 
+    getVisaCheckout(): Promise<BraintreeVisaCheckout> {
+        if (!this._visaCheckout) {
+            this._visaCheckout = Promise.all([
+                this.getClient(),
+                this._braintreeScriptLoader.loadVisaCheckout(),
+            ])
+            .then(([client, visaCheckout]) => visaCheckout.create({ client }));
+        }
+
+        return this._visaCheckout;
+    }
+
     teardown(): Promise<void> {
         return Promise.all([
             this._teardown(this._3ds),
             this._teardown(this._dataCollector),
+            this._teardown(this._visaCheckout),
         ]).then(() => {
             this._3ds = undefined;
             this._dataCollector = undefined;
+            this._visaCheckout = undefined;
         });
     }
 
