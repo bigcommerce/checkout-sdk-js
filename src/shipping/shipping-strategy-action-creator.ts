@@ -2,7 +2,7 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { InternalAddress } from '../address';
+import { Address } from '../address';
 import { Registry } from '../common/registry';
 
 import { ShippingInitializeOptions, ShippingRequestOptions } from './shipping-request-options';
@@ -20,7 +20,7 @@ export default class ShippingStrategyActionCreator {
         private _strategyRegistry: Registry<ShippingStrategy>
     ) {}
 
-    updateAddress(address: InternalAddress, options?: ShippingRequestOptions): ThunkAction<ShippingStrategyUpdateAddressAction> {
+    updateAddress(address: Address, options?: ShippingRequestOptions): ThunkAction<ShippingStrategyUpdateAddressAction> {
         return store => Observable.create((observer: Observer<ShippingStrategyUpdateAddressAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
             const methodId = options && options.methodId || remote.provider;
@@ -39,7 +39,7 @@ export default class ShippingStrategyActionCreator {
         });
     }
 
-    selectOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): ThunkAction<ShippingStrategySelectOptionAction> {
+    selectOption(shippingOptionId: string, options?: ShippingRequestOptions): ThunkAction<ShippingStrategySelectOptionAction> {
         return store => Observable.create((observer: Observer<ShippingStrategySelectOptionAction>) => {
             const { remote = {} } = store.getState().checkout.getCustomer() || {};
             const methodId = options && options.methodId || remote.provider;
@@ -47,7 +47,7 @@ export default class ShippingStrategyActionCreator {
             observer.next(createAction(ShippingStrategyActionType.SelectOptionRequested, undefined, { methodId }));
 
             this._strategyRegistry.get(methodId)
-                .selectOption(addressId, shippingOptionId, { ...options, methodId })
+                .selectOption(shippingOptionId, { ...options, methodId })
                 .then(() => {
                     observer.next(createAction(ShippingStrategyActionType.SelectOptionSucceeded, undefined, { methodId }));
                     observer.complete();

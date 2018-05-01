@@ -7,7 +7,8 @@ import { getConfigState } from '../config/configs.mock';
 import { getCustomerState } from '../customer/internal-customers.mock';
 import { OrderActionCreator } from '../order';
 import * as orderActionTypes from '../order/order-action-types';
-import { getCompleteOrderResponseBody, getSubmittedOrderState } from '../order/internal-orders.mock';
+import { getOrder } from '../order/orders.mock';
+import { getSubmittedOrderState } from '../order/internal-orders.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
@@ -26,7 +27,7 @@ describe('PaymentActionCreator', () => {
 
     beforeEach(() => {
         client = {
-            loadOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrderResponseBody()))),
+            loadOrder: jest.fn(() => Promise.resolve(getResponse(getOrder()))),
         };
 
         paymentRequestSender = {
@@ -69,7 +70,7 @@ describe('PaymentActionCreator', () => {
                 },
                 {
                     type: orderActionTypes.LOAD_ORDER_SUCCEEDED,
-                    payload: getCompleteOrderResponseBody().data,
+                    payload: getOrder(),
                 },
             ]);
         });

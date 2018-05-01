@@ -1,5 +1,5 @@
 export default interface InternalAddress {
-    id: string;
+    id?: string;
     firstName: string;
     lastName: string;
     company: string;
@@ -12,9 +12,9 @@ export default interface InternalAddress {
     country: string;
     countryCode: string;
     phone: string;
-    type: string;
     customFields: Array<{
         fieldId: string;
         fieldValue: string;
     }>;
+    type?: string;
 }

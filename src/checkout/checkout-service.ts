@@ -1,4 +1,4 @@
-import { InternalAddress } from '../address';
+import { Address } from '../address';
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
 import { MissingDataError } from '../common/error/errors';
@@ -12,13 +12,14 @@ import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOpt
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import {
+    ConsignmentActionCreator,
     ShippingCountryActionCreator,
     ShippingInitializeOptions,
-    ShippingOptionActionCreator,
     ShippingRequestOptions,
     ShippingStrategyActionCreator,
 } from '../shipping';
 
+import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
 
@@ -34,7 +35,9 @@ export default class CheckoutService {
         private _store: CheckoutStore,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _cartActionCreator: CartActionCreator,
+        private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator,
         private _countryActionCreator: CountryActionCreator,
         private _couponActionCreator: CouponActionCreator,
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
@@ -45,7 +48,6 @@ export default class CheckoutService {
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _quoteActionCreator: QuoteActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
-        private _shippingOptionActionCreator: ShippingOptionActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator
     ) {}
 
@@ -67,10 +69,11 @@ export default class CheckoutService {
         );
     }
 
-    loadCheckout(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._quoteActionCreator.loadQuote(options);
-
-        return this._store.dispatch(action);
+    loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors> {
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._checkoutActionCreator.loadCheckout(id, options)),
+        ]).then(() => this._store.getState());
     }
 
     loadConfig(options?: RequestOptions): Promise<CheckoutSelectors> {
@@ -96,9 +99,10 @@ export default class CheckoutService {
     }
 
     loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._orderActionCreator.loadOrder(orderId, options);
-
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._orderActionCreator.loadInternalOrder(orderId, options)),
+            this._store.dispatch(this._orderActionCreator.loadOrder(orderId, options)),
+        ]).then(() => this._store.getState());
     }
 
     submitOrder(payload: OrderRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
@@ -190,8 +194,8 @@ export default class CheckoutService {
         return this._store.dispatch(action, { queueId: 'customerStrategy' });
     }
 
-    loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._shippingOptionActionCreator.loadShippingOptions(options);
+    loadShippingOptions(options: RequestOptions = {}): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.loadShippingOptions(options);
 
         return this._store.dispatch(action);
     }
@@ -208,46 +212,50 @@ export default class CheckoutService {
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
-        const action = this._shippingStrategyActionCreator.selectOption(addressId, shippingOptionId, options);
+    selectShippingOption(shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._shippingStrategyActionCreator.selectOption(shippingOptionId, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    updateShippingAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateShippingAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' });
     }
 
-    updateBillingAddress(address: InternalAddress, options: RequestOptions = {}): Promise<CheckoutSelectors> {
+    updateBillingAddress(address: Address, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
         return this._store.dispatch(action);
     }
 
     applyCoupon(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const action = this._couponActionCreator.applyCoupon(code, options);
-
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._couponActionCreator.applyCoupon(code, options)),
+        ]).then(() => this._store.getState());
     }
 
     removeCoupon(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const action = this._couponActionCreator.removeCoupon(code, options);
-
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._couponActionCreator.removeCoupon(code, options)),
+        ]).then(() => this._store.getState());
     }
 
     applyGiftCertificate(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const action = this._giftCertificateActionCreator.applyGiftCertificate(code, options);
-
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._giftCertificateActionCreator.applyGiftCertificate(code, options)),
+        ]).then(() => this._store.getState());
     }
 
     removeGiftCertificate(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        const action = this._giftCertificateActionCreator.removeGiftCertificate(code, options);
-
-        return this._store.dispatch(action);
+        return Promise.all([
+            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
+            this._store.dispatch(this._giftCertificateActionCreator.removeGiftCertificate(code, options)),
+        ]).then(() => this._store.getState());
     }
 
     loadInstruments(): Promise<CheckoutSelectors> {

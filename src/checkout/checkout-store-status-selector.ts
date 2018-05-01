@@ -11,14 +11,17 @@ import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
+import CheckoutSelector from './checkout-selector';
+
 @selector
-export default class CheckoutStatusSelector {
+export default class CheckoutStoreStatusSelector {
     /**
      * @internal
      */
     constructor(
         private _billingAddress: BillingAddressSelector,
         private _cart: CartSelector,
+        private _checkout: CheckoutSelector,
         private _config: ConfigSelector,
         private _countries: CountrySelector,
         private _coupon: CouponSelector,
@@ -65,7 +68,7 @@ export default class CheckoutStatusSelector {
     }
 
     isLoadingCheckout(): boolean {
-        return this._quote.isLoading();
+        return this._quote.isLoading() || this._checkout.isLoading();
     }
 
     isSubmittingOrder(): boolean {
