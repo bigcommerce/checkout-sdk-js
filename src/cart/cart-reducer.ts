@@ -1,6 +1,6 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
-import * as billingAddressActionTypes from '../billing/billing-address-action-types';
+import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
 import * as couponActionTypes from '../coupon/coupon-action-types';
@@ -33,6 +33,7 @@ export default function cartReducer(state: any = {}, action: Action): any {
 
 function dataReducer(data: InternalCart, action: Action): InternalCart {
     switch (action.type) {
+    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionTypes.CreateConsignmentsSucceeded:
     case ConsignmentActionTypes.UpdateConsignmentSucceeded:
@@ -42,7 +43,6 @@ function dataReducer(data: InternalCart, action: Action): InternalCart {
     case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
         return { ...data, ...mapToInternalCart(action.payload, data) };
 
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case cartActionTypes.LOAD_CART_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:

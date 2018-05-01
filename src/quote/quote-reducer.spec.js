@@ -1,5 +1,5 @@
-import * as billingAddressActionTypes from '../billing/billing-address-action-types';
-import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
+import { BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
@@ -8,7 +8,6 @@ import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import { getQuote } from './internal-quotes.mock';
 import * as quoteActionTypes from './quote-action-types';
 import quoteReducer from './quote-reducer';
-import { CheckoutActionType } from '../checkout';
 
 describe('quoteReducer()', () => {
     let initialState;
@@ -111,7 +110,7 @@ describe('quoteReducer()', () => {
     describe('when updating billing address', () => {
         it('sets updating flag to true while updating', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_REQUESTED,
+                type: BillingAddressActionTypes.UpdateBillingAddressRequested,
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -121,7 +120,7 @@ describe('quoteReducer()', () => {
 
         it('cleans errors while updating', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_REQUESTED,
+                type: BillingAddressActionTypes.UpdateBillingAddressRequested,
             };
 
             initialState.errors = {
@@ -136,21 +135,20 @@ describe('quoteReducer()', () => {
         });
 
         it('saves the payload when update succeeds', () => {
-            const response = getBillingAddressResponseBody();
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED,
-                payload: response.data,
+                type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+                payload: getCheckout(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                data: action.payload.quote,
+                data: getQuote(),
             }));
         });
 
         it('sets updating flag to false if succeeded', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED,
-                payload: getErrorResponse(),
+                type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+                payload: getCheckout(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -160,7 +158,8 @@ describe('quoteReducer()', () => {
 
         it('cleans errors when update succeeds', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED,
+                type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+                payload: getCheckout(),
             };
 
             initialState.errors = {
@@ -176,7 +175,7 @@ describe('quoteReducer()', () => {
 
         it('saves the error when update fails', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED,
+                type: BillingAddressActionTypes.UpdateBillingAddressFailed,
                 payload: getErrorResponse(),
             };
 
@@ -187,7 +186,7 @@ describe('quoteReducer()', () => {
 
         it('sets the updating flag to false when update fails', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED,
+                type: BillingAddressActionTypes.UpdateBillingAddressFailed,
                 payload: getErrorResponse(),
             };
 
