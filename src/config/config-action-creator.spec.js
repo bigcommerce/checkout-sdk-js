@@ -28,7 +28,7 @@ describe('ConfigActionCreator', () => {
                 .subscribe((actions) => {
                     expect(actions).toEqual([
                         { type: actionTypes.LOAD_CONFIG_REQUESTED },
-                        { type: actionTypes.LOAD_CONFIG_SUCCEEDED, payload: response.body.data },
+                        { type: actionTypes.LOAD_CONFIG_SUCCEEDED, payload: response.body },
                     ]);
                 });
         });

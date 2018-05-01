@@ -21,7 +21,7 @@ export default class ConfigActionCreator {
 
             this._checkoutClient.loadConfig(options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_CONFIG_SUCCEEDED, body.data));
+                    observer.next(createAction(actionTypes.LOAD_CONFIG_SUCCEEDED, body));
                     observer.complete();
                 })
                 .catch(response => {
