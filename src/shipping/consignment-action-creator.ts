@@ -104,10 +104,13 @@ export default class ConsignmentActionCreator {
 
         return [{
             shippingAddress,
-            lineItems: cart.items.map(item => ({
-                itemId: item.id,
-                quantity: item.quantity,
-            })),
+            lineItems: cart.items
+                .filter(item => item.type === 'ItemPhysicalEntity')
+                .map(item => ({
+                    itemId: item.id,
+                    quantity: item.quantity,
+                })
+            ),
         }];
     }
 }

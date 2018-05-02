@@ -12,7 +12,7 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
     return {
         ...mapToInternalIncompleteOrder(checkout, existingOrder),
         id: order.orderId,
-        items: mapToInternalLineItems(order.lineItems, existingOrder.items, 'productId'),
+        items: mapToInternalLineItems(order.lineItems, order.currency.decimalPlaces, 'productId'),
         currency: order.currency.code,
         customerCanBeCreated: existingOrder.customerCanBeCreated,
         subtotal: {
@@ -37,7 +37,7 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
             appliedGiftCertificates: checkout.giftCertificates.map(mapToInternalGiftCertificate),
         },
         shipping: {
-            amount: checkout.shippingCostTotal,
+            amount: existingOrder.shipping.amount,
             integerAmount: existingOrder.shipping.integerAmount,
             amountBeforeDiscount: existingOrder.shipping.amountBeforeDiscount,
             integerAmountBeforeDiscount: existingOrder.shipping.integerAmountBeforeDiscount,

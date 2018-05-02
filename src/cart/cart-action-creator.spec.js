@@ -21,36 +21,6 @@ describe('CartActionCreator', () => {
         cartActionCreator = new CartActionCreator(checkoutClient);
     });
 
-    describe('#loadCart()', () => {
-        it('emits actions if able load cart', () => {
-            cartActionCreator.loadCart()
-                .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: actionTypes.LOAD_CART_REQUESTED },
-                        { type: actionTypes.LOAD_CART_SUCCEEDED, meta: response.body.meta, payload: response.body.data },
-                    ]);
-                });
-        });
-
-        it('emits error actions if unable load cart', () => {
-            checkoutClient.loadCart.mockReturnValue(Promise.reject(errorResponse));
-
-            const errorHandler = jest.fn((action) => Observable.of(action));
-
-            cartActionCreator.loadCart()
-                .catch(errorHandler)
-                .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: actionTypes.LOAD_CART_REQUESTED },
-                        { type: actionTypes.LOAD_CART_FAILED, payload: errorResponse, error: true },
-                    ]);
-                });
-        });
-    });
-
     describe('#verifyCart()', () => {
         it('emits `false` if cart content has not changed', () => {
             cartActionCreator.verifyCart(getCart())

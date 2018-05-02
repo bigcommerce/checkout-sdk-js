@@ -17,24 +17,6 @@ export default class CartActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    loadCart(options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.LOAD_CART_REQUESTED));
-
-            this._checkoutClient.loadCart(options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_CART_SUCCEEDED, body.data, body.meta));
-                    observer.complete();
-                })
-                .catch(response => {
-                    observer.error(createErrorAction(actionTypes.LOAD_CART_FAILED, response));
-                });
-        });
-    }
-
-    /**
-     * @deprecated
-     */
     verifyCart(cart?: InternalCart, options?: RequestOptions): Observable<Action> {
         return Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.VERIFY_CART_REQUESTED));

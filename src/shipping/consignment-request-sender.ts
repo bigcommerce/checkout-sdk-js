@@ -6,7 +6,13 @@ import { ContentType, RequestOptions } from '../common/http-request';
 import { ConsignmentsRequestBody, ConsignmentRequestBody } from './consignment';
 
 const DEFAULT_PARAMS = {
-    include: 'consignments.availableShippingOptions',
+    include: [
+        'consignments.availableShippingOptions',
+        'cart.lineItems.physicalItems.options',
+        'cart.lineItems.digitalItems.options',
+        'customer',
+        'promotions.banners',
+    ].join(','),
 };
 
 export default class ConsignmentRequestSender {

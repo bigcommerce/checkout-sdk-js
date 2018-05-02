@@ -11,13 +11,38 @@ export function getCart() {
                 amount: 200,
                 discount: 0,
                 amountAfterDiscount: 200,
-                tax: 0,
-                attributes: [],
+                attributes: [
+                    {
+                        name: 'n',
+                        value: 'v',
+                    },
+                ],
                 integerAmount: 20000,
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
-                integerTax: 0,
                 variantId: 71,
+            },
+            {
+                id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
+                name: '$100 Gift Certificate',
+                type: 'ItemGiftCertificateEntity',
+                sender: {
+                    name: 'pablo',
+                    email: 'pa@blo.com',
+                },
+                recipient: {
+                    name: 'luis',
+                    email: 'lu@is.com',
+                },
+                imageUrl: '',
+                quantity: 1,
+                amount: 100,
+                discount: 0,
+                amountAfterDiscount: 100,
+                attributes: [],
+                integerAmount: 10000,
+                integerDiscount: 0,
+                integerAmountAfterDiscount: 10000,
             },
         ],
         currency: 'USD',
@@ -26,20 +51,32 @@ export function getCart() {
             integerAmount: 20000,
         },
         coupon: {
-            discountedAmount: 5,
+            discountedAmount: 10,
             coupons: [
                 {
                     code: 'savebig2015',
                     discount: '20% off each item',
                     discountType: 'percentage_discount',
                 },
+                {
+                    code: '279F507D817E3E7',
+                    discount: '$5.00 off the shipping total',
+                    discountType: 'shipping_discount',
+                },
             ],
         },
         discount: {
             amount: 10,
-            integerAmount: 100,
+            integerAmount: 1000,
         },
-        discountNotifications: [],
+        discountNotifications: [
+            {
+                placeholders: [],
+                discountType: null,
+                message: '',
+                messageHtml: 'foo',
+            },
+        ],
         giftCertificate: {
             totalDiscountedAmount: 7,
             appliedGiftCertificates: [
@@ -57,9 +94,9 @@ export function getCart() {
         },
         shipping: {
             amount: 15,
-            integerAmount: 0,
+            integerAmount: 1500,
             amountBeforeDiscount: 20,
-            integerAmountBeforeDiscount: 0,
+            integerAmountBeforeDiscount: 2000,
             required: true,
         },
         storeCredit: {
@@ -72,7 +109,7 @@ export function getCart() {
         taxes: [
             {
                 name: 'Tax',
-                amount: 0,
+                amount: 3,
             },
         ],
         taxTotal: {
@@ -81,7 +118,7 @@ export function getCart() {
         },
         handling: {
             amount: 8,
-            integerAmount: 80,
+            integerAmount: 800,
         },
         grandTotal: {
             amount: 190,

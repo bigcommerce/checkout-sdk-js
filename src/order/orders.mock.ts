@@ -1,5 +1,6 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { getCoupon } from '../coupon/coupons.mock';
+import { getGiftCertificateItem } from '../cart/line-items.mock';
+import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
 import { getCurrency } from '../currency/currencies.mock';
 
 import { getPhysicalItem } from './line-items.mock';
@@ -12,6 +13,7 @@ export function getOrder(): Order {
         cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         coupons: [
             getCoupon(),
+            getShippingCoupon(),
         ],
         currency: getCurrency(),
         customerCreated: false,
@@ -26,7 +28,9 @@ export function getOrder(): Order {
                 getPhysicalItem(),
             ],
             digitalItems: [],
-            giftCertificates: [],
+            giftCertificates: [
+                getGiftCertificateItem(),
+            ],
         },
         orderAmount: 190,
         orderId: 295,

@@ -1,26 +1,26 @@
-import { find } from 'lodash';
-
 import InternalLineItem from './internal-line-item';
 import { LineItem } from './line-item';
 import LineItemMap from './line-item-map';
+import mapGiftCertificateToInternalLineItem from './map-gift-certificate-to-internal-line-item';
 import mapToInternalLineItem from './map-to-internal-line-item';
 
-export default function mapToInternalLineItems(
+export default function notificationsmapToInternalLineItems(
     itemMap: LineItemMap,
-    existingItems: InternalLineItem[],
+    decimalPlaces: number,
     idKey: keyof LineItem = 'id'
 ): InternalLineItem[] {
     return (Object.keys(itemMap) as Array<keyof LineItemMap>)
         .reduce((result, key) => [
             ...result,
             ...(itemMap[key] as LineItem[]).map((item: any) => {
-                // tslint:disable-next-line:no-non-null-assertion
-                const existingItem = find(existingItems, { id: item[idKey] })!;
+                if (key === 'giftCertificates') {
+                    return mapGiftCertificateToInternalLineItem(item, decimalPlaces);
+                }
 
                 return mapToInternalLineItem(
                     item,
-                    existingItem,
                     mapToInternalLineItemType(key),
+                    decimalPlaces,
                     idKey
                 );
             }),

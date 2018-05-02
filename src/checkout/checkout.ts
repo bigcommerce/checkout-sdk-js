@@ -3,6 +3,7 @@ import { Cart } from '../cart';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
 import { Discount } from '../discount';
+import { Promotion } from '../promotion';
 import { Consignment } from '../shipping';
 import { Tax } from '../tax';
 
@@ -18,10 +19,12 @@ export default interface Checkout {
     coupons: Coupon[];
     orderId: number;
     shippingCostTotal: number;
+    handlingCostTotal: number;
     taxTotal: number;
     grandTotal: number;
     storeCredit: number;
     giftCertificates: GiftCertificate[];
+    promotions?: Promotion[];
     balanceDue: number;
     createdTime: string;
     updatedTime: string;

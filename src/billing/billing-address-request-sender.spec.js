@@ -9,6 +9,12 @@ describe('BillingAddressRequestSender', () => {
     let addressRequestSender;
     let requestSender;
     let response;
+    const include = [
+        'cart.lineItems.physicalItems.options',
+        'cart.lineItems.digitalItems.options',
+        'customer',
+        'promotions.banners',
+    ].join(',');
 
     beforeEach(() => {
         requestSender = {
@@ -36,6 +42,9 @@ describe('BillingAddressRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
+                params: {
+                    include,
+                },
             });
         });
 
@@ -47,6 +56,9 @@ describe('BillingAddressRequestSender', () => {
             expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/billing-address/${id}`, {
                 ...options,
                 body: address,
+                params: {
+                    include,
+                },
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
@@ -62,6 +74,9 @@ describe('BillingAddressRequestSender', () => {
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/foo/billing-address', {
                 body: address,
+                params: {
+                    include,
+                },
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
@@ -76,6 +91,9 @@ describe('BillingAddressRequestSender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/foo/billing-address', {
                 ...options,
                 body: address,
+                params: {
+                    include,
+                },
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
