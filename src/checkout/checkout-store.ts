@@ -5,3 +5,7 @@ import CheckoutSelectors from './checkout-selectors';
 type CheckoutStore = DataStore<CheckoutSelectors>;
 
 export default CheckoutStore;
+
+export interface CheckoutStoreOptions {
+    shouldWarnMutation?: boolean;
+}
