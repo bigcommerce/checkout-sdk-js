@@ -25,17 +25,18 @@ import {
     ShippingStrategySelector,
 } from '../shipping';
 
+import CheckoutStoreState from './checkout-store-state';
 import createActionTransformer from './create-action-transformer';
 
 /**
  * @todo Convert this file into TypeScript properly
- * @param {Object} [initialState={}]
- * @param {CheckoutStoreOptions} [options={}]
- * @return {DataStore}
  */
-export default function createCheckoutStore(initialState = {}, options?: CheckoutStoreOptions): DataStore<any, Action, CheckoutSelectors> {
+export default function createCheckoutStore(
+    initialState: Partial<CheckoutStoreState> = {},
+    options?: CheckoutStoreOptions
+): DataStore<CheckoutStoreState, Action, CheckoutSelectors> {
     const actionTransformer = createActionTransformer(createRequestErrorFactory());
-    const stateTransformer = (state: any) => createCheckoutSelectors(state, options);
+    const stateTransformer = (state: CheckoutStoreState) => createCheckoutSelectors(state, options);
 
     return createDataStore(
         createCheckoutReducers(),
@@ -70,14 +71,7 @@ function createCheckoutReducers(): any {
     };
 }
 
-/**
- * @private
- * @param {CheckoutState} state
- * @param {Object} [options={}]
- * @param {boolean} [options.shouldWarnMutation=true]
- * @return {CheckoutSelectors}
- */
-function createCheckoutSelectors(state: any, options: CheckoutStoreOptions = {}): CheckoutSelectors {
+function createCheckoutSelectors(state: CheckoutStoreState, options: CheckoutStoreOptions = {}): CheckoutSelectors {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
     const config = new ConfigSelector(state.config);
