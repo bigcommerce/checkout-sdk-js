@@ -42,11 +42,7 @@ export default function createPaymentStrategyRegistry(
     client: CheckoutClient,
     paymentClient: any
 ) {
-    const config = store.getState().checkout.getConfig();
-    const registry = new PaymentStrategyRegistry({
-        clientSidePaymentProviders: config && config.clientSidePaymentProviders,
-        defaultToken: 'creditcard',
-    });
+    const registry = new PaymentStrategyRegistry(store, { defaultToken: 'creditcard' });
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const orderActionCreator = new OrderActionCreator(client);
