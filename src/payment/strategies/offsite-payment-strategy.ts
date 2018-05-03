@@ -22,7 +22,7 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
         const { payment: { gateway = '' } = {} } = payload;
         const orderPayload = gateway === 'adyen' ? payload : omit(payload, 'payment');
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, true, options))
+        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
             .then(() => {
                 if (!payload.payment) {
                     throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');

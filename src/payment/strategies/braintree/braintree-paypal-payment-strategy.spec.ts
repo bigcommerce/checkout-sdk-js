@@ -133,22 +133,15 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.initialize(options);
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Boolean), expect.any(Object));
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Object));
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-        });
-
-        it('asks for cart verification', async () => {
-            await braintreePaypalPaymentStrategy.initialize(options);
-            await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
-
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
         });
 
         it('pass the options to submitOrder', async () => {
             await braintreePaypalPaymentStrategy.initialize(options);
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), expect.any(Boolean), options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), options);
         });
 
         it('submitPayment with the right information', async () => {

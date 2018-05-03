@@ -26,7 +26,7 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
             throw new InvalidArgumentError();
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options))
+        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
             )

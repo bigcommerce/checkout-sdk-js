@@ -69,7 +69,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 paymentData,
             };
 
-            return this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options))
+            return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
                 .then(() =>
                     this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
                 );

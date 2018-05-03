@@ -25,7 +25,7 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
                 this._orderActionCreator.submitOrder({
                     ...payload,
                     payment: pick(payload.payment, 'name') as Payment,
-                }, true, options)
+                }, options)
             );
         }
 
@@ -35,7 +35,7 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
             throw new InvalidArgumentError();
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options))
+        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
             );

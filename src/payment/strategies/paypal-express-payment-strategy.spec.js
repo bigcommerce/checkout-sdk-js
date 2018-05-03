@@ -201,7 +201,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload, options);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
                 expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             });
 
@@ -251,7 +251,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 strategy.execute(payload, options);
                 await new Promise((resolve) => process.nextTick(resolve));
 
-                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
                 expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             });
 

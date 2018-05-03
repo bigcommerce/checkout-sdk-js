@@ -90,17 +90,6 @@ export default class CheckoutService {
             .then(() => this.getState());
     }
 
-    /**
-     * @deprecated
-     */
-    verifyCart(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const { cart } = this._store.getState();
-        const action = this._cartActionCreator.verifyCart(cart.getCart(), options);
-
-        return this._store.dispatch(action)
-            .then(() => this.getState());
-    }
-
     loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._orderActionCreator.loadOrder(orderId, options);
 

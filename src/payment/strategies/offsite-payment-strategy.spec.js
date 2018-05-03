@@ -56,7 +56,7 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -68,7 +68,7 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 

@@ -282,7 +282,7 @@ describe('AmazonPayPaymentStrategy', () => {
             .toHaveBeenCalledWith({
                 ...payload,
                 payment: omit(payload.payment, 'paymentData'),
-            }, true, options);
+            }, options);
 
         expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);

@@ -71,7 +71,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                     // Note: API currently doesn't support using Store Credit with Klarna.
                     // To prevent deducting customer's store credit, set it as false.
                     useStoreCredit: false,
-                }, true, options)
+                }, options)
             ));
     }
 

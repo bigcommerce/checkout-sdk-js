@@ -115,20 +115,14 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         it('calls submit order with the order request information', async () => {
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Boolean), expect.any(Object));
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Object));
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-        });
-
-        it('asks for cart verification', async () => {
-            await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
-
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
         });
 
         it('pass the options to submitOrder', async () => {
             await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), expect.any(Boolean), options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), options);
         });
 
         it('does not touch the card if it is going to be saved in the vault (shouldSaveInstrument: true)', async () => {

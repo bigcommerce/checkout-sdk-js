@@ -65,11 +65,11 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
             this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
-            return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options));
+            return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
         }
 
         if (!this._isInContextEnabled()) {
-            return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options))
+            return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
                 .then(state => {
                     const order = state.order.getOrder();
 
@@ -84,7 +84,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
         this._paypalSdk.checkout.initXO();
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options))
+        return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
             .then(state => {
                 const order = state.order.getOrder();
 

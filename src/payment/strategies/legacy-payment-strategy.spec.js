@@ -28,7 +28,7 @@ describe('LegacyPaymentStrategy', () => {
     it('submits order with payment data', async () => {
         await strategy.execute(getOrderRequestBody());
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(getOrderRequestBody(), true, undefined);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(getOrderRequestBody(), undefined);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 

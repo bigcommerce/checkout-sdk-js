@@ -49,7 +49,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         }
 
         return this._store.dispatch(
-            this._orderActionCreator.submitOrder(order, true, options)
+            this._orderActionCreator.submitOrder(order, options)
         )
             .then(state =>
                 state.order.isPaymentDataRequired(order.useStoreCredit) && payment ?

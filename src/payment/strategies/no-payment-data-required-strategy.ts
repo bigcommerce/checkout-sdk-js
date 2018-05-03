@@ -16,7 +16,7 @@ export default class NoPaymentDataRequiredPaymentStrategy extends PaymentStrateg
 
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
-            this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), true, options)
+            this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), options)
         );
     }
 }

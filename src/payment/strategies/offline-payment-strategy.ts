@@ -19,7 +19,7 @@ export default class OfflinePaymentStrategy extends PaymentStrategy {
         const action = this._orderActionCreator.submitOrder({
             ...payload,
             payment: pick(payload.payment, 'name') as Payment,
-        }, true, options);
+        }, options);
 
         return this._store.dispatch(action);
     }

@@ -100,7 +100,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 this._orderActionCreator.submitOrder({
                     ...payload,
                     payment: omit(payload.payment, 'paymentData') as Payment,
-                }, true, options)
+                }, options)
             ))
             .catch(error => {
                 if (error instanceof RequestError && error.body.type === 'provider_widget_error' && this._walletOptions) {

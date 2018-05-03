@@ -38,10 +38,7 @@ export default class OrderActionCreator {
         });
     }
 
-    /**
-     * @todo Remove `shouldVerifyCart` flag in the future. Always verify cart by default
-     */
-    submitOrder(payload: OrderRequestBody, shouldVerifyCart: boolean = false, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
+    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.SUBMIT_ORDER_REQUESTED));
 
@@ -52,7 +49,7 @@ export default class OrderActionCreator {
                 throw new MissingDataError();
             }
 
-            (shouldVerifyCart ? this._verifyCart(cart, options) : Promise.resolve(true))
+            this._verifyCart(cart, options)
                 .then(() => this._checkoutClient.submitOrder(payload, options))
                 .then(({ body = {}, headers = {} }) => {
                     observer.next(createAction(actionTypes.SUBMIT_ORDER_SUCCEEDED, body.data, { ...body.meta, token: headers.token }));

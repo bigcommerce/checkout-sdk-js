@@ -217,7 +217,6 @@ describe('AfterpayPaymentStrategy', () => {
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 { useStoreCredit: false, customerMessage: 'foo' },
-                true,
                 { nonce }
             );
 

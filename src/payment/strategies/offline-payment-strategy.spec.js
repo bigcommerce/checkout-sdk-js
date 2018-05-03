@@ -33,7 +33,7 @@ describe('OfflinePaymentStrategy', () => {
             payment: {
                 name: 'authorizenet',
             },
-        }, true, undefined);
+        }, undefined);
 
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });

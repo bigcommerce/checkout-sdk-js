@@ -58,7 +58,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
         return Promise.all([
                 payment ? this._preparePaymentData(payment) : Promise.resolve(payment),
-                this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options)),
+                this._store.dispatch(this._orderActionCreator.submitOrder(order, options)),
             ])
             .then(([payment]) =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment(payment))

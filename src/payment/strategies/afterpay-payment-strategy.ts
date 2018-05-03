@@ -99,7 +99,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             paymentData: { nonce: options.nonce },
         };
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, true, options))
+        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
             .then(() =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
             );

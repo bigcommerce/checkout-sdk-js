@@ -13,6 +13,6 @@ export default class LegacyPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options));
+        return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
     }
 }
