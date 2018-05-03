@@ -11,7 +11,6 @@ import { InternalOrder, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
-import { RemoteCheckoutSelector } from '../remote-checkout';
 import {
     InternalShippingOption,
     InternalShippingOptionList,
@@ -40,36 +39,10 @@ export default class CheckoutSelector {
         private _order: OrderSelector,
         private _paymentMethods: PaymentMethodSelector,
         private _quote: QuoteSelector,
-        private _remoteCheckout: RemoteCheckoutSelector,
         private _shippingAddress: ShippingAddressSelector,
         private _shippingCountries: ShippingCountrySelector,
         private _shippingOptions: ShippingOptionSelector
     ) {}
-
-    /**
-     * @return {CheckoutMeta}
-     */
-    getCheckoutMeta() {
-        const orderMeta = this._order.getOrderMeta();
-        const quoteMeta = this._quote.getQuoteMeta();
-        const isCartVerified = this._cart.isValid();
-        const paymentAuthToken = this._order.getPaymentAuthToken();
-        const instrumentsMeta = this._instruments.getInstrumentsMeta();
-        const remoteCheckout = this._remoteCheckout.getCheckout();
-        const remoteCheckoutMeta = this._remoteCheckout.getCheckoutMeta();
-
-        return {
-            ...orderMeta,
-            ...(quoteMeta && quoteMeta.request),
-            ...instrumentsMeta,
-            isCartVerified,
-            paymentAuthToken,
-            remoteCheckout: {
-                ...remoteCheckout,
-                ...remoteCheckoutMeta,
-            },
-        };
-    }
 
     getOrder(): InternalOrder | undefined {
         return this._order.getOrder();

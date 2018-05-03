@@ -8,19 +8,11 @@ import { InstrumentSelector } from '../payment/instrument';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector } from '../payment';
 import { QuoteSelector } from '../quote';
-import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
-import { getCartState } from '../cart/internal-carts.mock';
-import { getCompleteOrderState } from '../order/internal-orders.mock';
-import { getConfigState } from '../config/configs.mock';
-import { getCountries, getCountriesState } from '../geography/countries.mock';
-import { getCustomerState, getCustomerStrategyState } from '../customer/internal-customers.mock';
-import { getInstrumentsState } from '../payment/instrument/instrument.mock';
-import { getBraintree, getPaymentMethodsState } from '../payment/payment-methods.mock';
-import { getQuoteState } from '../quote/internal-quotes.mock';
-import { getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
-import { getShippingCountries, getShippingCountriesState } from '../shipping/shipping-countries.mock';
-import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
+import { getCheckoutStoreState } from './checkouts.mock';
+import { getCountries } from '../geography/countries.mock';
+import { getBraintree } from '../payment/payment-methods.mock';
+import { getShippingCountries } from '../shipping/shipping-countries.mock';
 import CheckoutSelector from './checkout-selector';
 
 describe('CheckoutSelector', () => {
@@ -30,20 +22,7 @@ describe('CheckoutSelector', () => {
     let state;
 
     beforeEach(() => {
-        state = {
-            cart: getCartState(),
-            config: getConfigState(),
-            countries: getCountriesState(),
-            customer: getCustomerState(),
-            customerStrategy: getCustomerStrategyState(),
-            instruments: getInstrumentsState(),
-            order: getCompleteOrderState(),
-            paymentMethods: getPaymentMethodsState(),
-            quote: getQuoteState(),
-            remoteCheckout: getRemoteCheckoutState(),
-            shippingOptions: getShippingOptionsState(),
-            shippingCountries: getShippingCountriesState(),
-        };
+        state = getCheckoutStoreState();
 
         orderSelector = new OrderSelector(state.order, state.customer, state.cart);
         formSelector = new FormSelector(state.config);
@@ -59,31 +38,10 @@ describe('CheckoutSelector', () => {
             orderSelector,
             new PaymentMethodSelector(state.paymentMethods),
             new QuoteSelector(state.quote),
-            new RemoteCheckoutSelector(state.remoteCheckout),
             new ShippingAddressSelector(state.quote),
             new ShippingCountrySelector(state.shippingCountries),
             new ShippingOptionSelector(state.shippingOptions)
         );
-    });
-
-    it('returns checkout meta', () => {
-        expect(selector.getCheckoutMeta()).toEqual({
-            isCartVerified: false,
-            paymentAuthToken: undefined,
-            remoteCheckout: {
-                ...state.remoteCheckout.meta,
-                ...state.remoteCheckout.data,
-            },
-            ...state.quote.meta.request,
-            ...state.instruments.meta,
-            ...state.order.meta,
-        });
-    });
-
-    it('returns same checkout meta unless changed', () => {
-        const meta = selector.getCheckoutMeta();
-
-        expect(selector.getCheckoutMeta()).toBe(meta);
     });
 
     it('returns order', () => {

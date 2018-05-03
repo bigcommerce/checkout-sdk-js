@@ -296,16 +296,6 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#verifyCart()', () => {
-        it('verifies cart data', async () => {
-            await checkoutService.loadCheckout();
-
-            const { checkout } = await checkoutService.verifyCart();
-
-            expect(checkout.getCheckoutMeta().isCartVerified).toEqual(true);
-        });
-    });
-
     describe('#loadOrder()', () => {
         it('loads order data', async () => {
             const { checkout } = await checkoutService.loadOrder(295);

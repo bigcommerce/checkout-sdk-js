@@ -12,7 +12,6 @@ export default function createCheckoutSelectors(selectors: InternalCheckoutSelec
         selectors.order,
         selectors.paymentMethod,
         selectors.quote,
-        selectors.remoteCheckout,
         selectors.shippingAddress,
         selectors.shippingCountry,
         selectors.shippingOption
