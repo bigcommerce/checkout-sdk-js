@@ -1,5 +1,8 @@
+import { ReadableDataStore } from '@bigcommerce/data-store';
 import { some } from 'lodash';
 
+import { CheckoutSelectors } from '../checkout';
+import { NotInitializedError } from '../common/error/errors';
 import { Registry } from '../common/registry';
 import { RegistryOptions } from '../common/registry/registry';
 
@@ -8,12 +11,12 @@ import * as paymentMethodTypes from './payment-method-types';
 import PaymentStrategy from './strategies/payment-strategy';
 
 export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
-    private _clientSidePaymentProviders?: string[];
 
-    constructor(options?: PaymentStrategyRegistryOptions) {
+    constructor(
+        private _store: ReadableDataStore<CheckoutSelectors>,
+        options?: PaymentStrategyRegistryOptions
+    ) {
         super(options);
-
-        this._clientSidePaymentProviders = options && options.clientSidePaymentProviders;
     }
 
     getByMethod(paymentMethod?: PaymentMethod): PaymentStrategy {
@@ -50,11 +53,19 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
     }
 
     private _isLegacyMethod(paymentMethod: PaymentMethod): boolean {
-        if (!this._clientSidePaymentProviders || paymentMethod.gateway === 'adyen') {
+        const config = this._store.getState().checkout.getConfig();
+
+        if (!config) {
+            throw new NotInitializedError('Config data is missing');
+        }
+
+        const { clientSidePaymentProviders } = config;
+
+        if (!clientSidePaymentProviders || paymentMethod.gateway === 'adyen') {
             return false;
         }
 
-        return !some(this._clientSidePaymentProviders, id =>
+        return !some(clientSidePaymentProviders, id =>
             paymentMethod.id === id || paymentMethod.gateway === id
         );
     }

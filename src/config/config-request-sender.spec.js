@@ -28,9 +28,9 @@ describe('ConfigRequestSender', () => {
             const output = await configRequestSender.loadConfig();
 
             expect(output).toEqual(response);
-            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkoutsettings', {
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout-settings', {
                 headers: {
-                    'X-API-INTERNAL': 'This API endpoint is for internal use only and changes',
+                    'X-API-INTERNAL': 'This API endpoint is for internal use only and may change in the future',
                 },
             });
         });
@@ -40,10 +40,10 @@ describe('ConfigRequestSender', () => {
             const output = await configRequestSender.loadConfig(options);
 
             expect(output).toEqual(response);
-            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkoutsettings', {
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout-settings', {
                 ...options,
                 headers: {
-                    'X-API-INTERNAL': 'This API endpoint is for internal use only and changes',
+                    'X-API-INTERNAL': 'This API endpoint is for internal use only and may change in the future',
                 },
             });
         });
