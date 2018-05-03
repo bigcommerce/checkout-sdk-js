@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import PaymentActionCreator from '../payment-action-creator';
@@ -18,7 +18,7 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment: { gateway = '' } = {} } = payload;
         const orderPayload = gateway === 'adyen' ? payload : omit(payload, 'payment');
 
@@ -32,9 +32,9 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
             });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const order = checkout.getOrder();
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const state = this._store.getState();
+        const order = state.order.getOrder();
 
         if (!order) {
             throw new MissingDataError('Unable to finalize order because "order" data is missing.');

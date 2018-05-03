@@ -133,7 +133,7 @@ export default class CheckoutSelector {
         return this._customer.getCustomer();
     }
 
-    isPaymentDataRequired(useStoreCredit: boolean = false): boolean {
+    isPaymentDataRequired(useStoreCredit?: boolean): boolean {
         return this._order.isPaymentDataRequired(useStoreCredit);
     }
 

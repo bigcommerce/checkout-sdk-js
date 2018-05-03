@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import Payment from '../payment';
@@ -19,7 +19,7 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (this._isPaymentAcknowledged()) {
             return this._store.dispatch(
                 this._orderActionCreator.submitOrder({
@@ -42,8 +42,8 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
     }
 
     private _isPaymentAcknowledged(): boolean {
-        const { checkout } = this._store.getState();
-        const order = checkout.getOrder();
+        const state = this._store.getState();
+        const order = state.order.getOrder();
 
         if (!order) {
             throw new MissingDataError('Unable to determine payment status because "order" data is missing.');

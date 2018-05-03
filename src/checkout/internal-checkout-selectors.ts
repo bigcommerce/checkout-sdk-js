@@ -16,20 +16,20 @@ export default interface InternalCheckoutSelectors {
     billingAddress: BillingAddressSelector;
     cart: CartSelector;
     config: ConfigSelector;
-    countries: CountrySelector;
-    coupons: CouponSelector;
+    country: CountrySelector;
+    coupon: CouponSelector;
     customer: CustomerSelector;
     customerStrategy: CustomerStrategySelector;
     form: FormSelector;
-    giftCertificates: GiftCertificateSelector;
-    instruments: InstrumentSelector;
+    giftCertificate: GiftCertificateSelector;
+    instrument: InstrumentSelector;
     order: OrderSelector;
-    paymentMethods: PaymentMethodSelector;
+    paymentMethod: PaymentMethodSelector;
     paymentStrategy: PaymentStrategySelector;
     quote: QuoteSelector;
     remoteCheckout: RemoteCheckoutSelector;
     shippingAddress: ShippingAddressSelector;
-    shippingCountries: ShippingCountrySelector;
-    shippingOptions: ShippingOptionSelector;
+    shippingCountry: ShippingCountrySelector;
+    shippingOption: ShippingOptionSelector;
     shippingStrategy: ShippingStrategySelector;
 }

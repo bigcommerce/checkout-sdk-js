@@ -1,41 +1,38 @@
 import { CheckoutErrorSelector, CheckoutSelector, CheckoutSelectors, CheckoutStatusSelector, InternalCheckoutSelectors } from '../checkout';
-import { createFreezeProxy } from '../common/utility';
 
-import { CheckoutStoreOptions } from './checkout-store';
-
-export default function createCheckoutSelectors(selectors: InternalCheckoutSelectors, options: CheckoutStoreOptions = {}): CheckoutSelectors {
+export default function createCheckoutSelectors(selectors: InternalCheckoutSelectors): CheckoutSelectors {
     const checkout = new CheckoutSelector(
         selectors.billingAddress,
         selectors.cart,
         selectors.config,
-        selectors.countries,
+        selectors.country,
         selectors.customer,
         selectors.form,
-        selectors.instruments,
+        selectors.instrument,
         selectors.order,
-        selectors.paymentMethods,
+        selectors.paymentMethod,
         selectors.quote,
         selectors.remoteCheckout,
         selectors.shippingAddress,
-        selectors.shippingCountries,
-        selectors.shippingOptions
+        selectors.shippingCountry,
+        selectors.shippingOption
     );
 
     const errors = new CheckoutErrorSelector(
         selectors.billingAddress,
         selectors.cart,
         selectors.config,
-        selectors.countries,
-        selectors.coupons,
+        selectors.country,
+        selectors.coupon,
         selectors.customerStrategy,
-        selectors.giftCertificates,
-        selectors.instruments,
+        selectors.giftCertificate,
+        selectors.instrument,
         selectors.order,
-        selectors.paymentMethods,
+        selectors.paymentMethod,
         selectors.paymentStrategy,
         selectors.quote,
-        selectors.shippingCountries,
-        selectors.shippingOptions,
+        selectors.shippingCountry,
+        selectors.shippingOption,
         selectors.shippingStrategy
     );
 
@@ -43,23 +40,23 @@ export default function createCheckoutSelectors(selectors: InternalCheckoutSelec
         selectors.billingAddress,
         selectors.cart,
         selectors.config,
-        selectors.countries,
-        selectors.coupons,
+        selectors.country,
+        selectors.coupon,
         selectors.customerStrategy,
-        selectors.giftCertificates,
-        selectors.instruments,
+        selectors.giftCertificate,
+        selectors.instrument,
         selectors.order,
-        selectors.paymentMethods,
+        selectors.paymentMethod,
         selectors.paymentStrategy,
         selectors.quote,
-        selectors.shippingCountries,
-        selectors.shippingOptions,
+        selectors.shippingCountry,
+        selectors.shippingOption,
         selectors.shippingStrategy
     );
 
     return {
-        checkout: options.shouldWarnMutation ? createFreezeProxy(checkout) : checkout,
-        errors: options.shouldWarnMutation ? createFreezeProxy(errors) : errors,
-        statuses: options.shouldWarnMutation ? createFreezeProxy(statuses) : statuses,
+        checkout,
+        errors,
+        statuses,
     };
 }

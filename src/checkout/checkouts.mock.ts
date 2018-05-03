@@ -1,7 +1,14 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getCart } from '../cart/carts.mock';
-import { getRemoteCheckoutMeta } from '../remote-checkout/remote-checkout.mock';
+import { getCartState } from '../cart/internal-carts.mock';
+import { getConfigState } from '../config/configs.mock';
+import { getCustomerState } from '../customer/internal-customers.mock';
+import { getCompleteOrderState } from '../order/internal-orders.mock';
+import { getPaymentMethodsState } from '../payment/payment-methods.mock';
+import { getQuoteState } from '../quote/internal-quotes.mock';
+import { getRemoteCheckoutMeta, getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
 import { getConsignment } from '../shipping/consignments.mock';
+import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
 
 import Checkout from './checkout';
 
@@ -31,5 +38,18 @@ export function getCheckout(): Checkout {
 export function getCheckoutMeta() {
     return {
         remoteCheckout: getRemoteCheckoutMeta(),
+    };
+}
+
+export function getCheckoutStoreState() {
+    return {
+        cart: getCartState(),
+        config: getConfigState(),
+        customer: getCustomerState(),
+        order: getCompleteOrderState(),
+        paymentMethods: getPaymentMethodsState(),
+        quote: getQuoteState(),
+        remoteCheckout: getRemoteCheckoutState(),
+        shippingOptions: getShippingOptionsState(),
     };
 }

@@ -4,7 +4,7 @@ import { Observer } from 'rxjs/Observer';
 
 import { CartComparator, InternalCart } from '../cart';
 import { CartChangedError } from '../cart/errors';
-import { CheckoutClient } from '../checkout';
+import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
@@ -41,12 +41,12 @@ export default class OrderActionCreator {
     /**
      * @todo Remove `shouldVerifyCart` flag in the future. Always verify cart by default
      */
-    submitOrder(payload: OrderRequestBody, shouldVerifyCart: boolean = false, options?: RequestOptions): ThunkAction<Action> {
+    submitOrder(payload: OrderRequestBody, shouldVerifyCart: boolean = false, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<Action>) => {
             observer.next(createAction(actionTypes.SUBMIT_ORDER_REQUESTED));
 
-            const { checkout } = store.getState();
-            const cart = checkout.getCart();
+            const state = store.getState();
+            const cart = state.cart.getCart();
 
             if (!cart) {
                 throw new MissingDataError();

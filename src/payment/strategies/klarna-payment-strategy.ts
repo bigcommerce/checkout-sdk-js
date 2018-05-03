@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
@@ -25,14 +25,14 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         return this._klarnaScriptLoader.load()
             .then(klarnaCredit => { this._klarnaCredit = klarnaCredit; })
             .then(() => {
                 this._unsubscribe = this._store.subscribe(
                     () => this._loadWidget(options),
-                    ({ checkout }) => {
-                        const cart = checkout.getCart();
+                    state => {
+                        const cart = state.cart.getCart();
 
                         return cart && cart.grandTotal;
                     }
@@ -43,7 +43,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (this._unsubscribe) {
             this._unsubscribe();
         }
@@ -51,7 +51,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
         return super.deinitialize(options);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._authorize()
             .then(res => {
                 const authorizationToken = res.authorization_token;
@@ -83,8 +83,8 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
         const { methodId, klarna: { container, onLoad } } = options;
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(({ checkout }) => new Promise<KlarnaLoadResponse>((resolve, reject) => {
-                const paymentMethod = checkout.getPaymentMethod(methodId);
+            .then(state => new Promise<KlarnaLoadResponse>((resolve, reject) => {
+                const paymentMethod = state.paymentMethod.getPaymentMethod(methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to load payment widget because "paymentMethod.clientToken" field is missing.');

@@ -217,7 +217,7 @@ describe('AmazonPayCustomerStrategy', () => {
     it('signs out from remote checkout provider', async () => {
         const action = Observable.of(createAction(SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
 
-        jest.spyOn(store.getState().checkout, 'getCustomer')
+        jest.spyOn(store.getState().customer, 'getCustomer')
             .mockReturnValue({
                 ...getGuestCustomer(),
                 remote: { provider: 'amazon' },

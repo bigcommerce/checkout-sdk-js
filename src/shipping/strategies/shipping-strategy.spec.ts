@@ -1,19 +1,19 @@
 import { DataStore } from '@bigcommerce/data-store';
 
 import { InternalAddress } from '../../address';
-import { createCheckoutClient, createCheckoutStore, CheckoutSelectors } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 
 import ShippingStrategy from './shipping-strategy';
 
 describe('ShippingStrategy', () => {
-    let store: DataStore<CheckoutSelectors>;
+    let store: DataStore<InternalCheckoutSelectors>;
 
     class FoobarShippingStrategy extends ShippingStrategy {
-        updateAddress(address: InternalAddress, options?: any): Promise<CheckoutSelectors> {
+        updateAddress(address: InternalAddress, options?: any): Promise<InternalCheckoutSelectors> {
             return Promise.resolve(store.getState());
         }
 
-        selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
+        selectOption(addressId: string, optionId: string, options?: any): Promise<InternalCheckoutSelectors> {
             return Promise.resolve(store.getState());
         }
     }

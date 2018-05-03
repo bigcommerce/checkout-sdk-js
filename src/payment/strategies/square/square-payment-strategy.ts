@@ -1,4 +1,4 @@
-import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
     MissingDataError,
@@ -29,7 +29,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         return this._scriptLoader.load()
             .then(createSquareForm =>
                 new Promise((resolve, reject) => {
@@ -42,7 +42,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             .then(() => super.initialize(options));
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
         if (!payment || !payment.name) {
@@ -78,8 +78,8 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 
     private _getFormOptions(options: PaymentInitializeOptions, deferred: DeferredPromise): SquareFormOptions {
         const { square: squareOptions, methodId } = options;
-        const { checkout } = this._store.getState();
-        const paymentMethod = checkout.getPaymentMethod(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethod.getPaymentMethod(methodId);
 
         if (!squareOptions || !paymentMethod) {
             throw new InvalidArgumentError('Unable to proceed because "options.square" argument is not provided.');
@@ -92,8 +92,8 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 paymentFormLoaded: () => {
                     deferred.resolve();
 
-                    const { checkout } = this._store.getState();
-                    const billingAddress = checkout.getBillingAddress();
+                    const state = this._store.getState();
+                    const billingAddress = state.billingAddress.getBillingAddress();
 
                     if (!this._paymentForm) {
                         throw new NotInitializedError();

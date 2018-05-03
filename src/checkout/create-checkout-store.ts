@@ -1,7 +1,7 @@
 import { createDataStore, Action, DataStore } from '@bigcommerce/data-store';
 
 import { cartReducer } from '../cart';
-import { CheckoutSelectors } from '../checkout';
+import { InternalCheckoutSelectors } from '../checkout';
 import { createRequestErrorFactory } from '../common/error';
 import { configReducer } from '../config';
 import { couponReducer, giftCertificateReducer } from '../coupon';
@@ -17,7 +17,6 @@ import { shippingCountryReducer, shippingOptionReducer, shippingStrategyReducer 
 import { CheckoutStoreOptions } from './checkout-store';
 import CheckoutStoreState from './checkout-store-state';
 import createActionTransformer from './create-action-transformer';
-import createCheckoutSelectors from './create-checkout-selectors';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 
 /**
@@ -26,9 +25,9 @@ import createInternalCheckoutSelectors from './create-internal-checkout-selector
 export default function createCheckoutStore(
     initialState: Partial<CheckoutStoreState> = {},
     options?: CheckoutStoreOptions
-): DataStore<CheckoutStoreState, Action, CheckoutSelectors> {
+): DataStore<CheckoutStoreState, Action, InternalCheckoutSelectors> {
     const actionTransformer = createActionTransformer(createRequestErrorFactory());
-    const stateTransformer = (state: CheckoutStoreState) => createCheckoutSelectors(createInternalCheckoutSelectors(state), options);
+    const stateTransformer = (state: CheckoutStoreState) => createInternalCheckoutSelectors(state);
 
     return createDataStore(
         createCheckoutReducers(),

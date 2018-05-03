@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import Payment from '../payment';
 import { PaymentRequestOptions } from '../payment-request-options';
@@ -15,7 +15,7 @@ export default class OfflinePaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const action = this._orderActionCreator.submitOrder({
             ...payload,
             payment: pick(payload.payment, 'name') as Payment,

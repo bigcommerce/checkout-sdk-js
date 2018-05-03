@@ -1,4 +1,4 @@
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors} from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotImplementedError, NotInitializedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
@@ -24,7 +24,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         this._window = window;
     }
 
-    initialize(options: CustomerInitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
         }
@@ -36,8 +36,8 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         }
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(({ checkout }) => new Promise((resolve, reject) => {
-                this._paymentMethod = checkout.getPaymentMethod(methodId);
+            .then(state => new Promise((resolve, reject) => {
+                this._paymentMethod = state.paymentMethod.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
                     throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
@@ -62,7 +62,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -72,15 +72,15 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         return super.deinitialize(options);
     }
 
-    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
             'In order to sign in via AmazonPay, the shopper must click on "Login with Amazon" button.'
         );
     }
 
-    signOut(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const { remote = { provider: undefined } } = checkout.getCustomer() || {};
+    signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        const { customer } = this._store.getState();
+        const { remote = { provider: undefined } } = customer.getCustomer() || {};
 
         if (!remote.provider) {
             return Promise.resolve(this._store.getState());

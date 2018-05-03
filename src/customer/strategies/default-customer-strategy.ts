@@ -1,4 +1,4 @@
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import CustomerActionCreator from '../customer-action-creator';
 import CustomerCredentials from '../customer-credentials';
 import { CustomerRequestOptions } from '../customer-request-options';
@@ -13,13 +13,13 @@ export default class DefaultCustomerStrategy extends CustomerStrategy {
         super(store);
     }
 
-    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._customerActionCreator.signInCustomer(credentials, options)
         );
     }
 
-    signOut(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
+    signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._customerActionCreator.signOutCustomer(options)
         );

@@ -1,5 +1,5 @@
 import { Payment, PaymentMethodActionCreator } from '../..';
-import { CheckoutSelectors, CheckoutStore } from '../../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import isCreditCardLike from '../../is-credit-card';
@@ -24,10 +24,10 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         super(store);
     }
 
-    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
-            .then(({ checkout }) => {
-                const paymentMethod = checkout.getPaymentMethod(options.methodId);
+            .then(state => {
+                const paymentMethod = state.paymentMethod.getPaymentMethod(options.methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');
@@ -41,9 +41,8 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
             .catch((error: Error) => this._handleError(error));
     }
 
-    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
-        const { checkout } = this._store.getState();
 
         if (!payment) {
             throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
@@ -52,8 +51,8 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         return this._store.dispatch(
             this._orderActionCreator.submitOrder(order, true, options)
         )
-            .then(() =>
-                checkout.isPaymentDataRequired(order.useStoreCredit) && payment ?
+            .then(state =>
+                state.order.isPaymentDataRequired(order.useStoreCredit) && payment ?
                     this._preparePaymentData(payment) :
                     Promise.resolve(payment)
             )
@@ -63,7 +62,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
             .catch((error: Error) => this._handleError(error));
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._braintreePaymentProcessor.deinitialize()
             .then(() => super.deinitialize(options));
     }
@@ -86,14 +85,14 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
 
     private _preparePaymentData(payment: Payment): Promise<Payment> {
         const { paymentData } = payment;
-        const { checkout } = this._store.getState();
+        const state = this._store.getState();
 
         if (paymentData && this._isUsingVaulting(paymentData)) {
             return Promise.resolve(payment);
         }
 
-        const cart = checkout.getCart();
-        const billingAddress = checkout.getBillingAddress();
+        const cart = state.cart.getCart();
+        const billingAddress = state.billingAddress.getBillingAddress();
 
         if (!cart || !billingAddress) {
             throw new MissingDataError('Unable to prepare payment data because "cart" and "billingAddress" data is missing.');

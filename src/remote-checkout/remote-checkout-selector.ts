@@ -1,10 +1,13 @@
+import { CustomerState } from '../customer';
+
 import RemoteCheckout from './remote-checkout';
 import RemoteCheckoutMeta from './remote-checkout-meta';
 import RemoteCheckoutState from './remote-checkout-state';
 
 export default class RemoteCheckoutSelector {
     constructor(
-        private _remoteCheckout: RemoteCheckoutState
+        private _remoteCheckout: RemoteCheckoutState,
+        private _customer: CustomerState
     ) {}
 
     getCheckout(): RemoteCheckout | undefined {
@@ -13,5 +16,11 @@ export default class RemoteCheckoutSelector {
 
     getCheckoutMeta(): RemoteCheckoutMeta | undefined {
         return this._remoteCheckout.meta;
+    }
+
+    getProviderId(): string | undefined {
+        const customer = this._customer.data;
+
+        return customer && customer.remote && customer.remote.provider;
     }
 }

@@ -1,7 +1,7 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { isAddressEqual, InternalAddress } from '../../address';
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
@@ -31,7 +31,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         this._window = window;
     }
 
-    initialize(options: ShippingInitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
         }
@@ -43,8 +43,8 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         }
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(({ checkout }) => new Promise((resolve, reject) => {
-                this._paymentMethod = checkout.getPaymentMethod(methodId);
+            .then(state => new Promise((resolve, reject) => {
+                this._paymentMethod = state.paymentMethod.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
                     throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
@@ -62,7 +62,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    deinitialize(options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -72,11 +72,11 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         return super.deinitialize(options);
     }
 
-    updateAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    selectOption(addressId: string, optionId: string, options?: any): Promise<CheckoutSelectors> {
+    selectOption(addressId: string, optionId: string, options?: any): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._optionActionCreator.selectShippingOption(addressId, optionId, options)
         );
@@ -121,10 +121,11 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         });
     }
 
-    private _synchronizeShippingAddress(): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const { remoteCheckout: { amazon: { referenceId } } } = checkout.getCheckoutMeta();
+    private _synchronizeShippingAddress(): Promise<InternalCheckoutSelectors> {
+        const state = this._store.getState();
+        const meta = state.remoteCheckout.getCheckoutMeta();
         const methodId = this._paymentMethod && this._paymentMethod.id;
+        const referenceId = meta && meta.amazon && meta.amazon.referenceId;
 
         if (!methodId || !referenceId) {
             throw new NotInitializedError();
@@ -136,15 +137,15 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             .then(() => this._store.dispatch(
                 this._remoteCheckoutActionCreator.initializeShipping(methodId, { referenceId })
             ))
-            .then(({ checkout }) => {
-                const { remoteCheckout = {} } = checkout.getCheckoutMeta();
-                const address = checkout.getShippingAddress();
+            .then(state => {
+                const remoteCheckout = state.remoteCheckout.getCheckout();
+                const address = state.shippingAddress.getShippingAddress();
 
-                if (remoteCheckout.shippingAddress === false) {
+                if (remoteCheckout && remoteCheckout.shippingAddress === false) {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (isAddressEqual(remoteCheckout.shippingAddress, address || {})) {
+                if (!remoteCheckout || !remoteCheckout.shippingAddress || isAddressEqual(remoteCheckout.shippingAddress, address || {})) {
                     return this._store.getState();
                 }
 

@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { PaymentRequestOptions } from '../payment-request-options';
 
@@ -14,7 +14,7 @@ export default class NoPaymentDataRequiredPaymentStrategy extends PaymentStrateg
         super(store);
     }
 
-    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._orderActionCreator.submitOrder(omit(orderRequest, 'payment'), true, options)
         );

@@ -1,5 +1,6 @@
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
+import { createFreezeProxies } from '../common/utility';
 import { ConfigSelector } from '../config';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector, CustomerStrategySelector } from '../customer';
@@ -12,49 +13,52 @@ import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
+import { CheckoutStoreOptions } from './checkout-store';
 import CheckoutStoreState from './checkout-store-state';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
-export default function createInternalCheckoutSelectors(state: CheckoutStoreState): InternalCheckoutSelectors {
+export default function createInternalCheckoutSelectors(state: CheckoutStoreState, options: CheckoutStoreOptions = {}): InternalCheckoutSelectors {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
     const config = new ConfigSelector(state.config);
-    const countries = new CountrySelector(state.countries);
-    const coupons = new CouponSelector(state.coupons);
+    const country = new CountrySelector(state.countries);
+    const coupon = new CouponSelector(state.coupons);
     const customer = new CustomerSelector(state.customer);
     const customerStrategy = new CustomerStrategySelector(state.customerStrategy);
     const form = new FormSelector(state.config);
-    const giftCertificates = new GiftCertificateSelector(state.giftCertificates);
-    const instruments = new InstrumentSelector(state.instruments);
+    const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
+    const instrument = new InstrumentSelector(state.instruments);
     const order = new OrderSelector(state.order, state.customer, state.cart);
-    const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+    const paymentMethod = new PaymentMethodSelector(state.paymentMethods, state.order);
     const paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
     const quote = new QuoteSelector(state.quote);
-    const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
+    const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout, state.customer);
     const shippingAddress = new ShippingAddressSelector(state.quote);
-    const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
-    const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
+    const shippingCountry = new ShippingCountrySelector(state.shippingCountries);
+    const shippingOption = new ShippingOptionSelector(state.shippingOptions, state.quote);
     const shippingStrategy = new ShippingStrategySelector(state.shippingStrategy);
 
-    return {
+    const selectors = {
         billingAddress,
         cart,
         config,
-        countries,
-        coupons,
+        country,
+        coupon,
         customer,
         customerStrategy,
         form,
-        giftCertificates,
-        instruments,
+        giftCertificate,
+        instrument,
         order,
-        paymentMethods,
+        paymentMethod,
         paymentStrategy,
         quote,
         remoteCheckout,
         shippingAddress,
-        shippingCountries,
-        shippingOptions,
+        shippingCountry,
+        shippingOption,
         shippingStrategy,
     };
+
+    return options.shouldWarnMutation ? createFreezeProxies(selectors) : selectors;
 }

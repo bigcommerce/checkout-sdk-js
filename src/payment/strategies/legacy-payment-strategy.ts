@@ -1,4 +1,4 @@
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { PaymentRequestOptions } from '../payment-request-options';
 
@@ -12,7 +12,7 @@ export default class LegacyPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options));
     }
 }

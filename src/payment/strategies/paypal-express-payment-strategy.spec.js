@@ -307,7 +307,7 @@ describe('PaypalExpressPaymentStrategy', () => {
                 },
             });
 
-            jest.spyOn(store.getState().checkout, 'getOrder').mockReturnValue(order);
+            jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(order);
 
             await strategy.initialize({ methodId: paymentMethod.id });
         });
@@ -331,7 +331,7 @@ describe('PaypalExpressPaymentStrategy', () => {
         });
 
         it('does not finalize order if order is not created', async () => {
-            jest.spyOn(store.getState().checkout, 'getOrder').mockReturnValue(getIncompleteOrder());
+            jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(getIncompleteOrder());
 
             try {
                 await strategy.finalize();

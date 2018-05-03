@@ -37,7 +37,7 @@ export default class OrderSelector {
         return this._order.meta && this._order.meta.token;
     }
 
-    isPaymentDataRequired(useStoreCredit: boolean): boolean {
+    isPaymentDataRequired(useStoreCredit: boolean = false): boolean {
         const grandTotal = this._cart.data && this._cart.data.grandTotal && this._cart.data.grandTotal.amount || 0;
         const storeCredit = this._customer.data && this._customer.data.storeCredit || 0;
 

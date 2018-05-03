@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import PaymentMethod from '../payment-method';
@@ -24,10 +24,10 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
+    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        const state = this._store.getState();
 
-        this._paymentMethod = checkout.getPaymentMethod(options.methodId);
+        this._paymentMethod = state.paymentMethod.getPaymentMethod(options.methodId);
 
         if (!this._isInContextEnabled() || this._isInitialized) {
             return super.initialize(options);
@@ -49,7 +49,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(): Promise<CheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize();
         }
@@ -62,7 +62,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         return super.deinitialize();
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
             this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
             return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options));
@@ -70,8 +70,8 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
         if (!this._isInContextEnabled()) {
             return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options))
-                .then(({ checkout }) => {
-                    const order = checkout.getOrder();
+                .then(state => {
+                    const order = state.order.getOrder();
 
                     if (order && order.payment.redirectUrl) {
                         window.location.assign(order.payment.redirectUrl);
@@ -85,8 +85,8 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         this._paypalSdk.checkout.initXO();
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(payload, true, options))
-            .then(({ checkout }) => {
-                const order = checkout.getOrder();
+            .then(state => {
+                const order = state.order.getOrder();
 
                 if (order && order.payment.redirectUrl) {
                     this._paypalSdk.checkout.startFlow(order.payment.redirectUrl);
@@ -102,9 +102,9 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
-        const { checkout } = this._store.getState();
-        const order = checkout.getOrder();
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const state = this._store.getState();
+        const order = state.order.getOrder();
 
         if (!order) {
             throw new MissingDataError('Unable to finalize order because "order" data is missing.');
@@ -120,8 +120,8 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     }
 
     private _getPaymentStatus(): string | undefined {
-        const { checkout } = this._store.getState();
-        const order = checkout.getOrder();
+        const state = this._store.getState();
+        const order = state.order.getOrder();
 
         if (!order) {
             throw new MissingDataError('Unable to determine payment status because "order" data is missing.');
