@@ -12,16 +12,16 @@ export default interface CheckoutStoreState {
     countries: any;
     coupons: any;
     customer: any;
-    customerStrategy: CustomerStrategyState;
+    customerStrategies: CustomerStrategyState;
     giftCertificates: any;
     instruments: any;
     order: any;
     payment: any;
     paymentMethods: any;
-    paymentStrategy: PaymentStrategyState;
+    paymentStrategies: PaymentStrategyState;
     quote: any;
     remoteCheckout: RemoteCheckoutState;
     shippingCountries: any;
     shippingOptions: any;
-    shippingStrategy: ShippingStrategyState;
+    shippingStrategies: ShippingStrategyState;
 }

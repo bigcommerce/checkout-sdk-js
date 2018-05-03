@@ -45,7 +45,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
 
         const { amazon: amazonOptions, methodId } = options;
         const state = this._store.getState();
-        const paymentMethod = state.paymentMethod.getPaymentMethod(methodId);
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
         if (!amazonOptions) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.amazon" argument is not provided.');

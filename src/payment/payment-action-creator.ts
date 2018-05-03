@@ -78,11 +78,11 @@ export default class PaymentActionCreator {
         const cart = state.cart.getCart();
         const customer = state.customer.getCustomer();
         const order = state.order.getOrder();
-        const paymentMethod = this._getPaymentMethod(payment, state.paymentMethod);
+        const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
         const shippingAddress = state.shippingAddress.getShippingAddress();
-        const shippingOption = state.shippingOption.getSelectedShippingOption();
+        const shippingOption = state.shippingOptions.getSelectedShippingOption();
         const config = state.config.getConfig();
-        const instrumentMeta = state.instrument.getInstrumentsMeta();
+        const instrumentMeta = state.instruments.getInstrumentsMeta();
 
         if (!config) {
             throw new NotInitializedError('Config data is missing');

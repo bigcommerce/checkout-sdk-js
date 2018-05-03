@@ -2,54 +2,54 @@ import PaymentStrategyState, { DEFAULT_STATE } from './payment-strategy-state';
 
 export default class PaymentStrategySelector {
     constructor(
-        private _paymentStrategy: PaymentStrategyState = DEFAULT_STATE
+        private _paymentStrategies: PaymentStrategyState = DEFAULT_STATE
     ) {}
 
     getInitializeError(methodId?: string): Error | undefined {
-        if (methodId && this._paymentStrategy.errors.initializeMethodId !== methodId) {
+        if (methodId && this._paymentStrategies.errors.initializeMethodId !== methodId) {
             return;
         }
 
-        return this._paymentStrategy.errors.initializeError;
+        return this._paymentStrategies.errors.initializeError;
     }
 
     getExecuteError(methodId?: string): Error | undefined {
-        if (methodId && this._paymentStrategy.errors.executeMethodId !== methodId) {
+        if (methodId && this._paymentStrategies.errors.executeMethodId !== methodId) {
             return;
         }
 
-        return this._paymentStrategy.errors.executeError;
+        return this._paymentStrategies.errors.executeError;
     }
 
     getFinalizeError(methodId?: string): Error | undefined {
-        if (methodId && this._paymentStrategy.errors.finalizeMethodId !== methodId) {
+        if (methodId && this._paymentStrategies.errors.finalizeMethodId !== methodId) {
             return;
         }
 
-        return this._paymentStrategy.errors.finalizeError;
+        return this._paymentStrategies.errors.finalizeError;
     }
 
     isInitializing(methodId?: string): boolean {
-        if (methodId && this._paymentStrategy.statuses.initializeMethodId !== methodId) {
+        if (methodId && this._paymentStrategies.statuses.initializeMethodId !== methodId) {
             return false;
         }
 
-        return !!this._paymentStrategy.statuses.isInitializing;
+        return !!this._paymentStrategies.statuses.isInitializing;
     }
 
     isExecuting(methodId?: string): boolean {
-        if (methodId && this._paymentStrategy.statuses.executeMethodId !== methodId) {
+        if (methodId && this._paymentStrategies.statuses.executeMethodId !== methodId) {
             return false;
         }
 
-        return !!this._paymentStrategy.statuses.isExecuting;
+        return !!this._paymentStrategies.statuses.isExecuting;
     }
 
     isFinalizing(methodId?: string): boolean {
-        if (methodId && this._paymentStrategy.statuses.finalizeMethodId !== methodId) {
+        if (methodId && this._paymentStrategies.statuses.finalizeMethodId !== methodId) {
             return false;
         }
 
-        return !!this._paymentStrategy.statuses.isFinalizing;
+        return !!this._paymentStrategies.statuses.isFinalizing;
     }
 }

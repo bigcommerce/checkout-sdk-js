@@ -34,7 +34,7 @@ export default class PaymentStrategyActionCreator {
             let strategy: PaymentStrategy;
 
             if (state.order.isPaymentDataRequired(useStoreCredit)) {
-                const method = state.paymentMethod.getPaymentMethod(payment.name, payment.gateway);
+                const method = state.paymentMethods.getPaymentMethod(payment.name, payment.gateway);
 
                 if (!method) {
                     throw new MissingDataError(`Unable to submit payment because "paymentMethod (${payment.name})" data is missing.`);
@@ -72,7 +72,7 @@ export default class PaymentStrategyActionCreator {
                 throw new OrderFinalizationNotRequiredError();
             }
 
-            const method = state.paymentMethod.getPaymentMethod(order.payment.id, order.payment.gateway);
+            const method = state.paymentMethods.getPaymentMethod(order.payment.id, order.payment.gateway);
             const meta = { methodId: order.payment.id };
 
             if (!method) {
@@ -97,7 +97,7 @@ export default class PaymentStrategyActionCreator {
         return store => Observable.create((observer: Observer<PaymentStrategyInitializeAction>) => {
             const state = store.getState();
             const { methodId, gatewayId } = options;
-            const method = state.paymentMethod.getPaymentMethod(methodId, gatewayId);
+            const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
 
             if (!method) {
                 throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
@@ -121,7 +121,7 @@ export default class PaymentStrategyActionCreator {
         return store => Observable.create((observer: Observer<PaymentStrategyDeinitializeAction>) => {
             const state = store.getState();
             const { methodId, gatewayId } = options;
-            const method = state.paymentMethod.getPaymentMethod(methodId, gatewayId);
+            const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
 
             if (!method) {
                 throw new MissingDataError(`Unable to deinitialize because "paymentMethod (${methodId})" data is missing.`);

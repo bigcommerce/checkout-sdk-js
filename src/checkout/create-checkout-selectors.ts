@@ -5,52 +5,52 @@ export default function createCheckoutSelectors(selectors: InternalCheckoutSelec
         selectors.billingAddress,
         selectors.cart,
         selectors.config,
-        selectors.country,
+        selectors.countries,
         selectors.customer,
         selectors.form,
-        selectors.instrument,
+        selectors.instruments,
         selectors.order,
-        selectors.paymentMethod,
+        selectors.paymentMethods,
         selectors.quote,
         selectors.shippingAddress,
-        selectors.shippingCountry,
-        selectors.shippingOption
+        selectors.shippingCountries,
+        selectors.shippingOptions
     );
 
     const errors = new CheckoutErrorSelector(
         selectors.billingAddress,
         selectors.cart,
         selectors.config,
-        selectors.country,
-        selectors.coupon,
-        selectors.customerStrategy,
-        selectors.giftCertificate,
-        selectors.instrument,
+        selectors.countries,
+        selectors.coupons,
+        selectors.customerStrategies,
+        selectors.giftCertificates,
+        selectors.instruments,
         selectors.order,
-        selectors.paymentMethod,
-        selectors.paymentStrategy,
+        selectors.paymentMethods,
+        selectors.paymentStrategies,
         selectors.quote,
-        selectors.shippingCountry,
-        selectors.shippingOption,
-        selectors.shippingStrategy
+        selectors.shippingCountries,
+        selectors.shippingOptions,
+        selectors.shippingStrategies
     );
 
     const statuses = new CheckoutStatusSelector(
         selectors.billingAddress,
         selectors.cart,
         selectors.config,
-        selectors.country,
-        selectors.coupon,
-        selectors.customerStrategy,
-        selectors.giftCertificate,
-        selectors.instrument,
+        selectors.countries,
+        selectors.coupons,
+        selectors.customerStrategies,
+        selectors.giftCertificates,
+        selectors.instruments,
         selectors.order,
-        selectors.paymentMethod,
-        selectors.paymentStrategy,
+        selectors.paymentMethods,
+        selectors.paymentStrategies,
         selectors.quote,
-        selectors.shippingCountry,
-        selectors.shippingOption,
-        selectors.shippingStrategy
+        selectors.shippingCountries,
+        selectors.shippingOptions,
+        selectors.shippingStrategies
     );
 
     return {

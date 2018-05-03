@@ -84,7 +84,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(state => new Promise<KlarnaLoadResponse>((resolve, reject) => {
-                const paymentMethod = state.paymentMethod.getPaymentMethod(methodId);
+                const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to load payment widget because "paymentMethod.clientToken" field is missing.');

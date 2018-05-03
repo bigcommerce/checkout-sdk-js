@@ -332,7 +332,7 @@ export default class CheckoutService {
 
         const { customerId } = customer;
         const { storeId } = config.storeProfile;
-        const { vaultAccessToken = null, vaultAccessExpiry = null } = state.instrument.getInstrumentsMeta() || {};
+        const { vaultAccessToken = null, vaultAccessExpiry = null } = state.instruments.getInstrumentsMeta() || {};
 
         return {
             customerId,

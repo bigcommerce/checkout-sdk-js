@@ -44,7 +44,7 @@ export function getCheckoutStoreState() {
         config: getConfigState(),
         countries: getCountriesState(),
         customer: getCustomerState(),
-        customerStrategy: getCustomerStrategyState(),
+        customerStrategies: getCustomerStrategyState(),
         instruments: getInstrumentsState(),
         order: getCompleteOrderState(),
         paymentMethods: getPaymentMethodsState(),

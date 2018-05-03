@@ -27,7 +27,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintree: braintreeOptions, methodId } = options;
 
-        this._paymentMethod = this._store.getState().paymentMethod.getPaymentMethod(methodId);
+        this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
 
         if (this._paymentMethod && this._paymentMethod.nonce) {
             return super.initialize(options);
@@ -35,7 +35,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(state => {
-                this._paymentMethod = state.paymentMethod.getPaymentMethod(methodId);
+                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod || !this._paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');

@@ -37,7 +37,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(state => new Promise((resolve, reject) => {
-                this._paymentMethod = state.paymentMethod.getPaymentMethod(methodId);
+                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
                     throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);

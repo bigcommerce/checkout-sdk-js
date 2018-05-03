@@ -32,7 +32,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         }
 
         const state = this._store.getState();
-        const paymentMethod = state.paymentMethod.getPaymentMethod(options.methodId, options.gatewayId);
+        const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId, options.gatewayId);
 
         if (!paymentMethod) {
             throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
@@ -76,7 +76,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(() => this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
             ))
-            .then(state => this._displayModal(state.paymentMethod.getPaymentMethod(paymentId)))
+            .then(state => this._displayModal(state.paymentMethods.getPaymentMethod(paymentId)))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
             .then(() => new Promise<never>(() => {}));
     }

@@ -27,7 +27,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
 
-        this._paymentMethod = state.paymentMethod.getPaymentMethod(options.methodId);
+        this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
 
         if (!this._isInContextEnabled() || this._isInitialized) {
             return super.initialize(options);

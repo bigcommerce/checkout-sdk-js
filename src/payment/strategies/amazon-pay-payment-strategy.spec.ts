@@ -216,7 +216,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('rejects with error if initialization fails', async () => {
-        jest.spyOn(store.getState().paymentMethod, 'getPaymentMethod')
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue({ ...paymentMethod, config: {} });
 
         try {

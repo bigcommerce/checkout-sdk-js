@@ -21,43 +21,43 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
     const config = new ConfigSelector(state.config);
-    const country = new CountrySelector(state.countries);
-    const coupon = new CouponSelector(state.coupons);
+    const countries = new CountrySelector(state.countries);
+    const coupons = new CouponSelector(state.coupons);
     const customer = new CustomerSelector(state.customer);
-    const customerStrategy = new CustomerStrategySelector(state.customerStrategy);
+    const customerStrategies = new CustomerStrategySelector(state.customerStrategies);
     const form = new FormSelector(state.config);
-    const giftCertificate = new GiftCertificateSelector(state.giftCertificates);
-    const instrument = new InstrumentSelector(state.instruments);
+    const giftCertificates = new GiftCertificateSelector(state.giftCertificates);
+    const instruments = new InstrumentSelector(state.instruments);
     const order = new OrderSelector(state.order, state.customer, state.cart);
-    const paymentMethod = new PaymentMethodSelector(state.paymentMethods, state.order);
-    const paymentStrategy = new PaymentStrategySelector(state.paymentStrategy);
+    const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+    const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
     const quote = new QuoteSelector(state.quote);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout, state.customer);
     const shippingAddress = new ShippingAddressSelector(state.quote);
-    const shippingCountry = new ShippingCountrySelector(state.shippingCountries);
-    const shippingOption = new ShippingOptionSelector(state.shippingOptions, state.quote);
-    const shippingStrategy = new ShippingStrategySelector(state.shippingStrategy);
+    const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
+    const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
+    const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
 
     const selectors = {
         billingAddress,
         cart,
         config,
-        country,
-        coupon,
+        countries,
+        coupons,
         customer,
-        customerStrategy,
+        customerStrategies,
         form,
-        giftCertificate,
-        instrument,
+        giftCertificates,
+        instruments,
         order,
-        paymentMethod,
-        paymentStrategy,
+        paymentMethods,
+        paymentStrategies,
         quote,
         remoteCheckout,
         shippingAddress,
-        shippingCountry,
-        shippingOption,
-        shippingStrategy,
+        shippingCountries,
+        shippingOptions,
+        shippingStrategies,
     };
 
     return options.shouldWarnMutation ? createFreezeProxies(selectors) : selectors;

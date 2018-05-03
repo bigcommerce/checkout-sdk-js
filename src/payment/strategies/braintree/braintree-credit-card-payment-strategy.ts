@@ -27,7 +27,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
             .then(state => {
-                const paymentMethod = state.paymentMethod.getPaymentMethod(options.methodId);
+                const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
                     throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');
