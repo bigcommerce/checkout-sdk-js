@@ -11,8 +11,13 @@ export default class ConfigRequestSender {
     ) {}
 
     loadConfig({ timeout }: RequestOptions = {}): Promise<Response> {
-        const url = '/internalapi/v1/checkout/configuration';
+        const url = '/api/storefront/checkoutsettings';
 
-        return this._requestSender.get(url, { timeout });
+        return this._requestSender.get(url, {
+            timeout,
+            headers: {
+                'X-API-INTERNAL': 'This API endpoint is for internal use only and changes',
+            },
+        });
     }
 }

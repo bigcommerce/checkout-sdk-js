@@ -10,7 +10,7 @@ import { getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator } from '../config';
-import { getAppConfig } from '../config/configs.mock';
+import { getAppConfig, getLegacyAppConfig } from '../config/configs.mock';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { getCustomerResponseBody, getGuestCustomer } from '../customer/internal-customers.mock';
@@ -18,12 +18,7 @@ import { getFormFields } from '../form/form.mocks';
 import { CountryActionCreator } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator } from '../order';
-import {
-    getCompleteOrderResponseBody,
-    getCompleteOrderState,
-    getOrderRequestBody,
-    getSubmittedOrder,
-} from '../order/internal-orders.mock';
+import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder, getCompleteOrderState } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
@@ -174,7 +169,14 @@ describe('CheckoutService', () => {
             quote: getQuoteState(),
             order: getCompleteOrderState(),
             checkout: getCheckoutState(),
-            config: { data: getAppConfig() },
+            config: {
+                data: {
+                    ...getLegacyAppConfig(),
+                    storeConfig: {
+                        formFields: getAppConfig().storeConfig.formFields,
+                    },
+                },
+            },
         });
 
         paymentStrategy = {
@@ -250,7 +252,12 @@ describe('CheckoutService', () => {
             const { checkout } = await checkoutService.loadConfig();
 
             expect(checkoutClient.loadConfig).toHaveBeenCalled();
-            expect(checkout.getConfig()).toEqual(getAppConfig());
+            expect(checkout.getConfig()).toEqual({
+                ...getLegacyAppConfig(),
+                storeConfig: {
+                    formFields: getAppConfig().storeConfig.formFields,
+                },
+            });
         });
 
         it('dispatches load config action with queue id', async () => {
@@ -785,7 +792,7 @@ describe('CheckoutService', () => {
 
     describe('#loadInstruments()', () => {
         it('loads instruments', async () => {
-            const { storeId } = getAppConfig();
+            const { storeId } = getAppConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
 
@@ -803,7 +810,7 @@ describe('CheckoutService', () => {
 
     describe('#vaultInstrument()', () => {
         it('vaults an instrument', async () => {
-            const { storeId } = getAppConfig();
+            const { storeId } = getAppConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
             const instrument = vaultInstrumentRequestBody();
@@ -824,7 +831,7 @@ describe('CheckoutService', () => {
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
-            const { storeId } = getAppConfig();
+            const { storeId } = getAppConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
             const instrumentId = '456';
