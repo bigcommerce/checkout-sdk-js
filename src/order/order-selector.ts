@@ -1,5 +1,6 @@
 import * as paymentStatusTypes from '../payment/payment-status-types';
 
+import { selector } from '../common/selector';
 import { PaymentMethod } from '../payment';
 
 import InternalOrder from './internal-order';
@@ -7,6 +8,7 @@ import InternalOrder from './internal-order';
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class OrderSelector {
     /**
      * @constructor

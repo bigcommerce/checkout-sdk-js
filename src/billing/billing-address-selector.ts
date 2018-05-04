@@ -1,8 +1,10 @@
 import { InternalAddress } from '../address';
+import { selector } from '../common/selector';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class BillingAddressSelector {
     constructor(
         private _quote: any = {}

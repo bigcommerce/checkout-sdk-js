@@ -1,6 +1,6 @@
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
-import { selectorDecorator as selector } from '../common/selector';
+import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerStrategySelector } from '../customer';

@@ -1,8 +1,11 @@
+import { selector } from '../common/selector';
+
 import InternalCart from './internal-cart';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class CartSelector {
     constructor(
         private _cart: any = {}

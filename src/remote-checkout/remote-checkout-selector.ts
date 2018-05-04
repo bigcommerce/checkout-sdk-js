@@ -1,9 +1,11 @@
+import { selector } from '../common/selector';
 import { CustomerState } from '../customer';
 
 import RemoteCheckout from './remote-checkout';
 import RemoteCheckoutMeta from './remote-checkout-meta';
 import RemoteCheckoutState from './remote-checkout-state';
 
+@selector
 export default class RemoteCheckoutSelector {
     constructor(
         private _remoteCheckout: RemoteCheckoutState,

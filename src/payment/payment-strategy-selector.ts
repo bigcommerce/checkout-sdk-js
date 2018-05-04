@@ -1,5 +1,8 @@
+import { selector } from '../common/selector';
+
 import PaymentStrategyState, { DEFAULT_STATE } from './payment-strategy-state';
 
+@selector
 export default class PaymentStrategySelector {
     constructor(
         private _paymentStrategies: PaymentStrategyState = DEFAULT_STATE

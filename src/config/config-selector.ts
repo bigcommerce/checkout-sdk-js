@@ -1,8 +1,11 @@
+import { selector } from '../common/selector';
+
 import { StoreConfig } from './config';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class ConfigSelector {
     /**
      * @constructor

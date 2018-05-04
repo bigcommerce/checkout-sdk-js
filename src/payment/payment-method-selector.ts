@@ -1,10 +1,13 @@
 import { find } from 'lodash';
 
+import { selector } from '../common/selector';
+
 import PaymentMethod from './payment-method';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class PaymentMethodSelector {
     /**
      * @constructor

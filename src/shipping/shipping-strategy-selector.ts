@@ -1,5 +1,8 @@
+import { selector } from '../common/selector';
+
 import ShippingStrategyState from './shipping-strategy-state';
 
+@selector
 export default class ShippingStrategySelector {
     constructor(
         private _shippingStrategies: ShippingStrategyState
