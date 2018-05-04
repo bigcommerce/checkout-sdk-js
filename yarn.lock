@@ -10,9 +10,9 @@
     deep-assign "^2.0.0"
     object-assign "^4.1.0"
 
-"@bigcommerce/data-store@git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.3":
-  version "0.1.3"
-  resolved "git+ssh://git@github.com/bigcommerce/data-store-js.git#7376b3bc76fb30201272fd0003dccf8c9986b74e"
+"@bigcommerce/data-store@git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.4":
+  version "0.1.4"
+  resolved "git+ssh://git@github.com/bigcommerce/data-store-js.git#92647d7485f9a09a824f963aee07b976eac9c591"
   dependencies:
     "@types/lodash" "^4.14.92"
     lodash "^4.17.4"

@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@bigcommerce/bigpay-client": "git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#2.11.1",
-    "@bigcommerce/data-store": "git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.3",
+    "@bigcommerce/data-store": "git+ssh://git@github.com/bigcommerce/data-store-js.git#v0.1.4",
     "@bigcommerce/form-poster": "git+ssh://git@github.com/bigcommerce/form-poster-js.git#1.1.2",
     "@bigcommerce/request-sender": "git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.2",
     "@bigcommerce/script-loader": "git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.2",
