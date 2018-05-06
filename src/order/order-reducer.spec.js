@@ -81,6 +81,7 @@ describe('orderReducer()', () => {
             meta: expect.objectContaining({
                 deviceFingerprint: response.meta.deviceFingerprint,
                 token: headers.token,
+                payment: action.payload.order.payment,
             }),
             data: action.payload.order,
         }));

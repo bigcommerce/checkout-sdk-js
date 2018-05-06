@@ -5,8 +5,7 @@ import { selector } from '../common/selector';
 import { CustomerState } from '../customer';
 import { PaymentMethod } from '../payment';
 
-import InternalIncompleteOrder from './internal-incomplete-order';
-import InternalOrder, { InternalOrderMeta } from './internal-order';
+import InternalOrder, { InternalIncompleteOrder, InternalOrderMeta } from './internal-order';
 import OrderState from './order-state';
 
 @selector

@@ -1,5 +1,4 @@
-import InternalIncompleteOrder from './internal-incomplete-order';
-import InternalOrder, { InternalOrderMeta } from './internal-order';
+import InternalOrder, { InternalIncompleteOrder, InternalOrderMeta, InternalOrderPayment } from './internal-order';
 
 export default interface OrderState {
     data?: InternalOrder | InternalIncompleteOrder;
@@ -10,6 +9,7 @@ export default interface OrderState {
 
 export interface OrderMetaState extends InternalOrderMeta {
     token?: string;
+    payment?: InternalOrderPayment;
 }
 
 export interface OrderErrorsState {
