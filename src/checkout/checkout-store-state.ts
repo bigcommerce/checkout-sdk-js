@@ -4,7 +4,7 @@ import { CouponState, GiftCertificateState } from '../coupon';
 import { CustomerState, CustomerStrategyState } from '../customer';
 import { CountryState } from '../geography';
 import { OrderState } from '../order';
-import { PaymentStrategyState } from '../payment';
+import { PaymentState, PaymentStrategyState } from '../payment';
 import { RemoteCheckoutState } from '../remote-checkout';
 import { ShippingCountryState, ShippingStrategyState } from '../shipping';
 
@@ -21,7 +21,7 @@ export default interface CheckoutStoreState {
     giftCertificates: GiftCertificateState;
     instruments: any;
     order: OrderState;
-    payment: any;
+    payment: PaymentState;
     paymentMethods: any;
     paymentStrategies: PaymentStrategyState;
     quote: any;

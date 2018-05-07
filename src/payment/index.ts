@@ -12,6 +12,7 @@ export { default as PaymentMethodRequestSender } from './payment-method-request-
 export { default as PaymentMethodSelector } from './payment-method-selector';
 export { default as paymentReducer } from './payment-reducer';
 export { default as PaymentRequestSender } from './payment-request-sender';
+export { default as PaymentState } from './payment-state';
 export { default as PaymentStrategyActionCreator } from './payment-strategy-action-creator';
 export { default as paymentStrategyReducer } from './payment-strategy-reducer';
 export { default as PaymentStrategyRegistry } from './payment-strategy-registry';
