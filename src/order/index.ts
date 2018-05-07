@@ -7,6 +7,7 @@ export { default as orderReducer } from './order-reducer';
 export { default as OrderRequestBody } from './order-request-body';
 export { default as OrderRequestSender } from './order-request-sender';
 export { default as OrderSelector } from './order-selector';
+export { default as OrderState } from './order-state';
 
 export { default as mapToInternalOrder } from './map-to-internal-order';
 export { default as mapToInternalIncompleteOrder } from './map-to-internal-incomplete-order';
