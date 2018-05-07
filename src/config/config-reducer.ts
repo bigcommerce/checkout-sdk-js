@@ -1,16 +1,16 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import Config, { StoreConfig } from './config';
-import { ConfigActionType } from './config-action-types';
+import { StoreConfig } from './config';
+import { ConfigActionType, LoadConfigAction } from './config-actions';
+import ConfigState, { ConfigErrorsState, ConfigStatusesState } from './config-state';
 
-/**
- * @todo Convert this file into TypeScript properly
- * @param {ConfigState} state
- * @param {Action} action
- * @return {ConfigState}
- */
-export default function configReducer(state: any = {}, action: Action<Config>): any {
-    const reducer = combineReducers({
+const DEFAULT_STATE: ConfigState = {
+    errors: {},
+    statuses: {},
+};
+
+export default function configReducer(state: ConfigState = DEFAULT_STATE, action: LoadConfigAction): ConfigState {
+    const reducer = combineReducers<ConfigState, LoadConfigAction>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -19,7 +19,7 @@ export default function configReducer(state: any = {}, action: Action<Config>): 
     return reducer(state, action);
 }
 
-function dataReducer(data: StoreConfig | undefined, action: Action<Config>): StoreConfig | undefined {
+function dataReducer(data: StoreConfig | undefined, action: LoadConfigAction): StoreConfig | undefined {
     switch (action.type) {
     case ConfigActionType.LoadConfigSucceeded:
         return action.payload ? action.payload.storeConfig : data;
@@ -29,13 +29,7 @@ function dataReducer(data: StoreConfig | undefined, action: Action<Config>): Sto
     }
 }
 
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(errors: ConfigErrorsState = DEFAULT_STATE.errors, action: LoadConfigAction): ConfigErrorsState {
     switch (action.type) {
     case ConfigActionType.LoadConfigSucceeded:
         return { ...errors, loadError: undefined };
@@ -48,13 +42,7 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(statuses: ConfigStatusesState = DEFAULT_STATE.statuses, action: LoadConfigAction): ConfigStatusesState {
     switch (action.type) {
     case ConfigActionType.LoadConfigRequested:
         return { ...statuses, isLoading: true };

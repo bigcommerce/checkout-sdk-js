@@ -1,4 +1,5 @@
 import { CartState } from '../cart';
+import { ConfigState } from '../config';
 import { CustomerStrategyState } from '../customer';
 import { PaymentStrategyState } from '../payment';
 import { RemoteCheckoutState } from '../remote-checkout';
@@ -9,7 +10,7 @@ import { ShippingStrategyState } from '../shipping';
  */
 export default interface CheckoutStoreState {
     cart: CartState;
-    config: any;
+    config: ConfigState;
     countries: any;
     coupons: any;
     customer: any;

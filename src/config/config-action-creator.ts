@@ -5,7 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { CheckoutClient } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 
-import { ConfigActionType, LoadConfigAction } from './config-action-types';
+import { ConfigActionType, LoadConfigAction } from './config-actions';
 
 /**
  * @todo Convert this file into TypeScript properly

@@ -1,7 +1,7 @@
 import { configReducer } from './index';
 import { getAppConfig } from './configs.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { ConfigActionType } from './config-action-types';
+import { ConfigActionType } from './config-actions';
 
 describe('configReducer()', () => {
     let initialState;
