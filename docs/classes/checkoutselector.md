@@ -162,7 +162,7 @@ ___
 
 ###  getConfig
 
-► **getConfig**(): [LegacyConfig](../interfaces/legacyconfig.md)⎮`undefined`
+► **getConfig**(): [StoreConfig](../interfaces/storeconfig.md)⎮`undefined`
 
 
 
@@ -171,7 +171,7 @@ ___
 
 
 
-**Returns:** [LegacyConfig](../interfaces/legacyconfig.md)⎮`undefined`
+**Returns:** [StoreConfig](../interfaces/storeconfig.md)⎮`undefined`
 
 
 

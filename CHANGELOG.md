@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.20.0"></a>
+# [0.20.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.19.2...v0.20.0) (2018-05-07)
+
+
+### Features
+
+* **common:** CHECKOUT-3075 Remove legacy config mapper ([1762da2](https://github.com/bigcommerce/checkout-sdk-js/commit/1762da2))
+
+
+### BREAKING CHANGES
+
+* **common:** Now getConfig() returns a different structure.
+
+
+
+<a name="0.19.2"></a>
+## [0.19.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.19.1...v0.19.2) (2018-05-03)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3035 Amend config endpoint URL and header ([dd5105a](https://github.com/bigcommerce/checkout-sdk-js/commit/dd5105a))
+* **payment:** CHECKOUT-3035 Inject store to PaymentStrategyRegistry so it can lazy load payment configuration ([a13afb5](https://github.com/bigcommerce/checkout-sdk-js/commit/a13afb5))
+
+
+
+<a name="0.19.1"></a>
+## [0.19.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.19.0...v0.19.1) (2018-05-02)
+
+
+### Features
+
+* **common:** CHECKOUT-3035 Use checkout setings public endpoint ([85ce289](https://github.com/bigcommerce/checkout-sdk-js/commit/85ce289))
+
+
+
 <a name="0.19.0"></a>
 # [0.19.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.18.0...v0.19.0) (2018-05-01)
 

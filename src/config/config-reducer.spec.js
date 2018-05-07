@@ -1,7 +1,7 @@
 import { configReducer } from './index';
-import { getConfigState, getLegacyAppConfig } from './configs.mock';
+import { getAppConfig } from './configs.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import * as configActionTypes from './config-action-types';
+import { ConfigActionType } from './config-action-types';
 
 describe('configReducer()', () => {
     let initialState;
@@ -12,7 +12,7 @@ describe('configReducer()', () => {
 
     it('loads the config', () => {
         const action = {
-            type: configActionTypes.LOAD_CONFIG_REQUESTED,
+            type: ConfigActionType.LoadConfigRequested,
         };
 
         expect(configReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -22,25 +22,19 @@ describe('configReducer()', () => {
 
     it('returns config data if it was load successfully', () => {
         const action = {
-            type: configActionTypes.LOAD_CONFIG_SUCCEEDED,
-            payload: getConfigState().data,
+            type: ConfigActionType.LoadConfigSucceeded,
+            payload: getAppConfig(),
         };
 
         expect(configReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: Object.assign({},
-                getLegacyAppConfig(), {
-                    storeConfig: {
-                        formFields: action.payload.storeConfig.formFields,
-                    },
-                }
-            ),
+            data: getAppConfig().storeConfig,
             statuses: { isLoading: false },
         }));
     });
 
     it('returns an error if loading fails', () => {
         const action = {
-            type: configActionTypes.LOAD_CONFIG_FAILED,
+            type: ConfigActionType.LoadConfigFailed,
             payload: getErrorResponse(),
         };
 

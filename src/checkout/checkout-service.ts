@@ -306,7 +306,7 @@ export default class CheckoutService {
         }
 
         const { customerId } = customer;
-        const { storeId } = config;
+        const { storeId } = config.storeProfile;
         const { vaultAccessToken, vaultAccessExpiry } = checkout.getCheckoutMeta();
 
         return {

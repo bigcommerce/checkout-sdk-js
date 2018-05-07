@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
 import { getAppConfig } from './configs.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import * as actionTypes from './config-action-types';
 import ConfigActionCreator from './config-action-creator';
+import { ConfigActionType } from './config-action-types';
 
 describe('ConfigActionCreator', () => {
     let checkoutClient;
@@ -27,8 +27,8 @@ describe('ConfigActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: actionTypes.LOAD_CONFIG_REQUESTED },
-                        { type: actionTypes.LOAD_CONFIG_SUCCEEDED, payload: response.body },
+                        { type: ConfigActionType.LoadConfigRequested },
+                        { type: ConfigActionType.LoadConfigSucceeded, payload: response.body },
                     ]);
                 });
         });
@@ -43,8 +43,8 @@ describe('ConfigActionCreator', () => {
                 .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.LOAD_CONFIG_REQUESTED },
-                        { type: actionTypes.LOAD_CONFIG_FAILED, payload: errorResponse, error: true },
+                        { type: ConfigActionType.LoadConfigRequested },
+                        { type: ConfigActionType.LoadConfigFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });

@@ -2,6 +2,7 @@ import { createClient } from '@bigcommerce/bigpay-client';
 import { DataStore } from '@bigcommerce/data-store';
 
 import { createCheckoutStore, CheckoutStore } from '../checkout';
+import { getAppConfig } from '../config/configs.mock';
 
 import createPaymentClient from './create-payment-client';
 
@@ -27,13 +28,12 @@ describe('createPaymentClient()', () => {
     it('sets the host when the store callback is invoked', () => {
         const state = {
             checkout: {
-                getConfig: () => ({
-                    bigpayBaseUrl: 'foo',
-                }),
+                getConfig: () => getAppConfig().storeConfig,
             },
         };
+
         subscribeCallback(state);
-        expect(client.setHost).toHaveBeenCalledWith('foo');
+        expect(client.setHost).toHaveBeenCalledWith('https://bigpay.integration.zone');
     });
 
     it('returns an instance of bigpay client', () => {

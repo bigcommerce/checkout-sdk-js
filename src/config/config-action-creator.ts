@@ -5,7 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { CheckoutClient } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 
-import * as actionTypes from './config-action-types';
+import { ConfigActionType, LoadConfigAction } from './config-action-types';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -15,17 +15,17 @@ export default class ConfigActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    loadConfig(options?: RequestOptions): Observable<Action> {
+    loadConfig(options?: RequestOptions): Observable<LoadConfigAction> {
         return Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.LOAD_CONFIG_REQUESTED));
+            observer.next(createAction(ConfigActionType.LoadConfigRequested));
 
             this._checkoutClient.loadConfig(options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_CONFIG_SUCCEEDED, body));
+                    observer.next(createAction(ConfigActionType.LoadConfigSucceeded, body));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.LOAD_CONFIG_FAILED, response));
+                    observer.error(createErrorAction(ConfigActionType.LoadConfigFailed, response));
                 });
         });
     }

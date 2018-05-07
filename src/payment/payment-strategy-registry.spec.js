@@ -1,5 +1,7 @@
 import { getAdyenAmex, getAuthorizenet, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import { createCheckoutStore } from '../checkout';
+import { getConfigState } from '../config/configs.mock';
 
 describe('PaymentStrategyRegistry', () => {
     let registry;
@@ -35,13 +37,11 @@ describe('PaymentStrategyRegistry', () => {
     }
 
     beforeEach(() => {
-        registry = new PaymentStrategyRegistry({
-            clientSidePaymentProviders: [
-                'adyen',
-                'braintree',
-                'braintreepaypal',
-            ],
+        const store = createCheckoutStore({
+            config: getConfigState(),
         });
+
+        registry = new PaymentStrategyRegistry(store);
     });
 
     describe('#getByMethod()', () => {
