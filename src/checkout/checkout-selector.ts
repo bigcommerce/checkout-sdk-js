@@ -2,7 +2,8 @@ import { InternalAddress } from '../address';
 import { BillingAddressSelector } from '../billing';
 import { CartSelector, InternalCart } from '../cart';
 import { selectorDecorator as selector } from '../common/selector';
-import { ConfigSelector, LegacyConfig } from '../config';
+import { ConfigSelector } from '../config';
+import { StoreConfig } from '../config/config';
 import { CustomerSelector, InternalCustomer } from '../customer';
 import { FormSelector } from '../form';
 import { CountrySelector } from '../geography';
@@ -78,7 +79,7 @@ export default class CheckoutSelector {
         return this._quote.getQuote();
     }
 
-    getConfig(): LegacyConfig | undefined {
+    getConfig(): StoreConfig | undefined {
         return this._config.getConfig();
     }
 

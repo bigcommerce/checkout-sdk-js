@@ -11,7 +11,7 @@ export default function createPaymentClient(store: CheckoutStore): any {
             const config = getConfig();
 
             if (config) {
-                paymentClient.setHost(config.bigpayBaseUrl);
+                paymentClient.setHost(config.paymentSettings.bigpayBaseUrl);
             }
         },
         ({ checkout: { getConfig } }) => getConfig()

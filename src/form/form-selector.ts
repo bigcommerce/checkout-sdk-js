@@ -20,7 +20,7 @@ export default class FormSelector {
     getShippingAddressFields(countries: any = [], countryCode: string): any {
         const selectedCountry = find(countries, { code: countryCode });
 
-        return this._config.data.storeConfig.formFields.shippingAddressFields
+        return this._config.data.formFields.shippingAddressFields
             .map((field: any) => this._processField(field, countries, selectedCountry));
     }
 
@@ -32,7 +32,7 @@ export default class FormSelector {
     getBillingAddressFields(countries: any[] = [], countryCode: string): any {
         const selectedCountry = find(countries, { code: countryCode });
 
-        return this._config.data.storeConfig.formFields.billingAddressFields
+        return this._config.data.formFields.billingAddressFields
             .map((field: any) => this._processField(field, countries, selectedCountry));
     }
 
