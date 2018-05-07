@@ -2,10 +2,11 @@ import { CartState } from '../cart';
 import { ConfigState } from '../config';
 import { CouponState, GiftCertificateState } from '../coupon';
 import { CustomerState, CustomerStrategyState } from '../customer';
+import { CountryState } from '../geography';
 import { OrderState } from '../order';
 import { PaymentStrategyState } from '../payment';
 import { RemoteCheckoutState } from '../remote-checkout';
-import { ShippingStrategyState } from '../shipping';
+import { ShippingCountryState, ShippingStrategyState } from '../shipping';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -13,7 +14,7 @@ import { ShippingStrategyState } from '../shipping';
 export default interface CheckoutStoreState {
     cart: CartState;
     config: ConfigState;
-    countries: any;
+    countries: CountryState;
     coupons: CouponState;
     customer: CustomerState;
     customerStrategies: CustomerStrategyState;
@@ -25,7 +26,7 @@ export default interface CheckoutStoreState {
     paymentStrategies: PaymentStrategyState;
     quote: any;
     remoteCheckout: RemoteCheckoutState;
-    shippingCountries: any;
+    shippingCountries: ShippingCountryState;
     shippingOptions: any;
     shippingStrategies: ShippingStrategyState;
 }
