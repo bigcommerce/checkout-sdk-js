@@ -48,7 +48,7 @@ export default class PaymentMethodSelector {
 
     getLoadMethodError(methodId?: string): Error | undefined {
         if (!this._paymentMethods.errors ||
-            (methodId && this._paymentMethods.errors.loadMethod !== methodId)) {
+            (methodId && this._paymentMethods.errors.loadMethodId !== methodId)) {
             return;
         }
 
