@@ -1,5 +1,6 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { getCheckout } from './checkouts.mock';
+import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import CheckoutRequestSender from './checkout-request-sender';
 
@@ -25,10 +26,15 @@ describe('CheckoutRequestSender', () => {
 
         await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4');
 
-        expect(requestSender.get).toHaveBeenCalledWith(
-            '/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
-            { params: { include: 'customer', timeout: undefined } },
-        );
+        expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+            headers: {
+                Accept: ContentType.JsonV1,
+            },
+            params: {
+                include: 'customer',
+            },
+            timeout: undefined,
+        });
     });
 
     it('appends passed params when loading checkout', async () => {
@@ -40,9 +46,14 @@ describe('CheckoutRequestSender', () => {
             },
         });
 
-        expect(requestSender.get).toHaveBeenCalledWith(
-            '/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
-            { params: { include: 'customer,foo', timeout: undefined } },
-        );
+        expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+            headers: {
+                Accept: ContentType.JsonV1,
+            },
+            params: {
+                include: 'customer,foo',
+                timeout: undefined,
+            },
+        });
     });
 });

@@ -1,6 +1,7 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 
 import { getCheckout } from '../checkout/checkouts.mock';
+import { ContentType } from '../common/http-request';
 import BillingAddressRequestSender from './billing-address-request-sender';
 import { getBillingAddress } from './internal-billing-addresses.mock';
 
@@ -32,6 +33,9 @@ describe('BillingAddressRequestSender', () => {
 
             expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/billing-address/${id}`, {
                 body: address,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
 
@@ -43,6 +47,9 @@ describe('BillingAddressRequestSender', () => {
             expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/billing-address/${id}`, {
                 ...options,
                 body: address,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
     });
@@ -55,6 +62,9 @@ describe('BillingAddressRequestSender', () => {
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/foo/billing-address', {
                 body: address,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
 
@@ -66,6 +76,9 @@ describe('BillingAddressRequestSender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/foo/billing-address', {
                 ...options,
                 body: address,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
     });

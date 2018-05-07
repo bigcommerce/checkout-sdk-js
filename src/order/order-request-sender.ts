@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { RequestOptions } from '../common/http-request';
+import { ContentType, RequestOptions } from '../common/http-request';
 
 import OrderRequestBody from './order-request-body';
 
@@ -8,18 +8,15 @@ import OrderRequestBody from './order-request-body';
  * @todo Convert this file into TypeScript properly
  */
 export default class OrderRequestSender {
-    /**
-     * @constructor
-     * @param {RequestSender} requestSender
-     */
     constructor(
         private _requestSender: RequestSender
     ) {}
 
     loadOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response> {
         const url = `/api/storefront/orders/${orderId}`;
+        const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.get(url, { timeout });
+        return this._requestSender.get(url, { headers, timeout });
     }
 
     loadInternalOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response> {

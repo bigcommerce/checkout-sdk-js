@@ -1,5 +1,6 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { getAppConfig } from './configs.mock';
+import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import ConfigRequestSender from './config-request-sender';
 
@@ -30,6 +31,7 @@ describe('ConfigRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout-settings', {
                 headers: {
+                    'Accept': ContentType.JsonV1,
                     'X-API-INTERNAL': 'This API endpoint is for internal use only and may change in the future',
                 },
             });
@@ -43,6 +45,7 @@ describe('ConfigRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout-settings', {
                 ...options,
                 headers: {
+                    'Accept': ContentType.JsonV1,
                     'X-API-INTERNAL': 'This API endpoint is for internal use only and may change in the future',
                 },
             });

@@ -1,4 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
+import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import GiftCertificateRequestSender from './gift-certificate-request-sender';
@@ -33,6 +34,9 @@ describe('Gift Certificate Request Sender', () => {
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates', {
                 body: { giftCertificateCode },
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
 
@@ -48,6 +52,9 @@ describe('Gift Certificate Request Sender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates', {
                 ...options,
                 body: { giftCertificateCode },
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
     });
@@ -60,7 +67,11 @@ describe('Gift Certificate Request Sender', () => {
             const output = await giftCertificateRequestSender.removeGiftCertificate(checkoutId, giftCertificateCode);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates/myGiftCertificate1234', {});
+            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates/myGiftCertificate1234', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+            });
         });
 
         it('removes gift certificate code with timeout', async () => {
@@ -73,6 +84,9 @@ describe('Gift Certificate Request Sender', () => {
             expect(output).toEqual(response);
             expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates/myGiftCertificate1234', {
                 ...options,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
     });
