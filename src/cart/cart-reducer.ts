@@ -11,17 +11,22 @@ import * as shippingAddressActionTypes from '../shipping/shipping-address-action
 import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
 
 import Cart from './cart';
+import CartState, { CartErrorsState, CartMetaState, CartStatusesState } from './cart-state';
 import InternalCart from './internal-cart';
 import mapToInternalCart from './map-to-internal-cart';
 
+const DEFAULT_STATE: CartState = {
+    errors: {},
+    meta: {},
+    statuses: {},
+};
+
 /**
  * @todo Convert this file into TypeScript properly
- * @param {CartState} state
- * @param {Action} action
- * @return {CartState}
+ * i.e.: Action
  */
-export default function cartReducer(state: any = {}, action: Action): any {
-    const reducer = combineReducers<any>({
+export default function cartReducer(state: CartState = DEFAULT_STATE, action: Action): CartState {
+    const reducer = combineReducers<CartState>({
         data: dataReducer,
         externalData: externalDataReducer,
         errors: errorsReducer,
@@ -32,10 +37,10 @@ export default function cartReducer(state: any = {}, action: Action): any {
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalCart, action: Action): InternalCart {
+function dataReducer(data: InternalCart | undefined, action: Action): InternalCart | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...data, ...mapToInternalCart(action.payload, data) };
+        return data ? { ...data, ...mapToInternalCart(action.payload, data) } : data;
 
     case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
     case cartActionTypes.LOAD_CART_SUCCEEDED:
@@ -56,7 +61,7 @@ function dataReducer(data: InternalCart, action: Action): InternalCart {
     }
 }
 
-function externalDataReducer(data: Cart, action: Action): Cart {
+function externalDataReducer(data: Cart | undefined, action: Action): Cart | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...data, ...action.payload.cart };
@@ -66,13 +71,7 @@ function externalDataReducer(data: Cart, action: Action): Cart {
     }
 }
 
-/**
- * @private
- * @param {?CartMeta} meta
- * @param {Action} action
- * @return {?CartMeta}
- */
-function metaReducer(meta: any, action: Action): any {
+function metaReducer(meta: CartMetaState = DEFAULT_STATE.meta, action: Action): CartMetaState {
     switch (action.type) {
     case cartActionTypes.VERIFY_CART_SUCCEEDED:
         return { ...meta, isValid: action.payload };
@@ -87,7 +86,7 @@ function metaReducer(meta: any, action: Action): any {
     }
 }
 
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(errors: CartErrorsState = DEFAULT_STATE.errors, action: Action): CartErrorsState {
     switch (action.type) {
     case cartActionTypes.LOAD_CART_REQUESTED:
     case cartActionTypes.LOAD_CART_SUCCEEDED:
@@ -108,7 +107,7 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(statuses: CartStatusesState = DEFAULT_STATE.statuses, action: Action): CartStatusesState {
     switch (action.type) {
     case cartActionTypes.LOAD_CART_REQUESTED:
         return { ...statuses, isLoading: true };
