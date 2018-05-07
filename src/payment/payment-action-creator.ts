@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { CheckoutSelectors, CheckoutStoreSelector } from '../checkout';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, NotInitializedError } from '../common/error/errors';
 import { OrderActionCreator } from '../order';
 
 import Payment, { CreditCard, VaultedInstrument } from './payment';
@@ -83,6 +83,10 @@ export default class PaymentActionCreator {
         const shippingOption = checkout.getSelectedShippingOption();
         const config = checkout.getConfig();
 
+        if (!config) {
+            throw new NotInitializedError('Config data is missing');
+        }
+
         const authToken = payment.paymentData && (payment.paymentData as VaultedInstrument).instrumentId
             ? `${checkoutMeta.paymentAuthToken}, ${checkoutMeta.vaultAccessToken}`
             : checkoutMeta.paymentAuthToken;
@@ -108,7 +112,7 @@ export default class PaymentActionCreator {
                 },
             },
             source: payment.source || 'bcapp-checkout-uco',
-            store: pick(config, [
+            store: pick(config.storeProfile, [
                 'storeHash',
                 'storeId',
                 'storeLanguage',

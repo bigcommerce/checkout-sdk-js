@@ -1,9 +1,7 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
-import Config from './config';
-import * as configActionType from './config-action-types';
-import LegacyConfig from './legacy-config';
-import mapToLegacyConfig from './map-to-legacy-config';
+import Config, { StoreConfig } from './config';
+import { ConfigActionType } from './config-action-types';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -21,10 +19,10 @@ export default function configReducer(state: any = {}, action: Action<Config>): 
     return reducer(state, action);
 }
 
-function dataReducer(data: LegacyConfig | undefined, action: Action<Config>): LegacyConfig | undefined {
+function dataReducer(data: StoreConfig | undefined, action: Action<Config>): StoreConfig | undefined {
     switch (action.type) {
-    case configActionType.LOAD_CONFIG_SUCCEEDED:
-        return action.payload ? { ...data, ...mapToLegacyConfig(action.payload.storeConfig) } : data;
+    case ConfigActionType.LoadConfigSucceeded:
+        return action.payload ? action.payload.storeConfig : data;
 
     default:
         return data;
@@ -39,10 +37,10 @@ function dataReducer(data: LegacyConfig | undefined, action: Action<Config>): Le
  */
 function errorsReducer(errors: any = {}, action: Action): any {
     switch (action.type) {
-    case configActionType.LOAD_CONFIG_SUCCEEDED:
+    case ConfigActionType.LoadConfigSucceeded:
         return { ...errors, loadError: undefined };
 
-    case configActionType.LOAD_CONFIG_FAILED:
+    case ConfigActionType.LoadConfigFailed:
         return { ...errors, loadError: action.payload };
 
     default:
@@ -58,11 +56,11 @@ function errorsReducer(errors: any = {}, action: Action): any {
  */
 function statusesReducer(statuses: any = {}, action: Action): any {
     switch (action.type) {
-    case configActionType.LOAD_CONFIG_REQUESTED:
+    case ConfigActionType.LoadConfigRequested:
         return { ...statuses, isLoading: true };
 
-    case configActionType.LOAD_CONFIG_SUCCEEDED:
-    case configActionType.LOAD_CONFIG_FAILED:
+    case ConfigActionType.LoadConfigSucceeded:
+    case ConfigActionType.LoadConfigFailed:
         return { ...statuses, isLoading: false };
 
     default:

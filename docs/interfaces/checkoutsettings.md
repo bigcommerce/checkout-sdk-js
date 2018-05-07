@@ -1,8 +1,8 @@
-[@bigcommerce/checkout-sdk](../README.md) > [LegacyCheckout](../interfaces/legacycheckout.md)
+[@bigcommerce/checkout-sdk](../README.md) > [CheckoutSettings](../interfaces/checkoutsettings.md)
 
 
 
-# Interface: LegacyCheckout
+# Interface: CheckoutSettings
 
 
 ## Properties
@@ -10,7 +10,7 @@
 
 ###  enableOrderComments
 
-**●  enableOrderComments**:  *`number`* 
+**●  enableOrderComments**:  *`boolean`* 
 
 
 
@@ -23,7 +23,7 @@ ___
 
 ###  enableTermsAndConditions
 
-**●  enableTermsAndConditions**:  *`number`* 
+**●  enableTermsAndConditions**:  *`boolean`* 
 
 
 
@@ -36,7 +36,7 @@ ___
 
 ###  guestCheckoutEnabled
 
-**●  guestCheckoutEnabled**:  *`number`* 
+**●  guestCheckoutEnabled**:  *`boolean`* 
 
 
 
@@ -140,7 +140,7 @@ ___
 
 ###  remoteCheckoutProviders
 
-**●  remoteCheckoutProviders**:  *`string`[]* 
+**●  remoteCheckoutProviders**:  *`any`[]* 
 
 
 

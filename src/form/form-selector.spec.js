@@ -1,5 +1,5 @@
 import { find, map } from 'lodash';
-import { getAppConfig } from '../config/configs.mock';
+import { getConfigState } from '../config/configs.mock';
 import FormSelector from './form-selector';
 import { getCountries } from '../geography/countries.mock';
 import { getShippingCountries } from '../shipping/shipping-countries.mock';
@@ -10,9 +10,7 @@ describe('FormSelector', () => {
 
     beforeEach(() => {
         state = {
-            config: {
-                data: getAppConfig(),
-            },
+            config: getConfigState(),
         };
     });
 
