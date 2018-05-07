@@ -5,6 +5,7 @@ import { CustomerState, CustomerStrategyState } from '../customer';
 import { CountryState } from '../geography';
 import { OrderState } from '../order';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
+import { QuoteState } from '../quote';
 import { RemoteCheckoutState } from '../remote-checkout';
 import { ShippingCountryState, ShippingStrategyState } from '../shipping';
 
@@ -24,7 +25,7 @@ export default interface CheckoutStoreState {
     payment: PaymentState;
     paymentMethods: PaymentMethodState;
     paymentStrategies: PaymentStrategyState;
-    quote: any;
+    quote: QuoteState;
     remoteCheckout: RemoteCheckoutState;
     shippingCountries: ShippingCountryState;
     shippingOptions: any;
