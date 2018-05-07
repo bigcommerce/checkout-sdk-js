@@ -1,3 +1,5 @@
+import { combineReducers, Action, Reducer } from '@bigcommerce/data-store';
+
 import { cartReducer } from '../cart';
 import { configReducer } from '../config';
 import { couponReducer, giftCertificateReducer } from '../coupon';
@@ -10,10 +12,10 @@ import { quoteReducer } from '../quote';
 import { remoteCheckoutReducer } from '../remote-checkout';
 import { shippingCountryReducer, shippingOptionReducer, shippingStrategyReducer } from '../shipping';
 
-import { CheckoutStoreReducers } from './checkout-store';
+import CheckoutStoreState from './checkout-store-state';
 
-export default function createCheckoutStoreReducers(): CheckoutStoreReducers {
-    return {
+export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState, Action> {
+    return combineReducers({
         cart: cartReducer,
         config: configReducer,
         countries: countryReducer,
@@ -31,5 +33,5 @@ export default function createCheckoutStoreReducers(): CheckoutStoreReducers {
         shippingCountries: shippingCountryReducer,
         shippingOptions: shippingOptionReducer,
         shippingStrategies: shippingStrategyReducer,
-    };
+    });
 }

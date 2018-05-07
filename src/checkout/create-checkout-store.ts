@@ -5,7 +5,7 @@ import { createRequestErrorFactory } from '../common/error';
 import CheckoutStore, { CheckoutStoreOptions } from './checkout-store';
 import CheckoutStoreState from './checkout-store-state';
 import createActionTransformer from './create-action-transformer';
-import createCheckoutStoreReducers from './create-checkout-store-reducers';
+import createCheckoutStoreReducer from './create-checkout-store-reducer';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 
 export default function createCheckoutStore(
@@ -16,7 +16,7 @@ export default function createCheckoutStore(
     const stateTransformer = (state: CheckoutStoreState) => createInternalCheckoutSelectors(state);
 
     return createDataStore(
-        createCheckoutStoreReducers(),
+        createCheckoutStoreReducer(),
         initialState,
         { actionTransformer, stateTransformer, ...options }
     );
