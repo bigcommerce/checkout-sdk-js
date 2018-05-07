@@ -1,0 +1,152 @@
+[@bigcommerce/checkout-sdk](../README.md) > [StoreConfig](../interfaces/storeconfig.md)
+
+
+
+# Interface: StoreConfig
+
+
+## Properties
+<a id="cdnpath"></a>
+
+###  cdnPath
+
+**●  cdnPath**:  *`string`* 
+
+
+
+
+
+
+___
+
+<a id="checkoutsettings"></a>
+
+###  checkoutSettings
+
+**●  checkoutSettings**:  *[CheckoutSettings](checkoutsettings.md)* 
+
+
+
+
+
+
+___
+
+<a id="currency"></a>
+
+###  currency
+
+**●  currency**:  *[Currency](currency.md)* 
+
+
+
+
+
+
+___
+
+<a id="formfields"></a>
+
+###  formFields
+
+**●  formFields**:  *[FormFields](formfields.md)* 
+
+
+
+
+
+
+___
+
+<a id="imagedirectory"></a>
+
+###  imageDirectory
+
+**●  imageDirectory**:  *`string`* 
+
+
+
+
+
+
+___
+
+<a id="isangulardebuggingenabled"></a>
+
+###  isAngularDebuggingEnabled
+
+**●  isAngularDebuggingEnabled**:  *`boolean`* 
+
+
+
+
+
+
+___
+
+<a id="links"></a>
+
+###  links
+
+**●  links**:  *[Links](links.md)* 
+
+
+
+
+
+
+___
+
+<a id="paymentsettings"></a>
+
+###  paymentSettings
+
+**●  paymentSettings**:  *[PaymentSettings](paymentsettings.md)* 
+
+
+
+
+
+
+___
+
+<a id="shopperconfig"></a>
+
+###  shopperConfig
+
+**●  shopperConfig**:  *[ShopperConfig](shopperconfig.md)* 
+
+
+
+
+
+
+___
+
+<a id="shoppercurrency"></a>
+
+###  shopperCurrency
+
+**●  shopperCurrency**:  *[ShopperCurrency](shoppercurrency.md)* 
+
+
+
+
+
+
+___
+
+<a id="storeprofile"></a>
+
+###  storeProfile
+
+**●  storeProfile**:  *[StoreProfile](storeprofile.md)* 
+
+
+
+
+
+
+___
+
+

@@ -148,7 +148,7 @@ declare class CheckoutSelector {
     getCheckoutMeta(): any;
     getOrder(): InternalOrder | undefined;
     getQuote(): InternalQuote | undefined;
-    getConfig(): LegacyConfig | undefined;
+    getConfig(): StoreConfig | undefined;
     getShippingAddress(): InternalAddress | undefined;
     getShippingOptions(): InternalShippingOptionList | undefined;
     getSelectedShippingOption(): InternalShippingOption | undefined;
@@ -260,6 +260,21 @@ declare interface CheckoutServiceOptions {
     shouldWarnMutation?: boolean;
 }
 
+declare interface CheckoutSettings {
+    enableOrderComments: boolean;
+    enableTermsAndConditions: boolean;
+    guestCheckoutEnabled: boolean;
+    isCardVaultingEnabled: boolean;
+    isPaymentRequestEnabled: boolean;
+    isPaymentRequestCanMakePaymentEnabled: boolean;
+    orderTermsAndConditions: string;
+    orderTermsAndConditionsLink: string;
+    orderTermsAndConditionsType: string;
+    shippingQuoteFailedMessage: string;
+    realtimeShippingProviders: string[];
+    remoteCheckoutProviders: any[];
+}
+
 declare class CheckoutStatusSelector {
     private _billingAddress;
     private _cart;
@@ -326,6 +341,15 @@ declare interface CreditCard {
     deviceSessionId?: string;
     shouldSaveInstrument?: boolean;
     extraData?: any;
+}
+
+declare interface Currency {
+    code: string;
+    decimalPlaces: string;
+    decimalSeparator: string;
+    symbolLocation: string;
+    symbol: string;
+    thousandsSeparator: string;
 }
 
 declare interface CustomerCredentials {
@@ -647,68 +671,10 @@ export declare class LanguageService {
     private _hasTranslations();
 }
 
-declare interface LegacyCheckout {
-    enableOrderComments: number;
-    enableTermsAndConditions: number;
-    guestCheckoutEnabled: number;
-    isCardVaultingEnabled: boolean;
-    isPaymentRequestEnabled: boolean;
-    isPaymentRequestCanMakePaymentEnabled: boolean;
-    orderTermsAndConditions: string;
-    orderTermsAndConditionsLink: string;
-    orderTermsAndConditionsType: string;
-    shippingQuoteFailedMessage: string;
-    realtimeShippingProviders: string[];
-    remoteCheckoutProviders: string[];
-}
-
-declare interface LegacyConfig {
-    bigpayBaseUrl: string;
+declare interface Links {
     cartLink: string;
     checkoutLink: string;
-    cdnPath: string;
-    checkout: LegacyCheckout;
-    clientSidePaymentProviders: string[];
-    currency: LegacyCurrency;
-    shopperCurrency: LegacyShopperCurrency;
-    storeConfig: LegacyStoreConfig;
-    defaultNewsletterSignup: boolean;
-    imageDirectory: string;
-    isAngularDebuggingEnabled: boolean;
-    passwordRequirements: PasswordRequirements;
     orderConfirmationLink: string;
-    orderEmail: string;
-    shopPath: string;
-    showNewsletterSignup: boolean;
-    storeCountry: string;
-    storeHash: string;
-    storeId: string;
-    storeName: string;
-    storePhoneNumber: string;
-    storeLanguage: string;
-}
-
-declare interface LegacyCurrency {
-    code: string;
-    decimal_places: string;
-    decimal_separator: string;
-    symbol_location: string;
-    symbol: string;
-    thousands_separator: string;
-}
-
-declare interface LegacyShopperCurrency {
-    code: string;
-    symbol_location: string;
-    symbol: string;
-    decimal_places: string;
-    decimal_separator: string;
-    thousands_separator: string;
-    exchange_rate: string;
-}
-
-declare interface LegacyStoreConfig {
-    formFields: FormFields;
 }
 
 declare interface Locales {
@@ -777,6 +743,11 @@ declare interface PaymentRequestOptions extends RequestOptions {
     gatewayId?: string;
 }
 
+declare interface PaymentSettings {
+    bigpayBaseUrl: string;
+    clientSidePaymentProviders: string[];
+}
+
 declare interface PlaceholderData {
     [key: string]: any;
 }
@@ -791,6 +762,22 @@ declare interface ShippingInitializeOptions extends ShippingRequestOptions {
 
 declare interface ShippingRequestOptions extends RequestOptions {
     methodId?: string;
+}
+
+declare interface ShopperConfig {
+    defaultNewsletterSignup: boolean;
+    passwordRequirements: PasswordRequirements;
+    showNewsletterSignup: boolean;
+}
+
+declare interface ShopperCurrency {
+    code: string;
+    symbolLocation: string;
+    symbol: string;
+    decimalPlaces: string;
+    decimalSeparator: string;
+    thousandsSeparator: string;
+    exchangeRate: string;
 }
 
 declare interface SquareFormElement {
@@ -812,6 +799,31 @@ declare interface SquarePaymentInitializeOptions {
 declare class StandardError extends Error {
     protected type: string;
     constructor(message?: string);
+}
+
+declare interface StoreConfig {
+    cdnPath: string;
+    checkoutSettings: CheckoutSettings;
+    currency: Currency;
+    formFields: FormFields;
+    links: Links;
+    paymentSettings: PaymentSettings;
+    shopperConfig: ShopperConfig;
+    storeProfile: StoreProfile;
+    imageDirectory: string;
+    isAngularDebuggingEnabled: boolean;
+    shopperCurrency: ShopperCurrency;
+}
+
+declare interface StoreProfile {
+    orderEmail: string;
+    shopPath: string;
+    storeCountry: string;
+    storeHash: string;
+    storeId: string;
+    storeName: string;
+    storePhoneNumber: string;
+    storeLanguage: string;
 }
 
 declare interface TokenizedCreditCard {
