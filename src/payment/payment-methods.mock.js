@@ -55,6 +55,31 @@ export function getBraintreePaypal() {
     };
 }
 
+export function getBraintreeVisaCheckout() {
+    return {
+        id: 'braintreevisacheckout',
+        gateway: null,
+        logoUrl: '',
+        method: 'paypal',
+        supportedCards: [],
+        config: {
+            displayName: null,
+            cardCode: null,
+            helpText: null,
+            enablePaypal: null,
+            merchantId: null,
+            is3dsEnabled: null,
+            testMode: false,
+            isVisaCheckoutEnabled: true,
+        },
+        type: 'PAYMENT_TYPE_API',
+        nonce: null,
+        initializationData: null,
+        clientToken: null,
+        returnUrl: null,
+    };
+}
+
 export function getPaypalExpress() {
     return {
         id: 'paypalexpress',
@@ -337,6 +362,7 @@ export function getPaymentMethods() {
     return [
         getBraintree(),
         getBraintreePaypal(),
+        getBraintreeVisaCheckout(),
         getAdyenAmex(),
         getAuthorizenet(),
         getPaypalExpress(),

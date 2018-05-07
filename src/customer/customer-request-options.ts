@@ -1,6 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
-import { AmazonPayCustomerInitializeOptions } from './strategies';
+import { AmazonPayCustomerInitializeOptions, BraintreeVisaCheckoutCustomerInitializeOptions } from './strategies';
 
 export interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
@@ -8,4 +8,5 @@ export interface CustomerRequestOptions extends RequestOptions {
 
 export interface CustomerInitializeOptions extends CustomerRequestOptions {
     amazon?: AmazonPayCustomerInitializeOptions;
+    braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
 }
