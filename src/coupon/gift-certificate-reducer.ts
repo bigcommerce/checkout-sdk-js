@@ -3,16 +3,20 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import { CheckoutActionType } from '../checkout';
 
 import * as giftCertificateActionTypes from './gift-certificate-action-types';
+import GiftCertificateState, { GiftCertificateErrorsState, GiftCertificateStatusesState } from './gift-certificate-state';
 import InternalGiftCertificate from './internal-gift-certificate';
+
+const DEFAULT_STATE: GiftCertificateState = {
+    errors: {},
+    statuses: {},
+};
 
 /**
  * @todo Convert this file into TypeScript properly
- * @param {GiftCertificateState} state
- * @param {Action} action
- * @return {GiftCertificateState}
+ * i.e.: Action
  */
-export default function giftCertificateReducer(state: any = {}, action: Action): any {
-    const reducer = combineReducers<any>({
+export default function giftCertificateReducer(state: GiftCertificateState = DEFAULT_STATE, action: Action): GiftCertificateState {
+    const reducer = combineReducers<GiftCertificateState>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -21,7 +25,7 @@ export default function giftCertificateReducer(state: any = {}, action: Action):
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalGiftCertificate[], action: Action): InternalGiftCertificate[] {
+function dataReducer(data: InternalGiftCertificate[] | undefined, action: Action): InternalGiftCertificate[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return action.payload.giftCertificates;
@@ -31,7 +35,7 @@ function dataReducer(data: InternalGiftCertificate[], action: Action): InternalG
     }
 }
 
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(errors: GiftCertificateErrorsState = DEFAULT_STATE.errors, action: Action): GiftCertificateErrorsState {
     switch (action.type) {
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED:
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
@@ -52,7 +56,7 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(statuses: GiftCertificateStatusesState = DEFAULT_STATE.statuses, action: Action): GiftCertificateStatusesState {
     switch (action.type) {
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED:
         return { ...statuses, isApplyingGiftCertificate: true };

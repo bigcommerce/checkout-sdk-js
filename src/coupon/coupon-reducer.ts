@@ -3,16 +3,20 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import { CheckoutActionType } from '../checkout';
 
 import * as couponActionTypes from './coupon-action-types';
+import CouponState, { CouponErrorsState, CouponStatusesState } from './coupon-state';
 import InternalCoupon from './internal-coupon';
+
+const DEFAULT_STATE: CouponState = {
+    errors: {},
+    statuses: {},
+};
 
 /**
  * @todo Convert this file into TypeScript properly
- * @param {CouponState} state
- * @param {Action} action
- * @return {CouponState}
+ * i.e.: Action
  */
-export default function couponReducer(state: any = {}, action: Action): any {
-    const reducer = combineReducers<any>({
+export default function couponReducer(state: CouponState = DEFAULT_STATE, action: Action): CouponState {
+    const reducer = combineReducers<CouponState>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -21,7 +25,7 @@ export default function couponReducer(state: any = {}, action: Action): any {
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalCoupon[], action: Action): InternalCoupon[] {
+function dataReducer(data: InternalCoupon[] | undefined, action: Action): InternalCoupon[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return action.payload.coupons;
@@ -31,7 +35,7 @@ function dataReducer(data: InternalCoupon[], action: Action): InternalCoupon[] {
     }
 }
 
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(errors: CouponErrorsState = {}, action: Action): CouponErrorsState {
     switch (action.type) {
     case couponActionTypes.APPLY_COUPON_REQUESTED:
     case couponActionTypes.APPLY_COUPON_SUCCEEDED:
@@ -52,7 +56,7 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(statuses: CouponStatusesState = {}, action: Action): CouponStatusesState {
     switch (action.type) {
     case couponActionTypes.APPLY_COUPON_REQUESTED:
         return { ...statuses, isApplyingCoupon: true };

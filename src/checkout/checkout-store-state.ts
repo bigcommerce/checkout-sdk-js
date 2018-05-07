@@ -1,5 +1,6 @@
 import { CartState } from '../cart';
 import { ConfigState } from '../config';
+import { CouponState, GiftCertificateState } from '../coupon';
 import { CustomerStrategyState } from '../customer';
 import { PaymentStrategyState } from '../payment';
 import { RemoteCheckoutState } from '../remote-checkout';
@@ -12,10 +13,10 @@ export default interface CheckoutStoreState {
     cart: CartState;
     config: ConfigState;
     countries: any;
-    coupons: any;
+    coupons: CouponState;
     customer: any;
     customerStrategies: CustomerStrategyState;
-    giftCertificates: any;
+    giftCertificates: GiftCertificateState;
     instruments: any;
     order: any;
     payment: any;
