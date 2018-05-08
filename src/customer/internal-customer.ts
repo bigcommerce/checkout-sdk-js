@@ -4,16 +4,16 @@ export default interface InternalCustomer {
     addresses: InternalAddress[];
     customerId: number;
     customerGroupId: number;
-    customerGroupName: number;
+    customerGroupName: string;
     isGuest: boolean;
-    remote: {
-        customerMessage: string;
-        provider: string;
-        useStoreCredit: boolean;
-    };
     phoneNumber: string;
     storeCredit: number;
     email: string;
     firstName: string;
     name: string;
+    remote?: {
+        customerMessage?: string;
+        provider: string;
+        useStoreCredit?: boolean;
+    };
 }

@@ -4,7 +4,6 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { getCheckoutMeta } from '../../checkout/checkouts.mock';
 import { NotInitializedError } from '../../common/error/errors';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
 import { PaymentMethodActionCreator } from '../../payment';
@@ -19,7 +18,7 @@ import {
     AmazonPayWindow,
 } from '../../remote-checkout/methods/amazon-pay';
 import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
-import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
+import { getRemoteCheckoutMeta, getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import { getShippingAddress } from '../internal-shipping-addresses.mock';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
 import ShippingAddressActionCreator from '../shipping-address-action-creator';
@@ -86,7 +85,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         orderReference = {
             getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
-            getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
+            getAmazonOrderReferenceId: () => getRemoteCheckoutMeta().amazon.referenceId,
         };
 
         container.setAttribute('id', 'addressBook');
@@ -179,7 +178,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         expect(remoteCheckoutActionCreator.initializeShipping)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getCheckoutMeta().remoteCheckout.amazon.referenceId,
+                referenceId: getRemoteCheckoutMeta().amazon.referenceId,
             });
 
         expect(addressActionCreator.updateAddress)
@@ -223,7 +222,7 @@ describe('AmazonPayShippingStrategy', () => {
 
         expect(remoteCheckoutActionCreator.setCheckoutMeta)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getCheckoutMeta().remoteCheckout.amazon.referenceId,
+                referenceId: getRemoteCheckoutMeta().amazon.referenceId,
             });
     });
 

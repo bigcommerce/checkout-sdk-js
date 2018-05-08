@@ -2,7 +2,6 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
-import { CheckoutService } from '../checkout';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
@@ -24,6 +23,7 @@ import {
 } from '../shipping';
 
 import CheckoutClient from './checkout-client';
+import CheckoutService from './checkout-service';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 

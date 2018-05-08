@@ -1,7 +1,13 @@
-import { DataStore } from '@bigcommerce/data-store';
+import { DataStore, ReadableDataStore } from '@bigcommerce/data-store';
 
-import CheckoutSelectors from './checkout-selectors';
+import InternalCheckoutSelectors from './internal-checkout-selectors';
 
-type CheckoutStore = DataStore<CheckoutSelectors>;
+type CheckoutStore = DataStore<InternalCheckoutSelectors>;
 
 export default CheckoutStore;
+
+export type ReadableCheckoutStore = ReadableDataStore<InternalCheckoutSelectors>;
+
+export interface CheckoutStoreOptions {
+    shouldWarnMutation?: boolean;
+}

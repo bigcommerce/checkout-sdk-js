@@ -1,4 +1,4 @@
-import createFreezeProxy from './create-freeze-proxy';
+import createFreezeProxy, { createFreezeProxies } from './create-freeze-proxy';
 
 class Foobar {
     constructor(data = {}) {
@@ -23,7 +23,7 @@ class ExtendedFoobar extends Foobar {
     }
 }
 
-describe('createFreezeProxy', () => {
+describe('createFreezeProxy()', () => {
     it('freezes return value of methods', () => {
         const foobar = new Foobar({ name: 'foobar' });
         const proxy = createFreezeProxy(foobar);
@@ -43,5 +43,18 @@ describe('createFreezeProxy', () => {
         const proxy = createFreezeProxy(new Foobar({ name: 'foobar' }));
 
         expect(proxy.getName()).toEqual('foobar');
+    });
+});
+
+describe('createFreezeProxies()', () => {
+    it('freezes return value of methods of all objects', () => {
+        const foobar = new Foobar({ name: 'foobar' });
+        const extendedFoobar = new ExtendedFoobar({ name: 'extended_foobar' });
+        const proxy = createFreezeProxies({ extendedFoobar, foobar });
+
+        expect(Object.isFrozen(foobar.getData())).toEqual(false);
+        expect(Object.isFrozen(extendedFoobar.getData())).toEqual(false);
+        expect(Object.isFrozen(proxy.foobar.getData())).toEqual(true);
+        expect(Object.isFrozen(proxy.extendedFoobar.getData())).toEqual(true);
     });
 });

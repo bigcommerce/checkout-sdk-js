@@ -1,7 +1,7 @@
 import { InternalAddress } from '../address';
 import { BillingAddressSelector } from '../billing';
 import { CartSelector, InternalCart } from '../cart';
-import { selectorDecorator as selector } from '../common/selector';
+import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
 import { CustomerSelector, InternalCustomer } from '../customer';
@@ -11,7 +11,6 @@ import { InternalOrder, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
-import { RemoteCheckoutSelector } from '../remote-checkout';
 import {
     InternalShippingOption,
     InternalShippingOptionList,
@@ -20,55 +19,45 @@ import {
     ShippingOptionSelector,
 } from '../shipping';
 
+import InternalCheckoutSelectors from './internal-checkout-selectors';
+
 /**
  * TODO: Convert this file into TypeScript properly
  * i.e.: CheckoutMeta, Config, Country, Instrument, Field
  */
 @selector
 export default class CheckoutSelector {
+    private _billingAddress: BillingAddressSelector;
+    private _cart: CartSelector;
+    private _config: ConfigSelector;
+    private _countries: CountrySelector;
+    private _customer: CustomerSelector;
+    private _form: FormSelector;
+    private _instruments: InstrumentSelector;
+    private _order: OrderSelector;
+    private _paymentMethods: PaymentMethodSelector;
+    private _quote: QuoteSelector;
+    private _shippingAddress: ShippingAddressSelector;
+    private _shippingCountries: ShippingCountrySelector;
+    private _shippingOptions: ShippingOptionSelector;
+
     /**
      * @internal
      */
-    constructor(
-        private _billingAddress: BillingAddressSelector,
-        private _cart: CartSelector,
-        private _config: ConfigSelector,
-        private _countries: CountrySelector,
-        private _customer: CustomerSelector,
-        private _form: FormSelector,
-        private _instruments: InstrumentSelector,
-        private _order: OrderSelector,
-        private _paymentMethods: PaymentMethodSelector,
-        private _quote: QuoteSelector,
-        private _remoteCheckout: RemoteCheckoutSelector,
-        private _shippingAddress: ShippingAddressSelector,
-        private _shippingCountries: ShippingCountrySelector,
-        private _shippingOptions: ShippingOptionSelector
-    ) {}
-
-    /**
-     * @return {CheckoutMeta}
-     */
-    getCheckoutMeta() {
-        const orderMeta = this._order.getOrderMeta();
-        const quoteMeta = this._quote.getQuoteMeta();
-        const isCartVerified = this._cart.isValid();
-        const paymentAuthToken = this._order.getPaymentAuthToken();
-        const instrumentsMeta = this._instruments.getInstrumentsMeta();
-        const remoteCheckout = this._remoteCheckout.getCheckout();
-        const remoteCheckoutMeta = this._remoteCheckout.getCheckoutMeta();
-
-        return {
-            ...orderMeta,
-            ...(quoteMeta && quoteMeta.request),
-            ...instrumentsMeta,
-            isCartVerified,
-            paymentAuthToken,
-            remoteCheckout: {
-                ...remoteCheckout,
-                ...remoteCheckoutMeta,
-            },
-        };
+    constructor(selectors: InternalCheckoutSelectors) {
+        this._billingAddress = selectors.billingAddress;
+        this._cart = selectors.cart;
+        this._config = selectors.config;
+        this._countries = selectors.countries;
+        this._customer = selectors.customer;
+        this._form = selectors.form;
+        this._instruments = selectors.instruments;
+        this._order = selectors.order;
+        this._paymentMethods = selectors.paymentMethods;
+        this._quote = selectors.quote;
+        this._shippingAddress = selectors.shippingAddress;
+        this._shippingCountries = selectors.shippingCountries;
+        this._shippingOptions = selectors.shippingOptions;
     }
 
     getOrder(): InternalOrder | undefined {
@@ -133,7 +122,7 @@ export default class CheckoutSelector {
         return this._customer.getCustomer();
     }
 
-    isPaymentDataRequired(useStoreCredit: boolean = false): boolean {
+    isPaymentDataRequired(useStoreCredit?: boolean): boolean {
         return this._order.isPaymentDataRequired(useStoreCredit);
     }
 

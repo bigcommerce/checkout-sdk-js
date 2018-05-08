@@ -31,6 +31,9 @@ import { getShippingOptionResponseBody } from '../shipping/internal-shipping-opt
 import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from './create-checkout-store';
 import CheckoutService from './checkout-service';
+import CheckoutSelector from './checkout-selector';
+import CheckoutErrorSelector from './checkout-error-selector';
+import CheckoutStatusSelector from './checkout-status-selector';
 
 describe('CheckoutService', () => {
     let checkoutClient;
@@ -181,7 +184,49 @@ describe('CheckoutService', () => {
         );
     });
 
-    describe('#notifyState', () => {
+    describe('#getState()', () => {
+        it('returns state', () => {
+            expect(checkoutService.getState()).toEqual({
+                checkout: expect.any(CheckoutSelector),
+                errors: expect.any(CheckoutErrorSelector),
+                statuses: expect.any(CheckoutStatusSelector),
+            });
+        });
+    });
+
+    describe('#subscribe()', () => {
+        it('passes state to subscriber', () => {
+            const subscriber = jest.fn();
+
+            checkoutService.subscribe(subscriber);
+
+            expect(subscriber).toHaveBeenCalledWith(checkoutService.getState());
+        });
+
+        it('passes state to filters', async () => {
+            const filter = jest.fn(state => state);
+
+            checkoutService.subscribe(() => {}, filter);
+
+            await checkoutService.loadCheckout();
+
+            expect(filter).toHaveBeenCalledWith(checkoutService.getState());
+        });
+
+        it('calls subscriber on state change', async () => {
+            const subscriber = jest.fn();
+
+            checkoutService.subscribe(subscriber, ({ checkout }) => checkout.getCart());
+            subscriber.mockReset();
+
+            await checkoutService.loadCart();
+            await checkoutService.loadCart();
+
+            expect(subscriber).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('#notifyState()', () => {
         it('notifies subscribers of its current state', () => {
             const subscriber = jest.fn();
 
@@ -248,16 +293,6 @@ describe('CheckoutService', () => {
             const { checkout } = await checkoutService.loadBillingAddressFields();
 
             expect(checkout.getBillingCountries()).toEqual(getCountriesResponseBody().data);
-        });
-    });
-
-    describe('#verifyCart()', () => {
-        it('verifies cart data', async () => {
-            await checkoutService.loadCheckout();
-
-            const { checkout } = await checkoutService.verifyCart();
-
-            expect(checkout.getCheckoutMeta().isCartVerified).toEqual(true);
         });
     });
 
@@ -510,7 +545,7 @@ describe('CheckoutService', () => {
         it('returns current state', async () => {
             const output = await checkoutService.initializeCustomer();
 
-            expect(output).toEqual(store.getState());
+            expect(output).toEqual(checkoutService.getState());
         });
     });
 
@@ -541,7 +576,7 @@ describe('CheckoutService', () => {
         it('returns current state', async () => {
             const output = await checkoutService.deinitializeCustomer();
 
-            expect(output).toEqual(store.getState());
+            expect(output).toEqual(checkoutService.getState());
         });
     });
 

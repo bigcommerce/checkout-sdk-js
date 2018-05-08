@@ -1,7 +1,7 @@
 import { ReadableDataStore } from '@bigcommerce/data-store';
 import { some } from 'lodash';
 
-import { CheckoutSelectors } from '../checkout';
+import { InternalCheckoutSelectors } from '../checkout';
 import { NotInitializedError } from '../common/error/errors';
 import { Registry } from '../common/registry';
 import { RegistryOptions } from '../common/registry/registry';
@@ -11,9 +11,8 @@ import * as paymentMethodTypes from './payment-method-types';
 import PaymentStrategy from './strategies/payment-strategy';
 
 export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
-
     constructor(
-        private _store: ReadableDataStore<CheckoutSelectors>,
+        private _store: ReadableDataStore<InternalCheckoutSelectors>,
         options?: PaymentStrategyRegistryOptions
     ) {
         super(options);
@@ -53,7 +52,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
     }
 
     private _isLegacyMethod(paymentMethod: PaymentMethod): boolean {
-        const config = this._store.getState().checkout.getConfig();
+        const config = this._store.getState().config.getConfig();
 
         if (!config) {
             throw new NotInitializedError('Config data is missing');

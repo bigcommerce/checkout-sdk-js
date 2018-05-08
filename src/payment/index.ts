@@ -16,3 +16,4 @@ export { default as PaymentStrategyActionCreator } from './payment-strategy-acti
 export { default as paymentStrategyReducer } from './payment-strategy-reducer';
 export { default as PaymentStrategyRegistry } from './payment-strategy-registry';
 export { default as PaymentStrategySelector } from './payment-strategy-selector';
+export { default as PaymentStrategyState } from './payment-strategy-state';

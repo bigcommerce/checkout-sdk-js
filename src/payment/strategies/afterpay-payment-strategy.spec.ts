@@ -197,7 +197,7 @@ describe('AfterpayPaymentStrategy', () => {
         it('submits the order and the payment', async () => {
             await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
 
-            jest.spyOn(store.getState().checkout, 'getOrder')
+            jest.spyOn(store.getState().order, 'getOrder')
                 .mockReturnValue({
                     ...getIncompleteOrder(),
                     payment: {
@@ -205,7 +205,7 @@ describe('AfterpayPaymentStrategy', () => {
                     },
                 });
 
-            jest.spyOn(store.getState().checkout, 'getCustomer')
+            jest.spyOn(store.getState().customer, 'getCustomer')
                 .mockReturnValue({
                     remote: { useStoreCredit: false, customerMessage: 'foo' },
                 });
@@ -217,7 +217,6 @@ describe('AfterpayPaymentStrategy', () => {
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 { useStoreCredit: false, customerMessage: 'foo' },
-                true,
                 { nonce }
             );
 

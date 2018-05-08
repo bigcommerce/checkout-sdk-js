@@ -23,6 +23,7 @@ export { default as shippingOptionReducer } from './shipping-option-reducer';
 
 export { default as ShippingStrategyActionCreator } from './shipping-strategy-action-creator';
 export { default as ShippingStrategySelector } from './shipping-strategy-selector';
+export { default as ShippingStrategyState } from './shipping-strategy-state';
 export { default as shippingStrategyReducer } from './shipping-strategy-reducer';
 
 export { default as mapToInternalShippingOption } from './map-to-internal-shipping-option';

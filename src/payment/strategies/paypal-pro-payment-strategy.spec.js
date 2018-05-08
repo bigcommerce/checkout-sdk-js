@@ -43,7 +43,7 @@ describe('PaypalProPaymentStrategy', () => {
 
         await strategy.execute(payload);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, undefined);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), undefined);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -96,7 +96,7 @@ describe('PaypalProPaymentStrategy', () => {
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({
                 ...payload,
                 payment: { name: payload.payment.name },
-            }, true, undefined);
+            }, undefined);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
