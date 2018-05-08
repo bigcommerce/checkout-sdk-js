@@ -1,5 +1,6 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { getCouponResponseBody } from './internal-coupons.mock';
+import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import CouponRequestSender from './coupon-request-sender';
 
@@ -33,6 +34,9 @@ describe('Coupon Request Sender', () => {
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons', {
                 body: { couponCode },
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
 
@@ -47,6 +51,9 @@ describe('Coupon Request Sender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons', {
                 ...options,
                 body: { couponCode },
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
     });
@@ -59,7 +66,11 @@ describe('Coupon Request Sender', () => {
             const output = await couponRequestSender.removeCoupon(checkoutId, couponCode);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', {});
+            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+            });
         });
 
         it('removes coupon code with timeout', async () => {
@@ -70,7 +81,12 @@ describe('Coupon Request Sender', () => {
             const output = await couponRequestSender.removeCoupon(checkoutId, couponCode, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', options);
+            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons/myCouponCode1234', {
+                ...options,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+            });
         });
     });
 });

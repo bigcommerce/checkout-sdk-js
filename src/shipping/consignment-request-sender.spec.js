@@ -1,4 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
+import { ContentType } from '../common/http-request';
 import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
 import { getCheckout } from '../checkout/checkouts.mock';
@@ -27,6 +28,9 @@ describe('ConsignmentRequestSender', () => {
 
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/foo/consignments', {
                 body: consignments,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
                 params: {
                     include: 'consignments.availableShippingOptions',
                 },
@@ -39,6 +43,9 @@ describe('ConsignmentRequestSender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/foo/consignments', {
                 ...options,
                 body: consignments,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
                 params: {
                     include: 'consignments.availableShippingOptions',
                 },
@@ -54,6 +61,9 @@ describe('ConsignmentRequestSender', () => {
 
             expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${id}`, {
                 body,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
                 params: {
                     include: 'consignments.availableShippingOptions',
                 },
@@ -66,6 +76,9 @@ describe('ConsignmentRequestSender', () => {
             expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${id}`, {
                 ...options,
                 body,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
                 params: {
                     include: 'consignments.availableShippingOptions',
                 },
