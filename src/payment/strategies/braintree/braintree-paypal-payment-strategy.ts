@@ -26,9 +26,10 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
     initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         const { braintree: braintreeOptions, methodId } = options;
-        const { nonce } = this._store.getState().checkout.getPaymentMethod(methodId) || { nonce: undefined };
 
-        if (nonce) {
+        this._paymentMethod = this._store.getState().checkout.getPaymentMethod(methodId);
+
+        if (this._paymentMethod && this._paymentMethod.nonce) {
             return super.initialize(options);
         }
 
