@@ -118,11 +118,10 @@ describe('BraintreePaypalPaymentStrategy', () => {
             checkoutMock.getCart = jest.fn(() => getCart());
             checkoutMock.getBillingAddress = jest.fn(() => getBillingAddress());
             checkoutMock.getConfig = jest.fn(() => getAppConfig().storeConfig);
-
-            return braintreePaypalPaymentStrategy.initialize(options);
         });
 
         it('calls submit order with the order request information', async () => {
+            await braintreePaypalPaymentStrategy.initialize(options);
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(orderRequestBody, 'payment'), expect.any(Boolean), expect.any(Object));
@@ -130,12 +129,14 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('asks for cart verification', async () => {
+            await braintreePaypalPaymentStrategy.initialize(options);
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, expect.any(Object));
         });
 
         it('pass the options to submitOrder', async () => {
+            await braintreePaypalPaymentStrategy.initialize(options);
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), expect.any(Boolean), options);
@@ -151,6 +152,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 },
             };
 
+            await braintreePaypalPaymentStrategy.initialize(options);
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', false);
@@ -179,6 +181,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         it('converts any error returned by braintree in a StandardError', async () => {
             braintreePaymentProcessorMock.paypal = () => Promise.reject({ name: 'BraintreeError', message: 'my_message'});
 
+            await braintreePaypalPaymentStrategy.initialize(options);
             await expect(braintreePaypalPaymentStrategy.execute(orderRequestBody, options)).rejects.toEqual(expect.any(StandardError));
         });
 
