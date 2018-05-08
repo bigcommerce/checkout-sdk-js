@@ -130,7 +130,7 @@ describe('FormSelector', () => {
         });
 
         it('does not make provinces required if we do not have them in the countries list', () => {
-            const forms = formSelector.getBillingAddressFields(countries, 'US');
+            const forms = formSelector.getBillingAddressFields(countries, 'JP');
             const province = find(forms, { name: 'province' });
 
             expect(province.required).toBe(false);

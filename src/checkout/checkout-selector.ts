@@ -19,30 +19,46 @@ import {
     ShippingOptionSelector,
 } from '../shipping';
 
+import InternalCheckoutSelectors from './internal-checkout-selectors';
+
 /**
  * TODO: Convert this file into TypeScript properly
  * i.e.: CheckoutMeta, Config, Country, Instrument, Field
  */
 @selector
 export default class CheckoutSelector {
+    private _billingAddress: BillingAddressSelector;
+    private _cart: CartSelector;
+    private _config: ConfigSelector;
+    private _countries: CountrySelector;
+    private _customer: CustomerSelector;
+    private _form: FormSelector;
+    private _instruments: InstrumentSelector;
+    private _order: OrderSelector;
+    private _paymentMethods: PaymentMethodSelector;
+    private _quote: QuoteSelector;
+    private _shippingAddress: ShippingAddressSelector;
+    private _shippingCountries: ShippingCountrySelector;
+    private _shippingOptions: ShippingOptionSelector;
+
     /**
      * @internal
      */
-    constructor(
-        private _billingAddress: BillingAddressSelector,
-        private _cart: CartSelector,
-        private _config: ConfigSelector,
-        private _countries: CountrySelector,
-        private _customer: CustomerSelector,
-        private _form: FormSelector,
-        private _instruments: InstrumentSelector,
-        private _order: OrderSelector,
-        private _paymentMethods: PaymentMethodSelector,
-        private _quote: QuoteSelector,
-        private _shippingAddress: ShippingAddressSelector,
-        private _shippingCountries: ShippingCountrySelector,
-        private _shippingOptions: ShippingOptionSelector
-    ) {}
+    constructor(selectors: InternalCheckoutSelectors) {
+        this._billingAddress = selectors.billingAddress;
+        this._cart = selectors.cart;
+        this._config = selectors.config;
+        this._countries = selectors.countries;
+        this._customer = selectors.customer;
+        this._form = selectors.form;
+        this._instruments = selectors.instruments;
+        this._order = selectors.order;
+        this._paymentMethods = selectors.paymentMethods;
+        this._quote = selectors.quote;
+        this._shippingAddress = selectors.shippingAddress;
+        this._shippingCountries = selectors.shippingCountries;
+        this._shippingOptions = selectors.shippingOptions;
+    }
 
     getOrder(): InternalOrder | undefined {
         return this._order.getOrder();

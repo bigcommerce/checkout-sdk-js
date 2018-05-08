@@ -11,28 +11,46 @@ import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
+import InternalCheckoutSelectors from './internal-checkout-selectors';
+
 @selector
 export default class CheckoutStatusSelector {
+    private _billingAddress: BillingAddressSelector;
+    private _cart: CartSelector;
+    private _config: ConfigSelector;
+    private _countries: CountrySelector;
+    private _coupons: CouponSelector;
+    private _customerStrategies: CustomerStrategySelector;
+    private _giftCertificates: GiftCertificateSelector;
+    private _instruments: InstrumentSelector;
+    private _order: OrderSelector;
+    private _paymentMethods: PaymentMethodSelector;
+    private _paymentStrategies: PaymentStrategySelector;
+    private _quote: QuoteSelector;
+    private _shippingCountries: ShippingCountrySelector;
+    private _shippingOptions: ShippingOptionSelector;
+    private _shippingStrategies: ShippingStrategySelector;
+
     /**
      * @internal
      */
-    constructor(
-        private _billingAddress: BillingAddressSelector,
-        private _cart: CartSelector,
-        private _config: ConfigSelector,
-        private _countries: CountrySelector,
-        private _coupon: CouponSelector,
-        private _customerStrategy: CustomerStrategySelector,
-        private _giftCertificate: GiftCertificateSelector,
-        private _instruments: InstrumentSelector,
-        private _order: OrderSelector,
-        private _paymentMethods: PaymentMethodSelector,
-        private _paymentStrategy: PaymentStrategySelector,
-        private _quote: QuoteSelector,
-        private _shippingCountries: ShippingCountrySelector,
-        private _shippingOptions: ShippingOptionSelector,
-        private _shippingStrategy: ShippingStrategySelector
-    ) {}
+    constructor(selectors: InternalCheckoutSelectors) {
+        this._billingAddress = selectors.billingAddress;
+        this._cart = selectors.cart;
+        this._config = selectors.config;
+        this._countries = selectors.countries;
+        this._coupons = selectors.coupons;
+        this._customerStrategies = selectors.customerStrategies;
+        this._giftCertificates = selectors.giftCertificates;
+        this._instruments = selectors.instruments;
+        this._order = selectors.order;
+        this._paymentMethods = selectors.paymentMethods;
+        this._paymentStrategies = selectors.paymentStrategies;
+        this._quote = selectors.quote;
+        this._shippingCountries = selectors.shippingCountries;
+        this._shippingOptions = selectors.shippingOptions;
+        this._shippingStrategies = selectors.shippingStrategies;
+    }
 
     isPending(): boolean {
         return this.isLoadingCheckout() ||
@@ -69,11 +87,11 @@ export default class CheckoutStatusSelector {
     }
 
     isSubmittingOrder(): boolean {
-        return this._paymentStrategy.isExecuting();
+        return this._paymentStrategies.isExecuting();
     }
 
     isFinalizingOrder(): boolean {
-        return this._paymentStrategy.isFinalizing();
+        return this._paymentStrategies.isFinalizing();
     }
 
     isLoadingOrder(): boolean {
@@ -105,19 +123,19 @@ export default class CheckoutStatusSelector {
     }
 
     isInitializingPaymentMethod(methodId?: string): boolean {
-        return this._paymentStrategy.isInitializing(methodId);
+        return this._paymentStrategies.isInitializing(methodId);
     }
 
     isSigningIn(methodId?: string): boolean {
-        return this._customerStrategy.isSigningIn(methodId);
+        return this._customerStrategies.isSigningIn(methodId);
     }
 
     isSigningOut(methodId?: string): boolean {
-        return this._customerStrategy.isSigningOut(methodId);
+        return this._customerStrategies.isSigningOut(methodId);
     }
 
     isInitializingCustomer(methodId?: string): boolean {
-        return this._customerStrategy.isInitializing(methodId);
+        return this._customerStrategies.isInitializing(methodId);
     }
 
     isLoadingShippingOptions(): boolean {
@@ -125,7 +143,7 @@ export default class CheckoutStatusSelector {
     }
 
     isSelectingShippingOption(): boolean {
-        return this._shippingStrategy.isSelectingOption();
+        return this._shippingStrategies.isSelectingOption();
     }
 
     isUpdatingBillingAddress(): boolean {
@@ -133,27 +151,27 @@ export default class CheckoutStatusSelector {
     }
 
     isUpdatingShippingAddress(): boolean {
-        return this._shippingStrategy.isUpdatingAddress();
+        return this._shippingStrategies.isUpdatingAddress();
     }
 
     isInitializingShipping(methodId?: string) {
-        return this._shippingStrategy.isInitializing(methodId);
+        return this._shippingStrategies.isInitializing(methodId);
     }
 
     isApplyingCoupon(): boolean {
-        return this._coupon.isApplying();
+        return this._coupons.isApplying();
     }
 
     isRemovingCoupon(): boolean {
-        return this._coupon.isRemoving();
+        return this._coupons.isRemoving();
     }
 
     isApplyingGiftCertificate(): boolean {
-        return this._giftCertificate.isApplying();
+        return this._giftCertificates.isApplying();
     }
 
     isRemovingGiftCertificate(): boolean {
-        return this._giftCertificate.isRemoving();
+        return this._giftCertificates.isRemoving();
     }
 
     isLoadingInstruments(): boolean {

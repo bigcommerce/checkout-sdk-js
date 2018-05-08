@@ -1,47 +1,19 @@
-import { BillingAddressSelector } from '../billing';
-import { CartSelector } from '../cart' ;
-import { ConfigSelector } from '../config';
-import { CountrySelector } from '../geography';
-import { CustomerSelector } from '../customer';
-import { FormSelector } from '../form';
-import { InstrumentSelector } from '../payment/instrument';
-import { OrderSelector } from '../order';
-import { PaymentMethodSelector } from '../payment';
-import { QuoteSelector } from '../quote';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
+import { find, reject } from 'lodash';
 import { getCheckoutStoreState } from './checkouts.mock';
-import { getCountries } from '../geography/countries.mock';
+import { getFormFields } from '../form/form.mocks';
+import { getUnitedStates } from '../geography/countries.mock';
 import { getBraintree } from '../payment/payment-methods.mock';
-import { getShippingCountries } from '../shipping/shipping-countries.mock';
+import { getAustralia } from '../shipping/shipping-countries.mock';
 import CheckoutSelector from './checkout-selector';
+import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 
 describe('CheckoutSelector', () => {
-    let orderSelector;
-    let formSelector;
     let selector;
     let state;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
-
-        orderSelector = new OrderSelector(state.order, state.customer, state.cart);
-        formSelector = new FormSelector(state.config);
-
-        selector = new CheckoutSelector(
-            new BillingAddressSelector(state.quote),
-            new CartSelector(state.cart),
-            new ConfigSelector(state.config),
-            new CountrySelector(state.countries),
-            new CustomerSelector(state.customer, state.customerStrategy),
-            formSelector,
-            new InstrumentSelector(state.instruments),
-            orderSelector,
-            new PaymentMethodSelector(state.paymentMethods),
-            new QuoteSelector(state.quote),
-            new ShippingAddressSelector(state.quote),
-            new ShippingCountrySelector(state.shippingCountries),
-            new ShippingOptionSelector(state.shippingOptions)
-        );
+        selector = new CheckoutSelector(createInternalCheckoutSelectors(state));
     });
 
     it('returns order', () => {
@@ -97,23 +69,24 @@ describe('CheckoutSelector', () => {
     });
 
     it('returns flag indicating if payment is submitted', () => {
-        jest.spyOn(orderSelector, 'isPaymentDataSubmitted');
-
         expect(selector.isPaymentDataSubmitted('braintree')).toEqual(true);
-        expect(orderSelector.isPaymentDataSubmitted).toHaveBeenCalledWith(getBraintree());
     });
 
     it('returns shipping address fields', () => {
-        jest.spyOn(formSelector, 'getShippingAddressFields').mockImplementation(() => {});
-        selector.getShippingAddressFields('AU');
-        expect(formSelector.getShippingAddressFields)
-            .toHaveBeenCalledWith(getShippingCountries(), 'AU');
+        const results = selector.getShippingAddressFields('AU');
+        const predicate = ({ name }) => name === 'province' || name === 'provinceCode' || name === 'countryCode';
+
+        expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
+        expect(find(results, { name: 'provinceCode' }).options.items)
+            .toEqual(getAustralia().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 
     it('returns billing address fields', () => {
-        jest.spyOn(formSelector, 'getBillingAddressFields').mockImplementation(() => {});
-        selector.getBillingAddressFields('US');
-        expect(formSelector.getBillingAddressFields)
-            .toHaveBeenCalledWith(getCountries(), 'US');
+        const results = selector.getBillingAddressFields('US');
+        const predicate = ({ name }) => name === 'province' || name === 'provinceCode' || name === 'countryCode';
+
+        expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
+        expect(find(results, { name: 'provinceCode' }).options.items)
+            .toEqual(getUnitedStates().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 });
