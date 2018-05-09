@@ -36,7 +36,7 @@ ___
 
 ###  customerGroupName
 
-**●  customerGroupName**:  *`number`* 
+**●  customerGroupName**:  *`string`* 
 
 
 
@@ -125,33 +125,9 @@ ___
 
 <a id="remote"></a>
 
-###  remote
+### «Optional» remote
 
-**●  remote**:  *`object`* 
-
-
-
-#### Type declaration
-
-
-
-
- customerMessage: `string`
-
-
-
-
-
-
- provider: `string`
-
-
-
-
-
-
- useStoreCredit: `boolean`
-
+**●  remote**:  *`undefined`⎮`object`* 
 
 
 

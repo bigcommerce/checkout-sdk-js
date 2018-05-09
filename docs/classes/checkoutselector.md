@@ -15,7 +15,6 @@ TODO: Convert this file into TypeScript properly i.e.: CheckoutMeta, Config, Cou
 * [getBillingAddressFields](checkoutselector.md#getbillingaddressfields)
 * [getBillingCountries](checkoutselector.md#getbillingcountries)
 * [getCart](checkoutselector.md#getcart)
-* [getCheckoutMeta](checkoutselector.md#getcheckoutmeta)
 * [getConfig](checkoutselector.md#getconfig)
 * [getCustomer](checkoutselector.md#getcustomer)
 * [getInstruments](checkoutselector.md#getinstruments)
@@ -127,30 +126,6 @@ ___
 
 
 **Returns:** [InternalCart](../interfaces/internalcart.md)⎮`undefined`
-
-
-
-
-
-___
-
-<a id="getcheckoutmeta"></a>
-
-###  getCheckoutMeta
-
-► **getCheckoutMeta**(): `any`
-
-
-
-
-
-
-
-
-
-**Returns:** `any`
-
-
 
 
 
