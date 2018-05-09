@@ -1,8 +1,11 @@
+import { selector } from '../common/selector';
+
 import { InternalAddress } from '../address';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class ShippingAddressSelector {
     constructor(
         private _quote: any = {}

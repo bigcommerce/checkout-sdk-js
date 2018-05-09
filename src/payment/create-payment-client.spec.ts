@@ -2,42 +2,34 @@ import { createClient } from '@bigcommerce/bigpay-client';
 import { DataStore } from '@bigcommerce/data-store';
 
 import { createCheckoutStore, CheckoutStore } from '../checkout';
-import { getAppConfig } from '../config/configs.mock';
+import { getConfigState } from '../config/configs.mock';
 
 import createPaymentClient from './create-payment-client';
 
 describe('createPaymentClient()', () => {
     let client: any;
     let store: CheckoutStore;
-    let subscribeCallback: (state: any) => {};
 
     beforeEach(() => {
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            config: getConfigState(),
+        });
 
-        jest.spyOn(store, 'subscribe')
-            .mockImplementation(callback => {
-                subscribeCallback = callback;
-            });
+        jest.spyOn(store, 'subscribe');
 
         client = createPaymentClient(store);
 
-        jest.spyOn(client, 'setHost')
-            .mockImplementation(() => {});
+        jest.spyOn(client, 'setHost');
     });
 
     it('sets the host when the store callback is invoked', () => {
-        const state = {
-            checkout: {
-                getConfig: () => getAppConfig().storeConfig,
-            },
-        };
+        store.notifyState();
 
-        subscribeCallback(state);
         expect(client.setHost).toHaveBeenCalledWith('https://bigpay.integration.zone');
     });
 
     it('returns an instance of bigpay client', () => {
-        expect(client).toMatchObject(createClient());
+        expect(client).toMatchObject(createClient({ host: 'https://bigpay.integration.zone' }));
     });
 
     it('subscribes to changes', () => {

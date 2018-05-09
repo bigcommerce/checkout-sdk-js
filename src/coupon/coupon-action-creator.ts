@@ -1,8 +1,8 @@
-import { createAction, createErrorAction, Action, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutClient, CheckoutSelectors } from '../checkout';
+import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
@@ -16,10 +16,10 @@ export default class CouponActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    applyCoupon(code: string, options?: RequestOptions): ThunkAction<Action> {
-        return (store: ReadableDataStore<CheckoutSelectors>) => Observable.create((observer: Observer<Action>) => {
-            const { checkout: { getCheckout } } = store.getState();
-            const checkout = getCheckout();
+    applyCoupon(code: string, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<Action>) => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
                 throw new MissingDataError('Unable to apply coupon because "checkout" data is missing.');
@@ -38,10 +38,10 @@ export default class CouponActionCreator {
         });
     }
 
-    removeCoupon(code: string, options?: RequestOptions): ThunkAction<Action> {
-        return (store: ReadableDataStore<CheckoutSelectors>) => Observable.create((observer: Observer<Action>) => {
-            const { checkout: { getCheckout } } = store.getState();
-            const checkout = getCheckout();
+    removeCoupon(code: string, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<Action>) => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
                 throw new MissingDataError('Unable to remove coupon because "checkout" data is missing.');

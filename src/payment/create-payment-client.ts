@@ -3,18 +3,18 @@ import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
 
 import { CheckoutStore } from '../checkout';
 
-export default function createPaymentClient(store: CheckoutStore): any {
-    const paymentClient: any = createBigpayClient();
+export default function createPaymentClient(store: CheckoutStore) {
+    const paymentClient = createBigpayClient();
 
     store.subscribe(
-        ({ checkout: { getConfig } }) => {
-            const config = getConfig();
+        state => {
+            const config = state.config.getConfig();
 
             if (config) {
                 paymentClient.setHost(config.paymentSettings.bigpayBaseUrl);
             }
         },
-        ({ checkout: { getConfig } }) => getConfig()
+        state => state.config.getConfig()
     );
 
     return paymentClient;

@@ -1,8 +1,11 @@
+import { selector } from '../common/selector';
+
 import InternalQuote from './internal-quote';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class QuoteSelector {
     /**
      * @constructor

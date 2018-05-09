@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import Payment from '../payment';
@@ -19,13 +19,13 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
         super(store);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (this._isPaymentAcknowledged()) {
             return this._store.dispatch(
                 this._orderActionCreator.submitOrder({
                     ...payload,
                     payment: pick(payload.payment, 'name') as Payment,
-                }, true, options)
+                }, options)
             );
         }
 
@@ -35,15 +35,15 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
             throw new InvalidArgumentError();
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, true, options))
+        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
             );
     }
 
     private _isPaymentAcknowledged(): boolean {
-        const { checkout } = this._store.getState();
-        const order = checkout.getOrder();
+        const state = this._store.getState();
+        const order = state.order.getOrder();
 
         if (!order) {
             throw new MissingDataError('Unable to determine payment status because "order" data is missing.');

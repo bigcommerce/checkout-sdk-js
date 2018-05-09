@@ -50,7 +50,7 @@ describe('CreditCardPaymentStrategy', () => {
 
         await strategy.execute(payload);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, undefined);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), undefined);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 

@@ -46,7 +46,6 @@ TODO: Convert this file into TypeScript properly i.e.: Instrument, InitializePay
 * [updateBillingAddress](checkoutservice.md#updatebillingaddress)
 * [updateShippingAddress](checkoutservice.md#updateshippingaddress)
 * [vaultInstrument](checkoutservice.md#vaultinstrument)
-* [verifyCart](checkoutservice.md#verifycart)
 
 
 
@@ -1047,38 +1046,6 @@ ___
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | instrument | `any`   |  - |
-
-
-
-
-
-**Returns:** `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-
-
-
-
-
-___
-
-<a id="verifycart"></a>
-
-###  verifyCart
-
-► **verifyCart**(options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`.<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-
-
-
-
-
-*__deprecated__*: 
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| options | [RequestOptions](../interfaces/requestoptions.md)   |  - |
 
 
 

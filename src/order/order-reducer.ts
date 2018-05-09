@@ -7,15 +7,20 @@ import * as quoteActionTypes from '../quote/quote-action-types';
 import InternalOrder from './internal-order';
 import mapFromOrderToInternal from './map-from-order-to-internal';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
+
+const DEFAULT_STATE: OrderState = {
+    errors: {},
+    meta: {},
+    statuses: {},
+};
 
 /**
  * @todo Convert this file into TypeScript properly
- * @param {OrderState} state
- * @param {Action} action
- * @return {OrderState}
+ * i.e.: Action
  */
-export default function orderReducer(state: any = {}, action: Action): any {
-    const reducer = combineReducers<any>({
+export default function orderReducer(state: OrderState = DEFAULT_STATE, action: Action): OrderState {
+    const reducer = combineReducers<OrderState>({
         data: dataReducer,
         errors: errorsReducer,
         meta: metaReducer,
@@ -25,13 +30,13 @@ export default function orderReducer(state: any = {}, action: Action): any {
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalOrder, action: Action): InternalOrder {
+function dataReducer(data: InternalOrder | undefined, action: Action): InternalOrder | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...data, ...mapToInternalIncompleteOrder(action.payload, data) };
+        return data ? { ...data, ...mapToInternalIncompleteOrder(action.payload, data) } : data;
 
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
-        return mapFromOrderToInternal(action.payload, data);
+        return data ? mapFromOrderToInternal(action.payload, data) : data;
 
     case orderActionTypes.LOAD_INTERNAL_ORDER_SUCCEEDED:
     case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
@@ -44,7 +49,7 @@ function dataReducer(data: InternalOrder, action: Action): InternalOrder {
     }
 }
 
-function metaReducer(meta: any, action: Action): any {
+function metaReducer(meta: OrderMetaState | undefined, action: Action): OrderMetaState | undefined {
     switch (action.type) {
     case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
         return { ...meta, ...action.meta };
@@ -54,7 +59,7 @@ function metaReducer(meta: any, action: Action): any {
     }
 }
 
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(errors: OrderErrorsState = DEFAULT_STATE.errors, action: Action): OrderErrorsState {
     switch (action.type) {
     case orderActionTypes.LOAD_ORDER_REQUESTED:
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
@@ -68,7 +73,7 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(statuses: OrderStatusesState = DEFAULT_STATE.statuses, action: Action): OrderStatusesState {
     switch (action.type) {
     case orderActionTypes.LOAD_ORDER_REQUESTED:
         return { ...statuses, isLoading: true };

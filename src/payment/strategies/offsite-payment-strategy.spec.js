@@ -56,7 +56,7 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), true, options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -68,7 +68,7 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.execute(payload, options);
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, true, options);
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -83,10 +83,10 @@ describe('OffsitePaymentStrategy', () => {
     });
 
     it('finalizes order if order is created and payment is acknowledged', async () => {
-        const { checkout } = store.getState();
+        const state = store.getState();
         const options = {};
 
-        jest.spyOn(checkout, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
             payment: {
                 status: paymentStatusTypes.ACKNOWLEDGE,
             },
@@ -94,15 +94,15 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.finalize(options);
 
-        expect(orderActionCreator.finalizeOrder).toHaveBeenCalledWith(checkout.getOrder().orderId, options);
+        expect(orderActionCreator.finalizeOrder).toHaveBeenCalledWith(state.order.getOrder().orderId, options);
         expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
     });
 
     it('finalizes order if order is created and payment is finalized', async () => {
-        const { checkout } = store.getState();
+        const state = store.getState();
         const options = {};
 
-        jest.spyOn(checkout, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
             payment: {
                 status: paymentStatusTypes.FINALIZE,
             },
@@ -110,14 +110,14 @@ describe('OffsitePaymentStrategy', () => {
 
         await strategy.finalize(options);
 
-        expect(orderActionCreator.finalizeOrder).toHaveBeenCalledWith(checkout.getOrder().orderId, options);
+        expect(orderActionCreator.finalizeOrder).toHaveBeenCalledWith(state.order.getOrder().orderId, options);
         expect(store.dispatch).toHaveBeenCalledWith(finalizeOrderAction);
     });
 
     it('does not finalize order if order is not created', async () => {
-        const { checkout } = store.getState();
+        const state = store.getState();
 
-        jest.spyOn(checkout, 'getOrder').mockReturnValue(getIncompleteOrder());
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(getIncompleteOrder());
 
         try {
             await strategy.finalize();
@@ -129,9 +129,9 @@ describe('OffsitePaymentStrategy', () => {
     });
 
     it('does not finalize order if order is not finalized or acknowledged', async () => {
-        const { checkout } = store.getState();
+        const state = store.getState();
 
-        jest.spyOn(checkout, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
+        jest.spyOn(state.order, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
             payment: {
                 status: paymentStatusTypes.INITIALIZE,
             },

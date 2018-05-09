@@ -190,7 +190,7 @@ describe('SquarePaymentStrategy', () => {
                 });
 
                 it('places the order with the right arguments', () => {
-                    expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ x: 'y', useStoreCredit: true }, true, { b: 'f' });
+                    expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ x: 'y', useStoreCredit: true }, { b: 'f' });
                     expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
                 });
 

@@ -1,8 +1,8 @@
-import { createAction, createErrorAction, Action, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutClient, CheckoutSelectors } from '../checkout';
+import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
@@ -16,10 +16,10 @@ export default class GiftCertificateActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    applyGiftCertificate(giftCertificate: string, options?: RequestOptions): ThunkAction<Action> {
-        return (store: ReadableDataStore<CheckoutSelectors>) => Observable.create((observer: Observer<Action>) => {
-            const { checkout: { getCheckout } } = store.getState();
-            const checkout = getCheckout();
+    applyGiftCertificate(giftCertificate: string, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<Action>) => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
                 throw new MissingDataError('Unable to apply gift certificate because "checkout" data is missing.');
@@ -38,10 +38,10 @@ export default class GiftCertificateActionCreator {
         });
     }
 
-    removeGiftCertificate(giftCertificate: string, options?: RequestOptions): ThunkAction<Action> {
-        return (store: ReadableDataStore<CheckoutSelectors>) => Observable.create((observer: Observer<Action>) => {
-            const { checkout: { getCheckout } } = store.getState();
-            const checkout = getCheckout();
+    removeGiftCertificate(giftCertificate: string, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<Action>) => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
                 throw new MissingDataError('Unable to remove gift certificate because "checkout" data is missing.');

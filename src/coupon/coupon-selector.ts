@@ -1,6 +1,9 @@
+import { selector } from '../common/selector';
+
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class CouponSelector {
     /**
      * @constructor

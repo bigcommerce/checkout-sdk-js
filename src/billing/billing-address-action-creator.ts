@@ -1,11 +1,10 @@
-import { createAction, createErrorAction, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { Address } from '../address';
-import { Checkout, CheckoutClient } from '../checkout';
-import CheckoutSelectors from '../checkout/checkout-selectors';
+import { Checkout, CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
@@ -16,7 +15,7 @@ export default class BillingAddressActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    updateAddress(address: Address, options?: RequestOptions): ThunkAction<BillingAddressAction, CheckoutSelectors> {
+    updateAddress(address: Address, options?: RequestOptions): ThunkAction<BillingAddressAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<BillingAddressAction>) => {
             observer.next(createAction(BillingAddressActionTypes.UpdateBillingAddressRequested));
 
@@ -31,21 +30,21 @@ export default class BillingAddressActionCreator {
         });
     }
 
-    private _requestBillingAddressUpdate(store: ReadableDataStore<CheckoutSelectors>, address: Address, options?: RequestOptions): Promise<Response<Checkout>> {
-        const checkoutSelector = store.getState().checkout;
-        const checkout = checkoutSelector.getCheckout();
+    private _requestBillingAddressUpdate(store: ReadableCheckoutStore, address: Address, options?: RequestOptions): Promise<Response<Checkout>> {
+        const state = store.getState();
+        const checkout = state.checkout.getCheckout();
 
         if (!checkout || !checkout.id) {
             throw new MissingDataError('Unable to update shipping address: "checkout.id" is missing.');
         }
 
-        const billingAddress = checkoutSelector.getBillingAddress();
+        const billingAddress = state.billingAddress.getBillingAddress();
 
         if (!billingAddress || !billingAddress.id) {
             return this._checkoutClient.createBillingAddress(checkout.id, address, options);
         }
 
-        const customer = checkoutSelector.getCustomer();
+        const customer = state.customer.getCustomer();
         const updatedBillingAddress = {
             ...address,
             email: customer ? customer.email : undefined,

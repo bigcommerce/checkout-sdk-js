@@ -1,11 +1,14 @@
 import { find } from 'lodash';
 
+import { selector } from '../common/selector';
+
 import PaymentMethod from './payment-method';
 import PaymentMethodsMeta from './payment-methods-meta';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
+@selector
 export default class PaymentMethodSelector {
     /**
      * @constructor
@@ -50,7 +53,7 @@ export default class PaymentMethodSelector {
 
     getLoadMethodError(methodId?: string): Error | undefined {
         if (!this._paymentMethods.errors ||
-            (methodId && this._paymentMethods.errors.loadMethod !== methodId)) {
+            (methodId && this._paymentMethods.errors.loadMethodId !== methodId)) {
             return;
         }
 

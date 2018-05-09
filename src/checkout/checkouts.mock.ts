@@ -5,7 +5,7 @@ import { getCartState } from '../cart/internal-carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getGiftCertificate } from '../coupon/gift-certificates.mock';
 import { getGuestCustomer } from '../customer/customers.mock';
-import { getCustomerState } from '../customer/internal-customers.mock';
+import { getCustomerState, getCustomerStrategyState } from '../customer/internal-customers.mock';
 import { getCountriesState } from '../geography/countries.mock';
 import { getCompleteOrderState } from '../order/internal-orders.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';

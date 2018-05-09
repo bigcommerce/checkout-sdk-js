@@ -37,7 +37,10 @@ export function getUnitedStates() {
         code: 'US',
         name: 'United States',
         hasPostalCodes: true,
-        subdivisions: [],
+        subdivisions: [
+            { code: 'CA', name: 'California' },
+            { code: 'TX', name: 'Texas' },
+        ],
     };
 }
 

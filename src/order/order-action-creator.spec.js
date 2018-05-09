@@ -90,22 +90,22 @@ describe('OrderActionCreator', () => {
             orderActionCreator = new OrderActionCreator(checkoutClient);
         });
 
-        it('emits actions if able to submit order', () => {
-            Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+        it('emits actions if able to submit order', async () => {
+            const actions = await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
                 .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: actionTypes.SUBMIT_ORDER_REQUESTED },
-                        {
-                            type: actionTypes.SUBMIT_ORDER_SUCCEEDED,
-                            payload: submitResponse.body.data,
-                            meta: {
-                                ...submitResponse.body.meta,
-                                token: submitResponse.headers.token,
-                            },
-                        },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: actionTypes.SUBMIT_ORDER_REQUESTED },
+                {
+                    type: actionTypes.SUBMIT_ORDER_SUCCEEDED,
+                    payload: submitResponse.body.data,
+                    meta: {
+                        ...submitResponse.body.meta,
+                        token: submitResponse.headers.token,
+                    },
+                },
+            ]);
         });
 
         it('emits error actions if unable to submit order', async () => {
@@ -125,7 +125,7 @@ describe('OrderActionCreator', () => {
         });
 
         it('verifies cart content', async () => {
-            await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody(), true)(store))
+            await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
                 .toPromise();
 
             expect(checkoutClient.loadCart).toHaveBeenCalled();
@@ -138,7 +138,7 @@ describe('OrderActionCreator', () => {
             });
 
             try {
-                await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody(), true)(store)).toPromise();
+                await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store)).toPromise();
             } catch (action) {
                 expect(checkoutClient.submitOrder).not.toHaveBeenCalled();
                 expect(action.payload.type).toEqual('cart_changed');

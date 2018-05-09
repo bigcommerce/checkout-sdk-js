@@ -5,10 +5,10 @@ import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../../billing';
-import { getBillingAddress } from '../../billing/internal-billing-addresses.mock';
+import { BillingAddressActionTypes } from '../../billing/billing-address-actions';
+import { getBillingAddress } from '../../billing/billing-addresses.mock';
 import { getCartResponseBody } from '../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
-import { getCheckoutMeta } from '../../checkout/checkouts.mock';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
@@ -30,11 +30,10 @@ import {
     INITIALIZE_REMOTE_BILLING_REQUESTED,
     INITIALIZE_REMOTE_PAYMENT_REQUESTED,
 } from '../../remote-checkout/remote-checkout-action-types';
-import { getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
+import { getRemoteCheckoutMeta, getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
 import PaymentMethod from '../payment-method';
 
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
-import { BillingAddressActionTypes } from '../../billing/billing-address-actions';
 
 describe('AmazonPayPaymentStrategy', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
@@ -108,7 +107,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         orderReference = {
             getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
-            getAmazonOrderReferenceId: () => getCheckoutMeta().remoteCheckout.amazon.referenceId,
+            getAmazonOrderReferenceId: () => getRemoteCheckoutMeta().amazon.referenceId,
         };
 
         paymentMethod = getAmazonPay();
@@ -155,7 +154,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('creates wallet widget with required properties', async () => {
-        const { referenceId } = getCheckoutMeta().remoteCheckout.amazon;
+        const { referenceId } = getRemoteCheckoutMeta().amazon;
         const { merchantId } = paymentMethod.config;
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
@@ -212,12 +211,12 @@ describe('AmazonPayPaymentStrategy', () => {
 
         expect(remoteCheckoutActionCreator.setCheckoutMeta)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getCheckoutMeta().remoteCheckout.amazon.referenceId,
+                referenceId: getRemoteCheckoutMeta().amazon.referenceId,
             });
     });
 
     it('rejects with error if initialization fails', async () => {
-        jest.spyOn(store.getState().checkout, 'getPaymentMethod')
+        jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue({ ...paymentMethod, config: {} });
 
         try {
@@ -269,7 +268,7 @@ describe('AmazonPayPaymentStrategy', () => {
     it('reinitializes payment method before submitting order', async () => {
         const payload = getOrderRequestBody();
         const options = { methodId: paymentMethod.id };
-        const { referenceId } = getCheckoutMeta().remoteCheckout.amazon;
+        const { referenceId } = getRemoteCheckoutMeta().amazon;
 
         jest.spyOn(store, 'dispatch');
 
@@ -283,7 +282,7 @@ describe('AmazonPayPaymentStrategy', () => {
             .toHaveBeenCalledWith({
                 ...payload,
                 payment: omit(payload.payment, 'paymentData'),
-            }, true, options);
+            }, options);
 
         expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
@@ -330,7 +329,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         expect(remoteCheckoutActionCreator.initializeBilling)
             .toHaveBeenCalledWith(paymentMethod.id, expect.objectContaining({
-                referenceId: getCheckoutMeta().remoteCheckout.amazon.referenceId,
+                referenceId: getRemoteCheckoutMeta().amazon.referenceId,
             }));
 
         expect(billingAddressActionCreator.updateAddress)

@@ -6,6 +6,15 @@ export default function createFreezeProxy<T extends object>(target: T): T {
     );
 }
 
+export function createFreezeProxies<T extends { [key: string]: object }>(map: T): T {
+    return Object.keys(map)
+        .reduce((result, key) => {
+            result[key] = createFreezeProxy(map[key]);
+
+            return result;
+        }, {} as T);
+}
+
 function createProxy<T extends object>(target: T, trap: (target: T, name: keyof T, proxy: T) => any): T {
     const proxy = Object.create(target);
 

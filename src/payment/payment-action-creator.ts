@@ -1,18 +1,19 @@
 import 'rxjs/add/observable/defer';
 import 'rxjs/add/operator/concat';
 
-import { createAction, createErrorAction, Action, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
 import { omit, pick } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutSelectors, CheckoutStoreSelector } from '../checkout';
+import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError, NotInitializedError } from '../common/error/errors';
 import { OrderActionCreator } from '../order';
 
 import Payment, { CreditCard, VaultedInstrument } from './payment';
 import * as actionTypes from './payment-action-types';
 import PaymentMethod from './payment-method';
+import PaymentMethodSelector from './payment-method-selector';
 import PaymentRequestBody from './payment-request-body';
 import PaymentRequestSender from './payment-request-sender';
 
@@ -25,13 +26,13 @@ export default class PaymentActionCreator {
         private _orderActionCreator: OrderActionCreator
     ) {}
 
-    submitPayment(payment: Payment): ThunkAction<Action> {
-        return (store: ReadableDataStore<CheckoutSelectors>) =>
+    submitPayment(payment: Payment): ThunkAction<Action, InternalCheckoutSelectors> {
+        return store =>
             Observable.create((observer: Observer<Action>) => {
                 observer.next(createAction(actionTypes.SUBMIT_PAYMENT_REQUESTED));
 
                 return this._paymentRequestSender.submitPayment(
-                    this._getPaymentRequestBody(payment, store.getState().checkout)
+                    this._getPaymentRequestBody(payment, store.getState())
                 )
                     .then(({ body }) => {
                         observer.next(createAction(actionTypes.SUBMIT_PAYMENT_SUCCEEDED, body));
@@ -42,8 +43,8 @@ export default class PaymentActionCreator {
                     });
             })
                 .concat(Observable.defer(() => {
-                    const { checkout: { getOrder } } = store.getState();
-                    const order = getOrder();
+                    const state = store.getState();
+                    const order = state.order.getOrder();
 
                     if (!order || !order.orderId) {
                         throw new MissingDataError('Unable to reload order data because "order.orderId" is missing');
@@ -53,13 +54,13 @@ export default class PaymentActionCreator {
                 }));
     }
 
-    initializeOffsitePayment(payment: Payment): ThunkAction<Action> {
-        return (store: ReadableDataStore<CheckoutSelectors>) =>
+    initializeOffsitePayment(payment: Payment): ThunkAction<Action, InternalCheckoutSelectors> {
+        return store =>
             Observable.create((observer: Observer<Action>) => {
                 observer.next(createAction(actionTypes.INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
 
                 return this._paymentRequestSender.initializeOffsitePayment(
-                    this._getPaymentRequestBody(payment, store.getState().checkout)
+                    this._getPaymentRequestBody(payment, store.getState())
                 )
                     .then(() => {
                         observer.next(createAction(actionTypes.INITIALIZE_OFFSITE_PAYMENT_SUCCEEDED));
@@ -71,25 +72,32 @@ export default class PaymentActionCreator {
             });
     }
 
-    private _getPaymentRequestBody(payment: Payment, checkout: CheckoutStoreSelector): PaymentRequestBody {
-        const deviceSessionId = payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId || checkout.getCheckoutMeta().deviceSessionId;
-        const checkoutMeta = checkout.getCheckoutMeta();
-        const billingAddress = checkout.getBillingAddress();
-        const cart = checkout.getCart();
-        const customer = checkout.getCustomer();
-        const order = checkout.getOrder();
-        const paymentMethod = this._getPaymentMethod(payment, checkout);
-        const shippingAddress = checkout.getShippingAddress();
-        const shippingOption = checkout.getSelectedShippingOption();
-        const config = checkout.getConfig();
+    private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
+        const deviceSessionId = (
+            payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId ||
+            state.paymentMethods.getPaymentMethodsMeta().request.deviceSessionId
+        );
+        const billingAddress = state.billingAddress.getBillingAddress();
+        const cart = state.cart.getCart();
+        const customer = state.customer.getCustomer();
+        const order = state.order.getOrder();
+        const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
+        const shippingAddress = state.shippingAddress.getShippingAddress();
+        const shippingOption = state.shippingOptions.getSelectedShippingOption();
+        const config = state.config.getConfig();
+        const instrumentMeta = state.instruments.getInstrumentsMeta();
 
         if (!config) {
             throw new NotInitializedError('Config data is missing');
         }
 
         const authToken = payment.paymentData && (payment.paymentData as VaultedInstrument).instrumentId
-            ? `${checkoutMeta.paymentAuthToken}, ${checkoutMeta.vaultAccessToken}`
-            : checkoutMeta.paymentAuthToken;
+            ? `${state.order.getPaymentAuthToken()}, ${instrumentMeta.vaultAccessToken}`
+            : state.order.getPaymentAuthToken();
+
+        if (!authToken) {
+            throw new MissingDataError('Unable to submit payment because "authToken" is missing.');
+        }
 
         return {
             billingAddress,
@@ -100,14 +108,11 @@ export default class PaymentActionCreator {
             shippingAddress,
             shippingOption,
             authToken,
-            orderMeta: pick(checkoutMeta, ['deviceFingerprint']),
+            orderMeta: state.order.getOrderMeta(),
             payment: omit(payment.paymentData, ['deviceSessionId']) as Payment,
             quoteMeta: {
                 request: {
-                    ...pick(checkoutMeta, [
-                        'geoCountryCode',
-                        'sessionHash',
-                    ]),
+                    ...state.paymentMethods.getPaymentMethodsMeta().request,
                     deviceSessionId,
                 },
             },
@@ -121,8 +126,8 @@ export default class PaymentActionCreator {
         };
     }
 
-    private _getPaymentMethod(payment: Payment, checkout: CheckoutStoreSelector): PaymentMethod | undefined {
-        const paymentMethod = checkout.getPaymentMethod(payment.name, payment.gateway);
+    private _getPaymentMethod(payment: Payment, paymentMethodSelector: PaymentMethodSelector): PaymentMethod | undefined {
+        const paymentMethod = paymentMethodSelector.getPaymentMethod(payment.name, payment.gateway);
 
         return (paymentMethod && paymentMethod.method === 'multi-option' && !paymentMethod.gateway) ?
             { ...paymentMethod, gateway: paymentMethod.id } :

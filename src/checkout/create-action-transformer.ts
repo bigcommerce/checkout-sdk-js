@@ -1,14 +1,15 @@
+import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/catch';
 
 import { Action } from '@bigcommerce/data-store';
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subscribable } from 'rxjs/Observable';
 
 import { RequestErrorFactory } from '../common/error';
 
 export default function createActionTransformer(
     requestErrorFactory: RequestErrorFactory
-): (action: Observable<Action>) => Observable<Action> {
-    return (action$: Observable<Action>) => action$.catch<Action, never>(action => {
+): (action: Subscribable<Action>) => Observable<Action> {
+    return action$ => Observable.from(action$).catch<Action, never>(action => {
         if (action instanceof Error || action.payload instanceof Error) {
             throw action;
         }

@@ -1,8 +1,8 @@
 import { noop, omit } from 'lodash';
 
-import { isAddressEqual } from '../../address';
+import { isAddressEqual, mapFromInternalAddress } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
-import { CheckoutSelectors, CheckoutStore } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError, StandardError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
@@ -38,14 +38,14 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         this._window = window;
     }
 
-    initialize(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
+    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         if (this._isInitialized) {
             return super.initialize(options);
         }
 
         const { amazon: amazonOptions, methodId } = options;
-        const { checkout } = this._store.getState();
-        const paymentMethod = checkout.getPaymentMethod(methodId);
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
         if (!amazonOptions) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.amazon" argument is not provided.');
@@ -71,7 +71,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             .then(() => super.initialize(options));
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (!this._isInitialized) {
             return super.deinitialize(options);
         }
@@ -81,7 +81,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return super.deinitialize(options);
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<CheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { useStoreCredit = false } = payload;
         const referenceId = this._getOrderReferenceId();
 
@@ -100,7 +100,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 this._orderActionCreator.submitOrder({
                     ...payload,
                     payment: omit(payload.payment, 'paymentData') as Payment,
-                }, true, options)
+                }, options)
             ))
             .catch(error => {
                 if (error instanceof RequestError && error.body.type === 'provider_widget_error' && this._walletOptions) {
@@ -117,10 +117,10 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     }
 
     private _getOrderReferenceId(): string | undefined {
-        const { checkout } = this._store.getState();
-        const { remoteCheckout: { amazon = {} } = {} } = checkout.getCheckoutMeta();
+        const state = this._store.getState();
+        const meta = state.remoteCheckout.getCheckoutMeta() || {};
 
-        return amazon.referenceId;
+        return meta && meta.amazon && meta.amazon.referenceId;
     }
 
     private _createWallet(options: AmazonPayPaymentInitializeOptions): Promise<AmazonPayWallet> {
@@ -176,7 +176,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         });
     }
 
-    private _synchronizeBillingAddress(): Promise<CheckoutSelectors> {
+    private _synchronizeBillingAddress(): Promise<InternalCheckoutSelectors> {
         const referenceId = this._getOrderReferenceId();
         const methodId = this._paymentMethod && this._paymentMethod.id;
 
@@ -187,20 +187,22 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializeBilling(methodId, { referenceId })
         )
-            .then(({ checkout }) => {
-                const { remoteCheckout = {} } = checkout.getCheckoutMeta();
-                const address = checkout.getBillingAddress();
+            .then(state => {
+                const remoteCheckout = state.remoteCheckout.getCheckout();
+                const address = state.billingAddress.getBillingAddress();
 
-                if (remoteCheckout.billingAddress === false) {
+                if (remoteCheckout && remoteCheckout.billingAddress === false) {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (isAddressEqual(remoteCheckout.billingAddress, address || {}) || !remoteCheckout.billingAddress) {
+                if (!remoteCheckout || !remoteCheckout.billingAddress || isAddressEqual(remoteCheckout.billingAddress, address || {})) {
                     return this._store.getState();
                 }
 
                 return this._store.dispatch(
-                    this._billingAddressActionCreator.updateAddress(remoteCheckout.billingAddress)
+                    this._billingAddressActionCreator.updateAddress(
+                        mapFromInternalAddress(remoteCheckout.billingAddress)
+                    )
                 );
             });
     }

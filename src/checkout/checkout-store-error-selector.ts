@@ -1,6 +1,6 @@
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
-import { selectorDecorator as selector } from '../common/selector';
+import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerStrategySelector } from '../customer';
@@ -12,30 +12,48 @@ import { QuoteSelector } from '../quote';
 import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
+import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 @selector
-export default class CheckoutStoreErrorSelector {
+export default class CheckoutErrorSelector {
+    private _billingAddress: BillingAddressSelector;
+    private _cart: CartSelector;
+    private _checkout: CheckoutSelector;
+    private _config: ConfigSelector;
+    private _countries: CountrySelector;
+    private _coupons: CouponSelector;
+    private _customerStrategies: CustomerStrategySelector;
+    private _giftCertificates: GiftCertificateSelector;
+    private _instruments: InstrumentSelector;
+    private _order: OrderSelector;
+    private _paymentMethods: PaymentMethodSelector;
+    private _paymentStrategies: PaymentStrategySelector;
+    private _quote: QuoteSelector;
+    private _shippingCountries: ShippingCountrySelector;
+    private _shippingOptions: ShippingOptionSelector;
+    private _shippingStrategies: ShippingStrategySelector;
+
     /**
      * @internal
      */
-    constructor(
-        private _billingAddress: BillingAddressSelector,
-        private _cart: CartSelector,
-        private _checkout: CheckoutSelector,
-        private _config: ConfigSelector,
-        private _countries: CountrySelector,
-        private _coupon: CouponSelector,
-        private _customerStrategy: CustomerStrategySelector,
-        private _giftCertificate: GiftCertificateSelector,
-        private _instruments: InstrumentSelector,
-        private _order: OrderSelector,
-        private _paymentMethods: PaymentMethodSelector,
-        private _paymentStrategy: PaymentStrategySelector,
-        private _quote: QuoteSelector,
-        private _shippingCountries: ShippingCountrySelector,
-        private _shippingOptions: ShippingOptionSelector,
-        private _shippingStrategy: ShippingStrategySelector
-    ) {}
+    constructor(selectors: InternalCheckoutSelectors) {
+        this._billingAddress = selectors.billingAddress;
+        this._cart = selectors.cart;
+        this._checkout = selectors.checkout;
+        this._config = selectors.config;
+        this._countries = selectors.countries;
+        this._coupons = selectors.coupons;
+        this._customerStrategies = selectors.customerStrategies;
+        this._giftCertificates = selectors.giftCertificates;
+        this._instruments = selectors.instruments;
+        this._order = selectors.order;
+        this._paymentMethods = selectors.paymentMethods;
+        this._paymentStrategies = selectors.paymentStrategies;
+        this._quote = selectors.quote;
+        this._shippingCountries = selectors.shippingCountries;
+        this._shippingOptions = selectors.shippingOptions;
+        this._shippingStrategies = selectors.shippingStrategies;
+    }
 
     getError(): Error | undefined {
         return this.getLoadCheckoutError() ||
@@ -72,11 +90,11 @@ export default class CheckoutStoreErrorSelector {
     }
 
     getSubmitOrderError(): Error | undefined {
-        return this._paymentStrategy.getExecuteError();
+        return this._paymentStrategies.getExecuteError();
     }
 
     getFinalizeOrderError(): Error | undefined {
-        return this._paymentStrategy.getFinalizeError();
+        return this._paymentStrategies.getFinalizeError();
     }
 
     getLoadOrderError(): Error | undefined {
@@ -108,19 +126,19 @@ export default class CheckoutStoreErrorSelector {
     }
 
     getInitializePaymentMethodError(methodId?: string): Error | undefined {
-        return this._paymentStrategy.getInitializeError(methodId);
+        return this._paymentStrategies.getInitializeError(methodId);
     }
 
     getSignInError(): Error | undefined {
-        return this._customerStrategy.getSignInError();
+        return this._customerStrategies.getSignInError();
     }
 
     getSignOutError(): Error | undefined {
-        return this._customerStrategy.getSignOutError();
+        return this._customerStrategies.getSignOutError();
     }
 
     getInitializeCustomerError(methodId?: string): Error | undefined {
-        return this._customerStrategy.getInitializeError(methodId);
+        return this._customerStrategies.getInitializeError(methodId);
     }
 
     getLoadShippingOptionsError(): Error | undefined {
@@ -128,7 +146,7 @@ export default class CheckoutStoreErrorSelector {
     }
 
     getSelectShippingOptionError(): Error | undefined {
-        return this._shippingStrategy.getSelectOptionError();
+        return this._shippingStrategies.getSelectOptionError();
     }
 
     getUpdateBillingAddressError(): Error | undefined {
@@ -136,27 +154,27 @@ export default class CheckoutStoreErrorSelector {
     }
 
     getUpdateShippingAddressError(): Error | undefined {
-        return this._shippingStrategy.getUpdateAddressError();
+        return this._shippingStrategies.getUpdateAddressError();
     }
 
     getInitializeShippingError(methodId?: string): Error | undefined {
-        return this._shippingStrategy.getInitializeError(methodId);
+        return this._shippingStrategies.getInitializeError(methodId);
     }
 
     getApplyCouponError(): Error | undefined {
-        return this._coupon.getApplyError();
+        return this._coupons.getApplyError();
     }
 
     getRemoveCouponError(): Error | undefined {
-        return this._coupon.getRemoveError();
+        return this._coupons.getRemoveError();
     }
 
     getApplyGiftCertificateError(): Error | undefined {
-        return this._giftCertificate.getApplyError();
+        return this._giftCertificates.getApplyError();
     }
 
     getRemoveGiftCertificateError(): Error | undefined {
-        return this._giftCertificate.getRemoveError();
+        return this._giftCertificates.getRemoveError();
     }
 
     getLoadInstrumentsError(): Error | undefined {

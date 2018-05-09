@@ -32,7 +32,7 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
         it('calls submit order with the right data', async () => {
             await noPaymentDataRequiredPaymentStrategy.execute(getOrderRequestBody(), undefined);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(getOrderRequestBody(), 'payment'), true, undefined);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(getOrderRequestBody(), 'payment'), undefined);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
@@ -40,7 +40,7 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
             const options = { myOptions: 'option1', methodId: 'testgateway' };
             await noPaymentDataRequiredPaymentStrategy.execute(getOrderRequestBody(), options);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), true, options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), options);
         });
     });
 });

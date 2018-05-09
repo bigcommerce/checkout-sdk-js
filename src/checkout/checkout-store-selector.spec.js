@@ -1,74 +1,24 @@
-import { BillingAddressSelector } from '../billing';
-import { CartSelector } from '../cart' ;
-import { ConfigSelector } from '../config';
-import { CountrySelector } from '../geography';
-import { CustomerSelector } from '../customer';
-import { FormSelector } from '../form';
-import { InstrumentSelector } from '../payment/instrument';
-import { OrderSelector } from '../order';
-import { PaymentMethodSelector } from '../payment';
-import { QuoteSelector } from '../quote';
-import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector } from '../shipping';
-import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
-import { getCountries } from '../geography/countries.mock';
+import { find, reject } from 'lodash';
+import { getCheckout } from './checkouts.mock';
+import { getCheckoutStoreState } from './checkouts.mock';
+import { getFormFields } from '../form/form.mocks';
+import { getUnitedStates } from '../geography/countries.mock';
 import { getBraintree } from '../payment/payment-methods.mock';
-import { getShippingCountries } from '../shipping/shipping-countries.mock';
-import CheckoutSelector from './checkout-selector';
+import { getAustralia } from '../shipping/shipping-countries.mock';
 import CheckoutStoreSelector from './checkout-store-selector';
+import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 
-describe('CheckoutStoreSelector', () => {
-    let orderSelector;
-    let formSelector;
+describe('CheckoutSelector', () => {
     let selector;
     let state;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
-        orderSelector = new OrderSelector(state.order, state.payment, state.cart);
-        formSelector = new FormSelector(state.config);
-
-        selector = new CheckoutStoreSelector(
-            new BillingAddressSelector(state.quote),
-            new CartSelector(state.cart),
-            new CheckoutSelector(state.checkout),
-            new ConfigSelector(state.config),
-            new CountrySelector(state.countries),
-            new CustomerSelector(state.customer, state.customerStrategy),
-            formSelector,
-            new InstrumentSelector(state.instruments),
-            orderSelector,
-            new PaymentMethodSelector(state.paymentMethods),
-            new QuoteSelector(state.quote),
-            new RemoteCheckoutSelector(state.remoteCheckout),
-            new ShippingAddressSelector(state.quote),
-            new ShippingCountrySelector(state.shippingCountries),
-            new ShippingOptionSelector(state.shippingOptions)
-        );
+        selector = new CheckoutStoreSelector(createInternalCheckoutSelectors(state));
     });
 
     it('returns checkout data', () => {
         expect(selector.getCheckout()).toEqual(getCheckout());
-    });
-
-    it('returns checkout meta', () => {
-        expect(selector.getCheckoutMeta()).toEqual({
-            isCartVerified: false,
-            paymentAuthToken: undefined,
-            remoteCheckout: {
-                ...state.remoteCheckout.meta,
-                ...state.remoteCheckout.data,
-            },
-            ...state.paymentMethods.meta.request,
-            ...state.instruments.meta,
-            ...state.order.meta,
-        });
-    });
-
-    it('returns same checkout meta unless changed', () => {
-        const meta = selector.getCheckoutMeta();
-
-        expect(selector.getCheckoutMeta()).toBe(meta);
     });
 
     it('returns order', () => {
@@ -124,23 +74,24 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns flag indicating if payment is submitted', () => {
-        jest.spyOn(orderSelector, 'isPaymentDataSubmitted');
-
         expect(selector.isPaymentDataSubmitted('braintree')).toEqual(true);
-        expect(orderSelector.isPaymentDataSubmitted).toHaveBeenCalledWith(getBraintree());
     });
 
     it('returns shipping address fields', () => {
-        jest.spyOn(formSelector, 'getShippingAddressFields').mockImplementation(() => {});
-        selector.getShippingAddressFields('AU');
-        expect(formSelector.getShippingAddressFields)
-            .toHaveBeenCalledWith(getShippingCountries(), 'AU');
+        const results = selector.getShippingAddressFields('AU');
+        const predicate = ({ name }) => name === 'province' || name === 'provinceCode' || name === 'countryCode';
+
+        expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
+        expect(find(results, { name: 'provinceCode' }).options.items)
+            .toEqual(getAustralia().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 
     it('returns billing address fields', () => {
-        jest.spyOn(formSelector, 'getBillingAddressFields').mockImplementation(() => {});
-        selector.getBillingAddressFields('US');
-        expect(formSelector.getBillingAddressFields)
-            .toHaveBeenCalledWith(getCountries(), 'US');
+        const results = selector.getBillingAddressFields('US');
+        const predicate = ({ name }) => name === 'province' || name === 'provinceCode' || name === 'countryCode';
+
+        expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
+        expect(find(results, { name: 'provinceCode' }).options.items)
+            .toEqual(getUnitedStates().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 });

@@ -3,6 +3,7 @@ export default interface InternalIncompleteOrder {
     token: string;
     payment: {
         id?: string;
+        gateway?: string;
         redirectUrl?: string;
         returnUrl?: string;
         status?: string;

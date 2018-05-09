@@ -1,9 +1,9 @@
-import { createAction, createErrorAction, ReadableDataStore, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { Address } from '../address';
-import { CheckoutAction, CheckoutActionType, CheckoutClient, CheckoutSelectors } from '../checkout';
+import { CheckoutAction, CheckoutActionType, CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
@@ -15,11 +15,11 @@ export default class ConsignmentActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    selectShippingOption(id: string, options?: RequestOptions): ThunkAction<UpdateConsignmentAction, CheckoutSelectors> {
+    selectShippingOption(id: string, options?: RequestOptions): ThunkAction<UpdateConsignmentAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<UpdateConsignmentAction>) => {
-            const checkoutSelector = store.getState().checkout;
-            const checkout = checkoutSelector.getCheckout();
-            const address = checkoutSelector.getShippingAddress();
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
+            const address = state.shippingAddress.getShippingAddress();
 
             if (!checkout || !checkout.id || !address || !address.id ) {
                 throw new MissingDataError('Unable to update shipping address: "checkout.id" or "shippingAddress.id" is missing.');
@@ -43,7 +43,7 @@ export default class ConsignmentActionCreator {
         });
     }
 
-    loadShippingOptions(options?: RequestOptions): ThunkAction<CheckoutAction, CheckoutSelectors> {
+    loadShippingOptions(options?: RequestOptions): ThunkAction<CheckoutAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<CheckoutAction>) => {
             const checkout = store.getState().checkout.getCheckout();
 
@@ -69,7 +69,7 @@ export default class ConsignmentActionCreator {
         });
     }
 
-    updateAddress(address: Address, options?: RequestOptions): ThunkAction<CreateConsignmentsAction, CheckoutSelectors> {
+    updateAddress(address: Address, options?: RequestOptions): ThunkAction<CreateConsignmentsAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<CreateConsignmentsAction>) => {
             const consignments = this._getConsignmentsRequestBody(address, store);
             const checkout = store.getState().checkout.getCheckout();
@@ -93,10 +93,10 @@ export default class ConsignmentActionCreator {
 
     private _getConsignmentsRequestBody(
         shippingAddress: Address,
-        store: ReadableDataStore<CheckoutSelectors>
+        store: ReadableCheckoutStore
     ): ConsignmentsRequestBody | undefined {
-        const { checkout: { getCart } } = store.getState();
-        const cart = getCart();
+        const state = store.getState();
+        const cart = state.cart.getCart();
 
         if (!cart || !cart.items) {
             return;

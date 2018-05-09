@@ -110,6 +110,13 @@ ___
 
 
 
+«Optional»  gateway: `undefined`⎮`string`
+
+
+
+
+
+
 «Optional»  helpText: `undefined`⎮`string`
 
 

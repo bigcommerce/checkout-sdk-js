@@ -68,7 +68,7 @@ describe('paymentMethodReducer()', () => {
                 action.payload.paymentMethod,
             ],
             errors: {
-                loadMethod: undefined,
+                loadMethodId: undefined,
                 loadMethodError: undefined,
             },
             statuses: {
@@ -89,7 +89,7 @@ describe('paymentMethodReducer()', () => {
             ...initialState,
             data: [],
             errors: {
-                loadMethod: 'braintree',
+                loadMethodId: 'braintree',
                 loadMethodError: getErrorResponse(),
             },
             statuses: {

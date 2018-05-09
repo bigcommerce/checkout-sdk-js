@@ -82,17 +82,17 @@ declare class CheckoutErrorSelector {
     private _cart;
     private _config;
     private _countries;
-    private _coupon;
-    private _customerStrategy;
-    private _giftCertificate;
+    private _coupons;
+    private _customerStrategies;
+    private _giftCertificates;
     private _instruments;
     private _order;
     private _paymentMethods;
-    private _paymentStrategy;
+    private _paymentStrategies;
     private _quote;
     private _shippingCountries;
     private _shippingOptions;
-    private _shippingStrategy;
+    private _shippingStrategies;
     getError(): Error | undefined;
     getLoadCheckoutError(): Error | undefined;
     getSubmitOrderError(): Error | undefined;
@@ -138,14 +138,9 @@ declare class CheckoutSelector {
     private _order;
     private _paymentMethods;
     private _quote;
-    private _remoteCheckout;
     private _shippingAddress;
     private _shippingCountries;
     private _shippingOptions;
-    /**
-     * @return {CheckoutMeta}
-     */
-    getCheckoutMeta(): any;
     getOrder(): InternalOrder | undefined;
     getQuote(): InternalQuote | undefined;
     getConfig(): StoreConfig | undefined;
@@ -209,16 +204,13 @@ export declare class CheckoutService {
     private _shippingCountryActionCreator;
     private _shippingOptionActionCreator;
     private _shippingStrategyActionCreator;
+    private _state;
     getState(): CheckoutSelectors;
     notifyState(): void;
     subscribe(subscriber: (state: CheckoutSelectors) => void, ...filters: Array<(state: CheckoutSelectors) => any>): () => void;
     loadCheckout(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadConfig(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadCart(options?: RequestOptions): Promise<CheckoutSelectors>;
-    /**
-     * @deprecated
-     */
-    verifyCart(options?: RequestOptions): Promise<CheckoutSelectors>;
     loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors>;
     submitOrder(payload: OrderRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
@@ -280,17 +272,17 @@ declare class CheckoutStatusSelector {
     private _cart;
     private _config;
     private _countries;
-    private _coupon;
-    private _customerStrategy;
-    private _giftCertificate;
+    private _coupons;
+    private _customerStrategies;
+    private _giftCertificates;
     private _instruments;
     private _order;
     private _paymentMethods;
-    private _paymentStrategy;
+    private _paymentStrategies;
     private _quote;
     private _shippingCountries;
     private _shippingOptions;
-    private _shippingStrategy;
+    private _shippingStrategies;
     isPending(): boolean;
     isLoadingCheckout(): boolean;
     isSubmittingOrder(): boolean;
@@ -474,18 +466,18 @@ declare interface InternalCustomer {
     addresses: InternalAddress[];
     customerId: number;
     customerGroupId: number;
-    customerGroupName: number;
+    customerGroupName: string;
     isGuest: boolean;
-    remote: {
-        customerMessage: string;
-        provider: string;
-        useStoreCredit: boolean;
-    };
     phoneNumber: string;
     storeCredit: number;
     email: string;
     firstName: string;
     name: string;
+    remote?: {
+        customerMessage?: string;
+        provider: string;
+        useStoreCredit?: boolean;
+    };
 }
 
 declare interface InternalGiftCertificate {
@@ -504,6 +496,7 @@ declare interface InternalIncompleteOrder {
     token: string;
     payment: {
         id?: string;
+        gateway?: string;
         redirectUrl?: string;
         returnUrl?: string;
         status?: string;

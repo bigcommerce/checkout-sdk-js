@@ -9,14 +9,9 @@ export default interface InternalCustomer {
     firstName: string;
     name: string;
     remote?: {
-        billing: string;
-        billingMessage: string;
-        customer: string;
-        customerMessage: string;
-        payment: string;
         provider: string;
-        shipping: string;
-        useStoreCredit: boolean;
+        customerMessage?: string;
+        useStoreCredit?: boolean;
     };
     customerGroupId?: number;
     customerGroupName?: string;
