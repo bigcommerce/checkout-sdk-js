@@ -1,19 +1,16 @@
+import { mapToInternalAddress } from '../address';
 import { Checkout } from '../checkout';
 
 import InternalCustomer from './internal-customer';
 
-export default function mapToInternalCustomer(checkout: Checkout, existingCustomer: InternalCustomer): InternalCustomer {
+export default function mapToInternalCustomer(checkout: Checkout): InternalCustomer {
     return {
-        addresses: existingCustomer.addresses,
+        addresses: checkout.customer.addresses.map(address => mapToInternalAddress(address)),
         customerId: checkout.cart.customerId,
-        customerGroupId: existingCustomer.customerGroupId,
-        customerGroupName: existingCustomer.customerGroupName,
-        isGuest: existingCustomer.isGuest,
-        phoneNumber: existingCustomer.phoneNumber,
-        remote: existingCustomer.remote,
+        isGuest: checkout.customer.isGuest,
         storeCredit: checkout.storeCredit,
-        email: existingCustomer.email,
-        firstName: existingCustomer.firstName,
-        name: existingCustomer.name,
+        email: checkout.customer.email,
+        firstName: checkout.customer.firstName,
+        name: checkout.customer.fullName,
     };
 }

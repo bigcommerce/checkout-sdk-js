@@ -1,16 +1,16 @@
 import { getCheckoutStoreState } from './checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
-import CheckoutErrorSelector from './checkout-error-selector';
+import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 
-describe('CheckoutErrorSelector', () => {
+describe('CheckoutStoreErrorSelector', () => {
     let errorResponse;
     let errors;
     let selectors;
 
     beforeEach(() => {
         selectors = createInternalCheckoutSelectors(getCheckoutStoreState());
-        errors = new CheckoutErrorSelector(selectors);
+        errors = new CheckoutStoreErrorSelector(selectors);
 
         errorResponse = getErrorResponse();
     });

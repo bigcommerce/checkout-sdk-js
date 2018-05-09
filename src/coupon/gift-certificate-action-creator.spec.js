@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../checkout';
+import { getCheckoutState } from '../checkout/checkouts.mock';
 import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './gift-certificate-action-types';
@@ -15,7 +16,9 @@ describe('GiftCertificateActionCreator', () => {
     beforeEach(() => {
         response = getResponse(getGiftCertificateResponseBody());
         errorResponse = getErrorResponse();
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            checkout: getCheckoutState(),
+        });
 
         checkoutClient = {
             applyGiftCertificate: jest.fn(() => Promise.resolve(response)),
@@ -33,7 +36,7 @@ describe('GiftCertificateActionCreator', () => {
         it('emits actions if able to apply giftCertificate', () => {
             const giftCertificate = 'myGiftCertificate1234';
 
-            giftCertificateActionCreator.applyGiftCertificate(giftCertificate)
+            Observable.from(giftCertificateActionCreator.applyGiftCertificate(giftCertificate)(store))
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
@@ -49,7 +52,7 @@ describe('GiftCertificateActionCreator', () => {
             const giftCertificate = 'myGiftCertificate1234';
             const errorHandler = jest.fn((action) => Observable.of(action));
 
-            giftCertificateActionCreator.applyGiftCertificate(giftCertificate)
+            Observable.from(giftCertificateActionCreator.applyGiftCertificate(giftCertificate)(store))
                 .catch(errorHandler)
                 .toArray()
                 .subscribe((actions) => {
@@ -70,7 +73,7 @@ describe('GiftCertificateActionCreator', () => {
         it('emits actions if able to remove giftCertificate', () => {
             const giftCertificate = 'myGiftCertificate1234';
 
-            giftCertificateActionCreator.removeGiftCertificate(giftCertificate)
+            Observable.from(giftCertificateActionCreator.removeGiftCertificate(giftCertificate)(store))
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
@@ -86,7 +89,7 @@ describe('GiftCertificateActionCreator', () => {
             const giftCertificate = 'myGiftCertificate1234';
             const errorHandler = jest.fn((action) => Observable.of(action));
 
-            giftCertificateActionCreator.removeGiftCertificate(giftCertificate)
+            Observable.from(giftCertificateActionCreator.removeGiftCertificate(giftCertificate)(store))
                 .catch(errorHandler)
                 .toArray()
                 .subscribe((actions) => {

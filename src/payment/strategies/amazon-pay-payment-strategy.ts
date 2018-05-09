@@ -1,6 +1,6 @@
 import { noop, omit } from 'lodash';
 
-import { isAddressEqual } from '../../address';
+import { isAddressEqual, mapFromInternalAddress } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError, StandardError } from '../../common/error/errors';
@@ -200,7 +200,9 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 }
 
                 return this._store.dispatch(
-                    this._billingAddressActionCreator.updateAddress(remoteCheckout.billingAddress)
+                    this._billingAddressActionCreator.updateAddress(
+                        mapFromInternalAddress(remoteCheckout.billingAddress)
+                    )
                 );
             });
     }

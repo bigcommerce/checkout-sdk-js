@@ -13,9 +13,7 @@ export function getFlatRateOption() {
     return {
         description: 'Flat Rate',
         module: 'shipping_flatrate',
-        method: 2,
         price: 0,
-        formattedPrice: '$0.00',
         id: '0:61d4bb52f746477e1d4fb411221318c3',
         isRecommended: true,
         selected: true,

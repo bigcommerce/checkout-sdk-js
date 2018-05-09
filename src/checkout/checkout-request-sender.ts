@@ -1,19 +1,26 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { RequestOptions } from '../common/http-request';
+import { ContentType, RequestOptions } from '../common/http-request';
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Response<T>
- */
+import { Checkout } from '.';
+import { CheckoutParams } from './checkout-params';
+
 export default class CheckoutRequestSender {
     constructor(
         private _requestSender: RequestSender
     ) {}
 
-    loadCheckout(id: string, { timeout }: RequestOptions = {}): Promise<Response> {
+    loadCheckout(id: string, { params: { include = [] } = {}, timeout }: RequestOptions<CheckoutParams> = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkout/${id}`;
+        const defaultIncludes = ['customer'];
+        const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.get(url, { timeout });
+        return this._requestSender.get(url, {
+            params: {
+                include: defaultIncludes.concat(include).join(','),
+            },
+            headers,
+            timeout,
+        });
     }
 }

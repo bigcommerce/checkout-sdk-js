@@ -1,4 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
+import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import GiftCertificateRequestSender from './gift-certificate-request-sender';
@@ -20,18 +21,22 @@ describe('Gift Certificate Request Sender', () => {
         expect(giftCertificateRequestSender).toBeDefined();
     });
 
+    const checkoutId = 'checkoutId1234';
+    const giftCertificateCode = 'myGiftCertificate1234';
+
     describe('#applyGiftCertificate()', () => {
         it('applies gift certificate code', async () => {
             const response = getResponse(getGiftCertificateResponseBody());
-
             requestSender.post.mockReturnValue(Promise.resolve(response));
 
-            const couponCode = 'myGiftCertificateCode1234';
-            const output = await giftCertificateRequestSender.applyGiftCertificate(couponCode);
+            const output = await giftCertificateRequestSender.applyGiftCertificate(checkoutId, giftCertificateCode);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/coupon', {
-                body: { couponCode },
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates', {
+                body: { giftCertificateCode },
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
 
@@ -41,13 +46,15 @@ describe('Gift Certificate Request Sender', () => {
 
             requestSender.post.mockReturnValue(Promise.resolve(response));
 
-            const couponCode = 'myGiftCertificateCode1234';
-            const output = await giftCertificateRequestSender.applyGiftCertificate(couponCode, options);
+            const output = await giftCertificateRequestSender.applyGiftCertificate(checkoutId, giftCertificateCode, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/coupon', {
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates', {
                 ...options,
-                body: { couponCode },
+                body: { giftCertificateCode },
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
     });
@@ -55,28 +62,31 @@ describe('Gift Certificate Request Sender', () => {
     describe('#removeGiftCertificate()', () => {
         it('removes gift certificate code', async () => {
             const response = getResponse(getGiftCertificateResponseBody());
-
             requestSender.delete.mockReturnValue(Promise.resolve(response));
 
-            const couponCode = 'myGiftCertificate1234';
-            const output = await giftCertificateRequestSender.removeGiftCertificate(couponCode);
+            const output = await giftCertificateRequestSender.removeGiftCertificate(checkoutId, giftCertificateCode);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/coupon/myGiftCertificate1234', {});
+            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates/myGiftCertificate1234', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+            });
         });
 
         it('removes gift certificate code with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getGiftCertificateResponseBody());
-
             requestSender.delete.mockReturnValue(Promise.resolve(response));
 
-            const couponCode = 'myGiftCertificate1234';
-            const output = await giftCertificateRequestSender.removeGiftCertificate(couponCode, options);
+            const output = await giftCertificateRequestSender.removeGiftCertificate(checkoutId, giftCertificateCode, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/coupon/myGiftCertificate1234', {
+            expect(requestSender.delete).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/gift-certificates/myGiftCertificate1234', {
                 ...options,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
             });
         });
     });

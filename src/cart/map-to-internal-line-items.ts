@@ -5,15 +5,24 @@ import { LineItem } from './line-item';
 import LineItemMap from './line-item-map';
 import mapToInternalLineItem from './map-to-internal-line-item';
 
-export default function mapToInternalLineItems(itemMap: LineItemMap, existingItems: InternalLineItem[]): InternalLineItem[] {
+export default function mapToInternalLineItems(
+    itemMap: LineItemMap,
+    existingItems: InternalLineItem[],
+    idKey: keyof LineItem = 'id'
+): InternalLineItem[] {
     return (Object.keys(itemMap) as Array<keyof LineItemMap>)
         .reduce((result, key) => [
             ...result,
-            ...(itemMap[key] as LineItem[]).map(item => {
+            ...(itemMap[key] as LineItem[]).map((item: any) => {
                 // tslint:disable-next-line:no-non-null-assertion
-                const existingItem = find(existingItems, { id: item.id })!;
+                const existingItem = find(existingItems, { id: item[idKey] })!;
 
-                return mapToInternalLineItem(item, existingItem, mapToInternalLineItemType(key));
+                return mapToInternalLineItem(
+                    item,
+                    existingItem,
+                    mapToInternalLineItemType(key),
+                    idKey
+                );
             }),
         ], [] as InternalLineItem[]);
 }

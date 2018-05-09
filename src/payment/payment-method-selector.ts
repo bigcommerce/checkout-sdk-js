@@ -3,6 +3,7 @@ import { find } from 'lodash';
 import { selector } from '../common/selector';
 
 import PaymentMethod from './payment-method';
+import PaymentMethodsMeta from './payment-methods-meta';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -21,6 +22,10 @@ export default class PaymentMethodSelector {
 
     getPaymentMethods(): PaymentMethod[] {
         return this._paymentMethods.data;
+    }
+
+    getPaymentMethodsMeta(): PaymentMethodsMeta {
+        return this._paymentMethods.meta;
     }
 
     getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined {

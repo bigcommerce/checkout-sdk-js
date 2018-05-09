@@ -245,12 +245,10 @@ describe('ShippingStrategyActionCreator', () => {
     });
 
     describe('#selectOption()', () => {
-        let addressId: string;
         let shippingOptionId: string;
         let strategy: ShippingStrategy;
 
         beforeEach(() => {
-            addressId = 'address-id-12';
             shippingOptionId = 'shipping-option-id-33';
             strategy = registry.get();
 
@@ -266,7 +264,7 @@ describe('ShippingStrategyActionCreator', () => {
 
             jest.spyOn(registry, 'get');
 
-            await Observable.from(actionCreator.selectOption(addressId, shippingOptionId, { methodId })(store))
+            await Observable.from(actionCreator.selectOption(shippingOptionId, { methodId })(store))
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith(methodId);
@@ -275,15 +273,15 @@ describe('ShippingStrategyActionCreator', () => {
         it('executes shipping strategy by default', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
 
-            await Observable.from(actionCreator.selectOption(addressId, shippingOptionId)(store))
+            await Observable.from(actionCreator.selectOption(shippingOptionId)(store))
                 .toPromise();
 
-            expect(strategy.selectOption).toHaveBeenCalledWith(addressId, shippingOptionId, { methodId: undefined });
+            expect(strategy.selectOption).toHaveBeenCalledWith(shippingOptionId, { methodId: undefined });
         });
 
         it('emits action to notify sign-out progress', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
-            const actions = await Observable.from(actionCreator.selectOption(addressId, shippingOptionId, { methodId: 'default' })(store))
+            const actions = await Observable.from(actionCreator.selectOption(shippingOptionId, { methodId: 'default' })(store))
                 .toArray()
                 .toPromise();
 
@@ -301,7 +299,7 @@ describe('ShippingStrategyActionCreator', () => {
             jest.spyOn(strategy, 'selectOption')
                 .mockReturnValue(Promise.reject(selectOptionError));
 
-            const actions = await Observable.from(actionCreator.selectOption(addressId, shippingOptionId, { methodId: 'default' })(store))
+            const actions = await Observable.from(actionCreator.selectOption(shippingOptionId, { methodId: 'default' })(store))
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();

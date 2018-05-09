@@ -1,10 +1,11 @@
 import { find, reject } from 'lodash';
+import { getCheckout } from './checkouts.mock';
 import { getCheckoutStoreState } from './checkouts.mock';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
 import { getBraintree } from '../payment/payment-methods.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
-import CheckoutSelector from './checkout-selector';
+import CheckoutStoreSelector from './checkout-store-selector';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 
 describe('CheckoutSelector', () => {
@@ -13,7 +14,11 @@ describe('CheckoutSelector', () => {
 
     beforeEach(() => {
         state = getCheckoutStoreState();
-        selector = new CheckoutSelector(createInternalCheckoutSelectors(state));
+        selector = new CheckoutStoreSelector(createInternalCheckoutSelectors(state));
+    });
+
+    it('returns checkout data', () => {
+        expect(selector.getCheckout()).toEqual(getCheckout());
     });
 
     it('returns order', () => {

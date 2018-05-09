@@ -7,16 +7,20 @@ import { OrderState } from '../order';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
 import { QuoteState } from '../quote';
 import { RemoteCheckoutState } from '../remote-checkout';
-import { ShippingCountryState, ShippingStrategyState } from '../shipping';
+import { ConsignmentState, ShippingCountryState, ShippingStrategyState } from '../shipping';
+
+import CheckoutState from './checkout-state';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
 export default interface CheckoutStoreState {
     cart: CartState;
+    checkout: CheckoutState;
     config: ConfigState;
     countries: CountryState;
     coupons: CouponState;
+    consignments: ConsignmentState;
     customer: CustomerState;
     customerStrategies: CustomerStrategyState;
     giftCertificates: GiftCertificateState;

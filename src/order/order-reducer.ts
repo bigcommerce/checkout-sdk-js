@@ -5,6 +5,7 @@ import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 
 import InternalOrder from './internal-order';
+import mapFromOrderToInternal from './map-from-order-to-internal';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 
@@ -35,6 +36,9 @@ function dataReducer(data: InternalOrder | undefined, action: Action): InternalO
         return data ? { ...data, ...mapToInternalIncompleteOrder(action.payload, data) } : data;
 
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
+        return data ? mapFromOrderToInternal(action.payload, data) : data;
+
+    case orderActionTypes.LOAD_INTERNAL_ORDER_SUCCEEDED:
     case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
     case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
