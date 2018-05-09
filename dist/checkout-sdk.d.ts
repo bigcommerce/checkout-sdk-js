@@ -204,6 +204,7 @@ export declare class CheckoutService {
     private _shippingCountryActionCreator;
     private _shippingOptionActionCreator;
     private _shippingStrategyActionCreator;
+    private _state;
     getState(): CheckoutSelectors;
     notifyState(): void;
     subscribe(subscriber: (state: CheckoutSelectors) => void, ...filters: Array<(state: CheckoutSelectors) => any>): () => void;
