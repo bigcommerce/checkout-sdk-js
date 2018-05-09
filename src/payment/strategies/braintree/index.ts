@@ -6,3 +6,4 @@ export { default as BraintreeVisaCheckoutPaymentProcessor } from './braintree-vi
 export { default as createBraintreePaymentProcessor } from './create-braintree-payment-processor';
 export { default as createBraintreeVisaCheckoutPaymentProcessor } from './create-braintree-visacheckout-payment-processor';
 export { default as VisaCheckoutScriptLoader } from './visacheckout-script-loader';
+export { default as BraintreeVisaCheckoutPaymentStrategy, BraintreeVisaCheckoutPaymentInitializeOptions } from './braintree-visacheckout-payment-strategy';

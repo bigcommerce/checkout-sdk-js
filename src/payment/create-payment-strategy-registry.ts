@@ -6,12 +6,14 @@ import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
 import { OrderActionCreator } from '../order';
+import { QuoteActionCreator } from '../quote';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { AfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
 import { WepayRiskClient } from '../remote-checkout/methods/wepay';
 
+import { PaymentStrategyActionCreator } from '.';
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import PaymentRequestSender from './payment-request-sender';
@@ -33,7 +35,12 @@ import {
     SquarePaymentStrategy,
     WepayPaymentStrategy,
 } from './strategies';
-import { createBraintreePaymentProcessor } from './strategies/braintree';
+import {
+    createBraintreePaymentProcessor,
+    createBraintreeVisaCheckoutPaymentProcessor,
+    BraintreeVisaCheckoutPaymentStrategy,
+    VisaCheckoutScriptLoader,
+} from './strategies/braintree';
 import { SquareScriptLoader } from './strategies/square';
 
 export default function createPaymentStrategyRegistry(
@@ -193,6 +200,19 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             braintreePaymentProcessor,
             true
+        )
+    );
+
+    registry.register('braintreevisacheckout', () =>
+        new BraintreeVisaCheckoutPaymentStrategy(
+            store,
+            paymentMethodActionCreator,
+            new PaymentStrategyActionCreator(registry),
+            new QuoteActionCreator(client),
+            paymentActionCreator,
+            orderActionCreator,
+            createBraintreeVisaCheckoutPaymentProcessor(scriptLoader),
+            new VisaCheckoutScriptLoader(scriptLoader)
         )
     );
 
