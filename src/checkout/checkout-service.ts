@@ -29,6 +29,8 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
  * i.e.: Instrument, InitializePaymentOptions etc...
  */
 export default class CheckoutService {
+    private _state: CheckoutSelectors;
+
     /**
      * @internal
      */
@@ -49,10 +51,16 @@ export default class CheckoutService {
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
         private _shippingOptionActionCreator: ShippingOptionActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator
-    ) {}
+    ) {
+        this._state = createCheckoutSelectors(this._store.getState());
+
+        this._store.subscribe(state => {
+            this._state = createCheckoutSelectors(state);
+        });
+    }
 
     getState(): CheckoutSelectors {
-        return createCheckoutSelectors(this._store.getState());
+        return this._state;
     }
 
     notifyState(): void {
@@ -64,7 +72,7 @@ export default class CheckoutService {
         ...filters: Array<(state: CheckoutSelectors) => any>
     ): () => void {
         return this._store.subscribe(
-            state => subscriber(createCheckoutSelectors(state)),
+            () => subscriber(this.getState()),
             ...filters.map(filter => (state: InternalCheckoutSelectors) => filter(createCheckoutSelectors(state)))
         );
     }

@@ -192,6 +192,16 @@ describe('CheckoutService', () => {
                 statuses: expect.any(CheckoutStatusSelector),
             });
         });
+
+        it('returns same state unless it is changed', () => {
+            const state = checkoutService.getState();
+
+            expect(state).toBe(checkoutService.getState());
+
+            checkoutService.loadPaymentMethods();
+
+            expect(state).not.toBe(checkoutService.getState());
+        });
     });
 
     describe('#subscribe()', () => {
