@@ -5,16 +5,17 @@ import * as customerActionTypes from '../customer/customer-action-types';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 
+import CustomerState from './customer-state';
 import InternalCustomer from './internal-customer';
 import mapToInternalCustomer from './map-to-internal-customer';
 
+const DEFAULT_STATE: CustomerState = {};
+
 /**
  * @todo Convert this file into TypeScript properly
- * @param {CustomerState} state
- * @param {Action} action
- * @return {CustomerState}
+ * i.e.: Action
  */
-export default function customerReducer(state: any = {}, action: Action): any {
+export default function customerReducer(state: CustomerState = DEFAULT_STATE, action: Action): CustomerState {
     const reducer = combineReducers<any>({
         data: dataReducer,
     });
@@ -22,10 +23,10 @@ export default function customerReducer(state: any = {}, action: Action): any {
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalCustomer, action: Action): InternalCustomer {
+function dataReducer(data: InternalCustomer | undefined, action: Action): InternalCustomer | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...data, ...mapToInternalCustomer(action.payload, data) };
+        return data ? { ...data, ...mapToInternalCustomer(action.payload, data) } : data;
 
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:

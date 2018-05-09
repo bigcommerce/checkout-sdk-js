@@ -16,6 +16,7 @@ export enum CustomerStrategyActionType {
 }
 
 export type CustomerStrategyAction =
+    Action |
     CustomerStrategySignInAction |
     CustomerStrategySignOutAction |
     CustomerStrategyInitializeAction |

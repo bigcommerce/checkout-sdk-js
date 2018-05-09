@@ -4,15 +4,19 @@ import { mergeOrPush } from '../common/utility';
 
 import PaymentMethod from './payment-method';
 import * as actionTypes from './payment-method-action-types';
+import PaymentMethodState, { PaymentMethodErrorsState, PaymentMethodStatusesState } from './payment-method-state';
+
+const DEFAULT_STATE: PaymentMethodState = {
+    errors: {},
+    statuses: {},
+};
 
 /**
  * @todo Convert this file into TypeScript properly
- * @param {PaymentMethodsState} state
- * @param {Action} action
- * @return {PaymentMethodsState}
+ * i.e.: Action
  */
-export default function paymentMethodReducer(state: any = {}, action: Action): any {
-    const reducer = combineReducers<any>({
+export default function paymentMethodReducer(state: PaymentMethodState = DEFAULT_STATE, action: Action): PaymentMethodState {
+    const reducer = combineReducers<PaymentMethodState>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -21,13 +25,7 @@ export default function paymentMethodReducer(state: any = {}, action: Action): a
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?PaymentMethod[]} data
- * @param {Action} action
- * @return {?PaymentMethod[]}
- */
-function dataReducer(data: PaymentMethod[], action: Action): PaymentMethod[] {
+function dataReducer(data: PaymentMethod[] | undefined, action: Action): PaymentMethod[] | undefined {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
         return mergeOrPush(data || [], action.payload.paymentMethod, {
@@ -43,13 +41,7 @@ function dataReducer(data: PaymentMethod[], action: Action): PaymentMethod[] {
     }
 }
 
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(errors: PaymentMethodErrorsState = DEFAULT_STATE.errors, action: Action): PaymentMethodErrorsState {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHODS_REQUESTED:
     case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
@@ -62,14 +54,14 @@ function errorsReducer(errors: any = {}, action: Action): any {
     case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
         return {
             ...errors,
-            loadMethod: undefined,
+            loadMethodId: undefined,
             loadMethodError: undefined,
         };
 
     case actionTypes.LOAD_PAYMENT_METHOD_FAILED:
         return {
             ...errors,
-            loadMethod: action.meta.methodId,
+            loadMethodId: action.meta.methodId,
             loadMethodError: action.payload,
         };
 
@@ -78,13 +70,7 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(statuses: PaymentMethodStatusesState = DEFAULT_STATE.statuses, action: Action): PaymentMethodStatusesState {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHODS_REQUESTED:
         return { ...statuses, isLoading: true };
@@ -97,7 +83,7 @@ function statusesReducer(statuses: any = {}, action: Action): any {
         return {
             ...statuses,
             isLoadingMethod: true,
-            loadingMethod: action.meta.methodId,
+            loadMethodId: action.meta.methodId,
         };
 
     case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
@@ -105,7 +91,7 @@ function statusesReducer(statuses: any = {}, action: Action): any {
         return {
             ...statuses,
             isLoadingMethod: false,
-            loadingMethod: undefined,
+            loadMethodId: undefined,
         };
 
     default:

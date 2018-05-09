@@ -1,15 +1,20 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
+import Country from './country';
 import * as actionTypes from './country-action-types';
+import CountryState, { CountryErrorsState, CountryStatusesState } from './country-state';
+
+const DEFAULT_STATE: CountryState = {
+    errors: {},
+    statuses: {},
+};
 
 /**
  * @todo Convert this file into TypeScript properly
- * @param {CountriesState} state
- * @param {Action} action
- * @return {CountriesState}
+ * i.e.: Action
  */
-export default function countryReducer(state: any = {}, action: Action): any {
-    const reducer = combineReducers<any>({
+export default function countryReducer(state: CountryState = DEFAULT_STATE, action: Action): CountryState {
+    const reducer = combineReducers<CountryState>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -18,13 +23,7 @@ export default function countryReducer(state: any = {}, action: Action): any {
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?Country[]} data
- * @param {Action} action
- * @return {?Country[]}
- */
-function dataReducer(data: any[], action: Action): any[] {
+function dataReducer(data: Country[] | undefined, action: Action): Country[] | undefined {
     switch (action.type) {
     case actionTypes.LOAD_COUNTRIES_SUCCEEDED:
         return action.payload || [];
@@ -34,13 +33,7 @@ function dataReducer(data: any[], action: Action): any[] {
     }
 }
 
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(errors: CountryErrorsState = DEFAULT_STATE.errors, action: Action): CountryErrorsState {
     switch (action.type) {
     case actionTypes.LOAD_COUNTRIES_REQUESTED:
     case actionTypes.LOAD_COUNTRIES_SUCCEEDED:
@@ -54,13 +47,7 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(statuses: CountryStatusesState = DEFAULT_STATE.statuses, action: Action): CountryStatusesState {
     switch (action.type) {
     case actionTypes.LOAD_COUNTRIES_REQUESTED:
         return { ...statuses, isLoading: true };

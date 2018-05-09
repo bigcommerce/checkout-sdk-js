@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { getAppConfig } from './configs.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import ConfigActionCreator from './config-action-creator';
-import { ConfigActionType } from './config-action-types';
+import { ConfigActionType } from './config-actions';
 
 describe('ConfigActionCreator', () => {
     let checkoutClient;

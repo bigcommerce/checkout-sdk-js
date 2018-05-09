@@ -103,7 +103,7 @@ describe('PaymentMethodSelector', () => {
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                errors: { loadMethodError, loadMethod: 'braintree' },
+                errors: { loadMethodError, loadMethodId: 'braintree' },
             }, state.order);
 
             expect(paymentMethodSelector.getLoadMethodError('braintree')).toEqual(loadMethodError);
@@ -120,7 +120,7 @@ describe('PaymentMethodSelector', () => {
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                errors: { loadMethodError, loadMethod: 'authorizenet' },
+                errors: { loadMethodError, loadMethodId: 'authorizenet' },
             }, state.order);
 
             expect(paymentMethodSelector.getLoadMethodError('braintree')).toBeUndefined();
@@ -131,7 +131,7 @@ describe('PaymentMethodSelector', () => {
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                errors: { loadMethodError, loadMethod: 'braintree' },
+                errors: { loadMethodError, loadMethodId: 'braintree' },
             }, state.order);
 
             expect(paymentMethodSelector.getLoadMethodError()).toEqual(loadMethodError);

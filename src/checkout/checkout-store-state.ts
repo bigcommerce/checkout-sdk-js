@@ -1,27 +1,33 @@
-import { CustomerStrategyState } from '../customer';
-import { PaymentStrategyState } from '../payment';
+import { CartState } from '../cart';
+import { ConfigState } from '../config';
+import { CouponState, GiftCertificateState } from '../coupon';
+import { CustomerState, CustomerStrategyState } from '../customer';
+import { CountryState } from '../geography';
+import { OrderState } from '../order';
+import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
+import { QuoteState } from '../quote';
 import { RemoteCheckoutState } from '../remote-checkout';
-import { ShippingStrategyState } from '../shipping';
+import { ShippingCountryState, ShippingStrategyState } from '../shipping';
 
 /**
  * @todo Convert this file into TypeScript properly
  */
 export default interface CheckoutStoreState {
-    cart: any;
-    config: any;
-    countries: any;
-    coupons: any;
-    customer: any;
+    cart: CartState;
+    config: ConfigState;
+    countries: CountryState;
+    coupons: CouponState;
+    customer: CustomerState;
     customerStrategies: CustomerStrategyState;
-    giftCertificates: any;
+    giftCertificates: GiftCertificateState;
     instruments: any;
-    order: any;
-    payment: any;
-    paymentMethods: any;
+    order: OrderState;
+    payment: PaymentState;
+    paymentMethods: PaymentMethodState;
     paymentStrategies: PaymentStrategyState;
-    quote: any;
+    quote: QuoteState;
     remoteCheckout: RemoteCheckoutState;
-    shippingCountries: any;
+    shippingCountries: ShippingCountryState;
     shippingOptions: any;
     shippingStrategies: ShippingStrategyState;
 }
