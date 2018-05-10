@@ -1,6 +1,6 @@
 import { getFormFields } from '../form/form.mocks';
 
-export function getAppConfig() {
+export function getConfig() {
     return {
         context: {
             flashMessages: [],
@@ -109,7 +109,7 @@ export function getAppConfig() {
 
 export function getConfigState() {
     return {
-        data: getAppConfig(),
+        data: getConfig(),
         errors: {},
         statuses: {},
     };

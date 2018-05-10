@@ -14,7 +14,7 @@ import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import { MissingDataError } from '../common/error/errors';
-import { getAppConfig, getConfigState } from '../config/configs.mock';
+import { getConfig, getConfigState } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
 import { getCartResponseBody } from '../cart/internal-carts.mock';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -51,7 +51,7 @@ describe('CheckoutService', () => {
             ),
 
             loadConfig: jest.fn(() =>
-                Promise.resolve(getResponse(getAppConfig()))
+                Promise.resolve(getResponse(getConfig()))
             ),
 
             loadCountries: jest.fn(() =>
@@ -262,7 +262,7 @@ describe('CheckoutService', () => {
             const { checkout } = await checkoutService.loadConfig();
 
             expect(checkoutClient.loadConfig).toHaveBeenCalled();
-            expect(checkout.getConfig()).toEqual(getAppConfig().storeConfig);
+            expect(checkout.getConfig()).toEqual(getConfig().storeConfig);
         });
 
         it('dispatches load config action with queue id', async () => {
@@ -787,7 +787,7 @@ describe('CheckoutService', () => {
 
     describe('#loadInstruments()', () => {
         it('loads instruments', async () => {
-            const { storeId } = getAppConfig().storeConfig.storeProfile;
+            const { storeId } = getConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
 
@@ -805,7 +805,7 @@ describe('CheckoutService', () => {
 
     describe('#vaultInstrument()', () => {
         it('vaults an instrument', async () => {
-            const { storeId } = getAppConfig().storeConfig.storeProfile;
+            const { storeId } = getConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
             const instrument = vaultInstrumentRequestBody();
@@ -826,7 +826,7 @@ describe('CheckoutService', () => {
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
-            const { storeId } = getAppConfig().storeConfig.storeProfile;
+            const { storeId } = getConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
             const instrumentId = '456';

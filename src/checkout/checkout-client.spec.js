@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getAppConfig } from '../config/configs.mock';
+import { getConfig } from '../config/configs.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
@@ -38,7 +38,7 @@ describe('CheckoutClient', () => {
         };
 
         configRequestSender = {
-            loadConfig: jest.fn(() => Promise.resolve(getResponse(getAppConfig()))),
+            loadConfig: jest.fn(() => Promise.resolve(getResponse(getConfig()))),
         };
 
         countryRequestSender = {
@@ -417,7 +417,7 @@ describe('CheckoutClient', () => {
         it('loads app config', async () => {
             const output = await client.loadConfig();
 
-            expect(output).toEqual(getResponse(getAppConfig()));
+            expect(output).toEqual(getResponse(getConfig()));
             expect(configRequestSender.loadConfig).toHaveBeenCalled();
         });
     });
