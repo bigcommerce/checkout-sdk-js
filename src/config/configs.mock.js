@@ -9,7 +9,7 @@ export function getConfig() {
             },
         },
         customization: {
-            languageData: {},
+            languageData: [],
         },
         storeConfig: {
             cdnPath: 'https://cdn.bcapp.dev/rHEAD',
