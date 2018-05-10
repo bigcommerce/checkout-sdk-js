@@ -1,18 +1,12 @@
 import { selector } from '../common/selector';
 
 import { StoreConfig } from './config';
+import ConfigState from './config-state';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 @selector
 export default class ConfigSelector {
-    /**
-     * @constructor
-     * @param {ConfigState} config
-     */
     constructor(
-        private _config: any = {}
+        private _config: ConfigState
     ) {}
 
     getConfig(): StoreConfig | undefined {
@@ -20,10 +14,10 @@ export default class ConfigSelector {
     }
 
     getLoadError(): Error | undefined {
-        return this._config.errors && this._config.errors.loadError;
+        return this._config.errors.loadError;
     }
 
     isLoading(): boolean {
-        return !!(this._config.statuses && this._config.statuses.isLoading);
+        return !!this._config.statuses.isLoading;
     }
 }

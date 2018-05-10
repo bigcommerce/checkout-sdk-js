@@ -1,30 +1,23 @@
 import { selector } from '../common/selector';
+import { Country } from '../geography';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
+import ShippingCountryState from './shipping-country-state';
+
 @selector
 export default class ShippingCountrySelector {
-    /**
-     * @constructor
-     * @param {ShippingCountriesState} shippingCountries
-     */
     constructor(
-        private _shippingCountries: any = {}
+        private _shippingCountries: ShippingCountryState
     ) {}
 
-    /**
-     * @return {Country[]}
-     */
-    getShippingCountries(): any[] {
+    getShippingCountries(): Country[] | undefined {
         return this._shippingCountries.data;
     }
 
     getLoadError(): Error | undefined {
-        return this._shippingCountries.errors && this._shippingCountries.errors.loadError;
+        return this._shippingCountries.errors.loadError;
     }
 
     isLoading(): boolean {
-        return !!(this._shippingCountries.statuses && this._shippingCountries.statuses.isLoading);
+        return !!this._shippingCountries.statuses.isLoading;
     }
 }

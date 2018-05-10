@@ -1,14 +1,12 @@
 import { selector } from '../common/selector';
 
+import CartState from './cart-state';
 import InternalCart from './internal-cart';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 @selector
 export default class CartSelector {
     constructor(
-        private _cart: any = {}
+        private _cart: CartState
     ) {}
 
     getCart(): InternalCart | undefined {
@@ -20,18 +18,18 @@ export default class CartSelector {
     }
 
     getLoadError(): Error | undefined {
-        return this._cart.errors && this._cart.errors.loadError;
+        return this._cart.errors.loadError;
     }
 
     getVerifyError(): Error | undefined {
-        return this._cart.errors && this._cart.errors.verifyError;
+        return this._cart.errors.verifyError;
     }
 
     isLoading(): boolean {
-        return !!(this._cart.statuses && this._cart.statuses.isLoading);
+        return !!this._cart.statuses.isLoading;
     }
 
     isVerifying(): boolean {
-        return !!(this._cart.statuses && this._cart.statuses.isVerifying);
+        return !!this._cart.statuses.isVerifying;
     }
 }

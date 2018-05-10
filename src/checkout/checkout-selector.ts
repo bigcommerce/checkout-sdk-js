@@ -5,9 +5,9 @@ import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
 import { CustomerSelector, InternalCustomer } from '../customer';
-import { FormSelector } from '../form';
-import { CountrySelector } from '../geography';
-import { InternalOrder, OrderSelector } from '../order';
+import { FormField, FormSelector } from '../form';
+import { Country, CountrySelector } from '../geography';
+import { InternalIncompleteOrder, InternalOrder, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
@@ -23,7 +23,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
  * TODO: Convert this file into TypeScript properly
- * i.e.: CheckoutMeta, Config, Country, Instrument, Field
+ * i.e.: Instrument
  */
 @selector
 export default class CheckoutSelector {
@@ -60,7 +60,7 @@ export default class CheckoutSelector {
         this._shippingOptions = selectors.shippingOptions;
     }
 
-    getOrder(): InternalOrder | undefined {
+    getOrder(): InternalOrder | InternalIncompleteOrder | undefined {
         return this._order.getOrder();
     }
 
@@ -84,10 +84,7 @@ export default class CheckoutSelector {
         return this._shippingOptions.getSelectedShippingOption();
     }
 
-    /**
-     * @return {Country[]}
-     */
-    getShippingCountries(): any[] {
+    getShippingCountries(): Country[] | undefined {
         return this._shippingCountries.getShippingCountries();
     }
 
@@ -95,10 +92,7 @@ export default class CheckoutSelector {
         return this._billingAddress.getBillingAddress();
     }
 
-    /**
-     * @return {Country[]}
-     */
-    getBillingCountries(): any[] {
+    getBillingCountries(): Country[] | undefined {
         return this._countries.getCountries();
     }
 
@@ -137,17 +131,11 @@ export default class CheckoutSelector {
         return this._instruments.getInstruments();
     }
 
-    /**
-     * @return {Field[]}
-     */
-    getBillingAddressFields(countryCode: string): any[] {
+    getBillingAddressFields(countryCode: string): FormField[] {
         return this._form.getBillingAddressFields(this.getBillingCountries(), countryCode);
     }
 
-    /**
-     * @return {Field[]}
-     */
-    getShippingAddressFields(countryCode: string): any[] {
+    getShippingAddressFields(countryCode: string): FormField[] {
         return this._form.getShippingAddressFields(this.getShippingCountries(), countryCode);
     }
 }

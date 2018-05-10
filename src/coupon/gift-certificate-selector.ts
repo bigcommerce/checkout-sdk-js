@@ -1,35 +1,26 @@
 import { selector } from '../common/selector';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
+import GiftCertificateState from './gift-certificate-state';
+
 @selector
 export default class GiftCertificateSelector {
-    /**
-     * @constructor
-     * @param {GiftCertificateState} giftCertificate
-     */
     constructor(
-        private _giftCertificate: any = {}
+        private _giftCertificate: GiftCertificateState
     ) {}
 
     getRemoveError(): Error | undefined {
-        return this._giftCertificate.errors &&
-            this._giftCertificate.errors.removeGiftCertificateError;
+        return this._giftCertificate.errors.removeGiftCertificateError;
     }
 
     getApplyError(): Error | undefined {
-        return this._giftCertificate.errors &&
-            this._giftCertificate.errors.applyGiftCertificateError;
+        return this._giftCertificate.errors.applyGiftCertificateError;
     }
 
     isApplying(): boolean {
-        return !!(this._giftCertificate.statuses &&
-            this._giftCertificate.statuses.isApplyingGiftCertificate);
+        return !!this._giftCertificate.statuses.isApplyingGiftCertificate;
     }
 
     isRemoving(): boolean {
-        return !!(this._giftCertificate.statuses &&
-            this._giftCertificate.statuses.isRemovingGiftCertificate);
+        return !!this._giftCertificate.statuses.isRemovingGiftCertificate;
     }
 }

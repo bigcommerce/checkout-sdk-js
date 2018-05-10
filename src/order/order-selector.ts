@@ -1,35 +1,27 @@
 import * as paymentStatusTypes from '../payment/payment-status-types';
 
+import { CartState } from '../cart';
 import { selector } from '../common/selector';
+import { CustomerState } from '../customer';
 import { PaymentMethod } from '../payment';
 
-import InternalOrder from './internal-order';
+import InternalIncompleteOrder from './internal-incomplete-order';
+import InternalOrder, { InternalOrderMeta } from './internal-order';
+import OrderState from './order-state';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 @selector
 export default class OrderSelector {
-    /**
-     * @constructor
-     * @param {OrderState} order
-     * @param {CustomerState} customer
-     * @param {CartState} cart
-     */
     constructor(
-        private _order: any = {},
-        private _customer: any = {},
-        private _cart: any = {}
+        private _order: OrderState,
+        private _customer: CustomerState,
+        private _cart: CartState
     ) {}
 
-    getOrder(): InternalOrder {
+    getOrder(): InternalOrder | InternalIncompleteOrder | undefined {
         return this._order.data;
     }
 
-    /**
-     * @return {Object}
-     */
-    getOrderMeta(): any {
+    getOrderMeta(): InternalOrderMeta {
         return {
             deviceFingerprint: this._order.meta && this._order.meta.deviceFingerprint,
         };
@@ -55,10 +47,10 @@ export default class OrderSelector {
     }
 
     getLoadError(): Error | undefined {
-        return this._order.errors && this._order.errors.loadError;
+        return this._order.errors.loadError;
     }
 
     isLoading(): boolean {
-        return !!(this._order.statuses && this._order.statuses.isLoading);
+        return !!this._order.statuses.isLoading;
     }
 }

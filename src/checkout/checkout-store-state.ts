@@ -7,7 +7,7 @@ import { OrderState } from '../order';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
 import { QuoteState } from '../quote';
 import { RemoteCheckoutState } from '../remote-checkout';
-import { ShippingCountryState, ShippingStrategyState } from '../shipping';
+import { ShippingCountryState, ShippingOptionState, ShippingStrategyState } from '../shipping';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -28,6 +28,6 @@ export default interface CheckoutStoreState {
     quote: QuoteState;
     remoteCheckout: RemoteCheckoutState;
     shippingCountries: ShippingCountryState;
-    shippingOptions: any;
+    shippingOptions: ShippingOptionState;
     shippingStrategies: ShippingStrategyState;
 }

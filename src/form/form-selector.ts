@@ -1,52 +1,32 @@
 import { find } from 'lodash';
 
 import { selector } from '../common/selector';
+import { ConfigState } from '../config';
+import { Country } from '../geography';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
+import FormField from './form-field';
+
 @selector
 export default class FormSelector {
-    /**
-     * @constructor
-     * @param {ConfigState} config
-     */
     constructor(
-        private _config: any = {}
+        private _config: ConfigState
     ) {}
 
-    /**
-     * @param {Country[]} countries
-     * @param {string} countryCode
-     * @returns {Field[]}
-     */
-    getShippingAddressFields(countries: any = [], countryCode: string): any {
+    getShippingAddressFields(countries: Country[] = [], countryCode: string): FormField[] {
         const selectedCountry = find(countries, { code: countryCode });
+        const fields = this._config.data ? this._config.data.formFields.shippingAddressFields : [];
 
-        return this._config.data.formFields.shippingAddressFields
-            .map((field: any) => this._processField(field, countries, selectedCountry));
+        return fields.map((field: any) => this._processField(field, countries, selectedCountry));
     }
 
-    /**
-     * @param {Country[]} countries
-     * @param {string} countryCode
-     * @returns {Field[]}
-     */
-    getBillingAddressFields(countries: any[] = [], countryCode: string): any {
+    getBillingAddressFields(countries: Country[] = [], countryCode: string): FormField[] {
         const selectedCountry = find(countries, { code: countryCode });
+        const fields = this._config.data ? this._config.data.formFields.billingAddressFields : [];
 
-        return this._config.data.formFields.billingAddressFields
-            .map((field: any) => this._processField(field, countries, selectedCountry));
+        return fields.map((field: any) => this._processField(field, countries, selectedCountry));
     }
 
-    /**
-     * @private
-     * @param {Field} field
-     * @param {Country[]} countries
-     * @param {Country} selectedCountry
-     * @returns {Field}
-     */
-    private _processField(field: any, countries: any[], selectedCountry: any = {}): any {
+    private _processField(field: FormField, countries: Country[], selectedCountry?: Country): FormField {
         if (field.name === 'countryCode') {
             return this._processCountry(field, countries, selectedCountry);
         }
@@ -62,19 +42,12 @@ export default class FormSelector {
         return field;
     }
 
-    /**
-     * @private
-     * @param {Field} field
-     * @param {Country[]} countries
-     * @param {Country} country
-     * @param {string} country.code
-     * @returns {Field}
-     */
-    private _processCountry(field: any, countries: any[] = [], { code = '' }: any): any {
+    private _processCountry(field: FormField, countries: Country[] = [], country?: Country): FormField {
         if (!countries.length) {
             return field;
         }
 
+        const { code = '' } = country || {};
         const items = countries.map(({ code, name }: any) => ({
             value: code,
             label: name,
@@ -90,14 +63,9 @@ export default class FormSelector {
         };
     }
 
-    /**
-     * @private
-     * @param {Field} field
-     * @param {Country} country
-     * @param {State[]} country.subdivisions
-     * @returns {Field}
-     */
-    private _processProvince(field: any, { subdivisions = [] }: any): any {
+    private _processProvince(field: FormField, country?: Country): FormField {
+        const { subdivisions = [] } = country || {};
+
         if (!subdivisions.length) {
             return {
                 ...field,
@@ -121,14 +89,9 @@ export default class FormSelector {
         };
     }
 
-    /**
-     * @private
-     * @param {Field} field
-     * @param {Country} country
-     * @param {boolean} country.hasPostalCodes
-     * @returns {Field}
-     */
-    private _processsPostCode(field: any, { hasPostalCodes }: any): any {
+    private _processsPostCode(field: FormField, country?: Country): FormField {
+        const { hasPostalCodes = [] } = country || {};
+
         if (hasPostalCodes === undefined) {
             return field;
         }

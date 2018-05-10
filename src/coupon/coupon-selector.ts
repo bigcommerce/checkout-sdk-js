@@ -1,35 +1,26 @@
 import { selector } from '../common/selector';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
+import CouponState from './coupon-state';
+
 @selector
 export default class CouponSelector {
-    /**
-     * @constructor
-     * @param {CouponState} coupon
-     */
     constructor(
-        private _coupon: any = {}
+        private _coupon: CouponState
     ) {}
 
     getRemoveError(): Error | undefined {
-        return this._coupon.errors &&
-            this._coupon.errors.removeCouponError;
+        return this._coupon.errors.removeCouponError;
     }
 
     getApplyError(): Error | undefined {
-        return this._coupon.errors &&
-            this._coupon.errors.applyCouponError;
+        return this._coupon.errors.applyCouponError;
     }
 
     isApplying(): boolean {
-        return !!(this._coupon.statuses &&
-            this._coupon.statuses.isApplyingCoupon);
+        return !!this._coupon.statuses.isApplyingCoupon;
     }
 
     isRemoving(): boolean {
-        return !!(this._coupon.statuses &&
-            this._coupon.statuses.isRemovingCoupon);
+        return !!this._coupon.statuses.isRemovingCoupon;
     }
 }

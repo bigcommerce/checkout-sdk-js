@@ -1,4 +1,4 @@
-import { getAppConfig } from './configs.mock';
+import { getConfigState } from './configs.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import ConfigSelector from './config-selector';
 
@@ -8,9 +8,7 @@ describe('ConfigSelector', () => {
 
     beforeEach(() => {
         state = {
-            config: {
-                data: getAppConfig(),
-            },
+            config: getConfigState(),
         };
     });
 
@@ -35,7 +33,7 @@ describe('ConfigSelector', () => {
         });
 
         it('does not returns error if able to load config', () => {
-            configSelector = new ConfigSelector(state.order);
+            configSelector = new ConfigSelector(state.config);
 
             expect(configSelector.getLoadError()).toBeUndefined();
         });

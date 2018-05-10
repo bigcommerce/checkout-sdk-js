@@ -1,30 +1,23 @@
 import { selector } from '../common/selector';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
+import Country from './country';
+import CountryState from './country-state';
+
 @selector
 export default class CountrySelector {
-    /**
-     * @constructor
-     * @param {CountriesState} countries
-     */
     constructor(
-        private _countries: any = {}
+        private _countries: CountryState
     ) {}
 
-    /**
-     * @return {Country[]}
-     */
-    getCountries(): any[] {
+    getCountries(): Country[] | undefined {
         return this._countries.data;
     }
 
     getLoadError(): Error | undefined {
-        return this._countries.errors && this._countries.errors.loadError;
+        return this._countries.errors.loadError;
     }
 
     isLoading(): boolean {
-        return !!(this._countries.statuses && this._countries.statuses.isLoading);
+        return !!this._countries.statuses.isLoading;
     }
 }
