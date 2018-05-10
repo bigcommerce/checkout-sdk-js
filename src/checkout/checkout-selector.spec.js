@@ -25,7 +25,7 @@ describe('CheckoutSelector', () => {
     });
 
     it('returns config', () => {
-        expect(selector.getConfig()).toEqual(state.config.data);
+        expect(selector.getConfig()).toEqual(state.config.data.storeConfig);
     });
 
     it('returns shipping options', () => {

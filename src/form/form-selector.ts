@@ -14,14 +14,14 @@ export default class FormSelector {
 
     getShippingAddressFields(countries: Country[] = [], countryCode: string): FormField[] {
         const selectedCountry = find(countries, { code: countryCode });
-        const fields = this._config.data ? this._config.data.formFields.shippingAddressFields : [];
+        const fields = this._config.data ? this._config.data.storeConfig.formFields.shippingAddressFields : [];
 
         return fields.map((field: any) => this._processField(field, countries, selectedCountry));
     }
 
     getBillingAddressFields(countries: Country[] = [], countryCode: string): FormField[] {
         const selectedCountry = find(countries, { code: countryCode });
-        const fields = this._config.data ? this._config.data.formFields.billingAddressFields : [];
+        const fields = this._config.data ? this._config.data.storeConfig.formFields.billingAddressFields : [];
 
         return fields.map((field: any) => this._processField(field, countries, selectedCountry));
     }

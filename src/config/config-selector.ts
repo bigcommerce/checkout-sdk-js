@@ -1,6 +1,6 @@
 import { selector } from '../common/selector';
 
-import { StoreConfig } from './config';
+import Config, { StoreConfig } from './config';
 import ConfigState from './config-state';
 
 @selector
@@ -9,8 +9,12 @@ export default class ConfigSelector {
         private _config: ConfigState
     ) {}
 
-    getConfig(): StoreConfig | undefined {
+    getConfig(): Config | undefined {
         return this._config.data;
+    }
+
+    getStoreConfig(): StoreConfig | undefined {
+        return this._config.data && this._config.data.storeConfig;
     }
 
     getLoadError(): Error | undefined {

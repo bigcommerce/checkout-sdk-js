@@ -81,7 +81,7 @@ export default class PaymentActionCreator {
         const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
         const shippingAddress = state.shippingAddress.getShippingAddress();
         const shippingOption = state.shippingOptions.getSelectedShippingOption();
-        const config = state.config.getConfig();
+        const config = state.config.getStoreConfig();
         const instrumentMeta = state.instruments.getInstrumentsMeta();
 
         if (!config) {

@@ -109,7 +109,7 @@ export function getAppConfig() {
 
 export function getConfigState() {
     return {
-        data: getAppConfig().storeConfig,
+        data: getAppConfig(),
         errors: {},
         statuses: {},
     };

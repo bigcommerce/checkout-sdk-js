@@ -27,7 +27,7 @@ describe('configReducer()', () => {
         };
 
         expect(configReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getAppConfig().storeConfig,
+            data: action.payload,
             statuses: { isLoading: false },
         }));
     });
