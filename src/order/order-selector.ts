@@ -1,11 +1,10 @@
-import * as paymentStatusTypes from '../payment/payment-status-types';
-
 import { CartState } from '../cart';
 import { selector } from '../common/selector';
 import { CustomerState } from '../customer';
 import { PaymentMethod } from '../payment';
+import * as paymentStatusTypes from '../payment/payment-status-types';
 
-import InternalOrder, { InternalIncompleteOrder, InternalOrderMeta } from './internal-order';
+import InternalOrder, { InternalIncompleteOrder, InternalOrderMeta, InternalOrderPayment } from './internal-order';
 import OrderState from './order-state';
 
 @selector
@@ -28,6 +27,10 @@ export default class OrderSelector {
 
     getPaymentAuthToken(): string | undefined {
         return this._order.meta && this._order.meta.token;
+    }
+
+    getInternalOrderPayment(): InternalOrderPayment | undefined {
+        return this._order.meta && this._order.meta.payment;
     }
 
     isPaymentDataRequired(useStoreCredit: boolean = false): boolean {

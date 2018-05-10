@@ -67,7 +67,7 @@ export default function mapToInternalOrder(order: Order, fallbackOrder: Internal
 }
 
 function mapToInteralOrderPayment(payments: OrderPayments): InternalOrderPayment {
-    const item = find(payments, isDefaultOrderPaymentItem);
+    const item = find(payments, isDefaultOrderPayment);
 
     if (!item) {
         return {};
@@ -80,6 +80,6 @@ function mapToInteralOrderPayment(payments: OrderPayments): InternalOrderPayment
     };
 }
 
-function isDefaultOrderPaymentItem(item: OrderPayment): item is DefaultOrderPayment {
-    return item.providerId !== 'giftcertificate' && item.providerId !== 'storecredit';
+function isDefaultOrderPayment(payment: OrderPayment): payment is DefaultOrderPayment {
+    return payment.providerId !== 'giftcertificate' && payment.providerId !== 'storecredit';
 }
