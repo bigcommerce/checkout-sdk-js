@@ -1,7 +1,8 @@
+import InternalIncompleteOrder from './internal-incomplete-order';
 import InternalOrder from './internal-order';
 
 export default interface OrderState {
-    data?: InternalOrder;
+    data?: InternalOrder | InternalIncompleteOrder;
     meta?: OrderMetaState;
     errors: OrderErrorsState;
     statuses: OrderStatusesState;

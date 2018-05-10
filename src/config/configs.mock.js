@@ -110,5 +110,7 @@ export function getAppConfig() {
 export function getConfigState() {
     return {
         data: getAppConfig().storeConfig,
+        errors: {},
+        statuses: {},
     };
 }

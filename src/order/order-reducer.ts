@@ -4,6 +4,7 @@ import { CheckoutActionType } from '../checkout';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 
+import InternalIncompleteOrder from './internal-incomplete-order';
 import InternalOrder from './internal-order';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
@@ -29,7 +30,7 @@ export default function orderReducer(state: OrderState = DEFAULT_STATE, action: 
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalOrder | undefined, action: Action): InternalOrder | undefined {
+function dataReducer(data: InternalOrder | InternalIncompleteOrder | undefined, action: Action): InternalOrder | InternalIncompleteOrder | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return data ? { ...data, ...mapToInternalIncompleteOrder(action.payload, data) } : data;

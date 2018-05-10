@@ -368,6 +368,8 @@ export function getPaymentMethodsResponseBody() {
 export function getPaymentMethodsState() {
     return {
         data: getPaymentMethods(),
+        errors: {},
         meta: {},
+        statuses: {},
     };
 }

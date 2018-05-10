@@ -1,5 +1,5 @@
 import { createAction, Action } from '@bigcommerce/data-store';
-import { omit } from 'lodash';
+import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
@@ -86,14 +86,13 @@ describe('BraintreePaypalPaymentStrategy', () => {
         });
 
         it('skips all initialization if a nonce is present in the paymentProvider', async () => {
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
+            store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
                 paymentMethods: {
                     data: [
                         { ...paymentMethodMock, nonce: 'some-nonce' },
                     ],
                 },
-            });
+            }));
 
             braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(
                 store,

@@ -14,8 +14,9 @@ export function getShippingCountriesResponseBody() {
 
 export function getShippingCountriesState() {
     return {
-        meta: {},
         data: getShippingCountries(),
+        errors: {},
+        statuses: {},
     };
 }
 
@@ -35,5 +36,6 @@ export function getJapan() {
         code: 'JP',
         name: 'Japan',
         hasPostalCodes: false,
+        subdivisions: [],
     };
 }
