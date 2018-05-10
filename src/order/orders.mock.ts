@@ -34,7 +34,7 @@ export function getOrder(): Order {
         },
         orderAmount: 190,
         orderId: 295,
-        payment: [
+        payments: [
             {
                 providerId: 'authorizenet',
                 description: 'credit-card',

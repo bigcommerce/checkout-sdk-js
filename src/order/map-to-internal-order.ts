@@ -4,7 +4,7 @@ import { mapToInternalLineItems } from '../cart';
 import { mapToInternalCoupon } from '../coupon';
 
 import InternalOrder, { InternalOrderPayment } from './internal-order';
-import Order, { DefaultOrderPaymentItem, OrderPayment, OrderPaymentItem } from './order';
+import Order, { DefaultOrderPayment, OrderPayment, OrderPayments } from './order';
 
 export default function mapToInternalOrder(order: Order, fallbackOrder: InternalOrder): InternalOrder {
     return {
@@ -14,7 +14,7 @@ export default function mapToInternalOrder(order: Order, fallbackOrder: Internal
         currency: order.currency.code,
         customerCanBeCreated: fallbackOrder.customerCanBeCreated,
         token: fallbackOrder.token,
-        payment: mapToInteralOrderPayment(order.payment),
+        payment: mapToInteralOrderPayment(order.payments),
         socialData: fallbackOrder.socialData,
         customerCreated: order.customerCreated,
         hasDigitalItems: order.hasDigitalItems,
@@ -66,8 +66,8 @@ export default function mapToInternalOrder(order: Order, fallbackOrder: Internal
     };
 }
 
-function mapToInteralOrderPayment(payment: OrderPayment): InternalOrderPayment {
-    const item = find(payment, isDefaultOrderPaymentItem);
+function mapToInteralOrderPayment(payments: OrderPayments): InternalOrderPayment {
+    const item = find(payments, isDefaultOrderPaymentItem);
 
     if (!item) {
         return {};
@@ -80,6 +80,6 @@ function mapToInteralOrderPayment(payment: OrderPayment): InternalOrderPayment {
     };
 }
 
-function isDefaultOrderPaymentItem(item: OrderPaymentItem): item is DefaultOrderPaymentItem {
+function isDefaultOrderPaymentItem(item: OrderPayment): item is DefaultOrderPayment {
     return item.providerId !== 'giftcertificate' && item.providerId !== 'storecredit';
 }
