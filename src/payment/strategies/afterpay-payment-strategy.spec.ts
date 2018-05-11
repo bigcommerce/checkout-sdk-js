@@ -12,17 +12,17 @@ import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { getGuestCustomer } from '../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
-import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
+import { getIncompleteOrder, getIncompleteOrderState, getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
-import { getAfterpay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { AfterpayScriptLoader } from '../../remote-checkout/methods/afterpay';
-import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED, LOAD_REMOTE_SETTINGS_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentActionCreator from '../payment-action-creator';
 import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../payment-method-action-types';
+import { getAfterpay, getPaymentMethodsState } from '../payment-methods.mock';
 import PaymentRequestSender from '../payment-request-sender';
 
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
@@ -32,6 +32,7 @@ describe('AfterpayPaymentStrategy', () => {
     let client: CheckoutClient;
     let initializePaymentAction: Observable<Action>;
     let loadPaymentMethodAction: Observable<Action>;
+    let loadRemoteSettingsAction: Observable<Action>;
     let orderActionCreator: OrderActionCreator;
     let payload: OrderRequestBody;
     let paymentActionCreator: PaymentActionCreator;
@@ -89,6 +90,11 @@ describe('AfterpayPaymentStrategy', () => {
             { paymentMethod: { ...paymentMethod, id: 'afterpay' } },
             { methodId: paymentMethod.gateway }
         ));
+        loadRemoteSettingsAction = Observable.of(createAction(
+            LOAD_REMOTE_SETTINGS_SUCCEEDED,
+            { useStoreCredit: false, customerMessage: 'foo' },
+            { methodId: paymentMethod.gateway }
+        ));
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
         verifyCartAction = Observable.of(createAction(VERIFY_CART_REQUESTED));
@@ -113,6 +119,9 @@ describe('AfterpayPaymentStrategy', () => {
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
             .mockReturnValue(initializePaymentAction);
+
+        jest.spyOn(remoteCheckoutActionCreator, 'loadSettings')
+            .mockReturnValue(loadRemoteSettingsAction);
 
         jest.spyOn(paymentActionCreator, 'submitPayment')
             .mockReturnValue(submitPaymentAction);
@@ -201,16 +210,13 @@ describe('AfterpayPaymentStrategy', () => {
                         context: { payment: { token: nonce } },
                     },
                 },
-                customer: {
-                    data: {
-                        ...getGuestCustomer(),
-                        remote: { useStoreCredit: false, customerMessage: 'foo' },
-                    },
-                },
                 order: {
                     data: {
                         ...getIncompleteOrder(),
-                        payment: { id: paymentMethod.id },
+                        payment: {
+                            id: paymentMethod.id,
+                            gateway: paymentMethod.gateway,
+                        },
                     },
                 },
             }));
@@ -228,14 +234,14 @@ describe('AfterpayPaymentStrategy', () => {
             jest.spyOn(store, 'dispatch');
 
             await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
-            await strategy.finalize();
+            await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 { useStoreCredit: false, customerMessage: 'foo' },
-                undefined
+                { methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }
             );
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
@@ -246,7 +252,7 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('throws error if unable to finalize order due to missing data', async () => {
             try {
-                await strategy.finalize();
+                await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }

@@ -6,12 +6,7 @@ import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
-import {
-    createPaymentClient,
-    createPaymentStrategyRegistry,
-    PaymentMethodActionCreator,
-    PaymentStrategyActionCreator,
-} from '../payment';
+import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';

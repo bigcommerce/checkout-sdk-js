@@ -118,9 +118,9 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
 
     private _getOrderReferenceId(): string | undefined {
         const state = this._store.getState();
-        const meta = state.remoteCheckout.getCheckoutMeta() || {};
+        const amazon = state.remoteCheckout.getCheckout('amazon');
 
-        return meta && meta.amazon && meta.amazon.referenceId;
+        return amazon ? amazon.referenceId : undefined;
     }
 
     private _createWallet(options: AmazonPayPaymentInitializeOptions): Promise<AmazonPayWallet> {
@@ -161,7 +161,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                     }
 
                     this._store.dispatch(
-                        this._remoteCheckoutActionCreator.setCheckoutMeta(this._paymentMethod.id, {
+                        this._remoteCheckoutActionCreator.updateCheckout(this._paymentMethod.id as 'amazon', {
                             referenceId: orderReference.getAmazonOrderReferenceId(),
                         })
                     );
@@ -188,21 +188,20 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             this._remoteCheckoutActionCreator.initializeBilling(methodId, { referenceId })
         )
             .then(state => {
-                const remoteCheckout = state.remoteCheckout.getCheckout();
+                const amazon = state.remoteCheckout.getCheckout('amazon');
+                const remoteAddress = amazon && amazon.billing && amazon.billing.address;
                 const address = state.billingAddress.getBillingAddress();
 
-                if (remoteCheckout && remoteCheckout.billingAddress === false) {
+                if (remoteAddress === false) {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (!remoteCheckout || !remoteCheckout.billingAddress || isAddressEqual(remoteCheckout.billingAddress, address || {})) {
+                if (!remoteAddress || isAddressEqual(remoteAddress, address || {})) {
                     return this._store.getState();
                 }
 
                 return this._store.dispatch(
-                    this._billingAddressActionCreator.updateAddress(
-                        mapFromInternalAddress(remoteCheckout.billingAddress)
-                    )
+                    this._billingAddressActionCreator.updateAddress(mapFromInternalAddress(remoteAddress))
                 );
             });
     }

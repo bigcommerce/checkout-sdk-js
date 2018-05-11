@@ -9,9 +9,10 @@ import { getCustomerState, getCustomerStrategyState } from '../customer/internal
 import { getCountriesState } from '../geography/countries.mock';
 import { getCompleteOrderState } from '../order/internal-orders.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
-import { getPaymentMethodsState } from '../payment/payment-methods.mock';
+import { HOSTED } from '../payment/payment-method-types';
+import { getPaymentMethod, getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
-import { getRemoteCheckoutMeta, getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
+import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../remote-checkout/remote-checkout.mock';
 import { getConsignment } from '../shipping/consignments.mock';
 import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
@@ -62,6 +63,19 @@ export function getCheckout(): Checkout {
     };
 }
 
+export function getCheckoutWithPayments(): Checkout {
+    return {
+        ...getCheckout(),
+        payments: [
+            {
+                providerId: getPaymentMethod().id,
+                gatewayId: getPaymentMethod().gateway,
+                providerType: HOSTED,
+            },
+        ],
+    };
+}
+
 export function getCheckoutState(): CheckoutState {
     return {
         data: getCheckout(),
@@ -72,7 +86,7 @@ export function getCheckoutState(): CheckoutState {
 
 export function getCheckoutMeta() {
     return {
-        remoteCheckout: getRemoteCheckoutMeta(),
+        remoteCheckout: getRemoteCheckoutStateData(),
     };
 }
 

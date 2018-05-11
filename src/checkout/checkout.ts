@@ -28,4 +28,11 @@ export default interface Checkout {
     balanceDue: number;
     createdTime: string;
     updatedTime: string;
+    payments?: CheckoutPayment[];
+}
+
+export interface CheckoutPayment {
+    providerId: string;
+    providerType: string;
+    gatewayId?: string;
 }

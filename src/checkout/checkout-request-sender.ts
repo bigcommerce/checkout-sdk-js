@@ -17,6 +17,7 @@ export default class CheckoutRequestSender {
             'cart.lineItems.physicalItems.options',
             'cart.lineItems.digitalItems.options',
             'customer',
+            'payments',
             'promotions.banners',
         ];
 
