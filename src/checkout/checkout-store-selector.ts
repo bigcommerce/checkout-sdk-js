@@ -26,7 +26,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
  * i.e.: Instrument
  */
 @selector
-export default class CheckoutSelector {
+export default class CheckoutStoreSelector {
     private _billingAddress: BillingAddressSelector;
     private _cart: CartSelector;
     private _config: ConfigSelector;

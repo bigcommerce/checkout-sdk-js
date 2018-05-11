@@ -1,9 +1,15 @@
-import { CheckoutErrorSelector, CheckoutSelector, CheckoutSelectors, CheckoutStatusSelector, InternalCheckoutSelectors } from '../checkout';
+import {
+    CheckoutSelectors,
+    CheckoutStoreErrorSelector,
+    CheckoutStoreSelector,
+    CheckoutStoreStatusSelector,
+    InternalCheckoutSelectors,
+} from '../checkout';
 
 export default function createCheckoutSelectors(selectors: InternalCheckoutSelectors): CheckoutSelectors {
-    const checkout = new CheckoutSelector(selectors);
-    const errors = new CheckoutErrorSelector(selectors);
-    const statuses = new CheckoutStatusSelector(selectors);
+    const checkout = new CheckoutStoreSelector(selectors);
+    const errors = new CheckoutStoreErrorSelector(selectors);
+    const statuses = new CheckoutStoreStatusSelector(selectors);
 
     return {
         checkout,
