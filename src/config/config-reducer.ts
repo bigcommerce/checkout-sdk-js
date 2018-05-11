@@ -1,6 +1,6 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
-import { StoreConfig } from './config';
+import Config from './config';
 import { ConfigActionType, LoadConfigAction } from './config-actions';
 import ConfigState, { ConfigErrorsState, ConfigStatusesState } from './config-state';
 
@@ -19,10 +19,10 @@ export default function configReducer(state: ConfigState = DEFAULT_STATE, action
     return reducer(state, action);
 }
 
-function dataReducer(data: StoreConfig | undefined, action: LoadConfigAction): StoreConfig | undefined {
+function dataReducer(data: Config | undefined, action: LoadConfigAction): Config | undefined {
     switch (action.type) {
     case ConfigActionType.LoadConfigSucceeded:
-        return action.payload ? action.payload.storeConfig : data;
+        return action.payload ? action.payload : data;
 
     default:
         return data;

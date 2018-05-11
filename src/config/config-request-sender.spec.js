@@ -1,5 +1,5 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getAppConfig } from './configs.mock';
+import { getConfig } from './configs.mock';
 import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import ConfigRequestSender from './config-request-sender';
@@ -20,7 +20,7 @@ describe('ConfigRequestSender', () => {
         let response;
 
         beforeEach(() => {
-            response = getResponse(getAppConfig());
+            response = getResponse(getConfig());
 
             requestSender.get.mockReturnValue(Promise.resolve(response));
         });

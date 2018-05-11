@@ -15,8 +15,9 @@ export function getCountriesResponseBody() {
 
 export function getCountriesState() {
     return {
-        meta: {},
         data: getCountries(),
+        errors: {},
+        statuses: {},
     };
 }
 

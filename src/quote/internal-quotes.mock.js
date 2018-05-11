@@ -51,7 +51,9 @@ export function getQuoteResponseBody() {
             order: getIncompleteOrder(),
             shippingOptions: getShippingOptions(),
         },
+        errors: {},
         meta: {},
+        statuses: {},
     };
 }
 
@@ -59,5 +61,7 @@ export function getQuoteState() {
     return {
         meta: {},
         data: getQuote(),
+        statuses: {},
+        errors: {},
     };
 }

@@ -4,8 +4,8 @@ import { mergeOrPush } from '../common/utility';
 
 import PaymentMethod from './payment-method';
 import * as actionTypes from './payment-method-action-types';
+import PaymentMethodMeta from './payment-method-meta';
 import PaymentMethodState, { PaymentMethodErrorsState, PaymentMethodStatusesState } from './payment-method-state';
-import PaymentMethodsMeta from './payment-methods-meta';
 
 const DEFAULT_STATE: PaymentMethodState = {
     errors: {},
@@ -43,7 +43,7 @@ function dataReducer(data: PaymentMethod[] | undefined, action: Action): Payment
     }
 }
 
-function metaReducer(meta: PaymentMethodsMeta | undefined, action: Action): PaymentMethodsMeta | undefined {
+function metaReducer(meta: PaymentMethodMeta | undefined, action: Action): PaymentMethodMeta | undefined {
     switch (action.type) {
     case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
         return action.meta ? { ...meta, ...action.meta } : meta;

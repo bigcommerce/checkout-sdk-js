@@ -82,7 +82,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
     private _preparePaymentData(payment: Payment): Promise<Payment> {
         const state = this._store.getState();
         const cart = state.cart.getCart();
-        const config = state.config.getConfig();
+        const config = state.config.getStoreConfig();
 
         if (!cart || !config || !this._paymentMethod) {
             throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (${payment.name})" data is missing.`);

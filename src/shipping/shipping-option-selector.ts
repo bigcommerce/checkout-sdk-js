@@ -1,33 +1,23 @@
 import { find } from 'lodash';
 
 import { selector } from '../common/selector';
+import { QuoteState } from '../quote';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
+import InternalShippingOption, { InternalShippingOptionList } from './internal-shipping-option';
+import ShippingOptionState from './shipping-option-state';
+
 @selector
 export default class ShippingOptionSelector {
-    /**
-     * @constructor
-     * @param {ShippingOptionsState} shippingOptions
-     * @param {QuoteState} quote
-     */
     constructor(
-        private _shippingOptions: any = {},
-        private _quote: any = {}
+        private _shippingOptions: ShippingOptionState,
+        private _quote: QuoteState
     ) {}
 
-    /**
-     * @return {InternalShippingOptionList}
-     */
-    getShippingOptions(): any | undefined {
+    getShippingOptions(): InternalShippingOptionList | undefined {
         return this._shippingOptions.data;
     }
 
-    /**
-     * @return {?ShippingOption}
-     */
-    getSelectedShippingOption(): any | undefined {
+    getSelectedShippingOption(): InternalShippingOption | undefined {
         const { shippingAddress = null, shippingOption: optionId = null } = this._quote.data || {};
         const shippingOptions = this.getShippingOptions();
 
@@ -35,14 +25,14 @@ export default class ShippingOptionSelector {
             return;
         }
 
-        return find(shippingOptions[shippingAddress.id], { id: optionId });
+        return shippingAddress.id ? find(shippingOptions[shippingAddress.id], { id: optionId }) : undefined;
     }
 
     getLoadError(): Error | undefined {
-        return this._shippingOptions.errors && this._shippingOptions.errors.loadError;
+        return this._shippingOptions.errors.loadError;
     }
 
     isLoading(): boolean {
-        return !!(this._shippingOptions.statuses && this._shippingOptions.statuses.isLoading);
+        return !!this._shippingOptions.statuses.isLoading;
     }
 }

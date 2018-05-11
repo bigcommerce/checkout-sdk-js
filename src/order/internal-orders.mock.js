@@ -26,8 +26,10 @@ export function getIncompleteOrder() {
 
 export function getIncompleteOrderState() {
     return {
-        meta: {},
         data: getIncompleteOrder(),
+        errors: {},
+        meta: {},
+        statuses: {},
     };
 }
 
@@ -206,6 +208,8 @@ export function getCompleteOrderState() {
     return {
         meta: {},
         data: getCompleteOrder(),
+        errors: {},
+        statuses: {},
     };
 }
 
@@ -246,5 +250,7 @@ export function getSubmittedOrderState() {
             ...getSubmitOrderResponseHeaders(),
         },
         data: getSubmittedOrder(),
+        errors: {},
+        statuses: {},
     };
 }

@@ -8,13 +8,13 @@ export default function createPaymentClient(store: CheckoutStore) {
 
     store.subscribe(
         state => {
-            const config = state.config.getConfig();
+            const config = state.config.getStoreConfig();
 
             if (config) {
                 paymentClient.setHost(config.paymentSettings.bigpayBaseUrl);
             }
         },
-        state => state.config.getConfig()
+        state => state.config.getStoreConfig()
     );
 
     return paymentClient;

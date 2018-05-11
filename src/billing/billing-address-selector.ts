@@ -1,13 +1,12 @@
 import { InternalAddress } from '../address';
 import { selector } from '../common/selector';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
+import { QuoteState } from '../quote';
+
 @selector
 export default class BillingAddressSelector {
     constructor(
-        private _quote: any = {}
+        private _quote: QuoteState
     ) {}
 
     getBillingAddress(): InternalAddress | undefined {
@@ -15,10 +14,10 @@ export default class BillingAddressSelector {
     }
 
     getUpdateError(): Error | undefined {
-        return this._quote.errors && this._quote.errors.updateBillingAddressError;
+        return this._quote.errors.updateBillingAddressError;
     }
 
     isUpdating(): boolean {
-        return !!(this._quote.statuses && this._quote.statuses.isUpdatingBillingAddress);
+        return !!this._quote.statuses.isUpdatingBillingAddress;
     }
 }

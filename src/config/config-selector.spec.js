@@ -1,4 +1,4 @@
-import { getAppConfig } from './configs.mock';
+import { getConfigState } from './configs.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import ConfigSelector from './config-selector';
 
@@ -8,17 +8,27 @@ describe('ConfigSelector', () => {
 
     beforeEach(() => {
         state = {
-            config: {
-                data: getAppConfig(),
-            },
+            config: getConfigState(),
         };
     });
 
     describe('#getConfig()', () => {
-        it('returns the current customer', () => {
+        it('returns the current config', () => {
             configSelector = new ConfigSelector(state.config);
 
             expect(configSelector.getConfig()).toEqual(state.config.data);
+        });
+
+        it('returns the store config', () => {
+            configSelector = new ConfigSelector(state.config);
+
+            expect(configSelector.getStoreConfig()).toEqual(state.config.data.storeConfig);
+        });
+
+        it('returns the context config', () => {
+            configSelector = new ConfigSelector(state.config);
+
+            expect(configSelector.getContextConfig()).toEqual(state.config.data.context);
         });
     });
 
@@ -35,7 +45,7 @@ describe('ConfigSelector', () => {
         });
 
         it('does not returns error if able to load config', () => {
-            configSelector = new ConfigSelector(state.order);
+            configSelector = new ConfigSelector(state.config);
 
             expect(configSelector.getLoadError()).toBeUndefined();
         });

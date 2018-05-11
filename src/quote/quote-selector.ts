@@ -1,18 +1,12 @@
 import { selector } from '../common/selector';
 
 import InternalQuote from './internal-quote';
+import QuoteState from './quote-state';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 @selector
 export default class QuoteSelector {
-    /**
-     * @constructor
-     * @param {QuoteState} quote
-     */
     constructor(
-        private _quote: any = {}
+        private _quote: QuoteState
     ) {}
 
     getQuote(): InternalQuote | undefined {
@@ -20,10 +14,10 @@ export default class QuoteSelector {
     }
 
     getLoadError(): Error | undefined {
-        return this._quote.errors && this._quote.errors.loadError;
+        return this._quote.errors.loadError;
     }
 
     isLoading(): boolean {
-        return !!(this._quote.statuses && this._quote.statuses.isLoading);
+        return !! this._quote.statuses.isLoading;
     }
 }

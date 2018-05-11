@@ -15,7 +15,7 @@ import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 @selector
-export default class CheckoutErrorSelector {
+export default class CheckoutStoreErrorSelector {
     private _billingAddress: BillingAddressSelector;
     private _cart: CartSelector;
     private _checkout: CheckoutSelector;

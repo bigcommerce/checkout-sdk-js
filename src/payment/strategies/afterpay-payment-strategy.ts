@@ -81,13 +81,14 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(() => new Promise<never>(() => {}));
     }
 
-    finalize(options: PaymentRequestOptions & { nonce: string }): Promise<InternalCheckoutSelectors> {
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const customer = state.customer.getCustomer();
         const order = state.order.getOrder();
+        const config = state.config.getContextConfig();
 
-        if (!order || !order.payment.id || !customer) {
-            throw new MissingDataError('Unable to finalize order because "order" or "customer" data is missing.');
+        if (!order || !order.payment.id || !config || !config.payment.token || !customer) {
+            throw new MissingDataError('Unable to finalize order because "order", "customer" or "token" data is missing.');
         }
 
         const orderPayload = customer.remote ?
@@ -96,7 +97,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
         const paymentPayload = {
             name: order.payment.id,
-            paymentData: { nonce: options.nonce },
+            paymentData: { nonce: config.payment.token },
         };
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))

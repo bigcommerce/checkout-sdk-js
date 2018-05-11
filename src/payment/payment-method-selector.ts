@@ -1,30 +1,24 @@
 import { find } from 'lodash';
 
 import { selector } from '../common/selector';
+import { OrderState } from '../order';
 
 import PaymentMethod from './payment-method';
-import PaymentMethodsMeta from './payment-methods-meta';
+import PaymentMethodMeta from './payment-method-meta';
+import PaymentMethodState from './payment-method-state';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 @selector
 export default class PaymentMethodSelector {
-    /**
-     * @constructor
-     * @param {PaymentMethodsState} paymentMethods
-     * @param {OrderState} order
-     */
     constructor(
-        private _paymentMethods: any = {},
-        private _order: any = {}
+        private _paymentMethods: PaymentMethodState,
+        private _order: OrderState
     ) {}
 
-    getPaymentMethods(): PaymentMethod[] {
+    getPaymentMethods(): PaymentMethod[] | undefined {
         return this._paymentMethods.data;
     }
 
-    getPaymentMethodsMeta(): PaymentMethodsMeta {
+    getPaymentMethodsMeta(): PaymentMethodMeta | undefined {
         return this._paymentMethods.meta;
     }
 
@@ -37,7 +31,7 @@ export default class PaymentMethodSelector {
     }
 
     getSelectedPaymentMethod(): PaymentMethod | undefined {
-        if (!this._order.data || !this._order.data.payment) {
+        if (!this._order.data || !this._order.data.payment || !this._order.data.payment.id) {
             return;
         }
 
@@ -52,8 +46,7 @@ export default class PaymentMethodSelector {
     }
 
     getLoadMethodError(methodId?: string): Error | undefined {
-        if (!this._paymentMethods.errors ||
-            (methodId && this._paymentMethods.errors.loadMethodId !== methodId)) {
+        if (methodId && this._paymentMethods.errors.loadMethodId !== methodId) {
             return;
         }
 
@@ -61,12 +54,11 @@ export default class PaymentMethodSelector {
     }
 
     isLoading(): boolean {
-        return !!(this._paymentMethods.statuses && this._paymentMethods.statuses.isLoading);
+        return !!this._paymentMethods.statuses.isLoading;
     }
 
     isLoadingMethod(methodId?: string): boolean {
-        if (!this._paymentMethods.statuses ||
-            (methodId && this._paymentMethods.statuses.loadingMethod !== methodId)) {
+        if (methodId && this._paymentMethods.statuses.loadMethodId !== methodId) {
             return false;
         }
 

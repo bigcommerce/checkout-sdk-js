@@ -52,7 +52,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
     }
 
     private _isLegacyMethod(paymentMethod: PaymentMethod): boolean {
-        const config = this._store.getState().config.getConfig();
+        const config = this._store.getState().config.getStoreConfig();
 
         if (!config) {
             throw new NotInitializedError('Config data is missing');

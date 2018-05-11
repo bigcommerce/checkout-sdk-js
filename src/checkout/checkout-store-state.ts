@@ -7,7 +7,7 @@ import { OrderState } from '../order';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
 import { QuoteState } from '../quote';
 import { RemoteCheckoutState } from '../remote-checkout';
-import { ConsignmentState, ShippingCountryState, ShippingStrategyState } from '../shipping';
+import { ConsignmentState, ShippingCountryState, ShippingOptionState, ShippingStrategyState } from '../shipping';
 
 import CheckoutState from './checkout-state';
 
@@ -32,6 +32,6 @@ export default interface CheckoutStoreState {
     quote: QuoteState;
     remoteCheckout: RemoteCheckoutState;
     shippingCountries: ShippingCountryState;
-    shippingOptions: any;
+    shippingOptions: ShippingOptionState;
     shippingStrategies: ShippingStrategyState;
 }

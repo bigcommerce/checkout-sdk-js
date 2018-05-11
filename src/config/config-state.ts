@@ -1,7 +1,7 @@
-import { StoreConfig } from './config';
+import Config from './config';
 
 export default interface ConfigState {
-    data?: StoreConfig;
+    data?: Config;
     errors: ConfigErrorsState;
     statuses: ConfigStatusesState;
 }

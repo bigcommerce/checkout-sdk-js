@@ -8,7 +8,7 @@ import { Observer } from 'rxjs/Observer';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError, NotInitializedError } from '../common/error/errors';
-import { OrderActionCreator } from '../order';
+import { InternalOrder, OrderActionCreator } from '../order';
 
 import Payment, { CreditCard, VaultedInstrument } from './payment';
 import * as actionTypes from './payment-action-types';
@@ -73,18 +73,19 @@ export default class PaymentActionCreator {
     }
 
     private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
+        const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
         const deviceSessionId = (
             payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId ||
-            state.paymentMethods.getPaymentMethodsMeta().request.deviceSessionId
+            paymentMeta && paymentMeta.request.deviceSessionId
         );
         const billingAddress = state.billingAddress.getBillingAddress();
         const cart = state.cart.getCart();
         const customer = state.customer.getCustomer();
-        const order = state.order.getOrder();
+        const order = state.order.getOrder() as InternalOrder;
         const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
         const shippingAddress = state.shippingAddress.getShippingAddress();
         const shippingOption = state.shippingOptions.getSelectedShippingOption();
-        const config = state.config.getConfig();
+        const config = state.config.getStoreConfig();
         const instrumentMeta = state.instruments.getInstrumentsMeta();
 
         if (!config) {
@@ -112,7 +113,7 @@ export default class PaymentActionCreator {
             payment: omit(payment.paymentData, ['deviceSessionId']) as Payment,
             quoteMeta: {
                 request: {
-                    ...state.paymentMethods.getPaymentMethodsMeta().request,
+                    ...(paymentMeta && paymentMeta.request),
                     deviceSessionId,
                 },
             },

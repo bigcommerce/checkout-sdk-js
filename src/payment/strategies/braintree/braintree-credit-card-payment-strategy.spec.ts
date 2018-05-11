@@ -1,6 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
-import { omit } from 'lodash';
+import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
@@ -180,10 +180,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         });
 
         it('throws error if unable to submit payment due to missing data', async () => {
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
-                quote: {},
-            });
+            store = createCheckoutStore(merge({}, getCheckoutStoreState(), { quote: { data: null } }));
 
             braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
                 store,

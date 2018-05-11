@@ -379,5 +379,7 @@ export function getPaymentMethodsState() {
     return {
         data: getPaymentMethods(),
         meta: getPaymentMethodsMeta(),
+        errors: {},
+        statuses: {},
     };
 }
