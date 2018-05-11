@@ -1,36 +1,51 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createTimeout } from '@bigcommerce/request-sender';
-import { merge, map } from 'lodash';
+import { map, merge } from 'lodash';
 import { Observable } from 'rxjs';
+
 import { BillingAddressActionCreator } from '../billing';
-import { CartActionCreator } from '../cart';
+import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
+import { getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
+import { MissingDataError } from '../common/error/errors';
+import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator } from '../config';
-import { CountryActionCreator } from '../geography';
+import { getConfig, getConfigState } from '../config/configs.mock';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
-import { OrderActionCreator } from '../order';
-import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
-import { InstrumentActionCreator } from '../payment/instrument';
-import { QuoteActionCreator } from '../quote';
-import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
-import { MissingDataError } from '../common/error/errors';
-import { getConfig, getConfigState } from '../config/configs.mock';
-import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
-import { getCartResponseBody } from '../cart/internal-carts.mock';
-import { getCountriesResponseBody } from '../geography/countries.mock';
-import { getCouponResponseBody } from '../coupon/internal-coupons.mock';
-import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder } from '../order/internal-orders.mock';
 import { getCustomerResponseBody, getGuestCustomer } from '../customer/internal-customers.mock';
 import { getFormFields } from '../form/form.mocks';
-import { getGiftCertificateResponseBody } from '../coupon/internal-gift-certificates.mock';
-import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody, getPaymentMethod } from '../payment/payment-methods.mock';
-import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
+import { CountryActionCreator } from '../geography';
+import { getCountriesResponseBody } from '../geography/countries.mock';
+import { OrderActionCreator } from '../order';
+import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder, getCompleteOrderState } from '../order/internal-orders.mock';
+import { getOrder } from '../order/orders.mock';
+import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
+import { InstrumentActionCreator } from '../payment/instrument';
+import {
+    deleteInstrumentResponseBody,
+    getInstrumentsMeta,
+    getInstrumentsResponseBody,
+    getVaultAccessTokenResponseBody,
+    vaultInstrumentRequestBody,
+    vaultInstrumentResponseBody,
+} from '../payment/instrument/instrument.mock';
+import {
+    getAuthorizenet,
+    getBraintree,
+    getPaymentMethod,
+    getPaymentMethodResponseBody,
+    getPaymentMethodsResponseBody,
+} from '../payment/payment-methods.mock';
+import { QuoteActionCreator } from '../quote';
+import { getQuoteResponseBody, getQuoteState } from '../quote/internal-quotes.mock';
+import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import ConsignmentActionCreator from '../shipping/consignment-action-creator';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
-import { getResponse } from '../common/http-request/responses.mock';
-import createCheckoutStore from './create-checkout-store';
+import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
+import { getCheckout, getCheckoutState } from './checkouts.mock';
+import createCheckoutStore from './create-checkout-store';
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
@@ -59,6 +74,10 @@ describe('CheckoutService', () => {
             ),
 
             loadOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getOrder()))
+            ),
+
+            loadInternalOrder: jest.fn(() =>
                 Promise.resolve(getResponse(getCompleteOrderResponseBody()))
             ),
 
@@ -79,6 +98,10 @@ describe('CheckoutService', () => {
             ),
 
             loadCheckout: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout()))
+            ),
+
+            loadQuote: jest.fn(() =>
                 Promise.resolve(getResponse(getQuoteResponseBody()))
             ),
 
@@ -99,7 +122,7 @@ describe('CheckoutService', () => {
             ),
 
             updateBillingAddress: jest.fn(() =>
-                Promise.resolve(getResponse(getBillingAddressResponseBody())),
+                Promise.resolve(getResponse(getCheckout())),
             ),
 
             updateShippingAddress: jest.fn(() =>
@@ -111,19 +134,19 @@ describe('CheckoutService', () => {
             ),
 
             applyCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCouponResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             removeCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCouponResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             applyGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getGiftCertificateResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             removeGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getGiftCertificateResponseBody()))
+                Promise.resolve(getResponse(getCheckout()))
             ),
 
             getVaultAccessToken: jest.fn(() =>
@@ -144,6 +167,10 @@ describe('CheckoutService', () => {
         };
 
         store = createCheckoutStore({
+            cart: getCartState(),
+            quote: getQuoteState(),
+            order: getCompleteOrderState(),
+            checkout: getCheckoutState(),
             config: getConfigState(),
         });
 
@@ -167,8 +194,9 @@ describe('CheckoutService', () => {
         checkoutService = new CheckoutService(
             store,
             new BillingAddressActionCreator(checkoutClient),
-            new CartActionCreator(checkoutClient),
+            new CheckoutActionCreator(checkoutClient),
             new ConfigActionCreator(checkoutClient),
+            new ConsignmentActionCreator(checkoutClient),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(checkoutClient),
             new CustomerStrategyActionCreator(customerStrategyRegistry),
@@ -179,7 +207,6 @@ describe('CheckoutService', () => {
             new PaymentStrategyActionCreator(paymentStrategyRegistry),
             new QuoteActionCreator(checkoutClient),
             new ShippingCountryActionCreator(checkoutClient),
-            new ShippingOptionActionCreator(checkoutClient),
             shippingStrategyActionCreator
         );
     });
@@ -226,11 +253,14 @@ describe('CheckoutService', () => {
         it('calls subscriber on state change', async () => {
             const subscriber = jest.fn();
 
-            checkoutService.subscribe(subscriber, ({ checkout }) => checkout.getCart());
+            checkoutService.subscribe(subscriber, ({ checkout }) => checkout.getConfig());
             subscriber.mockReset();
 
-            await checkoutService.loadCart();
-            await checkoutService.loadCart();
+            jest.spyOn(checkoutClient, 'loadConfig')
+                .mockReturnValue(Promise.resolve(getResponse()));
+
+            await checkoutService.loadConfig();
+            await checkoutService.loadConfig();
 
             expect(subscriber).toHaveBeenCalledTimes(1);
         });
@@ -249,11 +279,13 @@ describe('CheckoutService', () => {
     });
 
     describe('#loadCheckout()', () => {
-        it('loads quote data', async () => {
-            const { checkout } = await checkoutService.loadCheckout();
+        const { id } = getCheckout();
+
+        it('loads checkout data', async () => {
+            const { checkout } = await checkoutService.loadCheckout(id);
 
             expect(checkoutClient.loadCheckout).toHaveBeenCalled();
-            expect(checkout.getQuote()).toEqual(getQuoteResponseBody().data.quote);
+            expect(checkout.getCheckout()).toEqual(getCheckout());
         });
     });
 
@@ -362,7 +394,7 @@ describe('CheckoutService', () => {
 
     describe('#finalizeOrderIfNeeded()', () => {
         beforeEach(() => {
-            jest.spyOn(checkoutClient, 'loadCheckout').mockReturnValue(
+            jest.spyOn(checkoutClient, 'loadQuote').mockReturnValue(
                 Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
                     data: { order: getSubmittedOrder() },
                 })))
@@ -652,10 +684,11 @@ describe('CheckoutService', () => {
     });
 
     describe('#loadShippingOptions()', () => {
-        it('loads shipping options', async () => {
+        it('loads checkout data', async () => {
             const { checkout } = await checkoutService.loadShippingOptions();
 
-            expect(checkout.getShippingOptions()).toEqual(getShippingOptionResponseBody().data.shippingOptions);
+            expect(checkoutClient.loadCheckout).toHaveBeenCalled();
+            expect(checkout.getCheckout()).toEqual(getCheckout());
         });
     });
 
@@ -711,9 +744,8 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#updateShippingOption()', () => {
+    describe('#selectShippingOption()', () => {
         it('dispatches action to select shipping option', async () => {
-            const addressId = 'address-id-123';
             const shippingOptionId = 'shipping-option-id-456';
             const options = { timeout: createTimeout() };
             const action = Observable.of(createAction('SELECT_SHIPPING_OPTION'));
@@ -723,9 +755,9 @@ describe('CheckoutService', () => {
 
             jest.spyOn(store, 'dispatch');
 
-            await checkoutService.selectShippingOption(addressId, shippingOptionId, options);
+            await checkoutService.selectShippingOption(shippingOptionId, options);
 
-            expect(shippingStrategyActionCreator.selectOption).toHaveBeenCalledWith(addressId, shippingOptionId, options);
+            expect(shippingStrategyActionCreator.selectOption).toHaveBeenCalledWith(shippingOptionId, options);
             expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
         });
     });
@@ -737,7 +769,7 @@ describe('CheckoutService', () => {
             await checkoutService.updateBillingAddress(address, options);
 
             expect(checkoutClient.updateBillingAddress)
-                .toHaveBeenCalledWith(address, options);
+                .toHaveBeenCalledWith(getCheckout().id, address, options);
         });
     });
 
@@ -748,7 +780,7 @@ describe('CheckoutService', () => {
             await checkoutService.applyCoupon(code, options);
 
             expect(checkoutClient.applyCoupon)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -759,7 +791,7 @@ describe('CheckoutService', () => {
             await checkoutService.removeCoupon(code, options);
 
             expect(checkoutClient.removeCoupon)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -770,7 +802,7 @@ describe('CheckoutService', () => {
             await checkoutService.applyGiftCertificate(code, options);
 
             expect(checkoutClient.applyGiftCertificate)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 
@@ -781,7 +813,7 @@ describe('CheckoutService', () => {
             await checkoutService.removeGiftCertificate(code, options);
 
             expect(checkoutClient.removeGiftCertificate)
-                .toHaveBeenCalledWith(code, options);
+                .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
 

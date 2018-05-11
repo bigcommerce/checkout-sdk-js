@@ -73,7 +73,11 @@ export default class PaymentActionCreator {
     }
 
     private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
-        const deviceSessionId = payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId || state.quote.getQuoteMeta().request.deviceSessionId;
+        const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
+        const deviceSessionId = (
+            payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId ||
+            paymentMeta && paymentMeta.request.deviceSessionId
+        );
         const billingAddress = state.billingAddress.getBillingAddress();
         const cart = state.cart.getCart();
         const customer = state.customer.getCustomer();
@@ -109,7 +113,7 @@ export default class PaymentActionCreator {
             payment: omit(payment.paymentData, ['deviceSessionId']) as Payment,
             quoteMeta: {
                 request: {
-                    ...state.quote.getQuoteMeta().request,
+                    ...(paymentMeta && paymentMeta.request),
                     deviceSessionId,
                 },
             },

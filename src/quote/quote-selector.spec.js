@@ -20,14 +20,6 @@ describe('QuoteSelector', () => {
         });
     });
 
-    describe('#getQuoteMeta()', () => {
-        it('returns quote metadata', () => {
-            quoteSelector = new QuoteSelector(state.quote);
-
-            expect(quoteSelector.getQuoteMeta()).toEqual(state.quote.meta);
-        });
-    });
-
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
             const loadError = getErrorResponse();

@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { RequestOptions } from '../common/http-request';
+import { ContentType, RequestOptions } from '../common/http-request';
 
 /**
  * @todo Convert this file into TypeScript properly
@@ -10,15 +10,17 @@ export default class CouponRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    applyCoupon(couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
-        const url = '/internalapi/v1/checkout/coupon';
+    applyCoupon(checkoutId: string, couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
+        const url = `/api/storefront/checkouts/${checkoutId}/coupons`;
+        const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.post(url, { timeout, body: { couponCode } });
+        return this._requestSender.post(url, { headers, timeout, body: { couponCode } });
     }
 
-    removeCoupon(couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
-        const url = `/internalapi/v1/checkout/coupon/${couponCode}`;
+    removeCoupon(checkoutId: string, couponCode: string, { timeout }: RequestOptions = {}): Promise<Response> {
+        const url = `/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`;
+        const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.delete(url, { timeout });
+        return this._requestSender.delete(url, { headers, timeout });
     }
 }

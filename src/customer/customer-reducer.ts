@@ -26,7 +26,7 @@ export default function customerReducer(state: CustomerState = DEFAULT_STATE, ac
 function dataReducer(data: InternalCustomer | undefined, action: Action): InternalCustomer | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return data ? { ...data, ...mapToInternalCustomer(action.payload, data) } : data;
+        return data ? { ...data, ...mapToInternalCustomer(action.payload) } : data;
 
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:

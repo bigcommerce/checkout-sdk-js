@@ -1,0 +1,20 @@
+import Checkout from './checkout';
+import CheckoutState from './checkout-state';
+
+export default class CheckoutSelector {
+    constructor(
+        private _checkout: CheckoutState
+    ) {}
+
+    getCheckout(): Checkout | undefined {
+        return this._checkout.data;
+    }
+
+    getLoadError(): Error | undefined {
+        return this._checkout.errors.loadError;
+    }
+
+    isLoading(): boolean {
+        return this._checkout.statuses.isLoading === true;
+    }
+}

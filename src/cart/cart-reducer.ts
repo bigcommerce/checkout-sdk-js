@@ -1,14 +1,13 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
-import * as billingAddressActionTypes from '../billing/billing-address-action-types';
+import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
 import * as couponActionTypes from '../coupon/coupon-action-types';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 
 import Cart from './cart';
 import CartState, { CartErrorsState, CartMetaState, CartStatusesState } from './cart-state';
@@ -39,21 +38,19 @@ export default function cartReducer(state: CartState = DEFAULT_STATE, action: Ac
 
 function dataReducer(data: InternalCart | undefined, action: Action): InternalCart | undefined {
     switch (action.type) {
+    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return data ? { ...data, ...mapToInternalCart(action.payload, data) } : data;
-
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
-    case cartActionTypes.LOAD_CART_SUCCEEDED:
-    case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
-    case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
+    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
+    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
     case couponActionTypes.APPLY_COUPON_SUCCEEDED:
     case couponActionTypes.REMOVE_COUPON_SUCCEEDED:
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
     case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
+        return data ? { ...data, ...mapToInternalCart(action.payload) } : data;
+
+    case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
+    case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
+    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.cart } : data;
 
     default:
@@ -77,7 +74,6 @@ function metaReducer(meta: CartMetaState = DEFAULT_STATE.meta, action: Action): 
         return { ...meta, isValid: action.payload };
 
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case cartActionTypes.LOAD_CART_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return { ...meta, isValid: true };
 
@@ -88,13 +84,6 @@ function metaReducer(meta: CartMetaState = DEFAULT_STATE.meta, action: Action): 
 
 function errorsReducer(errors: CartErrorsState = DEFAULT_STATE.errors, action: Action): CartErrorsState {
     switch (action.type) {
-    case cartActionTypes.LOAD_CART_REQUESTED:
-    case cartActionTypes.LOAD_CART_SUCCEEDED:
-        return { ...errors, loadError: undefined };
-
-    case cartActionTypes.LOAD_CART_FAILED:
-        return { ...errors, loadError: action.payload };
-
     case cartActionTypes.VERIFY_CART_REQUESTED:
         return { ...errors, verifyError: undefined };
 
@@ -109,13 +98,6 @@ function errorsReducer(errors: CartErrorsState = DEFAULT_STATE.errors, action: A
 
 function statusesReducer(statuses: CartStatusesState = DEFAULT_STATE.statuses, action: Action): CartStatusesState {
     switch (action.type) {
-    case cartActionTypes.LOAD_CART_REQUESTED:
-        return { ...statuses, isLoading: true };
-
-    case cartActionTypes.LOAD_CART_SUCCEEDED:
-    case cartActionTypes.LOAD_CART_FAILED:
-        return { ...statuses, isLoading: false };
-
     case cartActionTypes.VERIFY_CART_REQUESTED:
         return { ...statuses, isVerifying: true };
 

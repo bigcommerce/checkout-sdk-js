@@ -4,6 +4,7 @@ import { selector } from '../common/selector';
 import { OrderState } from '../order';
 
 import PaymentMethod from './payment-method';
+import PaymentMethodMeta from './payment-method-meta';
 import PaymentMethodState from './payment-method-state';
 
 @selector
@@ -15,6 +16,10 @@ export default class PaymentMethodSelector {
 
     getPaymentMethods(): PaymentMethod[] | undefined {
         return this._paymentMethods.data;
+    }
+
+    getPaymentMethodsMeta(): PaymentMethodMeta | undefined {
+        return this._paymentMethods.meta;
     }
 
     getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined {

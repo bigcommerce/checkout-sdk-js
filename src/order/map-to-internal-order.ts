@@ -1,10 +1,10 @@
-import { find } from 'lodash';
+import { reduce } from 'lodash';
 
 import { mapToInternalLineItems } from '../cart';
 import { Checkout } from '../checkout';
 import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
 
-import { default as InternalOrder } from './internal-order';
+import InternalOrder from './internal-order';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
 import Order from './order';
 
@@ -12,7 +12,7 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
     return {
         ...mapToInternalIncompleteOrder(checkout, existingOrder),
         id: order.orderId,
-        items: mapToInternalLineItems(order.lineItems, existingOrder.items),
+        items: mapToInternalLineItems(order.lineItems, order.currency.decimalPlaces, 'productId'),
         currency: order.currency.code,
         customerCanBeCreated: existingOrder.customerCanBeCreated,
         subtotal: {
@@ -20,14 +20,10 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
             integerAmount: existingOrder.subtotal.integerAmount,
         },
         coupon: {
-            discountedAmount: existingOrder.coupon.discountedAmount,
-            coupons: checkout.cart.coupons.map(coupon =>
-                mapToInternalCoupon(
-                    coupon,
-                    // tslint:disable-next-line:no-non-null-assertion
-                    find(existingOrder.coupon.coupons, { code: coupon.code })!
-                )
-            ),
+            discountedAmount: reduce(checkout.cart.coupons, (sum, coupon) => {
+                return sum + coupon.discountedAmount;
+            }, 0),
+            coupons: checkout.cart.coupons.map(mapToInternalCoupon),
         },
         discount: {
             amount: order.discountAmount,
@@ -35,17 +31,13 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order, exi
         },
         discountNotifications: existingOrder.discountNotifications,
         giftCertificate: {
-            totalDiscountedAmount: existingOrder.giftCertificate.totalDiscountedAmount,
-            appliedGiftCertificates: checkout.giftCertificates.map(giftCertificate =>
-                mapToInternalGiftCertificate(
-                    giftCertificate,
-                    // tslint:disable-next-line:no-non-null-assertion
-                    find(existingOrder.giftCertificate.appliedGiftCertificates, { code: giftCertificate.code })!
-                )
-            ),
+            totalDiscountedAmount: reduce(checkout.giftCertificates, (sum, certificate) => {
+                return sum + certificate.used;
+            }, 0),
+            appliedGiftCertificates: checkout.giftCertificates.map(mapToInternalGiftCertificate),
         },
         shipping: {
-            amount: checkout.shippingCostTotal,
+            amount: existingOrder.shipping.amount,
             integerAmount: existingOrder.shipping.integerAmount,
             amountBeforeDiscount: existingOrder.shipping.amountBeforeDiscount,
             integerAmountBeforeDiscount: existingOrder.shipping.integerAmountBeforeDiscount,
