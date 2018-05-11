@@ -159,7 +159,7 @@ describe('PaymentMethodSelector', () => {
         it('returns true if loading payment method', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                statuses: { isLoadingMethod: true, loadingMethod: 'braintree' },
+                statuses: { isLoadingMethod: true, loadMethodId: 'braintree' },
             }, state.order);
 
             expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(true);
@@ -168,7 +168,7 @@ describe('PaymentMethodSelector', () => {
         it('returns false if not loading payment method', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                statuses: { isLoadingMethod: false, loadingMethod: undefined },
+                statuses: { isLoadingMethod: false, loadMethodId: undefined },
             }, state.order);
 
             expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(false);
@@ -177,7 +177,7 @@ describe('PaymentMethodSelector', () => {
         it('returns false if not loading specific payment method', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                statuses: { isLoadingMethod: true, loadingMethod: 'authorizenet' },
+                statuses: { isLoadingMethod: true, loadMethodId: 'authorizenet' },
             }, state.order);
 
             expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(false);
@@ -186,7 +186,7 @@ describe('PaymentMethodSelector', () => {
         it('returns any loading status if method id is not passed', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
-                statuses: { isLoadingMethod: true, loadingMethod: 'braintree' },
+                statuses: { isLoadingMethod: true, loadMethodId: 'braintree' },
             }, state.order);
 
             expect(paymentMethodSelector.isLoadingMethod()).toEqual(true);

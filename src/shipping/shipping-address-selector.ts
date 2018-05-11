@@ -1,14 +1,12 @@
 import { selector } from '../common/selector';
 
 import { InternalAddress } from '../address';
+import { QuoteState } from '../quote';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 @selector
 export default class ShippingAddressSelector {
     constructor(
-        private _quote: any = {}
+        private _quote: QuoteState
     ) {}
 
     getShippingAddress(): InternalAddress | undefined {

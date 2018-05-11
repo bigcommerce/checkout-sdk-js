@@ -1,5 +1,5 @@
 import InternalIncompleteOrder from './internal-incomplete-order';
-import InternalOrder from './internal-order';
+import InternalOrder, { InternalOrderMeta } from './internal-order';
 
 export default interface OrderState {
     data?: InternalOrder | InternalIncompleteOrder;
@@ -8,8 +8,7 @@ export default interface OrderState {
     statuses: OrderStatusesState;
 }
 
-export interface OrderMetaState {
-    deviceFingerprint?: string;
+export interface OrderMetaState extends InternalOrderMeta {
     token?: string;
 }
 

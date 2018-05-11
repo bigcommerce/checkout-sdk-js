@@ -12,7 +12,7 @@ export default interface FormField {
 }
 
 export interface Options {
-    helperLabel: string;
+    helperLabel?: string;
     items: Item[];
 }
 

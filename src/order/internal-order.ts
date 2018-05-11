@@ -57,3 +57,7 @@ export default interface InternalOrder extends InternalIncompleteOrder {
         integerAmount: number;
     };
 }
+
+export interface InternalOrderMeta {
+    deviceFingerprint?: string;
+}

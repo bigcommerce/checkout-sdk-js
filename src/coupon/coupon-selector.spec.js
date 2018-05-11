@@ -6,7 +6,12 @@ describe('CouponSelector', () => {
     let state;
 
     beforeEach(() => {
-        state = {};
+        state = {
+            coupons: {
+                errors: {},
+                statuses: {},
+            },
+        };
     });
 
     describe('#getApplyError()', () => {
@@ -14,7 +19,7 @@ describe('CouponSelector', () => {
             const applyCouponError = getErrorResponse();
 
             couponSelector = new CouponSelector({
-                ...state.quote,
+                ...state.coupons,
                 errors: { applyCouponError },
             });
 
@@ -22,7 +27,7 @@ describe('CouponSelector', () => {
         });
 
         it('does not returns error if able to apply', () => {
-            couponSelector = new CouponSelector(state.quote);
+            couponSelector = new CouponSelector(state.coupons);
 
             expect(couponSelector.getApplyError()).toBeUndefined();
         });
@@ -31,7 +36,7 @@ describe('CouponSelector', () => {
     describe('#isApplying()', () => {
         it('returns true if applying a coupon', () => {
             couponSelector = new CouponSelector({
-                ...state.quote,
+                ...state.coupons,
                 statuses: { isApplyingCoupon: true },
             });
 
@@ -39,7 +44,7 @@ describe('CouponSelector', () => {
         });
 
         it('returns false if not applying a coupon', () => {
-            couponSelector = new CouponSelector(state.quote);
+            couponSelector = new CouponSelector(state.coupons);
 
             expect(couponSelector.isApplying()).toEqual(false);
         });
@@ -50,7 +55,7 @@ describe('CouponSelector', () => {
             const removeCouponError = getErrorResponse();
 
             couponSelector = new CouponSelector({
-                ...state.quote,
+                ...state.coupons,
                 errors: { removeCouponError },
             });
 
@@ -58,7 +63,7 @@ describe('CouponSelector', () => {
         });
 
         it('does not returns error if able to remove', () => {
-            couponSelector = new CouponSelector(state.quote);
+            couponSelector = new CouponSelector(state.coupons);
 
             expect(couponSelector.getRemoveError()).toBeUndefined();
         });
@@ -67,7 +72,7 @@ describe('CouponSelector', () => {
     describe('#isRemoving()', () => {
         it('returns true if removing a coupon', () => {
             couponSelector = new CouponSelector({
-                ...state.quote,
+                ...state.coupons,
                 statuses: { isRemovingCoupon: true },
             });
 
@@ -75,7 +80,7 @@ describe('CouponSelector', () => {
         });
 
         it('returns false if not removing a coupon', () => {
-            couponSelector = new CouponSelector(state.quote);
+            couponSelector = new CouponSelector(state.coupons);
 
             expect(couponSelector.isRemoving()).toEqual(false);
         });

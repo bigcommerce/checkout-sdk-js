@@ -8,7 +8,7 @@ import { Observer } from 'rxjs/Observer';
 
 import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError, NotInitializedError } from '../common/error/errors';
-import { OrderActionCreator } from '../order';
+import { InternalOrder, OrderActionCreator } from '../order';
 
 import Payment, { CreditCard, VaultedInstrument } from './payment';
 import * as actionTypes from './payment-action-types';
@@ -77,7 +77,7 @@ export default class PaymentActionCreator {
         const billingAddress = state.billingAddress.getBillingAddress();
         const cart = state.cart.getCart();
         const customer = state.customer.getCustomer();
-        const order = state.order.getOrder();
+        const order = state.order.getOrder() as InternalOrder;
         const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
         const shippingAddress = state.shippingAddress.getShippingAddress();
         const shippingOption = state.shippingOptions.getSelectedShippingOption();

@@ -1,4 +1,4 @@
-import { getCountries } from './countries.mock';
+import { getCountriesState } from './countries.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CountrySelector from './country-selector';
 
@@ -8,10 +8,7 @@ describe('CountrySelector', () => {
 
     beforeEach(() => {
         state = {
-            countries: {
-                meta: {},
-                data: getCountries(),
-            },
+            countries: getCountriesState(),
         };
     });
 

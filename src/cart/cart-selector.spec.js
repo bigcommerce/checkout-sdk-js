@@ -1,4 +1,4 @@
-import { getCart } from './internal-carts.mock';
+import { getCartState } from './internal-carts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import CartSelector from './cart-selector';
 
@@ -8,10 +8,7 @@ describe('CartSelector', () => {
 
     beforeEach(() => {
         state = {
-            cart: {
-                meta: {},
-                data: getCart(),
-            },
+            cart: getCartState(),
         };
     });
 
@@ -36,7 +33,7 @@ describe('CartSelector', () => {
         });
 
         it('does not returns error if able to load', () => {
-            cartSelector = new CartSelector(state.verify);
+            cartSelector = new CartSelector(state.cart);
 
             expect(cartSelector.getVerifyError()).toBeUndefined();
         });

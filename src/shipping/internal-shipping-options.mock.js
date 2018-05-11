@@ -26,8 +26,10 @@ export function getFlatRateOption() {
 
 export function getShippingOptionsState() {
     return {
-        meta: {},
         data: getShippingOptions(),
+        errors: {},
+        meta: {},
+        statuses: {},
     };
 }
 

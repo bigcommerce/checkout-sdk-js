@@ -6,7 +6,12 @@ describe('GiftCertificateSelector', () => {
     let state;
 
     beforeEach(() => {
-        state = {};
+        state = {
+            giftCertificates: {
+                errors: {},
+                statuses: {},
+            },
+        };
     });
 
     describe('#getApplyError()', () => {
@@ -14,7 +19,7 @@ describe('GiftCertificateSelector', () => {
             const applyGiftCertificateError = getErrorResponse();
 
             giftCertificateSelector = new GiftCertificateSelector({
-                ...state.quote,
+                ...state.giftCertificates,
                 errors: { applyGiftCertificateError },
             });
 
@@ -22,7 +27,7 @@ describe('GiftCertificateSelector', () => {
         });
 
         it('does not returns error if able to apply', () => {
-            giftCertificateSelector = new GiftCertificateSelector(state.quote);
+            giftCertificateSelector = new GiftCertificateSelector(state.giftCertificates);
 
             expect(giftCertificateSelector.getApplyError()).toBeUndefined();
         });
@@ -31,7 +36,7 @@ describe('GiftCertificateSelector', () => {
     describe('#isApplying()', () => {
         it('returns true if applying a gift certificate', () => {
             giftCertificateSelector = new GiftCertificateSelector({
-                ...state.quote,
+                ...state.giftCertificates,
                 statuses: { isApplyingGiftCertificate: true },
             });
 
@@ -39,7 +44,7 @@ describe('GiftCertificateSelector', () => {
         });
 
         it('returns false if not applying a gift certificate', () => {
-            giftCertificateSelector = new GiftCertificateSelector(state.quote);
+            giftCertificateSelector = new GiftCertificateSelector(state.giftCertificates);
 
             expect(giftCertificateSelector.isApplying()).toEqual(false);
         });
@@ -50,7 +55,7 @@ describe('GiftCertificateSelector', () => {
             const removeGiftCertificateError = getErrorResponse();
 
             giftCertificateSelector = new GiftCertificateSelector({
-                ...state.quote,
+                ...state.giftCertificates,
                 errors: { removeGiftCertificateError },
             });
 
@@ -58,7 +63,7 @@ describe('GiftCertificateSelector', () => {
         });
 
         it('does not returns error if able to remove', () => {
-            giftCertificateSelector = new GiftCertificateSelector(state.quote);
+            giftCertificateSelector = new GiftCertificateSelector(state.giftCertificates);
 
             expect(giftCertificateSelector.getRemoveError()).toBeUndefined();
         });
@@ -67,7 +72,7 @@ describe('GiftCertificateSelector', () => {
     describe('#isRemoving()', () => {
         it('returns true if removing a gift certificate', () => {
             giftCertificateSelector = new GiftCertificateSelector({
-                ...state.quote,
+                ...state.giftCertificates,
                 statuses: { isRemovingGiftCertificate: true },
             });
 
@@ -75,7 +80,7 @@ describe('GiftCertificateSelector', () => {
         });
 
         it('returns false if not removing a gift certificate', () => {
-            giftCertificateSelector = new GiftCertificateSelector(state.quote);
+            giftCertificateSelector = new GiftCertificateSelector(state.giftCertificates);
 
             expect(giftCertificateSelector.isRemoving()).toEqual(false);
         });

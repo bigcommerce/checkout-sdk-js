@@ -1,5 +1,5 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getShippingCountries } from './shipping-countries.mock';
+import { getShippingCountriesState } from './shipping-countries.mock';
 import ShippingCountrySelector from './shipping-country-selector';
 
 describe('ShippingCountrySelector', () => {
@@ -8,9 +8,7 @@ describe('ShippingCountrySelector', () => {
 
     beforeEach(() => {
         state = {
-            shippingCountries: {
-                data: getShippingCountries(),
-            },
+            shippingCountries: getShippingCountriesState(),
         };
     });
 
