@@ -14,7 +14,7 @@ import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelect
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 @selector
-export default class CheckoutErrorSelector {
+export default class CheckoutStoreErrorSelector {
     private _billingAddress: BillingAddressSelector;
     private _cart: CartSelector;
     private _config: ConfigSelector;

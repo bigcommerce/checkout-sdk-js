@@ -31,9 +31,9 @@ import { getShippingOptionResponseBody } from '../shipping/internal-shipping-opt
 import { getResponse } from '../common/http-request/responses.mock';
 import createCheckoutStore from './create-checkout-store';
 import CheckoutService from './checkout-service';
-import CheckoutSelector from './checkout-selector';
-import CheckoutErrorSelector from './checkout-error-selector';
-import CheckoutStatusSelector from './checkout-status-selector';
+import CheckoutStoreSelector from './checkout-store-selector';
+import CheckoutStoreErrorSelector from './checkout-store-error-selector';
+import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 
 describe('CheckoutService', () => {
     let checkoutClient;
@@ -187,9 +187,9 @@ describe('CheckoutService', () => {
     describe('#getState()', () => {
         it('returns state', () => {
             expect(checkoutService.getState()).toEqual({
-                checkout: expect.any(CheckoutSelector),
-                errors: expect.any(CheckoutErrorSelector),
-                statuses: expect.any(CheckoutStatusSelector),
+                checkout: expect.any(CheckoutStoreSelector),
+                errors: expect.any(CheckoutStoreErrorSelector),
+                statuses: expect.any(CheckoutStoreStatusSelector),
             });
         });
 
