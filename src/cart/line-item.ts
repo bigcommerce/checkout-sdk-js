@@ -49,6 +49,7 @@ export interface LineItem {
     salePrice: number;
     extendedListPrice: number;
     extendedSalePrice: number;
+    socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
 }
 
@@ -57,4 +58,11 @@ export interface LineItemOption {
     nameId: number;
     value: string;
     valueId: number;
+}
+
+export interface LineItemSocialData {
+    channel: string;
+    code: string;
+    text: string;
+    link: string;
 }

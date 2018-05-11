@@ -1,73 +1,103 @@
-import { find } from 'lodash';
+import { filter, find, reduce, some } from 'lodash';
 
+import { AmountTransformer } from '../cart';
 import { mapToInternalLineItems } from '../cart';
-import { mapToInternalCoupon } from '../coupon';
+import { Checkout } from '../checkout';
+import { mapToInternalCoupon, mapToInternalGiftCertificate, InternalGiftCertificate } from '../coupon';
+import { mapToDiscountNotifications } from '../promotion';
 
-import InternalOrder, { InternalOrderPayment } from './internal-order';
-import Order, { DefaultOrderPayment, OrderPayment, OrderPayments } from './order';
+import InternalOrder, { InternalGiftCertificateList, InternalOrderPayment } from './internal-order';
+import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import Order, { DefaultOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
 
-export default function mapToInternalOrder(order: Order, fallbackOrder: InternalOrder): InternalOrder {
+export default function mapToInternalOrder(checkout: Checkout, order: Order): InternalOrder {
+    const decimalPlaces = order.currency.decimalPlaces;
+    const amountTransformer = new AmountTransformer(decimalPlaces);
+    const discountedAmount = reduce(checkout.cart.discounts, (sum, discount) => {
+        return sum + discount.discountedAmount;
+    }, 0);
+    // @todo: remove this once API returns shipping cost breakdown (CHECKOUT-3153)
+    const shippingAmountBeforeDiscount = checkout.shippingCostTotal + getShippingDiscount(checkout);
+
     return {
+        ...mapToInternalIncompleteOrder(order),
         id: order.orderId,
         items: mapToInternalLineItems(order.lineItems, order.currency.decimalPlaces, 'productId'),
         orderId: order.orderId,
         currency: order.currency.code,
-        customerCanBeCreated: fallbackOrder.customerCanBeCreated,
-        token: fallbackOrder.token,
+        customerCanBeCreated: order.customerCreated,
         payment: mapToInteralOrderPayment(order.payments),
-        socialData: fallbackOrder.socialData,
-        customerCreated: order.customerCreated,
-        hasDigitalItems: order.hasDigitalItems,
-        isDownloadable: order.isDownloadable,
-        isComplete: order.isComplete,
-        callbackUrl: fallbackOrder.callbackUrl,
-        status: fallbackOrder.status,
         subtotal: {
-            amount: fallbackOrder.subtotal.amount,
-            integerAmount: fallbackOrder.subtotal.integerAmount,
+            amount: order.baseAmount,
+            integerAmount: amountTransformer.toInteger(order.baseAmount),
         },
         coupon: {
-            discountedAmount: fallbackOrder.coupon.discountedAmount,
+            discountedAmount: reduce(order.coupons, (sum, coupon) => {
+                return sum + coupon.discountedAmount;
+            }, 0),
             coupons: order.coupons.map(mapToInternalCoupon),
         },
         discount: {
-            amount: order.discountAmount,
-            integerAmount: fallbackOrder.discount.integerAmount,
+            amount: discountedAmount,
+            integerAmount: amountTransformer.toInteger(discountedAmount),
         },
-        discountNotifications: fallbackOrder.discountNotifications,
-        giftCertificate: {
-            totalDiscountedAmount: fallbackOrder.giftCertificate.totalDiscountedAmount,
-            appliedGiftCertificates: fallbackOrder.giftCertificate.appliedGiftCertificates,
-        },
+        discountNotifications: mapToDiscountNotifications(checkout.promotions),
+        giftCertificate: mapToGiftCertificates(order.payments),
         shipping: {
-            amount: fallbackOrder.shipping.amount,
-            integerAmount: fallbackOrder.shipping.integerAmount,
-            amountBeforeDiscount: fallbackOrder.shipping.amountBeforeDiscount,
-            integerAmountBeforeDiscount: fallbackOrder.shipping.integerAmountBeforeDiscount,
-            required: fallbackOrder.shipping.required,
+            amount: checkout.shippingCostTotal,
+            integerAmount: amountTransformer.toInteger(checkout.shippingCostTotal),
+            amountBeforeDiscount: shippingAmountBeforeDiscount,
+            integerAmountBeforeDiscount: amountTransformer.toInteger(shippingAmountBeforeDiscount),
         },
         storeCredit: {
-            amount: fallbackOrder.storeCredit.amount,
+            amount: mapToStoreCredit(order.payments),
         },
-        taxSubtotal: fallbackOrder.taxSubtotal,
-        taxes: fallbackOrder.taxes,
+        taxSubtotal: {
+            amount: checkout.taxTotal,
+            integerAmount: amountTransformer.toInteger(checkout.taxTotal),
+        },
+        taxes: checkout.taxes,
         taxTotal: {
-            amount: fallbackOrder.taxTotal.amount,
-            integerAmount: fallbackOrder.taxTotal.integerAmount,
+            amount: checkout.taxTotal,
+            integerAmount: amountTransformer.toInteger(checkout.taxTotal),
         },
         handling: {
-            amount: fallbackOrder.handling.amount,
-            integerAmount: fallbackOrder.handling.integerAmount,
+            amount: checkout.handlingCostTotal,
+            integerAmount: amountTransformer.toInteger(checkout.handlingCostTotal),
         },
         grandTotal: {
             amount: order.orderAmount,
-            integerAmount: fallbackOrder.grandTotal.integerAmount,
+            integerAmount: order.orderAmountAsInteger,
         },
     };
 }
 
-function mapToInteralOrderPayment(payments: OrderPayments): InternalOrderPayment {
-    const item = find(payments, isDefaultOrderPayment);
+function mapToStoreCredit(payments?: OrderPayments): number {
+    const item = find(payments, { providerId: 'storecredit' });
+
+    return item ? item.amount : 0;
+}
+
+function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificateList {
+    const items = filter(payments, { providerId: 'giftcertificate' }) as GiftCertificateOrderPayment[];
+
+    return {
+        totalDiscountedAmount: reduce(items, (sum, item) => item.amount + sum, 0),
+        appliedGiftCertificates: items.map(item => ({
+            code: item.detail.code,
+            discountedAmount: item.amount,
+            remainingBalance: 0,
+            giftCertificate: {
+                balance: 0,
+                code: item.detail.code,
+                purchaseDate: '',
+            },
+        })),
+    };
+}
+
+function mapToInteralOrderPayment(payments?: OrderPayments): InternalOrderPayment {
+    const item = find(payments, isDefaultOrderPayment) as DefaultOrderPayment;
 
     if (!item) {
         return {};
@@ -82,4 +112,10 @@ function mapToInteralOrderPayment(payments: OrderPayments): InternalOrderPayment
 
 function isDefaultOrderPayment(payment: OrderPayment): payment is DefaultOrderPayment {
     return payment.providerId !== 'giftcertificate' && payment.providerId !== 'storecredit';
+}
+
+function getShippingDiscount(checkout: Checkout): number {
+    const coupon = checkout.cart.coupons.find(coupon => coupon.couponType === 'shipping_discount');
+
+    return coupon ? coupon.discountedAmount : 0;
 }

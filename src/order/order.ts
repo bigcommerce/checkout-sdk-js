@@ -1,5 +1,5 @@
 import { Address } from '../address';
-import { DigitalItem, GiftCertificateItem, PhysicalItem } from '../cart';
+import { LineItemMap } from '../cart';
 import { Coupon } from '../coupon';
 import { Currency } from '../currency';
 
@@ -16,14 +16,11 @@ export default interface Order {
     isComplete: boolean;
     isDownloadable: boolean;
     isTaxIncluded: boolean;
-    lineItems: {
-        physicalItems: PhysicalItem[];
-        digitalItems: DigitalItem[];
-        giftCertificates: GiftCertificateItem[];
-    };
+    lineItems: LineItemMap;
     orderAmount: number;
+    orderAmountAsInteger: number;
     orderId: number;
-    payments: OrderPayments;
+    payments?: OrderPayments;
     status: string;
 }
 
@@ -31,6 +28,7 @@ export type OrderPayments = Array<DefaultOrderPayment | GiftCertificateOrderPaym
 
 export interface OrderPayment {
     providerId: string;
+    gatewayId?: string | null;
     description: string;
     amount: number;
 }
