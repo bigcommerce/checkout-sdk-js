@@ -1,6 +1,6 @@
 import { getFormFields } from '../form/form.mocks';
 
-export function getAppConfig() {
+export function getConfig() {
     return {
         context: {
             flashMessages: [],
@@ -9,7 +9,7 @@ export function getAppConfig() {
             },
         },
         customization: {
-            languageData: {},
+            languageData: [],
         },
         storeConfig: {
             cdnPath: 'https://cdn.bcapp.dev/rHEAD',
@@ -109,7 +109,7 @@ export function getAppConfig() {
 
 export function getConfigState() {
     return {
-        data: getAppConfig().storeConfig,
+        data: getConfig(),
         errors: {},
         statuses: {},
     };

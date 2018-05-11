@@ -1,5 +1,5 @@
 import { configReducer } from './index';
-import { getAppConfig } from './configs.mock';
+import { getConfig } from './configs.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { ConfigActionType } from './config-actions';
 
@@ -23,11 +23,11 @@ describe('configReducer()', () => {
     it('returns config data if it was load successfully', () => {
         const action = {
             type: ConfigActionType.LoadConfigSucceeded,
-            payload: getAppConfig(),
+            payload: getConfig(),
         };
 
         expect(configReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getAppConfig().storeConfig,
+            data: action.payload,
             statuses: { isLoading: false },
         }));
     });

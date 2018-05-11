@@ -320,7 +320,7 @@ export default class CheckoutService {
 
     private _getInstrumentState(): any {
         const state = this._store.getState();
-        const config = state.config.getConfig();
+        const config = state.config.getStoreConfig();
         const customer = state.customer.getCustomer();
 
         if (!config || !customer) {

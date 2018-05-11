@@ -69,7 +69,7 @@ export default class CheckoutSelector {
     }
 
     getConfig(): StoreConfig | undefined {
-        return this._config.getConfig();
+        return this._config.getStoreConfig();
     }
 
     getShippingAddress(): InternalAddress | undefined {

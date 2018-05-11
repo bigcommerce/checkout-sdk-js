@@ -1,8 +1,8 @@
 import { FormField } from '../form';
 
 export default interface Config {
-    context: Context;
-    customization: Customization;
+    context: ContextConfig;
+    customization: CustomizationConfig;
     storeConfig: StoreConfig;
 }
 
@@ -94,15 +94,13 @@ export interface CheckoutSettings {
     remoteCheckoutProviders: any[];
 }
 
-export interface Customization {
+export interface CustomizationConfig {
     languageData: any[];
 }
 
-export interface Context {
+export interface ContextConfig {
     flashMessages: any[];
-    payment: Payment;
-}
-
-export interface Payment {
-    token?: string;
+    payment: {
+        token?: string;
+    };
 }

@@ -8,7 +8,9 @@ import { Observable } from 'rxjs';
 import { CartActionCreator } from '../../cart';
 import { VERIFY_CART_REQUESTED } from '../../cart/cart-action-types';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
+import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
+import { getGuestCustomer } from '../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { getIncompleteOrder, getOrderRequestBody } from '../../order/internal-orders.mock';
 import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
@@ -50,9 +52,7 @@ describe('AfterpayPaymentStrategy', () => {
 
     beforeEach(() => {
         client = createCheckoutClient();
-        store = createCheckoutStore({
-            paymentMethods: getPaymentMethodsState(),
-        });
+        store = createCheckoutStore(getCheckoutStoreState());
         orderActionCreator = new OrderActionCreator(client);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         cartActionCreator = new CartActionCreator(client);
@@ -195,29 +195,47 @@ describe('AfterpayPaymentStrategy', () => {
         const nonce = 'bar';
 
         it('submits the order and the payment', async () => {
-            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
-
-            jest.spyOn(store.getState().order, 'getOrder')
-                .mockReturnValue({
-                    ...getIncompleteOrder(),
-                    payment: {
-                        id: paymentMethod.id,
+            store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
+                config: {
+                    data: {
+                        context: { payment: { token: nonce } },
                     },
-                });
+                },
+                customer: {
+                    data: {
+                        ...getGuestCustomer(),
+                        remote: { useStoreCredit: false, customerMessage: 'foo' },
+                    },
+                },
+                order: {
+                    data: {
+                        ...getIncompleteOrder(),
+                        payment: { id: paymentMethod.id },
+                    },
+                },
+            }));
 
-            jest.spyOn(store.getState().customer, 'getCustomer')
-                .mockReturnValue({
-                    remote: { useStoreCredit: false, customerMessage: 'foo' },
-                });
+            strategy = new AfterpayPaymentStrategy(
+                store,
+                cartActionCreator,
+                orderActionCreator,
+                paymentActionCreator,
+                paymentMethodActionCreator,
+                remoteCheckoutActionCreator,
+                scriptLoader
+            );
 
-            await strategy.finalize({ nonce });
+            jest.spyOn(store, 'dispatch');
+
+            await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+            await strategy.finalize();
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
                 { useStoreCredit: false, customerMessage: 'foo' },
-                { nonce }
+                undefined
             );
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
@@ -228,7 +246,7 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('throws error if unable to finalize order due to missing data', async () => {
             try {
-                await strategy.finalize({ nonce });
+                await strategy.finalize();
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }
