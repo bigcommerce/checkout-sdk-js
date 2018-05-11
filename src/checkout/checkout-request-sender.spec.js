@@ -7,6 +7,12 @@ import CheckoutRequestSender from './checkout-request-sender';
 describe('CheckoutRequestSender', () => {
     let requestSender;
     let response;
+    const defaultIncludes = [
+        'cart.lineItems.physicalItems.options',
+        'cart.lineItems.digitalItems.options',
+        'customer',
+        'promotions.banners',
+    ].join(',');
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -31,7 +37,7 @@ describe('CheckoutRequestSender', () => {
                 Accept: ContentType.JsonV1,
             },
             params: {
-                include: 'customer',
+                include: defaultIncludes,
             },
             timeout: undefined,
         });
@@ -51,7 +57,7 @@ describe('CheckoutRequestSender', () => {
                 Accept: ContentType.JsonV1,
             },
             params: {
-                include: 'customer,foo',
+                include: defaultIncludes.concat(',foo'),
                 timeout: undefined,
             },
         });

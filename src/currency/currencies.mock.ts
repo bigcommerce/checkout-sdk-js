@@ -5,5 +5,6 @@ export function getCurrency(): Currency {
         name: 'US Dollar',
         code: 'USD',
         symbol: '$',
+        decimalPlaces: 2,
     };
 }

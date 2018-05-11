@@ -4,6 +4,15 @@ import { Address } from '../address';
 import { Checkout } from '../checkout';
 import { ContentType, RequestOptions } from '../common/http-request';
 
+const DEFAULT_PARAMS = {
+    include: [
+        'cart.lineItems.physicalItems.options',
+        'cart.lineItems.digitalItems.options',
+        'customer',
+        'promotions.banners',
+    ].join(','),
+};
+
 export default class BillingAddressRequestSender {
     constructor(
         private _requestSender: RequestSender
@@ -13,7 +22,7 @@ export default class BillingAddressRequestSender {
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address`;
         const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.post(url, { body: address, headers, timeout });
+        return this._requestSender.post(url, { body: address, params: DEFAULT_PARAMS, headers, timeout });
     }
 
     updateAddress(checkoutId: string, address: Address, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
@@ -21,6 +30,6 @@ export default class BillingAddressRequestSender {
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address/${id}`;
         const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.put(url, { body, headers, timeout });
+        return this._requestSender.put(url, { params: DEFAULT_PARAMS, body, headers, timeout });
     }
 }

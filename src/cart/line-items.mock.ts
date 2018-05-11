@@ -1,4 +1,4 @@
-import { PhysicalItem } from '../cart';
+import { GiftCertificateItem, PhysicalItem } from '../cart';
 
 export function getPhysicalItem(): PhysicalItem {
     return {
@@ -19,5 +19,32 @@ export function getPhysicalItem(): PhysicalItem {
         extendedListPrice: 200,
         extendedSalePrice: 200,
         isShippingRequired: true,
+        options: [
+            {
+                name: 'n',
+                nameId: 1,
+                value: 'v',
+                valueId: 3,
+            },
+        ],
+    };
+}
+
+export function getGiftCertificateItem(): GiftCertificateItem {
+    return {
+        id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
+        name: '$100 Gift Certificate',
+        message: 'message',
+        amount: 100,
+        taxable: false,
+        theme: 'General',
+        sender: {
+            name: 'pablo',
+            email: 'pa@blo.com',
+        },
+        recipient: {
+            name: 'luis',
+            email: 'lu@is.com',
+        },
     };
 }

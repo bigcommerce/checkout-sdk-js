@@ -3,15 +3,21 @@ export default interface InternalLineItem {
     amountAfterDiscount: number;
     attributes: Array<{ name: string, value: string }>;
     discount: number;
-    id: string | number;
-    imageUrl: string;
     integerAmount: number;
     integerAmountAfterDiscount: number;
     integerDiscount: number;
-    integerTax: number;
-    name: string;
+    id: string | number;
+    imageUrl: string;
+    name?: string;
     quantity: number;
-    tax: number;
     type: string;
-    variantId: number;
+    variantId?: number;
+    sender?: {
+        name: string;
+        email: string;
+    };
+    recipient?: {
+        name: string;
+        email: string;
+    };
 }

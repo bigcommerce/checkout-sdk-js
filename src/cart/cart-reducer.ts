@@ -46,9 +46,8 @@ function dataReducer(data: InternalCart | undefined, action: Action): InternalCa
     case couponActionTypes.REMOVE_COUPON_SUCCEEDED:
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
     case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
-        return data ? { ...data, ...mapToInternalCart(action.payload, data) } : data;
+        return data ? { ...data, ...mapToInternalCart(action.payload) } : data;
 
-    case cartActionTypes.LOAD_CART_SUCCEEDED:
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
@@ -75,7 +74,6 @@ function metaReducer(meta: CartMetaState = DEFAULT_STATE.meta, action: Action): 
         return { ...meta, isValid: action.payload };
 
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case cartActionTypes.LOAD_CART_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return { ...meta, isValid: true };
 
@@ -86,13 +84,6 @@ function metaReducer(meta: CartMetaState = DEFAULT_STATE.meta, action: Action): 
 
 function errorsReducer(errors: CartErrorsState = DEFAULT_STATE.errors, action: Action): CartErrorsState {
     switch (action.type) {
-    case cartActionTypes.LOAD_CART_REQUESTED:
-    case cartActionTypes.LOAD_CART_SUCCEEDED:
-        return { ...errors, loadError: undefined };
-
-    case cartActionTypes.LOAD_CART_FAILED:
-        return { ...errors, loadError: action.payload };
-
     case cartActionTypes.VERIFY_CART_REQUESTED:
         return { ...errors, verifyError: undefined };
 
@@ -107,13 +98,6 @@ function errorsReducer(errors: CartErrorsState = DEFAULT_STATE.errors, action: A
 
 function statusesReducer(statuses: CartStatusesState = DEFAULT_STATE.statuses, action: Action): CartStatusesState {
     switch (action.type) {
-    case cartActionTypes.LOAD_CART_REQUESTED:
-        return { ...statuses, isLoading: true };
-
-    case cartActionTypes.LOAD_CART_SUCCEEDED:
-    case cartActionTypes.LOAD_CART_FAILED:
-        return { ...statuses, isLoading: false };
-
     case cartActionTypes.VERIFY_CART_REQUESTED:
         return { ...statuses, isVerifying: true };
 

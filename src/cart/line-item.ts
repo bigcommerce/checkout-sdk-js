@@ -16,7 +16,8 @@ export interface DigitalItem extends LineItem {
 }
 
 export interface GiftCertificateItem {
-    id: string;
+    id: string | number;
+    name: string;
     theme: string;
     amount: number;
     taxable: boolean;
@@ -48,4 +49,12 @@ export interface LineItem {
     salePrice: number;
     extendedListPrice: number;
     extendedSalePrice: number;
+    options?: LineItemOption[];
+}
+
+export interface LineItemOption {
+    name: string;
+    nameId: number;
+    value: string;
+    valueId: number;
 }

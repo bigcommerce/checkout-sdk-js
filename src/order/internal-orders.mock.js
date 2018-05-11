@@ -45,13 +45,38 @@ export function getCompleteOrder() {
                 amount: 200,
                 discount: 0,
                 amountAfterDiscount: 200,
-                tax: 0,
-                attributes: [],
                 integerAmount: 20000,
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
-                integerTax: 0,
                 variantId: 71,
+                attributes: [
+                    {
+                        name: 'n',
+                        value: 'v',
+                    },
+                ],
+            },
+            {
+                id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
+                type: 'ItemGiftCertificateEntity',
+                name: '$100 Gift Certificate',
+                sender: {
+                    name: 'pablo',
+                    email: 'pa@blo.com',
+                },
+                recipient: {
+                    name: 'luis',
+                    email: 'lu@is.com',
+                },
+                imageUrl: '',
+                quantity: 1,
+                amount: 100,
+                discount: 0,
+                amountAfterDiscount: 100,
+                attributes: [],
+                integerAmount: 10000,
+                integerDiscount: 0,
+                integerAmountAfterDiscount: 10000,
             },
         ],
         currency: 'USD',
@@ -60,18 +85,23 @@ export function getCompleteOrder() {
             integerAmount: 20000,
         },
         coupon: {
-            discountedAmount: 5,
+            discountedAmount: 10,
             coupons: [
                 {
                     code: 'savebig2015',
                     discount: '20% off each item',
                     discountType: 'percentage_discount',
                 },
+                {
+                    code: '279F507D817E3E7',
+                    discount: '$5.00 off the shipping total',
+                    discountType: 'shipping_discount',
+                },
             ],
         },
         discount: {
             amount: 10,
-            integerAmount: 100,
+            integerAmount: 1000,
         },
         discountNotifications: [],
         giftCertificate: {
@@ -91,9 +121,9 @@ export function getCompleteOrder() {
         },
         shipping: {
             amount: 15,
-            integerAmount: 0,
+            integerAmount: 1500,
             amountBeforeDiscount: 20,
-            integerAmountBeforeDiscount: 0,
+            integerAmountBeforeDiscount: 2000,
             required: true,
         },
         storeCredit: {
@@ -115,7 +145,7 @@ export function getCompleteOrder() {
         },
         handling: {
             amount: 8,
-            integerAmount: 80,
+            integerAmount: 800,
         },
         grandTotal: {
             amount: 190,

@@ -4,8 +4,9 @@ import ShippingOption from './shipping-option';
 
 export default interface Consignment {
     id: string;
-    shippingCost: number;
     shippingAddress: Address;
+    handlingCost: number;
+    shippingCost: number;
     availableShippingOptions: ShippingOption[];
     selectedShippingOptionId?: string;
     lineItemIds?: string[];

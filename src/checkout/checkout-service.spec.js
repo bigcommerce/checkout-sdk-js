@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
-import { CartActionCreator } from '../cart';
 import { getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -195,7 +194,6 @@ describe('CheckoutService', () => {
         checkoutService = new CheckoutService(
             store,
             new BillingAddressActionCreator(checkoutClient),
-            new CartActionCreator(checkoutClient),
             new CheckoutActionCreator(checkoutClient),
             new ConfigActionCreator(checkoutClient),
             new ConsignmentActionCreator(checkoutClient),
@@ -282,13 +280,6 @@ describe('CheckoutService', () => {
 
     describe('#loadCheckout()', () => {
         const { id } = getCheckout();
-
-        it('loads quote data', async () => {
-            const { checkout } = await checkoutService.loadCheckout(id);
-
-            expect(checkoutClient.loadQuote).toHaveBeenCalled();
-            expect(checkout.getQuote()).toEqual(getQuoteResponseBody().data.quote);
-        });
 
         it('loads checkout data', async () => {
             const { checkout } = await checkoutService.loadCheckout(id);

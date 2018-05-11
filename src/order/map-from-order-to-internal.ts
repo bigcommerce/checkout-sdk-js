@@ -8,7 +8,7 @@ export default function mapFromOrderToInternal(order: Order, fallbackOrder: Inte
     return {
         id: order.orderId,
         orderId: order.orderId,
-        items: mapToInternalLineItems(order.lineItems, fallbackOrder.items, 'productId'),
+        items: mapToInternalLineItems(order.lineItems, order.currency.decimalPlaces, 'productId'),
         currency: order.currency.code,
         customerCanBeCreated: fallbackOrder.customerCanBeCreated,
         token: fallbackOrder.token,

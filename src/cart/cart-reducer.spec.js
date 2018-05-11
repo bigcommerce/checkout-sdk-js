@@ -2,7 +2,6 @@ import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
-import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as couponActionTypes from '../coupon/coupon-action-types';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
@@ -11,7 +10,7 @@ import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import cartReducer from './cart-reducer';
-import { getCart, getCartResponseBody } from './internal-carts.mock';
+import { getCart } from './internal-carts.mock';
 
 describe('cartReducer()', () => {
     let initialState;
@@ -91,45 +90,6 @@ describe('cartReducer()', () => {
             meta: expect.objectContaining({
                 isValid: true,
             }),
-        }));
-    });
-
-    it('returns new data if fetching cart', () => {
-        const action = {
-            type: cartActionTypes.LOAD_CART_REQUESTED,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isLoading: true },
-        }));
-    });
-
-    it('returns new data if cart is fetched successfully', () => {
-        const response = getCartResponseBody();
-        const action = {
-            type: cartActionTypes.LOAD_CART_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            meta: expect.objectContaining({
-                isValid: true,
-            }),
-            statuses: { isLoading: false },
-        }));
-    });
-
-    it('returns new data if cart is not fetched successfully', () => {
-        const response = getErrorResponse();
-        const action = {
-            type: cartActionTypes.LOAD_CART_FAILED,
-            payload: response.data,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            errors: { loadError: action.payload },
-            statuses: { isLoading: false },
         }));
     });
 

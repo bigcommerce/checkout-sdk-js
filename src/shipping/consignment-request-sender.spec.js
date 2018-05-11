@@ -12,6 +12,13 @@ describe('ConsignmentRequestSender', () => {
     const consignment = getConsignmentRequestBody();
     const consignments = [consignment];
     const options = { timeout: createTimeout() };
+    const include = [
+        'consignments.availableShippingOptions',
+        'cart.lineItems.physicalItems.options',
+        'cart.lineItems.digitalItems.options',
+        'customer',
+        'promotions.banners',
+    ].join(',');
 
     beforeEach(() => {
         requestSender = {
@@ -32,7 +39,7 @@ describe('ConsignmentRequestSender', () => {
                     Accept: ContentType.JsonV1,
                 },
                 params: {
-                    include: 'consignments.availableShippingOptions',
+                    include,
                 },
             });
         });
@@ -47,7 +54,7 @@ describe('ConsignmentRequestSender', () => {
                     Accept: ContentType.JsonV1,
                 },
                 params: {
-                    include: 'consignments.availableShippingOptions',
+                    include,
                 },
             });
         });
@@ -65,7 +72,7 @@ describe('ConsignmentRequestSender', () => {
                     Accept: ContentType.JsonV1,
                 },
                 params: {
-                    include: 'consignments.availableShippingOptions',
+                    include,
                 },
             });
         });
@@ -80,7 +87,7 @@ describe('ConsignmentRequestSender', () => {
                     Accept: ContentType.JsonV1,
                 },
                 params: {
-                    include: 'consignments.availableShippingOptions',
+                    include,
                 },
             });
         });

@@ -29,11 +29,17 @@ export function getCheckout(): Checkout {
         consignments: [
             getConsignment(),
         ],
-        taxes: [],
+        taxes: [
+            {
+                name: 'Tax',
+                amount: 3,
+            },
+        ],
         discounts: [],
         coupons: [],
         orderId: 295,
         shippingCostTotal: 15,
+        handlingCostTotal: 8,
         taxTotal: 0,
         grandTotal: 190,
         storeCredit: 0,
@@ -43,6 +49,16 @@ export function getCheckout(): Checkout {
         balanceDue: 0,
         createdTime: '2018-03-06T04:41:49+00:00',
         updatedTime: '2018-03-07T03:44:51+00:00',
+        promotions: [
+            {
+                banners: [
+                    {
+                        type: 'upsell',
+                        text: 'foo',
+                    },
+                ],
+            },
+        ],
     };
 }
 

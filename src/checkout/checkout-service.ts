@@ -1,6 +1,5 @@
 import { Address } from '../address';
 import { BillingAddressActionCreator } from '../billing';
-import { CartActionCreator } from '../cart';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
@@ -38,7 +37,6 @@ export default class CheckoutService {
     constructor(
         private _store: CheckoutStore,
         private _billingAddressActionCreator: BillingAddressActionCreator,
-        private _cartActionCreator: CartActionCreator,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
         private _consignmentActionCreator: ConsignmentActionCreator,
@@ -90,13 +88,6 @@ export default class CheckoutService {
         const action = this._configActionCreator.loadConfig(options);
 
         return this._store.dispatch(action, { queueId: 'config' })
-            .then(() => this.getState());
-    }
-
-    loadCart(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._cartActionCreator.loadCart(options);
-
-        return this._store.dispatch(action)
             .then(() => this.getState());
     }
 
@@ -252,31 +243,31 @@ export default class CheckoutService {
     }
 
     applyCoupon(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        return Promise.all([
-            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._couponActionCreator.applyCoupon(code, options)),
-        ]).then(() => this.getState());
+        const action = this._couponActionCreator.applyCoupon(code, options);
+
+        return this._store.dispatch(action)
+            .then(() => this.getState());
     }
 
     removeCoupon(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        return Promise.all([
-            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._couponActionCreator.removeCoupon(code, options)),
-        ]).then(() => this.getState());
+        const action = this._couponActionCreator.removeCoupon(code, options);
+
+        return this._store.dispatch(action)
+            .then(() => this.getState());
     }
 
     applyGiftCertificate(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        return Promise.all([
-            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._giftCertificateActionCreator.applyGiftCertificate(code, options)),
-        ]).then(() => this.getState());
+        const action = this._giftCertificateActionCreator.applyGiftCertificate(code, options);
+
+        return this._store.dispatch(action)
+            .then(() => this.getState());
     }
 
     removeGiftCertificate(code: string, options: RequestOptions = {}): Promise<CheckoutSelectors> {
-        return Promise.all([
-            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._giftCertificateActionCreator.removeGiftCertificate(code, options)),
-        ]).then(() => this.getState());
+        const action = this._giftCertificateActionCreator.removeGiftCertificate(code, options);
+
+        return this._store.dispatch(action)
+            .then(() => this.getState());
     }
 
     loadInstruments(): Promise<CheckoutSelectors> {

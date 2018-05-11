@@ -12,8 +12,13 @@ export default class CheckoutRequestSender {
 
     loadCheckout(id: string, { params: { include = [] } = {}, timeout }: RequestOptions<CheckoutParams> = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkout/${id}`;
-        const defaultIncludes = ['customer'];
         const headers = { Accept: ContentType.JsonV1 };
+        const defaultIncludes = [
+            'cart.lineItems.physicalItems.options',
+            'cart.lineItems.digitalItems.options',
+            'customer',
+            'promotions.banners',
+        ];
 
         return this._requestSender.get(url, {
             params: {
