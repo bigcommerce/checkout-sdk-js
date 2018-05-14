@@ -1,6 +1,6 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createTimeout } from '@bigcommerce/request-sender';
-import { map, merge } from 'lodash';
+import { map } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
@@ -17,7 +17,7 @@ import { getFormFields } from '../form/form.mocks';
 import { CountryActionCreator } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator } from '../order';
-import { getCompleteOrderResponseBody, getOrderRequestBody, getSubmittedOrder, getCompleteOrderState } from '../order/internal-orders.mock';
+import { getCompleteOrderResponseBody, getCompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
@@ -168,10 +168,10 @@ describe('CheckoutService', () => {
 
         store = createCheckoutStore({
             cart: getCartState(),
-            quote: getQuoteState(),
-            order: getCompleteOrderState(),
             checkout: getCheckoutState(),
             config: getConfigState(),
+            quote: getQuoteState(),
+            order: getCompleteOrderState(),
         });
 
         paymentStrategy = {
@@ -204,7 +204,10 @@ describe('CheckoutService', () => {
             new InstrumentActionCreator(checkoutClient),
             new OrderActionCreator(checkoutClient),
             new PaymentMethodActionCreator(checkoutClient),
-            new PaymentStrategyActionCreator(paymentStrategyRegistry),
+            new PaymentStrategyActionCreator(
+                paymentStrategyRegistry,
+                new OrderActionCreator(checkoutClient)
+            ),
             new QuoteActionCreator(checkoutClient),
             new ShippingCountryActionCreator(checkoutClient),
             shippingStrategyActionCreator
@@ -393,14 +396,6 @@ describe('CheckoutService', () => {
     });
 
     describe('#finalizeOrderIfNeeded()', () => {
-        beforeEach(() => {
-            jest.spyOn(checkoutClient, 'loadQuote').mockReturnValue(
-                Promise.resolve(getResponse(merge({}, getQuoteResponseBody(), {
-                    data: { order: getSubmittedOrder() },
-                })))
-            );
-        });
-
         it('finds payment strategy', async () => {
             await checkoutService.loadCheckout();
             await checkoutService.loadPaymentMethods();

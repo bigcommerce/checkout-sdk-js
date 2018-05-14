@@ -1,3 +1,4 @@
+import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/toPromise';
 

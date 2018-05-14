@@ -34,6 +34,17 @@ export function getOrder(): Order {
         },
         orderAmount: 190,
         orderId: 295,
+        payments: [
+            {
+                providerId: 'authorizenet',
+                description: 'credit-card',
+                amount: 190,
+                detail: {
+                    step: 'PAYMENT_STATUS_FINALIZE',
+                    instructions: '%%OrderID%% text %%OrderID%%',
+                },
+            },
+        ],
         status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
     };
 }

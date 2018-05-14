@@ -50,6 +50,18 @@ describe('OrderRequestSender', () => {
                 },
             });
         });
+
+        it('loads order including payment data', async () => {
+            await orderRequestSender.loadOrder(295, { params: { include: ['payments'] } });
+
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: { include: 'payments' },
+                timeout: undefined,
+            });
+        });
     });
 
     describe('#submitOrder()', () => {

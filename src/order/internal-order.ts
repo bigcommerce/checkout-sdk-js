@@ -1,8 +1,6 @@
 import { InternalLineItem } from '../cart';
 import { InternalCoupon, InternalGiftCertificate } from '../coupon';
 
-import InternalIncompleteOrder from './internal-incomplete-order';
-
 export default interface InternalOrder extends InternalIncompleteOrder {
     id: number;
     items: InternalLineItem[];
@@ -56,6 +54,37 @@ export default interface InternalOrder extends InternalIncompleteOrder {
         amount: number;
         integerAmount: number;
     };
+}
+
+export interface InternalIncompleteOrder {
+    orderId: number;
+    token: string;
+    payment: InternalOrderPayment;
+    socialData: {
+        [key: string]: {
+            name: string;
+            description: string;
+            image: string;
+            url: string;
+            shareText: string;
+            sharingLink: string;
+        },
+    };
+    status: string;
+    customerCreated: boolean;
+    hasDigitalItems: boolean;
+    isDownloadable: boolean;
+    isComplete: boolean;
+    callbackUrl: string;
+}
+
+export interface InternalOrderPayment {
+    id?: string;
+    gateway?: string;
+    redirectUrl?: string;
+    returnUrl?: string;
+    status?: string;
+    helpText?: string;
 }
 
 export interface InternalOrderMeta {

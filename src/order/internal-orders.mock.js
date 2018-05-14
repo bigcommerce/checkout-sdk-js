@@ -158,7 +158,6 @@ export function getCompleteOrder() {
             id: 'authorizenet',
             status: 'PAYMENT_STATUS_FINALIZE',
             helpText: '%%OrderID%% text %%OrderID%%',
-            confirmationRedirectUrl: '',
         },
         isDownloadable: false,
         customerCanBeCreated: true,
