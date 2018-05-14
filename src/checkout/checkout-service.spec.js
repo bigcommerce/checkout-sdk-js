@@ -13,7 +13,6 @@ import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../pay
 import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingOptionActionCreator, ShippingStrategyActionCreator } from '../shipping';
-import { MissingDataError } from '../common/error/errors';
 import { getConfig, getConfigState } from '../config/configs.mock';
 import { getBillingAddress, getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
 import { getCartResponseBody } from '../cart/internal-carts.mock';
@@ -787,59 +786,41 @@ describe('CheckoutService', () => {
 
     describe('#loadInstruments()', () => {
         it('loads instruments', async () => {
-            const { storeId } = getConfig().storeConfig.storeProfile;
-            const { customerId } = getGuestCustomer();
-            const { vaultAccessToken } = getInstrumentsMeta();
-
             await checkoutService.signInCustomer();
             await checkoutService.loadInstruments();
 
             expect(checkoutClient.getInstruments)
-                .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken);
-        });
-
-        it('throws error if customer data is missing', () => {
-            expect(() => checkoutService.loadInstruments()).toThrow(MissingDataError);
+                .toHaveBeenCalled();
         });
     });
 
     describe('#vaultInstrument()', () => {
         it('vaults an instrument', async () => {
+            const instrument = vaultInstrumentRequestBody();
             const { storeId } = getConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
-            const instrument = vaultInstrumentRequestBody();
 
             await checkoutService.signInCustomer();
             await checkoutService.vaultInstrument(instrument);
 
             expect(checkoutClient.vaultInstrument)
-                .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken, instrument);
-        });
-
-        it('throws error if customer data is missing', () => {
-            const instrument = vaultInstrumentRequestBody();
-
-            expect(() => checkoutService.vaultInstrument(instrument)).toThrow(MissingDataError);
+                .toHaveBeenCalledWith(storeId, customerId, instrument, vaultAccessToken);
         });
     });
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
+            const instrumentId = '456';
             const { storeId } = getConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
-            const instrumentId = '456';
 
             await checkoutService.signInCustomer();
             await checkoutService.deleteInstrument(instrumentId);
 
             expect(checkoutClient.deleteInstrument)
                 .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken, instrumentId);
-        });
-
-        it('throws error if customer data is missing', () => {
-            expect(() => checkoutService.deleteInstrument(456)).toThrow(MissingDataError);
         });
     });
 });

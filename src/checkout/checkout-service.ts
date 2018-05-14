@@ -1,7 +1,6 @@
 import { InternalAddress } from '../address';
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
-import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
@@ -9,7 +8,7 @@ import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions,
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
-import { InstrumentActionCreator } from '../payment/instrument';
+import { Instrument, InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import {
     ShippingCountryActionCreator,
@@ -24,10 +23,6 @@ import CheckoutStore from './checkout-store';
 import createCheckoutSelectors from './create-checkout-selectors';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
-/**
- * TODO: Convert this file into TypeScript properly
- * i.e.: Instrument, InitializePaymentOptions etc...
- */
 export default class CheckoutService {
     private _state: CheckoutSelectors;
 
@@ -278,66 +273,23 @@ export default class CheckoutService {
     }
 
     loadInstruments(): Promise<CheckoutSelectors> {
-        const { storeId, customerId, token } = this._getInstrumentState();
-
-        const action = this._instrumentActionCreator.loadInstruments(
-            storeId,
-            customerId,
-            token
-        );
+        const action = this._instrumentActionCreator.loadInstruments();
 
         return this._store.dispatch(action)
             .then(() => this.getState());
     }
 
-    vaultInstrument(instrument: any): Promise<CheckoutSelectors> {
-        const { storeId, customerId, token } = this._getInstrumentState();
-
-        const action = this._instrumentActionCreator.vaultInstrument(
-            storeId,
-            customerId,
-            token,
-            instrument
-        );
+    vaultInstrument(instrument: Instrument): Promise<CheckoutSelectors> {
+        const action = this._instrumentActionCreator.vaultInstrument(instrument);
 
         return this._store.dispatch(action)
             .then(() => this.getState());
     }
 
     deleteInstrument(instrumentId: string): Promise<CheckoutSelectors> {
-        const { storeId, customerId, token } = this._getInstrumentState();
-
-        const action = this._instrumentActionCreator.deleteInstrument(
-            storeId,
-            customerId,
-            token,
-            instrumentId
-        );
+        const action = this._instrumentActionCreator.deleteInstrument(instrumentId);
 
         return this._store.dispatch(action)
             .then(() => this.getState());
-    }
-
-    private _getInstrumentState(): any {
-        const state = this._store.getState();
-        const config = state.config.getStoreConfig();
-        const customer = state.customer.getCustomer();
-
-        if (!config || !customer) {
-            throw new MissingDataError('Unable to proceed because "config" or "customer" data is missing.');
-        }
-
-        const { customerId } = customer;
-        const { storeId } = config.storeProfile;
-        const { vaultAccessToken = null, vaultAccessExpiry = null } = state.instruments.getInstrumentsMeta() || {};
-
-        return {
-            customerId,
-            storeId,
-            token: {
-                vaultAccessToken,
-                vaultAccessExpiry,
-            },
-        };
     }
 }
