@@ -1,11 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { merge } from 'lodash';
-import 'rxjs/add/observable/from';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/toArray';
-import 'rxjs/add/operator/toPromise';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { getCartState } from '../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';

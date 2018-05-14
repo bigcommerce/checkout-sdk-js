@@ -1,9 +1,4 @@
-import 'rxjs/add/observable/from';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/toArray';
-import 'rxjs/add/operator/toPromise';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';

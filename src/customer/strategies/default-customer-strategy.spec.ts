@@ -1,6 +1,5 @@
 import { createAction } from '@bigcommerce/data-store';
-import 'rxjs/add/observable/of';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { getQuote } from '../../quote/internal-quotes.mock';

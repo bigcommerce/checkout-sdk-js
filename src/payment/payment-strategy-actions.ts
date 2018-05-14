@@ -16,7 +16,6 @@ export enum PaymentStrategyActionType {
 }
 
 export type PaymentStrategyAction =
-    Action |
     PaymentStrategyExecuteAction |
     PaymentStrategyFinalizeAction |
     PaymentStrategyInitializeAction |
