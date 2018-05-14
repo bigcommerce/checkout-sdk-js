@@ -14,5 +14,6 @@ export { default as CustomerStrategyActionCreator } from './customer-strategy-ac
 export { default as CustomerStrategySelector } from './customer-strategy-selector';
 export { default as CustomerStrategyState } from './customer-strategy-state';
 export { default as customerStrategyReducer } from './customer-strategy-reducer';
+export { default as GuestCredentials } from './guest-credentials';
 
 export { default as mapToInternalCustomer } from './map-to-internal-customer';

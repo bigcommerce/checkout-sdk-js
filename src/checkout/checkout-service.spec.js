@@ -1,6 +1,6 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createTimeout } from '@bigcommerce/request-sender';
-import { map } from 'lodash';
+import { map, merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
@@ -98,7 +98,7 @@ describe('CheckoutService', () => {
             ),
 
             loadCheckout: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
+                Promise.resolve(getResponse(getCheckout())),
             ),
 
             loadQuote: jest.fn(() =>
@@ -122,7 +122,14 @@ describe('CheckoutService', () => {
             ),
 
             updateBillingAddress: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout())),
+                Promise.resolve(getResponse(merge({}, getCheckout(), {
+                    customer: {
+                        email: 'foo@bar.com',
+                    },
+                    billingAddress: {
+                        email: 'foo@bar.com',
+                    },
+                })))
             ),
 
             updateShippingAddress: jest.fn(() =>
@@ -617,6 +624,21 @@ describe('CheckoutService', () => {
         });
     });
 
+    describe('#signInGuest()', () => {
+        const credentials = { email: 'foo@bar.com' };
+
+        it('stores the email in the customer store', async () => {
+            const { checkout } = await checkoutService.signInGuest(credentials);
+
+            expect(checkout.getCustomer().email).toEqual('foo@bar.com');
+        });
+
+        it('sends a request to update billing address', async () => {
+            await checkoutService.signInGuest(credentials);
+            expect(checkoutClient.updateBillingAddress).toHaveBeenCalled();
+        });
+    });
+
     describe('#signInCustomer()', () => {
         it('finds customer strategy by id', async () => {
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
@@ -764,7 +786,7 @@ describe('CheckoutService', () => {
             await checkoutService.updateBillingAddress(address, options);
 
             expect(checkoutClient.updateBillingAddress)
-                .toHaveBeenCalledWith(getCheckout().id, address, options);
+                .toHaveBeenCalledWith(getCheckout().id, { ...address, email: '' }, options);
         });
     });
 
