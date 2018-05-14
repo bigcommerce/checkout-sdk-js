@@ -22,13 +22,12 @@ import {
     ShippingStrategyActionCreator,
 } from '../shipping';
 
-import CheckoutClient from './checkout-client';
 import CheckoutService from './checkout-service';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 
 export default function createCheckoutService(options: CheckoutServiceOptions = {}): CheckoutService {
-    const client = options.client || createCheckoutClient({ locale: options.locale });
+    const client = createCheckoutClient({ locale: options.locale });
     const store = createCheckoutStore({}, { shouldWarnMutation: options.shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
 
@@ -55,7 +54,6 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
 }
 
 export interface CheckoutServiceOptions {
-    client?: CheckoutClient;
     locale?: string;
     shouldWarnMutation?: boolean;
 }

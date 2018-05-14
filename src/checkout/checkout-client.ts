@@ -13,8 +13,9 @@ import { PaymentMethodRequestSender } from '../payment';
 import { QuoteRequestSender } from '../quote';
 import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
 
-// Convert this file into TypeScript properly
-// i.e.: Response<T>
+/**
+ * @deprecated Use request senders directly
+ */
 export default class CheckoutClient {
     /**
      * @internal
