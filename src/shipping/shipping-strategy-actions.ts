@@ -16,7 +16,6 @@ export enum ShippingStrategyActionType {
 }
 
 export type ShippingStrategyAction =
-    Action |
     ShippingStrategyUpdateAddressAction |
     ShippingStrategySelectOptionAction |
     ShippingStrategyInitializeAction |

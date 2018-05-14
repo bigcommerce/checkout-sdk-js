@@ -9,7 +9,6 @@ export enum ConfigActionType {
 }
 
 export type LoadConfigAction =
-    Action |
     LoadConfigRequestedAction |
     LoadConfigSucceededAction |
     LoadConfigFailedAction;

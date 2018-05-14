@@ -1,6 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import 'rxjs/add/operator/toArray';
-import 'rxjs/add/operator/toPromise';
+import { Observable } from 'rxjs';
 
 import { CartRequestSender } from '../cart';
 import { getCart } from '../cart/carts.mock';
@@ -43,19 +42,17 @@ describe('CheckoutActionCreator', () => {
             .mockReturnValue(Promise.reject(getErrorResponse()));
 
         const actionCreator = new CheckoutActionCreator(checkoutRequestSender, cartRequestSender);
+        const errorHandler = jest.fn(action => Observable.of(action));
 
-        try {
-            const actions = await actionCreator.loadCheckout()
-                .toArray()
-                .toPromise();
+        const actions = await actionCreator.loadCheckout()
+            .catch(errorHandler)
+            .toArray()
+            .toPromise();
 
-            expect(actions).toEqual([
-                { type: CheckoutActionType.LoadCheckoutRequested },
-            ]);
-        } catch (error) {
-            expect(error).toEqual(
-                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() }
-            );
-        }
+        expect(errorHandler).toHaveBeenCalled();
+        expect(actions).toEqual([
+            { type: CheckoutActionType.LoadCheckoutRequested },
+            { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
+        ]);
     });
 });
