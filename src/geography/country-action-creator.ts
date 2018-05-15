@@ -5,6 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { CheckoutClient } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 
+import Country from './country';
 import * as actionTypes from './country-action-types';
 
 /**
@@ -15,13 +16,13 @@ export default class CountryActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    loadCountries(options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
+    loadCountries(options?: RequestOptions): Observable<Action<Country[]>> {
+        return Observable.create((observer: Observer<Action<Country[]>>) => {
             observer.next(createAction(actionTypes.LOAD_COUNTRIES_REQUESTED));
 
             this._checkoutClient.loadCountries(options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_COUNTRIES_SUCCEEDED, body.data));
+                .then(response => {
+                    observer.next(createAction(actionTypes.LOAD_COUNTRIES_SUCCEEDED, response.body.data));
                     observer.complete();
                 })
                 .catch(response => {

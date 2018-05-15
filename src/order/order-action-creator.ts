@@ -8,6 +8,7 @@ import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
+import { InternalOrderResponseData } from './internal-order-responses';
 import * as actionTypes from './order-action-types';
 import OrderRequestBody from './order-request-body';
 
@@ -23,13 +24,13 @@ export default class OrderActionCreator {
         this._cartComparator = new CartComparator();
     }
 
-    loadOrder(orderId: number, options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
+    loadOrder(orderId: number, options?: RequestOptions): Observable<Action<InternalOrderResponseData>> {
+        return Observable.create((observer: Observer<Action<InternalOrderResponseData>>) => {
             observer.next(createAction(actionTypes.LOAD_ORDER_REQUESTED));
 
             this._checkoutClient.loadOrder(orderId, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_ORDER_SUCCEEDED, body.data));
+                .then(response => {
+                    observer.next(createAction(actionTypes.LOAD_ORDER_SUCCEEDED, response.body.data));
                     observer.complete();
                 })
                 .catch(response => {
@@ -38,8 +39,8 @@ export default class OrderActionCreator {
         });
     }
 
-    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<Action>) => {
+    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<Action<InternalOrderResponseData>, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<Action<InternalOrderResponseData>>) => {
             observer.next(createAction(actionTypes.SUBMIT_ORDER_REQUESTED));
 
             const state = store.getState();
@@ -51,8 +52,8 @@ export default class OrderActionCreator {
 
             this._verifyCart(cart, options)
                 .then(() => this._checkoutClient.submitOrder(payload, options))
-                .then(({ body = {}, headers = {} }) => {
-                    observer.next(createAction(actionTypes.SUBMIT_ORDER_SUCCEEDED, body.data, { ...body.meta, token: headers.token }));
+                .then(response => {
+                    observer.next(createAction(actionTypes.SUBMIT_ORDER_SUCCEEDED, response.body.data, { ...response.body.meta, token: response.headers.token }));
                     observer.complete();
                 })
                 .catch(response => {
@@ -61,13 +62,13 @@ export default class OrderActionCreator {
         });
     }
 
-    finalizeOrder(orderId: number, options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
+    finalizeOrder(orderId: number, options?: RequestOptions): Observable<Action<InternalOrderResponseData>> {
+        return Observable.create((observer: Observer<Action<InternalOrderResponseData>>) => {
             observer.next(createAction(actionTypes.FINALIZE_ORDER_REQUESTED));
 
             this._checkoutClient.finalizeOrder(orderId, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.FINALIZE_ORDER_SUCCEEDED, body.data));
+                .then(response => {
+                    observer.next(createAction(actionTypes.FINALIZE_ORDER_SUCCEEDED, response.body.data));
                     observer.complete();
                 })
                 .catch(response => {
