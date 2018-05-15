@@ -1,4 +1,5 @@
 export * from './payment-request-options';
+export * from './payment-method-responses';
 
 export { default as createPaymentClient } from './create-payment-client';
 export { default as createPaymentStrategyRegistry } from './create-payment-strategy-registry';

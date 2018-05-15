@@ -20,8 +20,8 @@ export default class PaymentMethodActionCreator {
             observer.next(createAction(actionTypes.LOAD_PAYMENT_METHODS_REQUESTED));
 
             this._checkoutClient.loadPaymentMethods(options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED, body.data));
+                .then(response => {
+                    observer.next(createAction(actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED, response.body.data));
                     observer.complete();
                 })
                 .catch(response => {
@@ -35,8 +35,8 @@ export default class PaymentMethodActionCreator {
             observer.next(createAction(actionTypes.LOAD_PAYMENT_METHOD_REQUESTED, undefined, { methodId }));
 
             this._checkoutClient.loadPaymentMethod(methodId, options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED, body.data, { methodId }));
+                .then(response => {
+                    observer.next(createAction(actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED, response.body.data, { methodId }));
                     observer.complete();
                 })
                 .catch(response => {

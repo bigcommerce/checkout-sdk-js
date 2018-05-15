@@ -21,8 +21,8 @@ export default class ShippingCountryActionCreator {
             observer.next(createAction(actionTypes.LOAD_SHIPPING_COUNTRIES_REQUESTED));
 
             this._checkoutClient.loadShippingCountries(options)
-                .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.LOAD_SHIPPING_COUNTRIES_SUCCEEDED, body.data));
+                .then(response => {
+                    observer.next(createAction(actionTypes.LOAD_SHIPPING_COUNTRIES_SUCCEEDED, response.body.data));
                     observer.complete();
                 })
                 .catch(response => {
