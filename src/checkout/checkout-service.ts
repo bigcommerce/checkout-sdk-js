@@ -107,16 +107,6 @@ export default class CheckoutService {
             .then(() => this.getState());
     }
 
-    /**
-     * @deprecated
-     */
-    finalizeOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._orderActionCreator.finalizeOrder(orderId, options);
-
-        return this._store.dispatch(action)
-            .then(() => this.getState());
-    }
-
     finalizeOrderIfNeeded(options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.finalize(options);
 
