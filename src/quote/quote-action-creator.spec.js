@@ -15,7 +15,7 @@ describe('QuoteActionCreator', () => {
         errorResponse = getErrorResponse();
 
         checkoutClient = {
-            loadCheckout: jest.fn(() => Promise.resolve(response)),
+            loadQuote: jest.fn(() => Promise.resolve(response)),
         };
 
         quoteActionCreator = new QuoteActionCreator(checkoutClient);
@@ -36,7 +36,7 @@ describe('QuoteActionCreator', () => {
         it('emits error actions if unable to load quote', () => {
             const errorHandler = jest.fn((action) => Observable.of(action));
 
-            checkoutClient.loadCheckout.mockReturnValue(Promise.reject(errorResponse));
+            checkoutClient.loadQuote.mockReturnValue(Promise.reject(errorResponse));
 
             quoteActionCreator.loadQuote()
                 .catch(errorHandler)

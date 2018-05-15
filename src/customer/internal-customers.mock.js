@@ -1,20 +1,28 @@
 import { getCart } from '../cart/internal-carts.mock';
 import { getQuote } from '../quote/internal-quotes.mock';
+import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 
 export function getGuestCustomer() {
     return {
         addresses: [],
-        customerGroupId: 0,
-        customerGroupName: '',
         customerId: 0,
         email: 'test@bigcommerce.com',
         firstName: 'Foo',
         isGuest: true,
-        lastName: 'Bar',
         name: 'Foo Bar',
-        phoneNumber: '987654321',
         storeCredit: 0,
+    };
+}
+
+export function getCustomer() {
+    return {
+        ...getGuestCustomer(),
+        addresses: [
+            getShippingAddress(),
+        ],
+        customerId: 4,
+        isGuest: false,
     };
 }
 

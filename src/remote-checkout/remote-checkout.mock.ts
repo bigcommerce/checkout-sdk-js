@@ -1,32 +1,29 @@
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
 
-import RemoteCheckout from './remote-checkout';
-import RemoteCheckoutMeta from './remote-checkout-meta';
-import RemoteCheckoutState from './remote-checkout-state';
+import RemoteCheckoutState, { RemoteCheckoutStateData } from './remote-checkout-state';
 
 export function getRemoteCheckoutState(): RemoteCheckoutState {
     return {
-        data: {
-            billingAddress: getBillingAddress(),
-            shippingAddress: getShippingAddress(),
-        },
-        errors: {},
-        meta: getRemoteCheckoutMeta(),
-        statuses: {},
+        data: getRemoteCheckoutStateData(),
     };
 }
 
 export function getEmptyRemoteCheckoutState(): RemoteCheckoutState {
     return {
-        errors: {},
-        statuses: {},
+        data: {},
     };
 }
 
-export function getRemoteCheckoutMeta(): RemoteCheckoutMeta {
+export function getRemoteCheckoutStateData(): RemoteCheckoutStateData {
     return {
         amazon: {
+            billing: {
+                address: getBillingAddress(),
+            },
+            shipping: {
+                address: getShippingAddress(),
+            },
             referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
         },
     };

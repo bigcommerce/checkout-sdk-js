@@ -1,12 +1,12 @@
 import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { omit } from 'lodash';
+import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../../billing';
-import { UPDATE_BILLING_ADDRESS_REQUESTED } from '../../billing/billing-address-action-types';
-import { getBillingAddress } from '../../billing/internal-billing-addresses.mock';
+import { BillingAddressActionTypes } from '../../billing/billing-address-actions';
+import { getBillingAddress } from '../../billing/billing-addresses.mock';
 import { getCartResponseBody } from '../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
@@ -30,7 +30,7 @@ import {
     INITIALIZE_REMOTE_BILLING_REQUESTED,
     INITIALIZE_REMOTE_PAYMENT_REQUESTED,
 } from '../../remote-checkout/remote-checkout-action-types';
-import { getRemoteCheckoutMeta, getRemoteCheckoutState } from '../../remote-checkout/remote-checkout.mock';
+import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../remote-checkout/remote-checkout.mock';
 import PaymentMethod from '../payment-method';
 
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
@@ -107,13 +107,13 @@ describe('AmazonPayPaymentStrategy', () => {
 
         orderReference = {
             getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
-            getAmazonOrderReferenceId: () => getRemoteCheckoutMeta().amazon.referenceId,
+            getAmazonOrderReferenceId: () => getRemoteCheckoutStateData().amazon.referenceId,
         };
 
         paymentMethod = getAmazonPay();
         initializeBillingAction = Observable.of(createAction(INITIALIZE_REMOTE_BILLING_REQUESTED));
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
-        updateAddressAction = Observable.of(createAction(UPDATE_BILLING_ADDRESS_REQUESTED));
+        updateAddressAction = Observable.of(createAction(BillingAddressActionTypes.UpdateBillingAddressRequested));
         submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
 
         container.setAttribute('id', 'wallet');
@@ -154,7 +154,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('creates wallet widget with required properties', async () => {
-        const { referenceId } = getRemoteCheckoutMeta().amazon;
+        const { referenceId } = getRemoteCheckoutStateData().amazon;
         const { merchantId } = paymentMethod.config;
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
@@ -174,7 +174,7 @@ describe('AmazonPayPaymentStrategy', () => {
         const { merchantId } = paymentMethod.config;
 
         strategy = new AmazonPayPaymentStrategy(
-            createCheckoutStore({ remoteCheckout: {}, paymentMethods: getPaymentMethodsState() }),
+            createCheckoutStore({ remoteCheckout: { data: {} }, paymentMethods: getPaymentMethodsState() }),
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
@@ -196,22 +196,22 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('sets order reference id when order reference gets created', async () => {
         strategy = new AmazonPayPaymentStrategy(
-            createCheckoutStore({ remoteCheckout: {}, paymentMethods: getPaymentMethodsState() }),
+            createCheckoutStore({ remoteCheckout: { data: {} }, paymentMethods: getPaymentMethodsState() }),
             orderActionCreator,
             billingAddressActionCreator,
             remoteCheckoutActionCreator,
             scriptLoader
         );
 
-        jest.spyOn(remoteCheckoutActionCreator, 'setCheckoutMeta');
+        jest.spyOn(remoteCheckoutActionCreator, 'updateCheckout');
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
         document.getElementById('wallet').dispatchEvent(new CustomEvent('orderReferenceCreate'));
 
-        expect(remoteCheckoutActionCreator.setCheckoutMeta)
+        expect(remoteCheckoutActionCreator.updateCheckout)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getRemoteCheckoutMeta().amazon.referenceId,
+                referenceId: getRemoteCheckoutStateData().amazon.referenceId,
             });
     });
 
@@ -268,7 +268,7 @@ describe('AmazonPayPaymentStrategy', () => {
     it('reinitializes payment method before submitting order', async () => {
         const payload = getOrderRequestBody();
         const options = { methodId: paymentMethod.id };
-        const { referenceId } = getRemoteCheckoutMeta().amazon;
+        const { referenceId } = getRemoteCheckoutStateData().amazon;
 
         jest.spyOn(store, 'dispatch');
 
@@ -329,7 +329,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         expect(remoteCheckoutActionCreator.initializeBilling)
             .toHaveBeenCalledWith(paymentMethod.id, expect.objectContaining({
-                referenceId: getRemoteCheckoutMeta().amazon.referenceId,
+                referenceId: getRemoteCheckoutStateData().amazon.referenceId,
             }));
 
         expect(billingAddressActionCreator.updateAddress)
@@ -376,12 +376,9 @@ describe('AmazonPayPaymentStrategy', () => {
             },
             quote: getQuoteState(),
             paymentMethods: getPaymentMethodsState(),
-            remoteCheckout: {
-                ...getRemoteCheckoutState(),
-                data: {
-                    billingAddress: undefined,
-                },
-            },
+            remoteCheckout: merge({}, getRemoteCheckoutState(), {
+                data: { amazon: { billing: { address: undefined } } },
+            }),
         });
 
         strategy = new AmazonPayPaymentStrategy(

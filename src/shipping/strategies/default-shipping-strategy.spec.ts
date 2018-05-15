@@ -2,61 +2,57 @@ import { createAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
-import { getShippingAddress } from '../internal-shipping-addresses.mock';
+import ConsignmentActionCreator from '../consignment-action-creator';
+import { ConsignmentActionTypes } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
-import ShippingAddressActionCreator from '../shipping-address-action-creator';
-import { UPDATE_SHIPPING_ADDRESS_REQUESTED } from '../shipping-address-action-types';
-import ShippingOptionActionCreator from '../shipping-option-action-creator';
-import { SELECT_SHIPPING_OPTION_REQUESTED } from '../shipping-option-action-types';
+import { getShippingAddress } from '../shipping-addresses.mock';
 
 import DefaultShippingStrategy from './default-shipping-strategy';
 
 describe('DefaultShippingStrategy', () => {
     let client: CheckoutClient;
     let store: CheckoutStore;
-    let addressActionCreator: ShippingAddressActionCreator;
-    let optionActionCreator: ShippingOptionActionCreator;
+    let consignmentActionCreator: ConsignmentActionCreator;
 
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore();
-        addressActionCreator = new ShippingAddressActionCreator(client);
-        optionActionCreator = new ShippingOptionActionCreator(client);
+        consignmentActionCreator = new ConsignmentActionCreator(client);
     });
 
     it('updates shipping address', async () => {
-        const strategy = new DefaultShippingStrategy(store, addressActionCreator, optionActionCreator);
+        const strategy = new DefaultShippingStrategy(store, consignmentActionCreator);
         const address = getShippingAddress();
         const options = {};
-        const action = Observable.of(createAction(UPDATE_SHIPPING_ADDRESS_REQUESTED));
+        const action = Observable.of(createAction(ConsignmentActionTypes.CreateConsignmentsRequested));
 
-        jest.spyOn(addressActionCreator, 'updateAddress')
+        jest.spyOn(consignmentActionCreator, 'updateAddress')
             .mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
 
         const output = await strategy.updateAddress(address, options);
 
-        expect(addressActionCreator.updateAddress).toHaveBeenCalledWith(address, options);
+        expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith(address, options);
         expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });
 
     it('selects shipping option', async () => {
-        const strategy = new DefaultShippingStrategy(store, addressActionCreator, optionActionCreator);
+        const strategy = new DefaultShippingStrategy(store, consignmentActionCreator);
         const address = getShippingAddress();
         const method = getFlatRateOption();
         const options = {};
-        const action = Observable.of(createAction(SELECT_SHIPPING_OPTION_REQUESTED));
+        const action = Observable.of(createAction(ConsignmentActionTypes.UpdateConsignmentRequested));
 
-        jest.spyOn(optionActionCreator, 'selectShippingOption')
+        jest.spyOn(consignmentActionCreator, 'selectShippingOption')
             .mockReturnValue(action);
 
         jest.spyOn(store, 'dispatch');
 
-        const output = await strategy.selectOption(address.id, method.id, options);
+        const output = await strategy.selectOption(method.id, options);
 
-        expect(optionActionCreator.selectShippingOption).toHaveBeenCalledWith(address.id, method.id, options);
+        expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(method.id, options);
         expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });

@@ -13,6 +13,7 @@ import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
+import CheckoutSelector from './checkout-selector';
 import { CheckoutStoreOptions } from './checkout-store';
 import CheckoutStoreState from './checkout-store-state';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
@@ -20,6 +21,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default function createInternalCheckoutSelectors(state: CheckoutStoreState, options: CheckoutStoreOptions = {}): InternalCheckoutSelectors {
     const billingAddress = new BillingAddressSelector(state.quote);
     const cart = new CartSelector(state.cart);
+    const checkout = new CheckoutSelector(state.checkout);
     const config = new ConfigSelector(state.config);
     const countries = new CountrySelector(state.countries);
     const coupons = new CouponSelector(state.coupons);
@@ -32,7 +34,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
     const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
     const quote = new QuoteSelector(state.quote);
-    const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout, state.customer);
+    const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingAddress = new ShippingAddressSelector(state.quote);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
@@ -41,6 +43,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const selectors = {
         billingAddress,
         cart,
+        checkout,
         config,
         countries,
         coupons,

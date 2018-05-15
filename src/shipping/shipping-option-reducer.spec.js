@@ -1,13 +1,13 @@
-import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { getCheckout } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import { getShippingAddressResponseBody } from './internal-shipping-addresses.mock';
-import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as quoteActionTypes from '../quote/quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import shippingOptionReducer from './shipping-option-reducer';
+import { CheckoutActionType } from '../checkout';
 
 describe('shippingOptionReducer()', () => {
     let initialState;
@@ -32,17 +32,6 @@ describe('shippingOptionReducer()', () => {
         }));
     });
 
-    it('returns new shipping option data if customer has signed in successfully', () => {
-        const action = {
-            type: customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED,
-            payload: getCustomerResponseBody().data,
-        };
-
-        expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.shippingOptions,
-        }));
-    });
-
     it('returns new shipping option data if customer has signed out successfully', () => {
         const action = {
             type: customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED,
@@ -56,7 +45,7 @@ describe('shippingOptionReducer()', () => {
 
     it('returns a loading state if fetching shipping options', () => {
         const action = {
-            type: shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_REQUESTED,
+            type: CheckoutActionType.LoadCheckoutRequested,
         };
 
         expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -67,18 +56,18 @@ describe('shippingOptionReducer()', () => {
 
     it('returns new shipping option data if it loads correctly', () => {
         const action = {
-            type: shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED,
-            payload: getShippingOptionResponseBody().data,
+            type: CheckoutActionType.LoadCheckoutSucceeded,
+            payload: getCheckout(),
         };
 
         expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.shippingOptions,
+            data: getShippingOptions(),
         }));
     });
 
     it('returns an error state if shipping options can not be fetched', () => {
         const action = {
-            type: shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_FAILED,
+            type: CheckoutActionType.LoadCheckoutFailed,
             payload: getErrorResponse(),
         };
 
@@ -88,26 +77,25 @@ describe('shippingOptionReducer()', () => {
         }));
     });
 
-    it('returns new shipping option data when a selection succedes', () => {
+    it('returns a new state when updating consignments', () => {
         const action = {
-            type: shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED,
-            payload: getShippingOptionResponseBody().data,
+            type: ConsignmentActionTypes.UpdateConsignmentSucceeded,
+            payload: getCheckout(),
         };
 
         expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.shippingOptions,
+            data: getShippingOptions(),
         }));
     });
 
-    it('returns a new state when updating shipping address', () => {
-        const response = getShippingAddressResponseBody();
+    it('returns a new state when creating consignments', () => {
         const action = {
-            type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-            payload: response.data,
+            type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
+            payload: getCheckout(),
         };
 
         expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.shippingOptions,
+            data: getShippingOptions(),
         }));
     });
 });

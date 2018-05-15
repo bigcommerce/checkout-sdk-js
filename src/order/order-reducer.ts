@@ -4,9 +4,9 @@ import { CheckoutActionType } from '../checkout';
 import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 
-import InternalIncompleteOrder from './internal-incomplete-order';
-import InternalOrder from './internal-order';
+import InternalOrder, { InternalIncompleteOrder } from './internal-order';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import mapToInternalOrder from './map-to-internal-order';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 
 const DEFAULT_STATE: OrderState = {
@@ -36,6 +36,9 @@ function dataReducer(data: InternalOrder | InternalIncompleteOrder | undefined, 
         return data ? { ...data, ...mapToInternalIncompleteOrder(action.payload, data) } : data;
 
     case orderActionTypes.LOAD_ORDER_SUCCEEDED:
+        return data ? mapToInternalOrder(action.payload, data as InternalOrder) : data;
+
+    case orderActionTypes.LOAD_INTERNAL_ORDER_SUCCEEDED:
     case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
     case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
@@ -49,7 +52,11 @@ function dataReducer(data: InternalOrder | InternalIncompleteOrder | undefined, 
 function metaReducer(meta: OrderMetaState | undefined, action: Action): OrderMetaState | undefined {
     switch (action.type) {
     case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
-        return { ...meta, ...action.meta };
+        return {
+            ...meta,
+            ...action.meta,
+            payment: action.payload.order && action.payload.order.payment,
+        };
 
     default:
         return meta;

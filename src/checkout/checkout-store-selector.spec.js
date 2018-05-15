@@ -1,4 +1,5 @@
 import { find, reject } from 'lodash';
+import { getCheckout } from './checkouts.mock';
 import { getCheckoutStoreState } from './checkouts.mock';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
@@ -14,6 +15,10 @@ describe('CheckoutStoreSelector', () => {
     beforeEach(() => {
         state = getCheckoutStoreState();
         selector = new CheckoutStoreSelector(createInternalCheckoutSelectors(state));
+    });
+
+    it('returns checkout data', () => {
+        expect(selector.getCheckout()).toEqual(getCheckout());
     });
 
     it('returns order', () => {

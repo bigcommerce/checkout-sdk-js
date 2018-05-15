@@ -4,18 +4,19 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
 import { getCompleteOrder } from '../order/internal-orders.mock';
+import { getCheckout } from './checkouts.mock';
 import { getCountries } from '../geography/countries.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
 import { getQuote } from '../quote/internal-quotes.mock';
-import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import CheckoutClient from './checkout-client';
+import { getConsignmentRequestBody } from '../shipping/consignments.mock';
 
 describe('CheckoutClient', () => {
     let client;
     let billingAddressRequestSender;
     let cartRequestSender;
+    let checkoutRequestSender;
     let configRequestSender;
     let countryRequestSender;
     let couponRequestSender;
@@ -24,17 +25,21 @@ describe('CheckoutClient', () => {
     let orderRequestSender;
     let paymentMethodRequestSender;
     let quoteRequestSender;
-    let shippingAddressRequestSender;
+    let consignmentRequestSender;
     let shippingCountryRequestSender;
-    let shippingOptionRequestSender;
 
     beforeEach(() => {
         billingAddressRequestSender = {
-            updateAddress: jest.fn(() => Promise.resolve(getResponse(getBillingAddress()))),
+            updateAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
+            createAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
         };
 
         cartRequestSender = {
             loadCart: jest.fn(() => Promise.resolve(getResponse(getCart()))),
+        };
+
+        checkoutRequestSender = {
+            loadCheckout: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
         };
 
         configRequestSender = {
@@ -85,19 +90,16 @@ describe('CheckoutClient', () => {
             loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
         };
 
-        shippingAddressRequestSender = {
-            updateAddress: jest.fn(() => Promise.resolve(getResponse(getShippingAddress()))),
-        };
-
-        shippingOptionRequestSender = {
-            loadShippingOptions: jest.fn(() => Promise.resolve(getShippingOptions())),
-            selectShippingOption: jest.fn(() => Promise.resolve(getShippingOptions())),
+        consignmentRequestSender = {
+            createConsignments: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
         };
 
         client = new CheckoutClient(
             billingAddressRequestSender,
             cartRequestSender,
+            checkoutRequestSender,
             configRequestSender,
+            consignmentRequestSender,
             countryRequestSender,
             couponRequestSender,
             customerRequestSender,
@@ -105,15 +107,13 @@ describe('CheckoutClient', () => {
             orderRequestSender,
             paymentMethodRequestSender,
             quoteRequestSender,
-            shippingAddressRequestSender,
-            shippingCountryRequestSender,
-            shippingOptionRequestSender,
+            shippingCountryRequestSender
         );
     });
 
-    describe('#loadCheckout()', () => {
+    describe('#loadQuote()', () => {
         it('loads checkout', async () => {
-            const output = await client.loadCheckout();
+            const output = await client.loadQuote();
 
             expect(output).toEqual(getResponse(getQuote()));
             expect(quoteRequestSender.loadQuote).toHaveBeenCalled();
@@ -121,7 +121,7 @@ describe('CheckoutClient', () => {
 
         it('loads checkout with timeout', async () => {
             const options = { timeout: createTimeout() };
-            const output = await client.loadCheckout(options);
+            const output = await client.loadQuote(options);
 
             expect(output).toEqual(getResponse(getQuote()));
             expect(quoteRequestSender.loadQuote).toHaveBeenCalledWith(options);
@@ -266,28 +266,29 @@ describe('CheckoutClient', () => {
         });
     });
 
-    describe('#updateShippingAddress()', () => {
-        let address;
+    describe('#createConsignments()', () => {
+        const checkoutId = 'foo';
+        let consignments;
         let options;
 
         beforeEach(() => {
-            address = getShippingAddress();
+            consignments = [getConsignmentRequestBody()];
             options = {
                 timeout: createTimeout(),
             };
         });
 
-        it('updates the shipping address', async () => {
-            await client.updateShippingAddress(address, options);
+        it('calls consignment request sender', async () => {
+            await client.createConsignments(checkoutId, consignments, options);
 
-            expect(shippingAddressRequestSender.updateAddress)
-                .toHaveBeenCalledWith(address, options);
+            expect(consignmentRequestSender.createConsignments)
+                .toHaveBeenCalledWith(checkoutId, consignments, options);
         });
 
         it('returns the shipping address', async () => {
-            const output = await client.updateShippingAddress(address, options);
+            const output = await client.createConsignments(checkoutId, consignments, options);
 
-            expect(output).toEqual(getResponse(address));
+            expect(output).toEqual(getResponse(getCheckout()));
         });
     });
 
@@ -303,16 +304,41 @@ describe('CheckoutClient', () => {
         });
 
         it('updates the billing address', async () => {
-            await client.updateBillingAddress(address, options);
+            await client.updateBillingAddress('foo', address, options);
 
             expect(billingAddressRequestSender.updateAddress)
-                .toHaveBeenCalledWith(address, options);
+                .toHaveBeenCalledWith('foo', address, options);
         });
 
         it('returns the billing address', async () => {
-            const output = await client.updateBillingAddress(address, options);
+            const output = await client.updateBillingAddress('foo', address, options);
 
-            expect(output).toEqual(getResponse(address));
+            expect(output).toEqual(getResponse(getCheckout()));
+        });
+    });
+
+    describe('#createBillingAddress()', () => {
+        let address;
+        let options;
+
+        beforeEach(() => {
+            address = getBillingAddress();
+            options = {
+                timeout: createTimeout(),
+            };
+        });
+
+        it('creates the billing address', async () => {
+            await client.createBillingAddress('foo', address, options);
+
+            expect(billingAddressRequestSender.createAddress)
+                .toHaveBeenCalledWith('foo', address, options);
+        });
+
+        it('creates the billing address', async () => {
+            const output = await client.createBillingAddress('foo', address, options);
+
+            expect(output).toEqual(getResponse(getCheckout()));
         });
     });
 
@@ -352,64 +378,43 @@ describe('CheckoutClient', () => {
         });
     });
 
-    describe('#loadShippingOptions()', () => {
-        it('loads available shipping options', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.loadShippingOptions(options);
-
-            expect(output).toEqual(getShippingOptions());
-            expect(shippingOptionRequestSender.loadShippingOptions).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#selectShippingOption()', () => {
-        it('selects shipping option', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.selectShippingOption('addressId', 'shippingOptionId', options);
-
-            expect(output).toEqual(getShippingOptions());
-            expect(shippingOptionRequestSender.selectShippingOption)
-                .toHaveBeenCalledWith('addressId', 'shippingOptionId', options);
-        });
-    });
-
     describe('#applyCoupon()', () => {
         it('applies a coupon code', async () => {
-            const output = await client.applyCoupon('couponCode1234');
+            const output = await client.applyCoupon('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(couponRequestSender.applyCoupon)
-                .toHaveBeenCalledWith('couponCode1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#removeCoupon()', () => {
         it('removes a coupon code', async () => {
-            const output = await client.removeCoupon('couponCode1234');
+            const output = await client.removeCoupon('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(couponRequestSender.removeCoupon)
-                .toHaveBeenCalledWith('couponCode1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#applyGiftCertificate()', () => {
         it('applies a gift certificate', async () => {
-            const output = await client.applyGiftCertificate('giftCertificate1234');
+            const output = await client.applyGiftCertificate('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(giftCertificateRequestSender.applyGiftCertificate)
-                .toHaveBeenCalledWith('giftCertificate1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 
     describe('#removeGiftCertificate()', () => {
         it('removes a gift certificate', async () => {
-            const output = await client.removeGiftCertificate('giftCertificate1234');
+            const output = await client.removeGiftCertificate('foo', 'bar');
 
             expect(output).toEqual(getCartResponseBody());
             expect(giftCertificateRequestSender.removeGiftCertificate)
-                .toHaveBeenCalledWith('giftCertificate1234', undefined);
+                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 

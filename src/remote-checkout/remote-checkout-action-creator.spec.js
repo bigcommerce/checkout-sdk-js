@@ -121,6 +121,7 @@ describe('RemoteCheckoutActionCreator', () => {
             .toArray()
             .toPromise();
 
+        expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
             { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED, meta: { methodId: 'amazon' } },
             { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED, error: true, payload: response, meta: { methodId: 'amazon' } },
@@ -140,8 +141,8 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(requestSender.signOut).toHaveBeenCalledWith('amazon', options);
         expect(actions).toEqual([
-            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED },
-            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED },
+            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED, meta: { methodId: 'amazon' } },
+            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -157,19 +158,21 @@ describe('RemoteCheckoutActionCreator', () => {
             .toArray()
             .toPromise();
 
+        expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
-            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED },
-            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_FAILED, error: true, payload: response },
+            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED, meta: { methodId: 'amazon' } },
+            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_FAILED, error: true, payload: response, meta: { methodId: 'amazon' } },
         ]);
     });
 
     it('returns action to set meta for provider', () => {
         const meta = { referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' };
 
-        expect(actionCreator.setCheckoutMeta('amazon', meta))
+        expect(actionCreator.updateCheckout('amazon', meta))
             .toEqual({
-                type: actionTypes.SET_REMOTE_CHECKOUT_META,
-                payload: { amazon: meta },
+                type: actionTypes.UPDATE_REMOTE_CHECKOUT,
+                payload: meta,
+                meta: { methodId: 'amazon' },
             });
     });
 });
