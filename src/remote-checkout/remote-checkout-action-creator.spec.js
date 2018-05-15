@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
+import { Observable } from 'rxjs';
 import { getRemoteBillingResponseBody, getRemoteShippingResponseBody, getRemotePaymentResponseBody } from './remote-checkout.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './remote-checkout-action-types';
@@ -36,7 +36,7 @@ describe('RemoteCheckoutActionCreator', () => {
 
     it('emits error action if unable to initialize billing', async () => {
         const response = getErrorResponse();
-        const errorHandler = jest.fn((action) => Observable.of(action));
+        const errorHandler = jest.fn(action => Observable.of(action));
 
         jest.spyOn(requestSender, 'initializeBilling')
             .mockReturnValue(Promise.reject(response));
@@ -74,7 +74,7 @@ describe('RemoteCheckoutActionCreator', () => {
 
     it('emits error action if unable to initialize shipping', async () => {
         const response = getErrorResponse();
-        const errorHandler = jest.fn((action) => Observable.of(action));
+        const errorHandler = jest.fn(action => Observable.of(action));
 
         jest.spyOn(requestSender, 'initializeShipping')
             .mockReturnValue(Promise.reject(response));
@@ -111,7 +111,7 @@ describe('RemoteCheckoutActionCreator', () => {
 
     it('emits error action if unable to initialize payment', async () => {
         const response = getErrorResponse();
-        const errorHandler = jest.fn((action) => Observable.of(action));
+        const errorHandler = jest.fn(action => Observable.of(action));
 
         jest.spyOn(requestSender, 'initializePayment')
             .mockReturnValue(Promise.reject(response));
@@ -148,7 +148,7 @@ describe('RemoteCheckoutActionCreator', () => {
 
     it('emits error action if unable to sign out', async () => {
         const response = getErrorResponse();
-        const errorHandler = jest.fn((action) => Observable.of(action));
+        const errorHandler = jest.fn(action => Observable.of(action));
 
         jest.spyOn(requestSender, 'signOut')
             .mockReturnValue(Promise.reject(response));

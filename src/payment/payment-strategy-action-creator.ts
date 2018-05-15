@@ -1,7 +1,6 @@
-import 'rxjs/add/observable/empty';
-import 'rxjs/add/operator/concat';
-
 import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
+import { concat } from 'rxjs/observable/concat';
+import { empty } from 'rxjs/observable/empty';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -63,8 +62,10 @@ export default class PaymentStrategyActionCreator {
                     });
             });
 
-            return this._loadOrder(store, options)
-                .concat(executeAction);
+            return concat(
+                this._loadOrder(store, options),
+                executeAction
+            );
         };
     }
 
@@ -102,8 +103,10 @@ export default class PaymentStrategyActionCreator {
                     });
             });
 
-            return this._loadOrder(store, options)
-                .concat(finalizeAction);
+            return concat(
+                this._loadOrder(store, options),
+                finalizeAction
+            );
         };
     }
 
@@ -164,7 +167,7 @@ export default class PaymentStrategyActionCreator {
         }
 
         if (!checkout.orderId) {
-            return Observable.empty();
+            return empty();
         }
 
         return this._orderActionCreator.loadOrder(checkout.orderId, { ...options, params: { include: ['payments'] } });

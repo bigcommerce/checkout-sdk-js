@@ -1,8 +1,5 @@
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/toArray';
-import 'rxjs/add/operator/toPromise';
-
-import { Observable } from 'rxjs/Observable';
+import { createRequestSender } from '@bigcommerce/request-sender';
+import { Observable } from 'rxjs';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 

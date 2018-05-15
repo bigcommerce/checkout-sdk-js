@@ -1,9 +1,7 @@
-import 'rxjs/add/observable/of';
-
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import { getCheckoutState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';

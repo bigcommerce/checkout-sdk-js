@@ -4,12 +4,12 @@ import { AddressRequestBody } from '../address';
 import { BillingAddressRequestSender } from '../billing';
 import { CartRequestSender } from '../cart';
 import { RequestOptions } from '../common/http-request';
-import { ConfigRequestSender } from '../config';
+import { Config, ConfigRequestSender } from '../config';
 import { CouponRequestSender, GiftCertificateRequestSender } from '../coupon';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
-import { CountryRequestSender } from '../geography';
-import { OrderParams, OrderRequestBody, OrderRequestSender } from '../order';
-import { PaymentMethodRequestSender } from '../payment';
+import { CountryRequestSender, CountryResponseBody } from '../geography';
+import { InternalOrderResponseBody, Order, OrderParams, OrderRequestBody, OrderRequestSender } from '../order';
+import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
 import { QuoteRequestSender } from '../quote';
 import {
     ConsignmentsRequestBody,
@@ -56,7 +56,7 @@ export default class CheckoutClient {
         return this._cartRequestSender.loadCart(options);
     }
 
-    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Promise<Response> {
+    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Promise<Response<Order>> {
         return this._orderRequestSender.loadOrder(orderId, options);
     }
 
@@ -64,31 +64,31 @@ export default class CheckoutClient {
      * @deprecated
      * Remove once we fully transition to Storefront API
      */
-    loadInternalOrder(orderId: number, options?: RequestOptions): Promise<Response> {
+    loadInternalOrder(orderId: number, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
         return this._orderRequestSender.loadInternalOrder(orderId, options);
     }
 
-    submitOrder(body: OrderRequestBody, options?: RequestOptions): Promise<Response> {
+    submitOrder(body: OrderRequestBody, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
         return this._orderRequestSender.submitOrder(body, options);
     }
 
-    finalizeOrder(orderId: number, options?: RequestOptions): Promise<Response> {
+    finalizeOrder(orderId: number, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
         return this._orderRequestSender.finalizeOrder(orderId, options);
     }
 
-    loadPaymentMethods(options?: RequestOptions): Promise<Response> {
+    loadPaymentMethods(options?: RequestOptions): Promise<Response<PaymentMethodsResponseBody>> {
         return this._paymentMethodRequestSender.loadPaymentMethods(options);
     }
 
-    loadPaymentMethod(methodId: string, options?: RequestOptions): Promise<Response> {
+    loadPaymentMethod(methodId: string, options?: RequestOptions): Promise<Response<PaymentMethodResponseBody>> {
         return this._paymentMethodRequestSender.loadPaymentMethod(methodId, options);
     }
 
-    loadCountries(options?: RequestOptions): Promise<Response> {
+    loadCountries(options?: RequestOptions): Promise<Response<CountryResponseBody>> {
         return this._countryRequestSender.loadCountries(options);
     }
 
-    loadShippingCountries(options?: RequestOptions): Promise<Response> {
+    loadShippingCountries(options?: RequestOptions): Promise<Response<CountryResponseBody>> {
         return this._shippingCountryRequestSender.loadCountries(options);
     }
 
@@ -132,7 +132,7 @@ export default class CheckoutClient {
         return this._giftCertificateRequestSender.removeGiftCertificate(checkoutId, code, options);
     }
 
-    loadConfig(options?: RequestOptions): Promise<Response> {
+    loadConfig(options?: RequestOptions): Promise<Response<Config>> {
         return this._configRequestSender.loadConfig(options);
     }
 }

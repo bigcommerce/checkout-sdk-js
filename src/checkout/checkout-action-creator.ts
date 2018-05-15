@@ -1,6 +1,3 @@
-import 'rxjs/add/observable/empty';
-import 'rxjs/add/operator/concat';
-
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
