@@ -6,9 +6,8 @@ import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
 import CheckoutClient from '../../checkout/checkout-client';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getWepay } from '../../payment/payment-methods.mock';
 import { WepayRiskClient } from '../../remote-checkout/methods/wepay';
 import { CreditCard } from '../payment';
@@ -61,7 +60,7 @@ describe('WepayPaymentStrategy', () => {
             },
         });
 
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         jest.spyOn(wepayRiskClient, 'initialize')

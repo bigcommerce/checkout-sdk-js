@@ -4,8 +4,7 @@ import { merge } from 'lodash';
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody, getIncompleteOrder, getIncompleteOrderState, getSubmittedOrder } from '../../order/internal-orders.mock';
-import { FINALIZE_ORDER_REQUESTED, SUBMIT_ORDER_SUCCEEDED } from '../../order/order-action-types';
-import { OrderActionCreator } from '../../order';
+import { OrderActionCreator, OrderActionType } from '../../order';
 import { getPaypalExpress, getPaymentMethodsState } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalExpressPaymentStrategy from './paypal-express-payment-strategy';
@@ -50,8 +49,8 @@ describe('PaypalExpressPaymentStrategy', () => {
         store = createCheckoutStore(state);
 
         paymentMethod = getPaypalExpress();
-        finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_SUCCEEDED, { order }));
+        finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderSucceeded, { order }));
 
         order = merge({}, getSubmittedOrder(), {
             payment: {
