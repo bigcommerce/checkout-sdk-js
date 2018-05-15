@@ -92,9 +92,17 @@ describe('BillingAddressActionCreator', () => {
 
                 expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(getCheckout().id, address, {});
             });
+
+            it('sends request to update email', async () => {
+                const payload = { email: 'foo' };
+                await Observable.from(billingAddressActionCreator.updateAddress(payload, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(getCheckout().id, payload, {});
+            });
         });
 
-        describe('when store has checkout and billing address data from quoteqgiq', () => {
+        describe('when store has checkout and billing address data from quote', () => {
             beforeEach(() => {
                 store = createCheckoutStore({
                     quote: getQuoteState(),
@@ -132,7 +140,7 @@ describe('BillingAddressActionCreator', () => {
                 ]);
             });
 
-            it('sends request to update billing address', async () => {
+            it('sends request to update billing address, using customer email if not provided', async () => {
                 await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
@@ -141,6 +149,39 @@ describe('BillingAddressActionCreator', () => {
                     {
                         ...address,
                         email: 'test@bigcommerce.com',
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+
+            it('sends request to update billing address, using blank email when provided', async () => {
+                const email = '';
+                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                    .toPromise();
+
+
+                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email,
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+
+            it('sends request to update billing address, using provided email', async () => {
+                const email = 'foo@bar.com';
+                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email,
                         id: '55c96cda6f04c',
                     },
                     {}

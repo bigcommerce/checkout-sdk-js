@@ -4,7 +4,7 @@ import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator } from '../customer';
+import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
@@ -183,6 +183,13 @@ export default class CheckoutService {
         const action = this._customerStrategyActionCreator.deinitialize(options);
 
         return this._store.dispatch(action, { queueId: 'customerStrategy' })
+            .then(() => this.getState());
+    }
+
+    signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._billingAddressActionCreator.updateAddress(credentials, options);
+
+        return this._store.dispatch(action)
             .then(() => this.getState());
     }
 
