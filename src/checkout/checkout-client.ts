@@ -64,7 +64,7 @@ export default class CheckoutClient {
      * @deprecated
      * Remove once we fully transition to Storefront API
      */
-    loadInternalOrder(orderId: number, options?: RequestOptions): Promise<Response> {
+    loadInternalOrder(orderId: number, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
         return this._orderRequestSender.loadInternalOrder(orderId, options);
     }
 

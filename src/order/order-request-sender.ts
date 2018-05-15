@@ -24,7 +24,7 @@ export default class OrderRequestSender {
         });
     }
 
-    loadInternalOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response> {
+    loadInternalOrder(orderId: number, { timeout }: RequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
         const url = `/internalapi/v1/checkout/order/${orderId}`;
 
         return this._requestSender.get(url, { timeout });
