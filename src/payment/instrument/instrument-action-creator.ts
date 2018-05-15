@@ -6,7 +6,7 @@ import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../../checkout
 import { addMinutes, isFuture } from '../../common/date-time';
 import { MissingDataError } from '../../common/error/errors';
 
-import Instrument, { InstrumentRequestContext, VaultAccessToken } from './instrument';
+import Instrument, { SessionContext, VaultAccessToken } from './instrument';
 import * as actionTypes from './instrument-action-types';
 import InstrumentRequestSender from './instrument-request-sender';
 
@@ -16,15 +16,18 @@ export default class InstrumentActionCreator {
     ) {}
 
     loadInstruments(): ThunkAction<Action, InternalCheckoutSelectors> {
-        return store =>
-            Observable.create((observer: Observer<Action>) => {
+        return store => Observable.create((observer: Observer<Action>) => {
                 observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_REQUESTED));
 
-                const { token, storeId, customerId } = this._getInstrumentState(store);
+                const session = this._getSessionContext(store);
+                const token = this._getCurrentAccessToken(store);
 
                 return this._getValidAccessToken(token)
                     .then(currentToken =>
-                        this._instrumentRequestSender.getInstruments(storeId, customerId, currentToken.vaultAccessToken)
+                        this._instrumentRequestSender.getInstruments({
+                            ...session,
+                            vaultAccessToken: currentToken.vaultAccessToken,
+                        })
                             .then(({ body }) => {
                                 observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, body, currentToken));
                                 observer.complete();
@@ -37,15 +40,15 @@ export default class InstrumentActionCreator {
     }
 
     vaultInstrument(instrument: Instrument): ThunkAction<Action, InternalCheckoutSelectors> {
-        return store =>
-            Observable.create((observer: Observer<Action>) => {
+        return store => Observable.create((observer: Observer<Action>) => {
                 observer.next(createAction(actionTypes.VAULT_INSTRUMENT_REQUESTED));
 
-                const { token, storeId, customerId } = this._getInstrumentState(store);
+                const session = this._getSessionContext(store);
+                const token = this._getCurrentAccessToken(store);
 
                 return this._getValidAccessToken(token)
                     .then(currentToken =>
-                        this._instrumentRequestSender.vaultInstrument(storeId, customerId, instrument, currentToken.vaultAccessToken)
+                        this._instrumentRequestSender.vaultInstrument({ ...session, vaultAccessToken: currentToken.vaultAccessToken }, instrument)
                             .then(({ body }) => {
                                 observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, body, currentToken));
                                 observer.complete();
@@ -58,15 +61,15 @@ export default class InstrumentActionCreator {
     }
 
     deleteInstrument(instrumentId: string): ThunkAction<Action, InternalCheckoutSelectors> {
-        return store =>
-            Observable.create((observer: Observer<Action>) => {
+        return store => Observable.create((observer: Observer<Action>) => {
                 observer.next(createAction(actionTypes.DELETE_INSTRUMENT_REQUESTED, undefined, { instrumentId }));
 
-                const { token, storeId, customerId } = this._getInstrumentState(store);
+                const session = this._getSessionContext(store);
+                const token = this._getCurrentAccessToken(store);
 
                 return this._getValidAccessToken(token)
                     .then(currentToken =>
-                        this._instrumentRequestSender.deleteInstrument(storeId, customerId, currentToken.vaultAccessToken, instrumentId)
+                        this._instrumentRequestSender.deleteInstrument({ ...session, vaultAccessToken: currentToken.vaultAccessToken }, instrumentId)
                             .then(() => {
                                 observer.next(createAction(actionTypes.DELETE_INSTRUMENT_SUCCEEDED, undefined, {
                                     instrumentId,
@@ -92,6 +95,16 @@ export default class InstrumentActionCreator {
         return isFuture(expiry);
     }
 
+    private _getCurrentAccessToken(store: ReadableCheckoutStore): VaultAccessToken {
+        const { instruments } = store.getState();
+        const { vaultAccessToken = null, vaultAccessExpiry = null } = instruments.getInstrumentsMeta() || {};
+
+        return {
+            vaultAccessToken,
+            vaultAccessExpiry,
+        };
+    }
+
     private _getValidAccessToken(token: VaultAccessToken): Promise<VaultAccessToken> {
         return this._isValidVaultAccessToken(token)
             ? Promise.resolve(token)
@@ -102,7 +115,7 @@ export default class InstrumentActionCreator {
                 }));
     }
 
-    private _getInstrumentState(store: ReadableCheckoutStore): InstrumentRequestContext {
+    private _getSessionContext(store: ReadableCheckoutStore): SessionContext {
         const state = store.getState();
         const config = state.config.getStoreConfig();
         const customer = state.customer.getCustomer();
@@ -113,15 +126,10 @@ export default class InstrumentActionCreator {
 
         const { customerId } = customer;
         const { storeId } = config.storeProfile;
-        const { vaultAccessToken = null, vaultAccessExpiry = null } = state.instruments.getInstrumentsMeta() || {};
 
         return {
             customerId,
             storeId,
-            token: {
-                vaultAccessToken,
-                vaultAccessExpiry,
-            },
         };
     }
 }

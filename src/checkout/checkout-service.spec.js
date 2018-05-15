@@ -786,11 +786,15 @@ describe('CheckoutService', () => {
 
     describe('#loadInstruments()', () => {
         it('loads instruments', async () => {
+            const { storeId } = getConfig().storeConfig.storeProfile;
+            const { customerId } = getGuestCustomer();
+            const { vaultAccessToken } = getInstrumentsMeta();
+
             await checkoutService.signInCustomer();
             await checkoutService.loadInstruments();
 
             expect(checkoutClient.getInstruments)
-                .toHaveBeenCalled();
+                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken });
         });
     });
 
@@ -805,7 +809,7 @@ describe('CheckoutService', () => {
             await checkoutService.vaultInstrument(instrument);
 
             expect(checkoutClient.vaultInstrument)
-                .toHaveBeenCalledWith(storeId, customerId, instrument, vaultAccessToken);
+                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken }, instrument);
         });
     });
 
@@ -820,7 +824,7 @@ describe('CheckoutService', () => {
             await checkoutService.deleteInstrument(instrumentId);
 
             expect(checkoutClient.deleteInstrument)
-                .toHaveBeenCalledWith(storeId, customerId, vaultAccessToken, instrumentId);
+                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken }, instrumentId);
         });
     });
 });

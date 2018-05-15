@@ -5,6 +5,8 @@ import {
     getErrorInstrumentResponseBody,
     getInstrumentsResponseBody,
     getVaultAccessTokenResponseBody,
+    instrumentRequestContext,
+    vaultInstrumentRequestBody,
     vaultInstrumentResponseBody,
 } from './instrument.mock';
 import InstrumentRequestSender from './instrument-request-sender';
@@ -12,7 +14,9 @@ import InstrumentRequestSender from './instrument-request-sender';
 describe('InstrumentMethodRequestSender', () => {
     let client;
     let instrumentRequestSender;
+    let requestContext;
     let requestSender;
+    let vaultInstrumentRequest;
 
     beforeEach(() => {
         requestSender = {
@@ -26,6 +30,8 @@ describe('InstrumentMethodRequestSender', () => {
             deleteShopperInstrument: jest.fn((payload, callback) => callback()),
         };
 
+        requestContext = instrumentRequestContext();
+        vaultInstrumentRequest = vaultInstrumentRequestBody();
         instrumentRequestSender = new InstrumentRequestSender(client, requestSender);
     });
 
@@ -62,7 +68,7 @@ describe('InstrumentMethodRequestSender', () => {
                 statusText: 'OK',
             }));
 
-            const response = await instrumentRequestSender.getInstruments();
+            const response = await instrumentRequestSender.getInstruments(requestContext);
 
             expect(response).toEqual({
                 headers: {},
@@ -70,6 +76,11 @@ describe('InstrumentMethodRequestSender', () => {
                 status: 200,
                 statusText: 'OK',
             });
+
+            expect(client.getShopperInstruments).toHaveBeenCalledWith(
+                requestContext,
+                expect.any(Function)
+            );
         });
 
         it('returns error response if request is unsuccessful', async () => {
@@ -100,7 +111,7 @@ describe('InstrumentMethodRequestSender', () => {
                 statusText: 'OK',
             }));
 
-            const response = await instrumentRequestSender.vaultInstrument();
+            const response = await instrumentRequestSender.vaultInstrument(requestContext, vaultInstrumentRequest);
 
             expect(response).toEqual({
                 body: vaultInstrumentResponseBody(),
@@ -108,6 +119,11 @@ describe('InstrumentMethodRequestSender', () => {
                 status: 200,
                 statusText: 'OK',
             });
+
+            expect(client.postShopperInstrument).toHaveBeenCalledWith({
+                ...requestContext,
+                instrument: vaultInstrumentRequest,
+            }, expect.any(Function));
         });
 
         it('returns error response if submission is unsuccessful', async () => {
@@ -138,7 +154,8 @@ describe('InstrumentMethodRequestSender', () => {
                 statusText: 'OK',
             }));
 
-            const response = await instrumentRequestSender.deleteInstrument();
+            const instrumentId = '123';
+            const response = await instrumentRequestSender.deleteInstrument(requestContext, instrumentId);
 
             expect(response).toEqual({
                 headers: {},
@@ -146,7 +163,10 @@ describe('InstrumentMethodRequestSender', () => {
                 status: 200,
                 statusText: 'OK',
             });
-            expect(client.deleteShopperInstrument).toHaveBeenCalled();
+            expect(client.deleteShopperInstrument).toHaveBeenCalledWith({
+                ...requestContext,
+                instrumentId,
+            }, expect.any(Function));
         });
 
         it('returns error response if request is unsuccessful', async () => {
