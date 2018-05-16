@@ -46,7 +46,7 @@ describe('AfterpayPaymentStrategy', () => {
     let verifyCartAction: Observable<Action>;
 
     const afterpaySdk = {
-        init: () => {},
+        initialize: () => {},
         display: () => {},
     };
 
@@ -120,7 +120,7 @@ describe('AfterpayPaymentStrategy', () => {
         jest.spyOn(scriptLoader, 'load')
             .mockReturnValue(Promise.resolve(afterpaySdk));
 
-        jest.spyOn(afterpaySdk, 'init').mockImplementation(() => {});
+        jest.spyOn(afterpaySdk, 'initialize').mockImplementation(() => {});
         jest.spyOn(afterpaySdk, 'display').mockImplementation(() => {});
     });
 
@@ -128,7 +128,7 @@ describe('AfterpayPaymentStrategy', () => {
         it('loads script when initializing strategy', async () => {
             await strategy.initialize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
 
-            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod);
+            expect(scriptLoader.load).toHaveBeenCalledWith(paymentMethod, 'US');
         });
     });
 
@@ -144,7 +144,7 @@ describe('AfterpayPaymentStrategy', () => {
         });
 
         it('displays the afterpay modal', () => {
-            expect(afterpaySdk.init).toHaveBeenCalled();
+            expect(afterpaySdk.initialize).toHaveBeenCalledWith({ countryCode: 'US' });
             expect(afterpaySdk.display).toHaveBeenCalledWith({ token: paymentMethod.clientToken });
         });
 

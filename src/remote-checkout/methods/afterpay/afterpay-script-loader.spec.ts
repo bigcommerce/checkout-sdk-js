@@ -14,23 +14,55 @@ describe('AfterpayScriptLoader', () => {
             .mockReturnValue(Promise.resolve(new Event('load')));
     });
 
-    it('loads widget script', () => {
+    it('loads widget script for AU & NZ', () => {
         const method = getAfterpay();
 
-        afterpayScriptLoader.load(method);
+        afterpayScriptLoader.load(method, 'AU');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//www.secure-afterpay.com.au/afterpay-async.js'
+            '//portal.afterpay.com/afterpay-async.js'
+        );
+
+        afterpayScriptLoader.load(method, 'NZ');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            '//portal.afterpay.com/afterpay-async.js'
         );
     });
 
-    it('loads sandbox widget script if in test mode', () => {
+    it('loads sandbox widget script if in test mode for AU & NZ', () => {
         const method = merge({}, getAfterpay(), { config: { testMode: true } });
 
-        afterpayScriptLoader.load(method);
+        afterpayScriptLoader.load(method, 'AU');
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            '//www-sandbox.secure-afterpay.com.au/afterpay-async.js'
+            '//portal-sandbox.afterpay.com/afterpay-async.js'
+        );
+
+        afterpayScriptLoader.load(method, 'NZ');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            '//portal-sandbox.afterpay.com/afterpay-async.js'
+        );
+    });
+
+    it('loads widget script for US', () => {
+        const method = getAfterpay();
+
+        afterpayScriptLoader.load(method, 'US');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            '//portal.afterpay.com/afterpay-async.js'
+        );
+    });
+
+    it('loads sandbox widget script if in test mode for US', () => {
+        const method = merge({}, getAfterpay(), { config: { testMode: true } });
+
+        afterpayScriptLoader.load(method, 'US');
+
+        expect(scriptLoader.loadScript).toHaveBeenCalledWith(
+            '//portal.us-sandbox.afterpay.com/afterpay-async.js'
         );
     });
 });
