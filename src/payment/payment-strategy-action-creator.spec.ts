@@ -8,10 +8,9 @@ import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStor
 import { getCheckoutState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/internal-customers.mock';
-import { OrderActionCreator } from '../order';
+import { OrderActionCreator, OrderActionType } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getCompleteOrderState, getIncompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../order/order-action-types';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentActionCreator from './payment-action-creator';
@@ -212,7 +211,7 @@ describe('PaymentStrategyActionCreator', () => {
                 .mockReturnValue(Promise.resolve(store.getState()));
 
             jest.spyOn(orderActionCreator, 'loadOrder')
-                .mockReturnValue(Observable.of(createAction(SUBMIT_ORDER_REQUESTED)));
+                .mockReturnValue(Observable.of(createAction(OrderActionType.SubmitOrderRequested)));
         });
 
         it('finds payment strategy by method', async () => {
@@ -259,7 +258,7 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: SUBMIT_ORDER_REQUESTED },
+                { type: OrderActionType.SubmitOrderRequested },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.name } },
                 { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId: payload.payment.name } },
             ]);
@@ -281,7 +280,7 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: SUBMIT_ORDER_REQUESTED },
+                { type: OrderActionType.SubmitOrderRequested },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.name } },
                 { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId: payload.payment.name } },
             ]);
@@ -335,7 +334,7 @@ describe('PaymentStrategyActionCreator', () => {
                 .mockReturnValue(Promise.resolve(store.getState()));
 
             jest.spyOn(orderActionCreator, 'loadOrder')
-                .mockReturnValue(Observable.of(createAction(SUBMIT_ORDER_REQUESTED)));
+                .mockReturnValue(Observable.of(createAction(OrderActionType.SubmitOrderRequested)));
         });
 
         it('finds payment strategy by method', async () => {
@@ -378,7 +377,7 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: SUBMIT_ORDER_REQUESTED },
+                { type: OrderActionType.SubmitOrderRequested },
                 { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeSucceeded, meta: { methodId: method.id } },
             ]);
@@ -400,7 +399,7 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: SUBMIT_ORDER_REQUESTED },
+                { type: OrderActionType.SubmitOrderRequested },
                 { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeFailed, error: true, payload: finalizeError, meta: { methodId: method.id } },
             ]);

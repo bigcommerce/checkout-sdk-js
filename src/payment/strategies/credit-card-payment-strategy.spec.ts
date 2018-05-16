@@ -4,9 +4,8 @@ import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { OrderActionCreator } from '../../order';
+import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import PaymentActionCreator from '../payment-action-creator';
 import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
 import PaymentRequestSender from '../payment-request-sender';
@@ -29,7 +28,7 @@ describe('CreditCardPaymentStrategy', () => {
             orderActionCreator
         );
 
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         orderActionCreator = new OrderActionCreator(createCheckoutClient());

@@ -7,8 +7,7 @@ import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { MissingDataError, RequestError } from '../../common/error/errors';
 import { getResponse } from '../../common/http-request/responses.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
-import { FINALIZE_ORDER_REQUESTED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
-import { OrderActionCreator } from '../../order';
+import { OrderActionCreator, OrderActionType } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaymentActionCreator from '../payment-action-creator';
@@ -41,8 +40,8 @@ describe('SagePayPaymentStrategy', () => {
 
         store = createCheckoutStore();
 
-        finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         jest.spyOn(store, 'dispatch');

@@ -8,9 +8,8 @@ import { getCart } from '../../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
 import Payment, { CreditCard, VaultedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
@@ -55,7 +54,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
 
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
         loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod: paymentMethodMock }, { methodId: paymentMethodMock.id }));
 

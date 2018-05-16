@@ -5,9 +5,8 @@ import { Observable } from 'rxjs';
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
 import PaymentActionCreator from '../../payment-action-creator';
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
@@ -40,7 +39,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
         paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
         loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod: paymentMethodMock }, { methodId: paymentMethodMock.id }));
 

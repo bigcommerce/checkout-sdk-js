@@ -6,9 +6,8 @@ import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getKlarna, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { KlarnaCredit, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
@@ -70,7 +69,7 @@ describe('KlarnaPaymentStrategy', () => {
 
         loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod }, { methodId: paymentMethod.id }));
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(store, 'dispatch');
 

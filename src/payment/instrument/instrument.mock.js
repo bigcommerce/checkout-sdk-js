@@ -43,6 +43,14 @@ export function getInstruments() {
     ];
 }
 
+export function instrumentRequestContext() {
+    return {
+        storeId: '1504098821',
+        customerId: 0,
+        token: getInstrumentsMeta().vaultAccessToken,
+    };
+}
+
 export function vaultInstrumentRequestBody() {
     return {
         providerName: 'Braintree',

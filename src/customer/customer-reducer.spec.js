@@ -1,8 +1,8 @@
 import { getCustomerResponseBody, getGuestCustomer } from './internal-customers.mock';
+import { OrderActionType } from '../order';
 import { getCompleteOrderResponseBody } from '../order/internal-orders.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
-import * as orderActionTypes from '../order/order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
 import customerReducer from './customer-reducer';
 import { CheckoutActionType } from '../checkout';
@@ -58,7 +58,7 @@ describe('customerReducer()', () => {
     it('returns new customer data if order is fetched successfully', () => {
         const response = getCompleteOrderResponseBody();
         const action = {
-            type: orderActionTypes.LOAD_ORDER_SUCCEEDED,
+            type: OrderActionType.LoadOrderSucceeded,
             meta: response.meta,
             payload: response.data,
         };
@@ -71,7 +71,7 @@ describe('customerReducer()', () => {
     it('returns new customer data if order is submitted successfully', () => {
         const response = getCompleteOrderResponseBody();
         const action = {
-            type: orderActionTypes.SUBMIT_ORDER_SUCCEEDED,
+            type: OrderActionType.SubmitOrderSucceeded,
             meta: response.meta,
             payload: response.data,
         };
@@ -84,7 +84,7 @@ describe('customerReducer()', () => {
     it('returns new customer data if order is finalized successfully', () => {
         const response = getCompleteOrderResponseBody();
         const action = {
-            type: orderActionTypes.FINALIZE_ORDER_SUCCEEDED,
+            type: OrderActionType.SubmitOrderSucceeded,
             meta: response.meta,
             payload: response.data,
         };

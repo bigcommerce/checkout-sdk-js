@@ -6,8 +6,7 @@ import { merge, omit } from 'lodash';
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
-import { FINALIZE_ORDER_REQUESTED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
-import { OrderActionCreator } from '../../order';
+import { OrderActionCreator, OrderActionType } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import PaymentActionCreator from '../payment-action-creator';
 import { INITIALIZE_OFFSITE_PAYMENT_REQUESTED } from '../payment-action-types';
@@ -32,9 +31,9 @@ describe('OffsitePaymentStrategy', () => {
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator
         );
-        finalizeOrderAction = Observable.of(createAction(FINALIZE_ORDER_REQUESTED));
+        finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
         initializeOffsitePaymentAction = Observable.of(createAction(INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(store, 'dispatch');
 

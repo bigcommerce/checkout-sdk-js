@@ -22,8 +22,9 @@ import Checkout from './checkout';
 import CheckoutParams from './checkout-params';
 import CheckoutRequestSender from './checkout-request-sender';
 
-// Convert this file into TypeScript properly
-// i.e.: Response<T>
+/**
+ * @deprecated Use request senders directly
+ */
 export default class CheckoutClient {
     /**
      * @internal

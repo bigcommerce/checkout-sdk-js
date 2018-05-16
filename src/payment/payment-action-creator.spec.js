@@ -5,8 +5,7 @@ import { createCheckoutStore } from '../checkout';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCustomerState } from '../customer/internal-customers.mock';
-import { OrderActionCreator } from '../order';
-import * as orderActionTypes from '../order/order-action-types';
+import { OrderActionCreator, OrderActionType } from '../order';
 import { getOrder } from '../order/orders.mock';
 import { getSubmittedOrderState } from '../order/internal-orders.mock';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
@@ -66,10 +65,10 @@ describe('PaymentActionCreator', () => {
                     payload: getPaymentResponseBody(),
                 },
                 {
-                    type: orderActionTypes.LOAD_ORDER_REQUESTED,
+                    type: OrderActionType.LoadOrderRequested,
                 },
                 {
-                    type: orderActionTypes.LOAD_ORDER_SUCCEEDED,
+                    type: OrderActionType.LoadOrderSucceeded,
                     payload: getOrder(),
                 },
             ]);

@@ -9,7 +9,7 @@ import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
 import { InternalIncompleteOrder, InternalOrder, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector } from '../payment';
-import { InstrumentSelector } from '../payment/instrument';
+import { Instrument, InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
 import {
     InternalShippingOption,
@@ -132,7 +132,7 @@ export default class CheckoutStoreSelector {
         return this._order.isPaymentDataSubmitted(this.getPaymentMethod(methodId, gatewayId));
     }
 
-    getInstruments(): any[] {
+    getInstruments(): Instrument[] | undefined {
         return this._instruments.getInstruments();
     }
 

@@ -2,14 +2,11 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 
 import * as actionTypes from './instrument-action-types';
 
-/**
- * @todo Convert this file into TypeScript properly
- * @param {InstrumentState} state
- * @param {Action} action
- * @return {InstrumentState}
- */
-export default function instrumentReducer(state: any = {}, action: Action): any {
-    const reducer = combineReducers({
+import Instrument from './instrument';
+import InstrumentState, { DEFAULT_STATE, InstrumentErrorState, InstrumentMeta, InstrumentStatusState } from './instrument-state';
+
+export default function instrumentReducer(state: InstrumentState = DEFAULT_STATE, action: Action): InstrumentState {
+    const reducer = combineReducers<InstrumentState>({
         data: dataReducer,
         errors: errorsReducer,
         meta: metaReducer,
@@ -19,13 +16,7 @@ export default function instrumentReducer(state: any = {}, action: Action): any 
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?Instruments[]} data
- * @param {Action} action
- * @return {?Instruments[]}
- */
-function dataReducer(data: any, action: Action): any {
+function dataReducer(data: Instrument[] = DEFAULT_STATE.data, action: Action): Instrument[] {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
         return action.payload.vaulted_instruments || [];
@@ -43,13 +34,7 @@ function dataReducer(data: any, action: Action): any {
     }
 }
 
-/**
- * @private
- * @param {?Object} meta
- * @param {Action} action
- * @return {?Object}
- */
-function metaReducer(meta: any, action: Action): any {
+function metaReducer(meta: InstrumentMeta | undefined, action: Action): InstrumentMeta | undefined {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
     case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
@@ -61,13 +46,7 @@ function metaReducer(meta: any, action: Action): any {
     }
 }
 
-/**
- * @private
- * @param {Object} errors
- * @param {Action} action
- * @return {Object}
- */
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(errors: InstrumentErrorState = DEFAULT_STATE.errors, action: Action): InstrumentErrorState {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
@@ -103,13 +82,7 @@ function errorsReducer(errors: any = {}, action: Action): any {
     }
 }
 
-/**
- * @private
- * @param {Object} statuses
- * @param {Action} action
- * @return {Object}
- */
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(statuses: InstrumentStatusState = DEFAULT_STATE.statuses, action: Action): InstrumentStatusState {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
         return { ...statuses, isLoading: true };

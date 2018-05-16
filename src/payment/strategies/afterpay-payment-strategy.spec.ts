@@ -11,9 +11,8 @@ import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStor
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { getGuestCustomer } from '../../customer/internal-customers.mock';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
 import { getIncompleteOrder, getIncompleteOrderState, getOrderRequestBody } from '../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { AfterpayScriptLoader } from '../../remote-checkout/methods/afterpay';
 import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED, LOAD_REMOTE_SETTINGS_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
@@ -95,7 +94,7 @@ describe('AfterpayPaymentStrategy', () => {
             { useStoreCredit: false, customerMessage: 'foo' },
             { methodId: paymentMethod.gateway }
         ));
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
         verifyCartAction = Observable.of(createAction(VERIFY_CART_REQUESTED));
 

@@ -1,12 +1,12 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
-import { CheckoutActionType } from '../checkout';
-import * as orderActionTypes from '../order/order-action-types';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
 import * as quoteActionTypes from '../quote/quote-action-types';
 
 import InternalOrder, { InternalIncompleteOrder } from './internal-order';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
 import mapToInternalOrder from './map-to-internal-order';
+import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 
 const DEFAULT_STATE: OrderState = {
@@ -15,11 +15,10 @@ const DEFAULT_STATE: OrderState = {
     statuses: {},
 };
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action
- */
-export default function orderReducer(state: OrderState = DEFAULT_STATE, action: Action): OrderState {
+export default function orderReducer(
+    state: OrderState = DEFAULT_STATE,
+    action: Action | CheckoutAction | OrderAction
+): OrderState {
     const reducer = combineReducers<OrderState>({
         data: dataReducer,
         errors: errorsReducer,
@@ -30,17 +29,20 @@ export default function orderReducer(state: OrderState = DEFAULT_STATE, action: 
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalOrder | InternalIncompleteOrder | undefined, action: Action): InternalOrder | InternalIncompleteOrder | undefined {
+function dataReducer(
+    data: InternalOrder | InternalIncompleteOrder | undefined,
+    action: Action | CheckoutAction | OrderAction
+): InternalOrder | InternalIncompleteOrder | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return data ? { ...data, ...mapToInternalIncompleteOrder(action.payload, data) } : data;
 
-    case orderActionTypes.LOAD_ORDER_SUCCEEDED:
+    case OrderActionType.LoadOrderSucceeded:
         return data ? mapToInternalOrder(action.payload, data as InternalOrder) : data;
 
-    case orderActionTypes.LOAD_INTERNAL_ORDER_SUCCEEDED:
-    case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
-    case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
+    case OrderActionType.LoadInternalOrderSucceeded:
+    case OrderActionType.FinalizeOrderSucceeded:
+    case OrderActionType.SubmitOrderSucceeded:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.order } : data;
 
@@ -49,27 +51,33 @@ function dataReducer(data: InternalOrder | InternalIncompleteOrder | undefined, 
     }
 }
 
-function metaReducer(meta: OrderMetaState | undefined, action: Action): OrderMetaState | undefined {
+function metaReducer(
+    meta: OrderMetaState | undefined,
+    action: OrderAction
+): OrderMetaState | undefined {
     switch (action.type) {
-    case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
-        return {
+    case OrderActionType.SubmitOrderSucceeded:
+        return action.payload ? {
             ...meta,
             ...action.meta,
             payment: action.payload.order && action.payload.order.payment,
-        };
+        } : meta;
 
     default:
         return meta;
     }
 }
 
-function errorsReducer(errors: OrderErrorsState = DEFAULT_STATE.errors, action: Action): OrderErrorsState {
+function errorsReducer(
+    errors: OrderErrorsState = DEFAULT_STATE.errors,
+    action: OrderAction
+): OrderErrorsState {
     switch (action.type) {
-    case orderActionTypes.LOAD_ORDER_REQUESTED:
-    case orderActionTypes.LOAD_ORDER_SUCCEEDED:
+    case OrderActionType.LoadOrderRequested:
+    case OrderActionType.LoadOrderSucceeded:
         return { ...errors, loadError: undefined };
 
-    case orderActionTypes.LOAD_ORDER_FAILED:
+    case OrderActionType.LoadOrderFailed:
         return { ...errors, loadError: action.payload };
 
     default:
@@ -77,13 +85,16 @@ function errorsReducer(errors: OrderErrorsState = DEFAULT_STATE.errors, action: 
     }
 }
 
-function statusesReducer(statuses: OrderStatusesState = DEFAULT_STATE.statuses, action: Action): OrderStatusesState {
+function statusesReducer(
+    statuses: OrderStatusesState = DEFAULT_STATE.statuses,
+    action: OrderAction
+): OrderStatusesState {
     switch (action.type) {
-    case orderActionTypes.LOAD_ORDER_REQUESTED:
+    case OrderActionType.LoadOrderRequested:
         return { ...statuses, isLoading: true };
 
-    case orderActionTypes.LOAD_ORDER_SUCCEEDED:
-    case orderActionTypes.LOAD_ORDER_FAILED:
+    case OrderActionType.LoadOrderSucceeded:
+    case OrderActionType.LoadOrderFailed:
         return { ...statuses, isLoading: false };
     default:
         return statuses;

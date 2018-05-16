@@ -10,8 +10,9 @@ import {
 import { getCart, getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import * as actionTypes from './order-action-types';
 import OrderActionCreator from './order-action-creator';
+import { getOrder } from './orders.mock';
+import { OrderActionType } from './order-actions';
 
 describe('OrderActionCreator', () => {
     let checkoutClient;
@@ -32,7 +33,7 @@ describe('OrderActionCreator', () => {
         let response;
 
         beforeEach(() => {
-            response = getResponse(getCompleteOrderResponseBody());
+            response = getResponse(getOrder());
             errorResponse = getErrorResponse();
 
             checkoutClient = {
@@ -42,32 +43,31 @@ describe('OrderActionCreator', () => {
             orderActionCreator = new OrderActionCreator(checkoutClient);
         });
 
-        it('emits actions if able to load order', () => {
-            orderActionCreator.loadOrder(295)
+        it('emits actions if able to load order', async () => {
+            const actions = await orderActionCreator.loadOrder(295)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: actionTypes.LOAD_ORDER_REQUESTED },
-                        { type: actionTypes.LOAD_ORDER_SUCCEEDED, payload: response.body.data },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: OrderActionType.LoadOrderRequested },
+                { type: OrderActionType.LoadOrderSucceeded, payload: response.body },
+            ]);
         });
 
-        it('emits actions if unable to load order', () => {
+        it('emits actions if unable to load order', async () => {
             checkoutClient.loadOrder.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            orderActionCreator.loadOrder()
+            const actions = await orderActionCreator.loadOrder()
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: actionTypes.LOAD_ORDER_REQUESTED },
-                        { type: actionTypes.LOAD_ORDER_FAILED, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: OrderActionType.LoadOrderRequested },
+                { type: OrderActionType.LoadOrderFailed, payload: errorResponse, error: true },
+            ]);
         });
     });
 
@@ -96,9 +96,9 @@ describe('OrderActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: actionTypes.SUBMIT_ORDER_REQUESTED },
+                { type: OrderActionType.SubmitOrderRequested },
                 {
-                    type: actionTypes.SUBMIT_ORDER_SUCCEEDED,
+                    type: OrderActionType.SubmitOrderSucceeded,
                     payload: submitResponse.body.data,
                     meta: {
                         ...submitResponse.body.meta,
@@ -119,8 +119,8 @@ describe('OrderActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: actionTypes.SUBMIT_ORDER_REQUESTED },
-                { type: actionTypes.SUBMIT_ORDER_FAILED, payload: errorResponse, error: true },
+                { type: OrderActionType.SubmitOrderRequested },
+                { type: OrderActionType.SubmitOrderFailed, payload: errorResponse, error: true },
             ]);
         });
 
@@ -161,32 +161,31 @@ describe('OrderActionCreator', () => {
             orderActionCreator = new OrderActionCreator(checkoutClient);
         });
 
-        it('emits actions if able to finalize order', () => {
-            orderActionCreator.finalizeOrder(295)
+        it('emits actions if able to finalize order', async () => {
+            const actions = await orderActionCreator.finalizeOrder(295)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: actionTypes.FINALIZE_ORDER_REQUESTED },
-                        { type: actionTypes.FINALIZE_ORDER_SUCCEEDED, payload: response.body.data },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: OrderActionType.FinalizeOrderRequested },
+                { type: OrderActionType.FinalizeOrderSucceeded, payload: response.body.data },
+            ]);
         });
 
-        it('emits error actions if unable to finalize order', () => {
+        it('emits error actions if unable to finalize order', async () => {
             checkoutClient.finalizeOrder.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            orderActionCreator.finalizeOrder()
+            const actions = await orderActionCreator.finalizeOrder()
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: actionTypes.FINALIZE_ORDER_REQUESTED },
-                        { type: actionTypes.FINALIZE_ORDER_FAILED, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: OrderActionType.FinalizeOrderRequested },
+                { type: OrderActionType.FinalizeOrderFailed, payload: errorResponse, error: true },
+            ]);
         });
     });
 });

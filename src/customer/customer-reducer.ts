@@ -3,7 +3,7 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
-import * as orderActionTypes from '../order/order-action-types';
+import { OrderActionType } from '../order';
 import * as quoteActionTypes from '../quote/quote-action-types';
 
 import CustomerState from './customer-state';
@@ -32,9 +32,9 @@ function dataReducer(data: InternalCustomer | undefined, action: Action): Intern
 
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
-    case orderActionTypes.LOAD_ORDER_SUCCEEDED:
-    case orderActionTypes.FINALIZE_ORDER_SUCCEEDED:
-    case orderActionTypes.SUBMIT_ORDER_SUCCEEDED:
+    case OrderActionType.LoadOrderSucceeded:
+    case OrderActionType.FinalizeOrderSucceeded:
+    case OrderActionType.SubmitOrderSucceeded:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.customer } : data;
 

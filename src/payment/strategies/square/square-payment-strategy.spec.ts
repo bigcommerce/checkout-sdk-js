@@ -6,8 +6,7 @@ import { Observable } from 'rxjs';
 import { PaymentActionCreator, PaymentRequestSender } from '../..';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../../checkout';
 import { MissingDataError, TimeoutError } from '../../../common/error/errors';
-import { OrderActionCreator } from '../../../order';
-import { SUBMIT_ORDER_REQUESTED } from '../../../order/order-action-types';
+import { OrderActionCreator, OrderActionType } from '../../../order';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import PaymentMethod from '../../payment-method';
@@ -59,7 +58,7 @@ describe('SquarePaymentStrategy', () => {
         );
         scriptLoader = new SquareScriptLoader(createScriptLoader());
         strategy = new SquarePaymentStrategy(store, orderActionCreator, paymentActionCreator, scriptLoader);
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         jest.spyOn(orderActionCreator, 'submitOrder')

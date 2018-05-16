@@ -3,8 +3,8 @@ import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../../checkout';
 import { MissingDataError } from '../../common/error/errors';
+import { OrderActionType } from '../../order';
 import { getOrderRequestBody, getIncompleteOrderState } from '../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
@@ -18,7 +18,7 @@ describe('PaypalProPaymentStrategy', () => {
     let submitPaymentAction;
 
     beforeEach(() => {
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
 
         orderActionCreator = {

@@ -1,4 +1,3 @@
-/// <reference path="../common/form-poster/index.d.ts" />
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
