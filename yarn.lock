@@ -2,11 +2,11 @@
 # yarn lockfile v1
 
 
-"@bigcommerce/bigpay-client@git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#2.11.1":
-  version "2.11.1"
-  resolved "git+ssh://git@github.com/bigcommerce/bigpay-client-js.git#bc0e3dc919561af15dd618f0b7410d0a8bed1799"
+"@bigcommerce/bigpay-client@^2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@bigcommerce/bigpay-client/-/bigpay-client-2.12.0.tgz#d100a790452e2cf922d4296e209ab92d9e59073b"
   dependencies:
-    "@bigcommerce/form-poster" "git+ssh://git@github.com/bigcommerce/form-poster-js.git#1.1.2"
+    "@bigcommerce/form-poster" "^1.2.1"
     deep-assign "^2.0.0"
     object-assign "^4.1.0"
 
@@ -19,22 +19,22 @@
     rxjs "^5.5.5"
     tslib "^1.8.0"
 
-"@bigcommerce/form-poster@git+ssh://git@github.com/bigcommerce/form-poster-js.git#1.1.2":
-  version "1.1.2"
-  resolved "git+ssh://git@github.com/bigcommerce/form-poster-js.git#0d0c14290df3fdbe8432935a99a0c6da648cd72f"
+"@bigcommerce/form-poster@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@bigcommerce/form-poster/-/form-poster-1.2.1.tgz#1783c8de68116aeb579f0e8bdcb04b685d24b5ea"
 
-"@bigcommerce/request-sender@git+ssh://git@github.com/bigcommerce/request-sender-js.git#v0.1.2":
-  version "0.1.2"
-  resolved "git+ssh://git@github.com/bigcommerce/request-sender-js.git#c0f86a54e57ff8efcf873ff669a8645f1e36054b"
+"@bigcommerce/request-sender@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@bigcommerce/request-sender/-/request-sender-0.1.3.tgz#45cd9f52a4da0af9b251541b5dc204c1c9824aa5"
   dependencies:
     is-promise "^2.1.0"
     js-cookie "^2.1.4"
     query-string "^5.0.0"
     tslib "^1.8.0"
 
-"@bigcommerce/script-loader@git+ssh://git@github.com/bigcommerce/script-loader-js.git#v0.1.2":
-  version "0.1.2"
-  resolved "git+ssh://git@github.com/bigcommerce/script-loader-js.git#a98ae63523e247e19c8907f2111cb9e3f91a541b"
+"@bigcommerce/script-loader@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@bigcommerce/script-loader/-/script-loader-0.1.4.tgz#f5e3b1493402fea6c06ba78af45cd987f3ff3f9a"
   dependencies:
     tslib "^1.8.0"
 
