@@ -2,7 +2,8 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { RequestOptions } from '../../common/http-request';
 
-import { InstrumentRequestContext } from './instrument';
+import Instrument, { InstrumentRequestContext } from './instrument';
+import { InstrumentsResponseBody, InstrumentResponseBody, VaultAccessTokenResponseBody } from './instrument-response-body';
 
 export default class InstrumentRequestSender {
     constructor(
@@ -10,15 +11,15 @@ export default class InstrumentRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    getVaultAccessToken({ timeout }: RequestOptions = {}): Promise<Response> {
+    getVaultAccessToken({ timeout }: RequestOptions = {}): Promise<Response<VaultAccessTokenResponseBody>> {
         const url = '/internalapi/v1/checkout/payments/vault-access-token';
 
         return this._requestSender.get(url, { timeout });
     }
 
-    getInstruments(requestContext: InstrumentRequestContext): Promise<Response> {
+    getInstruments(requestContext: InstrumentRequestContext): Promise<Response<InstrumentsResponseBody>> {
         return new Promise((resolve, reject) => {
-            this._client.getShopperInstruments(requestContext, (error: any, response: any) => {
+            this._client.getShopperInstruments(requestContext, (error: Error, response: any) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {
@@ -28,7 +29,7 @@ export default class InstrumentRequestSender {
         });
     }
 
-    vaultInstrument(requestContext: InstrumentRequestContext, instrument: any): Promise<Response> {
+    vaultInstrument(requestContext: InstrumentRequestContext, instrument: Instrument): Promise<Response<InstrumentResponseBody>> {
         const payload = {
             ...requestContext,
             instrument,
@@ -52,7 +53,7 @@ export default class InstrumentRequestSender {
         };
 
         return new Promise((resolve, reject) => {
-            this._client.deleteShopperInstrument(payload, (error: any, response: any) => {
+            this._client.deleteShopperInstrument(payload, (error: Error, response: any) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {
