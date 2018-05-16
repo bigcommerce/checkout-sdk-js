@@ -2,8 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { OrderActionCreator } from '../../order';
-import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
+import { OrderActionCreator, OrderActionType } from '../../order';
 import LegacyPaymentStrategy from './legacy-payment-strategy';
 
 describe('LegacyPaymentStrategy', () => {
@@ -15,7 +14,7 @@ describe('LegacyPaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);

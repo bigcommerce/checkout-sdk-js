@@ -3,9 +3,8 @@ import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { OrderActionCreator } from '../../order';
+import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 
 import { NoPaymentDataRequiredPaymentStrategy } from '.';
 
@@ -18,7 +17,7 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);

@@ -1,8 +1,8 @@
 import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import * as orderActionTypes from './order-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
+import { OrderActionType } from './order-actions';
 import orderReducer from './order-reducer';
 
 describe('orderReducer()', () => {
@@ -27,7 +27,7 @@ describe('orderReducer()', () => {
 
     it('returns new data while fetching order', () => {
         const action = {
-            type: orderActionTypes.LOAD_ORDER_REQUESTED,
+            type: OrderActionType.LoadOrderRequested,
         };
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -38,7 +38,7 @@ describe('orderReducer()', () => {
     it('returns new data if it is fetched successfully', () => {
         const response = getCompleteOrderResponseBody();
         const action = {
-            type: orderActionTypes.LOAD_ORDER_SUCCEEDED,
+            type: OrderActionType.LoadOrderSucceeded,
             meta: response.meta,
             payload: response.data,
         };
@@ -52,7 +52,7 @@ describe('orderReducer()', () => {
     it('returns new data if it is not fetched successfully', () => {
         const response = getErrorResponse();
         const action = {
-            type: orderActionTypes.LOAD_ORDER_FAILED,
+            type: OrderActionType.LoadOrderFailed,
             payload: response.data,
         };
 
@@ -66,7 +66,7 @@ describe('orderReducer()', () => {
         const response = getSubmitOrderResponseBody();
         const headers = getSubmitOrderResponseHeaders();
         const action = {
-            type: orderActionTypes.SUBMIT_ORDER_SUCCEEDED,
+            type: OrderActionType.SubmitOrderSucceeded,
             meta: {
                 ...response.meta,
                 token: headers.token,
@@ -86,7 +86,7 @@ describe('orderReducer()', () => {
     it('returns new data if it is finalized successfully', () => {
         const response = getCompleteOrderResponseBody();
         const action = {
-            type: orderActionTypes.FINALIZE_ORDER_SUCCEEDED,
+            type: OrderActionType.FinalizeOrderSucceeded,
             meta: response.meta,
             payload: response.data,
         };

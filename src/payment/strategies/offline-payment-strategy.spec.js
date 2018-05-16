@@ -1,9 +1,8 @@
 import { createAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
-import { OrderActionCreator } from '../../order';
+import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import OfflinePaymentStrategy from './offline-payment-strategy';
 
 describe('OfflinePaymentStrategy', () => {
@@ -15,7 +14,7 @@ describe('OfflinePaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);

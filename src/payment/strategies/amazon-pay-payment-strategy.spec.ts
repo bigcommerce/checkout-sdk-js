@@ -12,9 +12,8 @@ import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStor
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
-import { OrderActionCreator } from '../../order';
+import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { SUBMIT_ORDER_FAILED, SUBMIT_ORDER_REQUESTED } from '../../order/order-action-types';
 import { getAmazonPay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { getQuoteState } from '../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
@@ -114,7 +113,7 @@ describe('AmazonPayPaymentStrategy', () => {
         initializeBillingAction = Observable.of(createAction(INITIALIZE_REMOTE_BILLING_REQUESTED));
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         updateAddressAction = Observable.of(createAction(UPDATE_BILLING_ADDRESS_REQUESTED));
-        submitOrderAction = Observable.of(createAction(SUBMIT_ORDER_REQUESTED));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         container.setAttribute('id', 'wallet');
         document.body.appendChild(container);
@@ -290,7 +289,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('refreshes wallet when there is provider widget error', async () => {
         jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(createErrorAction(SUBMIT_ORDER_FAILED, getErrorResponse({ type: 'provider_widget_error' })));
+            .mockReturnValue(createErrorAction(OrderActionType.SubmitOrderFailed, getErrorResponse({ type: 'provider_widget_error' })));
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
@@ -307,7 +306,7 @@ describe('AmazonPayPaymentStrategy', () => {
         const response = getErrorResponse();
 
         jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(createErrorAction(SUBMIT_ORDER_FAILED, response));
+            .mockReturnValue(createErrorAction(OrderActionType.SubmitOrderFailed, response));
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
