@@ -85,10 +85,10 @@ export default class CheckoutService {
     }
 
     loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors> {
-        return Promise.all([
-            this._store.dispatch(this._orderActionCreator.loadInternalOrder(orderId, options)),
-            this._store.dispatch(this._orderActionCreator.loadOrder(orderId, options)),
-        ]).then(() => this.getState());
+        const action = this._orderActionCreator.loadOrder(orderId, options);
+
+        return this._store.dispatch(action)
+            .then(() => this.getState());
     }
 
     submitOrder(payload: OrderRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {

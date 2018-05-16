@@ -2,6 +2,7 @@ import { Address } from '../address';
 import { LineItemMap } from '../cart';
 import { Coupon } from '../coupon';
 import { Currency } from '../currency';
+import { Tax } from '../tax';
 
 export default interface Order {
     baseAmount: number;
@@ -9,7 +10,7 @@ export default interface Order {
     cartId: string;
     coupons: Coupon[];
     currency: Currency;
-    customerCreated: boolean;
+    customerCanBeCreated: boolean;
     customerId: number;
     discountAmount: number;
     hasDigitalItems: boolean;
@@ -20,6 +21,10 @@ export default interface Order {
     orderAmount: number;
     orderAmountAsInteger: number;
     orderId: number;
+    shippingCostTotal: number;
+    shippingCostBeforeDiscount: number;
+    handlingCostTotal: number;
+    taxes: Tax[];
     payments?: OrderPayments;
     status: string;
 }

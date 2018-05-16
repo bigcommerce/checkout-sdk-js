@@ -8,8 +8,7 @@ import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import { FinalizeOrderAction, LoadInternalOrderAction, LoadOrderAction, OrderActionType, SubmitOrderAction } from './order-actions';
-import OrderParams from './order-params';
+import { FinalizeOrderAction, LoadOrderAction, OrderActionType, SubmitOrderAction } from './order-actions';
 import OrderRequestBody from './order-request-body';
 
 export default class OrderActionCreator {
@@ -21,7 +20,7 @@ export default class OrderActionCreator {
         this._cartComparator = new CartComparator();
     }
 
-    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Observable<LoadOrderAction> {
+    loadOrder(orderId: number, options?: RequestOptions): Observable<LoadOrderAction> {
         return Observable.create((observer: Observer<LoadOrderAction>) => {
             observer.next(createAction(OrderActionType.LoadOrderRequested));
 
@@ -32,25 +31,6 @@ export default class OrderActionCreator {
                 })
                 .catch(response => {
                     observer.error(createErrorAction(OrderActionType.LoadOrderFailed, response));
-                });
-        });
-    }
-
-    /**
-     * @deprecated
-     * Remove once we fully transition to Storefront API
-     */
-    loadInternalOrder(orderId: number, options?: RequestOptions): Observable<LoadInternalOrderAction> {
-        return Observable.create((observer: Observer<LoadInternalOrderAction>) => {
-            observer.next(createAction(OrderActionType.LoadInternalOrderRequested));
-
-            this._checkoutClient.loadInternalOrder(orderId, options)
-                .then(({ body: { data } }) => {
-                    observer.next(createAction(OrderActionType.LoadInternalOrderSucceeded, data));
-                    observer.complete();
-                })
-                .catch(response => {
-                    observer.error(createErrorAction(OrderActionType.LoadInternalOrderFailed, response));
                 });
         });
     }

@@ -1,31 +1,22 @@
-import { filter, find, reduce, some } from 'lodash';
+import { filter, find, reduce } from 'lodash';
 
-import { AmountTransformer } from '../cart';
+import { AmountTransformer, LineItem } from '../cart';
 import { mapToInternalLineItems } from '../cart';
-import { Checkout } from '../checkout';
-import { mapToInternalCoupon, mapToInternalGiftCertificate, InternalGiftCertificate } from '../coupon';
-import { mapToDiscountNotifications } from '../promotion';
+import { mapToInternalCoupon } from '../coupon';
 
-import InternalOrder, { InternalGiftCertificateList, InternalOrderPayment } from './internal-order';
-import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import InternalOrder, { InternalGiftCertificateList, InternalOrderPayment, InternalSocialDataList } from './internal-order';
 import Order, { DefaultOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
 
-export default function mapToInternalOrder(checkout: Checkout, order: Order): InternalOrder {
+export default function mapToInternalOrder(order: Order): InternalOrder {
     const decimalPlaces = order.currency.decimalPlaces;
     const amountTransformer = new AmountTransformer(decimalPlaces);
-    const discountedAmount = reduce(checkout.cart.discounts, (sum, discount) => {
-        return sum + discount.discountedAmount;
-    }, 0);
-    // @todo: remove this once API returns shipping cost breakdown (CHECKOUT-3153)
-    const shippingAmountBeforeDiscount = checkout.shippingCostTotal + getShippingDiscount(checkout);
 
     return {
-        ...mapToInternalIncompleteOrder(order),
         id: order.orderId,
         items: mapToInternalLineItems(order.lineItems, order.currency.decimalPlaces, 'productId'),
         orderId: order.orderId,
         currency: order.currency.code,
-        customerCanBeCreated: order.customerCreated,
+        customerCanBeCreated: order.customerCanBeCreated,
         payment: mapToInteralOrderPayment(order.payments),
         subtotal: {
             amount: order.baseAmount,
@@ -38,32 +29,29 @@ export default function mapToInternalOrder(checkout: Checkout, order: Order): In
             coupons: order.coupons.map(mapToInternalCoupon),
         },
         discount: {
-            amount: discountedAmount,
-            integerAmount: amountTransformer.toInteger(discountedAmount),
+            amount: order.discountAmount,
+            integerAmount: amountTransformer.toInteger(order.discountAmount),
         },
-        discountNotifications: mapToDiscountNotifications(checkout.promotions),
+        discountNotifications: [],
         giftCertificate: mapToGiftCertificates(order.payments),
+        socialData: mapToInternalSocialDataList(order),
+        status: order.status,
+        hasDigitalItems: order.hasDigitalItems,
+        isDownloadable: order.isDownloadable,
+        isComplete: order.isComplete,
         shipping: {
-            amount: checkout.shippingCostTotal,
-            integerAmount: amountTransformer.toInteger(checkout.shippingCostTotal),
-            amountBeforeDiscount: shippingAmountBeforeDiscount,
-            integerAmountBeforeDiscount: amountTransformer.toInteger(shippingAmountBeforeDiscount),
+            amount: order.shippingCostTotal,
+            integerAmount: amountTransformer.toInteger(order.shippingCostTotal),
+            amountBeforeDiscount: order.shippingCostBeforeDiscount,
+            integerAmountBeforeDiscount: amountTransformer.toInteger(order.shippingCostBeforeDiscount),
         },
         storeCredit: {
             amount: mapToStoreCredit(order.payments),
         },
-        taxSubtotal: {
-            amount: checkout.taxTotal,
-            integerAmount: amountTransformer.toInteger(checkout.taxTotal),
-        },
-        taxes: checkout.taxes,
-        taxTotal: {
-            amount: checkout.taxTotal,
-            integerAmount: amountTransformer.toInteger(checkout.taxTotal),
-        },
+        taxes: order.taxes,
         handling: {
-            amount: checkout.handlingCostTotal,
-            integerAmount: amountTransformer.toInteger(checkout.handlingCostTotal),
+            amount: order.handlingCostTotal,
+            integerAmount: amountTransformer.toInteger(order.handlingCostTotal),
         },
         grandTotal: {
             amount: order.orderAmount,
@@ -86,9 +74,9 @@ function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificat
         appliedGiftCertificates: items.map(item => ({
             code: item.detail.code,
             discountedAmount: item.amount,
-            remainingBalance: 0,
+            remainingBalance: item.detail.remaining,
             giftCertificate: {
-                balance: 0,
+                balance: item.amount + item.detail.remaining,
                 code: item.detail.code,
                 purchaseDate: '',
             },
@@ -114,8 +102,41 @@ function isDefaultOrderPayment(payment: OrderPayment): payment is DefaultOrderPa
     return payment.providerId !== 'giftcertificate' && payment.providerId !== 'storecredit';
 }
 
-function getShippingDiscount(checkout: Checkout): number {
-    const coupon = checkout.cart.coupons.find(coupon => coupon.couponType === 'shipping_discount');
+export function mapToInternalSocialDataList(order: Order): { [itemId: string]: InternalSocialDataList } | undefined {
+    const socialDataObject: { [itemId: string]: InternalSocialDataList } = {};
+    const items = [
+        ...order.lineItems.physicalItems,
+        ...order.lineItems.digitalItems,
+    ];
 
-    return coupon ? coupon.discountedAmount : 0;
+    items.forEach(item => {
+        socialDataObject[item.id] = mapToInternalSocialData(item);
+    });
+
+    return socialDataObject;
+}
+
+export function mapToInternalSocialData(lineItem: LineItem): InternalSocialDataList {
+    const codes = ['fb', 'tw', 'gp'];
+
+    return codes.reduce((socialData, code) => {
+        const item = lineItem.socialMedia && lineItem.socialMedia.find(item => item.code === code);
+
+        if (!item) {
+            return socialData;
+        }
+
+        socialData[code] = {
+            name: lineItem.name,
+            description: lineItem.name,
+            image: lineItem.imageUrl,
+            url: item.link,
+            shareText: item.text,
+            sharingLink: item.link,
+            channelName: item.channel,
+            channelCode: item.code,
+        };
+
+        return socialData;
+    }, {} as InternalSocialDataList);
 }

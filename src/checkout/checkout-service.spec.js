@@ -76,10 +76,6 @@ describe('CheckoutService', () => {
                 Promise.resolve(getResponse(getOrder()))
             ),
 
-            loadInternalOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
-            ),
-
             submitOrder: jest.fn(() =>
                 Promise.resolve(getResponse(getCompleteOrderResponseBody()))
             ),

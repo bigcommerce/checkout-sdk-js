@@ -2,8 +2,9 @@ import { InternalLineItem } from '../cart';
 import { InternalCoupon, InternalGiftCertificate } from '../coupon';
 import { DiscountNotification } from '../discount';
 
-export default interface InternalOrder extends InternalIncompleteOrder {
+export default interface InternalOrder {
     id: number;
+    orderId: number;
     items: InternalLineItem[];
     currency: string;
     customerCanBeCreated: boolean;
@@ -31,10 +32,6 @@ export default interface InternalOrder extends InternalIncompleteOrder {
         amount: number;
     };
     taxes: Array<{ name: string, amount: number }>;
-    taxTotal: {
-        amount: number;
-        integerAmount: number;
-    };
     handling: {
         amount: number;
         integerAmount: number;
@@ -43,24 +40,19 @@ export default interface InternalOrder extends InternalIncompleteOrder {
         amount: number;
         integerAmount: number;
     };
+    token?: string;
+    payment: InternalOrderPayment;
+    socialData?: { [itemId: string]: InternalSocialDataList };
+    status: string;
+    hasDigitalItems: boolean;
+    isDownloadable: boolean;
+    isComplete: boolean;
+    callbackUrl?: string;
 }
 
 export interface InternalGiftCertificateList {
     totalDiscountedAmount: number;
     appliedGiftCertificates: InternalGiftCertificate[];
-}
-
-export interface InternalIncompleteOrder {
-    orderId: number;
-    token?: string;
-    payment?: InternalOrderPayment;
-    socialData?: InternalSocialDataList;
-    status: string;
-    customerCreated: boolean;
-    hasDigitalItems: boolean;
-    isDownloadable: boolean;
-    isComplete: boolean;
-    callbackUrl?: string;
 }
 
 export interface InternalOrderPayment {

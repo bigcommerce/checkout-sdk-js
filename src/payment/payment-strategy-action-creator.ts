@@ -170,6 +170,6 @@ export default class PaymentStrategyActionCreator {
             return empty();
         }
 
-        return this._orderActionCreator.loadOrder(checkout.orderId, { ...options, params: { include: ['payments'] } });
+        return this._orderActionCreator.loadOrder(checkout.orderId, options);
     }
 }

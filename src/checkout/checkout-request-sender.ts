@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { transformParams, ContentType, RequestOptions } from '../common/http-request';
+import { ContentType, RequestOptions } from '../common/http-request';
 
 import Checkout from './checkout';
 import CheckoutParams from './checkout-params';
@@ -22,9 +22,9 @@ export default class CheckoutRequestSender {
         ];
 
         return this._requestSender.get(url, {
-            params: transformParams({
-                include: defaultIncludes.concat(params && params.include || []),
-            }),
+            params: {
+                include: defaultIncludes.concat(params && params.include || []).join(','),
+            },
             headers,
             timeout,
         });

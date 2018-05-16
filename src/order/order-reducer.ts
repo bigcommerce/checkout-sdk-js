@@ -1,6 +1,6 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
-import InternalOrder, { InternalIncompleteOrder } from './internal-order';
+import InternalOrder from './internal-order';
 import mapToInternalOrder from './map-to-internal-order';
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
@@ -26,14 +26,13 @@ export default function orderReducer(
 }
 
 function dataReducer(
-    data: InternalOrder | InternalIncompleteOrder | undefined,
+    data: InternalOrder | undefined,
     action: OrderAction
-): InternalOrder | InternalIncompleteOrder | undefined {
+): InternalOrder | undefined {
     switch (action.type) {
     case OrderActionType.LoadOrderSucceeded:
-        return data && action.payload ? { ...data, ...mapToInternalOrder(action.payload, data as InternalOrder) } : data;
+        return action.payload ? mapToInternalOrder(action.payload) : data;
 
-    case OrderActionType.LoadInternalOrderSucceeded:
     case OrderActionType.FinalizeOrderSucceeded:
     case OrderActionType.SubmitOrderSucceeded:
         return action.payload ? { ...data, ...action.payload.order } : data;

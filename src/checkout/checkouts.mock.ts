@@ -40,6 +40,7 @@ export function getCheckout(): Checkout {
         coupons: [],
         orderId: 295,
         shippingCostTotal: 15,
+        shippingCostBeforeDiscount: 20,
         handlingCostTotal: 8,
         taxTotal: 0,
         grandTotal: 190,
