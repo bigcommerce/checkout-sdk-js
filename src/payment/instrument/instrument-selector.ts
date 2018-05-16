@@ -1,19 +1,16 @@
-/**
- * @todo Convert this file into TypeScript properly
- */
+import Instrument from './instrument';
+import InstrumentState, { DEFAULT_STATE, InstrumentMeta } from './instrument-state';
+
 export default class InstrumentSelector {
     constructor(
-        private _instruments: any = {}
+        private _instruments: InstrumentState = DEFAULT_STATE
     ) {}
 
-    /**
-     * @return {Array<Instrument>}
-     */
-    getInstruments(): any[] {
+    getInstruments(): Instrument[] | undefined {
         return this._instruments.data;
     }
 
-    getInstrumentsMeta(): any {
+    getInstrumentsMeta(): InstrumentMeta | undefined {
         return this._instruments.meta;
     }
 

@@ -88,7 +88,7 @@ export default class PaymentActionCreator {
             throw new NotInitializedError('Config data is missing');
         }
 
-        const authToken = payment.paymentData && (payment.paymentData as VaultedInstrument).instrumentId
+        const authToken = payment.paymentData && instrumentMeta && (payment.paymentData as VaultedInstrument).instrumentId
             ? `${state.order.getPaymentAuthToken()}, ${instrumentMeta.vaultAccessToken}`
             : state.order.getPaymentAuthToken();
 

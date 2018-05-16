@@ -14,8 +14,11 @@ export interface VaultAccessToken {
     vaultAccessExpiry: number;
 }
 
-export interface InstrumentRequestContext {
+export interface SessionContext {
     customerId: number;
     storeId: string;
-    token: VaultAccessToken;
+}
+
+export interface InstrumentRequestContext extends SessionContext {
+    vaultAccessToken: string;
 }

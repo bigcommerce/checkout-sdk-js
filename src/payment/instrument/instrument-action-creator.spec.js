@@ -71,7 +71,7 @@ describe('InstrumentActionCreator', () => {
             await instrumentActionCreator.loadInstruments()(store).toPromise();
 
             expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
-            expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, customerId, vaultAccessToken);
+            expect(checkoutClient.getInstruments).toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken });
         });
 
         it('does not send a request to get a list of instruments if valid token is supplied', async () => {
@@ -90,7 +90,11 @@ describe('InstrumentActionCreator', () => {
             await instrumentActionCreator.loadInstruments()(store).toPromise();
 
             expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
-            expect(checkoutClient.getInstruments).toHaveBeenCalledWith(storeId, customerId, vaultAccessToken);
+            expect(checkoutClient.getInstruments).toHaveBeenCalledWith({
+                storeId,
+                customerId,
+                vaultAccessToken,
+            });
         });
 
         it('emits actions if able to load instruments', async () => {
@@ -146,10 +150,12 @@ describe('InstrumentActionCreator', () => {
 
             expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
             expect(checkoutClient.vaultInstrument).toHaveBeenCalledWith(
-                storeId,
-                customerId,
+                {
+                    storeId,
+                    customerId,
+                    vaultAccessToken,
+                },
                 expect.any(Object),
-                vaultAccessToken
             );
         });
 
@@ -171,10 +177,12 @@ describe('InstrumentActionCreator', () => {
 
             expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
             expect(checkoutClient.vaultInstrument).toHaveBeenCalledWith(
-                storeId,
-                customerId,
+                {
+                    storeId,
+                    customerId,
+                    vaultAccessToken,
+                },
                 expect.any(Object),
-                vaultAccessToken
             );
         });
 
@@ -231,9 +239,11 @@ describe('InstrumentActionCreator', () => {
 
             expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
             expect(checkoutClient.deleteInstrument).toHaveBeenCalledWith(
-                storeId,
-                customerId,
-                vaultAccessToken,
+                {
+                    storeId,
+                    customerId,
+                    vaultAccessToken,
+                },
                 instrumentId,
             );
         });
@@ -255,10 +265,12 @@ describe('InstrumentActionCreator', () => {
 
             expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
             expect(checkoutClient.deleteInstrument).toHaveBeenCalledWith(
-                storeId,
-                customerId,
-                vaultAccessToken,
-                instrumentId
+                {
+                    storeId,
+                    customerId,
+                    vaultAccessToken,
+                },
+                instrumentId,
             );
         });
 
