@@ -16,6 +16,7 @@ import {
     PaymentStrategyExecuteAction,
     PaymentStrategyFinalizeAction,
     PaymentStrategyInitializeAction,
+    PaymentStrategyWidgetAction,
 } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import { PaymentStrategy } from './strategies';
@@ -140,4 +141,20 @@ export default class PaymentStrategyActionCreator {
                 });
         });
     }
-}
+
+    widgetInteraction(method: () => Promise<any>, options?: PaymentRequestOptions): ThunkAction<PaymentStrategyWidgetAction> {
+        return store => Observable.create((observer: Observer<PaymentStrategyWidgetAction>) => {
+            const methodId = options && options.methodId;
+            const meta = { methodId };
+
+            observer.next(createAction(PaymentStrategyActionType.WidgetInteractionStarted, undefined, meta));
+
+            method().then(() => {
+                observer.next(createAction(PaymentStrategyActionType.WidgetInteractionFinished, undefined, meta));
+                observer.complete();
+            })
+            .catch(error => {
+                observer.error(createErrorAction(PaymentStrategyActionType.WidgetInteractionFailed, error, meta));
+            });
+        });
+    }}

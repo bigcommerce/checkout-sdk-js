@@ -80,6 +80,21 @@ function errorsReducer(
             finalizeMethodId: action.meta && action.meta.methodId,
         };
 
+    case PaymentStrategyActionType.WidgetInteractionStarted:
+    case PaymentStrategyActionType.WidgetInteractionFinished:
+        return {
+            ...errors,
+            widgetInteractionError: undefined,
+            widgetInteractionMethodId: undefined,
+        };
+
+    case PaymentStrategyActionType.WidgetInteractionFailed:
+        return {
+            ...errors,
+            widgetInteractionError: action.payload,
+            widgetInteractionMethodId: action.meta.methodId,
+        };
+
     default:
         return errors;
     }
@@ -149,6 +164,21 @@ function statusesReducer(
             isFinalizing: false,
             finalizeMethodId: undefined,
         };
+
+    case PaymentStrategyActionType.WidgetInteractionStarted:
+    return {
+        ...statuses,
+        isWidgetInteracting: true,
+        widgetInteractionMethodId: action.meta.methodId,
+     };
+
+    case PaymentStrategyActionType.WidgetInteractionFinished:
+    case PaymentStrategyActionType.WidgetInteractionFailed:
+     return {
+        ...statuses,
+        isWidgetInteracting: false,
+        widgetInteractionMethodId: undefined,
+     };
 
     default:
         return statuses;
