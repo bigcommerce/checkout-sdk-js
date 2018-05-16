@@ -1,5 +1,6 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
+import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
 import { OrderActionType } from '../order';
@@ -26,7 +27,8 @@ export default function customerReducer(state: CustomerState = DEFAULT_STATE, ac
 function dataReducer(data: InternalCustomer | undefined, action: Action): InternalCustomer | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return data ? { ...data, ...mapToInternalCustomer(action.payload, data) } : data;
+    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
+        return action.payload ? { ...data, ...mapToInternalCustomer(action.payload) } : data;
 
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:

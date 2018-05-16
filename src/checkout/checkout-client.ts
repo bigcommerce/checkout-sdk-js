@@ -1,6 +1,6 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { InternalAddress } from '../address';
+import { AddressRequestBody } from '../address';
 import { BillingAddressRequestSender } from '../billing';
 import { CartRequestSender } from '../cart';
 import { RequestOptions } from '../common/http-request';
@@ -8,10 +8,19 @@ import { Config, ConfigRequestSender } from '../config';
 import { CouponRequestSender, GiftCertificateRequestSender } from '../coupon';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
-import { InternalOrderResponseBody, OrderRequestBody, OrderRequestSender } from '../order';
+import { InternalOrderResponseBody, Order, OrderParams, OrderRequestBody, OrderRequestSender } from '../order';
 import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
 import { QuoteRequestSender } from '../quote';
-import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
+import {
+    ConsignmentsRequestBody,
+    ConsignmentRequestBody,
+    ConsignmentRequestSender,
+    ShippingCountryRequestSender
+} from '../shipping';
+
+import Checkout from './checkout';
+import CheckoutParams from './checkout-params';
+import CheckoutRequestSender from './checkout-request-sender';
 
 /**
  * @deprecated Use request senders directly
@@ -23,7 +32,9 @@ export default class CheckoutClient {
     constructor(
         private _billingAddressRequestSender: BillingAddressRequestSender,
         private _cartRequestSender: CartRequestSender,
+        private _checkoutRequestSender: CheckoutRequestSender,
         private _configRequestSender: ConfigRequestSender,
+        private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
         private _couponRequestSender: CouponRequestSender,
         private _customerRequestSender: CustomerRequestSender,
@@ -31,12 +42,14 @@ export default class CheckoutClient {
         private _orderRequestSender: OrderRequestSender,
         private _paymentMethodRequestSender: PaymentMethodRequestSender,
         private _quoteRequestSender: QuoteRequestSender,
-        private _shippingAddressRequestSender: ShippingAddressRequestSender,
-        private _shippingCountryRequestSender: ShippingCountryRequestSender,
-        private _shippingOptionRequestSender: ShippingOptionRequestSender
+        private _shippingCountryRequestSender: ShippingCountryRequestSender
     ) {}
 
-    loadCheckout(options?: RequestOptions): Promise<Response> {
+    loadCheckout(id: string, options?: RequestOptions<CheckoutParams>): Promise<Response> {
+        return this._checkoutRequestSender.loadCheckout(id, options);
+    }
+
+    loadQuote(options?: RequestOptions): Promise<Response> {
         return this._quoteRequestSender.loadQuote(options);
     }
 
@@ -44,8 +57,16 @@ export default class CheckoutClient {
         return this._cartRequestSender.loadCart(options);
     }
 
-    loadOrder(orderId: number, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
+    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Promise<Response<Order>> {
         return this._orderRequestSender.loadOrder(orderId, options);
+    }
+
+    /**
+     * @deprecated
+     * Remove once we fully transition to Storefront API
+     */
+    loadInternalOrder(orderId: number, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
+        return this._orderRequestSender.loadInternalOrder(orderId, options);
     }
 
     submitOrder(body: OrderRequestBody, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
@@ -72,20 +93,20 @@ export default class CheckoutClient {
         return this._shippingCountryRequestSender.loadCountries(options);
     }
 
-    updateBillingAddress(address: InternalAddress, options?: RequestOptions): Promise<Response> {
-        return this._billingAddressRequestSender.updateAddress(address, options);
+    createBillingAddress(checkoutId: string, address: Partial<AddressRequestBody>, options?: RequestOptions): Promise<Response<Checkout>> {
+        return this._billingAddressRequestSender.createAddress(checkoutId, address, options);
     }
 
-    updateShippingAddress(address: InternalAddress, options?: RequestOptions): Promise<Response> {
-        return this._shippingAddressRequestSender.updateAddress(address, options);
+    updateBillingAddress(checkoutId: string, address: Partial<AddressRequestBody>, options?: RequestOptions): Promise<Response> {
+        return this._billingAddressRequestSender.updateAddress(checkoutId, address, options);
     }
 
-    loadShippingOptions(options?: RequestOptions): Promise<Response> {
-        return this._shippingOptionRequestSender.loadShippingOptions(options);
+    createConsignments(checkoutId: string, consignments: ConsignmentsRequestBody, options?: RequestOptions): Promise<Response> {
+        return this._consignmentRequestSender.createConsignments(checkoutId, consignments, options);
     }
 
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: RequestOptions): Promise<Response> {
-        return this._shippingOptionRequestSender.selectShippingOption(addressId, shippingOptionId, options);
+    updateConsignment(checkoutId: string, consignment: ConsignmentRequestBody, options?: RequestOptions): Promise<Response> {
+        return this._consignmentRequestSender.updateConsignment(checkoutId, consignment, options);
     }
 
     signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Promise<Response> {
@@ -96,20 +117,20 @@ export default class CheckoutClient {
         return this._customerRequestSender.signOutCustomer(options);
     }
 
-    applyCoupon(code: string, options?: RequestOptions): Promise<Response> {
-        return this._couponRequestSender.applyCoupon(code, options);
+    applyCoupon(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
+        return this._couponRequestSender.applyCoupon(checkoutId, code, options);
     }
 
-    removeCoupon(code: string, options?: RequestOptions): Promise<Response> {
-        return this._couponRequestSender.removeCoupon(code, options);
+    removeCoupon(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
+        return this._couponRequestSender.removeCoupon(checkoutId, code, options);
     }
 
-    applyGiftCertificate(code: string, options?: RequestOptions): Promise<Response> {
-        return this._giftCertificateRequestSender.applyGiftCertificate(code, options);
+    applyGiftCertificate(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
+        return this._giftCertificateRequestSender.applyGiftCertificate(checkoutId, code, options);
     }
 
-    removeGiftCertificate(code: string, options?: RequestOptions): Promise<Response> {
-        return this._giftCertificateRequestSender.removeGiftCertificate(code, options);
+    removeGiftCertificate(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
+        return this._giftCertificateRequestSender.removeGiftCertificate(checkoutId, code, options);
     }
 
     loadConfig(options?: RequestOptions): Promise<Response<Config>> {

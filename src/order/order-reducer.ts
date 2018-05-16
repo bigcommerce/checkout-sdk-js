@@ -3,9 +3,9 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import * as quoteActionTypes from '../quote/quote-action-types';
 
-import InternalIncompleteOrder from './internal-incomplete-order';
-import InternalOrder from './internal-order';
+import InternalOrder, { InternalIncompleteOrder } from './internal-order';
 import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import mapToInternalOrder from './map-to-internal-order';
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 
@@ -38,6 +38,9 @@ function dataReducer(
         return data ? { ...data, ...mapToInternalIncompleteOrder(action.payload, data) } : data;
 
     case OrderActionType.LoadOrderSucceeded:
+        return data ? mapToInternalOrder(action.payload, data as InternalOrder) : data;
+
+    case OrderActionType.LoadInternalOrderSucceeded:
     case OrderActionType.FinalizeOrderSucceeded:
     case OrderActionType.SubmitOrderSucceeded:
     case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
@@ -54,7 +57,11 @@ function metaReducer(
 ): OrderMetaState | undefined {
     switch (action.type) {
     case OrderActionType.SubmitOrderSucceeded:
-        return { ...meta, ...action.meta };
+        return action.payload ? {
+            ...meta,
+            ...action.meta,
+            payment: action.payload.order && action.payload.order.payment,
+        } : meta;
 
     default:
         return meta;

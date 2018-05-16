@@ -19,6 +19,8 @@ import {
     ShippingOptionSelector,
 } from '../shipping';
 
+import Checkout from './checkout';
+import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
@@ -29,6 +31,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default class CheckoutStoreSelector {
     private _billingAddress: BillingAddressSelector;
     private _cart: CartSelector;
+    private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
     private _countries: CountrySelector;
     private _customer: CustomerSelector;
@@ -47,6 +50,7 @@ export default class CheckoutStoreSelector {
     constructor(selectors: InternalCheckoutSelectors) {
         this._billingAddress = selectors.billingAddress;
         this._cart = selectors.cart;
+        this._checkout = selectors.checkout;
         this._config = selectors.config;
         this._countries = selectors.countries;
         this._customer = selectors.customer;
@@ -58,6 +62,10 @@ export default class CheckoutStoreSelector {
         this._shippingAddress = selectors.shippingAddress;
         this._shippingCountries = selectors.shippingCountries;
         this._shippingOptions = selectors.shippingOptions;
+    }
+
+    getCheckout(): Checkout | undefined {
+        return this._checkout.getCheckout();
     }
 
     getOrder(): InternalOrder | InternalIncompleteOrder | undefined {

@@ -4,10 +4,12 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
+import { getCheckoutState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
 import { MissingDataError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
+import { HOSTED } from '../../payment/payment-method-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import {
@@ -215,11 +217,23 @@ describe('AmazonPayCustomerStrategy', () => {
     it('signs out from remote checkout provider', async () => {
         const action = Observable.of(createAction(SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
 
-        jest.spyOn(store.getState().customer, 'getCustomer')
-            .mockReturnValue({
-                ...getGuestCustomer(),
-                remote: { provider: 'amazon' },
-            });
+        store = createCheckoutStore({
+            checkout: {
+                ...getCheckoutState(),
+                data: {
+                    ...getCheckoutWithPayments(),
+                    payments: [{ providerId: 'amazon', providerType: HOSTED }],
+                },
+            },
+        });
+
+        strategy = new AmazonPayCustomerStrategy(
+            store,
+            paymentMethodActionCreator,
+            remoteCheckoutActionCreator,
+            remoteCheckoutRequestSender,
+            scriptLoader
+        );
 
         jest.spyOn(store, 'dispatch');
 

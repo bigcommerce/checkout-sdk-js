@@ -1,27 +1,18 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressActionCreator } from '../billing';
-import { CartActionCreator } from '../cart';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
-import {
-    createPaymentClient,
-    createPaymentStrategyRegistry,
-    PaymentMethodActionCreator,
-    PaymentStrategyActionCreator,
-} from '../payment';
+import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
-import {
-    createShippingStrategyRegistry,
-    ShippingCountryActionCreator,
-    ShippingOptionActionCreator,
-    ShippingStrategyActionCreator,
-} from '../shipping';
+import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import ConsignmentActionCreator from '../shipping/consignment-action-creator';
 
+import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
@@ -30,25 +21,27 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
     const client = createCheckoutClient({ locale: options.locale });
     const store = createCheckoutStore({}, { shouldWarnMutation: options.shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
-
-    const instrumentRequestSender = new InstrumentRequestSender(paymentClient, createRequestSender());
+    const requestSender = createRequestSender();
 
     return new CheckoutService(
         store,
         new BillingAddressActionCreator(client),
-        new CartActionCreator(client),
+        new CheckoutActionCreator(client),
         new ConfigActionCreator(client),
+        new ConsignmentActionCreator(client),
         new CountryActionCreator(client),
         new CouponActionCreator(client),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
         new GiftCertificateActionCreator(client),
-        new InstrumentActionCreator(instrumentRequestSender),
+        new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
-        new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
+        new PaymentStrategyActionCreator(
+            createPaymentStrategyRegistry(store, client, paymentClient),
+            new OrderActionCreator(client)
+        ),
         new QuoteActionCreator(client),
         new ShippingCountryActionCreator(client),
-        new ShippingOptionActionCreator(client),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, client))
     );
 }

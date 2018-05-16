@@ -1,5 +1,10 @@
-export default interface Address {
-    id: string;
+export default interface Address extends AddressRequestBody {
+    country: string;
+}
+
+export interface AddressRequestBody {
+    id?: string;
+    email?: string;
     firstName: string;
     lastName: string;
     company: string;
@@ -8,7 +13,6 @@ export default interface Address {
     city: string;
     region: string;
     regionCode: string;
-    country: string;
     countryCode: string;
     postalCode: string;
     phone: string;

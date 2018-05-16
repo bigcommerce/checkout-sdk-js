@@ -11,7 +11,8 @@ import { getCart, getCartResponseBody, getCartState } from '../cart/internal-car
 import { getConfigState } from '../config/configs.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import OrderActionCreator from './order-action-creator';
-import { OrderActionType } from '.';
+import { getOrder } from './orders.mock';
+import { OrderActionType } from './order-actions';
 
 describe('OrderActionCreator', () => {
     let checkoutClient;
@@ -32,7 +33,7 @@ describe('OrderActionCreator', () => {
         let response;
 
         beforeEach(() => {
-            response = getResponse(getCompleteOrderResponseBody());
+            response = getResponse(getOrder());
             errorResponse = getErrorResponse();
 
             checkoutClient = {
@@ -49,7 +50,7 @@ describe('OrderActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: OrderActionType.LoadOrderRequested },
-                { type: OrderActionType.LoadOrderSucceeded, payload: response.body.data },
+                { type: OrderActionType.LoadOrderSucceeded, payload: response.body },
             ]);
         });
 

@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../checkout';
+import { getCheckoutState } from '../checkout/checkouts.mock';
 import { getCouponResponseBody } from './internal-coupons.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import * as actionTypes from './coupon-action-types';
@@ -15,7 +16,9 @@ describe('CouponActionCreator', () => {
     beforeEach(() => {
         response = getResponse(getCouponResponseBody());
         errorResponse = getErrorResponse();
-        store = createCheckoutStore();
+        store = createCheckoutStore({
+            checkout: getCheckoutState(),
+        });
 
         checkoutClient = {
             applyCoupon: jest.fn(() => Promise.resolve(response)),
@@ -33,7 +36,7 @@ describe('CouponActionCreator', () => {
         it('emits actions if able to apply coupon', () => {
             const coupon = 'myCouponCode1234';
 
-            couponActionCreator.applyCoupon(coupon)
+            Observable.from(couponActionCreator.applyCoupon(coupon)(store))
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
@@ -49,7 +52,7 @@ describe('CouponActionCreator', () => {
             const coupon = 'myCouponCode1234';
             const errorHandler = jest.fn((action) => Observable.of(action));
 
-            couponActionCreator.applyCoupon(coupon)
+            Observable.from(couponActionCreator.applyCoupon(coupon)(store))
                 .catch(errorHandler)
                 .toArray()
                 .subscribe((actions) => {
@@ -70,7 +73,7 @@ describe('CouponActionCreator', () => {
         it('emits actions if able to remove coupon', () => {
             const coupon = 'myCouponCode1234';
 
-            couponActionCreator.removeCoupon(coupon)
+            Observable.from(couponActionCreator.removeCoupon(coupon)(store))
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
@@ -86,7 +89,7 @@ describe('CouponActionCreator', () => {
             const coupon = 'myCouponCode1234';
             const errorHandler = jest.fn((action) => Observable.of(action));
 
-            couponActionCreator.removeCoupon(coupon)
+            Observable.from(couponActionCreator.removeCoupon(coupon)(store))
                 .catch(errorHandler)
                 .toArray()
                 .subscribe((actions) => {

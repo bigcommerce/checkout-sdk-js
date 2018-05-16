@@ -1,9 +1,9 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { getPhysicalItem } from '../cart/line-items.mock';
-import { getCoupon } from '../coupon/coupons.mock';
+import { getGiftCertificateItem } from '../cart/line-items.mock';
+import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
 import { getCurrency } from '../currency/currencies.mock';
-import { getDiscount } from '../discount/discounts.mock';
 
+import { getPhysicalItem } from './line-items.mock';
 import Order from './order';
 
 export function getOrder(): Order {
@@ -11,6 +11,10 @@ export function getOrder(): Order {
         baseAmount: 200,
         billingAddress: getBillingAddress(),
         cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+        coupons: [
+            getCoupon(),
+            getShippingCoupon(),
+        ],
         currency: getCurrency(),
         customerCreated: false,
         customerId: 0,
@@ -24,10 +28,23 @@ export function getOrder(): Order {
                 getPhysicalItem(),
             ],
             digitalItems: [],
-            giftCertificates: [],
+            giftCertificates: [
+                getGiftCertificateItem(),
+            ],
         },
         orderAmount: 190,
         orderId: 295,
+        payments: [
+            {
+                providerId: 'authorizenet',
+                description: 'credit-card',
+                amount: 190,
+                detail: {
+                    step: 'PAYMENT_STATUS_FINALIZE',
+                    instructions: '%%OrderID%% text %%OrderID%%',
+                },
+            },
+        ],
         status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
     };
 }
