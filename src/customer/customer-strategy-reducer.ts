@@ -80,6 +80,21 @@ function errorsReducer(
             signOutMethodId: action.meta && action.meta.methodId,
         };
 
+    case CustomerStrategyActionType.WidgetInteractionStarted:
+    case CustomerStrategyActionType.WidgetInteractionFinished:
+        return {
+            ...errors,
+            widgetInteractionError: undefined,
+            widgetInteractionMethodId: undefined,
+        };
+
+    case CustomerStrategyActionType.WidgetInteractionFailed:
+        return {
+            ...errors,
+            widgetInteractionError: action.payload,
+            widgetInteractionMethodId: action.meta.methodId,
+        };
+
     default:
         return errors;
     }
@@ -149,6 +164,21 @@ function statusesReducer(
             isSigningOut: false,
             signOutMethodId: undefined,
         };
+
+    case CustomerStrategyActionType.WidgetInteractionStarted:
+        return {
+            ...statuses,
+            isWidgetInteracting: true,
+            widgetInteractionMethodId: action.meta.methodId,
+         };
+
+    case CustomerStrategyActionType.WidgetInteractionFinished:
+    case CustomerStrategyActionType.WidgetInteractionFailed:
+         return {
+            ...statuses,
+            isWidgetInteracting: false,
+            widgetInteractionMethodId: undefined,
+         };
 
     default:
         return statuses;
