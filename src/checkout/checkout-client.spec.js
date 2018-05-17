@@ -19,7 +19,6 @@ describe('CheckoutClient', () => {
     let checkoutRequestSender;
     let configRequestSender;
     let countryRequestSender;
-    let couponRequestSender;
     let customerRequestSender;
     let giftCertificateRequestSender;
     let orderRequestSender;
@@ -48,11 +47,6 @@ describe('CheckoutClient', () => {
 
         countryRequestSender = {
             loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
-        };
-
-        couponRequestSender = {
-            applyCoupon: jest.fn(() => Promise.resolve(getCartResponseBody())),
-            removeCoupon: jest.fn(() => Promise.resolve(getCartResponseBody())),
         };
 
         customerRequestSender = {
@@ -101,7 +95,6 @@ describe('CheckoutClient', () => {
             configRequestSender,
             consignmentRequestSender,
             countryRequestSender,
-            couponRequestSender,
             customerRequestSender,
             giftCertificateRequestSender,
             orderRequestSender,
@@ -375,26 +368,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getCustomerResponseBody());
             expect(customerRequestSender.signOutCustomer).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#applyCoupon()', () => {
-        it('applies a coupon code', async () => {
-            const output = await client.applyCoupon('foo', 'bar');
-
-            expect(output).toEqual(getCartResponseBody());
-            expect(couponRequestSender.applyCoupon)
-                .toHaveBeenCalledWith('foo', 'bar', undefined);
-        });
-    });
-
-    describe('#removeCoupon()', () => {
-        it('removes a coupon code', async () => {
-            const output = await client.removeCoupon('foo', 'bar');
-
-            expect(output).toEqual(getCartResponseBody());
-            expect(couponRequestSender.removeCoupon)
-                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 

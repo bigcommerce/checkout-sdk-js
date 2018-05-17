@@ -5,7 +5,7 @@ import { BillingAddressRequestSender } from '../billing';
 import { CartRequestSender } from '../cart';
 import { RequestOptions } from '../common/http-request';
 import { Config, ConfigRequestSender } from '../config';
-import { CouponRequestSender, GiftCertificateRequestSender } from '../coupon';
+import { GiftCertificateRequestSender } from '../coupon';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
 import { InternalOrderResponseBody, Order, OrderParams, OrderRequestBody, OrderRequestSender } from '../order';
@@ -36,7 +36,6 @@ export default class CheckoutClient {
         private _configRequestSender: ConfigRequestSender,
         private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
-        private _couponRequestSender: CouponRequestSender,
         private _customerRequestSender: CustomerRequestSender,
         private _giftCertificateRequestSender: GiftCertificateRequestSender,
         private _orderRequestSender: OrderRequestSender,
@@ -115,14 +114,6 @@ export default class CheckoutClient {
 
     signOutCustomer(options?: RequestOptions): Promise<Response> {
         return this._customerRequestSender.signOutCustomer(options);
-    }
-
-    applyCoupon(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
-        return this._couponRequestSender.applyCoupon(checkoutId, code, options);
-    }
-
-    removeCoupon(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
-        return this._couponRequestSender.removeCoupon(checkoutId, code, options);
     }
 
     applyGiftCertificate(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
