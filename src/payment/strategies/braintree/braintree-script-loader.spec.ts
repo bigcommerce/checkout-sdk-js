@@ -1,22 +1,22 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import * as Braintree from './braintree';
+import { BraintreeClientCreator, BraintreeHostWindow } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import { getClientMock, getDataCollectorMock, getModuleCreatorMock, getThreeDSecureMock } from './braintree.mock';
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
     let scriptLoader: ScriptLoader;
-    let mockWindow: Braintree.HostWindow;
+    let mockWindow: BraintreeHostWindow;
 
     beforeEach(() => {
-        mockWindow = { braintree: {} } as Braintree.HostWindow;
+        mockWindow = { braintree: {} } as BraintreeHostWindow;
         scriptLoader = {} as ScriptLoader;
         braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
     });
 
     describe('#loadClient()', () => {
-        let clientMock: Braintree.ClientCreator;
+        let clientMock: BraintreeClientCreator;
 
         beforeEach(() => {
             clientMock = getModuleCreatorMock(getClientMock());

@@ -1,40 +1,40 @@
-export interface SDK {
-    client?: ClientCreator;
-    dataCollector?: DataCollectorCreator;
-    paypal?: PaypalCreator;
-    threeDSecure?: ThreeDSecureCreator;
+export interface BraintreeSDK {
+    client?: BraintreeClientCreator;
+    dataCollector?: BraintreeDataCollectorCreator;
+    paypal?: BraintreePaypalCreator;
+    threeDSecure?: BraintreeThreeDSecureCreator;
 }
 
-export interface ModuleCreator<T> {
-    create(config: ModuleCreatorConfig): Promise<T>;
+export interface BraintreeModuleCreator<T> {
+    create(config: BraintreeModuleCreatorConfig): Promise<T>;
 }
 
-export interface ModuleCreatorConfig {
-    client?: Client;
+export interface BraintreeModuleCreatorConfig {
+    client?: BraintreeClient;
     authorization?: string;
     kount?: boolean;
 }
 
-export interface ClientCreator extends ModuleCreator<Client> {}
-export interface DataCollectorCreator extends ModuleCreator<DataCollector> {}
-export interface ThreeDSecureCreator extends ModuleCreator<ThreeDSecure> {}
-export interface PaypalCreator extends ModuleCreator<Paypal> {}
+export interface BraintreeClientCreator extends BraintreeModuleCreator<BraintreeClient> {}
+export interface BraintreeDataCollectorCreator extends BraintreeModuleCreator<BraintreeDataCollector> {}
+export interface BraintreeThreeDSecureCreator extends BraintreeModuleCreator<BraintreeThreeDSecure> {}
+export interface BraintreePaypalCreator extends BraintreeModuleCreator<BraintreePaypal> {}
 
-export interface Module {
+export interface BraintreeModule {
     teardown(): Promise<void>;
 }
 
-export interface Client {
-    request(payload: RequestData): Promise<TokenizeResponse>;
+export interface BraintreeClient {
+    request(payload: BraintreeRequestData): Promise<BraintreeTokenizeResponse>;
     getVersion(): string | void;
 }
 
-export interface ThreeDSecure extends Module {
-    verifyCard(options: ThreeDSecureOptions): Promise<{ nonce: string }>;
-    cancelVerifyCard(): Promise<VerifyPayload>;
+export interface BraintreeThreeDSecure extends BraintreeModule {
+    verifyCard(options: BraintreeThreeDSecureOptions): Promise<{ nonce: string }>;
+    cancelVerifyCard(): Promise<BraintreeVerifyPayload>;
 }
 
-export interface ThreeDSecureOptions {
+export interface BraintreeThreeDSecureOptions {
     nonce: string;
     amount: number;
     showLoader?: boolean;
@@ -42,30 +42,30 @@ export interface ThreeDSecureOptions {
     removeFrame(): void;
 }
 
-export interface DataCollector extends Module {
+export interface BraintreeDataCollector extends BraintreeModule {
     deviceData?: string;
 }
 
-export interface Paypal {
+export interface BraintreePaypal {
     closeWindow(): void;
     focusWindow(): void;
-    tokenize(options: PaypalRequest): Promise<TokenizePayload>;
+    tokenize(options: BraintreePaypalRequest): Promise<BraintreeTokenizePayload>;
 }
 
-export interface TokenizeReturn {
+export interface BraintreeTokenizeReturn {
     close(): void;
     focus(): void;
 }
 
-export interface HostWindow extends Window {
-    braintree?: SDK;
+export interface BraintreeHostWindow extends Window {
+    braintree?: BraintreeSDK;
 }
 
-export interface TokenizeResponse {
+export interface BraintreeTokenizeResponse {
     creditCards: Array<{ nonce: string }>;
 }
 
-export interface RequestData {
+export interface BraintreeRequestData {
     data: {
         creditCard: {
             billingAddress: {
@@ -86,7 +86,7 @@ export interface RequestData {
     method: string;
 }
 
-export interface PaypalRequest {
+export interface BraintreePaypalRequest {
     amount: string | number;
     billingAgreementDescription?: string;
     currency?: string;
@@ -98,11 +98,11 @@ export interface PaypalRequest {
     locale?: string;
     offerCredit: boolean;
     shippingAddressEditable?: boolean;
-    shippingAddressOverride?: Address;
+    shippingAddressOverride?: BraintreeAddress;
     useraction?: 'commit';
 }
 
-export interface Address {
+export interface BraintreeAddress {
     line1: string;
     line2?: string;
     city: string;
@@ -113,7 +113,7 @@ export interface Address {
     recipientName?: string;
 }
 
-export interface TokenizePayload {
+export interface BraintreeTokenizePayload {
     nonce: string;
     type: 'PaypalAccount';
     details: {
@@ -123,8 +123,8 @@ export interface TokenizePayload {
         lastName: string;
         countryCode?: string;
         phone?: string;
-        shippingAddress?: Address;
-        billingAddress?: Address;
+        shippingAddress?: BraintreeAddress;
+        billingAddress?: BraintreeAddress;
     };
     creditFinancingOffered: {
         totalCost: {
@@ -145,7 +145,7 @@ export interface TokenizePayload {
     };
 }
 
-export interface VerifyPayload {
+export interface BraintreeVerifyPayload {
     nonce: string;
     details: {
         cardType: string;

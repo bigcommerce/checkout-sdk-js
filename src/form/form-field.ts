@@ -8,15 +8,15 @@ export default interface FormField {
     type?: string;
     fieldType?: string;
     itemtype?: string;
-    options?: Options;
+    options?: FormFieldOptions;
 }
 
-export interface Options {
+export interface FormFieldOptions {
     helperLabel?: string;
-    items: Item[];
+    items: FormFieldItem[];
 }
 
-export interface Item {
+export interface FormFieldItem {
     value: string;
     label: string;
 }

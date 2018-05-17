@@ -42,7 +42,7 @@ export default class LanguageService {
         return this._hasTranslations() ? this._locale : DEFAULT_LOCALE;
     }
 
-    translate(rawKey: string, data: PlaceholderData = {}): string {
+    translate(rawKey: string, data: TranslationData = {}): string {
         const key = `${KEY_PREFIX}.${rawKey}`;
 
         if (typeof this._translations[key] !== 'string') {
@@ -105,14 +105,14 @@ export default class LanguageService {
         return result;
     }
 
-    private _transformData(data: PlaceholderData): PlaceholderData {
+    private _transformData(data: TranslationData): TranslationData {
         return Object.keys(data).reduce((result, key) => {
             const value = data[key];
 
             result[key] = value === null || value === undefined ? '' : value;
 
             return result;
-        }, {} as PlaceholderData);
+        }, {} as TranslationData);
     }
 
     private _hasTranslations(): boolean {
@@ -122,6 +122,6 @@ export default class LanguageService {
     }
 }
 
-export interface PlaceholderData {
-    [key: string]: any;
+export interface TranslationData {
+    [key: string]: string | number;
 }

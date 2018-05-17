@@ -2,10 +2,10 @@ export default interface Country {
     code: string;
     name: string;
     hasPostalCodes: boolean;
-    subdivisions: State[];
+    subdivisions: Region[];
 }
 
-export interface State {
+export interface Region {
     code: string;
     name: string;
 }

@@ -5,7 +5,7 @@ import { CancellablePromise } from '../../../common/utility';
 import { PaymentMethodCancelledError } from '../../errors';
 import { CreditCard, TokenizedCreditCard } from '../../payment';
 
-import * as Braintree from './braintree';
+import { BraintreePaypal, BraintreeRequestData } from './braintree';
 import { BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 
@@ -21,7 +21,7 @@ export default class BraintreePaymentProcessor {
         this._threeDSecureOptions = options && options.threeDSecure;
     }
 
-    preloadPaypal(): Promise<Braintree.Paypal> {
+    preloadPaypal(): Promise<BraintreePaypal> {
         return this._braintreeSDKCreator.getPaypal();
     }
 
@@ -93,7 +93,7 @@ export default class BraintreePaymentProcessor {
         return this._braintreeSDKCreator.teardown();
     }
 
-    private _mapToCreditCard(creditCard: CreditCard, billingAddress: InternalAddress): Braintree.RequestData {
+    private _mapToCreditCard(creditCard: CreditCard, billingAddress: InternalAddress): BraintreeRequestData {
         let streetAddress = billingAddress.addressLine1;
 
         if (billingAddress.addressLine2) {
