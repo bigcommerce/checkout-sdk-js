@@ -2,13 +2,14 @@ import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../../checkout';
 import { getConfigState } from '../../config/configs.mock';
 import { getCustomerState } from '../../customer/internal-customers.mock';
+import { getQuoteState } from '../../quote/internal-quotes.mock';
 import { getInstrumentsState, getInstrumentsMeta } from './instrument.mock';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import * as actionTypes from './instrument-action-types';
 import InstrumentActionCreator from './instrument-action-creator';
 import {
     getVaultAccessTokenResponseBody,
-    getInstrumentsResponseBody,
+    getLoadInstrumentsResponseBody,
     vaultInstrumentResponseBody,
     deleteInstrumentResponseBody,
 } from './instrument.mock';
@@ -17,7 +18,7 @@ describe('InstrumentActionCreator', () => {
     let instrumentActionCreator;
     let checkoutClient;
     let getVaultAccessTokenResponse;
-    let getInstrumentsResponse;
+    let loadInstrumentsResponse;
     let vaultInstrumentResponse;
     let deleteInstrumentResponse;
     let errorResponse;
@@ -25,22 +26,24 @@ describe('InstrumentActionCreator', () => {
     let storeId;
     let customerId;
     let instrumentId;
+    let shippingAddress;
     let vaultAccessExpiry;
     let vaultAccessToken;
     let configState;
     let customerState;
     let instrumentsState;
+    let quoteState;
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
         getVaultAccessTokenResponse = getResponse(getVaultAccessTokenResponseBody());
-        getInstrumentsResponse = getResponse(getInstrumentsResponseBody());
+        loadInstrumentsResponse = getResponse(getLoadInstrumentsResponseBody());
         vaultInstrumentResponse = getResponse(vaultInstrumentResponseBody());
         deleteInstrumentResponse = getResponse(deleteInstrumentResponseBody());
 
         checkoutClient = {
             getVaultAccessToken: jest.fn(() => Promise.resolve(getVaultAccessTokenResponse)),
-            getInstruments: jest.fn(() => Promise.resolve(getInstrumentsResponse)),
+            loadInstruments: jest.fn(() => Promise.resolve(loadInstrumentsResponse)),
             vaultInstrument: jest.fn(() => Promise.resolve(vaultInstrumentResponse)),
             deleteInstrument: jest.fn(() => Promise.resolve(deleteInstrumentResponse)),
         };
@@ -50,15 +53,18 @@ describe('InstrumentActionCreator', () => {
         configState = getConfigState();
         customerState = getCustomerState();
         instrumentsState = getInstrumentsState();
+        quoteState = getQuoteState();
 
         store = createCheckoutStore({
             config: configState,
             customer: customerState,
             instruments: instrumentsState,
+            quote: quoteState,
         });
 
         storeId = configState.data.storeConfig.storeProfile.storeId;
         customerId = customerState.data.customerId;
+        shippingAddress = quoteState.data.shippingAddress;
         instrumentId = '123';
 
         const instrumentsMeta = getInstrumentsMeta();
@@ -66,18 +72,22 @@ describe('InstrumentActionCreator', () => {
         vaultAccessExpiry = instrumentsMeta.vaultAccessExpiry;
     });
 
-    describe('#getInstruments()', () => {
+    describe('#loadInstruments()', () => {
         it('sends a request to get a list of instruments', async () => {
             await instrumentActionCreator.loadInstruments()(store).toPromise();
 
             expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
-            expect(checkoutClient.getInstruments).toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken });
+            expect(checkoutClient.loadInstruments).toHaveBeenCalledWith(
+                { storeId, customerId, vaultAccessToken },
+                shippingAddress
+            );
         });
 
         it('does not send a request to get a list of instruments if valid token is supplied', async () => {
             store = createCheckoutStore({
                 config: configState,
                 customer: customerState,
+                quote: quoteState,
                 instruments: {
                     ...getInstrumentsState(),
                     meta: {
@@ -90,11 +100,10 @@ describe('InstrumentActionCreator', () => {
             await instrumentActionCreator.loadInstruments()(store).toPromise();
 
             expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
-            expect(checkoutClient.getInstruments).toHaveBeenCalledWith({
-                storeId,
-                customerId,
-                vaultAccessToken,
-            });
+            expect(checkoutClient.loadInstruments).toHaveBeenCalledWith(
+                { storeId, customerId, vaultAccessToken },
+                shippingAddress
+            );
         });
 
         it('emits actions if able to load instruments', async () => {
@@ -109,13 +118,13 @@ describe('InstrumentActionCreator', () => {
                 {
                     type: actionTypes.LOAD_INSTRUMENTS_SUCCEEDED,
                     meta: { vaultAccessExpiry, vaultAccessToken },
-                    payload: getInstrumentsResponse.body,
+                    payload: loadInstrumentsResponse.body,
                 },
             ]);
         });
 
         it('emits error actions if unable to load instruments', async () => {
-            checkoutClient.getInstruments.mockReturnValue(Promise.reject(errorResponse));
+            checkoutClient.loadInstruments.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
             const actions = await instrumentActionCreator.loadInstruments()(store)
@@ -287,7 +296,7 @@ describe('InstrumentActionCreator', () => {
                 {
                     type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED,
                     meta: { instrumentId, vaultAccessExpiry, vaultAccessToken },
-                    payload: getInstrumentsResponse.body.data,
+                    payload: loadInstrumentsResponse.body.data,
                 },
             ]);
         });

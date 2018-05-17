@@ -2,6 +2,7 @@ import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommer
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
+import { InternalAddress } from '../../address';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../../checkout';
 import { addMinutes, isFuture } from '../../common/date-time';
 import { MissingDataError } from '../../common/error/errors';
@@ -21,13 +22,16 @@ export default class InstrumentActionCreator {
 
             const session = this._getSessionContext(store);
             const token = this._getCurrentAccessToken(store);
+            const shippingAddress = this._getShippingAddress(store);
 
             return this._getValidAccessToken(token)
                 .then(currentToken =>
-                    this._instrumentRequestSender.getInstruments({
-                        ...session,
-                        vaultAccessToken: currentToken.vaultAccessToken,
-                    })
+                    this._instrumentRequestSender.loadInstruments({
+                            ...session,
+                            vaultAccessToken: currentToken.vaultAccessToken,
+                        },
+                        shippingAddress
+                    )
                         .then(({ body }) => {
                             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, body, currentToken));
                             observer.complete();
@@ -117,6 +121,12 @@ export default class InstrumentActionCreator {
                     vaultAccessToken: body.data.token,
                     vaultAccessExpiry: body.data.expires_at,
                 }));
+    }
+
+    private _getShippingAddress(store: ReadableCheckoutStore): InternalAddress | undefined {
+        const state = store.getState();
+
+        return state.shippingAddress.getShippingAddress();
     }
 
     private _getSessionContext(store: ReadableCheckoutStore): SessionContext {

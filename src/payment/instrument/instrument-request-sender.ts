@@ -1,5 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { InternalAddress } from '../../address';
 import { RequestOptions } from '../../common/http-request';
 
 import Instrument, { InstrumentRequestContext } from './instrument';
@@ -17,16 +18,10 @@ export default class InstrumentRequestSender {
         return this._requestSender.get(url, { timeout });
     }
 
-    getInstruments(requestContext: InstrumentRequestContext): Promise<Response<InstrumentsResponseBody>> {
-        return new Promise((resolve, reject) => {
-            this._client.getShopperInstruments(requestContext, (error: Error, response: any) => {
-                if (error) {
-                    reject(this._transformResponse(error));
-                } else {
-                    resolve(this._transformResponse(response));
-                }
-            });
-        });
+    loadInstruments(requestContext: InstrumentRequestContext, shippingAddress?: InternalAddress): Promise<Response<InstrumentsResponseBody>> {
+        return (shippingAddress) ?
+            this._loadInstrumentsWithAddress(requestContext, shippingAddress) :
+            this._loadInstruments(requestContext);
     }
 
     vaultInstrument(requestContext: InstrumentRequestContext, instrument: Instrument): Promise<Response<InstrumentResponseBody>> {
@@ -54,6 +49,35 @@ export default class InstrumentRequestSender {
 
         return new Promise((resolve, reject) => {
             this._client.deleteShopperInstrument(payload, (error: Error, response: any) => {
+                if (error) {
+                    reject(this._transformResponse(error));
+                } else {
+                    resolve(this._transformResponse(response));
+                }
+            });
+        });
+    }
+
+    private _loadInstruments(requestContext: InstrumentRequestContext): Promise<Response<InstrumentsResponseBody>> {
+        return new Promise((resolve, reject) => {
+            this._client.loadInstruments(requestContext, (error: Error, response: any) => {
+                if (error) {
+                    reject(this._transformResponse(error));
+                } else {
+                    resolve(this._transformResponse(response));
+                }
+            });
+        });
+    }
+
+    private _loadInstrumentsWithAddress(requestContext: InstrumentRequestContext, shippingAddress: InternalAddress): Promise<Response<InstrumentsResponseBody>> {
+        const payload = {
+            ...requestContext,
+            shippingAddress,
+        };
+
+        return new Promise((resolve, reject) => {
+            this._client.loadInstrumentsWithAddress(payload, (error: Error, response: any) => {
                 if (error) {
                     reject(this._transformResponse(error));
                 } else {

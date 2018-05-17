@@ -1,14 +1,16 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { getResponse } from '../../common/http-request/responses.mock';
+import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
 import {
     deleteInstrumentResponseBody,
     getErrorInstrumentResponseBody,
-    getInstrumentsResponseBody,
+    getLoadInstrumentsResponseBody,
     getVaultAccessTokenResponseBody,
     instrumentRequestContext,
     vaultInstrumentRequestBody,
     vaultInstrumentResponseBody,
 } from './instrument.mock';
+
 import InstrumentRequestSender from './instrument-request-sender';
 
 describe('InstrumentMethodRequestSender', () => {
@@ -16,6 +18,7 @@ describe('InstrumentMethodRequestSender', () => {
     let instrumentRequestSender;
     let requestContext;
     let requestSender;
+    let shippingAddress;
     let vaultInstrumentRequest;
 
     beforeEach(() => {
@@ -25,7 +28,8 @@ describe('InstrumentMethodRequestSender', () => {
 
         client = {
             getVaultAccessToken: jest.fn((payload, callback) => callback()),
-            getShopperInstruments: jest.fn((payload, callback) => callback()),
+            loadInstruments: jest.fn((payload, callback) => callback()),
+            loadInstrumentsWithAddress: jest.fn((payload, callback) => callback()),
             postShopperInstrument: jest.fn((payload, callback) => callback()),
             deleteShopperInstrument: jest.fn((payload, callback) => callback()),
         };
@@ -33,6 +37,7 @@ describe('InstrumentMethodRequestSender', () => {
         requestContext = instrumentRequestContext();
         vaultInstrumentRequest = vaultInstrumentRequestBody();
         instrumentRequestSender = new InstrumentRequestSender(client, requestSender);
+        shippingAddress = getShippingAddress();
     });
 
     describe('#getVaultAccessToken()', () => {
@@ -60,38 +65,39 @@ describe('InstrumentMethodRequestSender', () => {
         });
     });
 
-    describe('#getInstruments()', () => {
+    describe('#loadInstruments()', () => {
         it('returns instruments if request is successful', async () => {
-            client.getShopperInstruments = jest.fn((payload, callback) => callback(null, {
-                data: getInstrumentsResponseBody(),
+            client.loadInstruments = jest.fn((payload, callback) => callback(null, {
+                data: getLoadInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
             }));
 
-            const response = await instrumentRequestSender.getInstruments(requestContext);
+            const response = await instrumentRequestSender.loadInstruments(requestContext);
 
             expect(response).toEqual({
                 headers: {},
-                body: getInstrumentsResponseBody(),
+                body: getLoadInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
             });
 
-            expect(client.getShopperInstruments).toHaveBeenCalledWith(
+            expect(client.loadInstrumentsWithAddress).not.toHaveBeenCalled();
+            expect(client.loadInstruments).toHaveBeenCalledWith(
                 requestContext,
                 expect.any(Function)
             );
         });
 
         it('returns error response if request is unsuccessful', async () => {
-            client.getShopperInstruments = jest.fn((payload, callback) => callback({
+            client.loadInstruments = jest.fn((payload, callback) => callback({
                 data: getErrorInstrumentResponseBody(),
                 status: 400,
                 statusText: 'Bad Request',
             }));
 
             try {
-                await instrumentRequestSender.getInstruments();
+                await instrumentRequestSender.loadInstruments();
             } catch (error) {
                 expect(error).toEqual({
                     body: getErrorInstrumentResponseBody(),
@@ -100,6 +106,32 @@ describe('InstrumentMethodRequestSender', () => {
                     statusText: 'Bad Request',
                 });
             }
+        });
+
+        it('returns loads trusted instruments if shipping address is available', async () => {
+            client.loadInstrumentsWithAddress = jest.fn((payload, callback) => callback(null, {
+                data: getLoadInstrumentsResponseBody(),
+                status: 200,
+                statusText: 'OK',
+            }));
+
+            const response = await instrumentRequestSender.loadInstruments(requestContext, shippingAddress);
+
+            expect(response).toEqual({
+                headers: {},
+                body: getLoadInstrumentsResponseBody(),
+                status: 200,
+                statusText: 'OK',
+            });
+
+            expect(client.loadInstruments).not.toHaveBeenCalled();
+            expect(client.loadInstrumentsWithAddress).toHaveBeenCalledWith(
+                {
+                    ...requestContext,
+                    shippingAddress,
+                },
+                expect.any(Function)
+            );
         });
     });
 

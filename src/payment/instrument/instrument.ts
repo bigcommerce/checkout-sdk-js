@@ -7,6 +7,7 @@ export default interface Instrument {
     expiry_year: string;
     brand: string;
     default_instrument: boolean;
+    trusted_shipping_address: boolean;
 }
 
 export interface VaultAccessToken {
