@@ -4,7 +4,7 @@ import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
 import { CouponActionType } from '../coupon/coupon-actions';
-import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
+import { GiftCertificateActionType } from '../coupon/gift-certificate-actions';
 import * as customerActionTypes from '../customer/customer-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 
@@ -43,8 +43,8 @@ function dataReducer(data: InternalCart | undefined, action: Action): InternalCa
     case ConsignmentActionTypes.UpdateConsignmentSucceeded:
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
-    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
-    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
+    case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
+    case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
         return action.payload ? { ...data, ...mapToInternalCart(action.payload) } : data;
 
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:

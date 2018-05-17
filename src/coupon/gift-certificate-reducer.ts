@@ -1,8 +1,8 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import { CheckoutActionType } from '../checkout';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
 
-import * as giftCertificateActionTypes from './gift-certificate-action-types';
+import { GiftCertificateAction, GiftCertificateActionType } from './gift-certificate-actions';
 import GiftCertificateState, { GiftCertificateErrorsState, GiftCertificateStatusesState } from './gift-certificate-state';
 import InternalGiftCertificate from './internal-gift-certificate';
 
@@ -11,11 +11,10 @@ const DEFAULT_STATE: GiftCertificateState = {
     statuses: {},
 };
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action
- */
-export default function giftCertificateReducer(state: GiftCertificateState = DEFAULT_STATE, action: Action): GiftCertificateState {
+export default function giftCertificateReducer(
+    state: GiftCertificateState = DEFAULT_STATE,
+    action: CheckoutAction | GiftCertificateAction
+): GiftCertificateState {
     const reducer = combineReducers<GiftCertificateState>({
         data: dataReducer,
         errors: errorsReducer,
@@ -25,7 +24,10 @@ export default function giftCertificateReducer(state: GiftCertificateState = DEF
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalGiftCertificate[] | undefined, action: Action): InternalGiftCertificate[] | undefined {
+function dataReducer(
+    data: InternalGiftCertificate[] | undefined,
+    action: CheckoutAction
+): InternalGiftCertificate[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return action.payload.giftCertificates;
@@ -35,20 +37,23 @@ function dataReducer(data: InternalGiftCertificate[] | undefined, action: Action
     }
 }
 
-function errorsReducer(errors: GiftCertificateErrorsState = DEFAULT_STATE.errors, action: Action): GiftCertificateErrorsState {
+function errorsReducer(
+    errors: GiftCertificateErrorsState = DEFAULT_STATE.errors,
+    action: GiftCertificateAction
+): GiftCertificateErrorsState {
     switch (action.type) {
-    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED:
-    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
+    case GiftCertificateActionType.ApplyGiftCertificateRequested:
+    case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
         return { ...errors, applyGiftCertificateError: undefined };
 
-    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_FAILED:
+    case GiftCertificateActionType.ApplyGiftCertificateFailed:
         return { ...errors, applyGiftCertificateError: action.payload };
 
-    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED:
-    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
+    case GiftCertificateActionType.RemoveGiftCertificateRequested:
+    case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
         return { ...errors, removeGiftCertificateError: undefined };
 
-    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_FAILED:
+    case GiftCertificateActionType.RemoveGiftCertificateFailed:
         return { ...errors, removeGiftCertificateError: action.payload };
 
     default:
@@ -56,20 +61,23 @@ function errorsReducer(errors: GiftCertificateErrorsState = DEFAULT_STATE.errors
     }
 }
 
-function statusesReducer(statuses: GiftCertificateStatusesState = DEFAULT_STATE.statuses, action: Action): GiftCertificateStatusesState {
+function statusesReducer(
+    statuses: GiftCertificateStatusesState = DEFAULT_STATE.statuses,
+    action: GiftCertificateAction
+): GiftCertificateStatusesState {
     switch (action.type) {
-    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED:
+    case GiftCertificateActionType.ApplyGiftCertificateRequested:
         return { ...statuses, isApplyingGiftCertificate: true };
 
-    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
-    case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_FAILED:
+    case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
+    case GiftCertificateActionType.ApplyGiftCertificateFailed:
         return { ...statuses, isApplyingGiftCertificate: false };
 
-    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED:
+    case GiftCertificateActionType.RemoveGiftCertificateRequested:
         return { ...statuses, isRemovingGiftCertificate: true };
 
-    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
-    case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_FAILED:
+    case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
+    case GiftCertificateActionType.RemoveGiftCertificateFailed:
         return { ...statuses, isRemovingGiftCertificate: false };
 
     default:

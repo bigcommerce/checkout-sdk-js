@@ -3,8 +3,8 @@ import { createCheckoutStore } from '../checkout';
 import { getCheckoutState } from '../checkout/checkouts.mock';
 import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import * as actionTypes from './gift-certificate-action-types';
 import GiftCertificateActionCreator from './gift-certificate-action-creator';
+import { GiftCertificateActionType } from './gift-certificate-actions';
 
 describe('GiftCertificateActionCreator', () => {
     let checkoutClient;
@@ -40,8 +40,8 @@ describe('GiftCertificateActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: actionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED },
-                        { type: actionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED, payload: response.body.data },
+                        { type: GiftCertificateActionType.ApplyGiftCertificateRequested },
+                        { type: GiftCertificateActionType.ApplyGiftCertificateSucceeded, payload: response.body.data },
                     ]);
                 });
         });
@@ -58,8 +58,8 @@ describe('GiftCertificateActionCreator', () => {
                 .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED },
-                        { type: actionTypes.APPLY_GIFT_CERTIFICATE_FAILED, payload: errorResponse, error: true },
+                        { type: GiftCertificateActionType.ApplyGiftCertificateRequested },
+                        { type: GiftCertificateActionType.ApplyGiftCertificateFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });
@@ -77,8 +77,8 @@ describe('GiftCertificateActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: actionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED },
-                        { type: actionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED, payload: response.body.data },
+                        { type: GiftCertificateActionType.RemoveGiftCertificateRequestedAction },
+                        { type: GiftCertificateActionType.RemoveGiftCertificateSucceededAction, payload: response.body.data },
                     ]);
                 });
         });
@@ -95,8 +95,8 @@ describe('GiftCertificateActionCreator', () => {
                 .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED },
-                        { type: actionTypes.REMOVE_GIFT_CERTIFICATE_FAILED, payload: errorResponse, error: true },
+                        { type: GiftCertificateActionType.RemoveGiftCertificateRequestedAction },
+                        { type: GiftCertificateActionType.RemoveGiftCertificateFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });
