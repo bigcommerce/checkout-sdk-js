@@ -3,7 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { BillingAddressRequestSender } from '../billing';
 import { CartRequestSender } from '../cart';
 import { ConfigRequestSender } from '../config';
-import { CouponRequestSender, GiftCertificateRequestSender } from '../coupon';
+import { GiftCertificateRequestSender } from '../coupon';
 import { CustomerRequestSender } from '../customer';
 import { CountryRequestSender } from '../geography';
 import { OrderRequestSender } from '../order';
@@ -23,7 +23,6 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
     const configRequestSender = new ConfigRequestSender(requestSender);
     const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const countryRequestSender = new CountryRequestSender(requestSender, config);
-    const couponRequestSender = new CouponRequestSender(requestSender);
     const customerRequestSender = new CustomerRequestSender(requestSender);
     const giftCertificateRequestSender = new GiftCertificateRequestSender(requestSender);
     const orderRequestSender = new OrderRequestSender(requestSender);
@@ -38,7 +37,6 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
         configRequestSender,
         consignmentRequestSender,
         countryRequestSender,
-        couponRequestSender,
         customerRequestSender,
         giftCertificateRequestSender,
         orderRequestSender,

@@ -3,8 +3,8 @@ import { createCheckoutStore } from '../checkout';
 import { getCheckoutState } from '../checkout/checkouts.mock';
 import { getCouponResponseBody } from './internal-coupons.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import * as actionTypes from './coupon-action-types';
 import CouponActionCreator from './coupon-action-creator';
+import { CouponActionType } from './coupon-actions';
 
 describe('CouponActionCreator', () => {
     let checkoutClient;
@@ -40,8 +40,8 @@ describe('CouponActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: actionTypes.APPLY_COUPON_REQUESTED },
-                        { type: actionTypes.APPLY_COUPON_SUCCEEDED, payload: response.body.data },
+                        { type: CouponActionType.ApplyCouponRequested },
+                        { type: CouponActionType.ApplyCouponSucceeded, payload: response.body.data },
                     ]);
                 });
         });
@@ -58,8 +58,8 @@ describe('CouponActionCreator', () => {
                 .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.APPLY_COUPON_REQUESTED },
-                        { type: actionTypes.APPLY_COUPON_FAILED, payload: errorResponse, error: true },
+                        { type: CouponActionType.ApplyCouponRequested },
+                        { type: CouponActionType.ApplyCouponFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });
@@ -77,8 +77,8 @@ describe('CouponActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: actionTypes.REMOVE_COUPON_REQUESTED },
-                        { type: actionTypes.REMOVE_COUPON_SUCCEEDED, payload: response.body.data },
+                        { type: CouponActionType.RemoveCouponRequested },
+                        { type: CouponActionType.RemoveCouponSucceeded, payload: response.body.data },
                     ]);
                 });
         });
@@ -95,8 +95,8 @@ describe('CouponActionCreator', () => {
                 .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.REMOVE_COUPON_REQUESTED },
-                        { type: actionTypes.REMOVE_COUPON_FAILED, payload: errorResponse, error: true },
+                        { type: CouponActionType.RemoveCouponRequested },
+                        { type: CouponActionType.RemoveCouponFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });

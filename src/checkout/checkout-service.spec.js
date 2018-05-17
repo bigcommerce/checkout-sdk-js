@@ -52,6 +52,7 @@ import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 describe('CheckoutService', () => {
     let checkoutClient;
     let checkoutService;
+    let couponRequestSender;
     let customerStrategyRegistry;
     let paymentStrategy;
     let paymentStrategyRegistry;
@@ -139,14 +140,6 @@ describe('CheckoutService', () => {
                 Promise.resolve(getResponse(getShippingOptionResponseBody())),
             ),
 
-            applyCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
-            ),
-
-            removeCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
-            ),
-
             applyGiftCertificate: jest.fn(() =>
                 Promise.resolve(getResponse(getCheckout()))
             ),
@@ -197,6 +190,16 @@ describe('CheckoutService', () => {
 
         customerStrategyRegistry = createCustomerStrategyRegistry(store, checkoutClient);
 
+        couponRequestSender = {
+            applyCoupon: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout()))
+            ),
+
+            removeCoupon: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout()))
+            ),
+        };
+
         checkoutService = new CheckoutService(
             store,
             new BillingAddressActionCreator(checkoutClient),
@@ -204,7 +207,7 @@ describe('CheckoutService', () => {
             new ConfigActionCreator(checkoutClient),
             new ConsignmentActionCreator(checkoutClient),
             new CountryActionCreator(checkoutClient),
-            new CouponActionCreator(checkoutClient),
+            new CouponActionCreator(couponRequestSender),
             new CustomerStrategyActionCreator(customerStrategyRegistry),
             new GiftCertificateActionCreator(checkoutClient),
             new InstrumentActionCreator(checkoutClient),
@@ -795,7 +798,7 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             await checkoutService.applyCoupon(code, options);
 
-            expect(checkoutClient.applyCoupon)
+            expect(couponRequestSender.applyCoupon)
                 .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
@@ -806,7 +809,7 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             await checkoutService.removeCoupon(code, options);
 
-            expect(checkoutClient.removeCoupon)
+            expect(couponRequestSender.removeCoupon)
                 .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });

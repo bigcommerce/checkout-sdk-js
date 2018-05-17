@@ -2,7 +2,7 @@ import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
-import * as couponActionTypes from '../coupon/coupon-action-types';
+import { CouponActionType } from '../coupon/coupon-actions';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
@@ -139,7 +139,7 @@ describe('cartReducer()', () => {
 
     it('returns new data when coupon gets applied', () => {
         const action = {
-            type: couponActionTypes.APPLY_COUPON_SUCCEEDED,
+            type: CouponActionType.ApplyCouponSucceeded,
             payload: getCheckout(),
         };
 
@@ -150,7 +150,7 @@ describe('cartReducer()', () => {
 
     it('returns new data when coupon gets removed', () => {
         const action = {
-            type: couponActionTypes.REMOVE_COUPON_SUCCEEDED,
+            type: CouponActionType.RemoveCouponSucceeded,
             payload: getCheckout(),
         };
 

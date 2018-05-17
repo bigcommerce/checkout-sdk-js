@@ -3,7 +3,7 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
-import * as couponActionTypes from '../coupon/coupon-action-types';
+import { CouponActionType } from '../coupon/coupon-actions';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import * as quoteActionTypes from '../quote/quote-action-types';
@@ -42,8 +42,8 @@ function dataReducer(data: InternalCart | undefined, action: Action): InternalCa
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionTypes.CreateConsignmentsSucceeded:
     case ConsignmentActionTypes.UpdateConsignmentSucceeded:
-    case couponActionTypes.APPLY_COUPON_SUCCEEDED:
-    case couponActionTypes.REMOVE_COUPON_SUCCEEDED:
+    case CouponActionType.ApplyCouponSucceeded:
+    case CouponActionType.RemoveCouponSucceeded:
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
     case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
         return data ? { ...data, ...mapToInternalCart(action.payload) } : data;

@@ -2,7 +2,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressActionCreator } from '../billing';
 import { ConfigActionCreator } from '../config';
-import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
+import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
@@ -23,6 +23,8 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
     const paymentClient = createPaymentClient(store);
     const requestSender = createRequestSender();
 
+    const couponRequestSender = new CouponRequestSender(requestSender);
+
     return new CheckoutService(
         store,
         new BillingAddressActionCreator(client),
@@ -30,7 +32,7 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
         new ConfigActionCreator(client),
         new ConsignmentActionCreator(client),
         new CountryActionCreator(client),
-        new CouponActionCreator(client),
+        new CouponActionCreator(couponRequestSender),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
         new GiftCertificateActionCreator(client),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
