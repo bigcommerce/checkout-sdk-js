@@ -1,9 +1,6 @@
-import { pick } from 'lodash';
-
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
-import Payment from '../payment';
 import PaymentActionCreator from '../payment-action-creator';
 import { PaymentRequestOptions } from '../payment-request-options';
 import * as paymentStatusTypes from '../payment-status-types';
@@ -24,20 +21,21 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
             return this._store.dispatch(
                 this._orderActionCreator.submitOrder({
                     ...payload,
-                    payment: pick(payload.payment, 'name') as Payment,
+                    payment: payload.payment ? { name: payload.payment.name } : undefined,
                 }, options)
             );
         }
 
         const { payment, ...order } = payload;
+        const paymentData = payment && payment.paymentData;
 
-        if (!payment) {
+        if (!payment || !paymentData) {
             throw new InvalidArgumentError();
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+                this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
             );
     }
 

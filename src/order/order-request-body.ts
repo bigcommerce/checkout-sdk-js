@@ -1,7 +1,13 @@
-import { Payment } from '../payment';
+import { CreditCardInstrument, VaultedInstrument } from '../payment';
 
 export default interface OrderRequestBody {
-    payment?: Payment;
+    payment?: OrderPaymentRequestBody;
     useStoreCredit?: boolean;
     customerMessage?: string;
+}
+
+export interface OrderPaymentRequestBody {
+    name: string;
+    paymentData?: CreditCardInstrument | VaultedInstrument;
+    gateway?: string;
 }

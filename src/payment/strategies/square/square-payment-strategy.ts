@@ -8,7 +8,7 @@ import {
     UnsupportedBrowserError,
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { TokenizedCreditCard } from '../../payment';
+import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -51,7 +51,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 
         const paymentName = payment.name;
 
-        return new Promise<TokenizedCreditCard>((resolve, reject) => {
+        return new Promise<NonceInstrument>((resolve, reject) => {
             if (!this._paymentForm) {
                 throw new NotInitializedError('Unable to submit payment because the choosen payment method has not been initialized.');
             }
@@ -127,7 +127,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 }
 
 export interface DeferredPromise {
-    resolve(resolution?: TokenizedCreditCard): void;
+    resolve(resolution?: NonceInstrument): void;
     reject(reason?: any): void;
 }
 

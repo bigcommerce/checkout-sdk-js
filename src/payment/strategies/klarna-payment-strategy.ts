@@ -1,11 +1,8 @@
-import { omit } from 'lodash';
-
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { KlarnaCredit, KlarnaLoadResponse, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
-import Payment from '../payment';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
@@ -52,22 +49,20 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        if (!payload.payment) {
+            throw new InvalidArgumentError('Unable to proceed because "payload.payment" argument is not provided.');
+        }
+
+        const { payment: { paymentData, ...paymentPayload } } = payload;
+
         return this._authorize()
-            .then(res => {
-                const authorizationToken = res.authorization_token;
-
-                if (!payload.payment) {
-                    throw new InvalidArgumentError('Unable to proceed because "payload.payment.name" argument is not provided.');
-                }
-
-                return this._store.dispatch(
-                    this._remoteCheckoutActionCreator.initializePayment(payload.payment.name, { authorizationToken })
-                );
-            })
+            .then(({ authorization_token: authorizationToken }) => this._store.dispatch(
+                this._remoteCheckoutActionCreator.initializePayment(paymentPayload.name, { authorizationToken })
+            ))
             .then(() => this._store.dispatch(
                 this._orderActionCreator.submitOrder({
                     ...payload,
-                    payment: omit(payload.payment, 'paymentData') as Payment,
+                    payment: paymentPayload,
                     // Note: API currently doesn't support using Store Credit with Klarna.
                     // To prevent deducting customer's store credit, set it as false.
                     useStoreCredit: false,

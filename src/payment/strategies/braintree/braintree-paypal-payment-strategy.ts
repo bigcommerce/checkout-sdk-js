@@ -1,6 +1,6 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -79,7 +79,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         throw error;
     }
 
-    private _preparePaymentData(payment: Payment): Promise<Payment> {
+    private _preparePaymentData(payment: OrderPaymentRequestBody): Promise<Payment> {
         const state = this._store.getState();
         const cart = state.cart.getCart();
         const config = state.config.getStoreConfig();

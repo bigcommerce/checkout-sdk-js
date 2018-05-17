@@ -1,5 +1,5 @@
 import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
-import { omit, pick } from 'lodash';
+import { pick } from 'lodash';
 import { concat } from 'rxjs/observable/concat';
 import { defer } from 'rxjs/observable/defer';
 import { Observable } from 'rxjs/Observable';
@@ -9,7 +9,8 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError, NotInitializedError } from '../common/error/errors';
 import { InternalOrder, OrderActionCreator } from '../order';
 
-import Payment, { CreditCard, VaultedInstrument } from './payment';
+import isVaultedInstrument from './is-vaulted-instrument';
+import Payment from './payment';
 import * as actionTypes from './payment-action-types';
 import PaymentMethod from './payment-method';
 import PaymentMethodSelector from './payment-method-selector';
@@ -73,7 +74,7 @@ export default class PaymentActionCreator {
     }
 
     private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
-        const deviceSessionId = payment.paymentData && (payment.paymentData as CreditCard).deviceSessionId || state.quote.getQuoteMeta().request.deviceSessionId;
+        const deviceSessionId = state.quote.getQuoteMeta().request.deviceSessionId;
         const billingAddress = state.billingAddress.getBillingAddress();
         const cart = state.cart.getCart();
         const customer = state.customer.getCustomer();
@@ -88,12 +89,12 @@ export default class PaymentActionCreator {
             throw new NotInitializedError('Config data is missing');
         }
 
-        const authToken = payment.paymentData && instrumentMeta && (payment.paymentData as VaultedInstrument).instrumentId
-            ? `${state.order.getPaymentAuthToken()}, ${instrumentMeta.vaultAccessToken}`
-            : state.order.getPaymentAuthToken();
+        const authToken = payment.paymentData && instrumentMeta && isVaultedInstrument(payment.paymentData) ?
+            `${state.order.getPaymentAuthToken()}, ${instrumentMeta.vaultAccessToken}` :
+            state.order.getPaymentAuthToken();
 
-        if (!authToken) {
-            throw new MissingDataError('Unable to submit payment because "authToken" is missing.');
+        if (!authToken || !payment.paymentData) {
+            throw new MissingDataError('Unable to submit payment because "authToken" or "paymentData" is missing.');
         }
 
         return {
@@ -106,14 +107,14 @@ export default class PaymentActionCreator {
             shippingOption,
             authToken,
             orderMeta: state.order.getOrderMeta(),
-            payment: omit(payment.paymentData, ['deviceSessionId']) as Payment,
+            payment: payment.paymentData,
             quoteMeta: {
                 request: {
                     ...state.quote.getQuoteMeta().request,
                     deviceSessionId,
                 },
             },
-            source: payment.source || 'bcapp-checkout-uco',
+            source: 'bcapp-checkout-uco',
             store: pick(config.storeProfile, [
                 'storeHash',
                 'storeId',

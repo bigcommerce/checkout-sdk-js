@@ -17,14 +17,15 @@ export default class CreditCardPaymentStrategy extends PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
+        const paymentData = payment && payment.paymentData;
 
-        if (!payment) {
+        if (!payment || !paymentData) {
             throw new InvalidArgumentError();
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+                this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
             );
     }
 }
