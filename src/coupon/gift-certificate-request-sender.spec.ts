@@ -1,11 +1,13 @@
 import { createTimeout } from '@bigcommerce/request-sender';
+
 import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
-import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
+
 import GiftCertificateRequestSender from './gift-certificate-request-sender';
+import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 
 describe('Gift Certificate Request Sender', () => {
-    let giftCertificateRequestSender;
+    let giftCertificateRequestSender: GiftCertificateRequestSender;
     let requestSender;
 
     beforeEach(() => {

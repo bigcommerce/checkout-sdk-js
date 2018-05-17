@@ -2,7 +2,7 @@ import { createTimeout } from '@bigcommerce/request-sender';
 import { getConfig } from '../config/configs.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
-import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
+import { getCart } from '../cart/internal-carts.mock';
 import { getCompleteOrder } from '../order/internal-orders.mock';
 import { getCheckout } from './checkouts.mock';
 import { getCountries } from '../geography/countries.mock';

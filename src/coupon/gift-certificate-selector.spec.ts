@@ -1,9 +1,16 @@
+import { createErrorAction } from '@bigcommerce/data-store';
+
+import { createRequestErrorFactory } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+
+import { GiftCertificateActionType } from './gift-certificate-actions';
 import GiftCertificateSelector from './gift-certificate-selector';
+import GiftCertificateState, { GiftCertificateErrorsState } from './gift-certificate-state';
 
 describe('GiftCertificateSelector', () => {
-    let giftCertificateSelector;
-    let state;
+    let giftCertificateSelector: GiftCertificateSelector;
+    let state: { giftCertificates: GiftCertificateState };
+    const errorFactory = createRequestErrorFactory();
 
     beforeEach(() => {
         state = {
@@ -16,11 +23,11 @@ describe('GiftCertificateSelector', () => {
 
     describe('#getApplyError()', () => {
         it('returns error if unable to apply', () => {
-            const applyGiftCertificateError = getErrorResponse();
+            const applyGiftCertificateError = errorFactory.createError(getErrorResponse());
 
             giftCertificateSelector = new GiftCertificateSelector({
                 ...state.giftCertificates,
-                errors: { applyGiftCertificateError },
+                 errors: { applyGiftCertificateError } ,
             });
 
             expect(giftCertificateSelector.getApplyError()).toEqual(applyGiftCertificateError);
@@ -52,7 +59,7 @@ describe('GiftCertificateSelector', () => {
 
     describe('#getRemoveError()', () => {
         it('returns error if unable to remove', () => {
-            const removeGiftCertificateError = getErrorResponse();
+            const removeGiftCertificateError = errorFactory.createError(getErrorResponse());
 
             giftCertificateSelector = new GiftCertificateSelector({
                 ...state.giftCertificates,

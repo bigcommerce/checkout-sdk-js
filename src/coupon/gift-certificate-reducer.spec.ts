@@ -1,7 +1,8 @@
-import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import giftCertificateReducer from './gift-certificate-reducer';
+
 import { GiftCertificateActionType } from './gift-certificate-actions';
+import giftCertificateReducer from './gift-certificate-reducer';
+import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 
 describe('giftCertificateReducer()', () => {
     let initialState;
@@ -23,7 +24,6 @@ describe('giftCertificateReducer()', () => {
         }));
     });
 
-
     it('no data gets stored when a gift certificate is removed', () => {
         const response = getGiftCertificateResponseBody();
         const action = {
@@ -36,7 +36,6 @@ describe('giftCertificateReducer()', () => {
             data: {},
         }));
     });
-
 
     it('returns an error state if gift certificate failed to be applied', () => {
         const action = {

@@ -1,10 +1,12 @@
 import { Observable } from 'rxjs';
+
 import { createCheckoutStore } from '../checkout';
 import { getCheckoutState } from '../checkout/checkouts.mock';
-import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+
 import GiftCertificateActionCreator from './gift-certificate-action-creator';
 import { GiftCertificateActionType } from './gift-certificate-actions';
+import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 
 describe('GiftCertificateActionCreator', () => {
     let checkoutClient;
@@ -38,7 +40,7 @@ describe('GiftCertificateActionCreator', () => {
 
             Observable.from(giftCertificateActionCreator.applyGiftCertificate(giftCertificate)(store))
                 .toArray()
-                .subscribe((actions) => {
+                .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: GiftCertificateActionType.ApplyGiftCertificateRequested },
                         { type: GiftCertificateActionType.ApplyGiftCertificateSucceeded, payload: response.body.data },
@@ -50,12 +52,12 @@ describe('GiftCertificateActionCreator', () => {
             checkoutClient.applyGiftCertificate.mockReturnValue(Promise.reject(errorResponse));
 
             const giftCertificate = 'myGiftCertificate1234';
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             Observable.from(giftCertificateActionCreator.applyGiftCertificate(giftCertificate)(store))
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
+                .subscribe(actions => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
                         { type: GiftCertificateActionType.ApplyGiftCertificateRequested },
@@ -75,10 +77,10 @@ describe('GiftCertificateActionCreator', () => {
 
             Observable.from(giftCertificateActionCreator.removeGiftCertificate(giftCertificate)(store))
                 .toArray()
-                .subscribe((actions) => {
+                .subscribe(actions => {
                     expect(actions).toEqual([
-                        { type: GiftCertificateActionType.RemoveGiftCertificateRequestedAction },
-                        { type: GiftCertificateActionType.RemoveGiftCertificateSucceededAction, payload: response.body.data },
+                        { type: GiftCertificateActionType.RemoveGiftCertificateRequested },
+                        { type: GiftCertificateActionType.RemoveGiftCertificateSucceeded, payload: response.body.data },
                     ]);
                 });
         });
@@ -87,15 +89,15 @@ describe('GiftCertificateActionCreator', () => {
             checkoutClient.removeGiftCertificate.mockReturnValue(Promise.reject(errorResponse));
 
             const giftCertificate = 'myGiftCertificate1234';
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             Observable.from(giftCertificateActionCreator.removeGiftCertificate(giftCertificate)(store))
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
+                .subscribe(actions => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: GiftCertificateActionType.RemoveGiftCertificateRequestedAction },
+                        { type: GiftCertificateActionType.RemoveGiftCertificateRequested },
                         { type: GiftCertificateActionType.RemoveGiftCertificateFailed, payload: errorResponse, error: true },
                     ]);
                 });
