@@ -4,7 +4,6 @@ import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import { CheckoutActionType } from '../checkout';
 import * as customerActionTypes from '../customer/customer-action-types';
 import { OrderActionType } from '../order';
-import * as quoteActionTypes from '../quote/quote-action-types';
 
 import CustomerState from './customer-state';
 import InternalCustomer from './internal-customer';
@@ -35,7 +34,6 @@ function dataReducer(data: InternalCustomer | undefined, action: Action): Intern
     case OrderActionType.LoadOrderSucceeded:
     case OrderActionType.FinalizeOrderSucceeded:
     case OrderActionType.SubmitOrderSucceeded:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.customer } : data;
 
     default:

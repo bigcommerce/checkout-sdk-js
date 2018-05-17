@@ -6,8 +6,6 @@ import { CouponActionType } from '../coupon/coupon-actions';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
-import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import * as quoteActionTypes from '../quote/quote-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import cartReducer from './cart-reducer';
 import { getCart } from './internal-carts.mock';
@@ -19,19 +17,6 @@ describe('cartReducer()', () => {
         initialState = {
             data: getCart(),
         };
-    });
-
-    it('returns new data when quote gets updated', () => {
-        const response = getQuoteResponseBody();
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
-        }));
     });
 
     it('returns new data if customer has signed in successfully', () => {
@@ -74,21 +59,6 @@ describe('cartReducer()', () => {
         expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
             meta: expect.objectContaining({
                 isValid: false,
-            }),
-        }));
-    });
-
-    it('returns true if fetching a new quote', () => {
-        const response = getQuoteResponseBody();
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            meta: expect.objectContaining({
-                isValid: true,
             }),
         }));
     });

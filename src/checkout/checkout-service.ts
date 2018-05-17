@@ -8,7 +8,6 @@ import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { Instrument, InstrumentActionCreator } from '../payment/instrument';
-import { QuoteActionCreator } from '../quote';
 import {
     ConsignmentActionCreator,
     ShippingCountryActionCreator,
@@ -43,7 +42,6 @@ export default class CheckoutService {
         private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
-        private _quoteActionCreator: QuoteActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator
     ) {
@@ -73,10 +71,10 @@ export default class CheckoutService {
     }
 
     loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors> {
-        return Promise.all([
-            this._store.dispatch(this._quoteActionCreator.loadQuote(options)),
-            this._store.dispatch(this._checkoutActionCreator.loadCheckout(id, options)),
-        ]).then(() => this.getState());
+        const action = this._checkoutActionCreator.loadCheckout(id, options);
+
+        return this._store.dispatch(action)
+            .then(() => this.getState());
     }
 
     loadConfig(options?: RequestOptions): Promise<CheckoutSelectors> {

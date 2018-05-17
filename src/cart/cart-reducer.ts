@@ -6,7 +6,6 @@ import { CheckoutActionType } from '../checkout';
 import { CouponActionType } from '../coupon/coupon-actions';
 import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
-import * as quoteActionTypes from '../quote/quote-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 
 import Cart from './cart';
@@ -46,11 +45,10 @@ function dataReducer(data: InternalCart | undefined, action: Action): InternalCa
     case CouponActionType.RemoveCouponSucceeded:
     case giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED:
     case giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED:
-        return data ? { ...data, ...mapToInternalCart(action.payload) } : data;
+        return action.payload ? { ...data, ...mapToInternalCart(action.payload) } : data;
 
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.cart } : data;
 
     default:
@@ -74,7 +72,6 @@ function metaReducer(meta: CartMetaState = DEFAULT_STATE.meta, action: Action): 
         return { ...meta, isValid: action.payload };
 
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return { ...meta, isValid: true };
 
     default:

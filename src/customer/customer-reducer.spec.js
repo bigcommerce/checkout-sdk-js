@@ -3,7 +3,6 @@ import { OrderActionType } from '../order';
 import { getCompleteOrderResponseBody } from '../order/internal-orders.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
-import * as quoteActionTypes from '../quote/quote-action-types';
 import customerReducer from './customer-reducer';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
@@ -39,19 +38,6 @@ describe('customerReducer()', () => {
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
             data: getGuestCustomer(),
-        }));
-    });
-
-    it('returns new state with customer data if quote is fetched successfully', () => {
-        const response = getQuoteResponseBody();
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.customer,
         }));
     });
 

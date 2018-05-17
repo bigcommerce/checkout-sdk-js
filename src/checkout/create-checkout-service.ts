@@ -8,7 +8,6 @@ import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
-import { QuoteActionCreator } from '../quote';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import ConsignmentActionCreator from '../shipping/consignment-action-creator';
 
@@ -42,7 +41,6 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
             createPaymentStrategyRegistry(store, client, paymentClient),
             new OrderActionCreator(client)
         ),
-        new QuoteActionCreator(client),
         new ShippingCountryActionCreator(client),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, client))
     );

@@ -35,8 +35,7 @@ import {
     getPaymentMethodResponseBody,
     getPaymentMethodsResponseBody,
 } from '../payment/payment-methods.mock';
-import { QuoteActionCreator } from '../quote';
-import { getQuoteResponseBody, getQuoteState } from '../quote/internal-quotes.mock';
+import { getQuoteState } from '../quote/internal-quotes.mock';
 import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import ConsignmentActionCreator from '../shipping/consignment-action-creator';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
@@ -99,10 +98,6 @@ describe('CheckoutService', () => {
 
             loadCheckout: jest.fn(() =>
                 Promise.resolve(getResponse(getCheckout())),
-            ),
-
-            loadQuote: jest.fn(() =>
-                Promise.resolve(getResponse(getQuoteResponseBody()))
             ),
 
             loadShippingCountries: jest.fn(() =>
@@ -217,7 +212,6 @@ describe('CheckoutService', () => {
                 paymentStrategyRegistry,
                 new OrderActionCreator(checkoutClient)
             ),
-            new QuoteActionCreator(checkoutClient),
             new ShippingCountryActionCreator(checkoutClient),
             shippingStrategyActionCreator
         );
