@@ -5,7 +5,6 @@ import { BillingAddressRequestSender } from '../billing';
 import { CartRequestSender } from '../cart';
 import { RequestOptions } from '../common/http-request';
 import { Config, ConfigRequestSender } from '../config';
-import { GiftCertificateRequestSender } from '../coupon';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
 import { InternalOrderResponseBody, Order, OrderRequestBody, OrderRequestSender } from '../order';
@@ -37,7 +36,6 @@ export default class CheckoutClient {
         private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
         private _customerRequestSender: CustomerRequestSender,
-        private _giftCertificateRequestSender: GiftCertificateRequestSender,
         private _orderRequestSender: OrderRequestSender,
         private _paymentMethodRequestSender: PaymentMethodRequestSender,
         private _quoteRequestSender: QuoteRequestSender,
@@ -106,14 +104,6 @@ export default class CheckoutClient {
 
     signOutCustomer(options?: RequestOptions): Promise<Response> {
         return this._customerRequestSender.signOutCustomer(options);
-    }
-
-    applyGiftCertificate(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
-        return this._giftCertificateRequestSender.applyGiftCertificate(checkoutId, code, options);
-    }
-
-    removeGiftCertificate(checkoutId: string, code: string, options?: RequestOptions): Promise<Response> {
-        return this._giftCertificateRequestSender.removeGiftCertificate(checkoutId, code, options);
     }
 
     loadConfig(options?: RequestOptions): Promise<Response<Config>> {

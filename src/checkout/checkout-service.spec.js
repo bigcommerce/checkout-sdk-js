@@ -57,6 +57,7 @@ describe('CheckoutService', () => {
     let paymentStrategyRegistry;
     let shippingStrategyActionCreator;
     let store;
+    let giftCertificateRequestSender;
 
     beforeEach(() => {
         checkoutClient = {
@@ -131,14 +132,6 @@ describe('CheckoutService', () => {
                 Promise.resolve(getResponse(getShippingOptionResponseBody())),
             ),
 
-            applyGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
-            ),
-
-            removeGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
-            ),
-
             getVaultAccessToken: jest.fn(() =>
                 Promise.resolve(getResponse(getVaultAccessTokenResponseBody()))
             ),
@@ -175,6 +168,16 @@ describe('CheckoutService', () => {
             getByMethod: jest.fn(() => paymentStrategy),
         };
 
+        giftCertificateRequestSender = {
+            applyGiftCertificate: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout()))
+            ),
+
+            removeGiftCertificate: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout()))
+            ),
+        };
+
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
             createShippingStrategyRegistry(store, checkoutClient)
         );
@@ -200,7 +203,7 @@ describe('CheckoutService', () => {
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(couponRequestSender),
             new CustomerStrategyActionCreator(customerStrategyRegistry),
-            new GiftCertificateActionCreator(checkoutClient),
+            new GiftCertificateActionCreator(giftCertificateRequestSender),
             new InstrumentActionCreator(checkoutClient),
             new OrderActionCreator(checkoutClient),
             new PaymentMethodActionCreator(checkoutClient),
@@ -810,7 +813,7 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             await checkoutService.applyGiftCertificate(code, options);
 
-            expect(checkoutClient.applyGiftCertificate)
+            expect(giftCertificateRequestSender.applyGiftCertificate)
                 .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });
@@ -821,7 +824,7 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             await checkoutService.removeGiftCertificate(code, options);
 
-            expect(checkoutClient.removeGiftCertificate)
+            expect(giftCertificateRequestSender.removeGiftCertificate)
                 .toHaveBeenCalledWith(getCheckout().id, code, options);
         });
     });

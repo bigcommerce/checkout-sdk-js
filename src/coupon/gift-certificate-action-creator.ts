@@ -2,10 +2,11 @@ import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommer
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
+import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
+import { GiftCertificateRequestSender } from '.';
 import * as actionTypes from './gift-certificate-action-types';
 
 /**
@@ -13,7 +14,7 @@ import * as actionTypes from './gift-certificate-action-types';
  */
 export default class GiftCertificateActionCreator {
     constructor(
-        private _checkoutClient: CheckoutClient
+        private _giftCertificateRequestSender: GiftCertificateRequestSender
     ) {}
 
     applyGiftCertificate(giftCertificate: string, options?: RequestOptions): ThunkAction<Action, InternalCheckoutSelectors> {
@@ -27,7 +28,7 @@ export default class GiftCertificateActionCreator {
 
             observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED));
 
-            this._checkoutClient.applyGiftCertificate(checkout.id, giftCertificate, options)
+            this._giftCertificateRequestSender.applyGiftCertificate(checkout.id, giftCertificate, options)
                 .then(({ body }) => {
                     observer.next(createAction(actionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
@@ -49,7 +50,7 @@ export default class GiftCertificateActionCreator {
 
             observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED));
 
-            this._checkoutClient.removeGiftCertificate(checkout.id, giftCertificate, options)
+            this._giftCertificateRequestSender.removeGiftCertificate(checkout.id, giftCertificate, options)
                 .then(({ body }) => {
                     observer.next(createAction(actionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED, body));
                     observer.complete();
