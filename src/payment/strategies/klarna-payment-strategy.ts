@@ -57,7 +57,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
         return this._authorize()
             .then(({ authorization_token: authorizationToken }) => this._store.dispatch(
-                this._remoteCheckoutActionCreator.initializePayment(paymentPayload.name, { authorizationToken })
+                this._remoteCheckoutActionCreator.initializePayment(paymentPayload.methodId, { authorizationToken })
             ))
             .then(() => this._store.dispatch(
                 this._orderActionCreator.submitOrder({

@@ -130,6 +130,22 @@ describe('OrderActionCreator', () => {
             expect(checkoutClient.loadCart).toHaveBeenCalled();
         });
 
+        it('submits order payload', async () => {
+            const payload = getOrderRequestBody();
+
+            await Observable.from(orderActionCreator.submitOrder(payload)(store))
+                .toPromise();
+
+            expect(checkoutClient.submitOrder).toHaveBeenCalledWith({
+                ...payload,
+                payment: {
+                    name: payload.payment.methodId,
+                    gateway: payload.payment.gatewayId,
+                    paymentData: payload.payment.paymentData,
+                },
+            }, undefined);
+        });
+
         it('does not submit order if cart verification fails', async () => {
             store = createCheckoutStore({
                 cart: merge({}, getCartState(), { data: { ...getCart(), currency: 'JPY' } }),

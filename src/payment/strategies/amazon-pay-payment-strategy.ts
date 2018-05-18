@@ -88,13 +88,13 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         }
 
         if (!payload.payment) {
-            throw new InvalidArgumentError('Unable to proceed because "payload.payment.name" argument is not provided.');
+            throw new InvalidArgumentError('Unable to proceed because "payload.payment.methodId" argument is not provided.');
         }
 
         const { payment: { paymentData, ...paymentPayload }, useStoreCredit = false } = payload;
 
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.initializePayment(paymentPayload.name, { referenceId, useStoreCredit })
+            this._remoteCheckoutActionCreator.initializePayment(paymentPayload.methodId, { referenceId, useStoreCredit })
         )
             .then(() => this._store.dispatch(
                 this._orderActionCreator.submitOrder({

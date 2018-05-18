@@ -19,10 +19,10 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const paymentData = payment && payment.paymentData;
-        const orderPayload = payment && payment.gateway === 'adyen' ? payload : order;
+        const orderPayload = payment && payment.gatewayId === 'adyen' ? payload : order;
 
         if (!payment || !paymentData) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.paymentData" argument is not provided.');
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))

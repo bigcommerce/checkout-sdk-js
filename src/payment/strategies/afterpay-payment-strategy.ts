@@ -58,7 +58,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const paymentId = payload.payment && payload.payment.gateway;
+        const paymentId = payload.payment && payload.payment.gatewayId;
 
         if (!paymentId) {
             throw new InvalidArgumentError('Unable to submit payment because "payload.payment.gateway" argument is not provided.');
@@ -96,7 +96,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             {};
 
         const paymentPayload = {
-            name: order.payment.id,
+            methodId: order.payment.id,
             paymentData: { nonce: config.payment.token },
         };
 

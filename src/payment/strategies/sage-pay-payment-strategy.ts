@@ -24,7 +24,7 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
         const paymentData = payment && payment.paymentData;
 
         if (!payment || !paymentData) {
-            throw new InvalidArgumentError();
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.paymentData" argument is not provided.');
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))

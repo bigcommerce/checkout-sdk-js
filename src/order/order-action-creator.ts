@@ -47,7 +47,7 @@ export default class OrderActionCreator {
             }
 
             this._verifyCart(cart, options)
-                .then(() => this._checkoutClient.submitOrder(payload, options))
+                .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload), options))
                 .then(response => {
                     observer.next(createAction(OrderActionType.SubmitOrderSucceeded, response.body.data, { ...response.body.meta, token: response.headers.token }));
                     observer.complete();
@@ -79,5 +79,20 @@ export default class OrderActionCreator {
                 this._cartComparator.isEqual(existingCart, body.data.cart) ? Promise.resolve(true) : Promise.reject(false)
             )
             .catch(() => Promise.reject(new CartChangedError()));
+    }
+
+    private _mapToOrderRequestBody(payload: OrderRequestBody): any {
+        if (!payload.payment) {
+            return payload;
+        }
+
+        return {
+            ...payload,
+            payment: {
+                paymentData: payload.payment.paymentData,
+                name: payload.payment.methodId,
+                gateway: payload.payment.gatewayId,
+            },
+        };
     }
 }

@@ -89,7 +89,7 @@ export function getBraintreeRequestData(): BraintreeRequestData {
 export function getBraintreePaymentData(): Payment {
     return {
         ...getPayment(),
-        name: 'braintree',
+        methodId: 'braintree',
     };
 }
 

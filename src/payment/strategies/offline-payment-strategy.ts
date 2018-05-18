@@ -15,7 +15,7 @@ export default class OfflinePaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const action = this._orderActionCreator.submitOrder({
             ...payload,
-            payment: payload.payment ? { name: payload.payment.name } : undefined,
+            payment: payload.payment ? { methodId: payload.payment.methodId } : undefined,
         }, options);
 
         return this._store.dispatch(action);

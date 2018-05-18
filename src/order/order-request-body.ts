@@ -7,7 +7,7 @@ export default interface OrderRequestBody {
 }
 
 export interface OrderPaymentRequestBody {
-    name: string;
+    methodId: string;
+    gatewayId?: string;
     paymentData?: CreditCardInstrument | VaultedInstrument;
-    gateway?: string;
 }

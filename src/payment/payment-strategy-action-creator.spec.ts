@@ -223,7 +223,7 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(strategy.execute).toHaveBeenCalledWith(
                 payload,
-                { methodId: payload.payment.name, gatewayId: payload.payment.gateway }
+                { methodId: payload.payment.methodId, gatewayId: payload.payment.gatewayId }
             );
         });
 
@@ -235,8 +235,8 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.name } },
-                { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId: payload.payment.name } },
+                { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.methodId } },
+                { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId: payload.payment.methodId } },
             ]);
         });
 
@@ -256,8 +256,8 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.name } },
-                { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId: payload.payment.name } },
+                { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.methodId } },
+                { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId: payload.payment.methodId } },
             ]);
         });
 
@@ -297,7 +297,7 @@ describe('PaymentStrategyActionCreator', () => {
             expect(registry.get).toHaveBeenCalledWith('nopaymentdatarequired');
             expect(noPaymentDataStrategy.execute).toHaveBeenCalledWith(
                 payload,
-                { methodId: payload.payment.name, gatewayId: payload.payment.gateway }
+                { methodId: payload.payment.methodId, gatewayId: payload.payment.gatewayId }
             );
         });
     });

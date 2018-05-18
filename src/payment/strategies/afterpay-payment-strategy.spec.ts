@@ -77,8 +77,8 @@ describe('AfterpayPaymentStrategy', () => {
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
-                name: paymentMethod.id,
-                gateway: paymentMethod.gateway,
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
             },
         });
 
@@ -94,8 +94,8 @@ describe('AfterpayPaymentStrategy', () => {
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
-                name: paymentMethod.id,
-                gateway: paymentMethod.gateway,
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
             },
         });
 
@@ -238,7 +238,7 @@ describe('AfterpayPaymentStrategy', () => {
             );
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
-                name: paymentMethod.id,
+                methodId: paymentMethod.id,
                 paymentData: { nonce },
             });
         });

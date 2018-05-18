@@ -341,7 +341,7 @@ describe('CheckoutService', () => {
 
             expect(paymentStrategy.execute).toHaveBeenCalledWith(
                 getOrderRequestBody(),
-                { methodId: payload.payment.name, gatewayId: payload.payment.gateway }
+                { methodId: payload.payment.methodId, gatewayId: payload.payment.gatewayId }
             );
         });
 
@@ -354,7 +354,7 @@ describe('CheckoutService', () => {
 
             expect(paymentStrategy.execute).toHaveBeenCalledWith(
                 payload,
-                { ...options, methodId: payload.payment.name, gatewayId: payload.payment.gateway }
+                { ...options, methodId: payload.payment.methodId, gatewayId: payload.payment.gatewayId }
             );
         });
     });

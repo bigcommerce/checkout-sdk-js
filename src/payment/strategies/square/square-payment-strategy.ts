@@ -45,11 +45,11 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
-        if (!payment || !payment.name) {
-            throw new MissingDataError('Unable to submit payment because "payload.payment.name" argument is not provided.');
+        if (!payment || !payment.methodId) {
+            throw new MissingDataError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
         }
 
-        const paymentName = payment.name;
+        const paymentName = payment.methodId;
 
         return new Promise<NonceInstrument>((resolve, reject) => {
             if (!this._paymentForm) {
@@ -65,7 +65,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         })
         .then(paymentData => {
             const paymentPayload = {
-                name: paymentName,
+                methodId: paymentName,
                 paymentData,
             };
 
