@@ -2,13 +2,11 @@ language: node_js
 
 node_js: 6
 
-cache: yarn
-
 dist: trusty
 
 sudo: false
 
 script:
-    - yarn validate-commits
-    - yarn lint
-    - yarn test:series --coverage
+    - npm run validate-commits
+    - npm run lint
+    - npm run test:series -- --coverage

@@ -21,7 +21,7 @@ export default class ShippingOptionSelector {
         const { shippingAddress = null, shippingOption: optionId = null } = this._quote.data || {};
         const shippingOptions = this.getShippingOptions();
 
-        if (!shippingAddress || !shippingOptions) {
+        if (!shippingAddress || !shippingOptions || !optionId) {
             return;
         }
 
