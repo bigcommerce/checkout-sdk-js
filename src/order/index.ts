@@ -3,6 +3,7 @@ export * from './order-actions';
 
 export { default as Order } from './order';
 export { default as InternalOrder } from './internal-order';
+export { default as InternalOrderRequestBody } from './internal-order-request-body';
 export { default as InternalIncompleteOrder } from './internal-incomplete-order';
 
 export { default as OrderActionCreator } from './order-action-creator';

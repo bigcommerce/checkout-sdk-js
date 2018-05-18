@@ -9,6 +9,20 @@ export function getOrderRequestBody() {
     };
 }
 
+export function getInternalOrderRequestBody() {
+    const payment = getPayment();
+
+    return {
+        customerMessage: '',
+        useStoreCredit: false,
+        payment: {
+            name: payment.methodId,
+            gateway: payment.gatewayId,
+            paymentData: payment.paymentData,
+        },
+    };
+}
+
 export function getIncompleteOrder() {
     return {
         orderId: null,

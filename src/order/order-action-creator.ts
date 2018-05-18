@@ -8,6 +8,7 @@ import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
+import InternalOrderRequestBody from './internal-order-request-body';
 import { FinalizeOrderAction, LoadOrderAction, OrderActionType, SubmitOrderAction } from './order-actions';
 import OrderRequestBody from './order-request-body';
 
@@ -81,17 +82,19 @@ export default class OrderActionCreator {
             .catch(() => Promise.reject(new CartChangedError()));
     }
 
-    private _mapToOrderRequestBody(payload: OrderRequestBody): any {
-        if (!payload.payment) {
-            return payload;
+    private _mapToOrderRequestBody(payload: OrderRequestBody): InternalOrderRequestBody {
+        const { payment, ...order } = payload;
+
+        if (!payment) {
+            return order;
         }
 
         return {
             ...payload,
             payment: {
-                paymentData: payload.payment.paymentData,
-                name: payload.payment.methodId,
-                gateway: payload.payment.gatewayId,
+                paymentData: payment.paymentData,
+                name: payment.methodId,
+                gateway: payment.gatewayId,
             },
         };
     }
