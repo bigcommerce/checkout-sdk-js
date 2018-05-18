@@ -6,50 +6,13 @@ import * as customerActionTypes from '../customer/customer-action-types';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import { getQuote } from './internal-quotes.mock';
-import * as quoteActionTypes from './quote-action-types';
 import quoteReducer from './quote-reducer';
 
 describe('quoteReducer()', () => {
     let initialState;
 
     beforeEach(() => {
-        initialState = {
-            data: getQuote(),
-        };
-    });
-
-    it('returns a new state with loading flag set to true', () => {
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_REQUESTED,
-        };
-
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            ...initialState,
-            statuses: { isLoading: true },
-        }));
-    });
-
-    it('returns new data while fetching quote', () => {
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_REQUESTED,
-        };
-
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isLoading: true },
-        }));
-    });
-
-    it('returns new data if quote is not fetched successfully', () => {
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_FAILED,
-            payload: getErrorResponse(),
-        };
-
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            ...initialState,
-            errors: { loadError: action.payload },
-            statuses: { isLoading: false },
-        }));
+        initialState = {};
     });
 
     it('returns new data if customer has signed in successfully', () => {

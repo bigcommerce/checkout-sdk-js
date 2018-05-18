@@ -7,7 +7,6 @@ import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 
 import InternalQuote from './internal-quote';
 import mapToInternalQuote from './map-to-internal-quote';
-import * as quoteActionTypes from './quote-action-types';
 import QuoteState, { QuoteErrorsState, QuoteStatusesState } from './quote-state';
 
 const DEFAULT_STATE: QuoteState = {
@@ -36,11 +35,10 @@ function dataReducer(data: InternalQuote | undefined, action: Action): InternalQ
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionTypes.CreateConsignmentsSucceeded:
     case ConsignmentActionTypes.UpdateConsignmentSucceeded:
-        return data ? { ...data, ...mapToInternalQuote(action.payload) } : data;
+        return action.payload ? { ...data, ...mapToInternalQuote(action.payload) } : data;
 
     case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
     case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.quote } : data;
 
     default:
@@ -52,12 +50,9 @@ function errorsReducer(errors: QuoteErrorsState = DEFAULT_STATE.errors, action: 
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case quoteActionTypes.LOAD_QUOTE_REQUESTED:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return { ...errors, loadError: undefined };
 
     case CheckoutActionType.LoadCheckoutFailed:
-    case quoteActionTypes.LOAD_QUOTE_FAILED:
         return { ...errors, loadError: action.payload };
 
     case BillingAddressActionTypes.UpdateBillingAddressRequested:
@@ -75,13 +70,10 @@ function errorsReducer(errors: QuoteErrorsState = DEFAULT_STATE.errors, action: 
 function statusesReducer(statuses: QuoteStatusesState = DEFAULT_STATE.statuses, action: Action): QuoteStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
-    case quoteActionTypes.LOAD_QUOTE_REQUESTED:
         return { ...statuses, isLoading: true };
 
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CheckoutActionType.LoadCheckoutFailed:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case quoteActionTypes.LOAD_QUOTE_FAILED:
         return { ...statuses, isLoading: false };
 
     case BillingAddressActionTypes.UpdateBillingAddressRequested:

@@ -2,8 +2,6 @@ import { getCheckout } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import * as customerActionTypes from '../customer/customer-action-types';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
-import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
-import * as quoteActionTypes from '../quote/quote-action-types';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import shippingOptionReducer from './shipping-option-reducer';
@@ -17,19 +15,6 @@ describe('shippingOptionReducer()', () => {
             meta: {},
             data: {},
         };
-    });
-
-    it('returns a new state with shipping options data and loading flag set to false', () => {
-        const response = getQuoteResponseBody();
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(shippingOptionReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.shippingOptions,
-        }));
     });
 
     it('returns new shipping option data if customer has signed out successfully', () => {
