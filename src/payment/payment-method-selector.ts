@@ -18,11 +18,9 @@ export default class PaymentMethodSelector {
     }
 
     getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined {
-        const predicate = gatewayId ?
-            { id: methodId, gateway: gatewayId } :
-            { id: methodId };
-
-        return find(this._paymentMethods.data, predicate);
+        return gatewayId ?
+            find(this._paymentMethods.data, { id: methodId, gateway: gatewayId }) :
+            find(this._paymentMethods.data, { id: methodId });
     }
 
     getSelectedPaymentMethod(): PaymentMethod | undefined {
