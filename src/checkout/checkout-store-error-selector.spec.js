@@ -175,18 +175,18 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
-    describe('#getInitializePaymentMethodError()', () => {
+    describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize payment', () => {
             jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(errorResponse);
 
-            expect(errors.getInitializePaymentMethodError('braintree')).toEqual(errorResponse);
+            expect(errors.getInitializePaymentError('braintree')).toEqual(errorResponse);
             expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith('braintree');
         });
 
         it('returns undefined if able to initialize payment', () => {
             jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue();
 
-            expect(errors.getInitializePaymentMethodError('braintree')).toEqual(undefined);
+            expect(errors.getInitializePaymentError('braintree')).toEqual(undefined);
             expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith('braintree');
         });
     });
@@ -303,7 +303,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
-    describe('#getInitializePaymentMethodError()', () => {
+    describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize shipping', () => {
             jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(errorResponse);
 

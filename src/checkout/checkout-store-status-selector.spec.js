@@ -171,7 +171,7 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
-    describe('#isInitializingPaymentMethod()', () => {
+    describe('#isInitializingPayment()', () => {
         beforeEach(() => {
             jest.spyOn(selectors.paymentStrategies, 'isInitializing').mockReturnValue(false);
         });
@@ -179,12 +179,12 @@ describe('CheckoutStoreStatusSelector', () => {
         it('returns true if initializing payment', () => {
             jest.spyOn(selectors.paymentStrategies, 'isInitializing').mockReturnValue(true);
 
-            expect(statuses.isInitializingPaymentMethod('foobar')).toEqual(true);
+            expect(statuses.isInitializingPayment('foobar')).toEqual(true);
             expect(selectors.paymentStrategies.isInitializing).toHaveBeenCalledWith('foobar');
         });
 
         it('returns false if not initializing payment', () => {
-            expect(statuses.isInitializingPaymentMethod('foobar')).toEqual(false);
+            expect(statuses.isInitializingPayment('foobar')).toEqual(false);
             expect(selectors.paymentStrategies.isInitializing).toHaveBeenCalledWith('foobar');
         });
     });

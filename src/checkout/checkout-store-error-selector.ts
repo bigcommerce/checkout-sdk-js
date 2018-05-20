@@ -63,7 +63,7 @@ export default class CheckoutStoreErrorSelector {
             this.getLoadShippingCountriesError() ||
             this.getLoadPaymentMethodsError() ||
             this.getLoadPaymentMethodError() ||
-            this.getInitializePaymentMethodError() ||
+            this.getInitializePaymentError() ||
             this.getLoadShippingOptionsError() ||
             this.getSelectShippingOptionError() ||
             this.getSignInError() ||
@@ -122,7 +122,7 @@ export default class CheckoutStoreErrorSelector {
         return this._paymentMethods.getLoadMethodError(methodId);
     }
 
-    getInitializePaymentMethodError(methodId?: string): Error | undefined {
+    getInitializePaymentError(methodId?: string): Error | undefined {
         return this._paymentStrategies.getInitializeError(methodId);
     }
 

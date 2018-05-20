@@ -63,7 +63,7 @@ export default class CheckoutStoreStatusSelector {
             this.isLoadingShippingCountries() ||
             this.isLoadingPaymentMethods() ||
             this.isLoadingPaymentMethod() ||
-            this.isInitializingPaymentMethod() ||
+            this.isInitializingPayment() ||
             this.isLoadingShippingOptions() ||
             this.isSelectingShippingOption() ||
             this.isSigningIn() ||
@@ -122,7 +122,7 @@ export default class CheckoutStoreStatusSelector {
         return this._paymentMethods.isLoadingMethod(methodId);
     }
 
-    isInitializingPaymentMethod(methodId?: string): boolean {
+    isInitializingPayment(methodId?: string): boolean {
         return this._paymentStrategies.isInitializing(methodId);
     }
 
