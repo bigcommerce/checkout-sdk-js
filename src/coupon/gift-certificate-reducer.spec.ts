@@ -1,7 +1,8 @@
-import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
+
+import { GiftCertificateActionType } from './gift-certificate-actions';
 import giftCertificateReducer from './gift-certificate-reducer';
+import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 
 describe('giftCertificateReducer()', () => {
     let initialState;
@@ -13,7 +14,7 @@ describe('giftCertificateReducer()', () => {
     it('no data gets stored when a gift certificate is applied', () => {
         const response = getGiftCertificateResponseBody();
         const action = {
-            type: giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED,
+            type: GiftCertificateActionType.ApplyGiftCertificateSucceeded,
             meta: response.meta,
             payload: response.data,
         };
@@ -22,12 +23,11 @@ describe('giftCertificateReducer()', () => {
             data: {},
         }));
     });
-
 
     it('no data gets stored when a gift certificate is removed', () => {
         const response = getGiftCertificateResponseBody();
         const action = {
-            type: giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED,
+            type: GiftCertificateActionType.RemoveGiftCertificateSucceeded,
             meta: response.meta,
             payload: response.data,
         };
@@ -37,10 +37,9 @@ describe('giftCertificateReducer()', () => {
         }));
     });
 
-
     it('returns an error state if gift certificate failed to be applied', () => {
         const action = {
-            type: giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_FAILED,
+            type: GiftCertificateActionType.ApplyGiftCertificateFailed,
             payload: getErrorResponse(),
         };
 
@@ -52,7 +51,7 @@ describe('giftCertificateReducer()', () => {
 
     it('returns an error state if gift certificate failed to be removed', () => {
         const action = {
-            type: giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_FAILED,
+            type: GiftCertificateActionType.RemoveGiftCertificateFailed,
             payload: getErrorResponse(),
         };
 
@@ -64,7 +63,7 @@ describe('giftCertificateReducer()', () => {
 
     it('returns new state while applying a gift certificate', () => {
         const action = {
-            type: giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_REQUESTED,
+            type: GiftCertificateActionType.ApplyGiftCertificateRequested,
         };
 
         expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -74,7 +73,7 @@ describe('giftCertificateReducer()', () => {
 
     it('returns new state while removing a giftCertificate', () => {
         const action = {
-            type: giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_REQUESTED,
+            type: GiftCertificateActionType.RemoveGiftCertificateRequested,
         };
 
         expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({

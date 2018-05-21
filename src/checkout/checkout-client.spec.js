@@ -2,7 +2,7 @@ import { createTimeout } from '@bigcommerce/request-sender';
 import { getConfig } from '../config/configs.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
-import { getCart, getCartResponseBody } from '../cart/internal-carts.mock';
+import { getCart } from '../cart/internal-carts.mock';
 import { getCompleteOrder } from '../order/internal-orders.mock';
 import { getCheckout } from './checkouts.mock';
 import { getCountries } from '../geography/countries.mock';
@@ -20,7 +20,6 @@ describe('CheckoutClient', () => {
     let configRequestSender;
     let countryRequestSender;
     let customerRequestSender;
-    let giftCertificateRequestSender;
     let orderRequestSender;
     let paymentMethodRequestSender;
     let quoteRequestSender;
@@ -52,11 +51,6 @@ describe('CheckoutClient', () => {
         customerRequestSender = {
             signInCustomer: jest.fn(() => Promise.resolve(getCustomerResponseBody())),
             signOutCustomer: jest.fn(() => Promise.resolve(getCustomerResponseBody())),
-        };
-
-        giftCertificateRequestSender = {
-            applyGiftCertificate: jest.fn(() => Promise.resolve(getCartResponseBody())),
-            removeGiftCertificate: jest.fn(() => Promise.resolve(getCartResponseBody())),
         };
 
         orderRequestSender = {
@@ -96,7 +90,6 @@ describe('CheckoutClient', () => {
             consignmentRequestSender,
             countryRequestSender,
             customerRequestSender,
-            giftCertificateRequestSender,
             orderRequestSender,
             paymentMethodRequestSender,
             quoteRequestSender,
@@ -368,26 +361,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getCustomerResponseBody());
             expect(customerRequestSender.signOutCustomer).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#applyGiftCertificate()', () => {
-        it('applies a gift certificate', async () => {
-            const output = await client.applyGiftCertificate('foo', 'bar');
-
-            expect(output).toEqual(getCartResponseBody());
-            expect(giftCertificateRequestSender.applyGiftCertificate)
-                .toHaveBeenCalledWith('foo', 'bar', undefined);
-        });
-    });
-
-    describe('#removeGiftCertificate()', () => {
-        it('removes a gift certificate', async () => {
-            const output = await client.removeGiftCertificate('foo', 'bar');
-
-            expect(output).toEqual(getCartResponseBody());
-            expect(giftCertificateRequestSender.removeGiftCertificate)
-                .toHaveBeenCalledWith('foo', 'bar', undefined);
         });
     });
 

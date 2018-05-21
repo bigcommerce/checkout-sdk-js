@@ -3,12 +3,12 @@ import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { CouponActionType } from '../coupon/coupon-actions';
-import * as giftCertificateActionTypes from '../coupon/gift-certificate-action-types';
 import * as customerActionTypes from '../customer/customer-action-types';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import cartReducer from './cart-reducer';
 import { getCart } from './internal-carts.mock';
+import { GiftCertificateActionType } from '../coupon/gift-certificate-actions';
 
 describe('cartReducer()', () => {
     let initialState;
@@ -131,7 +131,7 @@ describe('cartReducer()', () => {
 
     it('returns new data when gift certificate gets applied', () => {
         const action = {
-            type: giftCertificateActionTypes.APPLY_GIFT_CERTIFICATE_SUCCEEDED,
+            type: GiftCertificateActionType.ApplyGiftCertificateSucceeded,
             payload: getCheckout(),
         };
 
@@ -142,7 +142,7 @@ describe('cartReducer()', () => {
 
     it('returns new data when gift certificate gets removed', () => {
         const action = {
-            type: giftCertificateActionTypes.REMOVE_GIFT_CERTIFICATE_SUCCEEDED,
+            type: GiftCertificateActionType.RemoveGiftCertificateSucceeded,
             payload: getCheckout(),
         };
 
