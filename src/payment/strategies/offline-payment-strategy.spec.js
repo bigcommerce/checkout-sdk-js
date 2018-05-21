@@ -30,7 +30,7 @@ describe('OfflinePaymentStrategy', () => {
         expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({
             ...getOrderRequestBody(),
             payment: {
-                name: 'authorizenet',
+                methodId: 'authorizenet',
             },
         }, undefined);
 

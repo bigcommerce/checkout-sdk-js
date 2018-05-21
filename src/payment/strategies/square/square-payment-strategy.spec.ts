@@ -15,7 +15,6 @@ import { SquareFormCallbacks } from './square-form';
 import SquarePaymentStrategy from './square-payment-strategy';
 import SquareScriptLoader from './square-script-loader';
 
-
 describe('SquarePaymentStrategy', () => {
     let client: CheckoutClient;
     let scriptLoader: SquareScriptLoader;
@@ -133,7 +132,7 @@ describe('SquarePaymentStrategy', () => {
     describe('#execute()', () => {
         const payload = {
             payment: {
-                name: 'foo',
+                methodId: 'foo',
             },
         };
 
@@ -184,7 +183,7 @@ describe('SquarePaymentStrategy', () => {
                 let promise;
 
                 beforeEach(() => {
-                    promise = strategy.execute({ payment: { name: 'square' }, useStoreCredit: true, x: 'y' }, { b: 'f' });
+                    promise = strategy.execute({ payment: { methodId: 'square' }, useStoreCredit: true, x: 'y' }, { b: 'f' });
                     callbacks.cardNonceResponseReceived(null, 'nonce');
                 });
 
@@ -201,7 +200,7 @@ describe('SquarePaymentStrategy', () => {
 
                 it('submits the payment  with the right arguments', () => {
                     expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
-                        name: 'square',
+                        methodId: 'square',
                         paymentData: {
                             nonce: 'nonce',
                         },

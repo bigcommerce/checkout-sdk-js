@@ -1,13 +1,13 @@
 import { NotInitializedError } from '../../../common/error/errors';
 
-import * as Braintree from './braintree';
+import { BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreePaypal, BraintreeThreeDSecure } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {
-    private _client?: Promise<Braintree.Client>;
-    private _3ds?: Promise<Braintree.ThreeDSecure>;
-    private _dataCollector?: Promise<Braintree.DataCollector>;
-    private _paypal?: Promise<Braintree.Paypal>;
+    private _client?: Promise<BraintreeClient>;
+    private _3ds?: Promise<BraintreeThreeDSecure>;
+    private _dataCollector?: Promise<BraintreeDataCollector>;
+    private _paypal?: Promise<BraintreePaypal>;
     private _clientToken?: string;
 
     constructor(
@@ -18,7 +18,7 @@ export default class BraintreeSDKCreator {
         this._clientToken = clientToken;
     }
 
-    getClient(): Promise<Braintree.Client> {
+    getClient(): Promise<BraintreeClient> {
         if (!this._clientToken) {
             throw new NotInitializedError();
         }
@@ -31,7 +31,7 @@ export default class BraintreeSDKCreator {
         return this._client;
     }
 
-    getPaypal(): Promise<Braintree.Paypal> {
+    getPaypal(): Promise<BraintreePaypal> {
         if (!this._paypal) {
             this._paypal = Promise.all([
                 this.getClient(),
@@ -43,7 +43,7 @@ export default class BraintreeSDKCreator {
         return this._paypal;
     }
 
-    get3DS(): Promise<Braintree.ThreeDSecure> {
+    get3DS(): Promise<BraintreeThreeDSecure> {
         if (!this._3ds) {
             this._3ds = Promise.all([
                 this.getClient(),
@@ -55,7 +55,7 @@ export default class BraintreeSDKCreator {
         return this._3ds;
     }
 
-    getDataCollector(): Promise<Braintree.DataCollector> {
+    getDataCollector(): Promise<BraintreeDataCollector> {
         if (!this._dataCollector) {
             this._dataCollector = Promise.all([
                 this.getClient(),
@@ -84,7 +84,7 @@ export default class BraintreeSDKCreator {
         });
     }
 
-    private _teardown(module?: Promise<Braintree.Module>) {
+    private _teardown(module?: Promise<BraintreeModule>) {
         return module ?
             module.then(mod => mod.teardown()) :
             Promise.resolve();

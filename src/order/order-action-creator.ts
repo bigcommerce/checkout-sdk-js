@@ -8,6 +8,7 @@ import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
+import InternalOrderRequestBody from './internal-order-request-body';
 import { FinalizeOrderAction, LoadOrderAction, OrderActionType, SubmitOrderAction } from './order-actions';
 import OrderRequestBody from './order-request-body';
 
@@ -47,7 +48,7 @@ export default class OrderActionCreator {
             }
 
             this._verifyCart(cart, options)
-                .then(() => this._checkoutClient.submitOrder(payload, options))
+                .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload), options))
                 .then(response => {
                     observer.next(createAction(OrderActionType.SubmitOrderSucceeded, response.body.data, { ...response.body.meta, token: response.headers.token }));
                     observer.complete();
@@ -79,5 +80,22 @@ export default class OrderActionCreator {
                 this._cartComparator.isEqual(existingCart, body.data.cart) ? Promise.resolve(true) : Promise.reject(false)
             )
             .catch(() => Promise.reject(new CartChangedError()));
+    }
+
+    private _mapToOrderRequestBody(payload: OrderRequestBody): InternalOrderRequestBody {
+        const { payment, ...order } = payload;
+
+        if (!payment) {
+            return order;
+        }
+
+        return {
+            ...payload,
+            payment: {
+                paymentData: payment.paymentData,
+                name: payment.methodId,
+                gateway: payment.gatewayId,
+            },
+        };
     }
 }

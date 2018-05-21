@@ -8,7 +8,7 @@ import {
     UnsupportedBrowserError,
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { TokenizedCreditCard } from '../../payment';
+import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -45,13 +45,13 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
-        if (!payment || !payment.name) {
-            throw new MissingDataError('Unable to submit payment because "payload.payment.name" argument is not provided.');
+        if (!payment || !payment.methodId) {
+            throw new MissingDataError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
         }
 
-        const paymentName = payment.name;
+        const paymentName = payment.methodId;
 
-        return new Promise<TokenizedCreditCard>((resolve, reject) => {
+        return new Promise<NonceInstrument>((resolve, reject) => {
             if (!this._paymentForm) {
                 throw new NotInitializedError('Unable to submit payment because the choosen payment method has not been initialized.');
             }
@@ -65,7 +65,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         })
         .then(paymentData => {
             const paymentPayload = {
-                name: paymentName,
+                methodId: paymentName,
                 paymentData,
             };
 
@@ -127,7 +127,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 }
 
 export interface DeferredPromise {
-    resolve(resolution?: TokenizedCreditCard): void;
+    resolve(resolution?: NonceInstrument): void;
     reject(reason?: any): void;
 }
 

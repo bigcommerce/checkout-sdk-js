@@ -2,15 +2,21 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import * as Braintree from './braintree';
+import {
+    BraintreeClientCreator,
+    BraintreeDataCollectorCreator,
+    BraintreeHostWindow,
+    BraintreePaypalCreator,
+    BraintreeThreeDSecureCreator,
+} from './braintree';
 
 export default class BraintreeScriptLoader {
     constructor(
         private _scriptLoader: ScriptLoader,
-        private _window: Braintree.HostWindow = window
+        private _window: BraintreeHostWindow = window
     ) {}
 
-    loadClient(): Promise<Braintree.ClientCreator> {
+    loadClient(): Promise<BraintreeClientCreator> {
         return this._scriptLoader
             .loadScript('//js.braintreegateway.com/web/3.15.0/js/client.min.js')
             .then(() => {
@@ -22,7 +28,7 @@ export default class BraintreeScriptLoader {
             });
     }
 
-    load3DS(): Promise<Braintree.ThreeDSecureCreator> {
+    load3DS(): Promise<BraintreeThreeDSecureCreator> {
         return this._scriptLoader
             .loadScript('//js.braintreegateway.com/web/3.15.0/js/three-d-secure.min.js')
             .then(() => {
@@ -34,7 +40,7 @@ export default class BraintreeScriptLoader {
             });
     }
 
-    loadDataCollector(): Promise<Braintree.DataCollectorCreator> {
+    loadDataCollector(): Promise<BraintreeDataCollectorCreator> {
         return this._scriptLoader
             .loadScript('//js.braintreegateway.com/web/3.15.0/js/data-collector.min.js')
             .then(() => {
@@ -46,7 +52,7 @@ export default class BraintreeScriptLoader {
             });
     }
 
-    loadPaypal(): Promise<Braintree.PaypalCreator> {
+    loadPaypal(): Promise<BraintreePaypalCreator> {
         return this._scriptLoader
             .loadScript('//js.braintreegateway.com/web/3.15.0/js/paypal.min.js')
             .then(() => {

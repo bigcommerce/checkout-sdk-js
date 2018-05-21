@@ -11,7 +11,7 @@ export interface StoreConfig {
     checkoutSettings: CheckoutSettings;
     currency: Currency;
     formFields: FormFields;
-    links: Links;
+    links: StoreLinks;
     paymentSettings: PaymentSettings;
     shopperConfig: ShopperConfig;
     storeProfile: StoreProfile;
@@ -59,7 +59,7 @@ export interface PaymentSettings {
     clientSidePaymentProviders: string[];
 }
 
-export interface Links {
+export interface StoreLinks {
     cartLink: string;
     checkoutLink: string;
     orderConfirmationLink: string;

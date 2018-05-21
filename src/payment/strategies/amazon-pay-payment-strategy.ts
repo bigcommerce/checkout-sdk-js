@@ -1,4 +1,4 @@
-import { noop, omit } from 'lodash';
+import { noop } from 'lodash';
 
 import { isAddressEqual } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
@@ -15,7 +15,6 @@ import {
     AmazonPayWidgetError,
     AmazonPayWindow,
 } from '../../remote-checkout/methods/amazon-pay';
-import Payment from '../payment';
 import PaymentMethod from '../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
@@ -82,7 +81,6 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const { useStoreCredit = false } = payload;
         const referenceId = this._getOrderReferenceId();
 
         if (!referenceId) {
@@ -90,16 +88,18 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         }
 
         if (!payload.payment) {
-            throw new InvalidArgumentError('Unable to proceed because "payload.payment.name" argument is not provided.');
+            throw new InvalidArgumentError('Unable to proceed because "payload.payment.methodId" argument is not provided.');
         }
 
+        const { payment: { paymentData, ...paymentPayload }, useStoreCredit = false } = payload;
+
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.initializePayment(payload.payment.name, { referenceId, useStoreCredit })
+            this._remoteCheckoutActionCreator.initializePayment(paymentPayload.methodId, { referenceId, useStoreCredit })
         )
             .then(() => this._store.dispatch(
                 this._orderActionCreator.submitOrder({
                     ...payload,
-                    payment: omit(payload.payment, 'paymentData') as Payment,
+                    payment: paymentPayload,
                 }, options)
             ))
             .catch(error => {

@@ -1,9 +1,10 @@
 import { CartActionCreator } from '../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
+import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { AfterpayScriptLoader, AfterpaySdk } from '../../remote-checkout/methods/afterpay';
+import { PaymentArgumentInvalidError } from '../errors';
 import PaymentActionCreator from '../payment-action-creator';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
@@ -58,10 +59,10 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const paymentId = payload.payment && payload.payment.gateway;
+        const paymentId = payload.payment && payload.payment.gatewayId;
 
         if (!paymentId) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.gateway" argument is not provided.');
+            throw new PaymentArgumentInvalidError(['payment.gatewayId']);
         }
 
         const useStoreCredit = !!payload.useStoreCredit;
@@ -96,7 +97,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             {};
 
         const paymentPayload = {
-            name: order.payment.id,
+            methodId: order.payment.id,
             paymentData: { nonce: config.payment.token },
         };
 

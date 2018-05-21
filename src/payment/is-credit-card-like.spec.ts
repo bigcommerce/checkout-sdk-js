@@ -1,4 +1,4 @@
-import isCreditCardLike from './is-credit-card';
+import isCreditCardLike from './is-credit-card-like';
 import { getPayment } from './payments.mock';
 
 describe('isCreditCardLike', () => {

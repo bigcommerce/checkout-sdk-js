@@ -29,15 +29,15 @@ export default class PaymentStrategyActionCreator {
         return store => Observable.create((observer: Observer<PaymentStrategyExecuteAction>) => {
             const state = store.getState();
             const { payment = {} as Payment, useStoreCredit } = payload;
-            const meta = { methodId: payment.name };
+            const meta = { methodId: payment.methodId };
 
             let strategy: PaymentStrategy;
 
             if (state.order.isPaymentDataRequired(useStoreCredit)) {
-                const method = state.paymentMethods.getPaymentMethod(payment.name, payment.gateway);
+                const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
 
                 if (!method) {
-                    throw new MissingDataError(`Unable to submit payment because "paymentMethod (${payment.name})" data is missing.`);
+                    throw new MissingDataError(`Unable to submit payment because "paymentMethod (${payment.methodId})" data is missing.`);
                 }
 
                 strategy = this._strategyRegistry.getByMethod(method);
@@ -48,7 +48,7 @@ export default class PaymentStrategyActionCreator {
             observer.next(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta));
 
             strategy
-                .execute(payload, { ...options, methodId: payment.name, gatewayId: payment.gateway })
+                .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
                 .then(() => {
                     observer.next(createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
                     observer.complete();

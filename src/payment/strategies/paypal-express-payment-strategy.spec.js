@@ -139,7 +139,7 @@ describe('PaypalExpressPaymentStrategy', () => {
 
         beforeEach(() => {
             payload = merge({}, getOrderRequestBody(), {
-                payment: { name: paymentMethod.id },
+                payment: { methodId: paymentMethod.id },
             });
         });
 

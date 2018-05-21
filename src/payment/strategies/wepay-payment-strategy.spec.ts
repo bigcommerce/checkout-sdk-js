@@ -55,8 +55,8 @@ describe('WepayPaymentStrategy', () => {
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
-                name: paymentMethod.id,
-                gateway: paymentMethod.gateway,
+                methodId: paymentMethod.id,
+                gatewayId: paymentMethod.gateway,
             },
         });
 

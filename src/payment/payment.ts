@@ -1,13 +1,16 @@
 export default interface Payment {
-    name: string;
-    paymentData: PaymentInstrument;
-    gateway?: string;
-    source?: string;
+    methodId: string;
+    gatewayId?: string;
+    paymentData: PaymentInstrument & PaymentInstrumentMeta;
 }
 
-export type PaymentInstrument = CreditCard | TokenizedCreditCard | VaultedInstrument;
+export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument;
 
-export interface CreditCard {
+export interface PaymentInstrumentMeta {
+    deviceSessionId?: string;
+}
+
+export interface CreditCardInstrument {
     ccExpiry: {
         month: string,
         year: string,
@@ -16,12 +19,11 @@ export interface CreditCard {
     ccNumber: string;
     ccType: string;
     ccCvv?: string;
-    deviceSessionId?: string;
     shouldSaveInstrument?: boolean;
     extraData?: any;
 }
 
-export interface TokenizedCreditCard {
+export interface NonceInstrument {
     nonce: string;
     deviceSessionId?: string;
 }

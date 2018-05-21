@@ -275,7 +275,7 @@ describe('AmazonPayPaymentStrategy', () => {
         await strategy.execute(payload, options);
 
         expect(remoteCheckoutActionCreator.initializePayment)
-            .toHaveBeenCalledWith(payload.payment.name, { referenceId, useStoreCredit: false });
+            .toHaveBeenCalledWith(payload.payment.methodId, { referenceId, useStoreCredit: false });
 
         expect(orderActionCreator.submitOrder)
             .toHaveBeenCalledWith({

@@ -8,7 +8,7 @@ import { Config, ConfigRequestSender } from '../config';
 import { CouponRequestSender, GiftCertificateRequestSender } from '../coupon';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
-import { InternalOrderResponseBody, OrderRequestBody, OrderRequestSender } from '../order';
+import { InternalOrderRequestBody, InternalOrderResponseBody, OrderRequestSender } from '../order';
 import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
 import { QuoteRequestSender } from '../quote';
 import { ShippingAddressRequestSender, ShippingCountryRequestSender, ShippingOptionRequestSender } from '../shipping';
@@ -48,7 +48,7 @@ export default class CheckoutClient {
         return this._orderRequestSender.loadOrder(orderId, options);
     }
 
-    submitOrder(body: OrderRequestBody, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
+    submitOrder(body: InternalOrderRequestBody, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
         return this._orderRequestSender.submitOrder(body, options);
     }
 

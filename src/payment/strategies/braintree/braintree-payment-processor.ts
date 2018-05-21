@@ -1,11 +1,11 @@
-import { Payment } from '../..';
 import { InternalAddress } from '../../../address';
 import { NotInitializedError } from '../../../common/error/errors';
 import { CancellablePromise } from '../../../common/utility';
+import { OrderPaymentRequestBody } from '../../../order';
 import { PaymentMethodCancelledError } from '../../errors';
-import { CreditCard, TokenizedCreditCard } from '../../payment';
+import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
-import * as Braintree from './braintree';
+import { BraintreePaypal, BraintreeRequestData } from './braintree';
 import { BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 
@@ -21,13 +21,13 @@ export default class BraintreePaymentProcessor {
         this._threeDSecureOptions = options && options.threeDSecure;
     }
 
-    preloadPaypal(): Promise<Braintree.Paypal> {
+    preloadPaypal(): Promise<BraintreePaypal> {
         return this._braintreeSDKCreator.getPaypal();
     }
 
-    tokenizeCard(payment: Payment, billingAddress: InternalAddress): Promise<TokenizedCreditCard> {
+    tokenizeCard(payment: OrderPaymentRequestBody, billingAddress: InternalAddress): Promise<NonceInstrument> {
         const { paymentData } = payment;
-        const requestData = this._mapToCreditCard(paymentData as CreditCard, billingAddress);
+        const requestData = this._mapToCreditCard(paymentData as CreditCardInstrument, billingAddress);
 
         return this._braintreeSDKCreator.getClient()
             .then(client => client.request(requestData))
@@ -36,7 +36,7 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<TokenizedCreditCard> {
+    paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<NonceInstrument> {
         return this._braintreeSDKCreator.getPaypal()
             .then(paypal => paypal.tokenize({
                 amount,
@@ -49,7 +49,7 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    verifyCard(payment: Payment, billingAddress: InternalAddress, amount: number): Promise<TokenizedCreditCard> {
+    verifyCard(payment: OrderPaymentRequestBody, billingAddress: InternalAddress, amount: number): Promise<NonceInstrument> {
         if (!this._threeDSecureOptions) {
             throw new NotInitializedError('Unable to verify card because the choosen payment method has not been initialized.');
         }
@@ -83,7 +83,7 @@ export default class BraintreePaymentProcessor {
         });
     }
 
-    appendSessionId(processedPayment: Promise<TokenizedCreditCard>): Promise<TokenizedCreditCard> {
+    appendSessionId(processedPayment: Promise<NonceInstrument>): Promise<NonceInstrument> {
         return processedPayment
             .then(paymentData => Promise.all([paymentData, this._braintreeSDKCreator.getDataCollector()]))
             .then(([paymentData, { deviceData }]) => ({ ...paymentData, deviceSessionId: deviceData }));
@@ -93,7 +93,7 @@ export default class BraintreePaymentProcessor {
         return this._braintreeSDKCreator.teardown();
     }
 
-    private _mapToCreditCard(creditCard: CreditCard, billingAddress: InternalAddress): Braintree.RequestData {
+    private _mapToCreditCard(creditCard: CreditCardInstrument, billingAddress: InternalAddress): BraintreeRequestData {
         let streetAddress = billingAddress.addressLine1;
 
         if (billingAddress.addressLine2) {
