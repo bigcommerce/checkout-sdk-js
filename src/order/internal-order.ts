@@ -52,7 +52,7 @@ export default interface InternalOrder {
 
 export interface InternalGiftCertificateList {
     totalDiscountedAmount: number;
-    appliedGiftCertificates: InternalGiftCertificate[];
+    appliedGiftCertificates: { [code: string]: InternalGiftCertificate };
 }
 
 export interface InternalOrderPayment {

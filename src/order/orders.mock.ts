@@ -1,6 +1,7 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getGiftCertificateItem } from '../cart/line-items.mock';
 import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
+import { getGiftCertificate } from '../coupon/gift-certificates.mock';
 import { getCurrency } from '../currency/currencies.mock';
 
 import { getPhysicalItem } from './line-items.mock';
@@ -57,7 +58,7 @@ export function getOrder(): Order {
             },
             {
                 providerId: 'giftcertificate',
-                description: 'Gift Certificate',
+                description: 'gc',
                 amount: 7,
                 detail: {
                     code: 'gc',

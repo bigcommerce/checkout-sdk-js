@@ -24,5 +24,6 @@ export default function mapGiftCertificateToInternalLineItem(
         recipient: item.recipient,
         type: 'ItemGiftCertificateEntity',
         attributes: [],
+        variantId: null,
     };
 }

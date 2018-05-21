@@ -43,6 +43,7 @@ export function getCart() {
                 integerAmount: 10000,
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 10000,
+                variantId: null,
             },
         ],
         currency: 'USD',
@@ -56,12 +57,12 @@ export function getCart() {
                 {
                     code: 'savebig2015',
                     discount: '20% off each item',
-                    discountType: 'percentage_discount',
+                    discountType: 1,
                 },
                 {
                     code: '279F507D817E3E7',
                     discount: '$5.00 off the shipping total',
-                    discountType: 'shipping_discount',
+                    discountType: 3,
                 },
             ],
         },
@@ -79,8 +80,8 @@ export function getCart() {
         ],
         giftCertificate: {
             totalDiscountedAmount: 7,
-            appliedGiftCertificates: [
-                {
+            appliedGiftCertificates: {
+                gc: {
                     code: 'gc',
                     discountedAmount: 7,
                     remainingBalance: 3,
@@ -90,7 +91,7 @@ export function getCart() {
                         purchaseDate: 'ddmmyy',
                     },
                 },
-            ],
+            },
         },
         shipping: {
             amount: 15,
