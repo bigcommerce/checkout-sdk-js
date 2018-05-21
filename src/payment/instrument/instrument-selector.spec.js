@@ -12,7 +12,7 @@ describe('InstrumentSelector', () => {
         };
     });
 
-    describe('#getInstruments()', () => {
+    describe('#loadInstruments()', () => {
         it('returns a list of instruments', () => {
             instrumentSelector = new InstrumentSelector(state.instruments);
 

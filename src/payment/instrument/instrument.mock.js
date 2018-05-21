@@ -15,6 +15,7 @@ export function getInstrument() {
         expiry_year: '2020',
         brand: 'test',
         default_instrument: true,
+        trusted_shipping_address: true,
     };
 }
 
@@ -29,6 +30,7 @@ export function getInstruments() {
             expiry_year: '2020',
             brand: 'test',
             default_instrument: true,
+            trusted_shipping_address: true,
         },
         {
             bigpay_token: '111',
@@ -39,6 +41,7 @@ export function getInstruments() {
             expiry_year: '2024',
             brand: 'test',
             default_instrument: true,
+            trusted_shipping_address: false,
         },
     ];
 }
@@ -123,7 +126,7 @@ export function getVaultAccessTokenResponseBody() {
     };
 }
 
-export function getInstrumentsResponseBody() {
+export function getLoadInstrumentsResponseBody() {
     return {
         vaulted_instruments: getInstruments(),
     };

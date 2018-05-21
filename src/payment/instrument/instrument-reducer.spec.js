@@ -2,7 +2,7 @@ import {
     deleteInstrumentResponseBody,
     getInstruments,
     getInstrumentsMeta,
-    getInstrumentsResponseBody,
+    getLoadInstrumentsResponseBody,
     vaultInstrumentResponseBody,
 } from './instrument.mock';
 
@@ -41,7 +41,7 @@ describe('instrumentReducer()', () => {
         const action = {
             type: actionTypes.LOAD_INSTRUMENTS_SUCCEEDED,
             meta: getInstrumentsMeta(),
-            payload: getInstrumentsResponseBody(),
+            payload: getLoadInstrumentsResponseBody(),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({

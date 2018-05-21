@@ -7,6 +7,7 @@ export default interface Instrument {
     expiry_year: string;
     brand: string;
     default_instrument: boolean;
+    trusted_shipping_address: boolean;
 }
 
 export interface VaultAccessToken {
@@ -20,5 +21,5 @@ export interface SessionContext {
 }
 
 export interface InstrumentRequestContext extends SessionContext {
-    vaultAccessToken: string;
+    authToken: string;
 }

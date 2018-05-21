@@ -24,7 +24,7 @@ import { getFormFields } from '../form/form.mocks';
 import { getGiftCertificateResponseBody } from '../coupon/internal-gift-certificates.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody, getPaymentMethod } from '../payment/payment-methods.mock';
-import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
+import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -129,8 +129,8 @@ describe('CheckoutService', () => {
                 Promise.resolve(getResponse(getVaultAccessTokenResponseBody()))
             ),
 
-            getInstruments: jest.fn(() =>
-                Promise.resolve(getResponse(getInstrumentsResponseBody()))
+            loadInstruments: jest.fn(() =>
+                Promise.resolve(getResponse(getLoadInstrumentsResponseBody()))
             ),
 
             vaultInstrument: jest.fn(() =>
@@ -789,12 +789,13 @@ describe('CheckoutService', () => {
             const { storeId } = getConfig().storeConfig.storeProfile;
             const { customerId } = getGuestCustomer();
             const { vaultAccessToken } = getInstrumentsMeta();
+            const shippingAddress = getShippingAddress();
 
             await checkoutService.signInCustomer();
             await checkoutService.loadInstruments();
 
-            expect(checkoutClient.getInstruments)
-                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken });
+            expect(checkoutClient.loadInstruments)
+                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, shippingAddress);
         });
     });
 
@@ -809,7 +810,7 @@ describe('CheckoutService', () => {
             await checkoutService.vaultInstrument(instrument);
 
             expect(checkoutClient.vaultInstrument)
-                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken }, instrument);
+                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, instrument);
         });
     });
 
@@ -824,7 +825,7 @@ describe('CheckoutService', () => {
             await checkoutService.deleteInstrument(instrumentId);
 
             expect(checkoutClient.deleteInstrument)
-                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken }, instrumentId);
+                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, instrumentId);
         });
     });
 });
