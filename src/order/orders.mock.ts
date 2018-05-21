@@ -16,11 +16,12 @@ export function getOrder(): Order {
             getShippingCoupon(),
         ],
         currency: getCurrency(),
-        customerCreated: false,
+        customerCanBeCreated: true,
         customerId: 0,
         discountAmount: 10,
         hasDigitalItems: false,
         isComplete: true,
+        status: 'ORDER_STATUS_INCOMPLETE',
         isDownloadable: false,
         isTaxIncluded: false,
         lineItems: {
@@ -32,7 +33,17 @@ export function getOrder(): Order {
                 getGiftCertificateItem(),
             ],
         },
+         taxes: [
+            {
+                name: 'Tax',
+                amount: 3,
+            },
+        ],
+        shippingCostTotal: 15,
+        shippingCostBeforeDiscount: 20,
+        handlingCostTotal: 8,
         orderAmount: 190,
+        orderAmountAsInteger: 19000,
         orderId: 295,
         payments: [
             {
@@ -44,7 +55,15 @@ export function getOrder(): Order {
                     instructions: '%%OrderID%% text %%OrderID%%',
                 },
             },
+            {
+                providerId: 'giftcertificate',
+                description: 'Gift Certificate',
+                amount: 7,
+                detail: {
+                    code: 'gc',
+                    remaining: 3,
+                },
+            },
         ],
-        status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
     };
 }

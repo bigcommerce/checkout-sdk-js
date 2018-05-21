@@ -245,9 +245,7 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.execute(payload)(store))
                 .toPromise();
 
-            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(state.checkout.getCheckout().orderId, {
-                params: { include: ['payments'] },
-            });
+            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(state.checkout.getCheckout().orderId, undefined);
         });
 
         it('emits action to load order and notify execution progress', async () => {
@@ -364,9 +362,7 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.finalize()(store))
                 .toPromise();
 
-            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(state.checkout.getCheckout().orderId, {
-                params: { include: ['payments'] },
-            });
+            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(state.checkout.getCheckout().orderId, undefined);
         });
 
         it('emits action to load order and notify finalization progress', async () => {

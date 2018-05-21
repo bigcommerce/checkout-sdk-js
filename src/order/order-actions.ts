@@ -8,10 +8,6 @@ export enum OrderActionType {
     LoadOrderSucceeded = 'LOAD_ORDER_SUCCEEDED',
     LoadOrderFailed = 'LOAD_ORDER_FAILED',
 
-    LoadInternalOrderRequested = 'LOAD_INTERNAL_ORDER_REQUESTED',
-    LoadInternalOrderSucceeded = 'LOAD_INTERNAL_ORDER_SUCCEEDED',
-    LoadInternalOrderFailed = 'LOAD_INTERNAL_ORDER_FAILED',
-
     SubmitOrderRequested = 'SUBMIT_ORDER_REQUESTED',
     SubmitOrderSucceeded = 'SUBMIT_ORDER_SUCCEEDED',
     SubmitOrderFailed = 'SUBMIT_ORDER_FAILED',
@@ -22,7 +18,6 @@ export enum OrderActionType {
 }
 
 export type OrderAction = LoadOrderAction |
-    LoadInternalOrderAction |
     SubmitOrderAction |
     FinalizeOrderAction;
 
@@ -30,11 +25,6 @@ export type LoadOrderAction =
     LoadOrderRequestedAction |
     LoadOrderSucceededAction |
     LoadOrderFailedAction;
-
-export type LoadInternalOrderAction =
-    LoadInternalOrderRequestedAction |
-    LoadInternalOrderRequestedAction |
-    LoadInternalOrderSucceededAction;
 
 export type SubmitOrderAction =
     SubmitOrderRequestedAction |
@@ -56,18 +46,6 @@ export interface LoadOrderSucceededAction extends Action<Order> {
 
 export interface LoadOrderFailedAction extends Action<Error> {
     type: OrderActionType.LoadOrderFailed;
-}
-
-export interface LoadInternalOrderRequestedAction extends Action {
-    type: OrderActionType.LoadInternalOrderRequested;
-}
-
-export interface LoadInternalOrderSucceededAction extends Action<InternalOrderResponseData> {
-    type: OrderActionType.LoadInternalOrderSucceeded;
-}
-
-export interface LoadInternalOrderFailedAction extends Action<Error> {
-    type: OrderActionType.LoadInternalOrderFailed;
 }
 
 export interface SubmitOrderRequestedAction extends Action {

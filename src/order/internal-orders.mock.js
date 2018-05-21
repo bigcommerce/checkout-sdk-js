@@ -12,15 +12,12 @@ export function getOrderRequestBody() {
 export function getIncompleteOrder() {
     return {
         orderId: null,
-        token: null,
         payment: {},
         socialData: null,
         status: 'ORDER_STATUS_INCOMPLETE',
-        customerCreated: false,
         hasDigitalItems: false,
         isDownloadable: false,
         isComplete: false,
-        callbackUrl: null,
     };
 }
 
@@ -116,7 +113,7 @@ export function getCompleteOrder() {
                     giftCertificate: {
                         code: 'gc',
                         balance: 10,
-                        purchaseDate: 'ddmmyy',
+                        purchaseDate: '',
                     },
                 },
             ],
@@ -126,25 +123,16 @@ export function getCompleteOrder() {
             integerAmount: 1500,
             amountBeforeDiscount: 20,
             integerAmountBeforeDiscount: 2000,
-            required: true,
         },
         storeCredit: {
             amount: 0,
         },
-        taxSubtotal: {
-            amount: 0,
-            integerAmount: 0,
-        },
         taxes: [
             {
                 name: 'Tax',
-                amount: 0,
+                amount: 3,
             },
         ],
-        taxTotal: {
-            amount: 0,
-            integerAmount: 0,
-        },
         handling: {
             amount: 8,
             integerAmount: 800,
@@ -163,30 +151,36 @@ export function getCompleteOrder() {
         customerCanBeCreated: true,
         isComplete: true,
         socialData: {
-            68: {
+            5: {
                 fb: {
-                    name: '[Sample] Sodling, black leather duffle bag',
-                    description: 'How to write product descriptions that sellOne of the best things you can do to make your store successful is invest some time in writing great product descriptions. You want to provide detailed ye...',
-                    image: 'https:\/\/cdn.bcapp.dev\/bcapp\/uvn6bltx\/products\/68\/images\/253\/HERO_mensstyle_034__54484.1348466546.190.285.jpg?c=1',
-                    url: 'http:\/\/s1446156961.bcapp.dev\/sample-sodling-black-leather-duffle-bag\/',
+                    name: 'Canvas Laundry Cart',
+                    description: 'Canvas Laundry Cart',
+                    image: '/images/canvas-laundry-cart.jpg',
+                    url: 'http:\/\/www.facebook.com\/sharer\/sharer.php?s=100&p[title]=I+just+bought+%27%5BSample%5D+Sodling%2C+black+leather+duffle+bag%27+on+s1446156961&p[summary]=How+to+write+product+descriptions+that+sellOne+of+the+best+things+you+can+do+to+make+your+store+successful+is+invest+some+time+in+writing+great+product+descriptions.+You+want+to+provide+detailed+ye...&p[url]=http%3A%2F%2Fs1446156961.bcapp.dev%2Fsample-sodling-black-leather-duffle-bag%2F&p[images][0]=http%3A%2F%2Fcdn.bcapp.dev%2Fbcapp%2Fuvn6bltx%2Fproducts%2F68%2Fimages%2F253%2FHERO_mensstyle_034__54484.1348466546.190.285.jpg%3Fc%3D1',
                     shareText: "I just bought '[Sample] Sodling, black leather duffle bag' on s1446156961",
                     sharingLink: 'http:\/\/www.facebook.com\/sharer\/sharer.php?s=100&p[title]=I+just+bought+%27%5BSample%5D+Sodling%2C+black+leather+duffle+bag%27+on+s1446156961&p[summary]=How+to+write+product+descriptions+that+sellOne+of+the+best+things+you+can+do+to+make+your+store+successful+is+invest+some+time+in+writing+great+product+descriptions.+You+want+to+provide+detailed+ye...&p[url]=http%3A%2F%2Fs1446156961.bcapp.dev%2Fsample-sodling-black-leather-duffle-bag%2F&p[images][0]=http%3A%2F%2Fcdn.bcapp.dev%2Fbcapp%2Fuvn6bltx%2Fproducts%2F68%2Fimages%2F253%2FHERO_mensstyle_034__54484.1348466546.190.285.jpg%3Fc%3D1',
+                    channelName: 'Facebook',
+                    channelCode: 'fb',
                 },
                 tw: {
-                    name: '[Sample] Sodling, black leather duffle bag',
-                    description: 'How to write product descriptions that sellOne of the best things you can do to make your store successful is invest some time in writing great product descriptions. You want to provide detailed ye...',
-                    image: 'https:\/\/cdn.bcapp.dev\/bcapp\/uvn6bltx\/products\/68\/images\/253\/HERO_mensstyle_034__54484.1348466546.190.285.jpg?c=1',
-                    url: 'http:\/\/s1446156961.bcapp.dev\/sample-sodling-black-leather-duffle-bag\/',
+                    name: 'Canvas Laundry Cart',
+                    description: 'Canvas Laundry Cart',
+                    image: '/images/canvas-laundry-cart.jpg',
+                    url: 'https:\/\/twitter.com\/intent\/tweet?url=http%3A%2F%2Fs1446156961.bcapp.dev%2Fsample-sodling-black-leather-duffle-bag%2F&text=I+just+bought+%27%5BSample%5D+Sodling%2C+black+leather+duffle+bag%27+on+s1446156961',
                     shareText: "I just bought '[Sample] Sodling, black leather duffle bag' on s1446156961",
                     sharingLink: 'https:\/\/twitter.com\/intent\/tweet?url=http%3A%2F%2Fs1446156961.bcapp.dev%2Fsample-sodling-black-leather-duffle-bag%2F&text=I+just+bought+%27%5BSample%5D+Sodling%2C+black+leather+duffle+bag%27+on+s1446156961',
+                    channelName: 'Twitter',
+                    channelCode: 'tw',
                 },
                 gp: {
-                    name: '[Sample] Sodling, black leather duffle bag',
-                    description: 'How to write product descriptions that sellOne of the best things you can do to make your store successful is invest some time in writing great product descriptions. You want to provide detailed ye...',
-                    image: 'https:\/\/cdn.bcapp.dev\/bcapp\/uvn6bltx\/products\/68\/images\/253\/HERO_mensstyle_034__54484.1348466546.190.285.jpg?c=1',
-                    url: 'http:\/\/s1446156961.bcapp.dev\/sample-sodling-black-leather-duffle-bag\/',
-                    shareText: '[Sample] Sodling, black leather duffle bag',
+                    name: 'Canvas Laundry Cart',
+                    description: 'Canvas Laundry Cart',
+                    image: '/images/canvas-laundry-cart.jpg',
+                    url: 'https:\/\/plus.google.com\/share?url=http:\/\/s1446156961.bcapp.dev\/sample-sodling-black-leather-duffle-bag\/',
+                    shareText: "I just bought '[Sample] Sodling, black leather duffle bag' on s1446156961",
                     sharingLink: 'https:\/\/plus.google.com\/share?url=http:\/\/s1446156961.bcapp.dev\/sample-sodling-black-leather-duffle-bag\/',
+                    channelName: 'Google Plus',
+                    channelCode: 'gp',
                 },
             },
         },

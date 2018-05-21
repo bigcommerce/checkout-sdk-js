@@ -1,8 +1,10 @@
 import { InternalLineItem } from '../cart';
 import { InternalCoupon, InternalGiftCertificate } from '../coupon';
+import { DiscountNotification } from '../discount';
 
-export default interface InternalOrder extends InternalIncompleteOrder {
+export default interface InternalOrder {
     id: number;
+    orderId: number;
     items: InternalLineItem[];
     currency: string;
     customerCanBeCreated: boolean;
@@ -18,34 +20,18 @@ export default interface InternalOrder extends InternalIncompleteOrder {
         amount: number;
         integerAmount: number;
     };
-    discountNotifications: Array<{
-        message: string;
-        messageHtml: string;
-        type: string;
-    }>;
-    giftCertificate: {
-        totalDiscountedAmount: number;
-        appliedGiftCertificates: InternalGiftCertificate[];
-    };
+    discountNotifications: DiscountNotification[];
+    giftCertificate: InternalGiftCertificateList;
     shipping: {
         amount: number;
         integerAmount: number;
         amountBeforeDiscount: number;
         integerAmountBeforeDiscount: number;
-        required: boolean;
     };
     storeCredit: {
         amount: number;
     };
-    taxSubtotal: {
-        amount: number;
-        integerAmount: number;
-    };
     taxes: Array<{ name: string, amount: number }>;
-    taxTotal: {
-        amount: number;
-        integerAmount: number;
-    };
     handling: {
         amount: number;
         integerAmount: number;
@@ -54,28 +40,19 @@ export default interface InternalOrder extends InternalIncompleteOrder {
         amount: number;
         integerAmount: number;
     };
-}
-
-export interface InternalIncompleteOrder {
-    orderId: number;
-    token: string;
+    token?: string;
     payment: InternalOrderPayment;
-    socialData: {
-        [key: string]: {
-            name: string;
-            description: string;
-            image: string;
-            url: string;
-            shareText: string;
-            sharingLink: string;
-        },
-    };
+    socialData?: { [itemId: string]: InternalSocialDataList };
     status: string;
-    customerCreated: boolean;
     hasDigitalItems: boolean;
     isDownloadable: boolean;
     isComplete: boolean;
-    callbackUrl: string;
+    callbackUrl?: string;
+}
+
+export interface InternalGiftCertificateList {
+    totalDiscountedAmount: number;
+    appliedGiftCertificates: InternalGiftCertificate[];
 }
 
 export interface InternalOrderPayment {
@@ -85,8 +62,27 @@ export interface InternalOrderPayment {
     returnUrl?: string;
     status?: string;
     helpText?: string;
+    detail?: {
+        step: string;
+        instructions: string;
+    };
 }
 
 export interface InternalOrderMeta {
     deviceFingerprint?: string;
+}
+
+export interface InternalSocialDataItem {
+    name: string;
+    description: string;
+    image: string;
+    url: string;
+    shareText: string;
+    sharingLink: string;
+    channelName: string;
+    channelCode: string;
+}
+
+export interface InternalSocialDataList {
+    [key: string]: InternalSocialDataItem;
 }

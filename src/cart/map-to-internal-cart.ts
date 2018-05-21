@@ -14,8 +14,6 @@ export default function mapToInternalCart(checkout: Checkout): InternalCart {
     const discountedAmount = reduce(checkout.cart.discounts, (sum, discount) => {
         return sum + discount.discountedAmount;
     }, 0);
-    // @todo: remove this once API returns shipping cost breakdown (CHECKOUT-3153)
-    const shippingAmountBeforeDiscount = checkout.shippingCostTotal + getShippingDiscount(checkout);
 
     return {
         id: checkout.cart.id,
@@ -41,8 +39,8 @@ export default function mapToInternalCart(checkout: Checkout): InternalCart {
         shipping: {
             amount: checkout.shippingCostTotal,
             integerAmount: amountTransformer.toInteger(checkout.shippingCostTotal),
-            amountBeforeDiscount: shippingAmountBeforeDiscount,
-            integerAmountBeforeDiscount: amountTransformer.toInteger(shippingAmountBeforeDiscount),
+            amountBeforeDiscount: checkout.shippingCostBeforeDiscount,
+            integerAmountBeforeDiscount: amountTransformer.toInteger(checkout.shippingCostBeforeDiscount),
             required: some(checkout.cart.lineItems.physicalItems, lineItem => lineItem.isShippingRequired),
         },
         subtotal: {
@@ -70,10 +68,4 @@ export default function mapToInternalCart(checkout: Checkout): InternalCart {
             integerAmount: amountTransformer.toInteger(checkout.grandTotal),
         },
     };
-}
-
-function getShippingDiscount(checkout: Checkout): number {
-    const coupon = checkout.cart.coupons.find(coupon => coupon.couponType === 'shipping_discount');
-
-    return coupon ? coupon.discountedAmount : 0;
 }

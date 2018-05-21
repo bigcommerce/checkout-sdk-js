@@ -8,7 +8,7 @@ import { Config, ConfigRequestSender } from '../config';
 import { GiftCertificateRequestSender } from '../coupon';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
-import { InternalOrderResponseBody, Order, OrderParams, OrderRequestBody, OrderRequestSender } from '../order';
+import { InternalOrderResponseBody, Order, OrderRequestBody, OrderRequestSender } from '../order';
 import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
 import { QuoteRequestSender } from '../quote';
 import {
@@ -56,16 +56,8 @@ export default class CheckoutClient {
         return this._cartRequestSender.loadCart(options);
     }
 
-    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Promise<Response<Order>> {
+    loadOrder(orderId: number, options?: RequestOptions): Promise<Response<Order>> {
         return this._orderRequestSender.loadOrder(orderId, options);
-    }
-
-    /**
-     * @deprecated
-     * Remove once we fully transition to Storefront API
-     */
-    loadInternalOrder(orderId: number, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
-        return this._orderRequestSender.loadInternalOrder(orderId, options);
     }
 
     submitOrder(body: OrderRequestBody, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {

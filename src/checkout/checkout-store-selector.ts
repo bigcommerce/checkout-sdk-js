@@ -7,7 +7,7 @@ import { StoreConfig } from '../config/config';
 import { CustomerSelector, InternalCustomer } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
-import { InternalIncompleteOrder, InternalOrder, OrderSelector } from '../order';
+import { InternalOrder, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector } from '../payment';
 import { Instrument, InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
@@ -68,7 +68,7 @@ export default class CheckoutStoreSelector {
         return this._checkout.getCheckout();
     }
 
-    getOrder(): InternalOrder | InternalIncompleteOrder | undefined {
+    getOrder(): InternalOrder | undefined {
         return this._order.getOrder();
     }
 

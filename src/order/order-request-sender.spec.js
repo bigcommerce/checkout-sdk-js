@@ -7,6 +7,7 @@ import OrderRequestSender from './order-request-sender';
 describe('OrderRequestSender', () => {
     let orderRequestSender;
     let requestSender;
+    const include = 'payments,lineItems.physicalItems.socialMedia,lineItems.digitalItems.socialMedia';
 
     beforeEach(() => {
         requestSender = {
@@ -34,6 +35,7 @@ describe('OrderRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
+                params: { include },
                 timeout: undefined,
             });
         });
@@ -45,6 +47,7 @@ describe('OrderRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
                 ...options,
+                params: { include },
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
@@ -58,7 +61,7 @@ describe('OrderRequestSender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
-                params: { include: 'payments' },
+                params: { include },
                 timeout: undefined,
             });
         });
