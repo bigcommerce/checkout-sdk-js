@@ -795,7 +795,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadInstruments();
 
             expect(checkoutClient.loadInstruments)
-                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken }, shippingAddress);
+                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, shippingAddress);
         });
     });
 
@@ -810,7 +810,7 @@ describe('CheckoutService', () => {
             await checkoutService.vaultInstrument(instrument);
 
             expect(checkoutClient.vaultInstrument)
-                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken }, instrument);
+                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, instrument);
         });
     });
 
@@ -825,7 +825,7 @@ describe('CheckoutService', () => {
             await checkoutService.deleteInstrument(instrumentId);
 
             expect(checkoutClient.deleteInstrument)
-                .toHaveBeenCalledWith({ storeId, customerId, vaultAccessToken }, instrumentId);
+                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, instrumentId);
         });
     });
 });

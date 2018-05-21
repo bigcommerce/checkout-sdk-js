@@ -78,7 +78,7 @@ describe('InstrumentActionCreator', () => {
 
             expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
             expect(checkoutClient.loadInstruments).toHaveBeenCalledWith(
-                { storeId, customerId, vaultAccessToken },
+                { storeId, customerId, authToken: vaultAccessToken },
                 shippingAddress
             );
         });
@@ -101,7 +101,7 @@ describe('InstrumentActionCreator', () => {
 
             expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
             expect(checkoutClient.loadInstruments).toHaveBeenCalledWith(
-                { storeId, customerId, vaultAccessToken },
+                { storeId, customerId, authToken: vaultAccessToken },
                 shippingAddress
             );
         });
@@ -162,7 +162,7 @@ describe('InstrumentActionCreator', () => {
                 {
                     storeId,
                     customerId,
-                    vaultAccessToken,
+                    authToken: vaultAccessToken,
                 },
                 expect.any(Object),
             );
@@ -189,7 +189,7 @@ describe('InstrumentActionCreator', () => {
                 {
                     storeId,
                     customerId,
-                    vaultAccessToken,
+                    authToken: vaultAccessToken,
                 },
                 expect.any(Object),
             );
@@ -251,7 +251,7 @@ describe('InstrumentActionCreator', () => {
                 {
                     storeId,
                     customerId,
-                    vaultAccessToken,
+                    authToken: vaultAccessToken,
                 },
                 instrumentId,
             );
@@ -277,7 +277,7 @@ describe('InstrumentActionCreator', () => {
                 {
                     storeId,
                     customerId,
-                    vaultAccessToken,
+                    authToken: vaultAccessToken,
                 },
                 instrumentId,
             );

@@ -21,5 +21,5 @@ export interface SessionContext {
 }
 
 export interface InstrumentRequestContext extends SessionContext {
-    vaultAccessToken: string;
+    authToken: string;
 }

@@ -28,7 +28,7 @@ export default class InstrumentActionCreator {
                 .then(currentToken =>
                     this._instrumentRequestSender.loadInstruments({
                             ...session,
-                            vaultAccessToken: currentToken.vaultAccessToken,
+                            authToken: currentToken.vaultAccessToken,
                         },
                         shippingAddress
                     )
@@ -52,7 +52,7 @@ export default class InstrumentActionCreator {
 
             return this._getValidAccessToken(token)
                 .then(currentToken =>
-                    this._instrumentRequestSender.vaultInstrument({ ...session, vaultAccessToken: currentToken.vaultAccessToken }, instrument)
+                    this._instrumentRequestSender.vaultInstrument({ ...session, authToken: currentToken.vaultAccessToken }, instrument)
                         .then(({ body }) => {
                             observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, body, currentToken));
                             observer.complete();
@@ -73,7 +73,7 @@ export default class InstrumentActionCreator {
 
             return this._getValidAccessToken(token)
                 .then(currentToken =>
-                    this._instrumentRequestSender.deleteInstrument({ ...session, vaultAccessToken: currentToken.vaultAccessToken }, instrumentId)
+                    this._instrumentRequestSender.deleteInstrument({ ...session, authToken: currentToken.vaultAccessToken }, instrumentId)
                         .then(() => {
                             observer.next(createAction(actionTypes.DELETE_INSTRUMENT_SUCCEEDED, undefined, {
                                 instrumentId,
