@@ -114,7 +114,7 @@ export default class PaymentActionCreator {
                     deviceSessionId,
                 },
             },
-            source: 'bcapp-checkout-uco',
+            source: 'bigcommerce-checkout-js-sdk',
             store: pick(config.storeProfile, [
                 'storeHash',
                 'storeId',
