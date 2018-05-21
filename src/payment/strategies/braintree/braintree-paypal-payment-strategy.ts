@@ -1,6 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
+import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
+import { PaymentArgumentInvalidError } from '../../errors';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -53,7 +54,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         const { payment, ...order } = orderRequest;
 
         if (!payment) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+            throw new PaymentArgumentInvalidError(['payment']);
         }
 
         return Promise.all([

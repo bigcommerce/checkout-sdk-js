@@ -1,7 +1,8 @@
 import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
+import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
+import { PaymentArgumentInvalidError } from '../../errors';
 import isCreditCardLike from '../../is-credit-card-like';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { PaymentInstrument } from '../../payment';
@@ -45,7 +46,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         const { payment, ...order } = orderRequest;
 
         if (!payment) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+            throw new PaymentArgumentInvalidError(['payment']);
         }
 
         return this._store.dispatch(

@@ -1,8 +1,9 @@
 import { some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, RequestError } from '../../common/error/errors';
+import { MissingDataError, RequestError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
+import { PaymentArgumentInvalidError } from '../errors';
 import PaymentActionCreator from '../payment-action-creator';
 import { PaymentRequestOptions } from '../payment-request-options';
 import * as paymentStatusTypes from '../payment-status-types';
@@ -24,7 +25,7 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
         const paymentData = payment && payment.paymentData;
 
         if (!payment || !paymentData) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.paymentData" argument is not provided.');
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
