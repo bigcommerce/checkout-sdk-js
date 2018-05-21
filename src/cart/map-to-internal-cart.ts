@@ -1,4 +1,4 @@
-import { reduce, some } from 'lodash';
+import { keyBy, reduce, some } from 'lodash';
 
 import { Checkout } from '../checkout';
 import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
@@ -11,9 +11,6 @@ import mapToInternalLineItems from './map-to-internal-line-items';
 export default function mapToInternalCart(checkout: Checkout): InternalCart {
     const decimalPlaces = checkout.cart.currency.decimalPlaces;
     const amountTransformer = new AmountTransformer(decimalPlaces);
-    const discountedAmount = reduce(checkout.cart.discounts, (sum, discount) => {
-        return sum + discount.discountedAmount;
-    }, 0);
 
     return {
         id: checkout.cart.id,
@@ -26,15 +23,15 @@ export default function mapToInternalCart(checkout: Checkout): InternalCart {
             coupons: checkout.cart.coupons.map(mapToInternalCoupon),
         },
         discount: {
-            amount: discountedAmount,
-            integerAmount: amountTransformer.toInteger(discountedAmount),
+            amount: checkout.cart.discountAmount,
+            integerAmount: amountTransformer.toInteger(checkout.cart.discountAmount),
         },
         discountNotifications: mapToDiscountNotifications(checkout.promotions),
         giftCertificate: {
             totalDiscountedAmount: reduce(checkout.giftCertificates, (sum, certificate) => {
                 return sum + certificate.used;
             }, 0),
-            appliedGiftCertificates: checkout.giftCertificates.map(mapToInternalGiftCertificate),
+            appliedGiftCertificates: keyBy(checkout.giftCertificates.map(mapToInternalGiftCertificate), 'code'),
         },
         shipping: {
             amount: checkout.shippingCostTotal,

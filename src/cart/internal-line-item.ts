@@ -11,7 +11,7 @@ export default interface InternalLineItem {
     name?: string;
     quantity: number;
     type: string;
-    variantId?: number;
+    variantId: number | null;
     sender?: {
         name: string;
         email: string;

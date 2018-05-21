@@ -1,4 +1,4 @@
-import { filter, find, reduce } from 'lodash';
+import { filter, find, keyBy, reduce } from 'lodash';
 
 import { AmountTransformer, LineItem } from '../cart';
 import { mapToInternalLineItems } from '../cart';
@@ -71,7 +71,7 @@ function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificat
 
     return {
         totalDiscountedAmount: reduce(items, (sum, item) => item.amount + sum, 0),
-        appliedGiftCertificates: items.map(item => ({
+        appliedGiftCertificates: keyBy(items.map(item => ({
             code: item.detail.code,
             discountedAmount: item.amount,
             remainingBalance: item.detail.remaining,
@@ -80,7 +80,7 @@ function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificat
                 code: item.detail.code,
                 purchaseDate: '',
             },
-        })),
+        })), 'code'),
     };
 }
 
