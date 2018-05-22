@@ -43,17 +43,17 @@ export interface VisaCheckoutTokenizedPayload {
     };
 }
 
-interface EventMap {
+export interface VisaCheckoutEventMap {
     'payment.success'(payment: VisaCheckoutPaymentSuccessPayload): void;
     'payment.error'(payment: VisaCheckoutPaymentSuccessPayload, Error: Error): void;
 }
 
 export interface VisaCheckoutSDK {
     init(options: VisaCheckoutInitOptions): {};
-    on<EventType extends keyof EventMap>(eventType: EventType, callback: EventMap[EventType]): {};
+    on<VisaCheckoutEventType extends keyof VisaCheckoutEventMap>(eventType: VisaCheckoutEventType, callback: VisaCheckoutEventMap[VisaCheckoutEventType]): {};
 }
 
-export type CardType = 'VISA' | 'MASTERCARD' | 'AMEX' | 'DISCOVER' | 'ELECTRON' | 'ELO';
+export type VisaCheckoutCardType = 'VISA' | 'MASTERCARD' | 'AMEX' | 'DISCOVER' | 'ELECTRON' | 'ELO';
 
 export interface VisaCheckoutInitOptions {
     apikey: string;
@@ -75,7 +75,7 @@ export interface VisaCheckoutInitOptions {
             buttonAction?: 'Continue' | 'Pay';
         };
         payment?: {
-            cardBrands?: CardType[];
+            cardBrands?: VisaCheckoutCardType[];
             acceptCanadianVisaDebit?: boolean;
             billingCountries?: string;
         };
