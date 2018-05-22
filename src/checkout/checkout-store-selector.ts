@@ -22,8 +22,12 @@ import {
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
- * TODO: Convert this file into TypeScript properly
- * i.e.: Instrument
+ * Responsible for getting information about the current checkout.
+ *
+ * This object has a set of methods that allow you to get specific checkout
+ * information, such as shipping and billing details. It is an immutable object,
+ * meaning that the return values of all its getters stay the same throughout
+ * its lifetime.
  */
 @selector
 export default class CheckoutStoreSelector {
