@@ -10,6 +10,7 @@ export { default as CheckoutStoreErrorSelector } from './checkout-store-error-se
 export { default as CheckoutStoreSelector } from './checkout-store-selector';
 export { default as CheckoutStoreStatusSelector } from './checkout-store-status-selector';
 export { default as CheckoutStore, ReadableCheckoutStore } from './checkout-store';
+export { default as InternalCheckout } from './internal-checkout';
 export { default as InternalCheckoutSelectors } from './internal-checkout-selectors';
 
 export { default as createCheckoutClient } from './create-checkout-client';

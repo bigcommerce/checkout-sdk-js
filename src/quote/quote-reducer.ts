@@ -1,9 +1,9 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import { BillingAddressActionTypes } from '../billing/billing-address-actions';
-import { CheckoutActionType } from '../checkout';
-import * as customerActionTypes from '../customer/customer-action-types';
-import { ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { BillingAddressAction, BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { CustomerAction, CustomerActionType } from '../customer';
+import { ConsignmentAction, ConsignmentActionTypes } from '../shipping/consignment-actions';
 
 import InternalQuote from './internal-quote';
 import mapToInternalQuote from './map-to-internal-quote';
@@ -15,11 +15,10 @@ const DEFAULT_STATE: QuoteState = {
     statuses: {},
 };
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action
- */
-export default function quoteReducer(state: QuoteState = DEFAULT_STATE, action: Action): QuoteState {
+export default function quoteReducer(
+    state: QuoteState = DEFAULT_STATE,
+    action: BillingAddressAction | CheckoutAction | ConsignmentAction | CustomerAction
+): QuoteState {
     const reducer = combineReducers<QuoteState>({
         data: dataReducer,
         errors: errorsReducer,
@@ -29,7 +28,10 @@ export default function quoteReducer(state: QuoteState = DEFAULT_STATE, action: 
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalQuote | undefined, action: Action): InternalQuote | undefined {
+function dataReducer(
+    data: InternalQuote | undefined,
+    action: BillingAddressAction | CheckoutAction | ConsignmentAction | CustomerAction
+): InternalQuote | undefined {
     switch (action.type) {
     case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
@@ -37,8 +39,8 @@ function dataReducer(data: InternalQuote | undefined, action: Action): InternalQ
     case ConsignmentActionTypes.UpdateConsignmentSucceeded:
         return action.payload ? { ...data, ...mapToInternalQuote(action.payload) } : data;
 
-    case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
-    case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
+    case CustomerActionType.SignInCustomerSucceeded:
+    case CustomerActionType.SignOutCustomerSucceeded:
         return action.payload ? { ...data, ...action.payload.quote } : data;
 
     default:
@@ -46,7 +48,10 @@ function dataReducer(data: InternalQuote | undefined, action: Action): InternalQ
     }
 }
 
-function errorsReducer(errors: QuoteErrorsState = DEFAULT_STATE.errors, action: Action): QuoteErrorsState {
+function errorsReducer(
+    errors: QuoteErrorsState = DEFAULT_STATE.errors,
+    action: BillingAddressAction | CheckoutAction
+): QuoteErrorsState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
@@ -67,7 +72,10 @@ function errorsReducer(errors: QuoteErrorsState = DEFAULT_STATE.errors, action: 
     }
 }
 
-function statusesReducer(statuses: QuoteStatusesState = DEFAULT_STATE.statuses, action: Action): QuoteStatusesState {
+function statusesReducer(
+    statuses: QuoteStatusesState = DEFAULT_STATE.statuses,
+    action: BillingAddressAction | CheckoutAction
+): QuoteStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
         return { ...statuses, isLoading: true };

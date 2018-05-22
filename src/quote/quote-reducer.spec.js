@@ -1,8 +1,8 @@
 import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import { CheckoutActionType } from '../checkout';
+import { CustomerActionType } from '../customer';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import * as customerActionTypes from '../customer/customer-action-types';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import { getQuote } from './internal-quotes.mock';
@@ -17,7 +17,7 @@ describe('quoteReducer()', () => {
 
     it('returns new data if customer has signed in successfully', () => {
         const action = {
-            type: customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED,
+            type: CustomerActionType.SignOutCustomerSucceeded,
             payload: getCustomerResponseBody().data,
         };
 
@@ -28,7 +28,7 @@ describe('quoteReducer()', () => {
 
     it('returns new data if customer has signed out successfully', () => {
         const action = {
-            type: customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED,
+            type: CustomerActionType.SignOutCustomerSucceeded,
             payload: getCustomerResponseBody().data,
         };
 

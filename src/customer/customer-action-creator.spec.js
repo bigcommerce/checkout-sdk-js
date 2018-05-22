@@ -1,8 +1,10 @@
 import { Observable } from 'rxjs';
-import { getCustomerResponseBody } from './internal-customers.mock';
+
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import * as actionTypes from './customer-action-types';
+
+import { getCustomerResponseBody } from './internal-customers.mock';
 import CustomerActionCreator from './customer-action-creator';
+import { CustomerActionType } from './customer-actions';
 
 describe('CustomerActionCreator', () => {
     let checkoutClient;
@@ -30,8 +32,8 @@ describe('CustomerActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: actionTypes.SIGN_IN_CUSTOMER_REQUESTED },
-                        { type: actionTypes.SIGN_IN_CUSTOMER_SUCCEEDED, payload: response.body.data },
+                        { type: CustomerActionType.SignInCustomerRequested },
+                        { type: CustomerActionType.SignInCustomerSucceeded, payload: response.body.data },
                     ]);
                 });
         });
@@ -48,8 +50,8 @@ describe('CustomerActionCreator', () => {
                 .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.SIGN_IN_CUSTOMER_REQUESTED },
-                        { type: actionTypes.SIGN_IN_CUSTOMER_FAILED, payload: errorResponse, error: true },
+                        { type: CustomerActionType.SignInCustomerRequested },
+                        { type: CustomerActionType.SignInCustomerFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });
@@ -61,8 +63,8 @@ describe('CustomerActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: actionTypes.SIGN_OUT_CUSTOMER_REQUESTED },
-                        { type: actionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED, payload: response.body.data },
+                        { type: CustomerActionType.SignOutCustomerRequested },
+                        { type: CustomerActionType.SignOutCustomerSucceeded, payload: response.body.data },
                     ]);
                 });
         });
@@ -78,8 +80,8 @@ describe('CustomerActionCreator', () => {
                 .subscribe((actions) => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.SIGN_OUT_CUSTOMER_REQUESTED },
-                        { type: actionTypes.SIGN_OUT_CUSTOMER_FAILED, payload: errorResponse, error: true },
+                        { type: CustomerActionType.SignOutCustomerRequested },
+                        { type: CustomerActionType.SignOutCustomerFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });

@@ -3,12 +3,12 @@ import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { CouponActionType } from '../coupon/coupon-actions';
-import * as customerActionTypes from '../customer/customer-action-types';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import cartReducer from './cart-reducer';
 import { getCart } from './internal-carts.mock';
 import { GiftCertificateActionType } from '../coupon/gift-certificate-actions';
+import { CustomerActionType } from '../customer';
 
 describe('cartReducer()', () => {
     let initialState;
@@ -21,7 +21,7 @@ describe('cartReducer()', () => {
 
     it('returns new data if customer has signed in successfully', () => {
         const action = {
-            type: customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED,
+            type: CustomerActionType.SignInCustomerRequested,
             payload: getCustomerResponseBody().data,
         };
 
@@ -32,7 +32,7 @@ describe('cartReducer()', () => {
 
     it('returns new data if customer has signed out successfully', () => {
         const action = {
-            type: customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED,
+            type: CustomerActionType.SignOutCustomerSucceeded,
             payload: getCustomerResponseBody().data,
         };
 

@@ -1,11 +1,11 @@
 import { getCheckout } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import * as customerActionTypes from '../customer/customer-action-types';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { ConsignmentActionTypes } from '../shipping/consignment-actions';
 import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import shippingOptionReducer from './shipping-option-reducer';
 import { CheckoutActionType } from '../checkout';
+import { CustomerActionType } from '../customer';
 
 describe('shippingOptionReducer()', () => {
     let initialState;
@@ -19,7 +19,7 @@ describe('shippingOptionReducer()', () => {
 
     it('returns new shipping option data if customer has signed out successfully', () => {
         const action = {
-            type: customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED,
+            type: CustomerActionType.SignOutCustomerSucceeded,
             payload: getCustomerResponseBody().data,
         };
 

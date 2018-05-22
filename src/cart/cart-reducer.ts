@@ -1,12 +1,12 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
-import { BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { BillingAddressAction, BillingAddressActionTypes } from '../billing/billing-address-actions';
 import * as cartActionTypes from '../cart/cart-action-types';
-import { CheckoutActionType } from '../checkout';
-import { CouponActionType } from '../coupon/coupon-actions';
-import { GiftCertificateActionType } from '../coupon/gift-certificate-actions';
-import * as customerActionTypes from '../customer/customer-action-types';
-import { ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { CouponAction, CouponActionType } from '../coupon/coupon-actions';
+import { GiftCertificateAction, GiftCertificateActionType } from '../coupon/gift-certificate-actions';
+import { CustomerAction, CustomerActionType } from '../customer';
+import { ConsignmentAction, ConsignmentActionTypes } from '../shipping/consignment-actions';
 
 import Cart from './cart';
 import CartState, { CartErrorsState, CartMetaState, CartStatusesState } from './cart-state';
@@ -19,11 +19,10 @@ const DEFAULT_STATE: CartState = {
     statuses: {},
 };
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action
- */
-export default function cartReducer(state: CartState = DEFAULT_STATE, action: Action): CartState {
+export default function cartReducer(
+    state: CartState = DEFAULT_STATE,
+    action: Action
+): CartState {
     const reducer = combineReducers<CartState>({
         data: dataReducer,
         externalData: externalDataReducer,
@@ -35,7 +34,10 @@ export default function cartReducer(state: CartState = DEFAULT_STATE, action: Ac
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalCart | undefined, action: Action): InternalCart | undefined {
+function dataReducer(
+    data: InternalCart | undefined,
+    action: BillingAddressAction | CheckoutAction | ConsignmentAction | CouponAction | GiftCertificateAction | CustomerAction
+): InternalCart | undefined {
     switch (action.type) {
     case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
@@ -47,8 +49,8 @@ function dataReducer(data: InternalCart | undefined, action: Action): InternalCa
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
         return action.payload ? { ...data, ...mapToInternalCart(action.payload) } : data;
 
-    case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
-    case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
+    case CustomerActionType.SignInCustomerSucceeded:
+    case CustomerActionType.SignOutCustomerSucceeded:
         return action.payload ? { ...data, ...action.payload.cart } : data;
 
     default:
