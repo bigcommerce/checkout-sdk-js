@@ -1,388 +1,202 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalCart](../interfaces/internalcart.md)
 
-
-
 # Interface: InternalCart
 
+## Hierarchy
+
+**InternalCart**
+
+## Index
+
+### Properties
+
+* [coupon](internalcart.md#coupon)
+* [currency](internalcart.md#currency)
+* [discount](internalcart.md#discount)
+* [discountNotifications](internalcart.md#discountnotifications)
+* [giftCertificate](internalcart.md#giftcertificate)
+* [grandTotal](internalcart.md#grandtotal)
+* [handling](internalcart.md#handling)
+* [id](internalcart.md#id)
+* [items](internalcart.md#items)
+* [shipping](internalcart.md#shipping)
+* [storeCredit](internalcart.md#storecredit)
+* [subtotal](internalcart.md#subtotal)
+* [taxSubtotal](internalcart.md#taxsubtotal)
+* [taxTotal](internalcart.md#taxtotal)
+* [taxes](internalcart.md#taxes)
+
+---
 
 ## Properties
+
 <a id="coupon"></a>
 
 ###  coupon
 
-**●  coupon**:  *`object`* 
-
-
+**● coupon**: *`object`*
 
 #### Type declaration
 
-
-
-
  coupons: [InternalCoupon](internalcoupon.md)[]
-
-
-
-
-
 
  discountedAmount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="currency"></a>
 
 ###  currency
 
-**●  currency**:  *`string`* 
-
-
-
-
-
+**● currency**: *`string`*
 
 ___
-
 <a id="discount"></a>
 
 ###  discount
 
-**●  discount**:  *`object`* 
-
-
+**● discount**: *`object`*
 
 #### Type declaration
 
-
-
-
  amount: `number`
-
-
-
-
-
 
  integerAmount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="discountnotifications"></a>
 
 ###  discountNotifications
 
-**●  discountNotifications**:  *[DiscountNotification](discountnotification.md)[]* 
-
-
-
-
-
+**● discountNotifications**: *[DiscountNotification](discountnotification.md)[]*
 
 ___
-
 <a id="giftcertificate"></a>
 
 ###  giftCertificate
 
-**●  giftCertificate**:  *`object`* 
-
-
+**● giftCertificate**: *`object`*
 
 #### Type declaration
 
-
-
-
  appliedGiftCertificates: [InternalGiftCertificate](internalgiftcertificate.md)[]
-
-
-
-
-
 
  totalDiscountedAmount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="grandtotal"></a>
 
 ###  grandTotal
 
-**●  grandTotal**:  *`object`* 
-
-
+**● grandTotal**: *`object`*
 
 #### Type declaration
 
-
-
-
  amount: `number`
-
-
-
-
-
 
  integerAmount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="handling"></a>
 
 ###  handling
 
-**●  handling**:  *`object`* 
-
-
+**● handling**: *`object`*
 
 #### Type declaration
 
-
-
-
  amount: `number`
-
-
-
-
-
 
  integerAmount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="id"></a>
 
 ###  id
 
-**●  id**:  *`string`* 
-
-
-
-
-
+**● id**: *`string`*
 
 ___
-
 <a id="items"></a>
 
 ###  items
 
-**●  items**:  *[InternalLineItem](internallineitem.md)[]* 
-
-
-
-
-
+**● items**: *[InternalLineItem](internallineitem.md)[]*
 
 ___
-
 <a id="shipping"></a>
 
 ###  shipping
 
-**●  shipping**:  *`object`* 
-
-
+**● shipping**: *`object`*
 
 #### Type declaration
 
-
-
-
  amount: `number`
-
-
-
-
-
 
  amountBeforeDiscount: `number`
 
-
-
-
-
-
  integerAmount: `number`
-
-
-
-
-
 
  integerAmountBeforeDiscount: `number`
 
-
-
-
-
-
  required: `boolean`
 
-
-
-
-
-
-
 ___
-
 <a id="storecredit"></a>
 
 ###  storeCredit
 
-**●  storeCredit**:  *`object`* 
-
-
+**● storeCredit**: *`object`*
 
 #### Type declaration
 
-
-
-
  amount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="subtotal"></a>
 
 ###  subtotal
 
-**●  subtotal**:  *`object`* 
-
-
+**● subtotal**: *`object`*
 
 #### Type declaration
 
-
-
-
  amount: `number`
-
-
-
-
-
 
  integerAmount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="taxsubtotal"></a>
 
 ###  taxSubtotal
 
-**●  taxSubtotal**:  *`object`* 
-
-
+**● taxSubtotal**: *`object`*
 
 #### Type declaration
 
-
-
-
  amount: `number`
-
-
-
-
-
 
  integerAmount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="taxtotal"></a>
 
 ###  taxTotal
 
-**●  taxTotal**:  *`object`* 
-
-
+**● taxTotal**: *`object`*
 
 #### Type declaration
 
-
-
-
  amount: `number`
-
-
-
-
-
 
  integerAmount: `number`
 
-
-
-
-
-
-
 ___
-
 <a id="taxes"></a>
 
 ###  taxes
 
-**●  taxes**:  *`Array`.<`object`>* 
-
-
-
-
-
+**● taxes**: *`Array`<`object`>*
 
 ___
-
 

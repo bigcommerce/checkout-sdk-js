@@ -1,8 +1,10 @@
 [@bigcommerce/checkout-sdk](../README.md) > [LanguageService](../classes/languageservice.md)
 
-
-
 # Class: LanguageService
+
+## Hierarchy
+
+**LanguageService**
 
 ## Index
 
@@ -12,88 +14,50 @@
 * [mapKeys](languageservice.md#mapkeys)
 * [translate](languageservice.md#translate)
 
-
-
 ---
+
 ## Methods
+
 <a id="getlocale"></a>
 
 ###  getLocale
 
-► **getLocale**(): `string`
-
-
-
-
-
-
-
+▸ **getLocale**(): `string`
 
 **Returns:** `string`
 
-
-
-
-
 ___
-
 <a id="mapkeys"></a>
 
 ###  mapKeys
 
-► **mapKeys**(maps?: *`undefined`⎮`object`*): `void`
-
-
-
-
-
+▸ **mapKeys**(maps?: *`undefined` |`object`*): `void`
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| maps | `undefined`⎮`object`   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| `Optional` maps | `undefined` |
+`object`
+ | 
 
 **Returns:** `void`
 
-
-
-
-
 ___
-
 <a id="translate"></a>
 
 ###  translate
 
-► **translate**(rawKey: *`string`*, data?: *[PlaceholderData](../interfaces/placeholderdata.md)*): `string`
-
-
-
-
-
+▸ **translate**(rawKey: *`string`*, data?: *[TranslationData](../interfaces/translationdata.md)*): `string`
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| rawKey | `string`   |  - |
-| data | [PlaceholderData](../interfaces/placeholderdata.md)   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| rawKey | `string` | 
+| `Optional` data | [TranslationData](../interfaces/translationdata.md) | 
 
 **Returns:** `string`
 
-
-
-
-
 ___
-
 

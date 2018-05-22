@@ -1,5 +1,4 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 
 declare interface AmazonPayCustomerInitializeOptions {
@@ -37,47 +36,113 @@ declare interface BraintreePaymentInitializeOptions {
 }
 
 declare interface BraintreeThreeDSecureOptions {
-    addFrame(error: Error | undefined, iframe: HTMLIFrameElement, cancel: () => Promise<VerifyPayload> | undefined): void;
+    addFrame(error: Error | undefined, iframe: HTMLIFrameElement, cancel: () => Promise<BraintreeVerifyPayload> | undefined): void;
     removeFrame(): void;
 }
 
-export declare class CheckoutClient {
-    private _billingAddressRequestSender;
-    private _cartRequestSender;
-    private _configRequestSender;
-    private _countryRequestSender;
-    private _couponRequestSender;
-    private _customerRequestSender;
-    private _giftCertificateRequestSender;
-    private _orderRequestSender;
-    private _paymentMethodRequestSender;
-    private _quoteRequestSender;
-    private _shippingAddressRequestSender;
-    private _shippingCountryRequestSender;
-    private _shippingOptionRequestSender;
-    loadCheckout(options?: RequestOptions): Promise<Response>;
-    loadCart(options?: RequestOptions): Promise<Response>;
-    loadOrder(orderId: number, options?: RequestOptions): Promise<Response>;
-    submitOrder(body: OrderRequestBody, options?: RequestOptions): Promise<Response>;
-    finalizeOrder(orderId: number, options?: RequestOptions): Promise<Response>;
-    loadPaymentMethods(options?: RequestOptions): Promise<Response>;
-    loadPaymentMethod(methodId: string, options?: RequestOptions): Promise<Response>;
-    loadCountries(options?: RequestOptions): Promise<Response>;
-    loadShippingCountries(options?: RequestOptions): Promise<Response>;
-    updateBillingAddress(address: InternalAddress, options?: RequestOptions): Promise<Response>;
-    updateShippingAddress(address: InternalAddress, options?: RequestOptions): Promise<Response>;
-    loadShippingOptions(options?: RequestOptions): Promise<Response>;
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: RequestOptions): Promise<Response>;
-    signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Promise<Response>;
-    signOutCustomer(options?: RequestOptions): Promise<Response>;
-    applyCoupon(code: string, options?: RequestOptions): Promise<Response>;
-    removeCoupon(code: string, options?: RequestOptions): Promise<Response>;
-    applyGiftCertificate(code: string, options?: RequestOptions): Promise<Response>;
-    removeGiftCertificate(code: string, options?: RequestOptions): Promise<Response>;
-    loadConfig(options?: RequestOptions): Promise<Response>;
+declare interface BraintreeVerifyPayload {
+    nonce: string;
+    details: {
+        cardType: string;
+        lastFour: string;
+        lastTwo: string;
+    };
+    description: string;
+    liabilityShiftPossible: boolean;
+    liabilityShifted: boolean;
 }
 
-declare class CheckoutErrorSelector {
+declare interface BraintreeVisaCheckoutCustomerInitializeOptions {
+    container: string;
+    onError?(error: Error): void;
+}
+
+declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
+    onError?(error: Error): void;
+    onPaymentSelect?(): void;
+}
+
+declare interface CheckoutSelectors {
+    checkout: CheckoutStoreSelector;
+    errors: CheckoutStoreErrorSelector;
+    statuses: CheckoutStoreStatusSelector;
+}
+
+declare class CheckoutService {
+    private _store;
+    private _billingAddressActionCreator;
+    private _cartActionCreator;
+    private _configActionCreator;
+    private _countryActionCreator;
+    private _couponActionCreator;
+    private _customerStrategyActionCreator;
+    private _giftCertificateActionCreator;
+    private _instrumentActionCreator;
+    private _orderActionCreator;
+    private _paymentMethodActionCreator;
+    private _paymentStrategyActionCreator;
+    private _quoteActionCreator;
+    private _shippingCountryActionCreator;
+    private _shippingOptionActionCreator;
+    private _shippingStrategyActionCreator;
+    private _state;
+    getState(): CheckoutSelectors;
+    notifyState(): void;
+    subscribe(subscriber: (state: CheckoutSelectors) => void, ...filters: Array<(state: CheckoutSelectors) => any>): () => void;
+    loadCheckout(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadConfig(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadCart(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors>;
+    submitOrder(payload: OrderRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    finalizeOrderIfNeeded(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadPaymentMethod(methodId: string, options: RequestOptions): Promise<CheckoutSelectors>;
+    initializePayment(options: PaymentInitializeOptions): Promise<CheckoutSelectors>;
+    deinitializePayment(options: PaymentRequestOptions): Promise<CheckoutSelectors>;
+    loadBillingCountries(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadShippingCountries(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadBillingAddressFields(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadShippingAddressFields(options?: RequestOptions): Promise<CheckoutSelectors>;
+    initializeCustomer(options?: CustomerInitializeOptions): Promise<CheckoutSelectors>;
+    deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
+    signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
+    signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
+    loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors>;
+    initializeShipping(options?: ShippingInitializeOptions): Promise<CheckoutSelectors>;
+    deinitializeShipping(options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    selectShippingOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    updateShippingAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    updateBillingAddress(address: InternalAddress, options?: RequestOptions): Promise<CheckoutSelectors>;
+    applyCoupon(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
+    removeCoupon(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
+    applyGiftCertificate(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
+    removeGiftCertificate(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadInstruments(): Promise<CheckoutSelectors>;
+    vaultInstrument(instrument: Instrument): Promise<CheckoutSelectors>;
+    deleteInstrument(instrumentId: string): Promise<CheckoutSelectors>;
+}
+
+declare interface CheckoutServiceOptions {
+    locale?: string;
+    shouldWarnMutation?: boolean;
+}
+
+declare interface CheckoutSettings {
+    enableOrderComments: boolean;
+    enableTermsAndConditions: boolean;
+    guestCheckoutEnabled: boolean;
+    isCardVaultingEnabled: boolean;
+    isPaymentRequestEnabled: boolean;
+    isPaymentRequestCanMakePaymentEnabled: boolean;
+    orderTermsAndConditions: string;
+    orderTermsAndConditionsLink: string;
+    orderTermsAndConditionsType: string;
+    shippingQuoteFailedMessage: string;
+    realtimeShippingProviders: string[];
+    remoteCheckoutProviders: any[];
+}
+
+declare class CheckoutStoreErrorSelector {
     private _billingAddress;
     private _cart;
     private _config;
@@ -104,7 +169,7 @@ declare class CheckoutErrorSelector {
     getLoadShippingCountriesError(): Error | undefined;
     getLoadPaymentMethodsError(): Error | undefined;
     getLoadPaymentMethodError(methodId?: string): Error | undefined;
-    getInitializePaymentMethodError(methodId?: string): Error | undefined;
+    getInitializePaymentError(methodId?: string): Error | undefined;
     getSignInError(): Error | undefined;
     getSignOutError(): Error | undefined;
     getInitializeCustomerError(methodId?: string): Error | undefined;
@@ -125,9 +190,9 @@ declare class CheckoutErrorSelector {
 
 /**
  * TODO: Convert this file into TypeScript properly
- * i.e.: CheckoutMeta, Config, Country, Instrument, Field
+ * i.e.: Instrument
  */
-declare class CheckoutSelector {
+declare class CheckoutStoreSelector {
     private _billingAddress;
     private _cart;
     private _config;
@@ -141,21 +206,15 @@ declare class CheckoutSelector {
     private _shippingAddress;
     private _shippingCountries;
     private _shippingOptions;
-    getOrder(): InternalOrder | undefined;
+    getOrder(): InternalOrder | InternalIncompleteOrder | undefined;
     getQuote(): InternalQuote | undefined;
     getConfig(): StoreConfig | undefined;
     getShippingAddress(): InternalAddress | undefined;
     getShippingOptions(): InternalShippingOptionList | undefined;
     getSelectedShippingOption(): InternalShippingOption | undefined;
-    /**
-     * @return {Country[]}
-     */
-    getShippingCountries(): any[];
+    getShippingCountries(): Country[] | undefined;
     getBillingAddress(): InternalAddress | undefined;
-    /**
-     * @return {Country[]}
-     */
-    getBillingCountries(): any[];
+    getBillingCountries(): Country[] | undefined;
     getPaymentMethods(): PaymentMethod[] | undefined;
     getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
     getSelectedPaymentMethod(): PaymentMethod | undefined;
@@ -163,111 +222,12 @@ declare class CheckoutSelector {
     getCustomer(): InternalCustomer | undefined;
     isPaymentDataRequired(useStoreCredit?: boolean): boolean;
     isPaymentDataSubmitted(methodId: string, gatewayId?: string): boolean;
-    /**
-     * @return {Instrument[]}
-     */
-    getInstruments(): any[];
-    /**
-     * @return {Field[]}
-     */
-    getBillingAddressFields(countryCode: string): any[];
-    /**
-     * @return {Field[]}
-     */
-    getShippingAddressFields(countryCode: string): any[];
+    getInstruments(): Instrument[] | undefined;
+    getBillingAddressFields(countryCode: string): FormField[];
+    getShippingAddressFields(countryCode: string): FormField[];
 }
 
-export declare interface CheckoutSelectors {
-    checkout: CheckoutSelector;
-    errors: CheckoutErrorSelector;
-    statuses: CheckoutStatusSelector;
-}
-
-/**
- * TODO: Convert this file into TypeScript properly
- * i.e.: Instrument, InitializePaymentOptions etc...
- */
-export declare class CheckoutService {
-    private _store;
-    private _billingAddressActionCreator;
-    private _cartActionCreator;
-    private _configActionCreator;
-    private _countryActionCreator;
-    private _couponActionCreator;
-    private _customerStrategyActionCreator;
-    private _giftCertificateActionCreator;
-    private _instrumentActionCreator;
-    private _orderActionCreator;
-    private _paymentMethodActionCreator;
-    private _paymentStrategyActionCreator;
-    private _quoteActionCreator;
-    private _shippingCountryActionCreator;
-    private _shippingOptionActionCreator;
-    private _shippingStrategyActionCreator;
-    private _state;
-    getState(): CheckoutSelectors;
-    notifyState(): void;
-    subscribe(subscriber: (state: CheckoutSelectors) => void, ...filters: Array<(state: CheckoutSelectors) => any>): () => void;
-    loadCheckout(options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadConfig(options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadCart(options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors>;
-    submitOrder(payload: OrderRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
-    /**
-     * @deprecated
-     */
-    finalizeOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors>;
-    finalizeOrderIfNeeded(options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadPaymentMethod(methodId: string, options: RequestOptions): Promise<CheckoutSelectors>;
-    initializePayment(options: PaymentInitializeOptions): Promise<CheckoutSelectors>;
-    deinitializePayment(options: PaymentRequestOptions): Promise<CheckoutSelectors>;
-    loadBillingCountries(options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadShippingCountries(options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadBillingAddressFields(options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadShippingAddressFields(options?: RequestOptions): Promise<CheckoutSelectors>;
-    initializeCustomer(options?: CustomerInitializeOptions): Promise<CheckoutSelectors>;
-    deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
-    signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
-    signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
-    loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors>;
-    initializeShipping(options?: ShippingInitializeOptions): Promise<CheckoutSelectors>;
-    deinitializeShipping(options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
-    updateShippingAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
-    updateBillingAddress(address: InternalAddress, options?: RequestOptions): Promise<CheckoutSelectors>;
-    applyCoupon(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
-    removeCoupon(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
-    applyGiftCertificate(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
-    removeGiftCertificate(code: string, options?: RequestOptions): Promise<CheckoutSelectors>;
-    loadInstruments(): Promise<CheckoutSelectors>;
-    vaultInstrument(instrument: any): Promise<CheckoutSelectors>;
-    deleteInstrument(instrumentId: string): Promise<CheckoutSelectors>;
-    private _getInstrumentState();
-}
-
-declare interface CheckoutServiceOptions {
-    client?: CheckoutClient;
-    locale?: string;
-    shouldWarnMutation?: boolean;
-}
-
-declare interface CheckoutSettings {
-    enableOrderComments: boolean;
-    enableTermsAndConditions: boolean;
-    guestCheckoutEnabled: boolean;
-    isCardVaultingEnabled: boolean;
-    isPaymentRequestEnabled: boolean;
-    isPaymentRequestCanMakePaymentEnabled: boolean;
-    orderTermsAndConditions: string;
-    orderTermsAndConditionsLink: string;
-    orderTermsAndConditionsType: string;
-    shippingQuoteFailedMessage: string;
-    realtimeShippingProviders: string[];
-    remoteCheckoutProviders: any[];
-}
-
-declare class CheckoutStatusSelector {
+declare class CheckoutStoreStatusSelector {
     private _billingAddress;
     private _cart;
     private _config;
@@ -294,7 +254,7 @@ declare class CheckoutStatusSelector {
     isLoadingShippingCountries(): boolean;
     isLoadingPaymentMethods(): boolean;
     isLoadingPaymentMethod(methodId?: string): boolean;
-    isInitializingPaymentMethod(methodId?: string): boolean;
+    isInitializingPayment(methodId?: string): boolean;
     isSigningIn(methodId?: string): boolean;
     isSigningOut(methodId?: string): boolean;
     isInitializingCustomer(methodId?: string): boolean;
@@ -311,17 +271,22 @@ declare class CheckoutStatusSelector {
     isVaultingInstrument(): boolean;
     isDeletingInstrument(instrumentId?: string): boolean;
     isLoadingConfig(): boolean;
+    isCustomerStepPending(): boolean;
+    isPaymentStepPending(): boolean;
 }
 
-export declare function createCheckoutClient(config?: {
-    locale?: string;
-}): CheckoutClient;
+declare interface Country {
+    code: string;
+    name: string;
+    hasPostalCodes: boolean;
+    subdivisions: Region[];
+}
 
 export declare function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService;
 
 export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
 
-declare interface CreditCard {
+declare interface CreditCardInstrument {
     ccExpiry: {
         month: string;
         year: string;
@@ -330,7 +295,6 @@ declare interface CreditCard {
     ccNumber: string;
     ccType: string;
     ccCvv?: string;
-    deviceSessionId?: string;
     shouldSaveInstrument?: boolean;
     extraData?: any;
 }
@@ -351,6 +315,7 @@ declare interface CustomerCredentials {
 
 declare interface CustomerInitializeOptions extends CustomerRequestOptions {
     amazon?: AmazonPayCustomerInitializeOptions;
+    braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
 }
 
 declare interface CustomerRequestOptions extends RequestOptions {
@@ -373,12 +338,34 @@ declare interface FormField {
     type?: string;
     fieldType?: string;
     itemtype?: string;
-    options?: Options;
+    options?: FormFieldOptions;
+}
+
+declare interface FormFieldItem {
+    value: string;
+    label: string;
+}
+
+declare interface FormFieldOptions {
+    helperLabel?: string;
+    items: FormFieldItem[];
 }
 
 declare interface FormFields {
     shippingAddressFields: FormField[];
     billingAddressFields: FormField[];
+}
+
+declare interface Instrument {
+    bigpay_token: string;
+    provider: string;
+    iin: string;
+    last_4: string;
+    expiry_month: string;
+    expiry_year: string;
+    brand: string;
+    default_instrument: boolean;
+    trusted_shipping_address: boolean;
 }
 
 declare interface InternalAddress {
@@ -623,11 +610,6 @@ declare interface InternalShippingOptionList {
     [key: string]: InternalShippingOption[];
 }
 
-declare interface Item {
-    value: string;
-    label: string;
-}
-
 declare interface KlarnaLoadResponse {
     show_form: boolean;
     error?: {
@@ -647,7 +629,7 @@ declare interface LanguageConfig {
     translations: Translations;
 }
 
-export declare class LanguageService {
+declare class LanguageService {
     private _logger;
     private _locale;
     private _locales;
@@ -657,30 +639,25 @@ export declare class LanguageService {
         [key: string]: string;
     }): void;
     getLocale(): string;
-    translate(rawKey: string, data?: PlaceholderData): string;
+    translate(rawKey: string, data?: TranslationData): string;
     private _transformConfig(config?);
     private _flattenObject(object, result?, parentKey?);
     private _transformData(data);
     private _hasTranslations();
 }
 
-declare interface Links {
-    cartLink: string;
-    checkoutLink: string;
-    orderConfirmationLink: string;
-}
-
 declare interface Locales {
     [key: string]: string;
 }
 
-declare interface Options {
-    helperLabel: string;
-    items: Item[];
+declare interface OrderPaymentRequestBody {
+    methodId: string;
+    gatewayId?: string;
+    paymentData?: CreditCardInstrument | VaultedInstrument;
 }
 
 declare interface OrderRequestBody {
-    payment?: Payment;
+    payment?: OrderPaymentRequestBody;
     useStoreCredit?: boolean;
     customerMessage?: string;
 }
@@ -692,21 +669,13 @@ declare interface PasswordRequirements {
     error: string;
 }
 
-declare interface Payment {
-    name: string;
-    paymentData: PaymentInstrument;
-    gateway?: string;
-    source?: string;
-}
-
 declare interface PaymentInitializeOptions extends PaymentRequestOptions {
     amazon?: AmazonPayPaymentInitializeOptions;
     braintree?: BraintreePaymentInitializeOptions;
+    braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
     klarna?: KlarnaPaymentInitializeOptions;
     square?: SquarePaymentInitializeOptions;
 }
-
-declare type PaymentInstrument = CreditCard | TokenizedCreditCard | VaultedInstrument;
 
 declare interface PaymentMethod {
     id: string;
@@ -741,8 +710,9 @@ declare interface PaymentSettings {
     clientSidePaymentProviders: string[];
 }
 
-declare interface PlaceholderData {
-    [key: string]: any;
+declare interface Region {
+    code: string;
+    name: string;
 }
 
 declare interface RequestOptions {
@@ -799,13 +769,19 @@ declare interface StoreConfig {
     checkoutSettings: CheckoutSettings;
     currency: Currency;
     formFields: FormFields;
-    links: Links;
+    links: StoreLinks;
     paymentSettings: PaymentSettings;
     shopperConfig: ShopperConfig;
     storeProfile: StoreProfile;
     imageDirectory: string;
     isAngularDebuggingEnabled: boolean;
     shopperCurrency: ShopperCurrency;
+}
+
+declare interface StoreLinks {
+    cartLink: string;
+    checkoutLink: string;
+    orderConfirmationLink: string;
 }
 
 declare interface StoreProfile {
@@ -819,9 +795,8 @@ declare interface StoreProfile {
     storeLanguage: string;
 }
 
-declare interface TokenizedCreditCard {
-    nonce: string;
-    deviceSessionId?: string;
+declare interface TranslationData {
+    [key: string]: string | number;
 }
 
 declare interface Translations {
@@ -831,16 +806,4 @@ declare interface Translations {
 declare interface VaultedInstrument {
     instrumentId: string;
     cvv?: number;
-}
-
-declare interface VerifyPayload {
-    nonce: string;
-    details: {
-        cardType: string;
-        lastFour: string;
-        lastTwo: string;
-    };
-    description: string;
-    liabilityShiftPossible: boolean;
-    liabilityShifted: boolean;
 }

@@ -1,20 +1,16 @@
 
-
-
 #  @bigcommerce/checkout-sdk
 
 ## Index
 
 ### Classes
 
-* [CheckoutClient](classes/checkoutclient.md)
-* [CheckoutErrorSelector](classes/checkouterrorselector.md)
-* [CheckoutSelector](classes/checkoutselector.md)
 * [CheckoutService](classes/checkoutservice.md)
-* [CheckoutStatusSelector](classes/checkoutstatusselector.md)
+* [CheckoutStoreErrorSelector](classes/checkoutstoreerrorselector.md)
+* [CheckoutStoreSelector](classes/checkoutstoreselector.md)
+* [CheckoutStoreStatusSelector](classes/checkoutstorestatusselector.md)
 * [LanguageService](classes/languageservice.md)
 * [StandardError](classes/standarderror.md)
-
 
 ### Interfaces
 
@@ -25,17 +21,24 @@
 * [AmazonPayWidgetError](interfaces/amazonpaywidgeterror.md)
 * [BraintreePaymentInitializeOptions](interfaces/braintreepaymentinitializeoptions.md)
 * [BraintreeThreeDSecureOptions](interfaces/braintreethreedsecureoptions.md)
+* [BraintreeVerifyPayload](interfaces/braintreeverifypayload.md)
+* [BraintreeVisaCheckoutCustomerInitializeOptions](interfaces/braintreevisacheckoutcustomerinitializeoptions.md)
+* [BraintreeVisaCheckoutPaymentInitializeOptions](interfaces/braintreevisacheckoutpaymentinitializeoptions.md)
 * [CheckoutSelectors](interfaces/checkoutselectors.md)
 * [CheckoutServiceOptions](interfaces/checkoutserviceoptions.md)
 * [CheckoutSettings](interfaces/checkoutsettings.md)
-* [CreditCard](interfaces/creditcard.md)
+* [Country](interfaces/country.md)
+* [CreditCardInstrument](interfaces/creditcardinstrument.md)
 * [Currency](interfaces/currency.md)
 * [CustomerCredentials](interfaces/customercredentials.md)
 * [CustomerInitializeOptions](interfaces/customerinitializeoptions.md)
 * [CustomerRequestOptions](interfaces/customerrequestoptions.md)
 * [DiscountNotification](interfaces/discountnotification.md)
 * [FormField](interfaces/formfield.md)
+* [FormFieldItem](interfaces/formfielditem.md)
+* [FormFieldOptions](interfaces/formfieldoptions.md)
 * [FormFields](interfaces/formfields.md)
+* [Instrument](interfaces/instrument.md)
 * [InternalAddress](interfaces/internaladdress.md)
 * [InternalCart](interfaces/internalcart.md)
 * [InternalCoupon](interfaces/internalcoupon.md)
@@ -47,22 +50,19 @@
 * [InternalQuote](interfaces/internalquote.md)
 * [InternalShippingOption](interfaces/internalshippingoption.md)
 * [InternalShippingOptionList](interfaces/internalshippingoptionlist.md)
-* [Item](interfaces/item.md)
 * [KlarnaLoadResponse](interfaces/klarnaloadresponse.md)
 * [KlarnaPaymentInitializeOptions](interfaces/klarnapaymentinitializeoptions.md)
 * [LanguageConfig](interfaces/languageconfig.md)
-* [Links](interfaces/links.md)
 * [Locales](interfaces/locales.md)
-* [Options](interfaces/options.md)
+* [OrderPaymentRequestBody](interfaces/orderpaymentrequestbody.md)
 * [OrderRequestBody](interfaces/orderrequestbody.md)
 * [PasswordRequirements](interfaces/passwordrequirements.md)
-* [Payment](interfaces/payment.md)
 * [PaymentInitializeOptions](interfaces/paymentinitializeoptions.md)
 * [PaymentMethod](interfaces/paymentmethod.md)
 * [PaymentMethodConfig](interfaces/paymentmethodconfig.md)
 * [PaymentRequestOptions](interfaces/paymentrequestoptions.md)
 * [PaymentSettings](interfaces/paymentsettings.md)
-* [PlaceholderData](interfaces/placeholderdata.md)
+* [Region](interfaces/region.md)
 * [RequestOptions](interfaces/requestoptions.md)
 * [ShippingInitializeOptions](interfaces/shippinginitializeoptions.md)
 * [ShippingRequestOptions](interfaces/shippingrequestoptions.md)
@@ -71,128 +71,49 @@
 * [SquareFormElement](interfaces/squareformelement.md)
 * [SquarePaymentInitializeOptions](interfaces/squarepaymentinitializeoptions.md)
 * [StoreConfig](interfaces/storeconfig.md)
+* [StoreLinks](interfaces/storelinks.md)
 * [StoreProfile](interfaces/storeprofile.md)
-* [TokenizedCreditCard](interfaces/tokenizedcreditcard.md)
+* [TranslationData](interfaces/translationdata.md)
 * [Translations](interfaces/translations.md)
 * [VaultedInstrument](interfaces/vaultedinstrument.md)
-* [VerifyPayload](interfaces/verifypayload.md)
-
-
-### Type aliases
-
-* [PaymentInstrument](#paymentinstrument)
-
 
 ### Functions
 
-* [createCheckoutClient](#createcheckoutclient)
 * [createCheckoutService](#createcheckoutservice)
 * [createLanguageService](#createlanguageservice)
 
-
-
 ---
-# Type aliases
-<a id="paymentinstrument"></a>
 
-###  PaymentInstrument
-
-**Τ PaymentInstrument**:  *[CreditCard](interfaces/creditcard.md)⎮[TokenizedCreditCard](interfaces/tokenizedcreditcard.md)⎮[VaultedInstrument](interfaces/vaultedinstrument.md)* 
-
-
-
-
-
-
-___
-
-
-# Functions
-<a id="createcheckoutclient"></a>
-
-###  createCheckoutClient
-
-► **createCheckoutClient**(config?: *`undefined`⎮`object`*): [CheckoutClient](classes/checkoutclient.md)
-
-
-
-
-
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| config | `undefined`⎮`object`   |  - |
-
-
-
-
-
-**Returns:** [CheckoutClient](classes/checkoutclient.md)
-
-
-
-
-
-___
+## Functions
 
 <a id="createcheckoutservice"></a>
 
 ###  createCheckoutService
 
-► **createCheckoutService**(options?: *[CheckoutServiceOptions](interfaces/checkoutserviceoptions.md)*): [CheckoutService](classes/checkoutservice.md)
-
-
-
-
-
+▸ **createCheckoutService**(options?: *[CheckoutServiceOptions](interfaces/checkoutserviceoptions.md)*): [CheckoutService](classes/checkoutservice.md)
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| options | [CheckoutServiceOptions](interfaces/checkoutserviceoptions.md)   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| `Optional` options | [CheckoutServiceOptions](interfaces/checkoutserviceoptions.md) | 
 
 **Returns:** [CheckoutService](classes/checkoutservice.md)
 
-
-
-
-
 ___
-
 <a id="createlanguageservice"></a>
 
 ###  createLanguageService
 
-► **createLanguageService**(config?: *`Partial`.<[LanguageConfig](interfaces/languageconfig.md)>*): [LanguageService](classes/languageservice.md)
-
-
-
-
-
+▸ **createLanguageService**(config?: *`Partial`<[LanguageConfig](interfaces/languageconfig.md)>*): [LanguageService](classes/languageservice.md)
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| config | `Partial`.<[LanguageConfig](interfaces/languageconfig.md)>   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| `Optional` config | `Partial`<[LanguageConfig](interfaces/languageconfig.md)> | 
 
 **Returns:** [LanguageService](classes/languageservice.md)
 
-
-
-
-
 ___
-
 

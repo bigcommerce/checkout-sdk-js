@@ -1,11 +1,8 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CustomerRequestOptions](../interfaces/customerrequestoptions.md)
 
-
-
 # Interface: CustomerRequestOptions
 
 ## Hierarchy
-
 
  [RequestOptions](requestoptions.md)
 
@@ -13,41 +10,31 @@
 
 ↳  [CustomerInitializeOptions](customerinitializeoptions.md)
 
+## Index
 
+### Properties
 
+* [methodId](customerrequestoptions.md#methodid)
+* [timeout](customerrequestoptions.md#timeout)
 
-
-
-
-
-
-
+---
 
 ## Properties
+
 <a id="methodid"></a>
 
-### «Optional» methodId
+### `<Optional>` methodId
 
-**●  methodId**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● methodId**: *`undefined` |
+`string`
+*
 
 ___
-
 <a id="timeout"></a>
 
-### «Optional» timeout
+### `<Optional>` timeout
 
-**●  timeout**:  *`Timeout`* 
-
-
-
-
-
+**● timeout**: *`Timeout`*
 
 ___
-
 

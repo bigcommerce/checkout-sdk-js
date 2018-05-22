@@ -1,35 +1,36 @@
 [@bigcommerce/checkout-sdk](../README.md) > [VaultedInstrument](../interfaces/vaultedinstrument.md)
 
-
-
 # Interface: VaultedInstrument
 
+## Hierarchy
+
+**VaultedInstrument**
+
+## Index
+
+### Properties
+
+* [cvv](vaultedinstrument.md#cvv)
+* [instrumentId](vaultedinstrument.md#instrumentid)
+
+---
 
 ## Properties
+
 <a id="cvv"></a>
 
-### «Optional» cvv
+### `<Optional>` cvv
 
-**●  cvv**:  *`undefined`⎮`number`* 
-
-
-
-
-
+**● cvv**: *`undefined` |
+`number`
+*
 
 ___
-
 <a id="instrumentid"></a>
 
 ###  instrumentId
 
-**●  instrumentId**:  *`string`* 
-
-
-
-
-
+**● instrumentId**: *`string`*
 
 ___
-
 

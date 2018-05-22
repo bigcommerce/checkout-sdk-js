@@ -1,204 +1,138 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalLineItem](../interfaces/internallineitem.md)
 
-
-
 # Interface: InternalLineItem
 
+## Hierarchy
+
+**InternalLineItem**
+
+## Index
+
+### Properties
+
+* [amount](internallineitem.md#amount)
+* [amountAfterDiscount](internallineitem.md#amountafterdiscount)
+* [attributes](internallineitem.md#attributes)
+* [discount](internallineitem.md#discount)
+* [id](internallineitem.md#id)
+* [imageUrl](internallineitem.md#imageurl)
+* [integerAmount](internallineitem.md#integeramount)
+* [integerAmountAfterDiscount](internallineitem.md#integeramountafterdiscount)
+* [integerDiscount](internallineitem.md#integerdiscount)
+* [integerTax](internallineitem.md#integertax)
+* [name](internallineitem.md#name)
+* [quantity](internallineitem.md#quantity)
+* [tax](internallineitem.md#tax)
+* [type](internallineitem.md#type)
+* [variantId](internallineitem.md#variantid)
+
+---
 
 ## Properties
+
 <a id="amount"></a>
 
 ###  amount
 
-**●  amount**:  *`number`* 
-
-
-
-
-
+**● amount**: *`number`*
 
 ___
-
 <a id="amountafterdiscount"></a>
 
 ###  amountAfterDiscount
 
-**●  amountAfterDiscount**:  *`number`* 
-
-
-
-
-
+**● amountAfterDiscount**: *`number`*
 
 ___
-
 <a id="attributes"></a>
 
 ###  attributes
 
-**●  attributes**:  *`Array`.<`object`>* 
-
-
-
-
-
+**● attributes**: *`Array`<`object`>*
 
 ___
-
 <a id="discount"></a>
 
 ###  discount
 
-**●  discount**:  *`number`* 
-
-
-
-
-
+**● discount**: *`number`*
 
 ___
-
 <a id="id"></a>
 
 ###  id
 
-**●  id**:  *`string`* 
-
-
-
-
-
+**● id**: *`string`*
 
 ___
-
 <a id="imageurl"></a>
 
 ###  imageUrl
 
-**●  imageUrl**:  *`string`* 
-
-
-
-
-
+**● imageUrl**: *`string`*
 
 ___
-
 <a id="integeramount"></a>
 
 ###  integerAmount
 
-**●  integerAmount**:  *`number`* 
-
-
-
-
-
+**● integerAmount**: *`number`*
 
 ___
-
 <a id="integeramountafterdiscount"></a>
 
 ###  integerAmountAfterDiscount
 
-**●  integerAmountAfterDiscount**:  *`number`* 
-
-
-
-
-
+**● integerAmountAfterDiscount**: *`number`*
 
 ___
-
 <a id="integerdiscount"></a>
 
 ###  integerDiscount
 
-**●  integerDiscount**:  *`number`* 
-
-
-
-
-
+**● integerDiscount**: *`number`*
 
 ___
-
 <a id="integertax"></a>
 
 ###  integerTax
 
-**●  integerTax**:  *`number`* 
-
-
-
-
-
+**● integerTax**: *`number`*
 
 ___
-
 <a id="name"></a>
 
 ###  name
 
-**●  name**:  *`string`* 
-
-
-
-
-
+**● name**: *`string`*
 
 ___
-
 <a id="quantity"></a>
 
 ###  quantity
 
-**●  quantity**:  *`number`* 
-
-
-
-
-
+**● quantity**: *`number`*
 
 ___
-
 <a id="tax"></a>
 
 ###  tax
 
-**●  tax**:  *`number`* 
-
-
-
-
-
+**● tax**: *`number`*
 
 ___
-
 <a id="type"></a>
 
 ###  type
 
-**●  type**:  *`string`* 
-
-
-
-
-
+**● type**: *`string`*
 
 ___
-
 <a id="variantid"></a>
 
 ###  variantId
 
-**●  variantId**:  *`number`* 
-
-
-
-
-
+**● variantId**: *`number`*
 
 ___
-
 

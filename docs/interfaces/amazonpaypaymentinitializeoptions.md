@@ -1,111 +1,82 @@
 [@bigcommerce/checkout-sdk](../README.md) > [AmazonPayPaymentInitializeOptions](../interfaces/amazonpaypaymentinitializeoptions.md)
 
-
-
 # Interface: AmazonPayPaymentInitializeOptions
 
+## Hierarchy
+
+**AmazonPayPaymentInitializeOptions**
+
+## Index
+
+### Properties
+
+* [container](amazonpaypaymentinitializeoptions.md#container)
+
+### Methods
+
+* [onError](amazonpaypaymentinitializeoptions.md#onerror)
+* [onPaymentSelect](amazonpaypaymentinitializeoptions.md#onpaymentselect)
+* [onReady](amazonpaypaymentinitializeoptions.md#onready)
+
+---
 
 ## Properties
+
 <a id="container"></a>
 
 ###  container
 
-**●  container**:  *`string`* 
-
-
-
-
-
+**● container**: *`string`*
 
 ___
-
 
 ## Methods
+
 <a id="onerror"></a>
 
-### «Optional» onError
+### `<Optional>` onError
 
-► **onError**(error: *[AmazonPayWidgetError](amazonpaywidgeterror.md)⎮[StandardError](../classes/standarderror.md)*): `void`
-
-
-
-
-
+▸ **onError**(error: *[AmazonPayWidgetError](amazonpaywidgeterror.md) |[StandardError](../classes/standarderror.md)*): `void`
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| error | [AmazonPayWidgetError](amazonpaywidgeterror.md)⎮[StandardError](../classes/standarderror.md)   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| error | [AmazonPayWidgetError](amazonpaywidgeterror.md) |
+[StandardError](../classes/standarderror.md)
+ | 
 
 **Returns:** `void`
 
-
-
-
-
 ___
-
 <a id="onpaymentselect"></a>
 
-### «Optional» onPaymentSelect
+### `<Optional>` onPaymentSelect
 
-► **onPaymentSelect**(reference: *[AmazonPayOrderReference](amazonpayorderreference.md)*): `void`
-
-
-
-
-
+▸ **onPaymentSelect**(reference: *[AmazonPayOrderReference](amazonpayorderreference.md)*): `void`
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| reference | [AmazonPayOrderReference](amazonpayorderreference.md)   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| reference | [AmazonPayOrderReference](amazonpayorderreference.md) | 
 
 **Returns:** `void`
 
-
-
-
-
 ___
-
 <a id="onready"></a>
 
-### «Optional» onReady
+### `<Optional>` onReady
 
-► **onReady**(reference: *[AmazonPayOrderReference](amazonpayorderreference.md)*): `void`
-
-
-
-
-
+▸ **onReady**(reference: *[AmazonPayOrderReference](amazonpayorderreference.md)*): `void`
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| reference | [AmazonPayOrderReference](amazonpayorderreference.md)   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| reference | [AmazonPayOrderReference](amazonpayorderreference.md) | 
 
 **Returns:** `void`
 
-
-
-
-
 ___
-
 

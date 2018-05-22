@@ -1,48 +1,47 @@
 [@bigcommerce/checkout-sdk](../README.md) > [OrderRequestBody](../interfaces/orderrequestbody.md)
 
-
-
 # Interface: OrderRequestBody
 
+## Hierarchy
+
+**OrderRequestBody**
+
+## Index
+
+### Properties
+
+* [customerMessage](orderrequestbody.md#customermessage)
+* [payment](orderrequestbody.md#payment)
+* [useStoreCredit](orderrequestbody.md#usestorecredit)
+
+---
 
 ## Properties
+
 <a id="customermessage"></a>
 
-### «Optional» customerMessage
+### `<Optional>` customerMessage
 
-**●  customerMessage**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● customerMessage**: *`undefined` |
+`string`
+*
 
 ___
-
 <a id="payment"></a>
 
-### «Optional» payment
+### `<Optional>` payment
 
-**●  payment**:  *[Payment](payment.md)* 
-
-
-
-
-
+**● payment**: *[OrderPaymentRequestBody](orderpaymentrequestbody.md)*
 
 ___
-
 <a id="usestorecredit"></a>
 
-### «Optional» useStoreCredit
+### `<Optional>` useStoreCredit
 
-**●  useStoreCredit**:  *`undefined`⎮`true`⎮`false`* 
-
-
-
-
-
+**● useStoreCredit**: *`undefined` |
+`true` |
+`false`
+*
 
 ___
-
 
