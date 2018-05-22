@@ -13,13 +13,17 @@ export enum CustomerStrategyActionType {
     DeinitializeFailed = 'CUSTOMER_STRATEGY_DEINITIALIZE_FAILED',
     DeinitializeRequested = 'CUSTOMER_STRATEGY_DEINITIALIZE_REQUESTED',
     DeinitializeSucceeded = 'CUSTOMER_STRATEGY_DEINITIALIZE_SUCCEEDED',
+    WidgetInteractionStarted = 'CUSTOMER_STRATEGY_WIDGET_INTERACTION_STARTED',
+    WidgetInteractionFinished = 'CUSTOMER_STRATEGY_WIDGET_INTERACTION_FINISHED',
+    WidgetInteractionFailed = 'CUSTOMER_STRATEGY_WIDGET_INTERACTION_FAILED',
 }
 
 export type CustomerStrategyAction =
     CustomerStrategySignInAction |
     CustomerStrategySignOutAction |
     CustomerStrategyInitializeAction |
-    CustomerStrategyDeinitializeAction;
+    CustomerStrategyDeinitializeAction |
+    CustomerStrategyWidgetAction;
 
 export type CustomerStrategySignInAction =
     SignInRequestedAction |
@@ -40,6 +44,11 @@ export type CustomerStrategyDeinitializeAction =
     DeinitializeRequestedAction |
     DeinitializeSucceededAction |
     DeinitializeFailedAction;
+
+export type CustomerStrategyWidgetAction =
+    WidgetInteractionStartedAction |
+    WidgetInteractionFinishedAction |
+    WidgetInteractionFailedAction;
 
 export interface SignInRequestedAction extends Action {
     type: CustomerStrategyActionType.SignInRequested;
@@ -87,4 +96,16 @@ export interface DeinitializeSucceededAction extends Action {
 
 export interface DeinitializeFailedAction extends Action<Error> {
     type: CustomerStrategyActionType.DeinitializeFailed;
+}
+
+export interface WidgetInteractionStartedAction extends Action {
+    type: CustomerStrategyActionType.WidgetInteractionStarted;
+}
+
+export interface WidgetInteractionFinishedAction extends Action {
+    type: CustomerStrategyActionType.WidgetInteractionFinished;
+}
+
+export interface WidgetInteractionFailedAction extends Action<Error> {
+    type: CustomerStrategyActionType.WidgetInteractionFailed;
 }

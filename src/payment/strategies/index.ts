@@ -12,5 +12,5 @@ export { default as PaypalProPaymentStrategy } from './paypal-pro-payment-strate
 export { default as SagePayPaymentStrategy } from './sage-pay-payment-strategy';
 export { default as WepayPaymentStrategy } from './wepay-payment-strategy';
 
-export { BraintreeCreditCardPaymentStrategy, BraintreePaymentInitializeOptions, BraintreePaypalPaymentStrategy } from './braintree';
+export { BraintreeCreditCardPaymentStrategy, BraintreePaymentInitializeOptions, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy, BraintreeVisaCheckoutPaymentInitializeOptions } from './braintree';
 export { SquarePaymentStrategy, SquarePaymentInitializeOptions } from './square';

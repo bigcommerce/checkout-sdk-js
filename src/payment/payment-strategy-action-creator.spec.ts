@@ -391,4 +391,46 @@ describe('PaymentStrategyActionCreator', () => {
             }
         });
     });
+
+    describe('#widgetInteraction()', () => {
+        it('executes widget interaction callback', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const options = { methodId: 'default' };
+            const fakeMethod = jest.fn(() => Promise.resolve());
+            await Observable.from(actionCreator.widgetInteraction(fakeMethod, options)(store))
+                .toArray()
+                .toPromise();
+
+            expect(fakeMethod).toHaveBeenCalled();
+        });
+
+        it('emits action to notify widget interaction in progress', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actions = await Observable.from(actionCreator.widgetInteraction(jest.fn(() => Promise.resolve()), { methodId: 'default' })(store))
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: PaymentStrategyActionType.WidgetInteractionStarted, meta: { methodId: 'default' } },
+                { type: PaymentStrategyActionType.WidgetInteractionFinished, meta: { methodId: 'default' } },
+            ]);
+        });
+
+        it('emits error action if widget interaction fails', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const signInError = new Error();
+            const errorHandler = jest.fn(action => Observable.of(action));
+
+            const actions = await Observable.from(actionCreator.widgetInteraction(jest.fn(() => Promise.reject(signInError)), { methodId: 'default' })(store))
+                .catch(errorHandler)
+                .toArray()
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: PaymentStrategyActionType.WidgetInteractionStarted, meta: { methodId: 'default' } },
+                { type: PaymentStrategyActionType.WidgetInteractionFailed, error: true, payload: signInError, meta: { methodId: 'default' } },
+            ]);
+        });
+    });
 });

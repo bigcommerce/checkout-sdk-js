@@ -10,6 +10,7 @@ import {
     BraintreeThreeDSecure,
     BraintreeTokenizeResponse,
     BraintreeVerifyPayload,
+    BraintreeVisaCheckout,
 } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
@@ -35,7 +36,15 @@ export function getThreeDSecureMock(): BraintreeThreeDSecure {
     };
 }
 
-export function getModuleCreatorMock<T>(module: BraintreeModule): BraintreeModuleCreator<T> {
+export function getVisaCheckoutMock(): BraintreeVisaCheckout {
+    return {
+        createInitOptions: jest.fn(),
+        tokenize: jest.fn(),
+        teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+export function getModuleCreatorMock<T>(module: BraintreeModule | BraintreeClient): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve(module)),
     };

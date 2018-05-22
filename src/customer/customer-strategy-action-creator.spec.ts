@@ -271,4 +271,46 @@ describe('CustomerStrategyActionCreator', () => {
             ]);
         });
     });
+
+    describe('#widgetInteraction()', () => {
+        it('executes widget interaction callback', async () => {
+            const actionCreator = new CustomerStrategyActionCreator(registry);
+            const options = { methodId: 'default' };
+            const fakeMethod = jest.fn(() => Promise.resolve());
+            await actionCreator.widgetInteraction(fakeMethod, options)
+                .toArray()
+                .toPromise();
+
+            expect(fakeMethod).toHaveBeenCalled();
+        });
+
+        it('emits action to notify widget interaction in progress', async () => {
+            const actionCreator = new CustomerStrategyActionCreator(registry);
+            const actions = await actionCreator.widgetInteraction(jest.fn(() => Promise.resolve()), { methodId: 'default' })
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CustomerStrategyActionType.WidgetInteractionStarted, meta: { methodId: 'default' } },
+                { type: CustomerStrategyActionType.WidgetInteractionFinished, meta: { methodId: 'default' } },
+            ]);
+        });
+
+        it('emits error action if widget interaction fails', async () => {
+            const actionCreator = new CustomerStrategyActionCreator(registry);
+            const signInError = new Error();
+            const errorHandler = jest.fn(action => Observable.of(action));
+
+            const actions = await actionCreator.widgetInteraction(jest.fn(() => Promise.reject(signInError)), { methodId: 'default' })
+                .catch(errorHandler)
+                .toArray()
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CustomerStrategyActionType.WidgetInteractionStarted, meta: { methodId: 'default' } },
+                { type: CustomerStrategyActionType.WidgetInteractionFailed, error: true, payload: signInError, meta: { methodId: 'default' } },
+            ]);
+        });
+    });
 });

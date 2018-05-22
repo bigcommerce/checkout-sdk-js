@@ -12,6 +12,8 @@ export interface CustomerStrategyErrorsState {
     signInMethodId?: string;
     signOutError?: Error;
     signOutMethodId?: string;
+    widgetInteractionError?: Error;
+    widgetInteractionMethodId?: string;
 }
 
 export interface CustomerStrategyStatusesState {
@@ -23,6 +25,8 @@ export interface CustomerStrategyStatusesState {
     isSigningOut?: boolean;
     signInMethodId?: string;
     signOutMethodId?: string;
+    isWidgetInteracting?: boolean;
+    widgetInteractionMethodId?: string;
 }
 
 export const DEFAULT_STATE: CustomerStrategyState = {

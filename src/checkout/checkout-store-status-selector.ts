@@ -79,7 +79,9 @@ export default class CheckoutStoreStatusSelector {
             this.isLoadingInstruments() ||
             this.isVaultingInstrument() ||
             this.isDeletingInstrument() ||
-            this.isLoadingConfig();
+            this.isLoadingConfig() ||
+            this.isCustomerStepPending() ||
+            this.isPaymentStepPending();
     }
 
     isLoadingCheckout(): boolean {
@@ -188,5 +190,19 @@ export default class CheckoutStoreStatusSelector {
 
     isLoadingConfig(): boolean {
         return this._config.isLoading();
+    }
+
+    isCustomerStepPending(): boolean {
+        return this._customerStrategies.isInitializing() ||
+            this._customerStrategies.isSigningIn() ||
+            this._customerStrategies.isSigningOut() ||
+            this._customerStrategies.isWidgetInteracting();
+    }
+
+    isPaymentStepPending(): boolean {
+        return this._paymentStrategies.isInitializing() ||
+            this._paymentStrategies.isExecuting() ||
+            this._paymentStrategies.isFinalizing() ||
+            this._paymentStrategies.isWidgetInteracting();
     }
 }

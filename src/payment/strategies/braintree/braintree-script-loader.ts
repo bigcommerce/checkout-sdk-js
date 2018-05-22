@@ -8,6 +8,7 @@ import {
     BraintreeHostWindow,
     BraintreePaypalCreator,
     BraintreeThreeDSecureCreator,
+    BraintreeVisaCheckoutCreator,
 } from './braintree';
 
 export default class BraintreeScriptLoader {
@@ -61,6 +62,18 @@ export default class BraintreeScriptLoader {
                 }
 
                 return this._window.braintree.paypal;
+            });
+    }
+
+    loadVisaCheckout(): Promise<BraintreeVisaCheckoutCreator> {
+        return this._scriptLoader
+            .loadScript('//js.braintreegateway.com/web/3.15.0/js/visa-checkout.min.js')
+            .then(() => {
+                if (!this._window.braintree || !this._window.braintree.visaCheckout) {
+                    throw new StandardError();
+                }
+
+                return this._window.braintree.visaCheckout;
             });
     }
 }

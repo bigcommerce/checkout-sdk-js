@@ -446,4 +446,120 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.config.isLoading).toHaveBeenCalled();
         });
     });
+
+    describe('#isPaymentStepPending()', () => {
+        it('returns true if widget is interacting', () => {
+            jest.spyOn(selectors.paymentStrategies, 'isWidgetInteracting').mockReturnValue(true);
+
+            expect(statuses.isPaymentStepPending()).toEqual(true);
+            expect(selectors.paymentStrategies.isWidgetInteracting).toHaveBeenCalled();
+        });
+
+        it('returns false if widget is not interacting', () => {
+            jest.spyOn(selectors.paymentStrategies, 'isWidgetInteracting').mockReturnValue(false);
+
+            expect(statuses.isPaymentStepPending()).toEqual(false);
+            expect(selectors.paymentStrategies.isWidgetInteracting).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is initializing', () => {
+            jest.spyOn(selectors.paymentStrategies, 'isInitializing').mockReturnValue(true);
+
+            expect(statuses.isPaymentStepPending()).toEqual(true);
+            expect(selectors.paymentStrategies.isInitializing).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not initializing', () => {
+            jest.spyOn(selectors.paymentStrategies, 'isInitializing').mockReturnValue(false);
+
+            expect(statuses.isPaymentStepPending()).toEqual(false);
+            expect(selectors.paymentStrategies.isInitializing).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is executing', () => {
+            jest.spyOn(selectors.paymentStrategies, 'isExecuting').mockReturnValue(true);
+
+            expect(statuses.isPaymentStepPending()).toEqual(true);
+            expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not executing', () => {
+            jest.spyOn(selectors.paymentStrategies, 'isExecuting').mockReturnValue(false);
+
+            expect(statuses.isPaymentStepPending()).toEqual(false);
+            expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is finalizing', () => {
+            jest.spyOn(selectors.paymentStrategies, 'isFinalizing').mockReturnValue(true);
+
+            expect(statuses.isPaymentStepPending()).toEqual(true);
+            expect(selectors.paymentStrategies.isFinalizing).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not finalizing', () => {
+            jest.spyOn(selectors.paymentStrategies, 'isFinalizing').mockReturnValue(false);
+
+            expect(statuses.isPaymentStepPending()).toEqual(false);
+            expect(selectors.paymentStrategies.isFinalizing).toHaveBeenCalled();
+        });
+    });
+
+    describe('#isCustomerStepPending()', () => {
+        it('returns true if widget is interacting', () => {
+            jest.spyOn(selectors.customerStrategies, 'isWidgetInteracting').mockReturnValue(true);
+
+            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(selectors.customerStrategies.isWidgetInteracting).toHaveBeenCalled();
+        });
+
+        it('returns false if widget is not interacting', () => {
+            jest.spyOn(selectors.customerStrategies, 'isWidgetInteracting').mockReturnValue(false);
+
+            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(selectors.customerStrategies.isWidgetInteracting).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is initializing', () => {
+            jest.spyOn(selectors.customerStrategies, 'isInitializing').mockReturnValue(true);
+
+            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(selectors.customerStrategies.isInitializing).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not initializing', () => {
+            jest.spyOn(selectors.customerStrategies, 'isInitializing').mockReturnValue(false);
+
+            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(selectors.customerStrategies.isInitializing).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is executing', () => {
+            jest.spyOn(selectors.customerStrategies, 'isSigningIn').mockReturnValue(true);
+
+            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(selectors.customerStrategies.isSigningIn).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not executing', () => {
+            jest.spyOn(selectors.customerStrategies, 'isSigningIn').mockReturnValue(false);
+
+            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(selectors.customerStrategies.isSigningIn).toHaveBeenCalled();
+        });
+
+        it('returns true if strategy is finalizing', () => {
+            jest.spyOn(selectors.customerStrategies, 'isSigningOut').mockReturnValue(true);
+
+            expect(statuses.isCustomerStepPending()).toEqual(true);
+            expect(selectors.customerStrategies.isSigningOut).toHaveBeenCalled();
+        });
+
+        it('returns false if strategy is not finalizing', () => {
+            jest.spyOn(selectors.customerStrategies, 'isSigningOut').mockReturnValue(false);
+
+            expect(statuses.isCustomerStepPending()).toEqual(false);
+            expect(selectors.customerStrategies.isSigningOut).toHaveBeenCalled();
+        });
+    });
 });
