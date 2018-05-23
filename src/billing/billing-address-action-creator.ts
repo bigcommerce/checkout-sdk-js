@@ -8,19 +8,19 @@ import { Checkout, CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutSt
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import { BillingAddressAction, BillingAddressActionTypes } from './billing-address-actions';
+import { BillingAddressActionTypes, UpdateBillingAddressAction } from './billing-address-actions';
 
 export default class BillingAddressActionCreator {
     constructor(
         private _checkoutClient: CheckoutClient
     ) {}
 
-    updateAddress(address: Partial<AddressRequestBody>, options?: RequestOptions): ThunkAction<BillingAddressAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<BillingAddressAction>) => {
+    updateAddress(address: Partial<AddressRequestBody>, options?: RequestOptions): ThunkAction<UpdateBillingAddressAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<UpdateBillingAddressAction>) => {
             observer.next(createAction(BillingAddressActionTypes.UpdateBillingAddressRequested));
 
             this._requestBillingAddressUpdate(store, address, options)
-                .then(({ body = {} }) => {
+                .then(({ body }) => {
                     observer.next(createAction(BillingAddressActionTypes.UpdateBillingAddressSucceeded, body));
                     observer.complete();
                 })

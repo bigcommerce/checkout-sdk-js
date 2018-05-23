@@ -1,7 +1,7 @@
-import InternalGiftCertificate from './internal-gift-certificate';
+import GiftCertificate from './gift-certificate';
 
 export default interface GiftCertificateState {
-    data?: InternalGiftCertificate[];
+    data?: GiftCertificate[];
     errors: GiftCertificateErrorsState;
     statuses: GiftCertificateStatusesState;
 }

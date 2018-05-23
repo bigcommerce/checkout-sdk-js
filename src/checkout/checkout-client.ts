@@ -18,8 +18,6 @@ import {
 } from '../shipping';
 
 import Checkout from './checkout';
-import CheckoutParams from './checkout-params';
-import CheckoutRequestSender from './checkout-request-sender';
 
 /**
  * @deprecated Use request senders directly
@@ -31,7 +29,6 @@ export default class CheckoutClient {
     constructor(
         private _billingAddressRequestSender: BillingAddressRequestSender,
         private _cartRequestSender: CartRequestSender,
-        private _checkoutRequestSender: CheckoutRequestSender,
         private _configRequestSender: ConfigRequestSender,
         private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
@@ -41,10 +38,6 @@ export default class CheckoutClient {
         private _quoteRequestSender: QuoteRequestSender,
         private _shippingCountryRequestSender: ShippingCountryRequestSender
     ) {}
-
-    loadCheckout(id: string, options?: RequestOptions<CheckoutParams>): Promise<Response> {
-        return this._checkoutRequestSender.loadCheckout(id, options);
-    }
 
     loadQuote(options?: RequestOptions): Promise<Response> {
         return this._quoteRequestSender.loadQuote(options);

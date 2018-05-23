@@ -16,7 +16,6 @@ describe('CheckoutClient', () => {
     let client;
     let billingAddressRequestSender;
     let cartRequestSender;
-    let checkoutRequestSender;
     let configRequestSender;
     let countryRequestSender;
     let customerRequestSender;
@@ -34,10 +33,6 @@ describe('CheckoutClient', () => {
 
         cartRequestSender = {
             loadCart: jest.fn(() => Promise.resolve(getResponse(getCart()))),
-        };
-
-        checkoutRequestSender = {
-            loadCheckout: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
         };
 
         configRequestSender = {
@@ -85,7 +80,6 @@ describe('CheckoutClient', () => {
         client = new CheckoutClient(
             billingAddressRequestSender,
             cartRequestSender,
-            checkoutRequestSender,
             configRequestSender,
             consignmentRequestSender,
             countryRequestSender,

@@ -61,7 +61,6 @@ export default class CheckoutStoreStatusSelector {
             this.isFinalizingOrder() ||
             this.isLoadingOrder() ||
             this.isLoadingCart() ||
-            this.isVerifyingCart() ||
             this.isLoadingBillingCountries() ||
             this.isLoadingShippingCountries() ||
             this.isLoadingPaymentMethods() ||
@@ -103,10 +102,6 @@ export default class CheckoutStoreStatusSelector {
 
     isLoadingCart(): boolean {
         return this._cart.isLoading();
-    }
-
-    isVerifyingCart(): boolean {
-        return this._cart.isVerifying();
     }
 
     isLoadingBillingCountries(): boolean {

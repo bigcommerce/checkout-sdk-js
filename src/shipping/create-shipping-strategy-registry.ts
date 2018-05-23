@@ -2,6 +2,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutClient, CheckoutStore } from '../checkout';
+import CheckoutRequestSender from '../checkout/checkout-request-sender';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator } from '../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
@@ -14,14 +15,16 @@ export default function createShippingStrategyRegistry(
     store: CheckoutStore,
     client: CheckoutClient
 ): Registry<ShippingStrategy> {
+    const requestSender = createRequestSender();
     const registry = new Registry<ShippingStrategy>();
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
 
     registry.register('amazon', () =>
         new AmazonPayShippingStrategy(
             store,
-            new ConsignmentActionCreator(client),
+            new ConsignmentActionCreator(client, checkoutRequestSender),
             new PaymentMethodActionCreator(client),
-            new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(createRequestSender())),
+            new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(requestSender)),
             new AmazonPayScriptLoader(getScriptLoader())
         )
     );
@@ -29,7 +32,7 @@ export default function createShippingStrategyRegistry(
     registry.register('default', () =>
         new DefaultShippingStrategy(
             store,
-            new ConsignmentActionCreator(client)
+            new ConsignmentActionCreator(client, checkoutRequestSender)
         )
     );
 

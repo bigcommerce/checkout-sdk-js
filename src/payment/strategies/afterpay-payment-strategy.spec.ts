@@ -5,9 +5,9 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { CartActionCreator } from '../../cart';
-import { VERIFY_CART_REQUESTED } from '../../cart/cart-action-types';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
+import CheckoutRequestSender from '../../checkout/checkout-request-sender';
+import CheckoutValidator from '../../checkout/checkout-validator';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { getGuestCustomer } from '../../customer/internal-customers.mock';
@@ -27,7 +27,8 @@ import PaymentRequestSender from '../payment-request-sender';
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 
 describe('AfterpayPaymentStrategy', () => {
-    let cartActionCreator: CartActionCreator;
+    let checkoutValidator: CheckoutValidator;
+    let checkoutRequestSender: CheckoutRequestSender;
     let client: CheckoutClient;
     let initializePaymentAction: Observable<Action>;
     let loadPaymentMethodAction: Observable<Action>;
@@ -43,7 +44,6 @@ describe('AfterpayPaymentStrategy', () => {
     let submitPaymentAction: Observable<Action>;
     let store: CheckoutStore;
     let strategy: AfterpayPaymentStrategy;
-    let verifyCartAction: Observable<Action>;
 
     const afterpaySdk = {
         init: () => {},
@@ -53,9 +53,10 @@ describe('AfterpayPaymentStrategy', () => {
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore(getCheckoutStoreState());
-        orderActionCreator = new OrderActionCreator(client);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
-        cartActionCreator = new CartActionCreator(client);
+        checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        checkoutValidator = new CheckoutValidator(checkoutRequestSender);
+        orderActionCreator = new OrderActionCreator(client, checkoutValidator);
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator
@@ -66,7 +67,7 @@ describe('AfterpayPaymentStrategy', () => {
         scriptLoader = new AfterpayScriptLoader(createScriptLoader());
         strategy = new AfterpayPaymentStrategy(
             store,
-            cartActionCreator,
+            checkoutValidator,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
@@ -96,7 +97,6 @@ describe('AfterpayPaymentStrategy', () => {
         ));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
-        verifyCartAction = Observable.of(createAction(VERIFY_CART_REQUESTED));
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
@@ -107,8 +107,8 @@ describe('AfterpayPaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        jest.spyOn(cartActionCreator, 'verifyCart')
-            .mockReturnValue(verifyCartAction);
+        jest.spyOn(checkoutValidator, 'validate')
+            .mockReturnValue(new Promise(resolve => resolve()));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
@@ -161,9 +161,8 @@ describe('AfterpayPaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
         });
 
-        it('verifies the cart', () => {
-            expect(cartActionCreator.verifyCart).toHaveBeenCalled();
-            expect(store.dispatch).toHaveBeenCalledWith(verifyCartAction);
+        it('validates the checkout', () => {
+            expect(checkoutValidator.validate).toHaveBeenCalled();
         });
 
         it('does not resolve if execution is successful', () => {
@@ -222,7 +221,7 @@ describe('AfterpayPaymentStrategy', () => {
 
             strategy = new AfterpayPaymentStrategy(
                 store,
-                cartActionCreator,
+                checkoutValidator,
                 orderActionCreator,
                 paymentActionCreator,
                 paymentMethodActionCreator,

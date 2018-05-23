@@ -1,7 +1,6 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
 import { BillingAddressAction, BillingAddressActionTypes } from '../billing/billing-address-actions';
-import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { CouponAction, CouponActionType } from '../coupon/coupon-actions';
 import { GiftCertificateAction, GiftCertificateActionType } from '../coupon/gift-certificate-actions';
@@ -9,13 +8,12 @@ import { CustomerAction, CustomerActionType } from '../customer';
 import { ConsignmentAction, ConsignmentActionTypes } from '../shipping/consignment-actions';
 
 import Cart from './cart';
-import CartState, { CartErrorsState, CartMetaState, CartStatusesState } from './cart-state';
+import CartState, { CartErrorsState, CartStatusesState } from './cart-state';
 import InternalCart from './internal-cart';
 import mapToInternalCart from './map-to-internal-cart';
 
 const DEFAULT_STATE: CartState = {
     errors: {},
-    meta: {},
     statuses: {},
 };
 
@@ -27,7 +25,6 @@ export default function cartReducer(
         data: dataReducer,
         externalData: externalDataReducer,
         errors: errorsReducer,
-        meta: metaReducer,
         statuses: statusesReducer,
     });
 
@@ -68,43 +65,36 @@ function externalDataReducer(data: Cart | undefined, action: Action): Cart | und
     }
 }
 
-function metaReducer(meta: CartMetaState = DEFAULT_STATE.meta, action: Action): CartMetaState {
+function statusesReducer(
+    statuses: CartStatusesState = DEFAULT_STATE.statuses,
+    action: CheckoutAction
+): CartStatusesState {
     switch (action.type) {
-    case cartActionTypes.VERIFY_CART_SUCCEEDED:
-        return { ...meta, isValid: action.payload };
+    case CheckoutActionType.LoadCheckoutRequested:
+        return { ...statuses, isLoading: true };
 
+    case CheckoutActionType.LoadCheckoutFailed:
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...meta, isValid: true };
-
-    default:
-        return meta;
-    }
-}
-
-function errorsReducer(errors: CartErrorsState = DEFAULT_STATE.errors, action: Action): CartErrorsState {
-    switch (action.type) {
-    case cartActionTypes.VERIFY_CART_REQUESTED:
-        return { ...errors, verifyError: undefined };
-
-    case cartActionTypes.VERIFY_CART_SUCCEEDED:
-    case cartActionTypes.VERIFY_CART_FAILED:
-        return { ...errors, verifyError: action.payload };
-
-    default:
-        return errors;
-    }
-}
-
-function statusesReducer(statuses: CartStatusesState = DEFAULT_STATE.statuses, action: Action): CartStatusesState {
-    switch (action.type) {
-    case cartActionTypes.VERIFY_CART_REQUESTED:
-        return { ...statuses, isVerifying: true };
-
-    case cartActionTypes.VERIFY_CART_SUCCEEDED:
-    case cartActionTypes.VERIFY_CART_FAILED:
-        return { ...statuses, isVerifying: false };
+        return { ...statuses, isLoading: false };
 
     default:
         return statuses;
+    }
+}
+
+function errorsReducer(
+    errors: CartErrorsState = DEFAULT_STATE.errors,
+    action: CheckoutAction
+): CartErrorsState {
+    switch (action.type) {
+    case CheckoutActionType.LoadCheckoutRequested:
+    case CheckoutActionType.LoadCheckoutSucceeded:
+        return { ...errors, loadError: undefined };
+
+    case CheckoutActionType.LoadCheckoutFailed:
+        return { ...errors, loadError: action.payload };
+
+    default:
+        return errors;
     }
 }

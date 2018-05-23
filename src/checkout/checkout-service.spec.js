@@ -40,6 +40,7 @@ import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingS
 import ConsignmentActionCreator from '../shipping/consignment-action-creator';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
+
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
 import { getCheckout, getCheckoutState } from './checkouts.mock';
@@ -51,6 +52,8 @@ import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 describe('CheckoutService', () => {
     let checkoutClient;
     let checkoutService;
+    let checkoutValidator;
+    let checkoutRequestSender;
     let couponRequestSender;
     let customerStrategyRegistry;
     let paymentStrategy;
@@ -91,10 +94,6 @@ describe('CheckoutService', () => {
 
             loadPaymentMethods: jest.fn(() =>
                 Promise.resolve(getResponse(getPaymentMethodsResponseBody()))
-            ),
-
-            loadCheckout: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout())),
             ),
 
             loadShippingCountries: jest.fn(() =>
@@ -184,6 +183,12 @@ describe('CheckoutService', () => {
 
         customerStrategyRegistry = createCustomerStrategyRegistry(store, checkoutClient);
 
+        checkoutRequestSender = {
+            loadCheckout: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout())),
+            ),
+        };
+
         couponRequestSender = {
             applyCoupon: jest.fn(() =>
                 Promise.resolve(getResponse(getCheckout()))
@@ -194,22 +199,27 @@ describe('CheckoutService', () => {
             ),
         };
 
+        checkoutValidator = {
+            validate: jest.fn(() => Promise.resolve()),
+        };
+
+
         checkoutService = new CheckoutService(
             store,
             new BillingAddressActionCreator(checkoutClient),
-            new CheckoutActionCreator(checkoutClient),
+            new CheckoutActionCreator(checkoutRequestSender),
             new ConfigActionCreator(checkoutClient),
-            new ConsignmentActionCreator(checkoutClient),
+            new ConsignmentActionCreator(checkoutClient, checkoutRequestSender),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(couponRequestSender),
             new CustomerStrategyActionCreator(customerStrategyRegistry),
             new GiftCertificateActionCreator(giftCertificateRequestSender),
             new InstrumentActionCreator(checkoutClient),
-            new OrderActionCreator(checkoutClient),
+            new OrderActionCreator(checkoutClient, checkoutValidator),
             new PaymentMethodActionCreator(checkoutClient),
             new PaymentStrategyActionCreator(
                 paymentStrategyRegistry,
-                new OrderActionCreator(checkoutClient)
+                new OrderActionCreator(checkoutClient, checkoutValidator)
             ),
             new ShippingCountryActionCreator(checkoutClient),
             shippingStrategyActionCreator
@@ -289,7 +299,7 @@ describe('CheckoutService', () => {
         it('loads checkout data', async () => {
             const { checkout } = await checkoutService.loadCheckout(id);
 
-            expect(checkoutClient.loadCheckout).toHaveBeenCalled();
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
             expect(checkout.getCheckout()).toEqual(getCheckout());
         });
     });
@@ -699,7 +709,7 @@ describe('CheckoutService', () => {
         it('loads checkout data', async () => {
             const { checkout } = await checkoutService.loadShippingOptions();
 
-            expect(checkoutClient.loadCheckout).toHaveBeenCalled();
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
             expect(checkout.getCheckout()).toEqual(getCheckout());
         });
     });

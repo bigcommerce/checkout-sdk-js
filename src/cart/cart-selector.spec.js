@@ -20,25 +20,6 @@ describe('CartSelector', () => {
         });
     });
 
-    describe('#getVerifyError()', () => {
-        it('returns error if unable to verify', () => {
-            const verifyError = getErrorResponse();
-
-            cartSelector = new CartSelector({
-                ...state.cart,
-                errors: { verifyError },
-            });
-
-            expect(cartSelector.getVerifyError()).toEqual(verifyError);
-        });
-
-        it('does not returns error if able to load', () => {
-            cartSelector = new CartSelector(state.cart);
-
-            expect(cartSelector.getVerifyError()).toBeUndefined();
-        });
-    });
-
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
             const loadError = getErrorResponse();
@@ -72,23 +53,6 @@ describe('CartSelector', () => {
             cartSelector = new CartSelector(state.cart);
 
             expect(cartSelector.isLoading()).toEqual(false);
-        });
-    });
-
-    describe('#isVerifying()', () => {
-        it('returns true if loading cart', () => {
-            cartSelector = new CartSelector({
-                ...state.cart,
-                statuses: { isVerifying: true },
-            });
-
-            expect(cartSelector.isVerifying()).toEqual(true);
-        });
-
-        it('returns false if not loading cart', () => {
-            cartSelector = new CartSelector(state.cart);
-
-            expect(cartSelector.isVerifying()).toEqual(false);
         });
     });
 });
