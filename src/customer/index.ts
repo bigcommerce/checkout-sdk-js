@@ -4,6 +4,7 @@ export { default as InternalCustomer } from './internal-customer';
 export { default as Customer } from './customer';
 
 export { default as createCustomerStrategyRegistry } from './create-customer-strategy-registry';
+export { CustomerAction, CustomerActionType } from './customer-actions';
 export { default as customerReducer } from './customer-reducer';
 export { default as CustomerActionCreator } from './customer-action-creator';
 export { default as CustomerCredentials } from './customer-credentials';
