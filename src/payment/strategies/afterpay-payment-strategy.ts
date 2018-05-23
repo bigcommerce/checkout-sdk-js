@@ -34,12 +34,14 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId, options.gatewayId);
+        const config = state.config.getStoreConfig();
+        const storeCountryName = config ? config.storeProfile.storeCountry : '';
 
         if (!paymentMethod) {
             throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
         }
 
-        return this._afterpayScriptLoader.load(paymentMethod)
+        return this._afterpayScriptLoader.load(paymentMethod, this._mapCountryToISO2(storeCountryName))
             .then(afterpaySdk => {
                 this._afterpaySdk = afterpaySdk;
             })
@@ -67,6 +69,9 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
         const useStoreCredit = !!payload.useStoreCredit;
         const customerMessage = payload.customerMessage ? payload.customerMessage : '';
+        const state = this._store.getState();
+        const config = state.config.getStoreConfig();
+        const storeCountryName = config ? config.storeProfile.storeCountry : '';
 
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
@@ -77,7 +82,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(() => this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
             ))
-            .then(state => this._displayModal(state.paymentMethods.getPaymentMethod(paymentId)))
+            .then(state => this._displayModal(storeCountryName, state.paymentMethods.getPaymentMethod(paymentId)))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
             .then(() => new Promise<never>(() => {}));
     }
@@ -107,12 +112,25 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             );
     }
 
-    private _displayModal(paymentMethod?: PaymentMethod): void {
+    private _displayModal(countryName: string, paymentMethod?: PaymentMethod): void {
         if (!this._afterpaySdk || !paymentMethod || !paymentMethod.clientToken) {
             throw new NotInitializedError('Unable to display payment modal because payment method has not been initialized.');
         }
 
-        this._afterpaySdk.init();
+        this._afterpaySdk.initialize({ countryCode: this._mapCountryToISO2(countryName)});
         this._afterpaySdk.display({ token: paymentMethod.clientToken });
+    }
+
+    private _mapCountryToISO2(countryName: string): string {
+        switch (countryName) {
+            case 'Australia':
+                return 'AU';
+            case 'New Zealand':
+                return 'NZ';
+            case 'United States':
+                return 'US';
+            default:
+                return 'AU';
+        }
     }
 }
