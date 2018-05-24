@@ -1,5 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { Checkout } from '../checkout';
+
 export enum BillingAddressActionTypes {
     UpdateBillingAddressRequested = 'UPDATE_BILLING_ADDRESS_REQUESTED',
     UpdateBillingAddressSucceeded = 'UPDATE_BILLING_ADDRESS_SUCCEEDED',
@@ -18,7 +20,7 @@ export interface UpdateBillingAddressRequested extends Action {
     type: BillingAddressActionTypes.UpdateBillingAddressRequested;
 }
 
-export interface UpdateBillingAddressSucceeded extends Action {
+export interface UpdateBillingAddressSucceeded extends Action<Checkout> {
     type: BillingAddressActionTypes.UpdateBillingAddressSucceeded;
 }
 

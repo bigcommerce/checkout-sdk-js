@@ -5,25 +5,20 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 
 import CheckoutActionCreator from './checkout-action-creator';
 import { CheckoutActionType } from './checkout-actions';
-import CheckoutClient from './checkout-client';
-import CheckoutStore from './checkout-store';
+import CheckoutRequestSender from './checkout-request-sender';
 import { getCheckout } from './checkouts.mock';
-import createCheckoutClient from './create-checkout-client';
-import createCheckoutStore from './create-checkout-store';
 
 describe('CheckoutActionCreator', () => {
     let actionCreator: CheckoutActionCreator;
-    let checkoutClient: CheckoutClient;
-    let store: CheckoutStore;
+    let checkoutRequestSender: CheckoutRequestSender;
 
     beforeEach(() => {
-        checkoutClient = createCheckoutClient();
-        store = createCheckoutStore();
+        checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
 
-        jest.spyOn(checkoutClient, 'loadCheckout')
+        jest.spyOn(checkoutRequestSender, 'loadCheckout')
             .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
 
-        actionCreator = new CheckoutActionCreator(checkoutClient);
+        actionCreator = new CheckoutActionCreator(checkoutRequestSender);
     });
 
     describe('#loadCheckout', () => {
@@ -40,7 +35,7 @@ describe('CheckoutActionCreator', () => {
         });
 
         it('emits error action if unable to load checkout', async () => {
-            jest.spyOn(checkoutClient, 'loadCheckout')
+            jest.spyOn(checkoutRequestSender, 'loadCheckout')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
             const { id } = getCheckout();

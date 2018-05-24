@@ -2,9 +2,9 @@ import { combineReducers } from '@bigcommerce/data-store';
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 
+import GiftCertificate from './gift-certificate';
 import { GiftCertificateAction, GiftCertificateActionType } from './gift-certificate-actions';
 import GiftCertificateState, { GiftCertificateErrorsState, GiftCertificateStatusesState } from './gift-certificate-state';
-import InternalGiftCertificate from './internal-gift-certificate';
 
 const DEFAULT_STATE: GiftCertificateState = {
     errors: {},
@@ -25,12 +25,12 @@ export default function giftCertificateReducer(
 }
 
 function dataReducer(
-    data: InternalGiftCertificate[] | undefined,
+    data: GiftCertificate[] | undefined,
     action: CheckoutAction
-): InternalGiftCertificate[] | undefined {
+): GiftCertificate[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return action.payload.giftCertificates;
+        return action.payload ? action.payload.giftCertificates : data;
 
     default:
         return data;

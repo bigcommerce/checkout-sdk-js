@@ -2,16 +2,19 @@ import { combineReducers } from '@bigcommerce/data-store';
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 
+import Coupon from './coupon';
 import { CouponAction, CouponActionType } from './coupon-actions';
 import CouponState, { CouponErrorsState, CouponStatusesState } from './coupon-state';
-import InternalCoupon from './internal-coupon';
 
 const DEFAULT_STATE: CouponState = {
     errors: {},
     statuses: {},
 };
 
-export default function couponReducer(state: CouponState = DEFAULT_STATE, action: CouponAction): CouponState {
+export default function couponReducer(
+    state: CouponState = DEFAULT_STATE,
+    action: CouponAction | CheckoutAction
+): CouponState {
     const reducer = combineReducers<CouponState>({
         data: dataReducer,
         errors: errorsReducer,
@@ -22,12 +25,12 @@ export default function couponReducer(state: CouponState = DEFAULT_STATE, action
 }
 
 function dataReducer(
-    data: InternalCoupon[] | undefined,
-    action: CheckoutAction | CouponAction
-): InternalCoupon[] | undefined {
+    data: Coupon[] | undefined,
+    action: CheckoutAction
+): Coupon[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return action.payload.coupons;
+        return action.payload ? action.payload.coupons : data;
 
     default:
         return data;

@@ -61,7 +61,6 @@ export default class CheckoutStoreErrorSelector {
             this.getFinalizeOrderError() ||
             this.getLoadOrderError() ||
             this.getLoadCartError() ||
-            this.getVerifyCartError() ||
             this.getLoadBillingCountriesError() ||
             this.getLoadShippingCountriesError() ||
             this.getLoadPaymentMethodsError() ||
@@ -103,10 +102,6 @@ export default class CheckoutStoreErrorSelector {
 
     getLoadCartError(): Error | undefined {
         return this._cart.getLoadError();
-    }
-
-    getVerifyCartError(): Error | undefined {
-        return this._cart.getVerifyError();
     }
 
     getLoadBillingCountriesError(): Error | undefined {

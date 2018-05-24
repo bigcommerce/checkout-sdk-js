@@ -1,5 +1,4 @@
 import { BillingAddressActionTypes } from '../billing/billing-address-actions';
-import * as cartActionTypes from '../cart/cart-action-types';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { CouponActionType } from '../coupon/coupon-actions';
@@ -38,28 +37,6 @@ describe('cartReducer()', () => {
 
         expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
             data: action.payload.cart,
-        }));
-    });
-
-    it('returns true if the cart is valid', () => {
-        const action = {
-            type: cartActionTypes.VERIFY_CART_SUCCEEDED,
-            payload: true,
-        };
-
-        expect(cartReducer(initialState, action).meta.isValid).toEqual(true);
-    });
-
-    it('returns true if the cart is invalid', () => {
-        const action = {
-            type: cartActionTypes.VERIFY_CART_SUCCEEDED,
-            payload: false,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            meta: expect.objectContaining({
-                isValid: false,
-            }),
         }));
     });
 

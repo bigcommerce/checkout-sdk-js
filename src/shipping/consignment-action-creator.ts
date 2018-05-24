@@ -4,6 +4,7 @@ import { Observer } from 'rxjs/Observer';
 
 import { Address } from '../address';
 import { CheckoutAction, CheckoutActionType, CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import CheckoutRequestSender from '../checkout/checkout-request-sender';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
@@ -12,7 +13,8 @@ import { ConsignmentActionTypes, CreateConsignmentsAction, UpdateConsignmentActi
 
 export default class ConsignmentActionCreator {
     constructor(
-        private _checkoutClient: CheckoutClient
+        private _checkoutClient: CheckoutClient,
+        private _checkoutRequestSender: CheckoutRequestSender
     ) {}
 
     selectShippingOption(id: string, options?: RequestOptions): ThunkAction<UpdateConsignmentAction, InternalCheckoutSelectors> {
@@ -53,7 +55,7 @@ export default class ConsignmentActionCreator {
 
             observer.next(createAction(CheckoutActionType.LoadCheckoutRequested));
 
-            this._checkoutClient.loadCheckout(checkout.id, {
+            this._checkoutRequestSender.loadCheckout(checkout.id, {
                 ...options,
                 params: {
                     include: ['consignments.availableShippingOptions'],

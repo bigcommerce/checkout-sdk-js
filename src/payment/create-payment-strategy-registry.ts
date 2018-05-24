@@ -3,8 +3,9 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator } from '../billing';
-import { CartActionCreator } from '../cart';
 import { CheckoutClient, CheckoutStore } from '../checkout';
+import CheckoutRequestSender from '../checkout/checkout-request-sender';
+import CheckoutValidator from '../checkout/checkout-validator';
 import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { AfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
@@ -44,10 +45,14 @@ export default function createPaymentStrategyRegistry(
     const registry = new PaymentStrategyRegistry(store, { defaultToken: 'creditcard' });
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
-    const orderActionCreator = new OrderActionCreator(client);
+    const requestSender = createRequestSender();
+
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+    const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
+    const orderActionCreator = new OrderActionCreator(client, checkoutValidator);
     const paymentActionCreator = new PaymentActionCreator(
         new PaymentRequestSender(paymentClient),
-        new OrderActionCreator(client)
+        orderActionCreator
     );
     const paymentMethodActionCreator = new PaymentMethodActionCreator(client);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
@@ -57,7 +62,7 @@ export default function createPaymentStrategyRegistry(
     registry.register('afterpay', () =>
         new AfterpayPaymentStrategy(
             store,
-            new CartActionCreator(client),
+            checkoutValidator,
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,

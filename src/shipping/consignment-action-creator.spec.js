@@ -15,6 +15,7 @@ import { getShippingAddress } from './internal-shipping-addresses.mock';
 describe('consignmentActionCreator', () => {
     let address;
     let checkoutClient;
+    let checkoutRequestSender;
     let errorResponse;
     let response;
     let store;
@@ -35,10 +36,13 @@ describe('consignmentActionCreator', () => {
         checkoutClient = {
             createConsignments: jest.fn(() => Promise.resolve(response)),
             updateConsignment: jest.fn(() => Promise.resolve(response)),
+        };
+
+        checkoutRequestSender = {
             loadCheckout: jest.fn(() => Promise.resolve(response)),
         };
 
-        consignmentActionCreator = new ConsignmentActionCreator(checkoutClient);
+        consignmentActionCreator = new ConsignmentActionCreator(checkoutClient, checkoutRequestSender);
         address = getShippingAddress();
         actions = undefined;
     });
@@ -67,7 +71,7 @@ describe('consignmentActionCreator', () => {
                 .toArray()
                 .toPromise();
 
-            expect(checkoutClient.loadCheckout).toHaveBeenCalledWith(id, {
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(id, {
                 params: {
                     include: ['consignments.availableShippingOptions'],
                 },
@@ -80,7 +84,7 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits errors and passes right arguments to checkoutClient', async () => {
-            jest.spyOn(checkoutClient, 'loadCheckout')
+            jest.spyOn(checkoutRequestSender, 'loadCheckout')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
             const errorHandler = jest.fn(action => Observable.of(action));

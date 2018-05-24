@@ -1,7 +1,7 @@
-import InternalCoupon from './internal-coupon';
+import Coupon from './coupon';
 
 export default interface CouponState {
-    data?: InternalCoupon[];
+    data?: Coupon[];
     errors: CouponErrorsState;
     statuses: CouponStatusesState;
 }

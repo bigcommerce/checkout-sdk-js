@@ -1,5 +1,5 @@
-import { CartActionCreator } from '../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
+import CheckoutValidator from '../../checkout/checkout-validator';
 import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
@@ -16,7 +16,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        private _cartActionCreator: CartActionCreator,
+        private _checkoutValidator: CheckoutValidator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
@@ -70,9 +70,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
         )
-            .then(state => this._store.dispatch(
-                this._cartActionCreator.verifyCart(state.cart.getCart(), options)
-            ))
+            .then(state => this._checkoutValidator.validate(state.cart.getCart(), options))
             .then(() => this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
             ))
