@@ -34,6 +34,7 @@ const assetConfig = {
 
 module.exports = [
     Object.assign({}, assetConfig, {
+        name: 'umd',
         output: Object.assign({}, assetConfig.output, {
             libraryTarget: 'umd',
             filename: '[name].umd.js',
@@ -48,6 +49,7 @@ module.exports = [
         ]
     }),
     Object.assign({}, assetConfig, {
+        name: 'cjs',
         externals: [
             nodeExternals()
         ],
