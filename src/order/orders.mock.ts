@@ -52,7 +52,7 @@ export function getOrder(): Order {
                 description: 'credit-card',
                 amount: 190,
                 detail: {
-                    step: 'PAYMENT_STATUS_FINALIZE',
+                    step: 'FINALIZE',
                     instructions: '%%OrderID%% text %%OrderID%%',
                 },
             },

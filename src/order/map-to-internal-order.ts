@@ -93,7 +93,7 @@ function mapToInteralOrderPayment(payments?: OrderPayments): InternalOrderPaymen
 
     return {
         id: item.providerId,
-        status: item.detail.step,
+        status: `PAYMENT_STATUS_${item.detail.step}`,
         helpText: item.detail.instructions,
     };
 }
