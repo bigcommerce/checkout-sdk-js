@@ -12,7 +12,7 @@ const couponTypes = [
 export default function mapToInternalCoupon(coupon: Coupon): InternalCoupon {
     return {
         code: coupon.code,
-        discount: coupon.description,
+        discount: coupon.displayName,
         discountType: couponTypes.indexOf(coupon.couponType),
     };
 }
