@@ -7,7 +7,7 @@ import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../../checkout
 import { addMinutes, isFuture } from '../../common/date-time';
 import { MissingDataError } from '../../common/error/errors';
 
-import Instrument, { SessionContext, VaultAccessToken } from './instrument';
+import { SessionContext, VaultAccessToken } from './instrument';
 import * as actionTypes from './instrument-action-types';
 import InstrumentRequestSender from './instrument-request-sender';
 
@@ -39,27 +39,6 @@ export default class InstrumentActionCreator {
                 )
                 .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_INSTRUMENTS_FAILED, response));
-                });
-        });
-    }
-
-    vaultInstrument(instrument: Instrument): ThunkAction<Action, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.VAULT_INSTRUMENT_REQUESTED));
-
-            const session = this._getSessionContext(store);
-            const token = this._getCurrentAccessToken(store);
-
-            return this._getValidAccessToken(token)
-                .then(currentToken =>
-                    this._instrumentRequestSender.vaultInstrument({ ...session, authToken: currentToken.vaultAccessToken }, instrument)
-                        .then(({ body }) => {
-                            observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, body, currentToken));
-                            observer.complete();
-                        })
-                )
-                .catch(response => {
-                    observer.error(createErrorAction(actionTypes.VAULT_INSTRUMENT_FAILED, response));
                 });
         });
     }

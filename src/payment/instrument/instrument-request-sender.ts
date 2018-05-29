@@ -3,8 +3,8 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { InternalAddress } from '../../address';
 import { RequestOptions } from '../../common/http-request';
 
-import Instrument, { InstrumentRequestContext } from './instrument';
-import { InstrumentsResponseBody, InstrumentResponseBody, VaultAccessTokenResponseBody } from './instrument-response-body';
+import { InstrumentRequestContext } from './instrument';
+import { InstrumentsResponseBody, VaultAccessTokenResponseBody } from './instrument-response-body';
 
 export default class InstrumentRequestSender {
     constructor(
@@ -22,23 +22,6 @@ export default class InstrumentRequestSender {
         return (shippingAddress) ?
             this._loadInstrumentsWithAddress(requestContext, shippingAddress) :
             this._loadInstruments(requestContext);
-    }
-
-    vaultInstrument(requestContext: InstrumentRequestContext, instrument: Instrument): Promise<Response<InstrumentResponseBody>> {
-        const payload = {
-            ...requestContext,
-            instrument,
-        };
-
-        return new Promise((resolve, reject) => {
-            this._client.postShopperInstrument(payload, (error: Error, response: any) => {
-                if (error) {
-                    reject(this._transformResponse(error));
-                } else {
-                    resolve(this._transformResponse(response));
-                }
-            });
-        });
     }
 
     deleteInstrument(requestContext: InstrumentRequestContext, instrumentId: string): Promise<Response> {

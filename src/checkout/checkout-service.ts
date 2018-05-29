@@ -8,7 +8,7 @@ import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions,
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
-import { Instrument, InstrumentActionCreator } from '../payment/instrument';
+import { InstrumentActionCreator } from '../payment/instrument';
 import { QuoteActionCreator } from '../quote';
 import {
     ShippingCountryActionCreator,
@@ -264,13 +264,6 @@ export default class CheckoutService {
 
     loadInstruments(): Promise<CheckoutSelectors> {
         const action = this._instrumentActionCreator.loadInstruments();
-
-        return this._store.dispatch(action)
-            .then(() => this.getState());
-    }
-
-    vaultInstrument(instrument: Instrument): Promise<CheckoutSelectors> {
-        const action = this._instrumentActionCreator.vaultInstrument(instrument);
 
         return this._store.dispatch(action)
             .then(() => this.getState());

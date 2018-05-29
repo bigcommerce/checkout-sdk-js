@@ -7,8 +7,6 @@ import {
     getLoadInstrumentsResponseBody,
     getVaultAccessTokenResponseBody,
     instrumentRequestContext,
-    vaultInstrumentRequestBody,
-    vaultInstrumentResponseBody,
 } from './instrument.mock';
 
 import InstrumentRequestSender from './instrument-request-sender';
@@ -19,7 +17,6 @@ describe('InstrumentMethodRequestSender', () => {
     let requestContext;
     let requestSender;
     let shippingAddress;
-    let vaultInstrumentRequest;
 
     beforeEach(() => {
         requestSender = {
@@ -30,12 +27,10 @@ describe('InstrumentMethodRequestSender', () => {
             getVaultAccessToken: jest.fn((payload, callback) => callback()),
             loadInstruments: jest.fn((payload, callback) => callback()),
             loadInstrumentsWithAddress: jest.fn((payload, callback) => callback()),
-            postShopperInstrument: jest.fn((payload, callback) => callback()),
             deleteShopperInstrument: jest.fn((payload, callback) => callback()),
         };
 
         requestContext = instrumentRequestContext();
-        vaultInstrumentRequest = vaultInstrumentRequestBody();
         instrumentRequestSender = new InstrumentRequestSender(client, requestSender);
         shippingAddress = getShippingAddress();
     });
@@ -132,49 +127,6 @@ describe('InstrumentMethodRequestSender', () => {
                 },
                 expect.any(Function)
             );
-        });
-    });
-
-    describe('#vaultInstrument()', () => {
-        it('returns an instrument if submission is successful', async () => {
-            client.postShopperInstrument = jest.fn((payload, callback) => callback(null, {
-                data: vaultInstrumentResponseBody(),
-                status: 200,
-                statusText: 'OK',
-            }));
-
-            const response = await instrumentRequestSender.vaultInstrument(requestContext, vaultInstrumentRequest);
-
-            expect(response).toEqual({
-                body: vaultInstrumentResponseBody(),
-                headers: {},
-                status: 200,
-                statusText: 'OK',
-            });
-
-            expect(client.postShopperInstrument).toHaveBeenCalledWith({
-                ...requestContext,
-                instrument: vaultInstrumentRequest,
-            }, expect.any(Function));
-        });
-
-        it('returns error response if submission is unsuccessful', async () => {
-            client.postShopperInstrument = jest.fn((payload, callback) => callback({
-                data: getErrorInstrumentResponseBody(),
-                status: 400,
-                statusText: 'Bad Request',
-            }));
-
-            try {
-                await instrumentRequestSender.vaultInstrument();
-            } catch (error) {
-                expect(error).toEqual({
-                    body: getErrorInstrumentResponseBody(),
-                    headers: {},
-                    status: 400,
-                    statusText: 'Bad Request',
-                });
-            }
         });
     });
 

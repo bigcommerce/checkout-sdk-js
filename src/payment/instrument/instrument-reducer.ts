@@ -21,9 +21,6 @@ function dataReducer(data: Instrument[] = DEFAULT_STATE.data, action: Action): I
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
         return action.payload.vaulted_instruments || [];
 
-    case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
-        return [...(data || []), action.payload.vaulted_instrument];
-
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
         return (data || []).filter((instrument: any) =>
             instrument.bigpay_token !== action.meta.instrumentId
@@ -37,7 +34,6 @@ function dataReducer(data: Instrument[] = DEFAULT_STATE.data, action: Action): I
 function metaReducer(meta: InstrumentMeta | undefined, action: Action): InstrumentMeta | undefined {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
-    case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
         return { ...meta, ...action.meta };
 
@@ -52,10 +48,6 @@ function errorsReducer(errors: InstrumentErrorState = DEFAULT_STATE.errors, acti
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
         return { ...errors, loadError: undefined };
 
-    case actionTypes.VAULT_INSTRUMENT_REQUESTED:
-    case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
-        return { ...errors, vaultError: undefined };
-
     case actionTypes.DELETE_INSTRUMENT_REQUESTED:
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
         return {
@@ -66,9 +58,6 @@ function errorsReducer(errors: InstrumentErrorState = DEFAULT_STATE.errors, acti
 
     case actionTypes.LOAD_INSTRUMENTS_FAILED:
         return { ...errors, loadError: action.payload };
-
-    case actionTypes.VAULT_INSTRUMENT_FAILED:
-        return { ...errors, vaultError: action.payload };
 
     case actionTypes.DELETE_INSTRUMENT_FAILED:
         return {
@@ -87,9 +76,6 @@ function statusesReducer(statuses: InstrumentStatusState = DEFAULT_STATE.statuse
     case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
         return { ...statuses, isLoading: true };
 
-    case actionTypes.VAULT_INSTRUMENT_REQUESTED:
-        return { ...statuses, isVaulting: true };
-
     case actionTypes.DELETE_INSTRUMENT_REQUESTED:
         return {
             ...statuses,
@@ -100,10 +86,6 @@ function statusesReducer(statuses: InstrumentStatusState = DEFAULT_STATE.statuse
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
     case actionTypes.LOAD_INSTRUMENTS_FAILED:
         return { ...statuses, isLoading: false };
-
-    case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
-    case actionTypes.VAULT_INSTRUMENT_FAILED:
-        return { ...statuses, isVaulting: false };
 
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
     case actionTypes.DELETE_INSTRUMENT_FAILED:

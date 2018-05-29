@@ -367,22 +367,6 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
-    describe('#getVaultInstrumentError()', () => {
-        it('returns error if there is an error when vaulting instruments', () => {
-            jest.spyOn(selectors.instruments, 'getVaultError').mockReturnValue(errorResponse);
-
-            expect(errors.getVaultInstrumentError()).toEqual(errorResponse);
-            expect(selectors.instruments.getVaultError).toHaveBeenCalled();
-        });
-
-        it('returns undefined if there is NO error when vaulting instruments', () => {
-            jest.spyOn(selectors.instruments, 'getVaultError').mockReturnValue();
-
-            expect(errors.getVaultInstrumentError()).toEqual(undefined);
-            expect(selectors.instruments.getVaultError).toHaveBeenCalled();
-        });
-    });
-
     describe('#getDeleteInstrumentError()', () => {
         it('returns error if there is an error when deleting instruments', () => {
             jest.spyOn(selectors.instruments, 'getDeleteError').mockReturnValue(errorResponse);

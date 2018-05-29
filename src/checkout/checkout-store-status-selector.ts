@@ -77,7 +77,6 @@ export default class CheckoutStoreStatusSelector {
             this.isApplyingGiftCertificate() ||
             this.isRemovingGiftCertificate() ||
             this.isLoadingInstruments() ||
-            this.isVaultingInstrument() ||
             this.isDeletingInstrument() ||
             this.isLoadingConfig() ||
             this.isCustomerStepPending() ||
@@ -178,10 +177,6 @@ export default class CheckoutStoreStatusSelector {
 
     isLoadingInstruments(): boolean {
         return this._instruments.isLoading();
-    }
-
-    isVaultingInstrument(): boolean {
-        return this._instruments.isVaulting();
     }
 
     isDeletingInstrument(instrumentId?: string): boolean {

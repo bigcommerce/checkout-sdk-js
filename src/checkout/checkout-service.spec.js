@@ -24,7 +24,7 @@ import { getFormFields } from '../form/form.mocks';
 import { getGiftCertificateResponseBody } from '../coupon/internal-gift-certificates.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethodResponseBody, getPaymentMethodsResponseBody, getPaymentMethod } from '../payment/payment-methods.mock';
-import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody, vaultInstrumentRequestBody, vaultInstrumentResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
+import { getInstrumentsMeta, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody, deleteInstrumentResponseBody } from '../payment/instrument/instrument.mock';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
 import { getResponse } from '../common/http-request/responses.mock';
@@ -131,10 +131,6 @@ describe('CheckoutService', () => {
 
             loadInstruments: jest.fn(() =>
                 Promise.resolve(getResponse(getLoadInstrumentsResponseBody()))
-            ),
-
-            vaultInstrument: jest.fn(() =>
-                Promise.resolve(getResponse(vaultInstrumentResponseBody()))
             ),
 
             deleteInstrument: jest.fn(() =>
@@ -796,21 +792,6 @@ describe('CheckoutService', () => {
 
             expect(checkoutClient.loadInstruments)
                 .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, shippingAddress);
-        });
-    });
-
-    describe('#vaultInstrument()', () => {
-        it('vaults an instrument', async () => {
-            const instrument = vaultInstrumentRequestBody();
-            const { storeId } = getConfig().storeConfig.storeProfile;
-            const { customerId } = getGuestCustomer();
-            const { vaultAccessToken } = getInstrumentsMeta();
-
-            await checkoutService.signInCustomer();
-            await checkoutService.vaultInstrument(instrument);
-
-            expect(checkoutClient.vaultInstrument)
-                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, instrument);
         });
     });
 

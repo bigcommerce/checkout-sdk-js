@@ -78,7 +78,6 @@ export default class CheckoutStoreErrorSelector {
             this.getRemoveGiftCertificateError() ||
             this.getLoadInstrumentsError() ||
             this.getDeleteInstrumentError() ||
-            this.getVaultInstrumentError() ||
             this.getLoadConfigError();
     }
 
@@ -176,10 +175,6 @@ export default class CheckoutStoreErrorSelector {
 
     getLoadInstrumentsError(): Error | undefined {
         return this._instruments.getLoadError();
-    }
-
-    getVaultInstrumentError(): Error | undefined {
-        return this._instruments.getVaultError();
     }
 
     getDeleteInstrumentError(instrumentId?: string): Error | undefined {
