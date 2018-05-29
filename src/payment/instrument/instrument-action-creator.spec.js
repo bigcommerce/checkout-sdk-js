@@ -10,7 +10,6 @@ import InstrumentActionCreator from './instrument-action-creator';
 import {
     getVaultAccessTokenResponseBody,
     getLoadInstrumentsResponseBody,
-    vaultInstrumentResponseBody,
     deleteInstrumentResponseBody,
 } from './instrument.mock';
 
@@ -19,7 +18,6 @@ describe('InstrumentActionCreator', () => {
     let checkoutClient;
     let getVaultAccessTokenResponse;
     let loadInstrumentsResponse;
-    let vaultInstrumentResponse;
     let deleteInstrumentResponse;
     let errorResponse;
     let store;
@@ -38,13 +36,11 @@ describe('InstrumentActionCreator', () => {
         errorResponse = getErrorResponse();
         getVaultAccessTokenResponse = getResponse(getVaultAccessTokenResponseBody());
         loadInstrumentsResponse = getResponse(getLoadInstrumentsResponseBody());
-        vaultInstrumentResponse = getResponse(vaultInstrumentResponseBody());
         deleteInstrumentResponse = getResponse(deleteInstrumentResponseBody());
 
         checkoutClient = {
             getVaultAccessToken: jest.fn(() => Promise.resolve(getVaultAccessTokenResponse)),
             loadInstruments: jest.fn(() => Promise.resolve(loadInstrumentsResponse)),
-            vaultInstrument: jest.fn(() => Promise.resolve(vaultInstrumentResponse)),
             deleteInstrument: jest.fn(() => Promise.resolve(deleteInstrumentResponse)),
         };
 
@@ -144,95 +140,6 @@ describe('InstrumentActionCreator', () => {
 
             try {
                 await instrumentActionCreator.loadInstruments()(store)
-                    .toArray()
-                    .toPromise();
-            } catch (e) {
-                expect(e.type).toEqual('missing_data');
-            }
-        });
-    });
-
-    describe('#vaultInstrument()', () => {
-        it('post a new instrument', async () => {
-            await instrumentActionCreator.vaultInstrument({})(store)
-                .toPromise();
-
-            expect(checkoutClient.getVaultAccessToken).toHaveBeenCalled();
-            expect(checkoutClient.vaultInstrument).toHaveBeenCalledWith(
-                {
-                    storeId,
-                    customerId,
-                    authToken: vaultAccessToken,
-                },
-                expect.any(Object),
-            );
-        });
-
-        it('does not send a request to get a list of instruments if valid token is supplied', async () => {
-            store = createCheckoutStore({
-                config: configState,
-                customer: customerState,
-                instruments: {
-                    ...getInstrumentsState(),
-                    meta: {
-                        ...getInstrumentsMeta(),
-                        vaultAccessExpiry: 1816097476098,
-                    },
-                },
-            });
-
-            await instrumentActionCreator.vaultInstrument({})(store)
-                .toPromise();
-
-            expect(checkoutClient.getVaultAccessToken).not.toHaveBeenCalled();
-            expect(checkoutClient.vaultInstrument).toHaveBeenCalledWith(
-                {
-                    storeId,
-                    customerId,
-                    authToken: vaultAccessToken,
-                },
-                expect.any(Object),
-            );
-        });
-
-        it('emits actions if able to post instrument', async () => {
-            const actions = await instrumentActionCreator.vaultInstrument()(store)
-                .toArray()
-                .toPromise();
-
-            expect(actions).toEqual([
-                {
-                    type: actionTypes.VAULT_INSTRUMENT_REQUESTED,
-                },
-                {
-                    type: actionTypes.VAULT_INSTRUMENT_SUCCEEDED,
-                    meta: { vaultAccessExpiry, vaultAccessToken },
-                    payload: vaultInstrumentResponse.body,
-                },
-            ]);
-        });
-
-        it('emits error actions if unable to post instrument', async () => {
-            checkoutClient.vaultInstrument.mockReturnValue(Promise.reject(errorResponse));
-
-            const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await instrumentActionCreator.vaultInstrument()(store)
-                .catch(errorHandler)
-                .toArray()
-                .toPromise();
-
-            expect(errorHandler).toHaveBeenCalled();
-            expect(actions).toEqual([
-                { type: actionTypes.VAULT_INSTRUMENT_REQUESTED },
-                { type: actionTypes.VAULT_INSTRUMENT_FAILED, payload: errorResponse, error: true },
-            ]);
-        });
-
-        it('emits Missing Data Error if data is missing from the date', async () => {
-            store = createCheckoutStore();
-
-            try {
-                await instrumentActionCreator.vaultInstrument()(store)
                     .toArray()
                     .toPromise();
             } catch (e) {

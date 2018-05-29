@@ -3,7 +3,6 @@ import {
     getInstruments,
     getInstrumentsMeta,
     getLoadInstrumentsResponseBody,
-    vaultInstrumentResponseBody,
 } from './instrument.mock';
 
 import { getErrorResponse } from '../../common/http-request/responses.mock';
@@ -63,47 +62,6 @@ describe('instrumentReducer()', () => {
             ...initialState,
             errors: { loadError: action.payload },
             statuses: { isLoading: false },
-        });
-    });
-
-    it('returns new state when vaulting an instrument', () => {
-        const action = {
-            type: actionTypes.VAULT_INSTRUMENT_REQUESTED,
-        };
-
-        expect(instrumentReducer(initialState, action)).toEqual({
-            ...initialState,
-            errors: {},
-            statuses: { isVaulting: true },
-        });
-    });
-
-    it('returns new state when instruments are vaulted', () => {
-        const action = {
-            type: actionTypes.VAULT_INSTRUMENT_SUCCEEDED,
-            meta: getInstrumentsMeta(),
-            payload: vaultInstrumentResponseBody(),
-        };
-
-        expect(instrumentReducer(initialState, action)).toEqual({
-            ...initialState,
-            data: expect.arrayContaining([action.payload.vaulted_instrument]),
-            meta: action.meta,
-            errors: { vaultError: undefined },
-            statuses: { isVaulting: false },
-        });
-    });
-
-    it('returns new state when instruments cannot be vaulted', () => {
-        const action = {
-            type: actionTypes.VAULT_INSTRUMENT_FAILED,
-            payload: getErrorResponse(),
-        };
-
-        expect(instrumentReducer(initialState, action)).toEqual({
-            ...initialState,
-            errors: { vaultError: action.payload },
-            statuses: { isVaulting: false },
         });
     });
 

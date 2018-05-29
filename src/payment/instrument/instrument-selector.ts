@@ -18,10 +18,6 @@ export default class InstrumentSelector {
         return this._instruments.errors && this._instruments.errors.loadError;
     }
 
-    getVaultError(): Error | undefined {
-        return this._instruments.errors && this._instruments.errors.vaultError;
-    }
-
     getDeleteError(instrumentId?: string): Error | undefined {
         if (!this._instruments.errors || (instrumentId && this._instruments.errors.failedInstrument !== instrumentId)) {
             return;
@@ -32,10 +28,6 @@ export default class InstrumentSelector {
 
     isLoading(): boolean {
         return !!(this._instruments.statuses && this._instruments.statuses.isLoading);
-    }
-
-    isVaulting(): boolean {
-        return !!(this._instruments.statuses && this._instruments.statuses.isVaulting);
     }
 
     isDeleting(instrumentId?: string): boolean {

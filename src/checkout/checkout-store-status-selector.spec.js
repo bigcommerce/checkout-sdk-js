@@ -399,22 +399,6 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
-    describe('#isVaultingInstrument()', () => {
-        it('returns true if vaulting instrument', () => {
-            jest.spyOn(selectors.instruments, 'isVaulting').mockReturnValue(true);
-
-            expect(statuses.isVaultingInstrument()).toEqual(true);
-            expect(selectors.instruments.isVaulting).toHaveBeenCalled();
-        });
-
-        it('returns false if not vaulting instrument', () => {
-            jest.spyOn(selectors.instruments, 'isVaulting').mockReturnValue(false);
-
-            expect(statuses.isVaultingInstrument()).toEqual(false);
-            expect(selectors.instruments.isVaulting).toHaveBeenCalled();
-        });
-    });
-
     describe('#isDeletingInstrument()', () => {
         it('returns true if deleting instrument', () => {
             jest.spyOn(selectors.instruments, 'isDeleting').mockReturnValue(true);

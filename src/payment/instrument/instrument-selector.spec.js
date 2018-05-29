@@ -73,26 +73,6 @@ describe('InstrumentSelector', () => {
         });
     });
 
-    describe('#getVaultError()', () => {
-        it('returns error if unable to vault', () => {
-            const vaultError = getErrorResponse();
-
-            instrumentSelector = new InstrumentSelector({
-                ...state.instruments,
-                errors: { vaultError },
-            });
-
-            expect(instrumentSelector.getVaultError()).toEqual(vaultError);
-        });
-
-        it('does not return error if able to vault', () => {
-            instrumentSelector = new InstrumentSelector(state.instruments);
-
-            expect(instrumentSelector.getVaultError()).toBeUndefined();
-        });
-    });
-
-
     describe('#getDeleteError()', () => {
         let mockInstrumentId;
 
@@ -154,23 +134,6 @@ describe('InstrumentSelector', () => {
             instrumentSelector = new InstrumentSelector(state.instruments);
 
             expect(instrumentSelector.isLoading()).toEqual(false);
-        });
-    });
-
-    describe('#isVaulting()', () => {
-        it('returns true if deleting an instrument', () => {
-            instrumentSelector = new InstrumentSelector({
-                ...state.instruments,
-                statuses: { isVaulting: true },
-            });
-
-            expect(instrumentSelector.isVaulting()).toEqual(true);
-        });
-
-        it('returns false if not deleting an instrument', () => {
-            instrumentSelector = new InstrumentSelector(state.instruments);
-
-            expect(instrumentSelector.isVaulting()).toEqual(false);
         });
     });
 
