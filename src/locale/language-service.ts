@@ -9,6 +9,15 @@ import LanguageConfig, { Locales, Translations } from './language-config';
 const DEFAULT_LOCALE = 'en';
 const KEY_PREFIX = 'optimized_checkout';
 
+/**
+ * Responsible for getting language strings.
+ *
+ * This object can be used to retrieve language strings that are most
+ * appropriate for a given locale.
+ *
+ * The language strings provided to the object should follow [ICU
+ * MessageFormat](http://userguide.icu-project.org/formatparse/messages) syntax.
+ */
 export default class LanguageService {
     private _locale: string;
     private _locales: Locales;
@@ -30,7 +39,20 @@ export default class LanguageService {
         this._formatters = {};
     }
 
-    mapKeys(maps: { [key: string]: string } = {}): void {
+    /**
+     * Remaps a set of language strings with a different set of keys.
+     *
+     * ```js
+     * service.mapKeys({
+     *     'new_key': 'existing_key',
+     * });
+     *
+     * console.log(service.translate('new_key'));
+     * ```
+     *
+     * @param maps - The set of language strings.
+     */
+    mapKeys(maps: { [key: string]: string }): void {
         Object.keys(maps).forEach(key => {
             const translationKey = `${KEY_PREFIX}.${maps[key]}`;
 
@@ -38,26 +60,49 @@ export default class LanguageService {
         });
     }
 
+    /**
+     * Gets the preferred locale of the current customer.
+     *
+     * @returns The preferred locale code.
+     */
     getLocale(): string {
         return this._hasTranslations() ? this._locale : DEFAULT_LOCALE;
     }
 
-    translate(rawKey: string, data: TranslationData = {}): string {
-        const key = `${KEY_PREFIX}.${rawKey}`;
+    /**
+     * Gets a language string by a key.
+     *
+     * ```js
+     * service.translate('language_key');
+     * ```
+     *
+     * If the language string contains a placeholder, you can replace it by
+     * providing a second argument.
+     *
+     * ```js
+     * service.translate('language_key', { placeholder: 'Hello' });
+     * ```
+     *
+     * @param key - The language key.
+     * @param data - Data for replacing placeholders in the language string.
+     * @returns The translated language string.
+     */
+    translate(key: string, data: TranslationData = {}): string {
+        const prefixedKey = `${KEY_PREFIX}.${key}`;
 
-        if (typeof this._translations[key] !== 'string') {
-            this._logger.warn(`Translation key "${key}" is missing`);
+        if (typeof this._translations[prefixedKey] !== 'string') {
+            this._logger.warn(`Translation key "${prefixedKey}" is missing`);
 
-            return key;
+            return prefixedKey;
         }
 
-        if (!this._formatters[key]) {
-            const messageFormat = new MessageFormat(this._locales[key]);
+        if (!this._formatters[prefixedKey]) {
+            const messageFormat = new MessageFormat(this._locales[prefixedKey]);
 
-            this._formatters[key] = messageFormat.compile(this._translations[key] || '');
+            this._formatters[prefixedKey] = messageFormat.compile(this._translations[prefixedKey] || '');
         }
 
-        return this._formatters[key](this._transformData(data));
+        return this._formatters[prefixedKey](this._transformData(data));
     }
 
     private _transformConfig(config: Partial<LanguageConfig> = {}): LanguageConfig {

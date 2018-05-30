@@ -27,16 +27,31 @@ import CheckoutService from './checkout-service';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 
-export default function createCheckoutService(options: CheckoutServiceOptions = {}): CheckoutService {
+/**
+ * Creates an instance of `CheckoutService`.
+ *
+ * ```js
+ * const service = createCheckoutService();
+ *
+ * service.subscribe(state => {
+ *     console.log(state);
+ * });
+ *
+ * service.loadCheckout();
+ * ```
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutService`.
+ */
+export default function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService {
     if (document.location.protocol !== 'https:') {
         getDefaultLogger().warn('The BigCommerce Checkout SDK should not be used on a non-HTTPS page');
     }
 
-    const client = createCheckoutClient({ locale: options.locale });
-    const store = createCheckoutStore({}, { shouldWarnMutation: options.shouldWarnMutation });
+    const { locale = '', shouldWarnMutation = true } = options || {};
+    const client = createCheckoutClient({ locale });
+    const store = createCheckoutStore({}, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
-
-    const instrumentRequestSender = new InstrumentRequestSender(paymentClient, createRequestSender());
 
     return new CheckoutService(
         store,
@@ -47,7 +62,7 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
         new CouponActionCreator(client),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
         new GiftCertificateActionCreator(client),
-        new InstrumentActionCreator(instrumentRequestSender),
+        new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, createRequestSender())),
         new OrderActionCreator(client),
         new PaymentMethodActionCreator(client),
         new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
