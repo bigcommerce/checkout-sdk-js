@@ -3,6 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { BillingAddressActionCreator } from '../billing';
 import { CartActionCreator } from '../cart';
 import { getDefaultLogger } from '../common/log';
+import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
@@ -46,6 +47,10 @@ import createCheckoutStore from './create-checkout-store';
 export default function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService {
     if (document.location.protocol !== 'https:') {
         getDefaultLogger().warn('The BigCommerce Checkout SDK should not be used on a non-HTTPS page');
+    }
+
+    if (getEnvironment() !== 'production') {
+        getDefaultLogger().warn('Note that the development build is not optimized. To create a production build, set process.env.NODE_ENV to `production`.');
     }
 
     const { locale = '', shouldWarnMutation = true } = options || {};

@@ -1,8 +1,10 @@
+import { getEnvironment } from '../utility';
+
 import ConsoleLogger from './console-logger';
 import Logger from './logger';
 import NoopLogger from './noop-logger';
 
-const logger = createLogger(process.env.NODE_ENV !== 'test');
+const logger = createLogger(getEnvironment() !== 'test');
 
 export function createLogger(isEnabled = true): Logger {
     if (!isEnabled) {
