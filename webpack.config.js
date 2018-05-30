@@ -53,5 +53,8 @@ module.exports = [
         externals: [
             nodeExternals()
         ],
+        node: {
+            process: false,
+        },
     })
 ];
