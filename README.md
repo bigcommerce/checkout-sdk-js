@@ -6,6 +6,31 @@ Checkout JS SDK provides you with the tools you need to build your own checkout 
 
 The SDK has a convenient application interface for starting and completing a checkout flow. Behind the interface, it handles all the necessary interactions with our Storefront APIs and other payment SDKs. So you can focus on creating a checkout experience that is unique to your business.
 
+
+## Table of contents <!-- omit in toc -->
+- [What can you do with this?](#what-can-you-do-with-this)
+- [Install](#install)
+- [Requirements](#requirements)
+    - [Browser support](#browser-support)
+    - [Framework](#framework)
+    - [CORS](#cors)
+- [Usage](#usage)
+    - [Initialize service](#initialize-service)
+    - [Initialize state](#initialize-state)
+    - [Subscribe to data changes](#subscribe-to-data-changes)
+    - [Sign in shopper](#sign-in-shopper)
+    - [Update shipping details](#update-shipping-details)
+    - [Update billing details](#update-billing-details)
+    - [Apply coupon](#apply-coupon)
+    - [Load payment methods](#load-payment-methods)
+    - [Submit order](#submit-order)
+- [Notes](#notes)
+- [API reference](#api-reference)
+- [See also](#see-also)
+- [Contribution](#contribution)
+- [License](#license)
+
+
 ## What can you do with this?
 
 The Checkout SDK is a JavaScript wrapper for our [Storefront Checkout API](https://developer.bigcommerce.com/api/v3/storefront.html). It provides methods for all the operations needed to process a checkout - signing in a customer, populating shipping & billing addresses, fetching shipping quotes & selecting a shipping method, fetching payment options and finally creating an order. It also provides integrations with all the [payment gateways](https://support.bigcommerce.com/articles/Public/Optimized-Single-Page-Checkout) supported by Optimized One Page Checkout, such as:
