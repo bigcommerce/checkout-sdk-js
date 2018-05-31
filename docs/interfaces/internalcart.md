@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalCart](../interfaces/internalcart.md)
 
-# Interface: InternalCart
+# InternalCart
 
 ## Hierarchy
 

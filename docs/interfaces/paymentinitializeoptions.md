@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [PaymentInitializeOptions](../interfaces/paymentinitializeoptions.md)
 
-# Interface: PaymentInitializeOptions
+# PaymentInitializeOptions
 
 ## Hierarchy
 
@@ -50,8 +50,7 @@ ___
 
 ### `<Optional>` gatewayId
 
-**● gatewayId**: *`undefined` |
-`string`
+**● gatewayId**: * `undefined` &#124; `string`
 *
 
 ___

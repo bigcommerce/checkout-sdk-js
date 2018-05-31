@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CheckoutServiceOptions](../interfaces/checkoutserviceoptions.md)
 
-# Interface: CheckoutServiceOptions
+# CheckoutServiceOptions
 
 ## Hierarchy
 
@@ -21,8 +21,7 @@
 
 ### `<Optional>` locale
 
-**● locale**: *`undefined` |
-`string`
+**● locale**: * `undefined` &#124; `string`
 *
 
 ___
@@ -30,9 +29,7 @@ ___
 
 ### `<Optional>` shouldWarnMutation
 
-**● shouldWarnMutation**: *`undefined` |
-`true` |
-`false`
+**● shouldWarnMutation**: * `undefined` &#124; `true` &#124; `false`
 *
 
 ___

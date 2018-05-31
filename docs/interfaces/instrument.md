@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [Instrument](../interfaces/instrument.md)
 
-# Interface: Instrument
+# Instrument
 
 ## Hierarchy
 

@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalLineItem](../interfaces/internallineitem.md)
 
-# Interface: InternalLineItem
+# InternalLineItem
 
 ## Hierarchy
 

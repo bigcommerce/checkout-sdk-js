@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalQuote](../interfaces/internalquote.md)
 
-# Interface: InternalQuote
+# InternalQuote
 
 ## Hierarchy
 

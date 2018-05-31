@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CheckoutSettings](../interfaces/checkoutsettings.md)
 
-# Interface: CheckoutSettings
+# CheckoutSettings
 
 ## Hierarchy
 

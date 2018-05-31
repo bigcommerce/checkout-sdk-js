@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [FormFieldOptions](../interfaces/formfieldoptions.md)
 
-# Interface: FormFieldOptions
+# FormFieldOptions
 
 ## Hierarchy
 
@@ -21,8 +21,7 @@
 
 ### `<Optional>` helperLabel
 
-**● helperLabel**: *`undefined` |
-`string`
+**● helperLabel**: * `undefined` &#124; `string`
 *
 
 ___

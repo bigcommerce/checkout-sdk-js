@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [StoreConfig](../interfaces/storeconfig.md)
 
-# Interface: StoreConfig
+# StoreConfig
 
 ## Hierarchy
 

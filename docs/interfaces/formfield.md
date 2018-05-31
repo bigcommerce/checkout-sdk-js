@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [FormField](../interfaces/formfield.md)
 
-# Interface: FormField
+# FormField
 
 ## Hierarchy
 
@@ -36,8 +36,7 @@ ___
 
 ### `<Optional>` default
 
-**● default**: *`undefined` |
-`string`
+**● default**: * `undefined` &#124; `string`
 *
 
 ___
@@ -45,8 +44,7 @@ ___
 
 ### `<Optional>` fieldType
 
-**● fieldType**: *`undefined` |
-`string`
+**● fieldType**: * `undefined` &#124; `string`
 *
 
 ___
@@ -61,8 +59,7 @@ ___
 
 ### `<Optional>` itemtype
 
-**● itemtype**: *`undefined` |
-`string`
+**● itemtype**: * `undefined` &#124; `string`
 *
 
 ___
@@ -98,8 +95,7 @@ ___
 
 ### `<Optional>` type
 
-**● type**: *`undefined` |
-`string`
+**● type**: * `undefined` &#124; `string`
 *
 
 ___

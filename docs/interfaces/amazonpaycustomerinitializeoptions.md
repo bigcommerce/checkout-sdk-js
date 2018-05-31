@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [AmazonPayCustomerInitializeOptions](../interfaces/amazonpaycustomerinitializeoptions.md)
 
-# Interface: AmazonPayCustomerInitializeOptions
+# AmazonPayCustomerInitializeOptions
 
 ## Hierarchy
 
@@ -26,8 +26,7 @@
 
 ### `<Optional>` color
 
-**● color**: *`undefined` |
-`string`
+**● color**: * `undefined` &#124; `string`
 *
 
 ___
@@ -42,8 +41,7 @@ ___
 
 ### `<Optional>` size
 
-**● size**: *`undefined` |
-`string`
+**● size**: * `undefined` &#124; `string`
 *
 
 ___
@@ -54,15 +52,13 @@ ___
 
 ### `<Optional>` onError
 
-▸ **onError**(error: *[AmazonPayWidgetError](amazonpaywidgeterror.md) |[StandardError](../classes/standarderror.md)*): `void`
+▸ **onError**(error: * [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)*): `void`
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| error | [AmazonPayWidgetError](amazonpaywidgeterror.md) |
-[StandardError](../classes/standarderror.md)
- | 
+| error |  [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)|
 
 **Returns:** `void`
 

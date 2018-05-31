@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CheckoutService](../classes/checkoutservice.md)
 
-# Class: CheckoutService
+# CheckoutService
 
 Responsible for completing the checkout process for the current customer.
 

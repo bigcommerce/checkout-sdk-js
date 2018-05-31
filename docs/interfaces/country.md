@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [Country](../interfaces/country.md)
 
-# Interface: Country
+# Country
 
 ## Hierarchy
 

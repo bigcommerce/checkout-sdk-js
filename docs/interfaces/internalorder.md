@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalOrder](../interfaces/internalorder.md)
 
-# Interface: InternalOrder
+# InternalOrder
 
 ## Hierarchy
 
@@ -193,23 +193,17 @@ ___
 
 #### Type declaration
 
-`Optional`  gateway: `undefined` |
-`string`
+`Optional`  gateway:  `undefined` &#124; `string`
 
-`Optional`  helpText: `undefined` |
-`string`
+`Optional`  helpText:  `undefined` &#124; `string`
 
-`Optional`  id: `undefined` |
-`string`
+`Optional`  id:  `undefined` &#124; `string`
 
-`Optional`  redirectUrl: `undefined` |
-`string`
+`Optional`  redirectUrl:  `undefined` &#124; `string`
 
-`Optional`  returnUrl: `undefined` |
-`string`
+`Optional`  returnUrl:  `undefined` &#124; `string`
 
-`Optional`  status: `undefined` |
-`string`
+`Optional`  status:  `undefined` &#124; `string`
 
 ___
 <a id="shipping"></a>

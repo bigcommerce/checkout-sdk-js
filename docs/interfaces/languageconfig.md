@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [LanguageConfig](../interfaces/languageconfig.md)
 
-# Interface: LanguageConfig
+# LanguageConfig
 
 ## Hierarchy
 

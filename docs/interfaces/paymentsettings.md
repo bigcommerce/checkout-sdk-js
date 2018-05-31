@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [PaymentSettings](../interfaces/paymentsettings.md)
 
-# Interface: PaymentSettings
+# PaymentSettings
 
 ## Hierarchy
 

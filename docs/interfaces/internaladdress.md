@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalAddress](../interfaces/internaladdress.md)
 
-# Interface: InternalAddress
+# InternalAddress
 
 ## Hierarchy
 

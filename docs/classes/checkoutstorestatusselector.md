@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CheckoutStoreStatusSelector](../classes/checkoutstorestatusselector.md)
 
-# Class: CheckoutStoreStatusSelector
+# CheckoutStoreStatusSelector
 
 Responsible for checking the statuses of various asynchronous actions related to checkout.
 
@@ -90,7 +90,7 @@ ___
 
 ###  isDeletingInstrument
 
-▸ **isDeletingInstrument**(instrumentId?: *`undefined` |`string`*): `boolean`
+▸ **isDeletingInstrument**(instrumentId?: * `undefined` &#124; `string`*): `boolean`
 
 Checks whether the current customer is deleting a payment instrument.
 
@@ -98,9 +98,7 @@ Checks whether the current customer is deleting a payment instrument.
 
 | Param | Type |
 | ------ | ------ |
-| `Optional` instrumentId | `undefined` |
-`string`
- | 
+| `Optional` instrumentId |  `undefined` &#124; `string`|
 
 **Returns:** `boolean`
 True if deleting a payment instrument, otherwise false.
@@ -122,7 +120,7 @@ ___
 
 ###  isInitializingCustomer
 
-▸ **isInitializingCustomer**(methodId?: *`undefined` |`string`*): `boolean`
+▸ **isInitializingCustomer**(methodId?: * `undefined` &#124; `string`*): `boolean`
 
 Checks whether the customer step is initializing.
 
@@ -132,9 +130,7 @@ If an ID is provided, the method also checks whether the customer step is initia
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| `Optional` methodId | `undefined` |
-`string`
- |  The identifier of the method used for initializing the customer step of checkout. |
+| `Optional` methodId |  `undefined` &#124; `string`|  The identifier of the method used for initializing the customer step of checkout. |
 
 **Returns:** `boolean`
 True if the customer step is initializing, otherwise false.
@@ -144,7 +140,7 @@ ___
 
 ###  isInitializingPayment
 
-▸ **isInitializingPayment**(methodId?: *`undefined` |`string`*): `boolean`
+▸ **isInitializingPayment**(methodId?: * `undefined` &#124; `string`*): `boolean`
 
 Checks whether a specific or any payment method is initializing.
 
@@ -154,9 +150,7 @@ The method returns true if no ID is provided and at least one payment method is 
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| `Optional` methodId | `undefined` |
-`string`
- |  The identifier of the payment method to check. |
+| `Optional` methodId |  `undefined` &#124; `string`|  The identifier of the payment method to check. |
 
 **Returns:** `boolean`
 True if the payment method is initializing, otherwise false.
@@ -166,7 +160,7 @@ ___
 
 ###  isInitializingShipping
 
-▸ **isInitializingShipping**(methodId?: *`undefined` |`string`*): `boolean`
+▸ **isInitializingShipping**(methodId?: * `undefined` &#124; `string`*): `boolean`
 
 Checks whether the shipping step of a checkout process is initializing.
 
@@ -176,9 +170,7 @@ If an identifier is provided, the method also checks whether the shipping step i
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| `Optional` methodId | `undefined` |
-`string`
- |  The identifer of the initialization method to check. |
+| `Optional` methodId |  `undefined` &#124; `string`|  The identifer of the initialization method to check. |
 
 **Returns:** `boolean`
 True if the shipping step is initializing, otherwise false.
@@ -260,7 +252,7 @@ ___
 
 ###  isLoadingPaymentMethod
 
-▸ **isLoadingPaymentMethod**(methodId?: *`undefined` |`string`*): `boolean`
+▸ **isLoadingPaymentMethod**(methodId?: * `undefined` &#124; `string`*): `boolean`
 
 Checks whether a specific or any payment method is loading.
 
@@ -270,9 +262,7 @@ The method returns true if no ID is provided and at least one payment method is 
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| `Optional` methodId | `undefined` |
-`string`
- |  The identifier of the payment method to check. |
+| `Optional` methodId |  `undefined` &#124; `string`|  The identifier of the payment method to check. |
 
 **Returns:** `boolean`
 True if the payment method is loading, otherwise false.
@@ -380,7 +370,7 @@ ___
 
 ###  isSigningIn
 
-▸ **isSigningIn**(methodId?: *`undefined` |`string`*): `boolean`
+▸ **isSigningIn**(methodId?: * `undefined` &#124; `string`*): `boolean`
 
 Checks whether the current customer is signing in.
 
@@ -390,9 +380,7 @@ If an ID is provided, the method also checks whether the customer is signing in 
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| `Optional` methodId | `undefined` |
-`string`
- |  The identifier of the method used for signing in the current customer. |
+| `Optional` methodId |  `undefined` &#124; `string`|  The identifier of the method used for signing in the current customer. |
 
 **Returns:** `boolean`
 True if the customer is signing in, otherwise false.
@@ -402,7 +390,7 @@ ___
 
 ###  isSigningOut
 
-▸ **isSigningOut**(methodId?: *`undefined` |`string`*): `boolean`
+▸ **isSigningOut**(methodId?: * `undefined` &#124; `string`*): `boolean`
 
 Checks whether the current customer is signing out.
 
@@ -412,9 +400,7 @@ If an ID is provided, the method also checks whether the customer is signing out
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| `Optional` methodId | `undefined` |
-`string`
- |  The identifier of the method used for signing out the current customer. |
+| `Optional` methodId |  `undefined` &#124; `string`|  The identifier of the method used for signing out the current customer. |
 
 **Returns:** `boolean`
 True if the customer is signing out, otherwise false.

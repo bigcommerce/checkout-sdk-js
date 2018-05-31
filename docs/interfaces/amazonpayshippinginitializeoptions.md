@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [AmazonPayShippingInitializeOptions](../interfaces/amazonpayshippinginitializeoptions.md)
 
-# Interface: AmazonPayShippingInitializeOptions
+# AmazonPayShippingInitializeOptions
 
 ## Hierarchy
 
@@ -42,7 +42,7 @@ ___
 
 | Param | Type |
 | ------ | ------ |
-| reference | [AmazonPayOrderReference](amazonpayorderreference.md) | 
+| reference | [AmazonPayOrderReference](amazonpayorderreference.md) |
 
 **Returns:** `void`
 
@@ -51,15 +51,13 @@ ___
 
 ### `<Optional>` onError
 
-▸ **onError**(error: *[AmazonPayWidgetError](amazonpaywidgeterror.md) |[StandardError](../classes/standarderror.md)*): `void`
+▸ **onError**(error: * [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)*): `void`
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| error | [AmazonPayWidgetError](amazonpaywidgeterror.md) |
-[StandardError](../classes/standarderror.md)
- | 
+| error |  [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)|
 
 **Returns:** `void`
 

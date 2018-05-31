@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalGiftCertificate](../interfaces/internalgiftcertificate.md)
 
-# Interface: InternalGiftCertificate
+# InternalGiftCertificate
 
 ## Hierarchy
 
@@ -37,8 +37,7 @@ ___
 
 ### `<Optional>` giftCertificate
 
-**● giftCertificate**: *`undefined` |
-`object`
+**● giftCertificate**: * `undefined` &#124; `object`
 *
 
 ___

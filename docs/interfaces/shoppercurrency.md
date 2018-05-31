@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [ShopperCurrency](../interfaces/shoppercurrency.md)
 
-# Interface: ShopperCurrency
+# ShopperCurrency
 
 ## Hierarchy
 

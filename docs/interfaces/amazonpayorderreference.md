@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [AmazonPayOrderReference](../interfaces/amazonpayorderreference.md)
 
-# Interface: AmazonPayOrderReference
+# AmazonPayOrderReference
 
 ## Hierarchy
 

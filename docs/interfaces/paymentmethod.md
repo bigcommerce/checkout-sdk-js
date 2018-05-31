@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [PaymentMethod](../interfaces/paymentmethod.md)
 
-# Interface: PaymentMethod
+# PaymentMethod
 
 ## Hierarchy
 
@@ -30,8 +30,7 @@
 
 ### `<Optional>` clientToken
 
-**● clientToken**: *`undefined` |
-`string`
+**● clientToken**: * `undefined` &#124; `string`
 *
 
 ___
@@ -46,8 +45,7 @@ ___
 
 ### `<Optional>` gateway
 
-**● gateway**: *`undefined` |
-`string`
+**● gateway**: * `undefined` &#124; `string`
 *
 
 ___
@@ -69,8 +67,7 @@ ___
 
 ### `<Optional>` logoUrl
 
-**● logoUrl**: *`undefined` |
-`string`
+**● logoUrl**: * `undefined` &#124; `string`
 *
 
 ___
@@ -85,8 +82,7 @@ ___
 
 ### `<Optional>` nonce
 
-**● nonce**: *`undefined` |
-`string`
+**● nonce**: * `undefined` &#124; `string`
 *
 
 ___
@@ -94,8 +90,7 @@ ___
 
 ### `<Optional>` returnUrl
 
-**● returnUrl**: *`undefined` |
-`string`
+**● returnUrl**: * `undefined` &#124; `string`
 *
 
 ___

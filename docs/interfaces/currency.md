@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [Currency](../interfaces/currency.md)
 
-# Interface: Currency
+# Currency
 
 ## Hierarchy
 

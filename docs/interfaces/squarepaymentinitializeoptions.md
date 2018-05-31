@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [SquarePaymentInitializeOptions](../interfaces/squarepaymentinitializeoptions.md)
 
-# Interface: SquarePaymentInitializeOptions
+# SquarePaymentInitializeOptions
 
 ## Hierarchy
 
@@ -46,8 +46,7 @@ ___
 
 ### `<Optional>` inputClass
 
-**● inputClass**: *`undefined` |
-`string`
+**● inputClass**: * `undefined` &#124; `string`
 *
 
 ___

@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [StoreProfile](../interfaces/storeprofile.md)
 
-# Interface: StoreProfile
+# StoreProfile
 
 ## Hierarchy
 

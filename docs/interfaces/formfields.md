@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [FormFields](../interfaces/formfields.md)
 
-# Interface: FormFields
+# FormFields
 
 ## Hierarchy
 

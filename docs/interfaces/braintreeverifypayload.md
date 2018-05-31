@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [BraintreeVerifyPayload](../interfaces/braintreeverifypayload.md)
 
-# Interface: BraintreeVerifyPayload
+# BraintreeVerifyPayload
 
 ## Hierarchy
 

@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [AmazonPayPaymentInitializeOptions](../interfaces/amazonpaypaymentinitializeoptions.md)
 
-# Interface: AmazonPayPaymentInitializeOptions
+# AmazonPayPaymentInitializeOptions
 
 ## Hierarchy
 
@@ -36,15 +36,13 @@ ___
 
 ### `<Optional>` onError
 
-▸ **onError**(error: *[AmazonPayWidgetError](amazonpaywidgeterror.md) |[StandardError](../classes/standarderror.md)*): `void`
+▸ **onError**(error: * [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)*): `void`
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| error | [AmazonPayWidgetError](amazonpaywidgeterror.md) |
-[StandardError](../classes/standarderror.md)
- | 
+| error |  [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)|
 
 **Returns:** `void`
 
@@ -59,7 +57,7 @@ ___
 
 | Param | Type |
 | ------ | ------ |
-| reference | [AmazonPayOrderReference](amazonpayorderreference.md) | 
+| reference | [AmazonPayOrderReference](amazonpayorderreference.md) |
 
 **Returns:** `void`
 
@@ -74,7 +72,7 @@ ___
 
 | Param | Type |
 | ------ | ------ |
-| reference | [AmazonPayOrderReference](amazonpayorderreference.md) | 
+| reference | [AmazonPayOrderReference](amazonpayorderreference.md) |
 
 **Returns:** `void`
 

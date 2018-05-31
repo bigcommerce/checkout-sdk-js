@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [BraintreeVisaCheckoutPaymentInitializeOptions](../interfaces/braintreevisacheckoutpaymentinitializeoptions.md)
 
-# Interface: BraintreeVisaCheckoutPaymentInitializeOptions
+# BraintreeVisaCheckoutPaymentInitializeOptions
 
 ## Hierarchy
 
@@ -27,7 +27,7 @@
 
 | Param | Type |
 | ------ | ------ |
-| error | `Error` | 
+| error | `Error` |
 
 **Returns:** `void`
 

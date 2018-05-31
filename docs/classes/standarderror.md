@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [StandardError](../classes/standarderror.md)
 
-# Class: StandardError
+# StandardError
 
 ## Hierarchy
 
@@ -9,10 +9,6 @@
 **↳ StandardError**
 
 ## Index
-
-### Constructors
-
-* [constructor](standarderror.md#constructor)
 
 ### Properties
 
@@ -29,15 +25,13 @@
 
 ###  constructor
 
-⊕ **new StandardError**(message?: *`undefined` |`string`*): [StandardError](standarderror.md)
+⊕ **new StandardError**(message?: * `undefined` &#124; `string`*): [StandardError](standarderror.md)
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| `Optional` message | `undefined` |
-`string`
- | 
+| `Optional` message |  `undefined` &#124; `string`|
 
 **Returns:** [StandardError](standarderror.md)
 
@@ -70,8 +64,7 @@ ___
 
 ### `<Static>``<Optional>` stack
 
-**● stack**: *`undefined` |
-`string`
+**● stack**: * `undefined` &#124; `string`
 *
 
 ___

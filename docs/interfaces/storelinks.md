@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [StoreLinks](../interfaces/storelinks.md)
 
-# Interface: StoreLinks
+# StoreLinks
 
 ## Hierarchy
 

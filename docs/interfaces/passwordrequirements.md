@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [PasswordRequirements](../interfaces/passwordrequirements.md)
 
-# Interface: PasswordRequirements
+# PasswordRequirements
 
 ## Hierarchy
 

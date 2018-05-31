@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [LanguageService](../classes/languageservice.md)
 
-# Class: LanguageService
+# LanguageService
 
 Responsible for getting language strings.
 

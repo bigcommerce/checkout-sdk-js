@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CreditCardInstrument](../interfaces/creditcardinstrument.md)
 
-# Interface: CreditCardInstrument
+# CreditCardInstrument
 
 ## Hierarchy
 
@@ -26,8 +26,7 @@
 
 ### `<Optional>` ccCvv
 
-**● ccCvv**: *`undefined` |
-`string`
+**● ccCvv**: * `undefined` &#124; `string`
 *
 
 ___
@@ -76,9 +75,7 @@ ___
 
 ### `<Optional>` shouldSaveInstrument
 
-**● shouldSaveInstrument**: *`undefined` |
-`true` |
-`false`
+**● shouldSaveInstrument**: * `undefined` &#124; `true` &#124; `false`
 *
 
 ___
