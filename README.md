@@ -224,6 +224,10 @@ await service.submitOrder({ payment });
 * In order to keep up to date on the latest changes, please subscribe to this repository by clicking on the [watch](https://github.com/bigcommerce/checkout-sdk-js/subscription) button.
 
 
+## API reference
+
+You can learn more about the API by reading the [API reference](docs/README.md).
+
 
 ## See also
 
