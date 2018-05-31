@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [DiscountNotification](../interfaces/discountnotification.md)
 
-# Interface: DiscountNotification
+# DiscountNotification
 
 ## Hierarchy
 

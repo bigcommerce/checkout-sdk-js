@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CustomerInitializeOptions](../interfaces/customerinitializeoptions.md)
 
-# Interface: CustomerInitializeOptions
+# CustomerInitializeOptions
 
 ## Hierarchy
 
@@ -39,8 +39,7 @@ ___
 
 ### `<Optional>` methodId
 
-**● methodId**: *`undefined` |
-`string`
+**● methodId**: * `undefined` &#124; `string`
 *
 
 ___

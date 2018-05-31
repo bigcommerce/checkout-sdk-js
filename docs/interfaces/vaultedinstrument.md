@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [VaultedInstrument](../interfaces/vaultedinstrument.md)
 
-# Interface: VaultedInstrument
+# VaultedInstrument
 
 ## Hierarchy
 
@@ -21,8 +21,7 @@
 
 ### `<Optional>` cvv
 
-**● cvv**: *`undefined` |
-`number`
+**● cvv**: * `undefined` &#124; `number`
 *
 
 ___

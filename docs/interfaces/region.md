@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [Region](../interfaces/region.md)
 
-# Interface: Region
+# Region
 
 ## Hierarchy
 

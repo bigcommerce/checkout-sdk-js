@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CheckoutStoreSelector](../classes/checkoutstoreselector.md)
 
-# Class: CheckoutStoreSelector
+# CheckoutStoreSelector
 
 Responsible for getting the state of the current checkout.
 
@@ -42,12 +42,11 @@ This object has a set of methods that allow you to get a specific piece of check
 
 ###  getBillingAddress
 
-▸ **getBillingAddress**(): [InternalAddress](../interfaces/internaladdress.md) |`undefined`
+▸ **getBillingAddress**():  [InternalAddress](../interfaces/internaladdress.md) &#124; `undefined`
 
 Gets the billing address of an order.
 
-**Returns:** [InternalAddress](../interfaces/internaladdress.md) |
-`undefined`
+**Returns:**  [InternalAddress](../interfaces/internaladdress.md) &#124; `undefined`
 
 The billing address object if it is loaded, otherwise undefined.
 
@@ -75,12 +74,11 @@ ___
 
 ###  getBillingCountries
 
-▸ **getBillingCountries**(): [Country](../interfaces/country.md)[] |`undefined`
+▸ **getBillingCountries**():  [Country](../interfaces/country.md)[] &#124; `undefined`
 
 Gets a list of countries available for billing.
 
-**Returns:** [Country](../interfaces/country.md)[] |
-`undefined`
+**Returns:**  [Country](../interfaces/country.md)[] &#124; `undefined`
 
 The list of countries if it is loaded, otherwise undefined.
 
@@ -89,12 +87,11 @@ ___
 
 ###  getCart
 
-▸ **getCart**(): [InternalCart](../interfaces/internalcart.md) |`undefined`
+▸ **getCart**():  [InternalCart](../interfaces/internalcart.md) &#124; `undefined`
 
 Gets the current cart.
 
-**Returns:** [InternalCart](../interfaces/internalcart.md) |
-`undefined`
+**Returns:**  [InternalCart](../interfaces/internalcart.md) &#124; `undefined`
 
 The current cart object if it is loaded, otherwise undefined.
 
@@ -103,12 +100,11 @@ ___
 
 ###  getConfig
 
-▸ **getConfig**(): [StoreConfig](../interfaces/storeconfig.md) |`undefined`
+▸ **getConfig**():  [StoreConfig](../interfaces/storeconfig.md) &#124; `undefined`
 
 Gets the checkout configuration of a store.
 
-**Returns:** [StoreConfig](../interfaces/storeconfig.md) |
-`undefined`
+**Returns:**  [StoreConfig](../interfaces/storeconfig.md) &#124; `undefined`
 
 The configuration object if it is loaded, otherwise undefined.
 
@@ -117,12 +113,11 @@ ___
 
 ###  getCustomer
 
-▸ **getCustomer**(): [InternalCustomer](../interfaces/internalcustomer.md) |`undefined`
+▸ **getCustomer**():  [InternalCustomer](../interfaces/internalcustomer.md) &#124; `undefined`
 
 Gets the current customer.
 
-**Returns:** [InternalCustomer](../interfaces/internalcustomer.md) |
-`undefined`
+**Returns:**  [InternalCustomer](../interfaces/internalcustomer.md) &#124; `undefined`
 
 The current customer object if it is loaded, otherwise
 undefined.
@@ -132,12 +127,11 @@ ___
 
 ###  getInstruments
 
-▸ **getInstruments**(): [Instrument](../interfaces/instrument.md)[] |`undefined`
+▸ **getInstruments**():  [Instrument](../interfaces/instrument.md)[] &#124; `undefined`
 
 Gets a list of payment instruments associated with the current customer.
 
-**Returns:** [Instrument](../interfaces/instrument.md)[] |
-`undefined`
+**Returns:**  [Instrument](../interfaces/instrument.md)[] &#124; `undefined`
 
 The list of payment instruments if it is loaded, otherwise undefined.
 
@@ -146,15 +140,13 @@ ___
 
 ###  getOrder
 
-▸ **getOrder**(): [InternalOrder](../interfaces/internalorder.md) |[InternalIncompleteOrder](../interfaces/internalincompleteorder.md) |`undefined`
+▸ **getOrder**():  [InternalOrder](../interfaces/internalorder.md) &#124; [InternalIncompleteOrder](../interfaces/internalincompleteorder.md) &#124; `undefined`
 
 Gets the current order.
 
 If the order is not submitted, the method returns the order as incomplete. Otherwise, it returns the order as complete with an identifier.
 
-**Returns:** [InternalOrder](../interfaces/internalorder.md) |
-[InternalIncompleteOrder](../interfaces/internalincompleteorder.md) |
-`undefined`
+**Returns:**  [InternalOrder](../interfaces/internalorder.md) &#124; [InternalIncompleteOrder](../interfaces/internalincompleteorder.md) &#124; `undefined`
 
 The current order if it is loaded, otherwise undefined.
 
@@ -163,7 +155,7 @@ ___
 
 ###  getPaymentMethod
 
-▸ **getPaymentMethod**(methodId: *`string`*, gatewayId?: *`undefined` |`string`*): [PaymentMethod](../interfaces/paymentmethod.md) |`undefined`
+▸ **getPaymentMethod**(methodId: *`string`*, gatewayId?: * `undefined` &#124; `string`*):  [PaymentMethod](../interfaces/paymentmethod.md) &#124; `undefined`
 
 Gets a payment method by an id.
 
@@ -174,12 +166,9 @@ The method returns undefined if unable to find a payment method with the specifi
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | methodId | `string` |  The identifier of the payment method. |
-| `Optional` gatewayId | `undefined` |
-`string`
- |  The identifier of a payment provider providing the payment method. |
+| `Optional` gatewayId |  `undefined` &#124; `string`|  The identifier of a payment provider providing the payment method. |
 
-**Returns:** [PaymentMethod](../interfaces/paymentmethod.md) |
-`undefined`
+**Returns:**  [PaymentMethod](../interfaces/paymentmethod.md) &#124; `undefined`
 
 The payment method object if loaded and available, otherwise,
 undefined.
@@ -189,12 +178,11 @@ ___
 
 ###  getPaymentMethods
 
-▸ **getPaymentMethods**(): [PaymentMethod](../interfaces/paymentmethod.md)[] |`undefined`
+▸ **getPaymentMethods**():  [PaymentMethod](../interfaces/paymentmethod.md)[] &#124; `undefined`
 
 Gets a list of payment methods available for checkout.
 
-**Returns:** [PaymentMethod](../interfaces/paymentmethod.md)[] |
-`undefined`
+**Returns:**  [PaymentMethod](../interfaces/paymentmethod.md)[] &#124; `undefined`
 
 The list of payment methods if it is loaded, otherwise undefined.
 
@@ -203,13 +191,12 @@ ___
 
 ###  getQuote
 
-▸ **getQuote**(): [InternalQuote](../interfaces/internalquote.md) |`undefined`
+▸ **getQuote**():  [InternalQuote](../interfaces/internalquote.md) &#124; `undefined`
 
 Gets the current quote.
 *__deprecated__*: This method will be replaced in the future.
 
-**Returns:** [InternalQuote](../interfaces/internalquote.md) |
-`undefined`
+**Returns:**  [InternalQuote](../interfaces/internalquote.md) &#124; `undefined`
 
 The current quote if it is loaded, otherwise undefined.
 
@@ -218,12 +205,11 @@ ___
 
 ###  getSelectedPaymentMethod
 
-▸ **getSelectedPaymentMethod**(): [PaymentMethod](../interfaces/paymentmethod.md) |`undefined`
+▸ **getSelectedPaymentMethod**():  [PaymentMethod](../interfaces/paymentmethod.md) &#124; `undefined`
 
 Gets the payment method that is selected for checkout.
 
-**Returns:** [PaymentMethod](../interfaces/paymentmethod.md) |
-`undefined`
+**Returns:**  [PaymentMethod](../interfaces/paymentmethod.md) &#124; `undefined`
 
 The payment method object if there is a selected method;
 undefined if otherwise.
@@ -233,12 +219,11 @@ ___
 
 ###  getSelectedShippingOption
 
-▸ **getSelectedShippingOption**(): [InternalShippingOption](../interfaces/internalshippingoption.md) |`undefined`
+▸ **getSelectedShippingOption**():  [InternalShippingOption](../interfaces/internalshippingoption.md) &#124; `undefined`
 
 Gets the selected shipping option for the current checkout.
 
-**Returns:** [InternalShippingOption](../interfaces/internalshippingoption.md) |
-`undefined`
+**Returns:**  [InternalShippingOption](../interfaces/internalshippingoption.md) &#124; `undefined`
 
 The shipping option object if there is a selected option,
 otherwise undefined.
@@ -248,14 +233,13 @@ ___
 
 ###  getShippingAddress
 
-▸ **getShippingAddress**(): [InternalAddress](../interfaces/internaladdress.md) |`undefined`
+▸ **getShippingAddress**():  [InternalAddress](../interfaces/internaladdress.md) &#124; `undefined`
 
 Gets the shipping address of the current checkout.
 
 If the address is partially complete, it may not have shipping options associated with it.
 
-**Returns:** [InternalAddress](../interfaces/internaladdress.md) |
-`undefined`
+**Returns:**  [InternalAddress](../interfaces/internaladdress.md) &#124; `undefined`
 
 The shipping address object if it is loaded, otherwise
 undefined.
@@ -284,12 +268,11 @@ ___
 
 ###  getShippingCountries
 
-▸ **getShippingCountries**(): [Country](../interfaces/country.md)[] |`undefined`
+▸ **getShippingCountries**():  [Country](../interfaces/country.md)[] &#124; `undefined`
 
 Gets a list of countries available for shipping.
 
-**Returns:** [Country](../interfaces/country.md)[] |
-`undefined`
+**Returns:**  [Country](../interfaces/country.md)[] &#124; `undefined`
 
 The list of countries if it is loaded, otherwise undefined.
 
@@ -298,14 +281,13 @@ ___
 
 ###  getShippingOptions
 
-▸ **getShippingOptions**(): [InternalShippingOptionList](../interfaces/internalshippingoptionlist.md) |`undefined`
+▸ **getShippingOptions**():  [InternalShippingOptionList](../interfaces/internalshippingoptionlist.md) &#124; `undefined`
 
 Gets a list of shipping options available for each shipping address.
 
 If there is no shipping address assigned to the current checkout, the list of shipping options will be empty.
 
-**Returns:** [InternalShippingOptionList](../interfaces/internalshippingoptionlist.md) |
-`undefined`
+**Returns:**  [InternalShippingOptionList](../interfaces/internalshippingoptionlist.md) &#124; `undefined`
 
 The list of shipping options per address if loaded, otherwise
 undefined.
@@ -315,7 +297,7 @@ ___
 
 ###  isPaymentDataRequired
 
-▸ **isPaymentDataRequired**(useStoreCredit?: *`undefined` |`true` |`false`*): `boolean`
+▸ **isPaymentDataRequired**(useStoreCredit?: * `undefined` &#124; `true` &#124; `false`*): `boolean`
 
 Checks if payment data is required or not.
 
@@ -333,10 +315,7 @@ if (state.checkout.isPaymentDataRequired()) {
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| `Optional` useStoreCredit | `undefined` |
-`true` |
-`false`
- |  If true, check whether payment data is required with store credit applied; otherwise, check without store credit. |
+| `Optional` useStoreCredit |  `undefined` &#124; `true` &#124; `false`|  If true, check whether payment data is required with store credit applied; otherwise, check without store credit. |
 
 **Returns:** `boolean`
 True if payment data is required, otherwise false.
@@ -346,7 +325,7 @@ ___
 
 ###  isPaymentDataSubmitted
 
-▸ **isPaymentDataSubmitted**(methodId: *`string`*, gatewayId?: *`undefined` |`string`*): `boolean`
+▸ **isPaymentDataSubmitted**(methodId: *`string`*, gatewayId?: * `undefined` &#124; `string`*): `boolean`
 
 Checks if payment data is submitted or not.
 
@@ -357,9 +336,7 @@ If payment data is already submitted using a payment method, customers should no
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | methodId | `string` |  The identifier of the payment method. |
-| `Optional` gatewayId | `undefined` |
-`string`
- |  The identifier of a payment provider providing the payment method. |
+| `Optional` gatewayId |  `undefined` &#124; `string`|  The identifier of a payment provider providing the payment method. |
 
 **Returns:** `boolean`
 True if payment data is submitted, otherwise false.

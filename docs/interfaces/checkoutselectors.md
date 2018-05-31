@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CheckoutSelectors](../interfaces/checkoutselectors.md)
 
-# Interface: CheckoutSelectors
+# CheckoutSelectors
 
 ## Hierarchy
 

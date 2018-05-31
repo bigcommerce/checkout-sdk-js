@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [AmazonPayWidgetError](../interfaces/amazonpaywidgeterror.md)
 
-# Interface: AmazonPayWidgetError
+# AmazonPayWidgetError
 
 ## Hierarchy
 
@@ -50,8 +50,7 @@ ___
 
 ### `<Optional>` stack
 
-**● stack**: *`undefined` |
-`string`
+**● stack**: * `undefined` &#124; `string`
 *
 
 ___

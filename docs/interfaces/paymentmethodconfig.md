@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [PaymentMethodConfig](../interfaces/paymentmethodconfig.md)
 
-# Interface: PaymentMethodConfig
+# PaymentMethodConfig
 
 ## Hierarchy
 
@@ -25,9 +25,7 @@
 
 ### `<Optional>` cardCode
 
-**● cardCode**: *`undefined` |
-`true` |
-`false`
+**● cardCode**: * `undefined` &#124; `true` &#124; `false`
 *
 
 ___
@@ -35,8 +33,7 @@ ___
 
 ### `<Optional>` displayName
 
-**● displayName**: *`undefined` |
-`string`
+**● displayName**: * `undefined` &#124; `string`
 *
 
 ___
@@ -44,9 +41,7 @@ ___
 
 ### `<Optional>` is3dsEnabled
 
-**● is3dsEnabled**: *`undefined` |
-`true` |
-`false`
+**● is3dsEnabled**: * `undefined` &#124; `true` &#124; `false`
 *
 
 ___
@@ -54,8 +49,7 @@ ___
 
 ### `<Optional>` merchantId
 
-**● merchantId**: *`undefined` |
-`string`
+**● merchantId**: * `undefined` &#124; `string`
 *
 
 ___
@@ -63,8 +57,7 @@ ___
 
 ### `<Optional>` redirectUrl
 
-**● redirectUrl**: *`undefined` |
-`string`
+**● redirectUrl**: * `undefined` &#124; `string`
 *
 
 ___
@@ -72,9 +65,7 @@ ___
 
 ### `<Optional>` testMode
 
-**● testMode**: *`undefined` |
-`true` |
-`false`
+**● testMode**: * `undefined` &#124; `true` &#124; `false`
 *
 
 ___

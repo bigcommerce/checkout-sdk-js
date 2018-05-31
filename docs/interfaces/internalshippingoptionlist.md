@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalShippingOptionList](../interfaces/internalshippingoptionlist.md)
 
-# Interface: InternalShippingOptionList
+# InternalShippingOptionList
 
 ## Hierarchy
 

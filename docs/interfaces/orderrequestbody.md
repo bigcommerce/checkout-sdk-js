@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [OrderRequestBody](../interfaces/orderrequestbody.md)
 
-# Interface: OrderRequestBody
+# OrderRequestBody
 
 ## Hierarchy
 
@@ -22,8 +22,7 @@
 
 ### `<Optional>` customerMessage
 
-**● customerMessage**: *`undefined` |
-`string`
+**● customerMessage**: * `undefined` &#124; `string`
 *
 
 ___
@@ -38,9 +37,7 @@ ___
 
 ### `<Optional>` useStoreCredit
 
-**● useStoreCredit**: *`undefined` |
-`true` |
-`false`
+**● useStoreCredit**: * `undefined` &#124; `true` &#124; `false`
 *
 
 ___

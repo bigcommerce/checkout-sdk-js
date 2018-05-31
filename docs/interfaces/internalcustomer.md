@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalCustomer](../interfaces/internalcustomer.md)
 
-# Interface: InternalCustomer
+# InternalCustomer
 
 ## Hierarchy
 
@@ -93,8 +93,7 @@ ___
 
 ### `<Optional>` remote
 
-**● remote**: *`undefined` |
-`object`
+**● remote**: * `undefined` &#124; `object`
 *
 
 ___

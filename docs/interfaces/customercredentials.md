@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CustomerCredentials](../interfaces/customercredentials.md)
 
-# Interface: CustomerCredentials
+# CustomerCredentials
 
 ## Hierarchy
 
@@ -28,8 +28,7 @@ ___
 
 ### `<Optional>` password
 
-**● password**: *`undefined` |
-`string`
+**● password**: * `undefined` &#124; `string`
 *
 
 ___

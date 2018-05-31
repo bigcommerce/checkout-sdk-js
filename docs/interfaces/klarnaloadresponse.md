@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [KlarnaLoadResponse](../interfaces/klarnaloadresponse.md)
 
-# Interface: KlarnaLoadResponse
+# KlarnaLoadResponse
 
 ## Hierarchy
 
@@ -21,8 +21,7 @@
 
 ### `<Optional>` error
 
-**● error**: *`undefined` |
-`object`
+**● error**: * `undefined` &#124; `object`
 *
 
 ___

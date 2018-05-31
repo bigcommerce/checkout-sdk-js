@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [ShippingInitializeOptions](../interfaces/shippinginitializeoptions.md)
 
-# Interface: ShippingInitializeOptions
+# ShippingInitializeOptions
 
 ## Hierarchy
 
@@ -31,8 +31,7 @@ ___
 
 ### `<Optional>` methodId
 
-**● methodId**: *`undefined` |
-`string`
+**● methodId**: * `undefined` &#124; `string`
 *
 
 ___

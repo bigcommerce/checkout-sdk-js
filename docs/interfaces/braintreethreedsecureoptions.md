@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [BraintreeThreeDSecureOptions](../interfaces/braintreethreedsecureoptions.md)
 
-# Interface: BraintreeThreeDSecureOptions
+# BraintreeThreeDSecureOptions
 
 ## Hierarchy
 
@@ -21,17 +21,15 @@
 
 ###  addFrame
 
-▸ **addFrame**(error: *`Error` |`undefined`*, iframe: *`HTMLIFrameElement`*, cancel: *`function`*): `void`
+▸ **addFrame**(error: * `Error` &#124; `undefined`*, iframe: *`HTMLIFrameElement`*, cancel: *`function`*): `void`
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| error | `Error` |
-`undefined`
- | 
-| iframe | `HTMLIFrameElement` | 
-| cancel | `function` | 
+| error |  `Error` &#124; `undefined`|
+| iframe | `HTMLIFrameElement` |
+| cancel | `function` |
 
 **Returns:** `void`
 

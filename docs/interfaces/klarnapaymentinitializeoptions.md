@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [KlarnaPaymentInitializeOptions](../interfaces/klarnapaymentinitializeoptions.md)
 
-# Interface: KlarnaPaymentInitializeOptions
+# KlarnaPaymentInitializeOptions
 
 ## Hierarchy
 
@@ -40,7 +40,7 @@ ___
 
 | Param | Type |
 | ------ | ------ |
-| response | [KlarnaLoadResponse](klarnaloadresponse.md) | 
+| response | [KlarnaLoadResponse](klarnaloadresponse.md) |
 
 **Returns:** `void`
 

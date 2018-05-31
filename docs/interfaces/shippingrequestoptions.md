@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [ShippingRequestOptions](../interfaces/shippingrequestoptions.md)
 
-# Interface: ShippingRequestOptions
+# ShippingRequestOptions
 
 ## Hierarchy
 
@@ -25,8 +25,7 @@
 
 ### `<Optional>` methodId
 
-**● methodId**: *`undefined` |
-`string`
+**● methodId**: * `undefined` &#124; `string`
 *
 
 ___

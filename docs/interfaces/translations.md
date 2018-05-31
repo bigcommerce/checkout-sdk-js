@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [Translations](../interfaces/translations.md)
 
-# Interface: Translations
+# Translations
 
 ## Hierarchy
 
@@ -8,8 +8,7 @@
 
 ## Indexable
 
-\[key: `string`\]:&nbsp;`string` |
-[Translations](translations.md)
+\[key: `string`\]:&nbsp; `string` &#124; [Translations](translations.md)
 
 ## Index
 

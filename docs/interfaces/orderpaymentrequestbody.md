@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [OrderPaymentRequestBody](../interfaces/orderpaymentrequestbody.md)
 
-# Interface: OrderPaymentRequestBody
+# OrderPaymentRequestBody
 
 ## Hierarchy
 
@@ -22,8 +22,7 @@
 
 ### `<Optional>` gatewayId
 
-**● gatewayId**: *`undefined` |
-`string`
+**● gatewayId**: * `undefined` &#124; `string`
 *
 
 ___
@@ -38,8 +37,7 @@ ___
 
 ### `<Optional>` paymentData
 
-**● paymentData**: *[CreditCardInstrument](creditcardinstrument.md) |
-[VaultedInstrument](vaultedinstrument.md)
+**● paymentData**: * [CreditCardInstrument](creditcardinstrument.md) &#124; [VaultedInstrument](vaultedinstrument.md)
 *
 
 ___

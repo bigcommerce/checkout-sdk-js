@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [BraintreePaymentInitializeOptions](../interfaces/braintreepaymentinitializeoptions.md)
 
-# Interface: BraintreePaymentInitializeOptions
+# BraintreePaymentInitializeOptions
 
 ## Hierarchy
 

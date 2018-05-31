@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [PaymentRequestOptions](../interfaces/paymentrequestoptions.md)
 
-# Interface: PaymentRequestOptions
+# PaymentRequestOptions
 
 ## Hierarchy
 
@@ -26,8 +26,7 @@
 
 ### `<Optional>` gatewayId
 
-**● gatewayId**: *`undefined` |
-`string`
+**● gatewayId**: * `undefined` &#124; `string`
 *
 
 ___

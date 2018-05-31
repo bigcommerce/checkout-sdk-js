@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [SquareFormElement](../interfaces/squareformelement.md)
 
-# Interface: SquareFormElement
+# SquareFormElement
 
 ## Hierarchy
 
@@ -28,8 +28,7 @@ ___
 
 ### `<Optional>` placeholder
 
-**● placeholder**: *`undefined` |
-`string`
+**● placeholder**: * `undefined` &#124; `string`
 *
 
 ___

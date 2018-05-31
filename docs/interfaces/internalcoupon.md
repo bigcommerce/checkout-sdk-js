@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalCoupon](../interfaces/internalcoupon.md)
 
-# Interface: InternalCoupon
+# InternalCoupon
 
 ## Hierarchy
 

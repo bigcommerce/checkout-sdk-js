@@ -1,6 +1,6 @@
 [@bigcommerce/checkout-sdk](../README.md) > [RequestOptions](../interfaces/requestoptions.md)
 
-# Interface: RequestOptions
+# RequestOptions
 
 ## Hierarchy
 
