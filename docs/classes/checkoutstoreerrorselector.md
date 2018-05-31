@@ -2,6 +2,10 @@
 
 # Class: CheckoutStoreErrorSelector
 
+Responsible for getting the error of any asynchronous checkout action, if there is any.
+
+This object has a set of getters that would return an error if an action is not executed successfully. For example, if you are unable to submit an order, you can use this object to retrieve the reason for the failure.
+
 ## Hierarchy
 
 **CheckoutStoreErrorSelector**
@@ -36,7 +40,6 @@
 * [getSubmitOrderError](checkoutstoreerrorselector.md#getsubmitordererror)
 * [getUpdateBillingAddressError](checkoutstoreerrorselector.md#getupdatebillingaddresserror)
 * [getUpdateShippingAddressError](checkoutstoreerrorselector.md#getupdateshippingaddresserror)
-* [getVaultInstrumentError](checkoutstoreerrorselector.md#getvaultinstrumenterror)
 * [getVerifyCartError](checkoutstoreerrorselector.md#getverifycarterror)
 
 ---
@@ -49,8 +52,12 @@
 
 ▸ **getApplyCouponError**(): `Error` |`undefined`
 
+Returns an error if unable to apply a coupon code.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to apply, otherwise undefined.
 
 ___
 <a id="getapplygiftcertificateerror"></a>
@@ -59,8 +66,12 @@ ___
 
 ▸ **getApplyGiftCertificateError**(): `Error` |`undefined`
 
+Returns an error if unable to apply a gift certificate.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to apply, otherwise undefined.
 
 ___
 <a id="getdeleteinstrumenterror"></a>
@@ -69,16 +80,20 @@ ___
 
 ▸ **getDeleteInstrumentError**(instrumentId?: *`undefined` |`string`*): `Error` |`undefined`
 
+Returns an error if unable to delete a payment instrument.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` instrumentId | `undefined` |
 `string`
- | 
+ |  The identifier of the payment instrument to delete. |
 
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to delete, otherwise undefined.
 
 ___
 <a id="geterror"></a>
@@ -87,8 +102,13 @@ ___
 
 ▸ **getError**(): `Error` |`undefined`
 
+Gets the error of any checkout action that has failed.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to perform any checkout action,
+otherwise undefined.
 
 ___
 <a id="getfinalizeordererror"></a>
@@ -97,8 +117,12 @@ ___
 
 ▸ **getFinalizeOrderError**(): `Error` |`undefined`
 
+Returns an error if unable to finalize the current order.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to finalize, otherwise undefined.
 
 ___
 <a id="getinitializecustomererror"></a>
@@ -107,16 +131,20 @@ ___
 
 ▸ **getInitializeCustomerError**(methodId?: *`undefined` |`string`*): `Error` |`undefined`
 
+Returns an error if unable to initialize the customer step of a checkout process.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifer of the initialization method to execute. |
 
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to initialize, otherwise undefined.
 
 ___
 <a id="getinitializepaymenterror"></a>
@@ -125,16 +153,20 @@ ___
 
 ▸ **getInitializePaymentError**(methodId?: *`undefined` |`string`*): `Error` |`undefined`
 
+Returns an error if unable to initialize a specific payment method.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifier of the payment method to initialize. |
 
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to initialize, otherwise undefined.
 
 ___
 <a id="getinitializeshippingerror"></a>
@@ -143,16 +175,20 @@ ___
 
 ▸ **getInitializeShippingError**(methodId?: *`undefined` |`string`*): `Error` |`undefined`
 
+Returns an error if unable to initialize the shipping step of a checkout process.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifer of the initialization method to execute. |
 
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to initialize, otherwise undefined.
 
 ___
 <a id="getloadbillingcountrieserror"></a>
@@ -161,8 +197,12 @@ ___
 
 ▸ **getLoadBillingCountriesError**(): `Error` |`undefined`
 
+Returns an error if unable to load billing countries.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadcarterror"></a>
@@ -171,8 +211,12 @@ ___
 
 ▸ **getLoadCartError**(): `Error` |`undefined`
 
+Returns an error if unable to load the current cart.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadcheckouterror"></a>
@@ -181,8 +225,12 @@ ___
 
 ▸ **getLoadCheckoutError**(): `Error` |`undefined`
 
+Returns an error if unable to load the current checkout.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadconfigerror"></a>
@@ -191,8 +239,12 @@ ___
 
 ▸ **getLoadConfigError**(): `Error` |`undefined`
 
+Returns an error if unable to load the checkout configuration of a store.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadinstrumentserror"></a>
@@ -201,8 +253,12 @@ ___
 
 ▸ **getLoadInstrumentsError**(): `Error` |`undefined`
 
+Returns an error if unable to load payment instruments.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadordererror"></a>
@@ -211,8 +267,12 @@ ___
 
 ▸ **getLoadOrderError**(): `Error` |`undefined`
 
+Returns an error if unable to load the current order.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadpaymentmethoderror"></a>
@@ -221,16 +281,20 @@ ___
 
 ▸ **getLoadPaymentMethodError**(methodId?: *`undefined` |`string`*): `Error` |`undefined`
 
+Returns an error if unable to load a specific payment method.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifier of the payment method to load. |
 
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadpaymentmethodserror"></a>
@@ -239,8 +303,12 @@ ___
 
 ▸ **getLoadPaymentMethodsError**(): `Error` |`undefined`
 
+Returns an error if unable to load payment methods.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadshippingcountrieserror"></a>
@@ -249,8 +317,12 @@ ___
 
 ▸ **getLoadShippingCountriesError**(): `Error` |`undefined`
 
+Returns an error if unable to load shipping countries.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getloadshippingoptionserror"></a>
@@ -259,8 +331,12 @@ ___
 
 ▸ **getLoadShippingOptionsError**(): `Error` |`undefined`
 
+Returns an error if unable to load shipping options.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to load, otherwise undefined.
 
 ___
 <a id="getremovecouponerror"></a>
@@ -269,8 +345,12 @@ ___
 
 ▸ **getRemoveCouponError**(): `Error` |`undefined`
 
+Returns an error if unable to remove a coupon code.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to remove, otherwise undefined.
 
 ___
 <a id="getremovegiftcertificateerror"></a>
@@ -279,8 +359,12 @@ ___
 
 ▸ **getRemoveGiftCertificateError**(): `Error` |`undefined`
 
+Returns an error if unable to remove a gift certificate.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to remove, otherwise undefined.
 
 ___
 <a id="getselectshippingoptionerror"></a>
@@ -289,8 +373,12 @@ ___
 
 ▸ **getSelectShippingOptionError**(): `Error` |`undefined`
 
+Returns an error if unable to select a shipping option.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to select, otherwise undefined.
 
 ___
 <a id="getsigninerror"></a>
@@ -299,8 +387,12 @@ ___
 
 ▸ **getSignInError**(): `Error` |`undefined`
 
+Returns an error if unable to sign in.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to sign in, otherwise undefined.
 
 ___
 <a id="getsignouterror"></a>
@@ -309,8 +401,12 @@ ___
 
 ▸ **getSignOutError**(): `Error` |`undefined`
 
+Returns an error if unable to sign out.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to sign out, otherwise undefined.
 
 ___
 <a id="getsubmitordererror"></a>
@@ -319,8 +415,12 @@ ___
 
 ▸ **getSubmitOrderError**(): `Error` |`undefined`
 
+Returns an error if unable to submit the current order.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to submit, otherwise undefined.
 
 ___
 <a id="getupdatebillingaddresserror"></a>
@@ -329,8 +429,12 @@ ___
 
 ▸ **getUpdateBillingAddressError**(): `Error` |`undefined`
 
+Returns an error if unable to update a billing address.
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to update, otherwise undefined.
 
 ___
 <a id="getupdateshippingaddresserror"></a>
@@ -339,18 +443,12 @@ ___
 
 ▸ **getUpdateShippingAddressError**(): `Error` |`undefined`
 
-**Returns:** `Error` |
-`undefined`
-
-___
-<a id="getvaultinstrumenterror"></a>
-
-###  getVaultInstrumentError
-
-▸ **getVaultInstrumentError**(): `Error` |`undefined`
+Returns an error if unable to update a shipping address.
 
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to update, otherwise undefined.
 
 ___
 <a id="getverifycarterror"></a>
@@ -359,8 +457,15 @@ ___
 
 ▸ **getVerifyCartError**(): `Error` |`undefined`
 
+Returns an error if unable to verify the current cart.
+
+This method is deprecated because cart verification is an internal process, therefore should not be referred externally.
+*__deprecated__*: 
+
 **Returns:** `Error` |
 `undefined`
+
+The error object if unable to verify, otherwise undefined.
 
 ___
 

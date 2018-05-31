@@ -83,23 +83,23 @@ module.exports = require("@bigcommerce/data-store");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var invalid_argument_error_1 = __webpack_require__(125);
+var invalid_argument_error_1 = __webpack_require__(126);
 exports.InvalidArgumentError = invalid_argument_error_1.default;
-var missing_data_error_1 = __webpack_require__(126);
+var missing_data_error_1 = __webpack_require__(127);
 exports.MissingDataError = missing_data_error_1.default;
-var not_implemented_error_1 = __webpack_require__(127);
+var not_implemented_error_1 = __webpack_require__(128);
 exports.NotImplementedError = not_implemented_error_1.default;
-var not_initialized_error_1 = __webpack_require__(128);
+var not_initialized_error_1 = __webpack_require__(129);
 exports.NotInitializedError = not_initialized_error_1.default;
 var request_error_1 = __webpack_require__(34);
 exports.RequestError = request_error_1.default;
 var standard_error_1 = __webpack_require__(12);
 exports.StandardError = standard_error_1.default;
-var timeout_error_1 = __webpack_require__(129);
+var timeout_error_1 = __webpack_require__(130);
 exports.TimeoutError = timeout_error_1.default;
-var unrecoverable_error_1 = __webpack_require__(130);
+var unrecoverable_error_1 = __webpack_require__(131);
 exports.UnrecoverableError = unrecoverable_error_1.default;
-var unsupported_browser_error_1 = __webpack_require__(131);
+var unsupported_browser_error_1 = __webpack_require__(132);
 exports.UnsupportedBrowserError = unsupported_browser_error_1.default;
 
 
@@ -172,13 +172,13 @@ var checkout_service_1 = __webpack_require__(45);
 exports.CheckoutService = checkout_service_1.default;
 var checkout_store_error_selector_1 = __webpack_require__(91);
 exports.CheckoutStoreErrorSelector = checkout_store_error_selector_1.default;
-var checkout_store_selector_1 = __webpack_require__(99);
+var checkout_store_selector_1 = __webpack_require__(100);
 exports.CheckoutStoreSelector = checkout_store_selector_1.default;
-var checkout_store_status_selector_1 = __webpack_require__(100);
+var checkout_store_status_selector_1 = __webpack_require__(101);
 exports.CheckoutStoreStatusSelector = checkout_store_status_selector_1.default;
 var create_checkout_client_1 = __webpack_require__(48);
 exports.createCheckoutClient = create_checkout_client_1.default;
-var create_checkout_service_1 = __webpack_require__(230);
+var create_checkout_service_1 = __webpack_require__(231);
 exports.createCheckoutService = create_checkout_service_1.default;
 var create_checkout_store_1 = __webpack_require__(85);
 exports.createCheckoutStore = create_checkout_store_1.default;
@@ -191,27 +191,6 @@ exports.createCheckoutStore = create_checkout_store_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var payment_argument_invalid_error_1 = __webpack_require__(166);
-exports.PaymentArgumentInvalidError = payment_argument_invalid_error_1.default;
-var payment_method_invalid_error_1 = __webpack_require__(167);
-exports.PaymentMethodInvalidError = payment_method_invalid_error_1.default;
-var payment_method_cancelled_error_1 = __webpack_require__(168);
-exports.PaymentMethodCancelledError = payment_method_cancelled_error_1.default;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = require("@bigcommerce/request-sender");
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var bind_decorator_1 = __webpack_require__(92);
 exports.bindDecorator = bind_decorator_1.default;
 var create_freeze_proxy_1 = __webpack_require__(93);
@@ -219,15 +198,38 @@ exports.createFreezeProxy = create_freeze_proxy_1.default;
 exports.createFreezeProxies = create_freeze_proxy_1.createFreezeProxies;
 var cancellable_promise_1 = __webpack_require__(94);
 exports.CancellablePromise = cancellable_promise_1.default;
-var merge_or_push_1 = __webpack_require__(95);
+var get_environment_1 = __webpack_require__(95);
+exports.getEnvironment = get_environment_1.default;
+var merge_or_push_1 = __webpack_require__(96);
 exports.mergeOrPush = merge_or_push_1.default;
 var omit_deep_1 = __webpack_require__(47);
 exports.omitDeep = omit_deep_1.default;
-var omit_private_1 = __webpack_require__(96);
+var omit_private_1 = __webpack_require__(97);
 exports.omitPrivate = omit_private_1.default;
-var set_prototype_of_1 = __webpack_require__(97);
+var set_prototype_of_1 = __webpack_require__(98);
 exports.setPrototypeOf = set_prototype_of_1.default;
 
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var payment_argument_invalid_error_1 = __webpack_require__(167);
+exports.PaymentArgumentInvalidError = payment_argument_invalid_error_1.default;
+var payment_method_invalid_error_1 = __webpack_require__(168);
+exports.PaymentMethodInvalidError = payment_method_invalid_error_1.default;
+var payment_method_cancelled_error_1 = __webpack_require__(169);
+exports.PaymentMethodCancelledError = payment_method_cancelled_error_1.default;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = require("@bigcommerce/request-sender");
 
 /***/ }),
 /* 11 */
@@ -236,15 +238,15 @@ exports.setPrototypeOf = set_prototype_of_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var cart_action_creator_1 = __webpack_require__(105);
+var cart_action_creator_1 = __webpack_require__(106);
 exports.CartActionCreator = cart_action_creator_1.default;
 var cart_comparator_1 = __webpack_require__(50);
 exports.CartComparator = cart_comparator_1.default;
-var cart_reducer_1 = __webpack_require__(106);
+var cart_reducer_1 = __webpack_require__(107);
 exports.cartReducer = cart_reducer_1.default;
-var cart_request_sender_1 = __webpack_require__(117);
+var cart_request_sender_1 = __webpack_require__(118);
 exports.CartRequestSender = cart_request_sender_1.default;
-var cart_selector_1 = __webpack_require__(118);
+var cart_selector_1 = __webpack_require__(119);
 exports.CartSelector = cart_selector_1.default;
 var map_to_internal_cart_1 = __webpack_require__(51);
 exports.mapToInternalCart = map_to_internal_cart_1.default;
@@ -262,7 +264,7 @@ exports.mapToInternalLineItems = map_to_internal_line_items_1.default;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var utility_1 = __webpack_require__(10);
+var utility_1 = __webpack_require__(8);
 var StandardError = /** @class */ (function (_super) {
     tslib_1.__extends(StandardError, _super);
     function StandardError(message) {
@@ -290,31 +292,31 @@ exports.default = StandardError;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var create_payment_client_1 = __webpack_require__(132);
+var create_payment_client_1 = __webpack_require__(133);
 exports.createPaymentClient = create_payment_client_1.default;
-var create_payment_strategy_registry_1 = __webpack_require__(134);
+var create_payment_strategy_registry_1 = __webpack_require__(135);
 exports.createPaymentStrategyRegistry = create_payment_strategy_registry_1.default;
 var payment_action_creator_1 = __webpack_require__(57);
 exports.PaymentActionCreator = payment_action_creator_1.default;
 var payment_method_action_creator_1 = __webpack_require__(59);
 exports.PaymentMethodActionCreator = payment_method_action_creator_1.default;
-var payment_method_reducer_1 = __webpack_require__(190);
+var payment_method_reducer_1 = __webpack_require__(191);
 exports.paymentMethodReducer = payment_method_reducer_1.default;
-var payment_method_request_sender_1 = __webpack_require__(191);
+var payment_method_request_sender_1 = __webpack_require__(192);
 exports.PaymentMethodRequestSender = payment_method_request_sender_1.default;
-var payment_method_selector_1 = __webpack_require__(192);
+var payment_method_selector_1 = __webpack_require__(193);
 exports.PaymentMethodSelector = payment_method_selector_1.default;
-var payment_reducer_1 = __webpack_require__(193);
+var payment_reducer_1 = __webpack_require__(194);
 exports.paymentReducer = payment_reducer_1.default;
 var payment_request_sender_1 = __webpack_require__(61);
 exports.PaymentRequestSender = payment_request_sender_1.default;
-var payment_strategy_action_creator_1 = __webpack_require__(194);
+var payment_strategy_action_creator_1 = __webpack_require__(195);
 exports.PaymentStrategyActionCreator = payment_strategy_action_creator_1.default;
-var payment_strategy_reducer_1 = __webpack_require__(195);
+var payment_strategy_reducer_1 = __webpack_require__(196);
 exports.paymentStrategyReducer = payment_strategy_reducer_1.default;
 var payment_strategy_registry_1 = __webpack_require__(62);
 exports.PaymentStrategyRegistry = payment_strategy_registry_1.default;
-var payment_strategy_selector_1 = __webpack_require__(196);
+var payment_strategy_selector_1 = __webpack_require__(197);
 exports.PaymentStrategySelector = payment_strategy_selector_1.default;
 
 
@@ -337,25 +339,25 @@ exports.LOAD_QUOTE_FAILED = 'LOAD_QUOTE_FAILED';
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var coupon_action_creator_1 = __webpack_require__(107);
+var coupon_action_creator_1 = __webpack_require__(108);
 exports.CouponActionCreator = coupon_action_creator_1.default;
-var coupon_request_sender_1 = __webpack_require__(108);
+var coupon_request_sender_1 = __webpack_require__(109);
 exports.CouponRequestSender = coupon_request_sender_1.default;
-var coupon_selector_1 = __webpack_require__(109);
+var coupon_selector_1 = __webpack_require__(110);
 exports.CouponSelector = coupon_selector_1.default;
-var coupon_reducer_1 = __webpack_require__(110);
+var coupon_reducer_1 = __webpack_require__(111);
 exports.couponReducer = coupon_reducer_1.default;
-var gift_certificate_action_creator_1 = __webpack_require__(111);
+var gift_certificate_action_creator_1 = __webpack_require__(112);
 exports.GiftCertificateActionCreator = gift_certificate_action_creator_1.default;
-var gift_certificate_request_sender_1 = __webpack_require__(112);
+var gift_certificate_request_sender_1 = __webpack_require__(113);
 exports.GiftCertificateRequestSender = gift_certificate_request_sender_1.default;
-var gift_certificate_selector_1 = __webpack_require__(113);
+var gift_certificate_selector_1 = __webpack_require__(114);
 exports.GiftCertificateSelector = gift_certificate_selector_1.default;
-var gift_certificate_reducer_1 = __webpack_require__(114);
+var gift_certificate_reducer_1 = __webpack_require__(115);
 exports.giftCertificateReducer = gift_certificate_reducer_1.default;
-var map_to_internal_coupon_1 = __webpack_require__(115);
+var map_to_internal_coupon_1 = __webpack_require__(116);
 exports.mapToInternalCoupon = map_to_internal_coupon_1.default;
-var map_to_internal_gift_certificate_1 = __webpack_require__(116);
+var map_to_internal_gift_certificate_1 = __webpack_require__(117);
 exports.mapToInternalGiftCertificate = map_to_internal_gift_certificate_1.default;
 
 
@@ -368,15 +370,15 @@ exports.mapToInternalGiftCertificate = map_to_internal_gift_certificate_1.defaul
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 tslib_1.__exportStar(__webpack_require__(35), exports);
-var order_action_creator_1 = __webpack_require__(136);
+var order_action_creator_1 = __webpack_require__(137);
 exports.OrderActionCreator = order_action_creator_1.default;
-var order_reducer_1 = __webpack_require__(140);
+var order_reducer_1 = __webpack_require__(141);
 exports.orderReducer = order_reducer_1.default;
-var order_request_sender_1 = __webpack_require__(141);
+var order_request_sender_1 = __webpack_require__(142);
 exports.OrderRequestSender = order_request_sender_1.default;
-var order_selector_1 = __webpack_require__(142);
+var order_selector_1 = __webpack_require__(143);
 exports.OrderSelector = order_selector_1.default;
-var map_to_internal_order_1 = __webpack_require__(143);
+var map_to_internal_order_1 = __webpack_require__(144);
 exports.mapToInternalOrder = map_to_internal_order_1.default;
 var map_to_internal_incomplete_order_1 = __webpack_require__(36);
 exports.mapToInternalIncompleteOrder = map_to_internal_incomplete_order_1.default;
@@ -389,13 +391,13 @@ exports.mapToInternalIncompleteOrder = map_to_internal_incomplete_order_1.defaul
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var quote_action_creator_1 = __webpack_require__(144);
+var quote_action_creator_1 = __webpack_require__(145);
 exports.QuoteActionCreator = quote_action_creator_1.default;
-var quote_reducer_1 = __webpack_require__(145);
+var quote_reducer_1 = __webpack_require__(146);
 exports.quoteReducer = quote_reducer_1.default;
-var quote_request_sender_1 = __webpack_require__(148);
+var quote_request_sender_1 = __webpack_require__(149);
 exports.QuoteRequestSender = quote_request_sender_1.default;
-var quote_selector_1 = __webpack_require__(149);
+var quote_selector_1 = __webpack_require__(150);
 exports.QuoteSelector = quote_selector_1.default;
 var map_to_internal_quote_1 = __webpack_require__(55);
 exports.mapToInternalQuote = map_to_internal_quote_1.default;
@@ -423,21 +425,21 @@ exports.SIGN_OUT_CUSTOMER_FAILED = 'SIGN_OUT_CUSTOMER_FAILED';
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var create_customer_strategy_registry_1 = __webpack_require__(123);
+var create_customer_strategy_registry_1 = __webpack_require__(124);
 exports.createCustomerStrategyRegistry = create_customer_strategy_registry_1.default;
-var customer_reducer_1 = __webpack_require__(201);
+var customer_reducer_1 = __webpack_require__(202);
 exports.customerReducer = customer_reducer_1.default;
 var customer_action_creator_1 = __webpack_require__(73);
 exports.CustomerActionCreator = customer_action_creator_1.default;
-var customer_request_sender_1 = __webpack_require__(202);
+var customer_request_sender_1 = __webpack_require__(203);
 exports.CustomerRequestSender = customer_request_sender_1.default;
-var customer_selector_1 = __webpack_require__(203);
+var customer_selector_1 = __webpack_require__(204);
 exports.CustomerSelector = customer_selector_1.default;
-var customer_strategy_action_creator_1 = __webpack_require__(204);
+var customer_strategy_action_creator_1 = __webpack_require__(205);
 exports.CustomerStrategyActionCreator = customer_strategy_action_creator_1.default;
-var customer_strategy_selector_1 = __webpack_require__(205);
+var customer_strategy_selector_1 = __webpack_require__(206);
 exports.CustomerStrategySelector = customer_strategy_selector_1.default;
-var customer_strategy_reducer_1 = __webpack_require__(206);
+var customer_strategy_reducer_1 = __webpack_require__(207);
 exports.customerStrategyReducer = customer_strategy_reducer_1.default;
 var map_to_internal_customer_1 = __webpack_require__(74);
 exports.mapToInternalCustomer = map_to_internal_customer_1.default;
@@ -462,13 +464,13 @@ exports.INITIALIZE = 'PAYMENT_STATUS_INITIALIZE';
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var remote_checkout_action_creator_1 = __webpack_require__(150);
+var remote_checkout_action_creator_1 = __webpack_require__(151);
 exports.RemoteCheckoutActionCreator = remote_checkout_action_creator_1.default;
-var remote_checkout_request_sender_1 = __webpack_require__(151);
+var remote_checkout_request_sender_1 = __webpack_require__(152);
 exports.RemoteCheckoutRequestSender = remote_checkout_request_sender_1.default;
-var remote_checkout_selector_1 = __webpack_require__(152);
+var remote_checkout_selector_1 = __webpack_require__(153);
 exports.RemoteCheckoutSelector = remote_checkout_selector_1.default;
-var remote_checkout_reducer_1 = __webpack_require__(153);
+var remote_checkout_reducer_1 = __webpack_require__(154);
 exports.remoteCheckoutReducer = remote_checkout_reducer_1.default;
 
 
@@ -479,13 +481,13 @@ exports.remoteCheckoutReducer = remote_checkout_reducer_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var billing_address_selector_1 = __webpack_require__(101);
+var billing_address_selector_1 = __webpack_require__(102);
 exports.BillingAddressSelector = billing_address_selector_1.default;
-var billing_address_action_creator_1 = __webpack_require__(102);
+var billing_address_action_creator_1 = __webpack_require__(103);
 exports.BillingAddressActionCreator = billing_address_action_creator_1.default;
-var billing_address_request_sender_1 = __webpack_require__(103);
+var billing_address_request_sender_1 = __webpack_require__(104);
 exports.BillingAddressRequestSender = billing_address_request_sender_1.default;
-var billing_address_reducer_1 = __webpack_require__(104);
+var billing_address_reducer_1 = __webpack_require__(105);
 exports.billingAddressReducer = billing_address_reducer_1.default;
 
 
@@ -523,13 +525,13 @@ exports.SELECT_SHIPPING_OPTION_FAILED = 'SELECT_SHIPPING_OPTION_FAILED';
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var config_action_creator_1 = __webpack_require__(119);
+var config_action_creator_1 = __webpack_require__(120);
 exports.ConfigActionCreator = config_action_creator_1.default;
-var config_selector_1 = __webpack_require__(120);
+var config_selector_1 = __webpack_require__(121);
 exports.ConfigSelector = config_selector_1.default;
-var config_reducer_1 = __webpack_require__(121);
+var config_reducer_1 = __webpack_require__(122);
 exports.configReducer = config_reducer_1.default;
-var config_request_sender_1 = __webpack_require__(122);
+var config_request_sender_1 = __webpack_require__(123);
 exports.ConfigRequestSender = config_request_sender_1.default;
 
 
@@ -565,13 +567,13 @@ exports.default = CustomerStrategy;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var country_action_creator_1 = __webpack_require__(208);
+var country_action_creator_1 = __webpack_require__(209);
 exports.CountryActionCreator = country_action_creator_1.default;
-var country_request_sender_1 = __webpack_require__(209);
+var country_request_sender_1 = __webpack_require__(210);
 exports.CountryRequestSender = country_request_sender_1.default;
-var country_selector_1 = __webpack_require__(210);
+var country_selector_1 = __webpack_require__(211);
 exports.CountrySelector = country_selector_1.default;
-var country_reducer_1 = __webpack_require__(211);
+var country_reducer_1 = __webpack_require__(212);
 exports.countryReducer = country_reducer_1.default;
 
 
@@ -582,37 +584,37 @@ exports.countryReducer = country_reducer_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var create_shipping_strategy_registry_1 = __webpack_require__(212);
+var create_shipping_strategy_registry_1 = __webpack_require__(213);
 exports.createShippingStrategyRegistry = create_shipping_strategy_registry_1.default;
-var consignment_reducer_1 = __webpack_require__(216);
+var consignment_reducer_1 = __webpack_require__(217);
 exports.consignmentReducer = consignment_reducer_1.default;
 var shipping_address_action_creator_1 = __webpack_require__(77);
 exports.ShippingAddressActionCreator = shipping_address_action_creator_1.default;
-var shipping_address_request_sender_1 = __webpack_require__(217);
+var shipping_address_request_sender_1 = __webpack_require__(218);
 exports.ShippingAddressRequestSender = shipping_address_request_sender_1.default;
-var shipping_address_selector_1 = __webpack_require__(218);
+var shipping_address_selector_1 = __webpack_require__(219);
 exports.ShippingAddressSelector = shipping_address_selector_1.default;
-var shipping_country_action_creator_1 = __webpack_require__(219);
+var shipping_country_action_creator_1 = __webpack_require__(220);
 exports.ShippingCountryActionCreator = shipping_country_action_creator_1.default;
-var shipping_country_request_sender_1 = __webpack_require__(220);
+var shipping_country_request_sender_1 = __webpack_require__(221);
 exports.ShippingCountryRequestSender = shipping_country_request_sender_1.default;
-var shipping_country_selector_1 = __webpack_require__(221);
+var shipping_country_selector_1 = __webpack_require__(222);
 exports.ShippingCountrySelector = shipping_country_selector_1.default;
-var shipping_country_reducer_1 = __webpack_require__(222);
+var shipping_country_reducer_1 = __webpack_require__(223);
 exports.shippingCountryReducer = shipping_country_reducer_1.default;
 var shipping_option_action_creator_1 = __webpack_require__(78);
 exports.ShippingOptionActionCreator = shipping_option_action_creator_1.default;
-var shipping_option_request_sender_1 = __webpack_require__(223);
+var shipping_option_request_sender_1 = __webpack_require__(224);
 exports.ShippingOptionRequestSender = shipping_option_request_sender_1.default;
-var shipping_option_selector_1 = __webpack_require__(224);
+var shipping_option_selector_1 = __webpack_require__(225);
 exports.ShippingOptionSelector = shipping_option_selector_1.default;
-var shipping_option_reducer_1 = __webpack_require__(225);
+var shipping_option_reducer_1 = __webpack_require__(226);
 exports.shippingOptionReducer = shipping_option_reducer_1.default;
-var shipping_strategy_action_creator_1 = __webpack_require__(226);
+var shipping_strategy_action_creator_1 = __webpack_require__(227);
 exports.ShippingStrategyActionCreator = shipping_strategy_action_creator_1.default;
-var shipping_strategy_selector_1 = __webpack_require__(227);
+var shipping_strategy_selector_1 = __webpack_require__(228);
 exports.ShippingStrategySelector = shipping_strategy_selector_1.default;
-var shipping_strategy_reducer_1 = __webpack_require__(228);
+var shipping_strategy_reducer_1 = __webpack_require__(229);
 exports.shippingStrategyReducer = shipping_strategy_reducer_1.default;
 var map_to_internal_shipping_option_1 = __webpack_require__(81);
 exports.mapToInternalShippingOption = map_to_internal_shipping_option_1.default;
@@ -675,7 +677,7 @@ module.exports = require("@bigcommerce/script-loader");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var registry_1 = __webpack_require__(124);
+var registry_1 = __webpack_require__(125);
 exports.Registry = registry_1.default;
 
 
@@ -777,9 +779,9 @@ exports.default = mapToInternalIncompleteOrder;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var is_address_equal_1 = __webpack_require__(146);
+var is_address_equal_1 = __webpack_require__(147);
 exports.isAddressEqual = is_address_equal_1.default;
-var map_to_internal_address_1 = __webpack_require__(147);
+var map_to_internal_address_1 = __webpack_require__(148);
 exports.mapToInternalAddress = map_to_internal_address_1.default;
 
 
@@ -790,7 +792,7 @@ exports.mapToInternalAddress = map_to_internal_address_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var amazon_pay_script_loader_1 = __webpack_require__(156);
+var amazon_pay_script_loader_1 = __webpack_require__(157);
 exports.AmazonPayScriptLoader = amazon_pay_script_loader_1.default;
 
 
@@ -814,21 +816,21 @@ exports.default = isVaultedInstrument;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var braintree_credit_card_payment_strategy_1 = __webpack_require__(181);
+var braintree_credit_card_payment_strategy_1 = __webpack_require__(182);
 exports.BraintreeCreditCardPaymentStrategy = braintree_credit_card_payment_strategy_1.default;
 var braintree_payment_processor_1 = __webpack_require__(66);
 exports.BraintreePaymentProcessor = braintree_payment_processor_1.default;
-var braintree_paypal_payment_strategy_1 = __webpack_require__(183);
+var braintree_paypal_payment_strategy_1 = __webpack_require__(184);
 exports.BraintreePaypalPaymentStrategy = braintree_paypal_payment_strategy_1.default;
 var braintree_visacheckout_payment_processor_1 = __webpack_require__(67);
 exports.BraintreeVisaCheckoutPaymentProcessor = braintree_visacheckout_payment_processor_1.default;
-var create_braintree_payment_processor_1 = __webpack_require__(184);
+var create_braintree_payment_processor_1 = __webpack_require__(185);
 exports.createBraintreePaymentProcessor = create_braintree_payment_processor_1.default;
-var create_braintree_visacheckout_payment_processor_1 = __webpack_require__(185);
+var create_braintree_visacheckout_payment_processor_1 = __webpack_require__(186);
 exports.createBraintreeVisaCheckoutPaymentProcessor = create_braintree_visacheckout_payment_processor_1.default;
-var visacheckout_script_loader_1 = __webpack_require__(186);
+var visacheckout_script_loader_1 = __webpack_require__(187);
 exports.VisaCheckoutScriptLoader = visacheckout_script_loader_1.default;
-var braintree_visacheckout_payment_strategy_1 = __webpack_require__(187);
+var braintree_visacheckout_payment_strategy_1 = __webpack_require__(188);
 exports.BraintreeVisaCheckoutPaymentStrategy = braintree_visacheckout_payment_strategy_1.default;
 
 
@@ -1000,6 +1002,13 @@ exports.default = CheckoutClient;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var create_checkout_selectors_1 = __webpack_require__(90);
+/**
+ * Responsible for completing the checkout process for the current customer.
+ *
+ * This object can be used to collect all information that is required for
+ * checkout, such as shipping and billing information. It can also be used to
+ * retrieve the current checkout state and subscribe to its changes.
+ */
 var CheckoutService = /** @class */ (function () {
     /**
      * @internal
@@ -1027,12 +1036,65 @@ var CheckoutService = /** @class */ (function () {
             _this._state = create_checkout_selectors_1.default(state);
         });
     }
+    /**
+     * Returns a snapshot of the current checkout state.
+     *
+     * The method returns a new instance every time there is a change in the
+     * checkout state. You can query the state by calling any of its getter
+     * methods.
+     *
+     * ```js
+     * const state = service.getState();
+     *
+     * console.log(state.checkout.getOrder());
+     * console.log(state.errors.getSubmitOrderError());
+     * console.log(state.statuses.isSubmittingOrder());
+     * ```
+     *
+     * @returns The current customer's checkout state
+     */
     CheckoutService.prototype.getState = function () {
         return this._state;
     };
+    /**
+     * Notifies all subscribers with the current state.
+     *
+     * When this method gets called, the subscribers get called regardless if
+     * they have any filters applied.
+     */
     CheckoutService.prototype.notifyState = function () {
         this._store.notifyState();
     };
+    /**
+     * Subscribes to any changes to the current state.
+     *
+     * The method registers a callback function and executes it every time there
+     * is a change in the checkout state.
+     *
+     * ```js
+     * service.subscribe(state => {
+     *     console.log(state.checkout.getCart());
+     * });
+     * ```
+     *
+     * The method can be configured to notify subscribers only regarding
+     * relevant changes, by providing a filter function.
+     *
+     * ```js
+     * const filter = state => state.checkout.getCart();
+     *
+     * // Only trigger the subscriber when the cart changes.
+     * service.subscribe(state => {
+     *     console.log(state.checkout.getCart())
+     * }, filter);
+     * ```
+     *
+     * @param subscriber - The function to subscribe to state changes.
+     * @param filters - One or more functions to filter out irrelevant state
+     * changes. If more than one function is provided, the subscriber will only
+     * be triggered if all conditions are met.
+     * @returns A function, if called, will unsubscribe the subscriber.
+     */
     CheckoutService.prototype.subscribe = function (subscriber) {
         var _this = this;
         var filters = [];
@@ -1042,185 +1104,728 @@ var CheckoutService = /** @class */ (function () {
         return (_a = this._store).subscribe.apply(_a, [function () { return subscriber(_this.getState()); }].concat(filters.map(function (filter) { return function (state) { return filter(create_checkout_selectors_1.default(state)); }; })));
         var _a;
     };
+    /**
+     * Loads the current checkout.
+     *
+     * This method can only be called if there is an active checkout. Also, it
+     * can only retrieve data that belongs to the current customer. When it is
+     * successfully executed, you can retrieve the data by calling
+     * `CheckoutStoreSelector#getCheckout`.
+     *
+     * ```js
+     * const state = await service.loadCheckout();
+     *
+     * console.log(state.checkout.getCheckout());
+     * ```
+     *
+     * @param options - Options for loading the current checkout.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadCheckout = function (options) {
         var _this = this;
         var action = this._quoteActionCreator.loadQuote(options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads the checkout configuration of a store.
+     *
+     * This method should be called before performing any other actions using
+     * this service. If it is successfully executed, the data can be retrieved
+     * by calling `CheckoutStoreSelector#getConfig`.
+     *
+     * ```js
+     * const state = await service.loadConfig();
+     *
+     * console.log(state.checkout.getConfig());
+     * ```
+     *
+     * @param options - Options for loading the checkout configuration.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadConfig = function (options) {
         var _this = this;
         var action = this._configActionCreator.loadConfig(options);
         return this._store.dispatch(action, { queueId: 'config' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads the current cart.
+     *
+     * This method can only be called if there is an active cart. Also, it can
+     * only retrieve data that belongs to the current customer.
+     *
+     * If the method is called successfully, you can retrieve the current cart
+     * by calling `CheckoutStoreSelector#getCart`
+     *
+     * ```js
+     * const state = await service.loadCart();
+     *
+     * console.log(state.checkout.getCart());
+     * ```
+     *
+     * @param options - Options for loading the current cart.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadCart = function (options) {
         var _this = this;
         var action = this._cartActionCreator.loadCart(options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads an order by an id.
+     *
+     * The method can only retrieve an order if the order belongs to the current
+     * customer. If it is successfully executed, the data can be retrieved by
+     * calling `CheckoutStoreSelector#getOrder`.
+     *
+     * ```js
+     * const state = await service.loadOrder();
+     *
+     * console.log(state.checkout.getOrder());
+     * ```
+     *
+     * @param orderId - The identifier of the order to load.
+     * @param options - Options for loading the order.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadOrder = function (orderId, options) {
         var _this = this;
         var action = this._orderActionCreator.loadOrder(orderId, options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Submits an order, thereby completing a checkout process.
+     *
+     * Before you can submit an order, you must initialize the payment method
+     * chosen by the customer by calling `CheckoutService#initializePayment`.
+     *
+     * ```js
+     * await service.initializePayment({ methodId: 'braintree' });
+     * await service.submitOrder({
+     *     methodId: 'braintree',
+     *     payment: {
+     *         paymentData: {
+     *             ccExpiry: { month: 10, year: 20 },
+     *             ccName: 'BigCommerce',
+     *             ccNumber: '4111111111111111',
+     *             ccType: 'visa',
+     *             ccCvv: 123,
+     *         },
+     *     },
+     * });
+     * ```
+     *
+     * You are not required to include `paymentData` if the order does not
+     * require additional payment details. For example, the customer has already
+     * entered their payment details on the cart page using one of the hosted
+     * payment methods, such as PayPal. Or the customer has applied a gift
+     * certificate that exceeds the grand total amount.
+     *
+     * If the order is submitted successfully, you can retrieve the newly
+     * created order by calling `CheckoutStoreSelector#getOrder`.
+     *
+     * ```js
+     * const state = await service.submitOrder(payload);
+     *
+     * console.log(state.checkout.getOrder());
+     * ```
+     *
+     * @param payload - The request payload to submit for the current order.
+     * @param options - Options for submitting the current order.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.submitOrder = function (payload, options) {
         var _this = this;
         var action = this._paymentStrategyActionCreator.execute(payload, options);
         return this._store.dispatch(action, { queueId: 'paymentStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Finalizes the submission process for an order.
+     *
+     * This method is only required for certain hosted payment methods that
+     * require a customer to enter their credit card details on their website.
+     * You need to call this method once the customer has redirected back to
+     * checkout in order to complete the checkout process.
+     *
+     * If the method is called before order finalization is required or for a
+     * payment method that does not require order finalization, an error will be
+     * thrown. Conversely, if the method is called successfully, you should
+     * immediately redirect the customer to the order confirmation page.
+     *
+     * ```js
+     * try {
+     *     await service.finalizeOrderIfNeeded();
+     * } catch (error) {
+     *     if (error.type !== 'order_finalization_not_required') {
+     *         return;
+     *     }
+     *
+     *     throw error;
+     * }
+     *
+     * window.location.assign('/order-confirmation');
+     * ```
+     *
+     * @param options - Options for finalizing the current order.
+     * @returns A promise that resolves to the current state.
+     * @throws `OrderFinalizationNotRequiredError` error if order finalization
+     * is not required for the current order at the time of execution.
+     */
     CheckoutService.prototype.finalizeOrderIfNeeded = function (options) {
         var _this = this;
         var action = this._paymentStrategyActionCreator.finalize(options);
         return this._store.dispatch(action, { queueId: 'paymentStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads a list of payment methods available for checkout.
+     *
+     * If a customer enters their payment details before navigating to the
+     * checkout page (i.e.: using PayPal checkout button on the cart page), only
+     * one payment method will be available for the customer - the selected
+     * payment method. Otherwise, by default, all payment methods configured by
+     * the merchant will be available for the customer.
+     *
+     * Once the method is executed successfully, you can call
+     * `CheckoutStoreSelector#getPaymentMethods` to retrieve the list of payment
+     * methods.
+     *
+     * ```js
+     * const state = service.loadPaymentMethods();
+     *
+     * console.log(state.checkout.getPaymentMethods());
+     * ```
+     *
+     * @param options - Options for loading the payment methods that are
+     * available to the current customer.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadPaymentMethods = function (options) {
         var _this = this;
         var action = this._paymentMethodActionCreator.loadPaymentMethods(options);
         return this._store.dispatch(action, { queueId: 'paymentMethods' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads a payment method by an id.
+     *
+     * This method does not work with multi-option payment providers. Due to its
+     * limitation, it is deprecated and will be removed in the future.
+     *
+     * @deprecated
+     * @param methodId - The identifier for the payment method to load.
+     * @param options - Options for loading the payment method.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadPaymentMethod = function (methodId, options) {
         var _this = this;
         var action = this._paymentMethodActionCreator.loadPaymentMethod(methodId, options);
         return this._store.dispatch(action, { queueId: 'paymentMethods' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Initializes the payment step of a checkout process.
+     *
+     * Before a payment method can accept payment details, it must first be
+     * initialized. Some payment methods require you to provide additional
+     * initialization options. For example, Amazon requires a container ID in
+     * order to initialize their payment widget.
+     *
+     * ```js
+     * await service.initializePayment({
+     *     methodId: 'amazon',
+     *     amazon: {
+     *         container: 'walletWidget',
+     *     },
+     * });
+     * ```
+     *
+     * @param options - Options for initializing the payment step of checkout.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.initializePayment = function (options) {
         var _this = this;
         var action = this._paymentStrategyActionCreator.initialize(options);
         return this._store.dispatch(action, { queueId: 'paymentStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * De-initializes the payment step of a checkout process.
+     *
+     * The method should be called once you no longer require a payment method
+     * to be initialized. It can perform any necessary clean-up behind the
+     * scene, i.e.: remove DOM nodes or event handlers that are attached as a
+     * result of payment initialization.
+     *
+     * ```js
+     * await service.deinitializePayment({
+     *     methodId: 'amazon',
+     * });
+     * ```
+     *
+     * @param options - Options for deinitializing the payment step of checkout.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.deinitializePayment = function (options) {
         var _this = this;
         var action = this._paymentStrategyActionCreator.deinitialize(options);
         return this._store.dispatch(action, { queueId: 'paymentStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads a list of countries available for billing.
+     *
+     * Once you make a successful request, you will be able to retrieve the list
+     * of countries by calling `CheckoutStoreSelector#getBillingCountries`.
+     *
+     * ```js
+     * const state = await service.loadBillingCountries();
+     *
+     * console.log(state.checkout.getBillingCountries());
+     * ```
+     *
+     * @param options - Options for loading the available billing countries.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadBillingCountries = function (options) {
         var _this = this;
         var action = this._countryActionCreator.loadCountries(options);
         return this._store.dispatch(action, { queueId: 'billingCountries' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads a list of countries available for shipping.
+     *
+     * The list is determined based on the shipping zones configured by a
+     * merchant. Once you make a successful call, you will be able to retrieve
+     * the list of available shipping countries by calling
+     * `CheckoutStoreSelector#getShippingCountries`.
+     *
+     * ```js
+     * const state = await service.loadShippingCountries();
+     *
+     * console.log(state.checkout.getShippingCountries());
+     * ```
+     *
+     * @param options - Options for loading the available shipping countries.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadShippingCountries = function (options) {
         var _this = this;
         var action = this._shippingCountryActionCreator.loadCountries(options);
         return this._store.dispatch(action, { queueId: 'shippingCountries' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads a set of form fields that should be presented to customers in order
+     * to capture their billing address.
+     *
+     * Once the method has been executed successfully, you can call
+     * `CheckoutStoreSelector#getBillingAddressFields` to retrieve the set of
+     * form fields.
+     *
+     * ```js
+     * const state = service.loadBillingAddressFields();
+     *
+     * console.log(state.checkout.getBillingAddressFields('US'));
+     * ```
+     *
+     * @param options - Options for loading the billing address form fields.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadBillingAddressFields = function (options) {
         return this.loadBillingCountries(options);
     };
+    /**
+     * Loads a set of form fields that should be presented to customers in order
+     * to capture their shipping address.
+     *
+     * Once the method has been executed successfully, you can call
+     * `CheckoutStoreSelector#getShippingAddressFields` to retrieve the set of
+     * form fields.
+     *
+     * ```js
+     * const state = service.loadShippingAddressFields();
+     *
+     * console.log(state.checkout.getShippingAddressFields('US'));
+     * ```
+     *
+     * @param options - Options for loading the shipping address form fields.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadShippingAddressFields = function (options) {
         return this.loadShippingCountries(options);
     };
+    /**
+     * Initializes the sign-in step of a checkout process.
+     *
+     * Some payment methods, such as Amazon, have their own sign-in flow. In
+     * order to support them, this method must be called.
+     *
+     * ```js
+     * await service.initializeCustomer({
+     *     methodId: 'amazon',
+     *     amazon: {
+     *         container: 'signInButton',
+     *     },
+     * });
+     * ```
+     *
+     * @param options - Options for initializing the customer step of checkout.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.initializeCustomer = function (options) {
         var _this = this;
         var action = this._customerStrategyActionCreator.initialize(options);
         return this._store.dispatch(action, { queueId: 'customerStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * De-initializes the sign-in step of a checkout process.
+     *
+     * It should be called once you no longer want to prompt customers to sign
+     * in. It can perform any necessary clean-up behind the scene, i.e.: remove
+     * DOM nodes or event handlers that are attached as a result of customer
+     * initialization.
+     *
+     * ```js
+     * await service.deinitializeCustomer({
+     *     methodId: 'amazon',
+     * });
+     * ```
+     *
+     * @param options - Options for deinitializing the customer step of checkout.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.deinitializeCustomer = function (options) {
         var _this = this;
         var action = this._customerStrategyActionCreator.deinitialize(options);
         return this._store.dispatch(action, { queueId: 'customerStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Signs into a customer's registered account.
+     *
+     * Once a customer is signed in successfully, the checkout state will be
+     * populated with information associated with the customer, such as their
+     * saved addresses. You can call `CheckoutStoreSelector#getCustomer` to
+     * retrieve the data.
+     *
+     * ```js
+     * const state = await service.signInCustomer({
+     *     email: 'foo@bar.com',
+     *     password: 'password123',
+     * });
+     *
+     * console.log(state.checkout.getCustomer());
+     * ```
+     *
+     * @param credentials - The credentials to be used for signing in the customer.
+     * @param options - Options for signing in the customer.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.signInCustomer = function (credentials, options) {
         var _this = this;
         var action = this._customerStrategyActionCreator.signIn(credentials, options);
         return this._store.dispatch(action, { queueId: 'customerStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Signs out the current customer if they are previously signed in.
+     *
+     * Once the customer is successfully signed out, the checkout state will be
+     * reset automatically.
+     *
+     * ```js
+     * const state = await service.signOutCustomer();
+     *
+     * // The returned object should not contain information about the previously signed-in customer.
+     * console.log(state.checkout.getCustomer());
+     * ```
+     *
+     * @param options - Options for signing out the customer.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.signOutCustomer = function (options) {
         var _this = this;
         var action = this._customerStrategyActionCreator.signOut(options);
         return this._store.dispatch(action, { queueId: 'customerStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads a list of shipping options available for checkout.
+     *
+     * Available shipping options can only be determined once a customer
+     * provides their shipping address. If the method is executed successfully,
+     * `CheckoutStoreSelector#getShippingOptions` can be called to retrieve the
+     * list of shipping options.
+     *
+     * ```js
+     * const state = await service.loadShippingOptions();
+     *
+     * console.log(state.checkout.getShippingOptions());
+     * ```
+     *
+     * @param options - Options for loading the available shipping options.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadShippingOptions = function (options) {
         var _this = this;
         var action = this._shippingOptionActionCreator.loadShippingOptions(options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Initializes the shipping step of a checkout process.
+     *
+     * Some payment methods, such as Amazon, can provide shipping information to
+     * be used for checkout. In order to support them, this method must be
+     * called.
+     *
+     * ```js
+     * await service.initializeShipping({
+     *     methodId: 'amazon',
+     *     amazon: {
+     *         container: 'addressBook',
+     *     },
+     * });
+     * ```
+     *
+     * @param options - Options for initializing the shipping step of checkout.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.initializeShipping = function (options) {
         var _this = this;
         var action = this._shippingStrategyActionCreator.initialize(options);
         return this._store.dispatch(action, { queueId: 'shippingStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * De-initializes the shipping step of a checkout process.
+     *
+     * It should be called once you no longer need to collect shipping details.
+     * It can perform any necessary clean-up behind the scene, i.e.: remove DOM
+     * nodes or event handlers that are attached as a result of shipping
+     * initialization.
+     *
+     * ```js
+     * await service.deinitializeShipping({
+     *     methodId: 'amazon',
+     * });
+     * ```
+     *
+     * @param options - Options for deinitializing the shipping step of checkout.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.deinitializeShipping = function (options) {
         var _this = this;
         var action = this._shippingStrategyActionCreator.deinitialize(options);
         return this._store.dispatch(action, { queueId: 'shippingStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Selects a shipping option for a given address.
+     *
+     * If a shipping option has an additional cost, the quote for the current
+     * order will be adjusted once the option is selected.
+     *
+     * ```js
+     * const state = await service.selectShippingOption('address-id', 'shipping-option-id');
+     *
+     * console.log(state.checkout.getSelectedShippingOption());
+     * ```
+     *
+     * @param addressId - The identifier of the address to be assigned with the
+     * shipping option.
+     * @param shippingOptionId - The identifier of the shipping option to
+     * select.
+     * @param options - Options for selecting the shipping option.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.selectShippingOption = function (addressId, shippingOptionId, options) {
         var _this = this;
         var action = this._shippingStrategyActionCreator.selectOption(addressId, shippingOptionId, options);
         return this._store.dispatch(action, { queueId: 'shippingStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Updates the shipping address for the current checkout.
+     *
+     * When a customer updates their shipping address for an order, they will
+     * see an updated list of shipping options and the cost for each option,
+     * unless no options are available. If the update is successful, you can
+     * call `CheckoutStoreSelector#getShippingAddress` to retrieve the address.
+     *
+     * If the shipping address changes and the selected shipping option becomes
+     * unavailable for the updated address, the shipping option will be
+     * deselected.
+     *
+     * You can submit an address that is partially complete. The address does
+     * not get validated until you submit the order.
+     *
+     * ```js
+     * const state = await service.updateShippingAddress(address);
+     *
+     * console.log(state.checkout.getShippingAddress());
+     * ```
+     *
+     * @param address - The address to be used for shipping.
+     * @param options - Options for updating the shipping address.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.updateShippingAddress = function (address, options) {
         var _this = this;
         var action = this._shippingStrategyActionCreator.updateAddress(address, options);
         return this._store.dispatch(action, { queueId: 'shippingStrategy' })
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Updates the billing address for the current checkout.
+     *
+     * A customer must provide their billing address before they can proceed to
+     * pay for their order.
+     *
+     * You can submit an address that is partially complete. The address does
+     * not get validated until you submit the order.
+     *
+     * ```js
+     * const state = await service.updateBillingAddress(address);
+     *
+     * console.log(state.checkout.getBillingAddress());
+     * ```
+     *
+     * @param address - The address to be used for billing.
+     * @param options - Options for updating the billing address.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.updateBillingAddress = function (address, options) {
         var _this = this;
-        if (options === void 0) { options = {}; }
         var action = this._billingAddressActionCreator.updateAddress(address, options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Applies a coupon code to the current checkout.
+     *
+     * Once the coupon code gets applied, the quote for the current checkout will
+     * be adjusted accordingly. The same coupon code cannot be applied more than
+     * once.
+     *
+     * ```js
+     * await service.applyCoupon('COUPON');
+     * ```
+     *
+     * @param code - The coupon code to apply to the current checkout.
+     * @param options - Options for applying the coupon code.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.applyCoupon = function (code, options) {
         var _this = this;
-        if (options === void 0) { options = {}; }
         var action = this._couponActionCreator.applyCoupon(code, options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Removes a coupon code from the current checkout.
+     *
+     * Once the coupon code gets removed, the quote for the current checkout will
+     * be adjusted accordingly.
+     *
+     * ```js
+     * await service.removeCoupon('COUPON');
+     * ```
+     *
+     * @param code - The coupon code to remove from the current checkout.
+     * @param options - Options for removing the coupon code.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.removeCoupon = function (code, options) {
         var _this = this;
-        if (options === void 0) { options = {}; }
         var action = this._couponActionCreator.removeCoupon(code, options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Applies a gift certificate to the current checkout.
+     *
+     * Once the gift certificate gets applied, the quote for the current
+     * checkout will be adjusted accordingly.
+     *
+     * ```js
+     * await service.applyGiftCertificate('GIFT_CERTIFICATE');
+     * ```
+     *
+     * @param code - The gift certificate to apply to the current checkout.
+     * @param options - Options for applying the gift certificate.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.applyGiftCertificate = function (code, options) {
         var _this = this;
-        if (options === void 0) { options = {}; }
         var action = this._giftCertificateActionCreator.applyGiftCertificate(code, options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Removes a gift certificate from an order.
+     *
+     * Once the gift certificate gets removed, the quote for the current
+     * checkout will be adjusted accordingly.
+     *
+     * ```js
+     * await service.removeGiftCertificate('GIFT_CERTIFICATE');
+     * ```
+     *
+     * @param code - The gift certificate to remove from the current checkout.
+     * @param options - Options for removing the gift certificate.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.removeGiftCertificate = function (code, options) {
         var _this = this;
-        if (options === void 0) { options = {}; }
         var action = this._giftCertificateActionCreator.removeGiftCertificate(code, options);
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
+    /**
+     * Loads a list of payment instruments associated with a customer.
+     *
+     * Once the method has been called successfully, you can retrieve the list
+     * of payment instruments by calling `CheckoutStoreSelector#getInstruments`.
+     * If the customer does not have any payment instruments on record, i.e.:
+     * credit card, you will get an empty list instead.
+     *
+     * ```js
+     * const state = service.loadInstruments();
+     *
+     * console.log(state.checkout.getInstruments());
+     * ```
+     *
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.loadInstruments = function () {
         var _this = this;
         var action = this._instrumentActionCreator.loadInstruments();
         return this._store.dispatch(action)
             .then(function () { return _this.getState(); });
     };
-    CheckoutService.prototype.vaultInstrument = function (instrument) {
-        var _this = this;
-        var action = this._instrumentActionCreator.vaultInstrument(instrument);
-        return this._store.dispatch(action)
-            .then(function () { return _this.getState(); });
-    };
+    /**
+     * Deletes a payment instrument by an id.
+     *
+     * Once an instrument gets removed, it can no longer be retrieved using
+     * `CheckoutStoreSelector#getInstruments`.
+     *
+     * ```js
+     * const state = service.deleteInstrument('123');
+     *
+     * console.log(state.checkout.getInstruments());
+     * ```
+     *
+     * @param instrumentId - The identifier of the payment instrument to delete.
+     * @returns A promise that resolves to the current state.
+     */
     CheckoutService.prototype.deleteInstrument = function (instrumentId) {
         var _this = this;
         var action = this._instrumentActionCreator.deleteInstrument(instrumentId);
@@ -1241,8 +1846,8 @@ exports.default = CheckoutService;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var utility_1 = __webpack_require__(10);
-var cache_key_resolver_1 = __webpack_require__(98);
+var utility_1 = __webpack_require__(8);
+var cache_key_resolver_1 = __webpack_require__(99);
 /**
  * Decorates a class by patching all of its methods to cache their return values
  * and return them if they are called again with the same set of parameters. The
@@ -1347,7 +1952,7 @@ exports.default = omitDeep;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(9);
+var request_sender_1 = __webpack_require__(10);
 var billing_1 = __webpack_require__(22);
 var cart_1 = __webpack_require__(11);
 var config_1 = __webpack_require__(25);
@@ -1404,7 +2009,7 @@ exports.VERIFY_CART_FAILED = 'VERIFY_CART_FAILED';
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var utility_1 = __webpack_require__(10);
+var utility_1 = __webpack_require__(8);
 /**
  * @todo Convert this file into TypeScript properly
  */
@@ -1612,8 +2217,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(1);
 var lodash_1 = __webpack_require__(4);
-var concat_1 = __webpack_require__(161);
-var defer_1 = __webpack_require__(162);
+var concat_1 = __webpack_require__(162);
+var defer_1 = __webpack_require__(163);
 var Observable_1 = __webpack_require__(5);
 var errors_1 = __webpack_require__(2);
 var is_vaulted_instrument_1 = __webpack_require__(39);
@@ -1861,7 +2466,7 @@ var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
 var errors_1 = __webpack_require__(2);
 var registry_1 = __webpack_require__(33);
-var paymentMethodTypes = __webpack_require__(163);
+var paymentMethodTypes = __webpack_require__(164);
 var PaymentStrategyRegistry = /** @class */ (function (_super) {
     tslib_1.__extends(PaymentStrategyRegistry, _super);
     function PaymentStrategyRegistry(_store, options) {
@@ -1918,7 +2523,7 @@ exports.default = PaymentStrategyRegistry;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var order_finalization_not_required_error_1 = __webpack_require__(169);
+var order_finalization_not_required_error_1 = __webpack_require__(170);
 exports.OrderFinalizationNotRequiredError = order_finalization_not_required_error_1.default;
 
 
@@ -1929,7 +2534,7 @@ exports.OrderFinalizationNotRequiredError = order_finalization_not_required_erro
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var remote_checkout_synchronization_error_1 = __webpack_require__(171);
+var remote_checkout_synchronization_error_1 = __webpack_require__(172);
 exports.RemoteCheckoutSynchronizationError = remote_checkout_synchronization_error_1.default;
 
 
@@ -1941,7 +2546,7 @@ exports.RemoteCheckoutSynchronizationError = remote_checkout_synchronization_err
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var errors_1 = __webpack_require__(8);
+var errors_1 = __webpack_require__(9);
 var payment_strategy_1 = __webpack_require__(6);
 var CreditCardPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(CreditCardPaymentStrategy, _super);
@@ -1977,8 +2582,8 @@ exports.default = CreditCardPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var utility_1 = __webpack_require__(10);
-var errors_2 = __webpack_require__(8);
+var utility_1 = __webpack_require__(8);
+var errors_2 = __webpack_require__(9);
 var BraintreePaymentProcessor = /** @class */ (function () {
     function BraintreePaymentProcessor(_braintreeSDKCreator) {
         this._braintreeSDKCreator = _braintreeSDKCreator;
@@ -2396,9 +3001,9 @@ exports.default = BraintreeSDKCreator;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var square_payment_strategy_1 = __webpack_require__(188);
+var square_payment_strategy_1 = __webpack_require__(189);
 exports.SquarePaymentStrategy = square_payment_strategy_1.default;
-var square_script_loader_1 = __webpack_require__(189);
+var square_script_loader_1 = __webpack_require__(190);
 exports.SquareScriptLoader = square_script_loader_1.default;
 
 
@@ -2711,11 +3316,12 @@ exports.default = mapToInternalShippingOption;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
+
 Object.defineProperty(exports, "__esModule", { value: true });
+var utility_1 = __webpack_require__(8);
 var console_logger_1 = __webpack_require__(232);
 var noop_logger_1 = __webpack_require__(233);
-var logger = createLogger(process.env.NODE_ENV !== 'test');
+var logger = createLogger(utility_1.getEnvironment() !== 'test');
 function createLogger(isEnabled) {
     if (isEnabled === void 0) { isEnabled = true; }
     if (!isEnabled) {
@@ -2729,7 +3335,6 @@ function getDefaultLogger() {
 }
 exports.getDefaultLogger = getDefaultLogger;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(231)))
 
 /***/ }),
 /* 83 */
@@ -2741,9 +3346,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LOAD_INSTRUMENTS_REQUESTED = 'LOAD_INSTRUMENTS_REQUESTED';
 exports.LOAD_INSTRUMENTS_SUCCEEDED = 'LOAD_INSTRUMENTS_SUCCEEDED';
 exports.LOAD_INSTRUMENTS_FAILED = 'LOAD_INSTRUMENTS_FAILED';
-exports.VAULT_INSTRUMENT_REQUESTED = 'VAULT_INSTRUMENT_REQUESTED';
-exports.VAULT_INSTRUMENT_SUCCEEDED = 'VAULT_INSTRUMENT_SUCCEEDED';
-exports.VAULT_INSTRUMENT_FAILED = 'VAULT_INSTRUMENT_FAILED';
 exports.DELETE_INSTRUMENT_REQUESTED = 'DELETE_INSTRUMENT_REQUESTED';
 exports.DELETE_INSTRUMENT_SUCCEEDED = 'DELETE_INSTRUMENT_SUCCEEDED';
 exports.DELETE_INSTRUMENT_FAILED = 'DELETE_INSTRUMENT_FAILED';
@@ -2834,6 +3436,15 @@ var lodash_1 = __webpack_require__(4);
 var MessageFormat = __webpack_require__(252);
 var DEFAULT_LOCALE = 'en';
 var KEY_PREFIX = 'optimized_checkout';
+/**
+ * Responsible for getting language strings.
+ *
+ * This object can be used to retrieve language strings that are most
+ * appropriate for a given locale.
+ *
+ * The language strings provided to the object should follow [ICU
+ * MessageFormat](http://userguide.icu-project.org/formatparse/messages) syntax.
+ */
 var LanguageService = /** @class */ (function () {
     /**
      * @internal
@@ -2846,29 +3457,64 @@ var LanguageService = /** @class */ (function () {
         this._translations = translations;
         this._formatters = {};
     }
+    /**
+     * Remaps a set of language strings with a different set of keys.
+     *
+     * ```js
+     * service.mapKeys({
+     *     'new_key': 'existing_key',
+     * });
+     *
+     * console.log(service.translate('new_key'));
+     * ```
+     *
+     * @param maps - The set of language strings.
+     */
     LanguageService.prototype.mapKeys = function (maps) {
         var _this = this;
-        if (maps === void 0) { maps = {}; }
         Object.keys(maps).forEach(function (key) {
             var translationKey = KEY_PREFIX + "." + maps[key];
             _this._translations[KEY_PREFIX + "." + key] = _this._translations[translationKey];
         });
     };
+    /**
+     * Gets the preferred locale of the current customer.
+     *
+     * @returns The preferred locale code.
+     */
     LanguageService.prototype.getLocale = function () {
         return this._hasTranslations() ? this._locale : DEFAULT_LOCALE;
     };
-    LanguageService.prototype.translate = function (rawKey, data) {
+    /**
+     * Gets a language string by a key.
+     *
+     * ```js
+     * service.translate('language_key');
+     * ```
+     *
+     * If the language string contains a placeholder, you can replace it by
+     * providing a second argument.
+     *
+     * ```js
+     * service.translate('language_key', { placeholder: 'Hello' });
+     * ```
+     *
+     * @param key - The language key.
+     * @param data - Data for replacing placeholders in the language string.
+     * @returns The translated language string.
+     */
+    LanguageService.prototype.translate = function (key, data) {
         if (data === void 0) { data = {}; }
-        var key = KEY_PREFIX + "." + rawKey;
-        if (typeof this._translations[key] !== 'string') {
-            this._logger.warn("Translation key \"" + key + "\" is missing");
-            return key;
+        var prefixedKey = KEY_PREFIX + "." + key;
+        if (typeof this._translations[prefixedKey] !== 'string') {
+            this._logger.warn("Translation key \"" + prefixedKey + "\" is missing");
+            return prefixedKey;
         }
-        if (!this._formatters[key]) {
-            var messageFormat = new MessageFormat(this._locales[key]);
-            this._formatters[key] = messageFormat.compile(this._translations[key] || '');
+        if (!this._formatters[prefixedKey]) {
+            var messageFormat = new MessageFormat(this._locales[prefixedKey]);
+            this._formatters[prefixedKey] = messageFormat.compile(this._translations[prefixedKey] || '');
         }
-        return this._formatters[key](this._transformData(data));
+        return this._formatters[prefixedKey](this._transformData(data));
     };
     LanguageService.prototype._transformConfig = function (config) {
         if (config === void 0) { config = {}; }
@@ -2938,7 +3584,7 @@ exports.default = LanguageService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(9);
+var request_sender_1 = __webpack_require__(10);
 exports.createTimeout = request_sender_1.createTimeout;
 var checkout_1 = __webpack_require__(7);
 exports.createCheckoutService = checkout_1.createCheckoutService;
@@ -2991,6 +3637,14 @@ exports.default = createCheckoutSelectors;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var selector_1 = __webpack_require__(3);
+/**
+ * Responsible for getting the error of any asynchronous checkout action, if
+ * there is any.
+ *
+ * This object has a set of getters that would return an error if an action is
+ * not executed successfully. For example, if you are unable to submit an order,
+ * you can use this object to retrieve the reason for the failure.
+ */
 var CheckoutStoreErrorSelector = /** @class */ (function () {
     /**
      * @internal
@@ -3012,6 +3666,12 @@ var CheckoutStoreErrorSelector = /** @class */ (function () {
         this._shippingOptions = selectors.shippingOptions;
         this._shippingStrategies = selectors.shippingStrategies;
     }
+    /**
+     * Gets the error of any checkout action that has failed.
+     *
+     * @returns The error object if unable to perform any checkout action,
+     * otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getError = function () {
         return this.getLoadCheckoutError() ||
             this.getSubmitOrderError() ||
@@ -3038,87 +3698,224 @@ var CheckoutStoreErrorSelector = /** @class */ (function () {
             this.getRemoveGiftCertificateError() ||
             this.getLoadInstrumentsError() ||
             this.getDeleteInstrumentError() ||
-            this.getVaultInstrumentError() ||
             this.getLoadConfigError();
     };
+    /**
+     * Returns an error if unable to load the current checkout.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadCheckoutError = function () {
         return this._quote.getLoadError();
     };
+    /**
+     * Returns an error if unable to submit the current order.
+     *
+     * @returns The error object if unable to submit, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getSubmitOrderError = function () {
         return this._paymentStrategies.getExecuteError();
     };
+    /**
+     * Returns an error if unable to finalize the current order.
+     *
+     * @returns The error object if unable to finalize, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getFinalizeOrderError = function () {
         return this._paymentStrategies.getFinalizeError();
     };
+    /**
+     * Returns an error if unable to load the current order.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadOrderError = function () {
         return this._order.getLoadError();
     };
+    /**
+     * Returns an error if unable to load the current cart.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadCartError = function () {
         return this._cart.getLoadError();
     };
+    /**
+     * Returns an error if unable to verify the current cart.
+     *
+     * This method is deprecated because cart verification is an internal
+     * process, therefore should not be referred externally.
+     *
+     * @deprecated
+     * @returns The error object if unable to verify, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getVerifyCartError = function () {
         return this._cart.getVerifyError();
     };
+    /**
+     * Returns an error if unable to load billing countries.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadBillingCountriesError = function () {
         return this._countries.getLoadError();
     };
+    /**
+     * Returns an error if unable to load shipping countries.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadShippingCountriesError = function () {
         return this._shippingCountries.getLoadError();
     };
+    /**
+     * Returns an error if unable to load payment methods.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadPaymentMethodsError = function () {
         return this._paymentMethods.getLoadError();
     };
+    /**
+     * Returns an error if unable to load a specific payment method.
+     *
+     * @param methodId - The identifier of the payment method to load.
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadPaymentMethodError = function (methodId) {
         return this._paymentMethods.getLoadMethodError(methodId);
     };
+    /**
+     * Returns an error if unable to initialize a specific payment method.
+     *
+     * @param methodId - The identifier of the payment method to initialize.
+     * @returns The error object if unable to initialize, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getInitializePaymentError = function (methodId) {
         return this._paymentStrategies.getInitializeError(methodId);
     };
+    /**
+     * Returns an error if unable to sign in.
+     *
+     * @returns The error object if unable to sign in, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getSignInError = function () {
         return this._customerStrategies.getSignInError();
     };
+    /**
+     * Returns an error if unable to sign out.
+     *
+     * @returns The error object if unable to sign out, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getSignOutError = function () {
         return this._customerStrategies.getSignOutError();
     };
+    /**
+     * Returns an error if unable to initialize the customer step of a checkout
+     * process.
+     *
+     * @param methodId - The identifer of the initialization method to execute.
+     * @returns The error object if unable to initialize, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getInitializeCustomerError = function (methodId) {
         return this._customerStrategies.getInitializeError(methodId);
     };
+    /**
+     * Returns an error if unable to load shipping options.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadShippingOptionsError = function () {
         return this._shippingOptions.getLoadError();
     };
+    /**
+     * Returns an error if unable to select a shipping option.
+     *
+     * @returns The error object if unable to select, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getSelectShippingOptionError = function () {
         return this._shippingStrategies.getSelectOptionError();
     };
+    /**
+     * Returns an error if unable to update a billing address.
+     *
+     * @returns The error object if unable to update, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getUpdateBillingAddressError = function () {
         return this._billingAddress.getUpdateError();
     };
+    /**
+     * Returns an error if unable to update a shipping address.
+     *
+     * @returns The error object if unable to update, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getUpdateShippingAddressError = function () {
         return this._shippingStrategies.getUpdateAddressError();
     };
+    /**
+     * Returns an error if unable to initialize the shipping step of a checkout
+     * process.
+     *
+     * @param methodId - The identifer of the initialization method to execute.
+     * @returns The error object if unable to initialize, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getInitializeShippingError = function (methodId) {
         return this._shippingStrategies.getInitializeError(methodId);
     };
+    /**
+     * Returns an error if unable to apply a coupon code.
+     *
+     * @returns The error object if unable to apply, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getApplyCouponError = function () {
         return this._coupons.getApplyError();
     };
+    /**
+     * Returns an error if unable to remove a coupon code.
+     *
+     * @returns The error object if unable to remove, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getRemoveCouponError = function () {
         return this._coupons.getRemoveError();
     };
+    /**
+     * Returns an error if unable to apply a gift certificate.
+     *
+     * @returns The error object if unable to apply, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getApplyGiftCertificateError = function () {
         return this._giftCertificates.getApplyError();
     };
+    /**
+     * Returns an error if unable to remove a gift certificate.
+     *
+     * @returns The error object if unable to remove, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getRemoveGiftCertificateError = function () {
         return this._giftCertificates.getRemoveError();
     };
+    /**
+     * Returns an error if unable to load payment instruments.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadInstrumentsError = function () {
         return this._instruments.getLoadError();
     };
-    CheckoutStoreErrorSelector.prototype.getVaultInstrumentError = function () {
-        return this._instruments.getVaultError();
-    };
+    /**
+     * Returns an error if unable to delete a payment instrument.
+     *
+     * @param instrumentId - The identifier of the payment instrument to delete.
+     * @returns The error object if unable to delete, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getDeleteInstrumentError = function (instrumentId) {
         return this._instruments.getDeleteError(instrumentId);
     };
+    /**
+     * Returns an error if unable to load the checkout configuration of a store.
+     *
+     * @returns The error object if unable to load, otherwise undefined.
+     */
     CheckoutStoreErrorSelector.prototype.getLoadConfigError = function () {
         return this._config.getLoadError();
     };
@@ -3268,6 +4065,24 @@ exports.default = CancellablePromise;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+function getEnvironment() {
+    try {
+        return process.env.NODE_ENV || 'development';
+    }
+    catch (e) {
+        return 'development';
+    }
+}
+exports.default = getEnvironment;
+
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = __webpack_require__(4);
 /**
  * Push an item to an array if it doesn't exist in the array. Otherwise, merge
@@ -3288,7 +4103,7 @@ exports.default = mergeOrPush;
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3304,7 +4119,7 @@ exports.default = omitPrivate;
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3323,7 +4138,7 @@ exports.default = setPrototypeOf;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3405,7 +4220,7 @@ exports.default = CacheKeyResolver;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3414,8 +4229,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var selector_1 = __webpack_require__(3);
 /**
- * TODO: Convert this file into TypeScript properly
- * i.e.: Instrument
+ * Responsible for getting the state of the current checkout.
+ *
+ * This object has a set of methods that allow you to get a specific piece of
+ * checkout information, such as shipping and billing details.
  */
 var CheckoutStoreSelector = /** @class */ (function () {
     /**
@@ -3436,60 +4253,204 @@ var CheckoutStoreSelector = /** @class */ (function () {
         this._shippingCountries = selectors.shippingCountries;
         this._shippingOptions = selectors.shippingOptions;
     }
+    /**
+     * Gets the current order.
+     *
+     * If the order is not submitted, the method returns the order as
+     * incomplete. Otherwise, it returns the order as complete with an
+     * identifier.
+     *
+     * @returns The current order if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getOrder = function () {
         return this._order.getOrder();
     };
+    /**
+     * Gets the current quote.
+     *
+     * @deprecated This method will be replaced in the future.
+     * @returns The current quote if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getQuote = function () {
         return this._quote.getQuote();
     };
+    /**
+     * Gets the checkout configuration of a store.
+     *
+     * @returns The configuration object if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getConfig = function () {
         return this._config.getStoreConfig();
     };
+    /**
+     * Gets the shipping address of the current checkout.
+     *
+     * If the address is partially complete, it may not have shipping options
+     * associated with it.
+     *
+     * @returns The shipping address object if it is loaded, otherwise
+     * undefined.
+     */
     CheckoutStoreSelector.prototype.getShippingAddress = function () {
         return this._shippingAddress.getShippingAddress();
     };
+    /**
+     * Gets a list of shipping options available for each shipping address.
+     *
+     * If there is no shipping address assigned to the current checkout, the
+     * list of shipping options will be empty.
+     *
+     * @returns The list of shipping options per address if loaded, otherwise
+     * undefined.
+     */
     CheckoutStoreSelector.prototype.getShippingOptions = function () {
         return this._shippingOptions.getShippingOptions();
     };
+    /**
+     * Gets the selected shipping option for the current checkout.
+     *
+     * @returns The shipping option object if there is a selected option,
+     * otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getSelectedShippingOption = function () {
         return this._shippingOptions.getSelectedShippingOption();
     };
+    /**
+     * Gets a list of countries available for shipping.
+     *
+     * @returns The list of countries if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getShippingCountries = function () {
         return this._shippingCountries.getShippingCountries();
     };
+    /**
+     * Gets the billing address of an order.
+     *
+     * @returns The billing address object if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getBillingAddress = function () {
         return this._billingAddress.getBillingAddress();
     };
+    /**
+     * Gets a list of countries available for billing.
+     *
+     * @returns The list of countries if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getBillingCountries = function () {
         return this._countries.getCountries();
     };
+    /**
+     * Gets a list of payment methods available for checkout.
+     *
+     * @returns The list of payment methods if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getPaymentMethods = function () {
         return this._paymentMethods.getPaymentMethods();
     };
+    /**
+     * Gets a payment method by an id.
+     *
+     * The method returns undefined if unable to find a payment method with the
+     * specified id, either because it is not available for the customer, or it
+     * is not loaded.
+     *
+     * @param methodId - The identifier of the payment method.
+     * @param gatewayId - The identifier of a payment provider providing the
+     * payment method.
+     * @returns The payment method object if loaded and available, otherwise,
+     * undefined.
+     */
     CheckoutStoreSelector.prototype.getPaymentMethod = function (methodId, gatewayId) {
         return this._paymentMethods.getPaymentMethod(methodId, gatewayId);
     };
+    /**
+     * Gets the payment method that is selected for checkout.
+     *
+     * @returns The payment method object if there is a selected method;
+     * undefined if otherwise.
+     */
     CheckoutStoreSelector.prototype.getSelectedPaymentMethod = function () {
         return this._paymentMethods.getSelectedPaymentMethod();
     };
+    /**
+     * Gets the current cart.
+     *
+     * @returns The current cart object if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getCart = function () {
         return this._cart.getCart();
     };
+    /**
+     * Gets the current customer.
+     *
+     * @returns The current customer object if it is loaded, otherwise
+     * undefined.
+     */
     CheckoutStoreSelector.prototype.getCustomer = function () {
         return this._customer.getCustomer();
     };
+    /**
+     * Checks if payment data is required or not.
+     *
+     * If payment data is required, customers should be prompted to enter their
+     * payment details.
+     *
+     * ```js
+     * if (state.checkout.isPaymentDataRequired()) {
+     *     // Render payment form
+     * } else {
+     *     // Render "Payment is not required for this order" message
+     * }
+     * ```
+     *
+     * @param useStoreCredit - If true, check whether payment data is required
+     * with store credit applied; otherwise, check without store credit.
+     * @returns True if payment data is required, otherwise false.
+     */
     CheckoutStoreSelector.prototype.isPaymentDataRequired = function (useStoreCredit) {
         return this._order.isPaymentDataRequired(useStoreCredit);
     };
+    /**
+     * Checks if payment data is submitted or not.
+     *
+     * If payment data is already submitted using a payment method, customers
+     * should not be prompted to enter their payment details again.
+     *
+     * @param methodId - The identifier of the payment method.
+     * @param gatewayId - The identifier of a payment provider providing the
+     * payment method.
+     * @returns True if payment data is submitted, otherwise false.
+     */
     CheckoutStoreSelector.prototype.isPaymentDataSubmitted = function (methodId, gatewayId) {
         return this._order.isPaymentDataSubmitted(this.getPaymentMethod(methodId, gatewayId));
     };
+    /**
+     * Gets a list of payment instruments associated with the current customer.
+     *
+     * @returns The list of payment instruments if it is loaded, otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getInstruments = function () {
         return this._instruments.getInstruments();
     };
+    /**
+     * Gets a set of form fields that should be presented to customers in order
+     * to capture their billing address for a specific country.
+     *
+     * @param countryCode - A 2-letter country code (ISO 3166-1 alpha-2).
+     * @returns The set of billing address form fields if it is loaded,
+     * otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getBillingAddressFields = function (countryCode) {
         return this._form.getBillingAddressFields(this.getBillingCountries(), countryCode);
     };
+    /**
+     * Gets a set of form fields that should be presented to customers in order
+     * to capture their shipping address for a specific country.
+     *
+     * @param countryCode - A 2-letter country code (ISO 3166-1 alpha-2).
+     * @returns The set of shipping address form fields if it is loaded,
+     * otherwise undefined.
+     */
     CheckoutStoreSelector.prototype.getShippingAddressFields = function (countryCode) {
         return this._form.getShippingAddressFields(this.getShippingCountries(), countryCode);
     };
@@ -3502,7 +4463,7 @@ exports.default = CheckoutStoreSelector;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3510,6 +4471,14 @@ exports.default = CheckoutStoreSelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var selector_1 = __webpack_require__(3);
+/**
+ * Responsible for checking the statuses of various asynchronous actions related
+ * to checkout.
+ *
+ * This object has a set of getters that return true if an action is in
+ * progress. For example, you can check whether a customer is submitting an
+ * order and waiting for the request to complete.
+ */
 var CheckoutStoreStatusSelector = /** @class */ (function () {
     /**
      * @internal
@@ -3531,6 +4500,11 @@ var CheckoutStoreStatusSelector = /** @class */ (function () {
         this._shippingOptions = selectors.shippingOptions;
         this._shippingStrategies = selectors.shippingStrategies;
     }
+    /**
+     * Checks whether any checkout action is pending.
+     *
+     * @returns True if there is a pending action, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isPending = function () {
         return this.isLoadingCheckout() ||
             this.isSubmittingOrder() ||
@@ -3556,99 +4530,275 @@ var CheckoutStoreStatusSelector = /** @class */ (function () {
             this.isApplyingGiftCertificate() ||
             this.isRemovingGiftCertificate() ||
             this.isLoadingInstruments() ||
-            this.isVaultingInstrument() ||
             this.isDeletingInstrument() ||
             this.isLoadingConfig() ||
             this.isCustomerStepPending() ||
             this.isPaymentStepPending();
     };
+    /**
+     * Checks whether the current checkout is loading.
+     *
+     * @returns True if the current checkout is loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingCheckout = function () {
         return this._quote.isLoading();
     };
+    /**
+     * Checks whether the current order is submitting.
+     *
+     * @returns True if the current order is submitting, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isSubmittingOrder = function () {
         return this._paymentStrategies.isExecuting();
     };
+    /**
+     * Checks whether the current order is finalizing.
+     *
+     * @returns True if the current order is finalizing, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isFinalizingOrder = function () {
         return this._paymentStrategies.isFinalizing();
     };
+    /**
+     * Checks whether the current order is loading.
+     *
+     * @returns True if the current order is loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingOrder = function () {
         return this._order.isLoading();
     };
+    /**
+     * Checks whether the current cart is loading.
+     *
+     * @returns True if the current cart is loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingCart = function () {
         return this._cart.isLoading();
     };
+    /**
+     * Checks whether the current cart is verifying.
+     *
+     * This method is deprecated because cart verification is an internal
+     * process, therefore should not be referred externally.
+     *
+     * @deprecated
+     * @returns True if the current cart is verifying, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isVerifyingCart = function () {
         return this._cart.isVerifying();
     };
+    /**
+     * Checks whether billing countries are loading.
+     *
+     * @returns True if billing countries are loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingBillingCountries = function () {
         return this._countries.isLoading();
     };
+    /**
+     * Checks whether shipping countries are loading.
+     *
+     * @returns True if shipping countries are loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingShippingCountries = function () {
         return this._shippingCountries.isLoading();
     };
+    /**
+     * Checks whether payment methods are loading.
+     *
+     * @returns True if payment methods are loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingPaymentMethods = function () {
         return this._paymentMethods.isLoading();
     };
+    /**
+     * Checks whether a specific or any payment method is loading.
+     *
+     * The method returns true if no ID is provided and at least one payment
+     * method is loading.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the payment method is loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingPaymentMethod = function (methodId) {
         return this._paymentMethods.isLoadingMethod(methodId);
     };
+    /**
+     * Checks whether a specific or any payment method is initializing.
+     *
+     * The method returns true if no ID is provided and at least one payment
+     * method is initializing.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the payment method is initializing, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isInitializingPayment = function (methodId) {
         return this._paymentStrategies.isInitializing(methodId);
     };
+    /**
+     * Checks whether the current customer is signing in.
+     *
+     * If an ID is provided, the method also checks whether the customer is
+     * signing in using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for signing in the
+     * current customer.
+     * @returns True if the customer is signing in, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isSigningIn = function (methodId) {
         return this._customerStrategies.isSigningIn(methodId);
     };
+    /**
+     * Checks whether the current customer is signing out.
+     *
+     * If an ID is provided, the method also checks whether the customer is
+     * signing out using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for signing out the
+     * current customer.
+     * @returns True if the customer is signing out, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isSigningOut = function (methodId) {
         return this._customerStrategies.isSigningOut(methodId);
     };
+    /**
+     * Checks whether the customer step is initializing.
+     *
+     * If an ID is provided, the method also checks whether the customer step is
+     * initializing using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for initializing the
+     * customer step of checkout.
+     * @returns True if the customer step is initializing, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isInitializingCustomer = function (methodId) {
         return this._customerStrategies.isInitializing(methodId);
     };
+    /**
+     * Checks whether shipping options are loading.
+     *
+     * @returns True if shipping options are loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingShippingOptions = function () {
         return this._shippingOptions.isLoading();
     };
+    /**
+     * Checks whether the current customer is selecting a shipping option.
+     *
+     * @returns True if selecting a shipping option, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isSelectingShippingOption = function () {
         return this._shippingStrategies.isSelectingOption();
     };
+    /**
+     * Checks whether the current customer is updating their billing address.
+     *
+     * @returns True if updating their billing address, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isUpdatingBillingAddress = function () {
         return this._billingAddress.isUpdating();
     };
+    /**
+     * Checks whether the current customer is updating their shipping address.
+     *
+     * @returns True if updating their shipping address, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isUpdatingShippingAddress = function () {
         return this._shippingStrategies.isUpdatingAddress();
     };
+    /**
+     * Checks whether the shipping step of a checkout process is initializing.
+     *
+     * If an identifier is provided, the method also checks whether the shipping
+     * step is initializing using a specific shipping method with the same
+     * identifier.
+     *
+     * @param methodId - The identifer of the initialization method to check.
+     * @returns True if the shipping step is initializing, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isInitializingShipping = function (methodId) {
         return this._shippingStrategies.isInitializing(methodId);
     };
+    /**
+     * Checks whether the current customer is applying a coupon code.
+     *
+     * @returns True if applying a coupon code, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isApplyingCoupon = function () {
         return this._coupons.isApplying();
     };
+    /**
+     * Checks whether the current customer is removing a coupon code.
+     *
+     * @returns True if removing a coupon code, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isRemovingCoupon = function () {
         return this._coupons.isRemoving();
     };
+    /**
+     * Checks whether the current customer is applying a gift certificate.
+     *
+     * @returns True if applying a gift certificate, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isApplyingGiftCertificate = function () {
         return this._giftCertificates.isApplying();
     };
+    /**
+     * Checks whether the current customer is removing a gift certificate.
+     *
+     * @returns True if removing a gift certificate, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isRemovingGiftCertificate = function () {
         return this._giftCertificates.isRemoving();
     };
+    /**
+     * Checks whether the current customer's payment instruments are loading.
+     *
+     * @returns True if payment instruments are loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingInstruments = function () {
         return this._instruments.isLoading();
     };
-    CheckoutStoreStatusSelector.prototype.isVaultingInstrument = function () {
-        return this._instruments.isVaulting();
-    };
+    /**
+     * Checks whether the current customer is deleting a payment instrument.
+     *
+     * @returns True if deleting a payment instrument, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isDeletingInstrument = function (instrumentId) {
         return this._instruments.isDeleting(instrumentId);
     };
+    /**
+     * Checks whether the checkout configuration of a store is loading.
+     *
+     * @returns True if the configuration is loading, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isLoadingConfig = function () {
         return this._config.isLoading();
     };
+    /**
+     * Checks whether the customer step of a checkout is in a pending state.
+     *
+     * The customer step is considered to be pending if it is in the process of
+     * initializing, signing in, signing out, and/or interacting with a customer
+     * widget.
+     *
+     * @returns True if the customer step is pending, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isCustomerStepPending = function () {
         return this._customerStrategies.isInitializing() ||
             this._customerStrategies.isSigningIn() ||
             this._customerStrategies.isSigningOut() ||
             this._customerStrategies.isWidgetInteracting();
     };
+    /**
+     * Checks whether the payment step of a checkout is in a pending state.
+     *
+     * The payment step is considered to be pending if it is in the process of
+     * initializing, submitting an order, finalizing an order, and/or
+     * interacting with a payment widget.
+     *
+     * @returns True if the payment step is pending, otherwise false.
+     */
     CheckoutStoreStatusSelector.prototype.isPaymentStepPending = function () {
         return this._paymentStrategies.isInitializing() ||
             this._paymentStrategies.isExecuting() ||
@@ -3664,7 +4814,7 @@ exports.default = CheckoutStoreStatusSelector;
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3694,7 +4844,7 @@ exports.default = BillingAddressSelector;
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3731,7 +4881,7 @@ exports.default = BillingAddressActionCreator;
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3758,7 +4908,7 @@ exports.default = BillingAddressRequestSender;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3786,7 +4936,7 @@ function dataReducer(data, action) {
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3844,7 +4994,7 @@ exports.default = CartActionCreator;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3962,7 +5112,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4014,7 +5164,7 @@ exports.default = CouponActionCreator;
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4043,7 +5193,7 @@ exports.default = CouponRequestSender;
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4076,7 +5226,7 @@ exports.default = CouponSelector;
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4149,7 +5299,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4201,7 +5351,7 @@ exports.default = GiftCertificateActionCreator;
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4230,7 +5380,7 @@ exports.default = GiftCertificateRequestSender;
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4263,7 +5413,7 @@ exports.default = GiftCertificateSelector;
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4336,7 +5486,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4354,7 +5504,7 @@ exports.default = mapToInternalCoupon;
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4376,7 +5526,7 @@ exports.default = mapToInternalGiftCertificate;
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4405,7 +5555,7 @@ exports.default = CartRequestSender;
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4444,7 +5594,7 @@ exports.default = CartSelector;
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4477,7 +5627,7 @@ exports.default = ConfigActionCreator;
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4513,7 +5663,7 @@ exports.default = ConfigSelector;
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4570,7 +5720,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4596,13 +5746,13 @@ exports.default = ConfigRequestSender;
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(9);
+var request_sender_1 = __webpack_require__(10);
 var script_loader_1 = __webpack_require__(32);
 var registry_1 = __webpack_require__(33);
 var payment_1 = __webpack_require__(13);
@@ -4612,7 +5762,7 @@ var remote_checkout_1 = __webpack_require__(21);
 var amazon_pay_1 = __webpack_require__(38);
 var _1 = __webpack_require__(19);
 var customer_action_creator_1 = __webpack_require__(73);
-var strategies_1 = __webpack_require__(197);
+var strategies_1 = __webpack_require__(198);
 function createCustomerStrategyRegistry(store, client) {
     var registry = new registry_1.Registry();
     var remoteCheckoutRequestSender = new remote_checkout_1.RemoteCheckoutRequestSender(request_sender_1.createRequestSender());
@@ -4631,7 +5781,7 @@ exports.default = createCustomerStrategyRegistry;
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4683,7 +5833,7 @@ exports.default = Registry;
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4704,7 +5854,7 @@ exports.default = InvalidArgumentError;
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4725,7 +5875,7 @@ exports.default = MissingDataError;
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4746,7 +5896,7 @@ exports.default = NotImplementedError;
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4767,7 +5917,7 @@ exports.default = NotInitializedError;
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4791,7 +5941,7 @@ exports.default = TimeoutError;
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4812,7 +5962,7 @@ exports.default = UnrecoverableError;
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4833,14 +5983,14 @@ exports.default = UnsupportedBrowserError;
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="../payment/bigpay-client.d.ts" />
-var bigpay_client_1 = __webpack_require__(133);
+var bigpay_client_1 = __webpack_require__(134);
 function createPaymentClient(store) {
     var paymentClient = bigpay_client_1.createClient();
     store.subscribe(function (state) {
@@ -4855,36 +6005,36 @@ exports.default = createPaymentClient;
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports) {
 
 module.exports = require("@bigcommerce/bigpay-client");
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var form_poster_1 = __webpack_require__(135);
-var request_sender_1 = __webpack_require__(9);
+var form_poster_1 = __webpack_require__(136);
+var request_sender_1 = __webpack_require__(10);
 var script_loader_1 = __webpack_require__(32);
 var billing_1 = __webpack_require__(22);
 var cart_1 = __webpack_require__(11);
 var order_1 = __webpack_require__(16);
 var quote_1 = __webpack_require__(17);
 var remote_checkout_1 = __webpack_require__(21);
-var afterpay_1 = __webpack_require__(154);
+var afterpay_1 = __webpack_require__(155);
 var amazon_pay_1 = __webpack_require__(38);
-var klarna_1 = __webpack_require__(157);
-var wepay_1 = __webpack_require__(159);
+var klarna_1 = __webpack_require__(158);
+var wepay_1 = __webpack_require__(160);
 var _1 = __webpack_require__(13);
 var payment_action_creator_1 = __webpack_require__(57);
 var payment_method_action_creator_1 = __webpack_require__(59);
 var payment_request_sender_1 = __webpack_require__(61);
 var payment_strategy_registry_1 = __webpack_require__(62);
-var strategies_1 = __webpack_require__(164);
+var strategies_1 = __webpack_require__(165);
 var braintree_1 = __webpack_require__(40);
 var square_1 = __webpack_require__(70);
 function createPaymentStrategyRegistry(store, client, paymentClient) {
@@ -4955,13 +6105,13 @@ exports.default = createPaymentStrategyRegistry;
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports) {
 
 module.exports = require("@bigcommerce/form-poster");
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4971,7 +6121,7 @@ var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(1);
 var Observable_1 = __webpack_require__(5);
 var cart_1 = __webpack_require__(11);
-var errors_1 = __webpack_require__(137);
+var errors_1 = __webpack_require__(138);
 var errors_2 = __webpack_require__(2);
 var order_actions_1 = __webpack_require__(35);
 var OrderActionCreator = /** @class */ (function () {
@@ -5053,20 +6203,20 @@ exports.default = OrderActionCreator;
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var cart_changed_error_1 = __webpack_require__(138);
+var cart_changed_error_1 = __webpack_require__(139);
 exports.CartChangedError = cart_changed_error_1.default;
-var cart_unavailable_error_1 = __webpack_require__(139);
+var cart_unavailable_error_1 = __webpack_require__(140);
 exports.CartUnavailableError = cart_unavailable_error_1.default;
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5087,7 +6237,7 @@ exports.default = CartChangedError;
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5108,7 +6258,7 @@ exports.default = CartUnavailableError;
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5184,7 +6334,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5215,7 +6365,7 @@ exports.default = OrderRequestSender;
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5268,7 +6418,7 @@ exports.default = OrderSelector;
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5323,7 +6473,7 @@ exports.default = mapToInternalOrder;
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5361,7 +6511,7 @@ exports.default = QuoteActionCreator;
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5463,7 +6613,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5471,7 +6621,7 @@ function statusesReducer(statuses, action) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var utility_1 = __webpack_require__(10);
+var utility_1 = __webpack_require__(8);
 function isAddressEqual(addressA, addressB) {
     return lodash_1.isEqual(normalize(addressA), normalize(addressB));
 }
@@ -5488,7 +6638,7 @@ function normalize(address) {
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5517,7 +6667,7 @@ exports.default = mapToInternalAddress;
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5544,7 +6694,7 @@ exports.default = QuoteRequestSender;
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5577,7 +6727,7 @@ exports.default = QuoteSelector;
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5665,7 +6815,7 @@ exports.default = RemoteCheckoutActionCreator;
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5714,7 +6864,7 @@ exports.default = RemoteCheckoutRequestSender;
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5746,7 +6896,7 @@ exports.default = RemoteCheckoutSelector;
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5787,18 +6937,18 @@ function metaReducer(meta, action) {
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var afterpay_script_loader_1 = __webpack_require__(155);
+var afterpay_script_loader_1 = __webpack_require__(156);
 exports.AfterpayScriptLoader = afterpay_script_loader_1.default;
 
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5839,7 +6989,7 @@ exports.default = AfterpayScriptLoader;
 
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5890,18 +7040,18 @@ exports.default = AmazonPayScriptLoader;
 
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var klarna_script_loader_1 = __webpack_require__(158);
+var klarna_script_loader_1 = __webpack_require__(159);
 exports.KlarnaScriptLoader = klarna_script_loader_1.default;
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5922,18 +7072,18 @@ exports.default = KlarnaScriptLoader;
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var wepay_risk_client_1 = __webpack_require__(160);
+var wepay_risk_client_1 = __webpack_require__(161);
 exports.WepayRiskClient = wepay_risk_client_1.default;
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5965,19 +7115,19 @@ exports.default = WepayRiskClient;
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports) {
 
 module.exports = require("rxjs/observable/concat");
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports) {
 
 module.exports = require("rxjs/observable/defer");
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5988,37 +7138,37 @@ exports.OFFLINE = 'PAYMENT_TYPE_OFFLINE';
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var afterpay_payment_strategy_1 = __webpack_require__(165);
+var afterpay_payment_strategy_1 = __webpack_require__(166);
 exports.AfterpayPaymentStrategy = afterpay_payment_strategy_1.default;
-var amazon_pay_payment_strategy_1 = __webpack_require__(170);
+var amazon_pay_payment_strategy_1 = __webpack_require__(171);
 exports.AmazonPayPaymentStrategy = amazon_pay_payment_strategy_1.default;
 var credit_card_payment_strategy_1 = __webpack_require__(65);
 exports.CreditCardPaymentStrategy = credit_card_payment_strategy_1.default;
-var klarna_payment_strategy_1 = __webpack_require__(172);
+var klarna_payment_strategy_1 = __webpack_require__(173);
 exports.KlarnaPaymentStrategy = klarna_payment_strategy_1.default;
-var legacy_payment_strategy_1 = __webpack_require__(173);
+var legacy_payment_strategy_1 = __webpack_require__(174);
 exports.LegacyPaymentStrategy = legacy_payment_strategy_1.default;
-var no_payment_data_required_strategy_1 = __webpack_require__(174);
+var no_payment_data_required_strategy_1 = __webpack_require__(175);
 exports.NoPaymentDataRequiredPaymentStrategy = no_payment_data_required_strategy_1.default;
-var offline_payment_strategy_1 = __webpack_require__(175);
+var offline_payment_strategy_1 = __webpack_require__(176);
 exports.OfflinePaymentStrategy = offline_payment_strategy_1.default;
-var offsite_payment_strategy_1 = __webpack_require__(176);
+var offsite_payment_strategy_1 = __webpack_require__(177);
 exports.OffsitePaymentStrategy = offsite_payment_strategy_1.default;
 var payment_strategy_1 = __webpack_require__(6);
 exports.PaymentStrategy = payment_strategy_1.default;
-var paypal_express_payment_strategy_1 = __webpack_require__(177);
+var paypal_express_payment_strategy_1 = __webpack_require__(178);
 exports.PaypalExpressPaymentStrategy = paypal_express_payment_strategy_1.default;
-var paypal_pro_payment_strategy_1 = __webpack_require__(178);
+var paypal_pro_payment_strategy_1 = __webpack_require__(179);
 exports.PaypalProPaymentStrategy = paypal_pro_payment_strategy_1.default;
-var sage_pay_payment_strategy_1 = __webpack_require__(179);
+var sage_pay_payment_strategy_1 = __webpack_require__(180);
 exports.SagePayPaymentStrategy = sage_pay_payment_strategy_1.default;
-var wepay_payment_strategy_1 = __webpack_require__(180);
+var wepay_payment_strategy_1 = __webpack_require__(181);
 exports.WepayPaymentStrategy = wepay_payment_strategy_1.default;
 var braintree_1 = __webpack_require__(40);
 exports.BraintreeCreditCardPaymentStrategy = braintree_1.BraintreeCreditCardPaymentStrategy;
@@ -6029,7 +7179,7 @@ exports.SquarePaymentStrategy = square_1.SquarePaymentStrategy;
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6037,7 +7187,7 @@ exports.SquarePaymentStrategy = square_1.SquarePaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(8);
+var errors_2 = __webpack_require__(9);
 var payment_strategy_1 = __webpack_require__(6);
 var AfterpayPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(AfterpayPaymentStrategy, _super);
@@ -6142,7 +7292,7 @@ exports.default = AfterpayPaymentStrategy;
 
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6167,7 +7317,7 @@ exports.default = PaymentArgumentInvalidError;
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6188,7 +7338,7 @@ exports.default = PaymentMethodInvalidError;
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6209,7 +7359,7 @@ exports.default = PaymentMethodCancelledError;
 
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6230,7 +7380,7 @@ exports.default = OrderFinalizationNotRequiredError;
 
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6386,7 +7536,7 @@ exports.default = AmazonPayPaymentStrategy;
 
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6408,7 +7558,7 @@ exports.default = RemoteCheckoutSynchronizationError;
 
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6513,7 +7663,7 @@ exports.default = KlarnaPaymentStrategy;
 
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6537,7 +7687,7 @@ exports.default = LegacyPaymentStrategy;
 
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6562,7 +7712,7 @@ exports.default = NoPaymentDataRequiredPaymentStrategy;
 
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6587,7 +7737,7 @@ exports.default = OfflinePaymentStrategy;
 
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6595,7 +7745,7 @@ exports.default = OfflinePaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(8);
+var errors_2 = __webpack_require__(9);
 var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var OffsitePaymentStrategy = /** @class */ (function (_super) {
@@ -6639,7 +7789,7 @@ exports.default = OffsitePaymentStrategy;
 
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6752,7 +7902,7 @@ exports.default = PaypalExpressPaymentStrategy;
 
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6760,7 +7910,7 @@ exports.default = PaypalExpressPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(8);
+var errors_2 = __webpack_require__(9);
 var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var PaypalProPaymentStrategy = /** @class */ (function (_super) {
@@ -6800,7 +7950,7 @@ exports.default = PaypalProPaymentStrategy;
 
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6809,7 +7959,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(8);
+var errors_2 = __webpack_require__(9);
 var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var SagePayPaymentStrategy = /** @class */ (function (_super) {
@@ -6863,7 +8013,7 @@ exports.default = SagePayPaymentStrategy;
 
 
 /***/ }),
-/* 180 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6902,7 +8052,7 @@ exports.default = WepayPaymentStrategy;
 
 
 /***/ }),
-/* 181 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6910,8 +8060,8 @@ exports.default = WepayPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(8);
-var is_credit_card_like_1 = __webpack_require__(182);
+var errors_2 = __webpack_require__(9);
+var is_credit_card_like_1 = __webpack_require__(183);
 var is_vaulted_instrument_1 = __webpack_require__(39);
 var payment_strategy_1 = __webpack_require__(6);
 var BraintreeCreditCardPaymentStrategy = /** @class */ (function (_super) {
@@ -6995,7 +8145,7 @@ exports.default = BraintreeCreditCardPaymentStrategy;
 
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7016,7 +8166,7 @@ exports.default = isCreditCardLike;
 
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7024,7 +8174,7 @@ exports.default = isCreditCardLike;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(8);
+var errors_2 = __webpack_require__(9);
 var payment_strategy_1 = __webpack_require__(6);
 var BraintreePaypalPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(BraintreePaypalPaymentStrategy, _super);
@@ -7108,7 +8258,7 @@ exports.default = BraintreePaypalPaymentStrategy;
 
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7126,13 +8276,13 @@ exports.default = createBraintreePaymentProcessor;
 
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(9);
+var request_sender_1 = __webpack_require__(10);
 var braintree_script_loader_1 = __webpack_require__(68);
 var braintree_sdk_creator_1 = __webpack_require__(69);
 var braintree_visacheckout_payment_processor_1 = __webpack_require__(67);
@@ -7146,7 +8296,7 @@ exports.default = createBraintreeVisaCheckoutPaymentProcessor;
 
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7176,7 +8326,7 @@ exports.default = VisaCheckoutScriptLoader;
 
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7284,7 +8434,7 @@ exports.default = BraintreeVisaCheckoutPaymentStrategy;
 
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7386,7 +8536,7 @@ exports.default = SquarePaymentStrategy;
 
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7409,7 +8559,7 @@ exports.default = SquareScriptLoader;
 
 
 /***/ }),
-/* 190 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7417,7 +8567,7 @@ exports.default = SquareScriptLoader;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(1);
-var utility_1 = __webpack_require__(10);
+var utility_1 = __webpack_require__(8);
 var actionTypes = __webpack_require__(60);
 var DEFAULT_STATE = {
     errors: {},
@@ -7487,7 +8637,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 191 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7513,7 +8663,7 @@ exports.default = PaymentMethodRequestSender;
 
 
 /***/ }),
-/* 192 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7568,7 +8718,7 @@ exports.default = PaymentMethodSelector;
 
 
 /***/ }),
-/* 193 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7599,7 +8749,7 @@ function dataReducer(data, action) {
 
 
 /***/ }),
-/* 194 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7734,7 +8884,7 @@ exports.default = PaymentStrategyActionCreator;
 
 
 /***/ }),
-/* 195 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7820,7 +8970,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 196 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7891,24 +9041,24 @@ exports.default = PaymentStrategySelector;
 
 
 /***/ }),
-/* 197 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var amazon_pay_customer_strategy_1 = __webpack_require__(198);
+var amazon_pay_customer_strategy_1 = __webpack_require__(199);
 exports.AmazonPayCustomerStrategy = amazon_pay_customer_strategy_1.default;
 var customer_strategy_1 = __webpack_require__(26);
 exports.CustomerStrategy = customer_strategy_1.default;
-var default_customer_strategy_1 = __webpack_require__(199);
+var default_customer_strategy_1 = __webpack_require__(200);
 exports.DefaultCustomerStrategy = default_customer_strategy_1.default;
-var braintree_visacheckout_customer_strategy_1 = __webpack_require__(200);
+var braintree_visacheckout_customer_strategy_1 = __webpack_require__(201);
 exports.BraintreeVisaCheckoutCustomerStrategy = braintree_visacheckout_customer_strategy_1.default;
 
 
 /***/ }),
-/* 198 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8013,7 +9163,7 @@ exports.default = AmazonPayCustomerStrategy;
 
 
 /***/ }),
-/* 199 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8040,7 +9190,7 @@ exports.default = DefaultCustomerStrategy;
 
 
 /***/ }),
-/* 200 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8158,7 +9308,7 @@ exports.default = BraintreeVisaCheckoutCustomerStrategy;
 
 
 /***/ }),
-/* 201 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8202,7 +9352,7 @@ function dataReducer(data, action) {
 
 
 /***/ }),
-/* 202 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8237,7 +9387,7 @@ exports.default = CustomerRequestSender;
 
 
 /***/ }),
-/* 203 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8261,7 +9411,7 @@ exports.default = CustomerSelector;
 
 
 /***/ }),
-/* 204 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8362,7 +9512,7 @@ exports.default = CustomerStrategyActionCreator;
 
 
 /***/ }),
-/* 205 */
+/* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8426,7 +9576,7 @@ exports.default = CustomerStrategySelector;
 
 
 /***/ }),
-/* 206 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8435,7 +9585,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(1);
 var customer_strategy_actions_1 = __webpack_require__(75);
-var customer_strategy_state_1 = __webpack_require__(207);
+var customer_strategy_state_1 = __webpack_require__(208);
 function customerStrategyReducer(state, action) {
     if (state === void 0) { state = customer_strategy_state_1.DEFAULT_STATE; }
     var reducer = data_store_1.combineReducers({
@@ -8512,7 +9662,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 207 */
+/* 208 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8525,7 +9675,7 @@ exports.DEFAULT_STATE = {
 
 
 /***/ }),
-/* 208 */
+/* 209 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8561,7 +9711,7 @@ exports.default = CountryActionCreator;
 
 
 /***/ }),
-/* 209 */
+/* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8586,7 +9736,7 @@ exports.default = CountryRequestSender;
 
 
 /***/ }),
-/* 210 */
+/* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8616,7 +9766,7 @@ exports.default = CountrySelector;
 
 
 /***/ }),
-/* 211 */
+/* 212 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8678,13 +9828,13 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 212 */
+/* 213 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(9);
+var request_sender_1 = __webpack_require__(10);
 var script_loader_1 = __webpack_require__(32);
 var registry_1 = __webpack_require__(33);
 var payment_1 = __webpack_require__(13);
@@ -8692,7 +9842,7 @@ var remote_checkout_1 = __webpack_require__(21);
 var amazon_pay_1 = __webpack_require__(38);
 var shipping_address_action_creator_1 = __webpack_require__(77);
 var shipping_option_action_creator_1 = __webpack_require__(78);
-var strategies_1 = __webpack_require__(213);
+var strategies_1 = __webpack_require__(214);
 function createShippingStrategyRegistry(store, client) {
     var registry = new registry_1.Registry();
     registry.register('amazon', function () {
@@ -8707,22 +9857,22 @@ exports.default = createShippingStrategyRegistry;
 
 
 /***/ }),
-/* 213 */
+/* 214 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var amazon_pay_shipping_strategy_1 = __webpack_require__(214);
+var amazon_pay_shipping_strategy_1 = __webpack_require__(215);
 exports.AmazonPayShippingStrategy = amazon_pay_shipping_strategy_1.default;
-var default_shipping_strategy_1 = __webpack_require__(215);
+var default_shipping_strategy_1 = __webpack_require__(216);
 exports.DefaultShippingStrategy = default_shipping_strategy_1.default;
 var shipping_strategy_1 = __webpack_require__(42);
 exports.ShippingStrategy = shipping_strategy_1.default;
 
 
 /***/ }),
-/* 214 */
+/* 215 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8859,7 +10009,7 @@ exports.default = AmazonPayShippingStrategy;
 
 
 /***/ }),
-/* 215 */
+/* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8887,7 +10037,7 @@ exports.default = DefaultShippingStrategy;
 
 
 /***/ }),
-/* 216 */
+/* 217 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8915,7 +10065,7 @@ function dataReducer(data, action) {
 
 
 /***/ }),
-/* 217 */
+/* 218 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8943,7 +10093,7 @@ exports.default = ShippingAddressRequestSender;
 
 
 /***/ }),
-/* 218 */
+/* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8967,7 +10117,7 @@ exports.default = ShippingAddressSelector;
 
 
 /***/ }),
-/* 219 */
+/* 220 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9004,7 +10154,7 @@ exports.default = ShippingCountryActionCreator;
 
 
 /***/ }),
-/* 220 */
+/* 221 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9029,7 +10179,7 @@ exports.default = ShippingCountryRequestSender;
 
 
 /***/ }),
-/* 221 */
+/* 222 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9059,7 +10209,7 @@ exports.default = ShippingCountrySelector;
 
 
 /***/ }),
-/* 222 */
+/* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9121,7 +10271,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 223 */
+/* 224 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9157,7 +10307,7 @@ exports.default = ShippingOptionRequestSender;
 
 
 /***/ }),
-/* 224 */
+/* 225 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9197,7 +10347,7 @@ exports.default = ShippingOptionSelector;
 
 
 /***/ }),
-/* 225 */
+/* 226 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9275,7 +10425,7 @@ function errorsReducer(errors, action) {
 
 
 /***/ }),
-/* 226 */
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9360,7 +10510,7 @@ exports.default = ShippingStrategyActionCreator;
 
 
 /***/ }),
-/* 227 */
+/* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9417,7 +10567,7 @@ exports.default = ShippingStrategySelector;
 
 
 /***/ }),
-/* 228 */
+/* 229 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9426,7 +10576,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(1);
 var shipping_strategy_actions_1 = __webpack_require__(41);
-var shipping_strategy_state_1 = __webpack_require__(229);
+var shipping_strategy_state_1 = __webpack_require__(230);
 function shippingStrategyReducer(state, action) {
     if (state === void 0) { state = shipping_strategy_state_1.DEFAULT_STATE; }
     var reducer = data_store_1.combineReducers({
@@ -9493,7 +10643,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 229 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9506,16 +10656,17 @@ exports.DEFAULT_STATE = {
 
 
 /***/ }),
-/* 230 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(9);
+var request_sender_1 = __webpack_require__(10);
 var billing_1 = __webpack_require__(22);
 var cart_1 = __webpack_require__(11);
 var log_1 = __webpack_require__(82);
+var utility_1 = __webpack_require__(8);
 var config_1 = __webpack_require__(25);
 var coupon_1 = __webpack_require__(15);
 var customer_1 = __webpack_require__(19);
@@ -9528,208 +10679,36 @@ var shipping_1 = __webpack_require__(28);
 var checkout_service_1 = __webpack_require__(45);
 var create_checkout_client_1 = __webpack_require__(48);
 var create_checkout_store_1 = __webpack_require__(85);
+/**
+ * Creates an instance of `CheckoutService`.
+ *
+ * ```js
+ * const service = createCheckoutService();
+ *
+ * service.subscribe(state => {
+ *     console.log(state);
+ * });
+ *
+ * service.loadCheckout();
+ * ```
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutService`.
+ */
 function createCheckoutService(options) {
-    if (options === void 0) { options = {}; }
     if (document.location.protocol !== 'https:') {
         log_1.getDefaultLogger().warn('The BigCommerce Checkout SDK should not be used on a non-HTTPS page');
     }
-    var client = create_checkout_client_1.default({ locale: options.locale });
-    var store = create_checkout_store_1.default({}, { shouldWarnMutation: options.shouldWarnMutation });
+    if (utility_1.getEnvironment() !== 'production') {
+        log_1.getDefaultLogger().warn('Note that the development build is not optimized. To create a production build, set process.env.NODE_ENV to `production`.');
+    }
+    var _a = options || {}, _b = _a.locale, locale = _b === void 0 ? '' : _b, _c = _a.shouldWarnMutation, shouldWarnMutation = _c === void 0 ? true : _c;
+    var client = create_checkout_client_1.default({ locale: locale });
+    var store = create_checkout_store_1.default({}, { shouldWarnMutation: shouldWarnMutation });
     var paymentClient = payment_1.createPaymentClient(store);
-    var instrumentRequestSender = new instrument_1.InstrumentRequestSender(paymentClient, request_sender_1.createRequestSender());
-    return new checkout_service_1.default(store, new billing_1.BillingAddressActionCreator(client), new cart_1.CartActionCreator(client), new config_1.ConfigActionCreator(client), new geography_1.CountryActionCreator(client), new coupon_1.CouponActionCreator(client), new customer_1.CustomerStrategyActionCreator(customer_1.createCustomerStrategyRegistry(store, client)), new coupon_1.GiftCertificateActionCreator(client), new instrument_1.InstrumentActionCreator(instrumentRequestSender), new order_1.OrderActionCreator(client), new payment_1.PaymentMethodActionCreator(client), new payment_1.PaymentStrategyActionCreator(payment_1.createPaymentStrategyRegistry(store, client, paymentClient)), new quote_1.QuoteActionCreator(client), new shipping_1.ShippingCountryActionCreator(client), new shipping_1.ShippingOptionActionCreator(client), new shipping_1.ShippingStrategyActionCreator(shipping_1.createShippingStrategyRegistry(store, client)));
+    return new checkout_service_1.default(store, new billing_1.BillingAddressActionCreator(client), new cart_1.CartActionCreator(client), new config_1.ConfigActionCreator(client), new geography_1.CountryActionCreator(client), new coupon_1.CouponActionCreator(client), new customer_1.CustomerStrategyActionCreator(customer_1.createCustomerStrategyRegistry(store, client)), new coupon_1.GiftCertificateActionCreator(client), new instrument_1.InstrumentActionCreator(new instrument_1.InstrumentRequestSender(paymentClient, request_sender_1.createRequestSender())), new order_1.OrderActionCreator(client), new payment_1.PaymentMethodActionCreator(client), new payment_1.PaymentStrategyActionCreator(payment_1.createPaymentStrategyRegistry(store, client, paymentClient)), new quote_1.QuoteActionCreator(client), new shipping_1.ShippingCountryActionCreator(client), new shipping_1.ShippingOptionActionCreator(client), new shipping_1.ShippingStrategyActionCreator(shipping_1.createShippingStrategyRegistry(store, client)));
 }
 exports.default = createCheckoutService;
-
-
-/***/ }),
-/* 231 */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
 
 
 /***/ }),
@@ -9849,26 +10828,6 @@ var InstrumentActionCreator = /** @class */ (function () {
             })
                 .catch(function (response) {
                 observer.error(data_store_1.createErrorAction(actionTypes.LOAD_INSTRUMENTS_FAILED, response));
-            });
-        }); };
-    };
-    InstrumentActionCreator.prototype.vaultInstrument = function (instrument) {
-        var _this = this;
-        return function (store) { return Observable_1.Observable.create(function (observer) {
-            observer.next(data_store_1.createAction(actionTypes.VAULT_INSTRUMENT_REQUESTED));
-            var session = _this._getSessionContext(store);
-            var token = _this._getCurrentAccessToken(store);
-            return _this._getValidAccessToken(token)
-                .then(function (currentToken) {
-                return _this._instrumentRequestSender.vaultInstrument(tslib_1.__assign({}, session, { authToken: currentToken.vaultAccessToken }), instrument)
-                    .then(function (_a) {
-                    var body = _a.body;
-                    observer.next(data_store_1.createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, body, currentToken));
-                    observer.complete();
-                });
-            })
-                .catch(function (response) {
-                observer.error(data_store_1.createErrorAction(actionTypes.VAULT_INSTRUMENT_FAILED, response));
             });
         }); };
     };
@@ -10009,20 +10968,6 @@ var InstrumentRequestSender = /** @class */ (function () {
             this._loadInstrumentsWithAddress(requestContext, shippingAddress) :
             this._loadInstruments(requestContext);
     };
-    InstrumentRequestSender.prototype.vaultInstrument = function (requestContext, instrument) {
-        var _this = this;
-        var payload = tslib_1.__assign({}, requestContext, { instrument: instrument });
-        return new Promise(function (resolve, reject) {
-            _this._client.postShopperInstrument(payload, function (error, response) {
-                if (error) {
-                    reject(_this._transformResponse(error));
-                }
-                else {
-                    resolve(_this._transformResponse(response));
-                }
-            });
-        });
-    };
     InstrumentRequestSender.prototype.deleteInstrument = function (requestContext, instrumentId) {
         var _this = this;
         var payload = tslib_1.__assign({}, requestContext, { instrumentId: instrumentId });
@@ -10100,9 +11045,6 @@ var InstrumentSelector = /** @class */ (function () {
     InstrumentSelector.prototype.getLoadError = function () {
         return this._instruments.errors && this._instruments.errors.loadError;
     };
-    InstrumentSelector.prototype.getVaultError = function () {
-        return this._instruments.errors && this._instruments.errors.vaultError;
-    };
     InstrumentSelector.prototype.getDeleteError = function (instrumentId) {
         if (!this._instruments.errors || (instrumentId && this._instruments.errors.failedInstrument !== instrumentId)) {
             return;
@@ -10111,9 +11053,6 @@ var InstrumentSelector = /** @class */ (function () {
     };
     InstrumentSelector.prototype.isLoading = function () {
         return !!(this._instruments.statuses && this._instruments.statuses.isLoading);
-    };
-    InstrumentSelector.prototype.isVaulting = function () {
-        return !!(this._instruments.statuses && this._instruments.statuses.isVaulting);
     };
     InstrumentSelector.prototype.isDeleting = function (instrumentId) {
         if (!this._instruments.statuses || (instrumentId && this._instruments.statuses.deletingInstrument !== instrumentId)) {
@@ -10153,8 +11092,6 @@ function dataReducer(data, action) {
     switch (action.type) {
         case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
             return action.payload.vaulted_instruments || [];
-        case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
-            return (data || []).concat([action.payload.vaulted_instrument]);
         case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
             return (data || []).filter(function (instrument) {
                 return instrument.bigpay_token !== action.meta.instrumentId;
@@ -10166,7 +11103,6 @@ function dataReducer(data, action) {
 function metaReducer(meta, action) {
     switch (action.type) {
         case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
-        case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
         case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
             return tslib_1.__assign({}, meta, action.meta);
         default:
@@ -10179,16 +11115,11 @@ function errorsReducer(errors, action) {
         case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
         case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
             return tslib_1.__assign({}, errors, { loadError: undefined });
-        case actionTypes.VAULT_INSTRUMENT_REQUESTED:
-        case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
-            return tslib_1.__assign({}, errors, { vaultError: undefined });
         case actionTypes.DELETE_INSTRUMENT_REQUESTED:
         case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
             return tslib_1.__assign({}, errors, { deleteError: undefined, failedInstrument: undefined });
         case actionTypes.LOAD_INSTRUMENTS_FAILED:
             return tslib_1.__assign({}, errors, { loadError: action.payload });
-        case actionTypes.VAULT_INSTRUMENT_FAILED:
-            return tslib_1.__assign({}, errors, { vaultError: action.payload });
         case actionTypes.DELETE_INSTRUMENT_FAILED:
             return tslib_1.__assign({}, errors, { deleteError: action.payload, failedInstrument: action.meta.instrumentId });
         default:
@@ -10200,16 +11131,11 @@ function statusesReducer(statuses, action) {
     switch (action.type) {
         case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
             return tslib_1.__assign({}, statuses, { isLoading: true });
-        case actionTypes.VAULT_INSTRUMENT_REQUESTED:
-            return tslib_1.__assign({}, statuses, { isVaulting: true });
         case actionTypes.DELETE_INSTRUMENT_REQUESTED:
             return tslib_1.__assign({}, statuses, { isDeleting: true, deletingInstrument: action.meta.instrumentId });
         case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
         case actionTypes.LOAD_INSTRUMENTS_FAILED:
             return tslib_1.__assign({}, statuses, { isLoading: false });
-        case actionTypes.VAULT_INSTRUMENT_SUCCEEDED:
-        case actionTypes.VAULT_INSTRUMENT_FAILED:
-            return tslib_1.__assign({}, statuses, { isVaulting: false });
         case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
         case actionTypes.DELETE_INSTRUMENT_FAILED:
             return tslib_1.__assign({}, statuses, { isDeleting: false, deletingInstrument: undefined });
@@ -10239,7 +11165,7 @@ exports.RequestErrorFactory = request_error_factory_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var errors_1 = __webpack_require__(8);
+var errors_1 = __webpack_require__(9);
 var errors_2 = __webpack_require__(2);
 var request_error_factory_1 = __webpack_require__(86);
 function createRequestErrorFactory() {
@@ -10365,7 +11291,7 @@ exports.default = createCheckoutStoreReducer;
 Object.defineProperty(exports, "__esModule", { value: true });
 var billing_1 = __webpack_require__(22);
 var cart_1 = __webpack_require__(11);
-var utility_1 = __webpack_require__(10);
+var utility_1 = __webpack_require__(8);
 var config_1 = __webpack_require__(25);
 var coupon_1 = __webpack_require__(15);
 var customer_1 = __webpack_require__(19);
@@ -10541,6 +11467,19 @@ exports.LanguageService = language_service_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var log_1 = __webpack_require__(82);
 var language_service_1 = __webpack_require__(87);
+/**
+ * Creates an instance of `LanguageService`.
+ *
+ * ```js
+ * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
+ * const service = createLanguageService(language);
+ *
+ * console.log(service.translate('address.city_label'));
+ * ```
+ *
+ * @param config - A configuration object.
+ * @returns An instance of `LanguageService`.
+ */
 function createLanguageService(config) {
     if (config === void 0) { config = {}; }
     return new language_service_1.default(config, log_1.getDefaultLogger());

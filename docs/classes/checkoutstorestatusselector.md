@@ -2,6 +2,10 @@
 
 # Class: CheckoutStoreStatusSelector
 
+Responsible for checking the statuses of various asynchronous actions related to checkout.
+
+This object has a set of getters that return true if an action is in progress. For example, you can check whether a customer is submitting an order and waiting for the request to complete.
+
 ## Hierarchy
 
 **CheckoutStoreStatusSelector**
@@ -38,7 +42,6 @@
 * [isSubmittingOrder](checkoutstorestatusselector.md#issubmittingorder)
 * [isUpdatingBillingAddress](checkoutstorestatusselector.md#isupdatingbillingaddress)
 * [isUpdatingShippingAddress](checkoutstorestatusselector.md#isupdatingshippingaddress)
-* [isVaultingInstrument](checkoutstorestatusselector.md#isvaultinginstrument)
 * [isVerifyingCart](checkoutstorestatusselector.md#isverifyingcart)
 
 ---
@@ -51,7 +54,10 @@
 
 ▸ **isApplyingCoupon**(): `boolean`
 
+Checks whether the current customer is applying a coupon code.
+
 **Returns:** `boolean`
+True if applying a coupon code, otherwise false.
 
 ___
 <a id="isapplyinggiftcertificate"></a>
@@ -60,7 +66,10 @@ ___
 
 ▸ **isApplyingGiftCertificate**(): `boolean`
 
+Checks whether the current customer is applying a gift certificate.
+
 **Returns:** `boolean`
+True if applying a gift certificate, otherwise false.
 
 ___
 <a id="iscustomersteppending"></a>
@@ -69,7 +78,12 @@ ___
 
 ▸ **isCustomerStepPending**(): `boolean`
 
+Checks whether the customer step of a checkout is in a pending state.
+
+The customer step is considered to be pending if it is in the process of initializing, signing in, signing out, and/or interacting with a customer widget.
+
 **Returns:** `boolean`
+True if the customer step is pending, otherwise false.
 
 ___
 <a id="isdeletinginstrument"></a>
@@ -77,6 +91,8 @@ ___
 ###  isDeletingInstrument
 
 ▸ **isDeletingInstrument**(instrumentId?: *`undefined` |`string`*): `boolean`
+
+Checks whether the current customer is deleting a payment instrument.
 
 **Parameters:**
 
@@ -87,6 +103,7 @@ ___
  | 
 
 **Returns:** `boolean`
+True if deleting a payment instrument, otherwise false.
 
 ___
 <a id="isfinalizingorder"></a>
@@ -95,7 +112,10 @@ ___
 
 ▸ **isFinalizingOrder**(): `boolean`
 
+Checks whether the current order is finalizing.
+
 **Returns:** `boolean`
+True if the current order is finalizing, otherwise false.
 
 ___
 <a id="isinitializingcustomer"></a>
@@ -104,15 +124,20 @@ ___
 
 ▸ **isInitializingCustomer**(methodId?: *`undefined` |`string`*): `boolean`
 
+Checks whether the customer step is initializing.
+
+If an ID is provided, the method also checks whether the customer step is initializing using a specific customer method with the same ID.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifier of the method used for initializing the customer step of checkout. |
 
 **Returns:** `boolean`
+True if the customer step is initializing, otherwise false.
 
 ___
 <a id="isinitializingpayment"></a>
@@ -121,15 +146,20 @@ ___
 
 ▸ **isInitializingPayment**(methodId?: *`undefined` |`string`*): `boolean`
 
+Checks whether a specific or any payment method is initializing.
+
+The method returns true if no ID is provided and at least one payment method is initializing.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifier of the payment method to check. |
 
 **Returns:** `boolean`
+True if the payment method is initializing, otherwise false.
 
 ___
 <a id="isinitializingshipping"></a>
@@ -138,15 +168,20 @@ ___
 
 ▸ **isInitializingShipping**(methodId?: *`undefined` |`string`*): `boolean`
 
+Checks whether the shipping step of a checkout process is initializing.
+
+If an identifier is provided, the method also checks whether the shipping step is initializing using a specific shipping method with the same identifier.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifer of the initialization method to check. |
 
 **Returns:** `boolean`
+True if the shipping step is initializing, otherwise false.
 
 ___
 <a id="isloadingbillingcountries"></a>
@@ -155,7 +190,10 @@ ___
 
 ▸ **isLoadingBillingCountries**(): `boolean`
 
+Checks whether billing countries are loading.
+
 **Returns:** `boolean`
+True if billing countries are loading, otherwise false.
 
 ___
 <a id="isloadingcart"></a>
@@ -164,7 +202,10 @@ ___
 
 ▸ **isLoadingCart**(): `boolean`
 
+Checks whether the current cart is loading.
+
 **Returns:** `boolean`
+True if the current cart is loading, otherwise false.
 
 ___
 <a id="isloadingcheckout"></a>
@@ -173,7 +214,10 @@ ___
 
 ▸ **isLoadingCheckout**(): `boolean`
 
+Checks whether the current checkout is loading.
+
 **Returns:** `boolean`
+True if the current checkout is loading, otherwise false.
 
 ___
 <a id="isloadingconfig"></a>
@@ -182,7 +226,10 @@ ___
 
 ▸ **isLoadingConfig**(): `boolean`
 
+Checks whether the checkout configuration of a store is loading.
+
 **Returns:** `boolean`
+True if the configuration is loading, otherwise false.
 
 ___
 <a id="isloadinginstruments"></a>
@@ -191,7 +238,10 @@ ___
 
 ▸ **isLoadingInstruments**(): `boolean`
 
+Checks whether the current customer's payment instruments are loading.
+
 **Returns:** `boolean`
+True if payment instruments are loading, otherwise false.
 
 ___
 <a id="isloadingorder"></a>
@@ -200,7 +250,10 @@ ___
 
 ▸ **isLoadingOrder**(): `boolean`
 
+Checks whether the current order is loading.
+
 **Returns:** `boolean`
+True if the current order is loading, otherwise false.
 
 ___
 <a id="isloadingpaymentmethod"></a>
@@ -209,15 +262,20 @@ ___
 
 ▸ **isLoadingPaymentMethod**(methodId?: *`undefined` |`string`*): `boolean`
 
+Checks whether a specific or any payment method is loading.
+
+The method returns true if no ID is provided and at least one payment method is loading.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifier of the payment method to check. |
 
 **Returns:** `boolean`
+True if the payment method is loading, otherwise false.
 
 ___
 <a id="isloadingpaymentmethods"></a>
@@ -226,7 +284,10 @@ ___
 
 ▸ **isLoadingPaymentMethods**(): `boolean`
 
+Checks whether payment methods are loading.
+
 **Returns:** `boolean`
+True if payment methods are loading, otherwise false.
 
 ___
 <a id="isloadingshippingcountries"></a>
@@ -235,7 +296,10 @@ ___
 
 ▸ **isLoadingShippingCountries**(): `boolean`
 
+Checks whether shipping countries are loading.
+
 **Returns:** `boolean`
+True if shipping countries are loading, otherwise false.
 
 ___
 <a id="isloadingshippingoptions"></a>
@@ -244,7 +308,10 @@ ___
 
 ▸ **isLoadingShippingOptions**(): `boolean`
 
+Checks whether shipping options are loading.
+
 **Returns:** `boolean`
+True if shipping options are loading, otherwise false.
 
 ___
 <a id="ispaymentsteppending"></a>
@@ -253,7 +320,12 @@ ___
 
 ▸ **isPaymentStepPending**(): `boolean`
 
+Checks whether the payment step of a checkout is in a pending state.
+
+The payment step is considered to be pending if it is in the process of initializing, submitting an order, finalizing an order, and/or interacting with a payment widget.
+
 **Returns:** `boolean`
+True if the payment step is pending, otherwise false.
 
 ___
 <a id="ispending"></a>
@@ -262,7 +334,10 @@ ___
 
 ▸ **isPending**(): `boolean`
 
+Checks whether any checkout action is pending.
+
 **Returns:** `boolean`
+True if there is a pending action, otherwise false.
 
 ___
 <a id="isremovingcoupon"></a>
@@ -271,7 +346,10 @@ ___
 
 ▸ **isRemovingCoupon**(): `boolean`
 
+Checks whether the current customer is removing a coupon code.
+
 **Returns:** `boolean`
+True if removing a coupon code, otherwise false.
 
 ___
 <a id="isremovinggiftcertificate"></a>
@@ -280,7 +358,10 @@ ___
 
 ▸ **isRemovingGiftCertificate**(): `boolean`
 
+Checks whether the current customer is removing a gift certificate.
+
 **Returns:** `boolean`
+True if removing a gift certificate, otherwise false.
 
 ___
 <a id="isselectingshippingoption"></a>
@@ -289,7 +370,10 @@ ___
 
 ▸ **isSelectingShippingOption**(): `boolean`
 
+Checks whether the current customer is selecting a shipping option.
+
 **Returns:** `boolean`
+True if selecting a shipping option, otherwise false.
 
 ___
 <a id="issigningin"></a>
@@ -298,15 +382,20 @@ ___
 
 ▸ **isSigningIn**(methodId?: *`undefined` |`string`*): `boolean`
 
+Checks whether the current customer is signing in.
+
+If an ID is provided, the method also checks whether the customer is signing in using a specific customer method with the same ID.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifier of the method used for signing in the current customer. |
 
 **Returns:** `boolean`
+True if the customer is signing in, otherwise false.
 
 ___
 <a id="issigningout"></a>
@@ -315,15 +404,20 @@ ___
 
 ▸ **isSigningOut**(methodId?: *`undefined` |`string`*): `boolean`
 
+Checks whether the current customer is signing out.
+
+If an ID is provided, the method also checks whether the customer is signing out using a specific customer method with the same ID.
+
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
+| Param | Type | Description |
+| ------ | ------ | ------ |
 | `Optional` methodId | `undefined` |
 `string`
- | 
+ |  The identifier of the method used for signing out the current customer. |
 
 **Returns:** `boolean`
+True if the customer is signing out, otherwise false.
 
 ___
 <a id="issubmittingorder"></a>
@@ -332,7 +426,10 @@ ___
 
 ▸ **isSubmittingOrder**(): `boolean`
 
+Checks whether the current order is submitting.
+
 **Returns:** `boolean`
+True if the current order is submitting, otherwise false.
 
 ___
 <a id="isupdatingbillingaddress"></a>
@@ -341,7 +438,10 @@ ___
 
 ▸ **isUpdatingBillingAddress**(): `boolean`
 
+Checks whether the current customer is updating their billing address.
+
 **Returns:** `boolean`
+True if updating their billing address, otherwise false.
 
 ___
 <a id="isupdatingshippingaddress"></a>
@@ -350,16 +450,10 @@ ___
 
 ▸ **isUpdatingShippingAddress**(): `boolean`
 
-**Returns:** `boolean`
-
-___
-<a id="isvaultinginstrument"></a>
-
-###  isVaultingInstrument
-
-▸ **isVaultingInstrument**(): `boolean`
+Checks whether the current customer is updating their shipping address.
 
 **Returns:** `boolean`
+True if updating their shipping address, otherwise false.
 
 ___
 <a id="isverifyingcart"></a>
@@ -368,7 +462,13 @@ ___
 
 ▸ **isVerifyingCart**(): `boolean`
 
+Checks whether the current cart is verifying.
+
+This method is deprecated because cart verification is an internal process, therefore should not be referred externally.
+*__deprecated__*: 
+
 **Returns:** `boolean`
+True if the current cart is verifying, otherwise false.
 
 ___
 
