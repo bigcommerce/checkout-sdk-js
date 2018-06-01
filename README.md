@@ -8,32 +8,45 @@ The SDK has a convenient application interface for starting and completing a che
 
 
 ## Table of contents <!-- omit in toc -->
-- [What can you do with this?](#what-can-you-do-with-this)
-- [Install](#install)
+- [Features](#features)
+- [Installation](#installation)
 - [Requirements](#requirements)
     - [Browser support](#browser-support)
     - [Framework](#framework)
     - [CORS](#cors)
 - [Usage](#usage)
-    - [Initialize service](#initialize-service)
-    - [Initialize state](#initialize-state)
-    - [Subscribe to data changes](#subscribe-to-data-changes)
-    - [Sign in shopper](#sign-in-shopper)
-    - [Update shipping details](#update-shipping-details)
-    - [Update billing details](#update-billing-details)
-    - [Apply coupon](#apply-coupon)
-    - [Load payment methods](#load-payment-methods)
-    - [Submit order](#submit-order)
-- [Notes](#notes)
+    - [Initialize instance](#initialize-instance)
+        - [Load configuration](#load-configuration)
+        - [Load checkout](#load-checkout)
+    - [Sign in customer](#sign-in-customer)
+    - [Set shipping details](#set-shipping-details)
+        - [Set shipping address](#set-shipping-address)
+        - [Set shipping option](#set-shipping-option)
+    - [Set billing details](#set-billing-details)
+    - [Apply coupon or gift certificate](#apply-coupon-or-gift-certificate)
+    - [Submit payment and order](#submit-payment-and-order)
+        - [Load payment methods](#load-payment-methods)
+        - [Initialize payment method](#initialize-payment-method)
+        - [Submit order](#submit-order)
+        - [Finalize order](#finalize-order)
+    - [Load order](#load-order)
+    - [Subscribe to changes](#subscribe-to-changes)
+    - [Cancel requests](#cancel-requests)
 - [API reference](#api-reference)
 - [See also](#see-also)
+- [Notes](#notes)
 - [Contribution](#contribution)
 - [License](#license)
 
 
-## What can you do with this?
+## Features
 
-The Checkout SDK is a JavaScript wrapper for our [Storefront Checkout API](https://developer.bigcommerce.com/api/v3/storefront.html). It provides methods for all the operations needed to process a checkout - signing in a customer, populating shipping & billing addresses, fetching shipping quotes & selecting a shipping method, fetching payment options and finally creating an order. It also provides integrations with all the [payment gateways](https://support.bigcommerce.com/articles/Public/Optimized-Single-Page-Checkout) supported by Optimized One Page Checkout, such as:
+The Checkout JS SDK is a client-side JavaScript library for our [Storefront Checkout Web API](https://developer.bigcommerce.com/api/v3/storefront.html). It provides all the methods that are required to complete a checkout process, for example:
+* Sign in a customer and begin the checkout process
+* Set shipping, billing and other required information
+* Pay for the order and complete the checkout process
+
+The library also provides integrations with all the payment methods supported by [Optimized One Page Checkout](https://support.bigcommerce.com/articles/Public/Optimized-Single-Page-Checkout), such as:
 * PayPal Express
 * Braintree
 * Square
@@ -41,10 +54,10 @@ The Checkout SDK is a JavaScript wrapper for our [Storefront Checkout API](https
 * Klarna
 * AfterPay
 
-Using these tools in conjunction with your favorite frontend framework, it’s possible to build a complete checkout experience specific to a single store, or a checkout replacement that’s augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) in React to get you started.
+Using this library in conjunction with your favorite UI framework, it is possible to build a bespoke checkout UI for a store, that can be augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) written in React to get you started.
 
 
-## Install
+## Installation
 
 You can install this library using [npm](https://www.npmjs.com/get-npm).
 
@@ -57,7 +70,7 @@ npm install --save @bigcommerce/checkout-sdk
 
 ### Browser support
 
-We release the library in ES5 so you shouldn't have to do additional transpilation in order to use it. However, you do require the [Promise polyfill](https://github.com/stefanpenner/es6-promise) if you need to support older browsers, such as IE11.
+We release the library in ES5 so you don't have to do additional transpilation in order to use it. However, you do require the [Promise polyfill](https://github.com/stefanpenner/es6-promise) if you need to support older browsers, such as IE11.
 
 ### Framework
 
@@ -65,83 +78,85 @@ The library is framework agnostic. In other words, you can use it with any UI fr
 
 ### CORS
 
-As our Storefront Web APIs currently don't support CORS, you may not be able to use the library outside of a BigCommerce store.
+As our Storefront Web APIs currently don't support CORS, you will not be able to use the library outside of a BigCommerce store.
 
 
 ## Usage
 
-Below are a few examples showing you some of the things you can do with the library.
+Below is a guide on how to use this library.
 
 
-### Initialize service
+### Initialize instance
 
-To create a `CheckoutService` instance and load the initial configuration:
+First, you have to create a `CheckoutService` instance.
 
 ```js
 import { createCheckoutService } from '@bigcommerce/checkout-sdk';
 
 const service = createCheckoutService();
-
-service.loadConfig();
 ```
 
-### Initialize state
+#### Load configuration
 
-Once the service has been initialized, you can either initialize the checkout or the order state.
+Once you have the instance, you need to load the store's checkout configuration. The configuration object contains information about various settings related to checkout, such as the default currency of the store etc...
 
 ```js
-service.loadCheckout();
-service.loadOrder();
+const state = await service.loadConfig();
+
+console.log(state.checkout.getConfig());
 ```
 
-### Subscribe to data changes
+#### Load checkout
 
-To subscribe to changes to the current state:
+Afterwards, you should load the current checkout and present the information to the customer.
 
 ```js
-service.subscribe(({ checkout, errors, statuses }) => {
-    // Return the current checkout
-    console.log(checkout.getCheckout());
+const state = await service.loadCheckout();
 
-    // Return an error object if unable to load checkout
-    console.log(errors.getLoadCheckoutError());
+console.log(state.checkout.getCheckout());
+```
 
-    // Return `true` if in the process of loading checkout
-    console.log(statuses.isLoadingCheckout());
+The checkout object contains various information about the checkout process, such as the cart, the grand total etc... Once the data is loaded, you can retrieve it by calling the getters provided by the state object.
+
+```js
+console.log(state.checkout.getCart());
+console.log(state.checkout.getBillingAddress());
+console.log(state.checkout.getShippingAddress());
+```
+
+### Sign in customer
+
+Before you can collect other checkout information from the customer, you should first ask them to sign in. Once they are signed in, the checkout state will be populated with their personal details, such as their addresses.
+
+```js
+const state = await service.signInCustomer('foo@bar.com', 'password123');
+
+console.log(state.checkout.getCustomer());
+```
+
+Alternatively, you can ask the customer to continue as a guest.
+
+```js
+const state = await service.signInCustomer('foo@bar.com');
+
+console.log(state.checkout.getCustomer());
+```
+
+### Set shipping details
+
+#### Set shipping address
+
+To set a shipping destination for the checkout, you should ask the customer to provide an address. To do that, you need to render a set of form fields for collecting their details. The set of fields also includes all the custom fields configured by the merchant.
+
+```js
+const fields = state.checkout.getShippingAddressFields();
+
+fields.forEach(field => {
+    console.log(field);
 });
 ```
 
-The subscriber gets triggered every time there is a state change. So you can use it to render the latest data in the view.
-
-Once data is loaded, you can also get it outside of a subscriber:
-
-```js
-const { checkout } = service.getState();
-
-console.log(checkout.getCheckout());
-```
-
-### Sign in shopper
-
-To sign in a guest shopper to begin the checkout process:
-
-```js
-const { checkout } = await service.signInCustomer('foo@bar.com');
-
-console.log(checkout.getCustomer());
-```
-
-Or to sign in a returning shopper:
-
-```js
-const { checkout } = await service.signInCustomer('foo@bar.com', 'password123');
-
-console.log(checkout.getCustomer());
-```
-
-### Update shipping details
-
-To set a shipping address for the order:
+To set the shipping address, you can collate all the address fields and construct a request payload.
 
 ```js
 const address = {
@@ -155,72 +170,97 @@ const address = {
     phone: '555-555-5555',
 };
 
-const { checkout } = await service.updateShippingAddress(address);
+const state = await service.updateShippingAddress(address);
 
-console.log(checkout.getShippingAddress());
+console.log(state.checkout.getShippingAddress());
+console.log(state.checkout.getShippingOptions());
 ```
 
-To select a shipping option available for the shipping address:
+#### Set shipping option
+
+Once the address is provided, you can get a list of shipping options available for the address and the cost for each option.
+
+Then, you can ask the customer to select a shipping option from the list.
 
 ```js
-const address = checkout.getShippingAddress();
-const options = checkout.getShippingOptions();
+const address = state.checkout.getShippingAddress();
+const options = state.checkout.getShippingOptions();
+const newState = await service.selectShippingOption(address.id, options[address.id].id);
 
-const { checkout } = await service.selectShippingOption(address.id, options[address.id].id);
-
-console.log(checkout.getSelectedShippingOption());
+console.log(newState.checkout.getSelectedShippingOption());
 ```
 
-### Update billing details
+### Set billing details
 
-To set a billing address for the order:
+In order to complete the checkout process, you also need to collect a billing address from the customer.
 
 ```js
-const { checkout } = await service.updateBillingAddress(address);
+const state = await service.updateBillingAddress(address);
 
-console.log(checkout.getBillingAddress());
+console.log(state.checkout.getBillingAddress());
 ```
 
-### Apply coupon
+### Apply coupon or gift certificate
 
-To apply a coupon or gift certificate to the order:
+You may also want to accept any coupon code or gift certificate provided by the customer.
 
 ```js
-const { checkout } = await service.applyCoupon('COUPON');
+const state = await service.applyCoupon('COUPON');
 
-console.log(checkout.getOrder().coupon);
+console.log(state.checkout.getOrder().coupon);
 ```
 
 ```js
-const { checkout } = await service.applyGiftCertificate('GIFT');
+const state = await service.applyGiftCertificate('GIFT');
 
-console.log(checkout.getOrder().giftCertificate);
+console.log(state.checkout.getOrder().giftCertificate);
 ```
 
-To remove an applied coupon or gift certificate from the order:
+You can also allow the customer to remove any coupon code or gift certificate previously applied.
 
 ```js
 await service.removeCoupon('COUPON');
-await service.removeGiftCertificate('COUPON');
+await service.removeGiftCertificate('GIFT');
 ```
 
-### Load payment methods
+### Submit payment and order
 
-To load available payment methods:
+#### Load payment methods
+
+Before you can place the order, you need to collect payment details from the customer. In order to do that, you must first load and present a list of available payment methods to the customer.
 
 ```js
-const { checkout } = await service.loadPaymentMethods();
+const state = await service.loadPaymentMethods();
 
-console.log(checkout.getPaymentMethods());
+console.log(state.checkout.getPaymentMethods());
 ```
 
-### Submit order
+#### Initialize payment method
 
-To submit the order with payment details and complete the checkout process:
+After that, you should initialize the payment method so they are ready to accept payment details.
+
+```js
+await service.initializePayment({ methodId: 'braintree' });
+```
+
+Some payment methods require you to provide additional initialization options. For example, Amazon requires a container ID in order to initialize their payment widget. Otherwise, they will not work properly.
+
+```js
+await service.initializePayment({
+    methodId: 'amazon',
+    amazon: {
+        container: 'walletWidget',
+    },
+});
+```
+
+#### Submit order
+
+And then, you can ask the customer to provide payment details required by their chosen payment method. If the method is executed successfully, you will create an order and thereby complete the checkout process.
 
 ```js
 const payment = {
-    name: 'testgateway',
+    methodId: 'braintree',
     paymentData: {
         ccExpiry: { month: 10, year: 20 },
         ccName: 'BigCommerce',
@@ -230,23 +270,97 @@ const payment = {
     },
 };
 
-await service.submitOrder({ payment });
+const state = await service.submitOrder({ payment });
+
+console.log(state.getOrder());
+
+window.location.assign('/order-confirmation');
 ```
 
-To submit the order using a hosted payment method:
+If the submission is successful, you should redirect the customer to the order confirmation page.
+
+#### Finalize order
+
+Also, for some payment methods, the customer may be asked to enter their payment details on an external website. For these methods, you must finalize the order when the customer is redirected back to the checkout page in order to complete the checkout flow. This should be done in the background before you present any checkout information to the customer. 
 
 ```js
-const payment = { name: 'braintreepaypal' };
+await service.loadCheckout();
 
-await service.initializePaymentMethod(payment.name);
-await service.submitOrder({ payment });
+try {
+    await service.finalizeOrderIfNeeded();
+
+    window.location.assign('/order-confirmation');
+} catch (error) {
+    if (error.type !== 'order_finalization_not_required') {
+        throw error;
+    }
+}
+
+// Render the checkout view
 ```
 
+Similarly, if the order finalization is successful, you should redirect the customer to the order confirmation page.
 
-## Notes
+### Load order
 
-* You must have [Optimized One Page Checkout](https://support.bigcommerce.com/articles/Public/Optimized-Single-Page-Checkout/) enabled if your store is using a Stencil theme. Otherwise, any changes you have made to the `checkout.html` template won't be applied.
-* In order to keep up to date on the latest changes, please subscribe to this repository by clicking on the [watch](https://github.com/bigcommerce/checkout-sdk-js/subscription) button.
+Once the order is created, you can make a call to retrieve it. This should be done on the order confirmation page so that you can present the final order to the customer.
+
+```js
+const state = await service.loadOrder(123);
+
+console.log(state.checkout.getOrder());
+```
+
+### Subscribe to changes
+
+Your UI should react to changes to the checkout state. When there is a change, you should present the latest information to the customer. You can do that by subscribing to the checkout state.
+
+The subscriber gets triggered every time there is a change in the state. If the change affects your view, you should re-render it in order to reflect the latest update. The subscriber provides a state object which you can use to get specific checkout information. It also provides meta information such as loading statuses, error details etc...
+
+```js
+service.subscribe(state => {
+    // Return the current checkout
+    console.log(state.checkout.getCheckout());
+
+    // Return an error object if unable to load checkout
+    console.log(state.errors.getLoadCheckoutError());
+
+    // Return `true` if in the process of loading checkout
+    console.log(state.statuses.isLoadingCheckout());
+});
+```
+
+If you are only interested in certain parts of the state, you can filter out irrelevant changes by providing a filter function to the subscriber.
+
+```js
+const filter = state => state.checkout.getCart();
+
+service.subscribe(state => {
+    console.log(state.checkout.getCart())
+}, filter);
+```
+
+You can retrieve the same state object outside of a subscriber if there is a need for it.
+
+```js
+const state = service.getState();
+
+console.log(state);
+```
+
+### Cancel requests
+
+If you need to cancel a request before it is complete, you can provide a `Timeout` object when making the request. An example use case might be to implement a UI that updates the shipping address whenever there is a change - so you want to abort any pending requests and only take the latest one.
+
+```js
+import { createTimeout } from '@bigcommerce/checkout-js-sdk';
+
+const address = { countryCode: 'US' };
+const timeout = createTimeout();
+
+service.updateShippingAddress(address, { timeout });
+timeout.complete(); // Aborts the update
+```
 
 
 ## API reference
@@ -258,6 +372,13 @@ You can learn more about the API by reading the [API reference](docs/README.md).
 
 * [Example app](https://github.com/bigcommerce/checkout-sdk-js-example) - A sample checkout app written in React.
 * [Storefront APIs](https://developer.bigcommerce.com/api/v3/storefront.html) - The documentation for Storefront Checkout & Cart Web APIs.
+
+
+## Notes
+
+* If you are using this library on the checkout page of a Stencil theme, you must have [Optimized One Page Checkout](https://support.bigcommerce.com/articles/Public/Optimized-Single-Page-Checkout/) enabled. Otherwise, you will not be able to preview your changes.
+* You should only use this library on a HTTPS page unless you are developing locally.
+* In order to keep up to date on the latest changes, please subscribe to this repository by clicking on the [watch](https://github.com/bigcommerce/checkout-sdk-js/subscription) button.
 
 
 ## Contribution

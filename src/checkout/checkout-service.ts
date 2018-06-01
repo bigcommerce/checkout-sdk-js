@@ -292,15 +292,13 @@ export default class CheckoutService {
      * ```js
      * try {
      *     await service.finalizeOrderIfNeeded();
+     *
+     *     window.location.assign('/order-confirmation');
      * } catch (error) {
      *     if (error.type !== 'order_finalization_not_required') {
-     *         return;
+     *         throw error;
      *     }
-     *
-     *     throw error;
      * }
-     *
-     * window.location.assign('/order-confirmation');
      * ```
      *
      * @param options - Options for finalizing the current order.
