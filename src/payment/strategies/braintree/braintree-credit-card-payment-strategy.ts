@@ -1,8 +1,9 @@
 import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import isCreditCardLike from '../../is-credit-card';
+import { MissingDataError, StandardError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
+import { PaymentArgumentInvalidError } from '../../errors';
+import isCreditCardLike from '../../is-credit-card-like';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { PaymentInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -45,7 +46,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         const { payment, ...order } = orderRequest;
 
         if (!payment) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+            throw new PaymentArgumentInvalidError(['payment']);
         }
 
         return this._store.dispatch(
@@ -54,7 +55,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
             .then(state =>
                 state.order.isPaymentDataRequired(order.useStoreCredit) && payment ?
                     this._preparePaymentData(payment) :
-                    Promise.resolve(payment)
+                    Promise.resolve(payment as Payment)
             )
             .then(payment =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
@@ -83,12 +84,12 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         return isVaultedInstrument(paymentData);
     }
 
-    private _preparePaymentData(payment: Payment): Promise<Payment> {
+    private _preparePaymentData(payment: OrderPaymentRequestBody): Promise<Payment> {
         const { paymentData } = payment;
         const state = this._store.getState();
 
         if (paymentData && this._isUsingVaulting(paymentData)) {
-            return Promise.resolve(payment);
+            return Promise.resolve(payment as Payment);
         }
 
         const cart = state.cart.getCart();

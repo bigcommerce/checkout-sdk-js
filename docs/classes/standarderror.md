@@ -1,28 +1,14 @@
 [@bigcommerce/checkout-sdk](../README.md) > [StandardError](../classes/standarderror.md)
 
-
-
-# Class: StandardError
+# StandardError
 
 ## Hierarchy
-
 
  `Error`
 
 **↳ StandardError**
 
-
-
-
-
-
-
 ## Index
-
-### Constructors
-
-* [constructor](standarderror.md#constructor)
-
 
 ### Properties
 
@@ -31,85 +17,55 @@
 * [name](standarderror.md#name)
 * [stack](standarderror.md#stack)
 
-
-
 ---
+
 ## Constructors
+
 <a id="constructor"></a>
 
+###  constructor
 
-### ⊕ **new StandardError**(message?: *`undefined`⎮`string`*): [StandardError](standarderror.md)
-
-
-
-
+⊕ **new StandardError**(message?: * `undefined` &#124; `string`*): [StandardError](standarderror.md)
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| message | `undefined`⎮`string`   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| `Optional` message |  `undefined` &#124; `string`|
 
 **Returns:** [StandardError](standarderror.md)
 
----
-
+___
 
 ## Properties
+
 <a id="error"></a>
 
-### «Static» Error
+### `<Static>` Error
 
-**●  Error**:  *`ErrorConstructor`* 
-
-
-
-
-
+**● Error**: *`ErrorConstructor`*
 
 ___
-
 <a id="message"></a>
 
-### «Static» message
+### `<Static>` message
 
-**●  message**:  *`string`* 
-
-
-
-
-
+**● message**: *`string`*
 
 ___
-
 <a id="name"></a>
 
-### «Static» name
+### `<Static>` name
 
-**●  name**:  *`string`* 
-
-
-
-
-
+**● name**: *`string`*
 
 ___
-
 <a id="stack"></a>
 
-### «Static»«Optional» stack
+### `<Static>``<Optional>` stack
 
-**●  stack**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● stack**: * `undefined` &#124; `string`
+*
 
 ___
-
 

@@ -2,10 +2,10 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutClient, InternalCheckoutSelectors } from '../checkout';
-import CheckoutValidator from '../checkout/checkout-validator';
+import { CheckoutClient, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 
+import InternalOrderRequestBody from './internal-order-request-body';
 import { FinalizeOrderAction, LoadOrderAction, OrderActionType, SubmitOrderAction } from './order-actions';
 import OrderRequestBody from './order-request-body';
 
@@ -38,7 +38,7 @@ export default class OrderActionCreator {
             const cart = state.cart.getCart();
 
             this._checkoutValidator.validate(cart, options)
-                .then(() => this._checkoutClient.submitOrder(payload, options))
+                .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload), options))
                 .then(response => {
                     observer.next(createAction(OrderActionType.SubmitOrderSucceeded, response.body.data, { ...response.body.meta, token: response.headers.token }));
                     observer.complete();
@@ -62,5 +62,22 @@ export default class OrderActionCreator {
                     observer.error(createErrorAction(OrderActionType.FinalizeOrderFailed, response));
                 });
         });
+    }
+
+    private _mapToOrderRequestBody(payload: OrderRequestBody): InternalOrderRequestBody {
+        const { payment, ...order } = payload;
+
+        if (!payment) {
+            return order;
+        }
+
+        return {
+            ...payload,
+            payment: {
+                paymentData: payment.paymentData,
+                name: payment.methodId,
+                gateway: payment.gatewayId,
+            },
+        };
     }
 }

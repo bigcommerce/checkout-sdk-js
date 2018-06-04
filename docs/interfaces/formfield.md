@@ -1,139 +1,102 @@
 [@bigcommerce/checkout-sdk](../README.md) > [FormField](../interfaces/formfield.md)
 
+# FormField
 
+## Hierarchy
 
-# Interface: FormField
+**FormField**
 
+## Index
+
+### Properties
+
+* [custom](formfield.md#custom)
+* [default](formfield.md#default)
+* [fieldType](formfield.md#fieldtype)
+* [id](formfield.md#id)
+* [itemtype](formfield.md#itemtype)
+* [label](formfield.md#label)
+* [name](formfield.md#name)
+* [options](formfield.md#options)
+* [required](formfield.md#required)
+* [type](formfield.md#type)
+
+---
 
 ## Properties
+
 <a id="custom"></a>
 
 ###  custom
 
-**●  custom**:  *`boolean`* 
-
-
-
-
-
+**● custom**: *`boolean`*
 
 ___
-
 <a id="default"></a>
 
-### «Optional» default
+### `<Optional>` default
 
-**●  default**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● default**: * `undefined` &#124; `string`
+*
 
 ___
-
 <a id="fieldtype"></a>
 
-### «Optional» fieldType
+### `<Optional>` fieldType
 
-**●  fieldType**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● fieldType**: * `undefined` &#124; `string`
+*
 
 ___
-
 <a id="id"></a>
 
 ###  id
 
-**●  id**:  *`string`* 
-
-
-
-
-
+**● id**: *`string`*
 
 ___
-
 <a id="itemtype"></a>
 
-### «Optional» itemtype
+### `<Optional>` itemtype
 
-**●  itemtype**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● itemtype**: * `undefined` &#124; `string`
+*
 
 ___
-
 <a id="label"></a>
 
 ###  label
 
-**●  label**:  *`string`* 
-
-
-
-
-
+**● label**: *`string`*
 
 ___
-
 <a id="name"></a>
 
 ###  name
 
-**●  name**:  *`string`* 
-
-
-
-
-
+**● name**: *`string`*
 
 ___
-
 <a id="options"></a>
 
-### «Optional» options
+### `<Optional>` options
 
-**●  options**:  *[Options](options.md)* 
-
-
-
-
-
+**● options**: *[FormFieldOptions](formfieldoptions.md)*
 
 ___
-
 <a id="required"></a>
 
 ###  required
 
-**●  required**:  *`boolean`* 
-
-
-
-
-
+**● required**: *`boolean`*
 
 ___
-
 <a id="type"></a>
 
-### «Optional» type
+### `<Optional>` type
 
-**●  type**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● type**: * `undefined` &#124; `string`
+*
 
 ___
-
 

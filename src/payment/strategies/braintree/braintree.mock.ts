@@ -1,24 +1,34 @@
 import { Payment } from '../..';
 import { getPayment } from '../../payments.mock';
 
-import * as Braintree from './braintree';
+import {
+    BraintreeClient,
+    BraintreeDataCollector,
+    BraintreeModule,
+    BraintreeModuleCreator,
+    BraintreeRequestData,
+    BraintreeThreeDSecure,
+    BraintreeTokenizeResponse,
+    BraintreeVerifyPayload,
+    BraintreeVisaCheckout,
+} from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
-export function getClientMock(): Braintree.Client {
+export function getClientMock(): BraintreeClient {
     return {
         request: jest.fn(),
         getVersion: jest.fn(),
     };
 }
 
-export function getDataCollectorMock(): Braintree.DataCollector {
+export function getDataCollectorMock(): BraintreeDataCollector {
     return {
         deviceData: 'my_device_session_id',
         teardown: jest.fn(() => Promise.resolve()),
     };
 }
 
-export function getThreeDSecureMock(): Braintree.ThreeDSecure {
+export function getThreeDSecureMock(): BraintreeThreeDSecure {
     return {
         verifyCard: jest.fn(),
         cancelVerifyCard: jest.fn(),
@@ -26,13 +36,21 @@ export function getThreeDSecureMock(): Braintree.ThreeDSecure {
     };
 }
 
-export function getModuleCreatorMock<T>(module: Braintree.Module): Braintree.ModuleCreator<T> {
+export function getVisaCheckoutMock(): BraintreeVisaCheckout {
+    return {
+        createInitOptions: jest.fn(),
+        tokenize: jest.fn(),
+        teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+export function getModuleCreatorMock<T>(module: BraintreeModule | BraintreeClient): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve(module)),
     };
 }
 
-export function getTokenizeResponseBody(): Braintree.TokenizeResponse {
+export function getTokenizeResponseBody(): BraintreeTokenizeResponse {
     return {
         creditCards: [
             { nonce: 'demo_nonce' },
@@ -40,7 +58,7 @@ export function getTokenizeResponseBody(): Braintree.TokenizeResponse {
     };
 }
 
-export function getVerifyPayload(): Braintree.VerifyPayload {
+export function getVerifyPayload(): BraintreeVerifyPayload {
     return {
         nonce: 'demo_nonce',
         details: {
@@ -54,7 +72,7 @@ export function getVerifyPayload(): Braintree.VerifyPayload {
     };
 }
 
-export function getBraintreeRequestData(): Braintree.RequestData {
+export function getBraintreeRequestData(): BraintreeRequestData {
     return {
         data: {
             creditCard: {
@@ -80,7 +98,7 @@ export function getBraintreeRequestData(): Braintree.RequestData {
 export function getBraintreePaymentData(): Payment {
     return {
         ...getPayment(),
-        name: 'braintree',
+        methodId: 'braintree',
     };
 }
 

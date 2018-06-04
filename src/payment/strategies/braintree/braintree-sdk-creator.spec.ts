@@ -7,6 +7,7 @@ import {
     getDataCollectorMock,
     getModuleCreatorMock,
     getThreeDSecureMock,
+    getVisaCheckoutMock,
 } from './braintree.mock';
 
 describe('Braintree SDK Creator', () => {
@@ -143,17 +144,57 @@ describe('Braintree SDK Creator', () => {
         });
     });
 
+    describe('#getVisaCheckout()', () => {
+        let visaCheckoutMock;
+        let visaCheckoutCreatorMock;
+        let braintreeSDKCreator;
+
+        beforeEach(() => {
+            visaCheckoutMock = getVisaCheckoutMock();
+            visaCheckoutCreatorMock = getModuleCreatorMock(visaCheckoutMock);
+            braintreeScriptLoader.loadVisaCheckout = jest.fn().mockReturnValue(Promise.resolve(visaCheckoutCreatorMock));
+            braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
+            jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(Promise.resolve(clientMock));
+        });
+
+        it('returns a promise that resolves to the VisaCheckout client', async () => {
+            const visaCheckout = await braintreeSDKCreator.getVisaCheckout();
+
+            expect(visaCheckoutCreatorMock.create).toHaveBeenCalledWith({ client: clientMock });
+            expect(visaCheckout).toBe(visaCheckoutMock);
+        });
+
+        it('always returns the same instance of the VisaCheckout client', async () => {
+            const visaCheckout1 = await braintreeSDKCreator.getVisaCheckout();
+            const visaCheckout2 = await braintreeSDKCreator.getVisaCheckout();
+
+            expect(visaCheckout1).toBe(visaCheckout2);
+            expect(braintreeScriptLoader.loadVisaCheckout).toHaveBeenCalledTimes(1);
+            expect(visaCheckoutCreatorMock.create).toHaveBeenCalledTimes(1);
+        });
+
+        it('throws if getting the client throws', async () => {
+            const errorMessage = 'some_error';
+            braintreeSDKCreator.getClient.mockImplementation(() => { throw new Error(errorMessage); });
+
+            expect(() => braintreeSDKCreator.getVisaCheckout()).toThrow(errorMessage);
+        });
+    });
+
     describe('#teardown()', () => {
         let braintreeSDKCreator;
         let dataCollectorMock;
         let threeDSecureMock;
+        let visaCheckoutMock;
 
         beforeEach(() => {
             dataCollectorMock = getDataCollectorMock();
             threeDSecureMock = getThreeDSecureMock();
+            visaCheckoutMock = getVisaCheckoutMock();
 
             braintreeScriptLoader.loadDataCollector = jest.fn().mockReturnValue(Promise.resolve(getModuleCreatorMock(dataCollectorMock)));
             braintreeScriptLoader.load3DS = jest.fn().mockReturnValue(Promise.resolve(getModuleCreatorMock(threeDSecureMock)));
+            braintreeScriptLoader.loadVisaCheckout = jest.fn().mockReturnValue(Promise.resolve(getModuleCreatorMock(visaCheckoutMock)));
             braintreeScriptLoader.loadClient = jest.fn().mockReturnValue(Promise.resolve(getModuleCreatorMock(clientMock)));
 
             braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
@@ -163,10 +204,12 @@ describe('Braintree SDK Creator', () => {
         it('calls teardown in all the dependencies', async () => {
             await braintreeSDKCreator.get3DS();
             await braintreeSDKCreator.getDataCollector();
+            await braintreeSDKCreator.getVisaCheckout();
 
             await braintreeSDKCreator.teardown();
             expect(dataCollectorMock.teardown).toHaveBeenCalled();
             expect(threeDSecureMock.teardown).toHaveBeenCalled();
+            expect(visaCheckoutMock.teardown).toHaveBeenCalled();
         });
 
         it('only teardown instanciated dependencies', async () => {
@@ -175,6 +218,7 @@ describe('Braintree SDK Creator', () => {
             await braintreeSDKCreator.teardown();
             expect(dataCollectorMock.teardown).toHaveBeenCalled();
             expect(threeDSecureMock.teardown).not.toHaveBeenCalled();
+            expect(visaCheckoutMock.teardown).not.toHaveBeenCalled();
         });
     });
 });

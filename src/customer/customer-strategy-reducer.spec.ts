@@ -185,4 +185,47 @@ describe('customerStrategyReducer()', () => {
             isSigningOut: false,
         });
     });
+
+    it('returns pending flag as true if interacting with widget', () => {
+        const action = createAction(
+            CustomerStrategyActionType.WidgetInteractionStarted,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            widgetInteractionMethodId: 'foobar',
+            isWidgetInteracting: true,
+        });
+    });
+
+    it('returns pending flag as false if interacting with widget has finished', () => {
+        const action = createAction(
+            CustomerStrategyActionType.WidgetInteractionFinished,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            widgetInteractionMethodId: undefined,
+            isWidgetInteracting: false,
+        });
+    });
+
+    it('returns error if widget interaction has failed', () => {
+        const action = createErrorAction(
+            CustomerStrategyActionType.WidgetInteractionFailed,
+            new Error(),
+            { methodId: 'foobar' }
+        );
+
+        expect(customerStrategyReducer(initialState, action).errors).toEqual({
+            widgetInteractionMethodId: 'foobar',
+            widgetInteractionError: action.payload,
+        });
+
+        expect(customerStrategyReducer(initialState, action).statuses).toEqual({
+            isWidgetInteracting: false,
+        });
+    });
 });

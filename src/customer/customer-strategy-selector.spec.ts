@@ -82,6 +82,36 @@ describe('CustomerStrategySelector', () => {
         });
     });
 
+    describe('#getWidgetInteractingError()', () => {
+        it('returns error if unable to initialize any method', () => {
+            selector = new CustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
+            });
+
+            expect(selector.getWidgetInteractionError()).toEqual(getErrorResponse());
+        });
+
+        it('returns error if unable to initialize specific method', () => {
+            selector = new CustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
+            });
+
+            expect(selector.getWidgetInteractionError('foobar')).toEqual(getErrorResponse());
+            expect(selector.getWidgetInteractionError('bar')).toEqual(undefined);
+        });
+
+        it('does not return error if able to initialize', () => {
+            selector = new CustomerStrategySelector({
+                ...state.customerStrategy,
+                errors: {},
+            });
+
+            expect(selector.getWidgetInteractionError()).toEqual(undefined);
+        });
+    });
+
     describe('#isSigningIn()', () => {
         it('returns true if signing in', () => {
             selector = new CustomerStrategySelector({
@@ -143,6 +173,36 @@ describe('CustomerStrategySelector', () => {
             });
 
             expect(selector.isInitializing()).toEqual(false);
+        });
+    });
+
+    describe('#isWidgetInteracting()', () => {
+        it('returns true if any method is interacting with a widget', () => {
+            selector = new CustomerStrategySelector({
+                ...state.customerStrategy,
+                statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
+            });
+
+            expect(selector.isWidgetInteracting()).toEqual(true);
+        });
+
+        it('returns true if a specific method is interacting with a widget', () => {
+            selector = new CustomerStrategySelector({
+                ...state.customerStrategy,
+                statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
+            });
+
+            expect(selector.isWidgetInteracting('foobar')).toEqual(true);
+            expect(selector.isWidgetInteracting('bar')).toEqual(false);
+        });
+
+        it('returns false if not interacting with a widget', () => {
+            selector = new CustomerStrategySelector({
+                ...state.customerStrategy,
+                statuses: { widgetInteractionMethodId: undefined, isWidgetInteracting: false },
+            });
+
+            expect(selector.isWidgetInteracting()).toEqual(false);
         });
     });
 });

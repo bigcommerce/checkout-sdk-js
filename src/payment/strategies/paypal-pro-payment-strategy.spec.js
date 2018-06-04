@@ -95,7 +95,7 @@ describe('PaypalProPaymentStrategy', () => {
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({
                 ...payload,
-                payment: { name: payload.payment.name },
+                payment: { methodId: payload.payment.methodId },
             }, undefined);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });

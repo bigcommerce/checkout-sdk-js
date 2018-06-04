@@ -1,6 +1,6 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
+import { PaymentArgumentInvalidError } from '../errors';
 import PaymentActionCreator from '../payment-action-creator';
 import { PaymentRequestOptions } from '../payment-request-options';
 
@@ -17,14 +17,15 @@ export default class CreditCardPaymentStrategy extends PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
+        const paymentData = payment && payment.paymentData;
 
-        if (!payment) {
-            throw new InvalidArgumentError();
+        if (!payment || !paymentData) {
+            throw new PaymentArgumentInvalidError(['payment.paymentData']);
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
+                this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
             );
     }
 }

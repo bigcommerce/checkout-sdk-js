@@ -2,8 +2,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { ContentType, RequestOptions } from '../common/http-request';
 
-import OrderRequestBody from './order-request-body';
-
+import InternalOrderRequestBody from './internal-order-request-body';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import Order from './order';
 
@@ -31,7 +30,7 @@ export default class OrderRequestSender {
         });
     }
 
-    submitOrder(body: OrderRequestBody, { timeout }: RequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
+    submitOrder(body: InternalOrderRequestBody, { timeout }: RequestOptions = {}): Promise<Response<InternalOrderResponseBody>> {
         const url = '/internalapi/v1/checkout/order';
 
         return this._requestSender.post(url, { body, timeout });

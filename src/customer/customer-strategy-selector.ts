@@ -29,6 +29,14 @@ export default class CustomerStrategySelector {
         return this._customerStrategies.errors.initializeError;
     }
 
+    getWidgetInteractionError(methodId?: string): Error | undefined {
+        if (methodId && this._customerStrategies.errors.widgetInteractionMethodId !== methodId) {
+            return;
+        }
+
+        return this._customerStrategies.errors.widgetInteractionError;
+    }
+
     isSigningIn(methodId?: string): boolean {
         if (methodId && this._customerStrategies.statuses.signInMethodId !== methodId) {
             return false;
@@ -52,4 +60,11 @@ export default class CustomerStrategySelector {
 
         return !!this._customerStrategies.statuses.isInitializing;
     }
-}
+
+    isWidgetInteracting(methodId?: string): boolean {
+        if (methodId && this._customerStrategies.statuses.widgetInteractionMethodId !== methodId) {
+            return false;
+        }
+
+        return !!this._customerStrategies.statuses.isWidgetInteracting;
+    }}

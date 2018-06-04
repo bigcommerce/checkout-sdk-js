@@ -1,61 +1,50 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalQuote](../interfaces/internalquote.md)
 
+# InternalQuote
 
+## Hierarchy
 
-# Interface: InternalQuote
+**InternalQuote**
 
+## Index
+
+### Properties
+
+* [billingAddress](internalquote.md#billingaddress)
+* [orderComment](internalquote.md#ordercomment)
+* [shippingAddress](internalquote.md#shippingaddress)
+* [shippingOption](internalquote.md#shippingoption)
+
+---
 
 ## Properties
+
 <a id="billingaddress"></a>
 
 ###  billingAddress
 
-**●  billingAddress**:  *[InternalAddress](internaladdress.md)* 
-
-
-
-
-
+**● billingAddress**: *[InternalAddress](internaladdress.md)*
 
 ___
-
 <a id="ordercomment"></a>
 
 ###  orderComment
 
-**●  orderComment**:  *`string`* 
-
-
-
-
-
+**● orderComment**: *`string`*
 
 ___
-
 <a id="shippingaddress"></a>
 
 ###  shippingAddress
 
-**●  shippingAddress**:  *[InternalAddress](internaladdress.md)* 
-
-
-
-
-
+**● shippingAddress**: *[InternalAddress](internaladdress.md)*
 
 ___
-
 <a id="shippingoption"></a>
 
 ###  shippingOption
 
-**●  shippingOption**:  *`string`* 
-
-
-
-
-
+**● shippingOption**: *`string`*
 
 ___
-
 

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../checkout';
 import {
     getCompleteOrderResponseBody,
+    getInternalOrderRequestBody,
     getOrderRequestBody,
     getSubmitOrderResponseBody,
     getSubmitOrderResponseHeaders,
@@ -140,6 +141,13 @@ describe('OrderActionCreator', () => {
                 .toPromise();
 
             expect(checkoutValidator.validate).toHaveBeenCalled();
+        });
+
+        it('submits order payload', async () => {
+            await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                .toPromise();
+
+            expect(checkoutClient.submitOrder).toHaveBeenCalledWith(getInternalOrderRequestBody(), undefined);
         });
 
         it('does not submit order if cart verification fails', async () => {

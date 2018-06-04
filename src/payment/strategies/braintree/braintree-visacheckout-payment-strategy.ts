@@ -1,0 +1,139 @@
+import {
+    PaymentActionCreator,
+    PaymentInitializeOptions,
+    PaymentMethod,
+    PaymentMethodActionCreator,
+    PaymentRequestOptions,
+    PaymentStrategyActionCreator,
+} from '../..';
+import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import PaymentStrategy from '../payment-strategy';
+
+import { BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '.';
+import { VisaCheckoutPaymentSuccessPayload } from './visacheckout';
+
+export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrategy {
+    private _paymentMethod?: PaymentMethod;
+
+    constructor(
+        store: CheckoutStore,
+        private _checkoutActionCreator: CheckoutActionCreator,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+        private _orderActionCreator: OrderActionCreator,
+        private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
+        private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader
+    ) {
+        super(store);
+    }
+
+    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        const { braintreevisacheckout: visaCheckoutOptions, methodId } = options;
+
+        if (!visaCheckoutOptions) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.braintreevisacheckout" argument is not provided.');
+        }
+
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+            .then(state => {
+                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+
+                const cart = state.cart.getCart();
+                const storeConfig = state.config.getStoreConfig();
+
+                if (!cart || !storeConfig || !this._paymentMethod || !this._paymentMethod.clientToken) {
+                    throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (Visa Checkout)" data is missing.`);
+                }
+
+                const {
+                    onError = () => {},
+                    onPaymentSelect = () => {},
+                } = visaCheckoutOptions;
+
+                const initOptions = {
+                    locale: storeConfig.storeProfile.storeLanguage,
+                    collectShipping: false,
+                    subtotal: cart.subtotal.amount,
+                    currencyCode: storeConfig.currency.code,
+                };
+
+                return Promise.all([
+                    this._visaCheckoutScriptLoader.load(this._paymentMethod.config.testMode),
+                    this._braintreeVisaCheckoutPaymentProcessor.initialize(this._paymentMethod.clientToken, initOptions),
+                ])
+                .then(([visaCheckout, visaInitOptions]) => {
+                    visaCheckout.init(visaInitOptions);
+                    visaCheckout.on('payment.success', (paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) =>
+                        this._paymentInstrumentSelected(paymentSuccessPayload)
+                            .then(() => onPaymentSelect())
+                            .catch(error => onError(error))
+                    );
+                    visaCheckout.on('payment.error', (payment, error) => onError(error));
+                });
+            })
+            .then(() => super.initialize(options));
+    }
+
+    execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const { payment, ...order } = orderRequest;
+
+        if (!payment) {
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+        }
+
+        if (!this._paymentMethod || !this._paymentMethod.initializationData || !this._paymentMethod.initializationData.nonce) {
+            throw new MissingDataError(`Unable to prepare payment data because "paymentMethod (${payment.methodId})" data is missing.`);
+        }
+
+        const { nonce } = this._paymentMethod.initializationData;
+
+        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+            .then(() =>
+                this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData: { nonce } }))
+            )
+            .catch((error: Error) => this._handleError(error));
+    }
+
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._braintreeVisaCheckoutPaymentProcessor.deinitialize()
+            .then(() => super.deinitialize(options));
+    }
+
+    private _paymentInstrumentSelected(paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) {
+        const state = this._store.getState();
+
+        if (!this._paymentMethod) {
+            throw new Error('Payment method not initialized');
+        }
+
+        const { id: methodId } = this._paymentMethod;
+
+        return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
+            return this._braintreeVisaCheckoutPaymentProcessor.handleSuccess(
+                paymentSuccessPayload,
+                state.shippingAddress.getShippingAddress(),
+                state.billingAddress.getBillingAddress()
+            )
+            .then(() => Promise.all([
+                this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
+                this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
+            ]));
+        }, { methodId }), { queueId: 'widgetInteraction' });
+    }
+
+    private _handleError(error: Error): never {
+        if (error.name === 'BraintreeError') {
+            throw new StandardError(error.message);
+        }
+
+        throw error;
+    }
+}
+
+export interface BraintreeVisaCheckoutPaymentInitializeOptions {
+    onError?(error: Error): void;
+    onPaymentSelect?(): void;
+}

@@ -1,20 +1,16 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressActionCreator } from '../billing';
+import { getDefaultLogger } from '../common/log';
+import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator } from '../config';
-import {
-    CouponActionCreator,
-    CouponRequestSender,
-    GiftCertificateActionCreator,
-    GiftCertificateRequestSender
-} from '../coupon';
+import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
-import { createShippingStrategyRegistry, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
-import ConsignmentActionCreator from '../shipping/consignment-action-creator';
+import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
@@ -23,17 +19,38 @@ import CheckoutValidator from './checkout-validator';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 
-export default function createCheckoutService(options: CheckoutServiceOptions = {}): CheckoutService {
-    const client = createCheckoutClient({ locale: options.locale });
-    const store = createCheckoutStore({}, { shouldWarnMutation: options.shouldWarnMutation });
+/**
+ * Creates an instance of `CheckoutService`.
+ *
+ * ```js
+ * const service = createCheckoutService();
+ *
+ * service.subscribe(state => {
+ *     console.log(state);
+ * });
+ *
+ * service.loadCheckout();
+ * ```
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutService`.
+ */
+export default function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService {
+    if (document.location.protocol !== 'https:') {
+        getDefaultLogger().warn('The BigCommerce Checkout SDK should not be used on a non-HTTPS page');
+    }
+
+    if (getEnvironment() !== 'production') {
+        getDefaultLogger().warn('Note that the development build is not optimized. To create a production build, set process.env.NODE_ENV to `production`.');
+    }
+
+    const { locale = '', shouldWarnMutation = true } = options || {};
+    const client = createCheckoutClient({ locale });
+    const store = createCheckoutStore({}, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
     const requestSender = createRequestSender();
-
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-    const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const couponRequestSender = new CouponRequestSender(requestSender);
-    const giftCertificateRequestSender = new GiftCertificateRequestSender(requestSender);
-    const orderActionCreator = new OrderActionCreator(client, checkoutValidator);
+    const orderActionCreator = new OrderActionCreator(client, new CheckoutValidator(checkoutRequestSender));
 
     return new CheckoutService(
         store,
@@ -42,9 +59,9 @@ export default function createCheckoutService(options: CheckoutServiceOptions = 
         new ConfigActionCreator(client),
         new ConsignmentActionCreator(client, checkoutRequestSender),
         new CountryActionCreator(client),
-        new CouponActionCreator(couponRequestSender),
+        new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
-        new GiftCertificateActionCreator(giftCertificateRequestSender),
+        new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         orderActionCreator,
         new PaymentMethodActionCreator(client),

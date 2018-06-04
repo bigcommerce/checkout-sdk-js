@@ -1,11 +1,13 @@
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
+import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
 import CheckoutRequestSender from './checkout-request-sender';
+import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 export default class CheckoutActionCreator {
     constructor(
@@ -25,5 +27,18 @@ export default class CheckoutActionCreator {
                     observer.error(createErrorAction(CheckoutActionType.LoadCheckoutFailed, response));
                 });
         });
+    }
+
+    loadCurrentCheckout(options?: RequestOptions): ThunkAction<CheckoutAction, InternalCheckoutSelectors> {
+        return store => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError('Unable to reload the current checkout because "checkout.id" is missing.');
+            }
+
+            return this.loadCheckout(checkout.id, options);
+        };
     }
 }

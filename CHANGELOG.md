@@ -2,6 +2,80 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.23.1"></a>
+## [0.23.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.23.0...v0.23.1) (2018-05-31)
+
+
+
+<a name="0.23.0"></a>
+# [0.23.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.22.0...v0.23.0) (2018-05-28)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3191 Update dependencies to fix issue with sourcemaps ([4f6ae44](https://github.com/bigcommerce/checkout-sdk-js/commit/4f6ae44))
+
+
+### Features
+
+* **payment:** INT-275 Add Cryptogram like a new payment instrument ([811a69a](https://github.com/bigcommerce/checkout-sdk-js/commit/811a69a))
+* **payment:** PAYMENTS-2744 Updating Afterpay to support US and NZ customers. ([8f134e8](https://github.com/bigcommerce/checkout-sdk-js/commit/8f134e8))
+
+
+
+<a name="0.22.0"></a>
+# [0.22.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.21.1...v0.22.0) (2018-05-22)
+
+
+### Bug Fixes
+
+* **common:** PAYMENTS-2672 Update `package-lock.json` ([b774111](https://github.com/bigcommerce/checkout-sdk-js/commit/b774111))
+* **payment:** CHECKOUT-2941 Afterpay token no longer needs to be passed in manually ([b7ecf70](https://github.com/bigcommerce/checkout-sdk-js/commit/b7ecf70))
+* **payment:** CHECKOUT-3031 Export VisaCheckoutEventMap ([b1ae134](https://github.com/bigcommerce/checkout-sdk-js/commit/b1ae134))
+* **payment:** PAYMENT-2672 Pass accessToken with all instrument payloads ([af3a264](https://github.com/bigcommerce/checkout-sdk-js/commit/af3a264))
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-3060 Stop exporting `CheckoutService` and `LanguageService` ([215e85f](https://github.com/bigcommerce/checkout-sdk-js/commit/215e85f))
+* **checkout:** CHECKOUT-3142 Remove `CheckoutClient` from public exports ([912a1f3](https://github.com/bigcommerce/checkout-sdk-js/commit/912a1f3))
+* **order:** CHECKOUT-3060 Change order submission parameters ([5aecc72](https://github.com/bigcommerce/checkout-sdk-js/commit/5aecc72))
+* **order:** CHECKOUT-3142 Remove `finalizeOrder` method ([170a639](https://github.com/bigcommerce/checkout-sdk-js/commit/170a639))
+* **payment:** CHECKOUT-3060 Update method names to be consistent ([fd7682c](https://github.com/bigcommerce/checkout-sdk-js/commit/fd7682c))
+
+
+### Features
+
+* **common:** CHECKOUT-2957 Prevent the use of the SDK in non https pages ([7c2bb21](https://github.com/bigcommerce/checkout-sdk-js/commit/7c2bb21))
+* **payment:** CHECKOUT-3031 Add Braintree & VisaCheckout types for VisaCheckout ([01ffa12](https://github.com/bigcommerce/checkout-sdk-js/commit/01ffa12))
+* **payment:** CHECKOUT-3031 Add BraintreeVisaCheckout to BraintreeSDKCreator ([09ac772](https://github.com/bigcommerce/checkout-sdk-js/commit/09ac772))
+* **payment:** CHECKOUT-3031 Add BraintreeVisaCheckoutPaymentProcessor ([4a5e1f4](https://github.com/bigcommerce/checkout-sdk-js/commit/4a5e1f4))
+* **payment:** CHECKOUT-3031 Add BraintreeVisaCheckoutPaymentStrategy ([8da4a29](https://github.com/bigcommerce/checkout-sdk-js/commit/8da4a29))
+* **payment:** CHECKOUT-3031 Add script loader for BraintreeVisaCheckout ([1b5a2a2](https://github.com/bigcommerce/checkout-sdk-js/commit/1b5a2a2))
+* **payment:** CHECKOUT-3031 Add script loader for VisaCheckoutSDK ([53993e3](https://github.com/bigcommerce/checkout-sdk-js/commit/53993e3))
+* **payment:** CHECKOUT-3031 Create WidgetInteraction action for Payment Strategy ([6151dd7](https://github.com/bigcommerce/checkout-sdk-js/commit/6151dd7))
+* **payment:** PAYMENT-2672 Introduce loadInstrumentsByAddress ([3ec227e](https://github.com/bigcommerce/checkout-sdk-js/commit/3ec227e))
+* **shopper:** CHECKOUT-3031 Add BraintreeVisaCheckoutCustomerStrategy ([9a90cca](https://github.com/bigcommerce/checkout-sdk-js/commit/9a90cca))
+* **shopper:** CHECKOUT-3031 Create WidgetInteraction action for Customer Strategy ([ab0b61b](https://github.com/bigcommerce/checkout-sdk-js/commit/ab0b61b))
+
+
+### BREAKING CHANGES
+
+* **checkout:** You can no longer directly call the constructors of
+`CheckoutService` and `LanguageService`. Use `createCheckoutService` and
+`createLanguageService` factory functions instead.
+* **order:** To specify a payment method when submitting an order,
+you have to provide `methodId` and `gatewayId` instead of `name` and
+`gateway` fields.
+* **payment:** `getInitializePaymentMethod` and
+`isInitializingPaymentMethod` have now been renamed to
+`getInitializePayment` and `isInitializingPayment` respectively.
+* **order:** `CheckoutService#finalizeOrder` method has been
+removed.
+* **checkout:** `CheckoutClient` is no longer exported for public use.
+
+
+
 <a name="0.21.1"></a>
 ## [0.21.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.21.0...v0.21.1) (2018-05-09)
 

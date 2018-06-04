@@ -81,6 +81,36 @@ describe('PaymentStrategySelector', () => {
         });
     });
 
+    describe('#getWidgetInteractingError()', () => {
+        it('returns error if widget interaction failed', () => {
+            selector = new PaymentStrategySelector({
+                ...state.paymentStrategy,
+                errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
+            });
+
+            expect(selector.getWidgetInteractingError()).toEqual(getErrorResponse());
+        });
+
+        it('returns error if unable to initialize specific method', () => {
+            selector = new PaymentStrategySelector({
+                ...state.paymentStrategy,
+                errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
+            });
+
+            expect(selector.getInitializeError('foobar')).toEqual(getErrorResponse());
+            expect(selector.getInitializeError('bar')).toEqual(undefined);
+        });
+
+        it('does not return error if able to initialize', () => {
+            selector = new PaymentStrategySelector({
+                ...state.paymentStrategy,
+                errors: {},
+            });
+
+            expect(selector.getInitializeError()).toEqual(undefined);
+        });
+    });
+
     describe('#isExecuting()', () => {
         it('returns true if updating address', () => {
             selector = new PaymentStrategySelector({
@@ -142,6 +172,36 @@ describe('PaymentStrategySelector', () => {
             });
 
             expect(selector.isInitializing()).toEqual(false);
+        });
+    });
+
+    describe('#isWidgetInteracting()', () => {
+        it('returns true if widget interacting in any method', () => {
+            selector = new PaymentStrategySelector({
+                ...state.paymentStrategy,
+                statuses: { initializeMethodId: 'foobar', isWidgetInteracting: true },
+            });
+
+            expect(selector.isWidgetInteracting()).toEqual(true);
+        });
+
+        it('returns true if widget interacting for a specific method', () => {
+            selector = new PaymentStrategySelector({
+                ...state.paymentStrategy,
+                statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
+            });
+
+            expect(selector.isWidgetInteracting('foobar')).toEqual(true);
+            expect(selector.isWidgetInteracting('bar')).toEqual(false);
+        });
+
+        it('returns false if widget not interacting for a specific method', () => {
+            selector = new PaymentStrategySelector({
+                ...state.paymentStrategy,
+                statuses: { widgetInteractionMethodId: undefined, isWidgetInteracting: false },
+            });
+
+            expect(selector.isWidgetInteracting()).toEqual(false);
         });
     });
 });

@@ -1,11 +1,8 @@
 [@bigcommerce/checkout-sdk](../README.md) > [PaymentRequestOptions](../interfaces/paymentrequestoptions.md)
 
-
-
-# Interface: PaymentRequestOptions
+# PaymentRequestOptions
 
 ## Hierarchy
-
 
  [RequestOptions](requestoptions.md)
 
@@ -13,54 +10,38 @@
 
 ↳  [PaymentInitializeOptions](paymentinitializeoptions.md)
 
+## Index
 
+### Properties
 
+* [gatewayId](paymentrequestoptions.md#gatewayid)
+* [methodId](paymentrequestoptions.md#methodid)
+* [timeout](paymentrequestoptions.md#timeout)
 
-
-
-
-
-
-
+---
 
 ## Properties
+
 <a id="gatewayid"></a>
 
-### «Optional» gatewayId
+### `<Optional>` gatewayId
 
-**●  gatewayId**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● gatewayId**: * `undefined` &#124; `string`
+*
 
 ___
-
 <a id="methodid"></a>
 
 ###  methodId
 
-**●  methodId**:  *`string`* 
-
-
-
-
-
+**● methodId**: *`string`*
 
 ___
-
 <a id="timeout"></a>
 
-### «Optional» timeout
+### `<Optional>` timeout
 
-**●  timeout**:  *`Timeout`* 
-
-
-
-
-
+**● timeout**: *`Timeout`*
 
 ___
-
 

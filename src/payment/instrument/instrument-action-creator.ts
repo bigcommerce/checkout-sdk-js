@@ -2,11 +2,12 @@ import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommer
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
+import { InternalAddress } from '../../address';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../../checkout';
 import { addMinutes, isFuture } from '../../common/date-time';
 import { MissingDataError } from '../../common/error/errors';
 
-import Instrument, { SessionContext, VaultAccessToken } from './instrument';
+import { SessionContext, VaultAccessToken } from './instrument';
 import * as actionTypes from './instrument-action-types';
 import InstrumentRequestSender from './instrument-request-sender';
 
@@ -21,13 +22,16 @@ export default class InstrumentActionCreator {
 
             const session = this._getSessionContext(store);
             const token = this._getCurrentAccessToken(store);
+            const shippingAddress = this._getShippingAddress(store);
 
             return this._getValidAccessToken(token)
                 .then(currentToken =>
-                    this._instrumentRequestSender.getInstruments({
-                        ...session,
-                        vaultAccessToken: currentToken.vaultAccessToken,
-                    })
+                    this._instrumentRequestSender.loadInstruments({
+                            ...session,
+                            authToken: currentToken.vaultAccessToken,
+                        },
+                        shippingAddress
+                    )
                         .then(({ body }) => {
                             observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, body, currentToken));
                             observer.complete();
@@ -35,27 +39,6 @@ export default class InstrumentActionCreator {
                 )
                 .catch(response => {
                     observer.error(createErrorAction(actionTypes.LOAD_INSTRUMENTS_FAILED, response));
-                });
-        });
-    }
-
-    vaultInstrument(instrument: Instrument): ThunkAction<Action, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.VAULT_INSTRUMENT_REQUESTED));
-
-            const session = this._getSessionContext(store);
-            const token = this._getCurrentAccessToken(store);
-
-            return this._getValidAccessToken(token)
-                .then(currentToken =>
-                    this._instrumentRequestSender.vaultInstrument({ ...session, vaultAccessToken: currentToken.vaultAccessToken }, instrument)
-                        .then(({ body }) => {
-                            observer.next(createAction(actionTypes.VAULT_INSTRUMENT_SUCCEEDED, body, currentToken));
-                            observer.complete();
-                        })
-                )
-                .catch(response => {
-                    observer.error(createErrorAction(actionTypes.VAULT_INSTRUMENT_FAILED, response));
                 });
         });
     }
@@ -69,7 +52,7 @@ export default class InstrumentActionCreator {
 
             return this._getValidAccessToken(token)
                 .then(currentToken =>
-                    this._instrumentRequestSender.deleteInstrument({ ...session, vaultAccessToken: currentToken.vaultAccessToken }, instrumentId)
+                    this._instrumentRequestSender.deleteInstrument({ ...session, authToken: currentToken.vaultAccessToken }, instrumentId)
                         .then(() => {
                             observer.next(createAction(actionTypes.DELETE_INSTRUMENT_SUCCEEDED, undefined, {
                                 instrumentId,
@@ -117,6 +100,12 @@ export default class InstrumentActionCreator {
                     vaultAccessToken: body.data.token,
                     vaultAccessExpiry: body.data.expires_at,
                 }));
+    }
+
+    private _getShippingAddress(store: ReadableCheckoutStore): InternalAddress | undefined {
+        const state = store.getState();
+
+        return state.shippingAddress.getShippingAddress();
     }
 
     private _getSessionContext(store: ReadableCheckoutStore): SessionContext {

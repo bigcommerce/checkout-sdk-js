@@ -7,15 +7,10 @@ import { RequestOptions } from '../common/http-request';
 import { Config, ConfigRequestSender } from '../config';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
-import { InternalOrderResponseBody, Order, OrderRequestBody, OrderRequestSender } from '../order';
+import { InternalOrderRequestBody, InternalOrderResponseBody, Order, OrderRequestSender } from '../order';
 import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
 import { QuoteRequestSender } from '../quote';
-import {
-    ConsignmentsRequestBody,
-    ConsignmentRequestBody,
-    ConsignmentRequestSender,
-    ShippingCountryRequestSender
-} from '../shipping';
+import { ConsignmentsRequestBody, ConsignmentRequestBody, ConsignmentRequestSender, ShippingCountryRequestSender } from '../shipping';
 
 import Checkout from './checkout';
 
@@ -51,7 +46,7 @@ export default class CheckoutClient {
         return this._orderRequestSender.loadOrder(orderId, options);
     }
 
-    submitOrder(body: OrderRequestBody, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
+    submitOrder(body: InternalOrderRequestBody, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
         return this._orderRequestSender.submitOrder(body, options);
     }
 

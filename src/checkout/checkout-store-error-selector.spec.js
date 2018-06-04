@@ -159,18 +159,18 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
-    describe('#getInitializePaymentMethodError()', () => {
+    describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize payment', () => {
             jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(errorResponse);
 
-            expect(errors.getInitializePaymentMethodError('braintree')).toEqual(errorResponse);
+            expect(errors.getInitializePaymentError('braintree')).toEqual(errorResponse);
             expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith('braintree');
         });
 
         it('returns undefined if able to initialize payment', () => {
             jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue();
 
-            expect(errors.getInitializePaymentMethodError('braintree')).toEqual(undefined);
+            expect(errors.getInitializePaymentError('braintree')).toEqual(undefined);
             expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith('braintree');
         });
     });
@@ -287,7 +287,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
-    describe('#getInitializePaymentMethodError()', () => {
+    describe('#getInitializePaymentError()', () => {
         it('returns error if unable to initialize shipping', () => {
             jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(errorResponse);
 
@@ -348,22 +348,6 @@ describe('CheckoutStoreErrorSelector', () => {
 
             expect(errors.getLoadInstrumentsError()).toEqual(undefined);
             expect(selectors.instruments.getLoadError).toHaveBeenCalled();
-        });
-    });
-
-    describe('#getVaultInstrumentError()', () => {
-        it('returns error if there is an error when vaulting instruments', () => {
-            jest.spyOn(selectors.instruments, 'getVaultError').mockReturnValue(errorResponse);
-
-            expect(errors.getVaultInstrumentError()).toEqual(errorResponse);
-            expect(selectors.instruments.getVaultError).toHaveBeenCalled();
-        });
-
-        it('returns undefined if there is NO error when vaulting instruments', () => {
-            jest.spyOn(selectors.instruments, 'getVaultError').mockReturnValue();
-
-            expect(errors.getVaultInstrumentError()).toEqual(undefined);
-            expect(selectors.instruments.getVaultError).toHaveBeenCalled();
         });
     });
 

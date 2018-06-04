@@ -32,6 +32,14 @@ export default class PaymentStrategySelector {
         return this._paymentStrategies.errors.finalizeError;
     }
 
+    getWidgetInteractingError(methodId?: string): Error | undefined {
+        if (methodId && this._paymentStrategies.errors.widgetInteractionMethodId !== methodId) {
+            return;
+        }
+
+        return this._paymentStrategies.errors.widgetInteractionError;
+    }
+
     isInitializing(methodId?: string): boolean {
         if (methodId && this._paymentStrategies.statuses.initializeMethodId !== methodId) {
             return false;
@@ -54,5 +62,13 @@ export default class PaymentStrategySelector {
         }
 
         return !!this._paymentStrategies.statuses.isFinalizing;
+    }
+
+    isWidgetInteracting(methodId?: string): boolean {
+        if (methodId && this._paymentStrategies.statuses.widgetInteractionMethodId !== methodId) {
+            return false;
+        }
+
+        return !!this._paymentStrategies.statuses.isWidgetInteracting;
     }
 }

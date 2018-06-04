@@ -61,7 +61,7 @@ describe('OffsitePaymentStrategy', () => {
 
     it('submits order with payment data if payment gateway is "adyen"', async () => {
         const payload = merge({}, getOrderRequestBody(), {
-            payment: { name: 'amex', gateway: 'adyen' },
+            payment: { methodId: 'amex', gatewayId: 'adyen' },
         });
         const options = {};
 

@@ -1,61 +1,51 @@
 [@bigcommerce/checkout-sdk](../README.md) > [InternalGiftCertificate](../interfaces/internalgiftcertificate.md)
 
+# InternalGiftCertificate
 
+## Hierarchy
 
-# Interface: InternalGiftCertificate
+**InternalGiftCertificate**
 
+## Index
+
+### Properties
+
+* [code](internalgiftcertificate.md#code)
+* [discountedAmount](internalgiftcertificate.md#discountedamount)
+* [giftCertificate](internalgiftcertificate.md#giftcertificate)
+* [remainingBalance](internalgiftcertificate.md#remainingbalance)
+
+---
 
 ## Properties
+
 <a id="code"></a>
 
 ###  code
 
-**●  code**:  *`string`* 
-
-
-
-
-
+**● code**: *`string`*
 
 ___
-
 <a id="discountedamount"></a>
 
 ###  discountedAmount
 
-**●  discountedAmount**:  *`number`* 
-
-
-
-
-
+**● discountedAmount**: *`number`*
 
 ___
-
 <a id="giftcertificate"></a>
 
-### «Optional» giftCertificate
+### `<Optional>` giftCertificate
 
-**●  giftCertificate**:  *`undefined`⎮`object`* 
-
-
-
-
-
+**● giftCertificate**: * `undefined` &#124; `object`
+*
 
 ___
-
 <a id="remainingbalance"></a>
 
 ###  remainingBalance
 
-**●  remainingBalance**:  *`number`* 
-
-
-
-
-
+**● remainingBalance**: *`number`*
 
 ___
-
 

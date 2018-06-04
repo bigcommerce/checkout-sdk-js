@@ -1,4 +1,4 @@
-import isTokenizedCreditCardLike from './is-tokenized-card';
+import isTokenizedCreditCardLike from './is-nonce-like';
 import { getPayment } from './payments.mock';
 
 describe('isTokenizedCreditCardLike', () => {

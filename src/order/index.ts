@@ -3,10 +3,11 @@ export * from './order-actions';
 
 export { default as Order } from './order';
 export { default as InternalOrder } from './internal-order';
+export { default as InternalOrderRequestBody } from './internal-order-request-body';
 
 export { default as OrderActionCreator } from './order-action-creator';
 export { default as orderReducer } from './order-reducer';
-export { default as OrderRequestBody } from './order-request-body';
+export { default as OrderRequestBody, OrderPaymentRequestBody } from './order-request-body';
 export { default as OrderRequestSender } from './order-request-sender';
 export { default as OrderSelector } from './order-selector';
 export { default as OrderState } from './order-state';

@@ -1,48 +1,42 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CheckoutSelectors](../interfaces/checkoutselectors.md)
 
+# CheckoutSelectors
 
+## Hierarchy
 
-# Interface: CheckoutSelectors
+**CheckoutSelectors**
 
+## Index
+
+### Properties
+
+* [checkout](checkoutselectors.md#checkout)
+* [errors](checkoutselectors.md#errors)
+* [statuses](checkoutselectors.md#statuses)
+
+---
 
 ## Properties
+
 <a id="checkout"></a>
 
 ###  checkout
 
-**●  checkout**:  *[CheckoutSelector](../classes/checkoutselector.md)* 
-
-
-
-
-
+**● checkout**: *[CheckoutStoreSelector](../classes/checkoutstoreselector.md)*
 
 ___
-
 <a id="errors"></a>
 
 ###  errors
 
-**●  errors**:  *[CheckoutErrorSelector](../classes/checkouterrorselector.md)* 
-
-
-
-
-
+**● errors**: *[CheckoutStoreErrorSelector](../classes/checkoutstoreerrorselector.md)*
 
 ___
-
 <a id="statuses"></a>
 
 ###  statuses
 
-**●  statuses**:  *[CheckoutStatusSelector](../classes/checkoutstatusselector.md)* 
-
-
-
-
-
+**● statuses**: *[CheckoutStoreStatusSelector](../classes/checkoutstorestatusselector.md)*
 
 ___
-
 

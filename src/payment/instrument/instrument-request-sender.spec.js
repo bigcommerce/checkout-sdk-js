@@ -1,14 +1,14 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { getResponse } from '../../common/http-request/responses.mock';
+import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
 import {
     deleteInstrumentResponseBody,
     getErrorInstrumentResponseBody,
-    getInstrumentsResponseBody,
+    getLoadInstrumentsResponseBody,
     getVaultAccessTokenResponseBody,
     instrumentRequestContext,
-    vaultInstrumentRequestBody,
-    vaultInstrumentResponseBody,
 } from './instrument.mock';
+
 import InstrumentRequestSender from './instrument-request-sender';
 
 describe('InstrumentMethodRequestSender', () => {
@@ -16,7 +16,7 @@ describe('InstrumentMethodRequestSender', () => {
     let instrumentRequestSender;
     let requestContext;
     let requestSender;
-    let vaultInstrumentRequest;
+    let shippingAddress;
 
     beforeEach(() => {
         requestSender = {
@@ -25,14 +25,14 @@ describe('InstrumentMethodRequestSender', () => {
 
         client = {
             getVaultAccessToken: jest.fn((payload, callback) => callback()),
-            getShopperInstruments: jest.fn((payload, callback) => callback()),
-            postShopperInstrument: jest.fn((payload, callback) => callback()),
+            loadInstruments: jest.fn((payload, callback) => callback()),
+            loadInstrumentsWithAddress: jest.fn((payload, callback) => callback()),
             deleteShopperInstrument: jest.fn((payload, callback) => callback()),
         };
 
         requestContext = instrumentRequestContext();
-        vaultInstrumentRequest = vaultInstrumentRequestBody();
         instrumentRequestSender = new InstrumentRequestSender(client, requestSender);
+        shippingAddress = getShippingAddress();
     });
 
     describe('#getVaultAccessToken()', () => {
@@ -60,38 +60,39 @@ describe('InstrumentMethodRequestSender', () => {
         });
     });
 
-    describe('#getInstruments()', () => {
+    describe('#loadInstruments()', () => {
         it('returns instruments if request is successful', async () => {
-            client.getShopperInstruments = jest.fn((payload, callback) => callback(null, {
-                data: getInstrumentsResponseBody(),
+            client.loadInstruments = jest.fn((payload, callback) => callback(null, {
+                data: getLoadInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
             }));
 
-            const response = await instrumentRequestSender.getInstruments(requestContext);
+            const response = await instrumentRequestSender.loadInstruments(requestContext);
 
             expect(response).toEqual({
                 headers: {},
-                body: getInstrumentsResponseBody(),
+                body: getLoadInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
             });
 
-            expect(client.getShopperInstruments).toHaveBeenCalledWith(
+            expect(client.loadInstrumentsWithAddress).not.toHaveBeenCalled();
+            expect(client.loadInstruments).toHaveBeenCalledWith(
                 requestContext,
                 expect.any(Function)
             );
         });
 
         it('returns error response if request is unsuccessful', async () => {
-            client.getShopperInstruments = jest.fn((payload, callback) => callback({
+            client.loadInstruments = jest.fn((payload, callback) => callback({
                 data: getErrorInstrumentResponseBody(),
                 status: 400,
                 statusText: 'Bad Request',
             }));
 
             try {
-                await instrumentRequestSender.getInstruments();
+                await instrumentRequestSender.loadInstruments();
             } catch (error) {
                 expect(error).toEqual({
                     body: getErrorInstrumentResponseBody(),
@@ -101,48 +102,31 @@ describe('InstrumentMethodRequestSender', () => {
                 });
             }
         });
-    });
 
-    describe('#vaultInstrument()', () => {
-        it('returns an instrument if submission is successful', async () => {
-            client.postShopperInstrument = jest.fn((payload, callback) => callback(null, {
-                data: vaultInstrumentResponseBody(),
+        it('returns loads trusted instruments if shipping address is available', async () => {
+            client.loadInstrumentsWithAddress = jest.fn((payload, callback) => callback(null, {
+                data: getLoadInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
             }));
 
-            const response = await instrumentRequestSender.vaultInstrument(requestContext, vaultInstrumentRequest);
+            const response = await instrumentRequestSender.loadInstruments(requestContext, shippingAddress);
 
             expect(response).toEqual({
-                body: vaultInstrumentResponseBody(),
                 headers: {},
+                body: getLoadInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
             });
 
-            expect(client.postShopperInstrument).toHaveBeenCalledWith({
-                ...requestContext,
-                instrument: vaultInstrumentRequest,
-            }, expect.any(Function));
-        });
-
-        it('returns error response if submission is unsuccessful', async () => {
-            client.postShopperInstrument = jest.fn((payload, callback) => callback({
-                data: getErrorInstrumentResponseBody(),
-                status: 400,
-                statusText: 'Bad Request',
-            }));
-
-            try {
-                await instrumentRequestSender.vaultInstrument();
-            } catch (error) {
-                expect(error).toEqual({
-                    body: getErrorInstrumentResponseBody(),
-                    headers: {},
-                    status: 400,
-                    statusText: 'Bad Request',
-                });
-            }
+            expect(client.loadInstruments).not.toHaveBeenCalled();
+            expect(client.loadInstrumentsWithAddress).toHaveBeenCalledWith(
+                {
+                    ...requestContext,
+                    shippingAddress,
+                },
+                expect.any(Function)
+            );
         });
     });
 

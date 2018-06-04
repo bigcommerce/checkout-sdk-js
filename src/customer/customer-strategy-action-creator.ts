@@ -12,6 +12,7 @@ import {
     CustomerStrategyInitializeAction,
     CustomerStrategySignInAction,
     CustomerStrategySignOutAction,
+    CustomerStrategyWidgetAction,
 } from './customer-strategy-actions';
 import { CustomerStrategy } from './strategies';
 
@@ -93,6 +94,23 @@ export default class CustomerStrategyActionCreator {
                 .catch(error => {
                     observer.error(createErrorAction(CustomerStrategyActionType.DeinitializeFailed, error, meta));
                 });
+        });
+    }
+
+    widgetInteraction(method: () => Promise<any>, options?: CustomerRequestOptions): Observable<CustomerStrategyWidgetAction> {
+        return Observable.create((observer: Observer<CustomerStrategyWidgetAction>) => {
+            const methodId = options && options.methodId;
+            const meta = { methodId };
+
+            observer.next(createAction(CustomerStrategyActionType.WidgetInteractionStarted, undefined, meta));
+
+            method().then(() => {
+                observer.next(createAction(CustomerStrategyActionType.WidgetInteractionFinished, undefined, meta));
+                observer.complete();
+            })
+            .catch(error => {
+                observer.error(createErrorAction(CustomerStrategyActionType.WidgetInteractionFailed, error, meta));
+            });
         });
     }
 }

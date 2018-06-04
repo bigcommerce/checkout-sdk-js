@@ -1,103 +1,74 @@
 [@bigcommerce/checkout-sdk](../README.md) > [AmazonPayShippingInitializeOptions](../interfaces/amazonpayshippinginitializeoptions.md)
 
+# AmazonPayShippingInitializeOptions
 
+## Hierarchy
 
-# Interface: AmazonPayShippingInitializeOptions
+**AmazonPayShippingInitializeOptions**
 
+## Index
+
+### Properties
+
+* [container](amazonpayshippinginitializeoptions.md#container)
+
+### Methods
+
+* [onAddressSelect](amazonpayshippinginitializeoptions.md#onaddressselect)
+* [onError](amazonpayshippinginitializeoptions.md#onerror)
+* [onReady](amazonpayshippinginitializeoptions.md#onready)
+
+---
 
 ## Properties
+
 <a id="container"></a>
 
 ###  container
 
-**●  container**:  *`string`* 
-
-
-
-
-
+**● container**: *`string`*
 
 ___
-
 
 ## Methods
+
 <a id="onaddressselect"></a>
 
-### «Optional» onAddressSelect
+### `<Optional>` onAddressSelect
 
-► **onAddressSelect**(reference: *[AmazonPayOrderReference](amazonpayorderreference.md)*): `void`
-
-
-
-
-
+▸ **onAddressSelect**(reference: *[AmazonPayOrderReference](amazonpayorderreference.md)*): `void`
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| reference | [AmazonPayOrderReference](amazonpayorderreference.md)   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| reference | [AmazonPayOrderReference](amazonpayorderreference.md) |
 
 **Returns:** `void`
 
-
-
-
-
 ___
-
 <a id="onerror"></a>
 
-### «Optional» onError
+### `<Optional>` onError
 
-► **onError**(error: *[AmazonPayWidgetError](amazonpaywidgeterror.md)⎮[StandardError](../classes/standarderror.md)*): `void`
-
-
-
-
-
+▸ **onError**(error: * [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)*): `void`
 
 **Parameters:**
 
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| error | [AmazonPayWidgetError](amazonpaywidgeterror.md)⎮[StandardError](../classes/standarderror.md)   |  - |
-
-
-
-
+| Param | Type |
+| ------ | ------ |
+| error |  [AmazonPayWidgetError](amazonpaywidgeterror.md) &#124; [StandardError](../classes/standarderror.md)|
 
 **Returns:** `void`
 
-
-
-
-
 ___
-
 <a id="onready"></a>
 
-### «Optional» onReady
+### `<Optional>` onReady
 
-► **onReady**(): `void`
-
-
-
-
-
-
-
+▸ **onReady**(): `void`
 
 **Returns:** `void`
 
-
-
-
-
 ___
-
 

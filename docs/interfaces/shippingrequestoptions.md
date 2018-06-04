@@ -1,11 +1,8 @@
 [@bigcommerce/checkout-sdk](../README.md) > [ShippingRequestOptions](../interfaces/shippingrequestoptions.md)
 
-
-
-# Interface: ShippingRequestOptions
+# ShippingRequestOptions
 
 ## Hierarchy
-
 
  [RequestOptions](requestoptions.md)
 
@@ -13,41 +10,30 @@
 
 ↳  [ShippingInitializeOptions](shippinginitializeoptions.md)
 
+## Index
 
+### Properties
 
+* [methodId](shippingrequestoptions.md#methodid)
+* [timeout](shippingrequestoptions.md#timeout)
 
-
-
-
-
-
-
+---
 
 ## Properties
+
 <a id="methodid"></a>
 
-### «Optional» methodId
+### `<Optional>` methodId
 
-**●  methodId**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● methodId**: * `undefined` &#124; `string`
+*
 
 ___
-
 <a id="timeout"></a>
 
-### «Optional» timeout
+### `<Optional>` timeout
 
-**●  timeout**:  *`Timeout`* 
-
-
-
-
-
+**● timeout**: *`Timeout`*
 
 ___
-
 

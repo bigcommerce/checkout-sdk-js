@@ -7,8 +7,8 @@ import { getQuote } from '../quote/internal-quotes.mock';
 
 export function getPayment() {
     return {
-        name: 'authorizenet',
-        gateway: null,
+        methodId: 'authorizenet',
+        gatewayId: null,
         source: 'bcapp-checkout-uco',
         paymentData: {
             ccExpiry: {

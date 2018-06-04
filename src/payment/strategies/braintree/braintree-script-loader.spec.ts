@@ -1,22 +1,28 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import * as Braintree from './braintree';
+import { BraintreeClientCreator, BraintreeHostWindow } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
-import { getClientMock, getDataCollectorMock, getModuleCreatorMock, getThreeDSecureMock } from './braintree.mock';
+import {
+    getClientMock,
+    getDataCollectorMock,
+    getModuleCreatorMock,
+    getThreeDSecureMock,
+    getVisaCheckoutMock,
+} from './braintree.mock';
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
     let scriptLoader: ScriptLoader;
-    let mockWindow: Braintree.HostWindow;
+    let mockWindow: BraintreeHostWindow;
 
     beforeEach(() => {
-        mockWindow = { braintree: {} } as Braintree.HostWindow;
+        mockWindow = { braintree: {} } as BraintreeHostWindow;
         scriptLoader = {} as ScriptLoader;
         braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader, mockWindow);
     });
 
     describe('#loadClient()', () => {
-        let clientMock: Braintree.ClientCreator;
+        let clientMock: BraintreeClientCreator;
 
         beforeEach(() => {
             clientMock = getModuleCreatorMock(getClientMock());
@@ -80,4 +86,27 @@ describe('BraintreeScriptLoader', () => {
             expect(dataCollector).toBe(dataCollectorMock);
         });
     });
+
+    describe('#loadVisaCheckout()', () => {
+        let visaCheckoutMock;
+
+        beforeEach(() => {
+            visaCheckoutMock = getModuleCreatorMock(getVisaCheckoutMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                mockWindow.braintree.visaCheckout = visaCheckoutMock;
+                return Promise.resolve();
+            });
+        });
+
+        it('loads the VisaCheckout library', async () => {
+            await braintreeScriptLoader.loadVisaCheckout();
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.15.0/js/visa-checkout.min.js');
+        });
+
+        it('returns the VisaCheckout from the window', async () => {
+            const visaCheckout = await braintreeScriptLoader.loadVisaCheckout();
+            expect(visaCheckout).toBe(visaCheckoutMock);
+        });
+    });
+
 });

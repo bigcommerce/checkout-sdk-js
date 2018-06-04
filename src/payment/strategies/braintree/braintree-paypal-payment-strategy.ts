@@ -1,6 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { MissingDataError, StandardError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
+import { PaymentArgumentInvalidError } from '../../errors';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -53,7 +54,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         const { payment, ...order } = orderRequest;
 
         if (!payment) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+            throw new PaymentArgumentInvalidError(['payment']);
         }
 
         return Promise.all([
@@ -79,13 +80,13 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         throw error;
     }
 
-    private _preparePaymentData(payment: Payment): Promise<Payment> {
+    private _preparePaymentData(payment: OrderPaymentRequestBody): Promise<Payment> {
         const state = this._store.getState();
         const cart = state.cart.getCart();
         const config = state.config.getStoreConfig();
 
         if (!cart || !config || !this._paymentMethod) {
-            throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (${payment.name})" data is missing.`);
+            throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (${payment.methodId})" data is missing.`);
         }
 
         const { amount } = cart.grandTotal;

@@ -13,13 +13,17 @@ export enum PaymentStrategyActionType {
     DeinitializeFailed = 'PAYMENT_STRATEGY_DEINITIALIZE_FAILED',
     DeinitializeRequested = 'PAYMENT_STRATEGY_DEINITIALIZE_REQUESTED',
     DeinitializeSucceeded = 'PAYMENT_STRATEGY_DEINITIALIZE_SUCCEEDED',
+    WidgetInteractionStarted = 'PAYMENT_STRATEGY_WIDGET_INTERACTION_STARTED',
+    WidgetInteractionFinished = 'PAYMENT_STRATEGY_WIDGET_INTERACTION_FINISHED',
+    WidgetInteractionFailed = 'PAYMENT_STRATEGY_WIDGET_INTERACTION_FAILED',
 }
 
 export type PaymentStrategyAction =
     PaymentStrategyExecuteAction |
     PaymentStrategyFinalizeAction |
     PaymentStrategyInitializeAction |
-    PaymentStrategyDeinitializeAction;
+    PaymentStrategyDeinitializeAction |
+    PaymentStrategyWidgetAction;
 
 export type PaymentStrategyExecuteAction =
     ExecuteRequestedAction |
@@ -40,6 +44,11 @@ export type PaymentStrategyDeinitializeAction =
     DeinitializeRequestedAction |
     DeinitializeSucceededAction |
     DeinitializeFailedAction;
+
+export type PaymentStrategyWidgetAction =
+    WidgetInteractionStartedAction |
+    WidgetInteractionFinishedAction |
+    WidgetInteractionFailedAction;
 
 export interface ExecuteRequestedAction extends Action {
     type: PaymentStrategyActionType.ExecuteRequested;
@@ -87,4 +96,16 @@ export interface DeinitializeSucceededAction extends Action {
 
 export interface DeinitializeFailedAction extends Action<Error> {
     type: PaymentStrategyActionType.DeinitializeFailed;
+}
+
+export interface WidgetInteractionStartedAction extends Action {
+    type: PaymentStrategyActionType.WidgetInteractionStarted;
+}
+
+export interface WidgetInteractionFinishedAction extends Action {
+    type: PaymentStrategyActionType.WidgetInteractionFinished;
+}
+
+export interface WidgetInteractionFailedAction extends Action<Error> {
+    type: PaymentStrategyActionType.WidgetInteractionFailed;
 }

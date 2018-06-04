@@ -1,48 +1,36 @@
 [@bigcommerce/checkout-sdk](../README.md) > [CheckoutServiceOptions](../interfaces/checkoutserviceoptions.md)
 
+# CheckoutServiceOptions
 
+## Hierarchy
 
-# Interface: CheckoutServiceOptions
+**CheckoutServiceOptions**
 
+## Index
+
+### Properties
+
+* [locale](checkoutserviceoptions.md#locale)
+* [shouldWarnMutation](checkoutserviceoptions.md#shouldwarnmutation)
+
+---
 
 ## Properties
-<a id="client"></a>
-
-### «Optional» client
-
-**●  client**:  *[CheckoutClient](../classes/checkoutclient.md)* 
-
-
-
-
-
-
-___
 
 <a id="locale"></a>
 
-### «Optional» locale
+### `<Optional>` locale
 
-**●  locale**:  *`undefined`⎮`string`* 
-
-
-
-
-
+**● locale**: * `undefined` &#124; `string`
+*
 
 ___
-
 <a id="shouldwarnmutation"></a>
 
-### «Optional» shouldWarnMutation
+### `<Optional>` shouldWarnMutation
 
-**●  shouldWarnMutation**:  *`undefined`⎮`true`⎮`false`* 
-
-
-
-
-
+**● shouldWarnMutation**: * `undefined` &#124; `true` &#124; `false`
+*
 
 ___
-
 

@@ -12,6 +12,8 @@ export interface PaymentStrategyErrorsState {
     finalizeMethodId?: string;
     initializeError?: Error;
     initializeMethodId?: string;
+    widgetInteractionError?: Error;
+    widgetInteractionMethodId?: string;
 }
 
 export interface PaymentStrategyStatusesState {
@@ -23,6 +25,8 @@ export interface PaymentStrategyStatusesState {
     isExecuting?: boolean;
     isFinalizing?: boolean;
     isInitializing?: boolean;
+    isWidgetInteracting?: boolean;
+    widgetInteractionMethodId?: string;
 }
 
 export const DEFAULT_STATE: PaymentStrategyState = {

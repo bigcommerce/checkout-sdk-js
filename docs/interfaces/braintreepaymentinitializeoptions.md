@@ -1,22 +1,26 @@
 [@bigcommerce/checkout-sdk](../README.md) > [BraintreePaymentInitializeOptions](../interfaces/braintreepaymentinitializeoptions.md)
 
+# BraintreePaymentInitializeOptions
 
+## Hierarchy
 
-# Interface: BraintreePaymentInitializeOptions
+**BraintreePaymentInitializeOptions**
 
+## Index
+
+### Properties
+
+* [threeDSecure](braintreepaymentinitializeoptions.md#threedsecure)
+
+---
 
 ## Properties
+
 <a id="threedsecure"></a>
 
-### «Optional» threeDSecure
+### `<Optional>` threeDSecure
 
-**●  threeDSecure**:  *[BraintreeThreeDSecureOptions](braintreethreedsecureoptions.md)* 
-
-
-
-
-
+**● threeDSecure**: *[BraintreeThreeDSecureOptions](braintreethreedsecureoptions.md)*
 
 ___
-
 
