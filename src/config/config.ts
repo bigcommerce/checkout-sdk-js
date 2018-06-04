@@ -99,6 +99,7 @@ export interface CustomizationConfig {
 }
 
 export interface ContextConfig {
+    geoCountryCode: string;
     flashMessages: any[];
     payment: {
         token?: string;
