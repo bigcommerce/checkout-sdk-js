@@ -1,30 +1,21 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressActionCreator } from '../billing';
-import { CartActionCreator } from '../cart';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator } from '../config';
-import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
+import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
-import {
-    createPaymentClient,
-    createPaymentStrategyRegistry,
-    PaymentMethodActionCreator,
-    PaymentStrategyActionCreator,
-} from '../payment';
+import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
-import { QuoteActionCreator } from '../quote';
-import {
-    createShippingStrategyRegistry,
-    ShippingCountryActionCreator,
-    ShippingOptionActionCreator,
-    ShippingStrategyActionCreator,
-} from '../shipping';
+import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 
+import CheckoutActionCreator from './checkout-action-creator';
+import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutService from './checkout-service';
+import CheckoutValidator from './checkout-validator';
 import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 
@@ -57,23 +48,28 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const client = createCheckoutClient({ locale });
     const store = createCheckoutStore({}, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
+    const requestSender = createRequestSender();
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+    const orderActionCreator = new OrderActionCreator(client, new CheckoutValidator(checkoutRequestSender));
 
     return new CheckoutService(
         store,
         new BillingAddressActionCreator(client),
-        new CartActionCreator(client),
+        new CheckoutActionCreator(checkoutRequestSender),
         new ConfigActionCreator(client),
+        new ConsignmentActionCreator(client, checkoutRequestSender),
         new CountryActionCreator(client),
-        new CouponActionCreator(client),
+        new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
-        new GiftCertificateActionCreator(client),
-        new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, createRequestSender())),
-        new OrderActionCreator(client),
+        new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
+        new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
+        orderActionCreator,
         new PaymentMethodActionCreator(client),
-        new PaymentStrategyActionCreator(createPaymentStrategyRegistry(store, client, paymentClient)),
-        new QuoteActionCreator(client),
+        new PaymentStrategyActionCreator(
+            createPaymentStrategyRegistry(store, client, paymentClient),
+            orderActionCreator
+        ),
         new ShippingCountryActionCreator(client),
-        new ShippingOptionActionCreator(client),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, client))
     );
 }

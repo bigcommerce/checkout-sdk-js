@@ -1,9 +1,10 @@
 export * from './customer-request-options';
 
 export { default as InternalCustomer } from './internal-customer';
-export { default as Shopper } from './shopper';
+export { default as Customer } from './customer';
 
 export { default as createCustomerStrategyRegistry } from './create-customer-strategy-registry';
+export { CustomerAction, CustomerActionType } from './customer-actions';
 export { default as customerReducer } from './customer-reducer';
 export { default as CustomerActionCreator } from './customer-action-creator';
 export { default as CustomerCredentials } from './customer-credentials';
@@ -14,5 +15,6 @@ export { default as CustomerStrategyActionCreator } from './customer-strategy-ac
 export { default as CustomerStrategySelector } from './customer-strategy-selector';
 export { default as CustomerStrategyState } from './customer-strategy-state';
 export { default as customerStrategyReducer } from './customer-strategy-reducer';
+export { default as GuestCredentials } from './guest-credentials';
 
 export { default as mapToInternalCustomer } from './map-to-internal-customer';

@@ -11,6 +11,7 @@ import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
+import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
@@ -25,6 +26,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default class CheckoutStoreStatusSelector {
     private _billingAddress: BillingAddressSelector;
     private _cart: CartSelector;
+    private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
     private _countries: CountrySelector;
     private _coupons: CouponSelector;
@@ -45,6 +47,7 @@ export default class CheckoutStoreStatusSelector {
     constructor(selectors: InternalCheckoutSelectors) {
         this._billingAddress = selectors.billingAddress;
         this._cart = selectors.cart;
+        this._checkout = selectors.checkout;
         this._config = selectors.config;
         this._countries = selectors.countries;
         this._coupons = selectors.coupons;
@@ -71,7 +74,6 @@ export default class CheckoutStoreStatusSelector {
             this.isFinalizingOrder() ||
             this.isLoadingOrder() ||
             this.isLoadingCart() ||
-            this.isVerifyingCart() ||
             this.isLoadingBillingCountries() ||
             this.isLoadingShippingCountries() ||
             this.isLoadingPaymentMethods() ||
@@ -102,7 +104,7 @@ export default class CheckoutStoreStatusSelector {
      * @returns True if the current checkout is loading, otherwise false.
      */
     isLoadingCheckout(): boolean {
-        return this._quote.isLoading();
+        return this._quote.isLoading() || this._checkout.isLoading();
     }
 
     /**
@@ -139,19 +141,6 @@ export default class CheckoutStoreStatusSelector {
      */
     isLoadingCart(): boolean {
         return this._cart.isLoading();
-    }
-
-    /**
-     * Checks whether the current cart is verifying.
-     *
-     * This method is deprecated because cart verification is an internal
-     * process, therefore should not be referred externally.
-     *
-     * @deprecated
-     * @returns True if the current cart is verifying, otherwise false.
-     */
-    isVerifyingCart(): boolean {
-        return this._cart.isVerifying();
     }
 
     /**

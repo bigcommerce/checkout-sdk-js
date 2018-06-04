@@ -1,6 +1,6 @@
 import { getCouponResponseBody } from './internal-coupons.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import * as couponActionTypes from '../coupon/coupon-action-types';
+import { CouponActionType } from './coupon-actions';
 import couponReducer from './coupon-reducer';
 
 describe('couponReducer()', () => {
@@ -13,7 +13,7 @@ describe('couponReducer()', () => {
     it('no data gets stored when a coupon is applied', () => {
         const response = getCouponResponseBody();
         const action = {
-            type: couponActionTypes.APPLY_COUPON_SUCCEEDED,
+            type: CouponActionType.ApplyCouponSucceeded,
             meta: response.meta,
             payload: response.data,
         };
@@ -26,7 +26,7 @@ describe('couponReducer()', () => {
     it('no data gets stored when a coupon is removed', () => {
         const response = getCouponResponseBody();
         const action = {
-            type: couponActionTypes.REMOVE_COUPON_SUCCEEDED,
+            type: CouponActionType.RemoveCouponSucceeded,
             meta: response.meta,
             payload: response.data,
         };
@@ -38,7 +38,7 @@ describe('couponReducer()', () => {
 
     it('returns an error state if coupon failed to be applied', () => {
         const action = {
-            type: couponActionTypes.APPLY_COUPON_FAILED,
+            type: CouponActionType.ApplyCouponFailed,
             payload: getErrorResponse(),
         };
 
@@ -50,7 +50,7 @@ describe('couponReducer()', () => {
 
     it('returns an error state if coupon failed to be removed', () => {
         const action = {
-            type: couponActionTypes.REMOVE_COUPON_FAILED,
+            type: CouponActionType.RemoveCouponFailed,
             payload: getErrorResponse(),
         };
 
@@ -62,7 +62,7 @@ describe('couponReducer()', () => {
 
     it('returns new state while applying a coupon', () => {
         const action = {
-            type: couponActionTypes.APPLY_COUPON_REQUESTED,
+            type: CouponActionType.ApplyCouponRequested,
         };
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -72,7 +72,7 @@ describe('couponReducer()', () => {
 
     it('returns new state while removing a coupon', () => {
         const action = {
-            type: couponActionTypes.REMOVE_COUPON_REQUESTED,
+            type: CouponActionType.RemoveCouponRequested,
         };
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({

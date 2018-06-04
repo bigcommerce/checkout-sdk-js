@@ -5,43 +5,40 @@ import { Observer } from 'rxjs/Observer';
 
 import { CheckoutClient } from '../checkout';
 
-import * as actionTypes from './customer-action-types';
+import { CustomerActionType, SignInCustomerAction, SignOutCustomerAction } from './customer-actions';
 import CustomerCredentials from './customer-credentials';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 export default class CustomerActionCreator {
     constructor(
         private _checkoutClient: CheckoutClient
     ) {}
 
-    signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Observable<Action> {
+    signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Observable<SignInCustomerAction> {
         return Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.SIGN_IN_CUSTOMER_REQUESTED));
+            observer.next(createAction(CustomerActionType.SignInCustomerRequested));
 
             this._checkoutClient.signInCustomer(credentials, options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.SIGN_IN_CUSTOMER_SUCCEEDED, body.data));
+                    observer.next(createAction(CustomerActionType.SignInCustomerSucceeded, body.data));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.SIGN_IN_CUSTOMER_FAILED, response));
+                    observer.error(createErrorAction(CustomerActionType.SignInCustomerFailed, response));
                 });
         });
     }
 
-    signOutCustomer(options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.SIGN_OUT_CUSTOMER_REQUESTED));
+    signOutCustomer(options?: RequestOptions): Observable<SignOutCustomerAction> {
+        return Observable.create((observer: Observer<SignOutCustomerAction>) => {
+            observer.next(createAction(CustomerActionType.SignOutCustomerRequested));
 
             this._checkoutClient.signOutCustomer(options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(actionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED, body.data));
+                    observer.next(createAction(CustomerActionType.SignOutCustomerSucceeded, body.data));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.SIGN_OUT_CUSTOMER_FAILED, response));
+                    observer.error(createErrorAction(CustomerActionType.SignOutCustomerFailed, response));
                 });
         });
     }

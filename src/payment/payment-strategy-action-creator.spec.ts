@@ -1,12 +1,14 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction } from '@bigcommerce/data-store';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { getCartState } from '../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';
+import { getCheckoutState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/internal-customers.mock';
-import { OrderActionCreator } from '../order';
+import { OrderActionCreator, OrderActionType } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getCompleteOrderState, getIncompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
 
@@ -21,24 +23,29 @@ import { CreditCardPaymentStrategy, NoPaymentDataRequiredPaymentStrategy, Paymen
 
 describe('PaymentStrategyActionCreator', () => {
     let client: CheckoutClient;
+    let orderActionCreator: OrderActionCreator;
     let paymentClient: any;
     let registry: PaymentStrategyRegistry;
+    let state: any;
     let store: CheckoutStore;
     let strategy: PaymentStrategy;
     let noPaymentDataStrategy: PaymentStrategy;
 
     beforeEach(() => {
-        store = createCheckoutStore({
+        state = {
             cart: getCartState(),
+            checkout: getCheckoutState(),
             order: getCompleteOrderState(),
             paymentMethods: getPaymentMethodsState(),
-        });
+        };
+        store = createCheckoutStore(state);
         client = createCheckoutClient();
         paymentClient = createPaymentClient();
         registry = createPaymentStrategyRegistry(store, client, paymentClient);
+        orderActionCreator = new OrderActionCreator(client);
         strategy = new CreditCardPaymentStrategy(
             store,
-            new OrderActionCreator(client),
+            orderActionCreator,
             new PaymentActionCreator(
                 new PaymentRequestSender(createPaymentClient()),
                 new OrderActionCreator(client)
@@ -60,7 +67,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('finds payment strategy by method', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await Observable.from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
@@ -70,7 +77,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('initializes payment strategy', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await Observable.from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
@@ -80,7 +87,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits action to notify initialization progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const actions = await Observable.from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toArray()
@@ -93,7 +100,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to initialize', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const initializeError = new Error();
             const errorHandler = jest.fn(action => Observable.of(action));
@@ -114,7 +121,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('throws error if payment method has not been loaded', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
             try {
                 await Observable.from(actionCreator.initialize({ methodId: 'unknown' })(store)).toPromise();
@@ -131,7 +138,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('finds payment strategy by method', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await Observable.from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
@@ -141,7 +148,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('deinitializes payment strategy', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await Observable.from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
@@ -151,7 +158,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits action to notify deinitialization progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const actions = await Observable.from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toArray()
@@ -164,7 +171,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to deinitialize', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const deinitializeError = new Error();
             const errorHandler = jest.fn(action => Observable.of(action));
@@ -185,7 +192,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('throws error if payment method has not been loaded', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
             try {
                 await Observable.from(actionCreator.initialize({ methodId: 'unknown' })(store)).toPromise();
@@ -202,10 +209,13 @@ describe('PaymentStrategyActionCreator', () => {
 
             jest.spyOn(noPaymentDataStrategy, 'execute')
                 .mockReturnValue(Promise.resolve(store.getState()));
+
+            jest.spyOn(orderActionCreator, 'loadOrder')
+                .mockReturnValue(Observable.of(createAction(OrderActionType.SubmitOrderRequested)));
         });
 
         it('finds payment strategy by method', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await Observable.from(actionCreator.execute(getOrderRequestBody())(store))
@@ -215,7 +225,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('executes payment strategy', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
 
             await Observable.from(actionCreator.execute(payload)(store))
@@ -227,21 +237,33 @@ describe('PaymentStrategyActionCreator', () => {
             );
         });
 
-        it('emits action to notify execution progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+        it('loads current order with payment data', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+            const payload = getOrderRequestBody();
+            const state = store.getState();
+
+            await Observable.from(actionCreator.execute(payload)(store))
+                .toPromise();
+
+            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(state.checkout.getCheckout().orderId, undefined);
+        });
+
+        it('emits action to load order and notify execution progress', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
             const actions = await Observable.from(actionCreator.execute(payload)(store))
                 .toArray()
                 .toPromise();
 
             expect(actions).toEqual([
+                { type: OrderActionType.SubmitOrderRequested },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.methodId } },
                 { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId: payload.payment.methodId } },
             ]);
         });
 
         it('emits error action if unable to execute', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
             const executeError = new Error();
             const errorHandler = jest.fn(action => Observable.of(action));
@@ -256,16 +278,17 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
+                { type: OrderActionType.SubmitOrderRequested },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.methodId } },
                 { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId: payload.payment.methodId } },
             ]);
         });
 
         it('throws error if payment method is not found or loaded', async () => {
-            store = createCheckoutStore();
+            store = createCheckoutStore({ checkout: getCheckoutState() });
             registry = createPaymentStrategyRegistry(store, client, paymentClient);
 
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
             try {
                 await Observable.from(actionCreator.execute(getOrderRequestBody())(store)).toPromise();
@@ -276,6 +299,7 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('finds `nopaymentrequired` strategy if payment data is not required', async () => {
             store = createCheckoutStore({
+                ...state,
                 customer: merge({}, getCustomerState(), {
                     data: {
                         storeCredit: 9999,
@@ -288,7 +312,7 @@ describe('PaymentStrategyActionCreator', () => {
             jest.spyOn(registry, 'get')
                 .mockReturnValue(noPaymentDataStrategy);
 
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = { ...getOrderRequestBody(), useStoreCredit: true };
 
             await Observable.from(actionCreator.execute(payload)(store))
@@ -306,10 +330,13 @@ describe('PaymentStrategyActionCreator', () => {
         beforeEach(() => {
             jest.spyOn(strategy, 'finalize')
                 .mockReturnValue(Promise.resolve(store.getState()));
+
+            jest.spyOn(orderActionCreator, 'loadOrder')
+                .mockReturnValue(Observable.of(createAction(OrderActionType.SubmitOrderRequested)));
         });
 
         it('finds payment strategy by method', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await Observable.from(actionCreator.finalize()(store))
@@ -319,7 +346,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('finalizes order using payment strategy', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
 
             await Observable.from(actionCreator.finalize()(store))
@@ -328,21 +355,32 @@ describe('PaymentStrategyActionCreator', () => {
             expect(strategy.finalize).toHaveBeenCalled();
         });
 
-        it('emits action to notify finalization progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+        it('loads current order with payment data', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+            const state = store.getState();
+
+            await Observable.from(actionCreator.finalize()(store))
+                .toPromise();
+
+            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(state.checkout.getCheckout().orderId, undefined);
+        });
+
+        it('emits action to load order and notify finalization progress', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const actions = await Observable.from(actionCreator.finalize()(store))
                 .toArray()
                 .toPromise();
 
             expect(actions).toEqual([
+                { type: OrderActionType.SubmitOrderRequested },
                 { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeSucceeded, meta: { methodId: method.id } },
             ]);
         });
 
         it('emits error action if unable to finalize', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const finalizeError = new Error();
             const errorHandler = jest.fn(action => Observable.of(action));
@@ -357,6 +395,7 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
+                { type: OrderActionType.SubmitOrderRequested },
                 { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeFailed, error: true, payload: finalizeError, meta: { methodId: method.id } },
             ]);
@@ -366,7 +405,7 @@ describe('PaymentStrategyActionCreator', () => {
             store = createCheckoutStore();
             registry = createPaymentStrategyRegistry(store, client, paymentClient);
 
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
             try {
                 await Observable.from(actionCreator.finalize()(store)).toPromise();
@@ -377,12 +416,12 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('returns rejected promise if order does not require finalization', async () => {
             store = createCheckoutStore({
+                ...state,
                 order: getIncompleteOrderState(),
-                paymentMethods: getPaymentMethodsState(),
             });
             registry = createPaymentStrategyRegistry(store, client, paymentClient);
 
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
             try {
                 await Observable.from(actionCreator.finalize()(store)).toPromise();

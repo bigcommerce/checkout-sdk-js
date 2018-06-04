@@ -1,15 +1,13 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import * as billingAddressActionTypes from '../billing/billing-address-action-types';
-import { CheckoutActionType } from '../checkout';
-import * as customerActionTypes from '../customer/customer-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+import { BillingAddressAction, BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { CustomerAction, CustomerActionType } from '../customer';
+import { ConsignmentAction, ConsignmentActionTypes } from '../shipping/consignment-actions';
 
 import InternalQuote from './internal-quote';
 import mapToInternalQuote from './map-to-internal-quote';
-import * as quoteActionTypes from './quote-action-types';
-import QuoteState, { QuoteErrorsState, QuoteMetaState, QuoteStatusesState } from './quote-state';
+import QuoteState, { QuoteErrorsState, QuoteStatusesState } from './quote-state';
 
 const DEFAULT_STATE: QuoteState = {
     errors: {},
@@ -17,33 +15,32 @@ const DEFAULT_STATE: QuoteState = {
     statuses: {},
 };
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action
- */
-export default function quoteReducer(state: QuoteState = DEFAULT_STATE, action: Action): QuoteState {
+export default function quoteReducer(
+    state: QuoteState = DEFAULT_STATE,
+    action: BillingAddressAction | CheckoutAction | ConsignmentAction | CustomerAction
+): QuoteState {
     const reducer = combineReducers<QuoteState>({
         data: dataReducer,
         errors: errorsReducer,
-        meta: metaReducer,
         statuses: statusesReducer,
     });
 
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalQuote | undefined, action: Action): InternalQuote | undefined {
+function dataReducer(
+    data: InternalQuote | undefined,
+    action: BillingAddressAction | CheckoutAction | ConsignmentAction | CustomerAction
+): InternalQuote | undefined {
     switch (action.type) {
+    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return data ? { ...data, ...mapToInternalQuote(action.payload, data) } : data;
+    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
+    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
+        return action.payload ? { ...data, ...mapToInternalQuote(action.payload) } : data;
 
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
-    case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
-    case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
+    case CustomerActionType.SignInCustomerSucceeded:
+    case CustomerActionType.SignOutCustomerSucceeded:
         return action.payload ? { ...data, ...action.payload.quote } : data;
 
     default:
@@ -51,33 +48,23 @@ function dataReducer(data: InternalQuote | undefined, action: Action): InternalQ
     }
 }
 
-function metaReducer(meta: QuoteMetaState | undefined, action: Action): QuoteMetaState | undefined {
-    switch (action.type) {
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-        return action.meta ? { ...meta, ...action.meta } : meta;
-
-    default:
-        return meta;
-    }
-}
-
-function errorsReducer(errors: QuoteErrorsState = DEFAULT_STATE.errors, action: Action): QuoteErrorsState {
+function errorsReducer(
+    errors: QuoteErrorsState = DEFAULT_STATE.errors,
+    action: BillingAddressAction | CheckoutAction
+): QuoteErrorsState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case quoteActionTypes.LOAD_QUOTE_REQUESTED:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return { ...errors, loadError: undefined };
 
     case CheckoutActionType.LoadCheckoutFailed:
-    case quoteActionTypes.LOAD_QUOTE_FAILED:
         return { ...errors, loadError: action.payload };
 
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_REQUESTED:
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
+    case BillingAddressActionTypes.UpdateBillingAddressRequested:
+    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
         return { ...errors, updateBillingAddressError: undefined };
 
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED:
+    case BillingAddressActionTypes.UpdateBillingAddressFailed:
         return { ...errors, updateBillingAddressError: action.payload };
 
     default:
@@ -85,23 +72,23 @@ function errorsReducer(errors: QuoteErrorsState = DEFAULT_STATE.errors, action: 
     }
 }
 
-function statusesReducer(statuses: QuoteStatusesState = DEFAULT_STATE.statuses, action: Action): QuoteStatusesState {
+function statusesReducer(
+    statuses: QuoteStatusesState = DEFAULT_STATE.statuses,
+    action: BillingAddressAction | CheckoutAction
+): QuoteStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
-    case quoteActionTypes.LOAD_QUOTE_REQUESTED:
         return { ...statuses, isLoading: true };
 
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CheckoutActionType.LoadCheckoutFailed:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case quoteActionTypes.LOAD_QUOTE_FAILED:
         return { ...statuses, isLoading: false };
 
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_REQUESTED:
+    case BillingAddressActionTypes.UpdateBillingAddressRequested:
         return { ...statuses, isUpdatingBillingAddress: true };
 
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED:
-    case billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED:
+    case BillingAddressActionTypes.UpdateBillingAddressFailed:
+    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
         return { ...statuses, isUpdatingBillingAddress: false };
 
     default:

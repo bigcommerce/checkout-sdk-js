@@ -1,11 +1,7 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import { CheckoutAction, CheckoutActionType } from '../checkout';
-import * as quoteActionTypes from '../quote/quote-action-types';
-
-import InternalIncompleteOrder from './internal-incomplete-order';
 import InternalOrder from './internal-order';
-import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
+import mapToInternalOrder from './map-to-internal-order';
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 
@@ -17,7 +13,7 @@ const DEFAULT_STATE: OrderState = {
 
 export default function orderReducer(
     state: OrderState = DEFAULT_STATE,
-    action: Action | CheckoutAction | OrderAction
+    action: OrderAction
 ): OrderState {
     const reducer = combineReducers<OrderState>({
         data: dataReducer,
@@ -30,17 +26,15 @@ export default function orderReducer(
 }
 
 function dataReducer(
-    data: InternalOrder | InternalIncompleteOrder | undefined,
-    action: Action | CheckoutAction | OrderAction
-): InternalOrder | InternalIncompleteOrder | undefined {
+    data: InternalOrder | undefined,
+    action: OrderAction
+): InternalOrder | undefined {
     switch (action.type) {
-    case CheckoutActionType.LoadCheckoutSucceeded:
-        return data ? { ...data, ...mapToInternalIncompleteOrder(action.payload, data) } : data;
-
     case OrderActionType.LoadOrderSucceeded:
+        return action.payload ? mapToInternalOrder(action.payload) : data;
+
     case OrderActionType.FinalizeOrderSucceeded:
     case OrderActionType.SubmitOrderSucceeded:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
         return action.payload ? { ...data, ...action.payload.order } : data;
 
     default:
@@ -54,7 +48,11 @@ function metaReducer(
 ): OrderMetaState | undefined {
     switch (action.type) {
     case OrderActionType.SubmitOrderSucceeded:
-        return { ...meta, ...action.meta };
+        return action.payload ? {
+            ...meta,
+            ...action.meta,
+            payment: action.payload.order && action.payload.order.payment,
+        } : meta;
 
     default:
         return meta;

@@ -1,11 +1,10 @@
 import { CustomerStrategyActionCreator } from '..';
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
+import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, NotImplementedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { BraintreeVisaCheckoutPaymentProcessor } from '../../payment/strategies/braintree';
 import { VisaCheckoutPaymentSuccessPayload } from '../../payment/strategies/braintree/visacheckout';
 import VisaCheckoutScriptLoader from '../../payment/strategies/braintree/visacheckout-script-loader';
-import { QuoteActionCreator } from '../../quote';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import CustomerCredentials from '../customer-credentials';
 import { CustomerInitializeOptions } from '../customer-request-options';
@@ -18,9 +17,9 @@ export default class BraintreeVisaCheckoutCustomerStrategy extends CustomerStrat
 
     constructor(
         store: CheckoutStore,
+        private _checkoutActionCreator: CheckoutActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
-        private _quoteActionCreator: QuoteActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
         private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader
@@ -125,7 +124,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy extends CustomerStrat
                     state.shippingAddress.getShippingAddress(),
                     state.billingAddress.getBillingAddress()
                 )
-                .then(() => this._store.dispatch(this._quoteActionCreator.loadQuote()));
+                .then(() => this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()));
         }, { methodId }), { queueId: 'widgetInteraction' });
     }
 

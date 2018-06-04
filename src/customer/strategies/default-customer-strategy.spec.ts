@@ -1,10 +1,10 @@
 import { createAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 
+import { CustomerActionType } from '..';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import { getQuote } from '../../quote/internal-quotes.mock';
 import CustomerActionCreator from '../customer-action-creator';
-import { SIGN_IN_CUSTOMER_SUCCEEDED, SIGN_OUT_CUSTOMER_SUCCEEDED } from '../customer-action-types';
 
 import DefaultCustomerStrategy from './default-customer-strategy';
 
@@ -23,7 +23,7 @@ describe('DefaultCustomerStrategy', () => {
         const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
         const credentials = { email: 'foo@bar.com', password: 'foobar' };
         const options = {};
-        const action = Observable.of(createAction(SIGN_IN_CUSTOMER_SUCCEEDED, getQuote()));
+        const action = Observable.of(createAction(CustomerActionType.SignInCustomerRequested, getQuote()));
 
         jest.spyOn(customerActionCreator, 'signInCustomer')
             .mockReturnValue(action);
@@ -40,7 +40,7 @@ describe('DefaultCustomerStrategy', () => {
     it('dispatches action to sign out customer', async () => {
         const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
         const options = {};
-        const action = Observable.of(createAction(SIGN_OUT_CUSTOMER_SUCCEEDED, getQuote()));
+        const action = Observable.of(createAction(CustomerActionType.SignOutCustomerRequested, getQuote()));
 
         jest.spyOn(customerActionCreator, 'signOutCustomer')
             .mockReturnValue(action);

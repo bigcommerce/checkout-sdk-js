@@ -1,11 +1,18 @@
 import Coupon from './coupon';
 import InternalCoupon from './internal-coupon';
 
-export default function mapToInternalCoupon(coupon: Coupon, existingCoupon: InternalCoupon): InternalCoupon {
+const couponTypes = [
+    'per_item_discount',
+    'percentage_discount',
+    'per_total_discount',
+    'shipping_discount',
+    'free_shipping',
+];
+
+export default function mapToInternalCoupon(coupon: Coupon): InternalCoupon {
     return {
         code: coupon.code,
-        discount: existingCoupon.discount,
-        discountType: existingCoupon.discountType,
-        name: existingCoupon.name,
+        discount: coupon.displayName,
+        discountType: couponTypes.indexOf(coupon.couponType),
     };
 }

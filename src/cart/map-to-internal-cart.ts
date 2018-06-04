@@ -1,62 +1,68 @@
-import { find } from 'lodash';
+import { keyBy, reduce, some } from 'lodash';
 
 import { Checkout } from '../checkout';
 import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
+import { mapToDiscountNotifications } from '../promotion';
 
+import { AmountTransformer } from '.';
 import InternalCart from './internal-cart';
 import mapToInternalLineItems from './map-to-internal-line-items';
 
-export default function mapToInternalCart(checkout: Checkout, existingCart: InternalCart): InternalCart {
+export default function mapToInternalCart(checkout: Checkout): InternalCart {
+    const decimalPlaces = checkout.cart.currency.decimalPlaces;
+    const amountTransformer = new AmountTransformer(decimalPlaces);
+
     return {
         id: checkout.cart.id,
-        items: mapToInternalLineItems(checkout.cart.lineItems, existingCart.items),
+        items: mapToInternalLineItems(checkout.cart.lineItems, decimalPlaces),
         currency: checkout.cart.currency.code,
-        subtotal: existingCart.subtotal,
         coupon: {
-            discountedAmount: existingCart.coupon.discountedAmount,
-            coupons: checkout.cart.coupons.map(coupon =>
-                mapToInternalCoupon(
-                    coupon,
-                    // tslint:disable-next-line:no-non-null-assertion
-                    find(existingCart.coupon.coupons, { code: coupon.code })!
-                )
-            ),
+            discountedAmount: reduce(checkout.cart.coupons, (sum, coupon) => {
+                return sum + coupon.discountedAmount;
+            }, 0),
+            coupons: checkout.cart.coupons.map(mapToInternalCoupon),
         },
         discount: {
             amount: checkout.cart.discountAmount,
-            integerAmount: existingCart.discount.integerAmount,
+            integerAmount: amountTransformer.toInteger(checkout.cart.discountAmount),
         },
-        discountNotifications: existingCart.discountNotifications,
+        discountNotifications: mapToDiscountNotifications(checkout.promotions),
         giftCertificate: {
-            totalDiscountedAmount: existingCart.giftCertificate.totalDiscountedAmount,
-            appliedGiftCertificates: checkout.giftCertificates.map(giftCertificate =>
-                mapToInternalGiftCertificate(
-                    giftCertificate,
-                    // tslint:disable-next-line:no-non-null-assertion
-                    find(existingCart.giftCertificate.appliedGiftCertificates, { code: giftCertificate.code })!
-                )
-            ),
+            totalDiscountedAmount: reduce(checkout.giftCertificates, (sum, certificate) => {
+                return sum + certificate.used;
+            }, 0),
+            appliedGiftCertificates: keyBy(checkout.giftCertificates.map(mapToInternalGiftCertificate), 'code'),
         },
         shipping: {
             amount: checkout.shippingCostTotal,
-            integerAmount: existingCart.shipping.integerAmount,
-            amountBeforeDiscount: existingCart.shipping.amountBeforeDiscount,
-            integerAmountBeforeDiscount: existingCart.shipping.integerAmountBeforeDiscount,
-            required: existingCart.shipping.required,
+            integerAmount: amountTransformer.toInteger(checkout.shippingCostTotal),
+            amountBeforeDiscount: checkout.shippingCostBeforeDiscount,
+            integerAmountBeforeDiscount: amountTransformer.toInteger(checkout.shippingCostBeforeDiscount),
+            required: some(checkout.cart.lineItems.physicalItems, lineItem => lineItem.isShippingRequired),
+        },
+        subtotal: {
+            amount: checkout.cart.cartAmount,
+            integerAmount: amountTransformer.toInteger(checkout.cart.cartAmount),
         },
         storeCredit: {
             amount: checkout.storeCredit,
         },
-        taxSubtotal: existingCart.taxSubtotal,
-        taxes: existingCart.taxes,
+        taxSubtotal: {
+            amount: checkout.taxTotal,
+            integerAmount: amountTransformer.toInteger(checkout.taxTotal),
+        },
+        taxes: checkout.taxes,
         taxTotal: {
             amount: checkout.taxTotal,
-            integerAmount: existingCart.taxTotal.integerAmount,
+            integerAmount: amountTransformer.toInteger(checkout.taxTotal),
         },
-        handling: existingCart.handling,
+        handling: {
+            amount: checkout.handlingCostTotal,
+            integerAmount: amountTransformer.toInteger(checkout.handlingCostTotal),
+        },
         grandTotal: {
             amount: checkout.grandTotal,
-            integerAmount: existingCart.grandTotal.integerAmount,
+            integerAmount: amountTransformer.toInteger(checkout.grandTotal),
         },
     };
 }
