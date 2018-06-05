@@ -31,11 +31,11 @@ export default class FormSelector {
             return this._processCountry(field, countries, selectedCountry);
         }
 
-        if (field.name === 'province') {
+        if (field.name === 'stateOrProvince') {
             return this._processProvince(field, selectedCountry);
         }
 
-        if (field.name === 'postCode') {
+        if (field.name === 'postalCode') {
             return this._processsPostCode(field, selectedCountry);
         }
 
@@ -80,7 +80,7 @@ export default class FormSelector {
 
         return {
             ...field,
-            name: 'provinceCode',
+            name: 'stateOrProvinceCode',
             options: { items },
             required: true,
             type: 'array',
