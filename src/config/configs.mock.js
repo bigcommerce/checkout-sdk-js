@@ -4,6 +4,7 @@ export function getConfig() {
     return {
         context: {
             flashMessages: [],
+            geoCountryCode: 'AU',
             payment: {
                 token: null,
             },
