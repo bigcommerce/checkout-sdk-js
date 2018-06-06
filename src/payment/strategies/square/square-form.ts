@@ -21,8 +21,18 @@ export interface SquareFormOptions {
     postalCode: SquareFormElement;
 }
 
+/**
+ * Configures any form element provided by Square payment.
+ */
 export interface SquareFormElement {
+    /**
+     * The ID of the container which the form element should insert into.
+     */
     elementId: string;
+
+    /**
+     * The placeholder text to use for the form element, if provided.
+     */
     placeholder?: string;
 }
 
