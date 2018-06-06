@@ -48,8 +48,8 @@ export function getCart() {
         ],
         currency: 'USD',
         subtotal: {
-            amount: 190,
-            integerAmount: 19000,
+            amount: 200,
+            integerAmount: 20000,
         },
         coupon: {
             discountedAmount: 10,
