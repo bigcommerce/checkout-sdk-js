@@ -146,7 +146,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
                 collectShipping: false,
                 currencyCode: 'USD',
                 locale: 'en_US',
-                subtotal: 190,
+                subtotal: 200,
             });
         });
 
