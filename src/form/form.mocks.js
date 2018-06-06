@@ -32,14 +32,14 @@ export function getFormFields() {
         default: '',
     }, {
         id: 'field_8',
-        name: 'addressLine1',
+        name: 'address1',
         custom: false,
         label: 'Address Line 1',
         required: true,
         default: '',
     }, {
         id: 'field_9',
-        name: 'addressLine2',
+        name: 'address2',
         custom: false,
         label: 'Address Line 2',
         required: false,
@@ -60,14 +60,14 @@ export function getFormFields() {
         default: null,
     }, {
         id: 'field_12',
-        name: 'province',
+        name: 'stateOrProvince',
         custom: false,
         label: 'State/Province',
         required: true,
         default: null,
     }, {
         id: 'field_13',
-        name: 'postCode',
+        name: 'postalCode',
         custom: false,
         label: 'Zip/Postcode',
         required: true,

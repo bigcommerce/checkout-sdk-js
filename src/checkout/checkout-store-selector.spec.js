@@ -74,19 +74,19 @@ describe('CheckoutStoreSelector', () => {
 
     it('returns shipping address fields', () => {
         const results = selector.getShippingAddressFields('AU');
-        const predicate = ({ name }) => name === 'province' || name === 'provinceCode' || name === 'countryCode';
+        const predicate = ({ name }) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
 
         expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
-        expect(find(results, { name: 'provinceCode' }).options.items)
+        expect(find(results, { name: 'stateOrProvinceCode' }).options.items)
             .toEqual(getAustralia().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 
     it('returns billing address fields', () => {
         const results = selector.getBillingAddressFields('US');
-        const predicate = ({ name }) => name === 'province' || name === 'provinceCode' || name === 'countryCode';
+        const predicate = ({ name }) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
 
         expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
-        expect(find(results, { name: 'provinceCode' }).options.items)
+        expect(find(results, { name: 'stateOrProvinceCode' }).options.items)
             .toEqual(getUnitedStates().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 });

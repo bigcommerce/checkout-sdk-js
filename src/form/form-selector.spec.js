@@ -50,7 +50,7 @@ describe('FormSelector', () => {
 
         it('includes the provinces for the selected country', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'AU');
-            const province = find(forms, { name: 'provinceCode' });
+            const province = find(forms, { name: 'stateOrProvinceCode' });
 
             expect(province.required).toBe(true);
             expect(province.fieldType).toBe('dropdown');
@@ -61,7 +61,7 @@ describe('FormSelector', () => {
 
         it('does not make provinces required if we do not have them in the countries list', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'JP');
-            const province = find(forms, { name: 'province' });
+            const province = find(forms, { name: 'stateOrProvince' });
 
             expect(province.required).toBe(false);
             expect(province.fieldType).not.toBe('dropdown');
@@ -69,14 +69,14 @@ describe('FormSelector', () => {
 
         it('makes postcode required for countries that require it', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'AU');
-            const postCode = find(forms, { name: 'postCode' });
+            const postCode = find(forms, { name: 'postalCode' });
 
             expect(postCode.required).toBe(true);
         });
 
         it('makes postcode NOT required for countries that DO NOT require it', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'JP');
-            const postCode = find(forms, { name: 'postCode' });
+            const postCode = find(forms, { name: 'postalCode' });
 
             expect(postCode.required).toBe(false);
         });
@@ -119,7 +119,7 @@ describe('FormSelector', () => {
 
         it('includes the provinces for the selected country', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'AU');
-            const province = find(forms, { name: 'provinceCode' });
+            const province = find(forms, { name: 'stateOrProvinceCode' });
 
             expect(province.required).toBe(true);
             expect(province.fieldType).toBe('dropdown');
@@ -131,7 +131,7 @@ describe('FormSelector', () => {
 
         it('does not make provinces required if we do not have them in the countries list', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'JP');
-            const province = find(forms, { name: 'province' });
+            const province = find(forms, { name: 'stateOrProvince' });
 
             expect(province.required).toBe(false);
             expect(province.fieldType).not.toBe('dropdown');
@@ -139,14 +139,14 @@ describe('FormSelector', () => {
 
         it('makes postcode required for countries that require it', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'AU');
-            const postCode = find(forms, { name: 'postCode' });
+            const postCode = find(forms, { name: 'postalCode' });
 
             expect(postCode.required).toBe(true);
         });
 
         it('makes postcode NOT required for countries that DO NOT require it', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'JP');
-            const postCode = find(forms, { name: 'postCode' });
+            const postCode = find(forms, { name: 'postalCode' });
 
             expect(postCode.required).toBe(false);
         });
