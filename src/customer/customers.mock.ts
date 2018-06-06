@@ -10,6 +10,7 @@ export function getGuestCustomer(): Customer {
         fullName: 'Foo Bar',
         isGuest: true,
         lastName: 'Bar',
+        storeCredit: 0,
     };
 }
 

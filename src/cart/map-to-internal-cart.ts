@@ -45,7 +45,7 @@ export default function mapToInternalCart(checkout: Checkout): InternalCart {
             integerAmount: amountTransformer.toInteger(checkout.cart.cartAmount),
         },
         storeCredit: {
-            amount: checkout.storeCredit,
+            amount: checkout.customer ? checkout.customer.storeCredit : 0,
         },
         taxSubtotal: {
             amount: checkout.taxTotal,
