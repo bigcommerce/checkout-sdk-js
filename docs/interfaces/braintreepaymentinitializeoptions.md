@@ -2,6 +2,8 @@
 
 # BraintreePaymentInitializeOptions
 
+A set of options that are required to initialize the Braintree payment method. You need to provide the options if you want to support 3D Secure authentication flow.
+
 ## Hierarchy
 
 **BraintreePaymentInitializeOptions**

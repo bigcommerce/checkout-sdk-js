@@ -1,10 +1,33 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 
+/**
+ * A set of options that are required to initialize the customer step of
+ * checkout to support Amazon Pay.
+ *
+ * When AmazonPay is initialized, a sign-in button will be inserted into the
+ * DOM. When the customer clicks on it, they will be redirected to Amazon to
+ * sign in.
+ */
 declare interface AmazonPayCustomerInitializeOptions {
+    /**
+     * The ID of a container which the sign-in button should insert into.
+     */
     container: string;
-    color?: string;
-    size?: string;
+    /**
+     * The colour of the sign-in button.
+     */
+    color?: 'Gold' | 'LightGray' | 'DarkGray';
+    /**
+     * The size of the sign-in button.
+     */
+    size?: 'small' | 'medium' | 'large' | 'x-large';
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure.
+     */
     onError?(error: AmazonPayWidgetError | StandardError): void;
 }
 
@@ -13,17 +36,70 @@ declare interface AmazonPayOrderReference {
     getAmazonOrderReferenceId(): string;
 }
 
+/**
+ * A set of options that are required to initialize the Amazon Pay payment
+ * method.
+ *
+ * When AmazonPay is initialized, a widget will be inserted into the DOM. The
+ * widget has a list of payment options for the customer to choose from.
+ */
 declare interface AmazonPayPaymentInitializeOptions {
+    /**
+     * The ID of a container which the payment widget should insert into.
+     */
     container: string;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the payment options.
+     *
+     * @param error - The error object describing the failure.
+     */
     onError?(error: AmazonPayWidgetError | StandardError): void;
+    /**
+     * A callback that gets called when the customer selects one of the payment
+     * options provided by the widget.
+     *
+     * @param reference - The order reference provided by Amazon.
+     */
     onPaymentSelect?(reference: AmazonPayOrderReference): void;
+    /**
+     * A callback that gets called when the widget is loaded and ready to be
+     * interacted with.
+     *
+     * @param reference - The order reference provided by Amazon.
+     */
     onReady?(reference: AmazonPayOrderReference): void;
 }
 
+/**
+ * A set of options that are required to initialize the shipping step of
+ * checkout in order to support Amazon Pay.
+ *
+ * When Amazon Pay is initialized, a widget will be inserted into the DOM. The
+ * widget has a list of shipping addresses for the customer to choose from.
+ */
 declare interface AmazonPayShippingInitializeOptions {
+    /**
+     * The ID of a container which the address widget should insert into.
+     */
     container: string;
+    /**
+     * A callback that gets called when the customer selects an address option.
+     *
+     * @param reference - The order reference provided by Amazon.
+     */
     onAddressSelect?(reference: AmazonPayOrderReference): void;
+    /**
+     * A callback that gets called if unable to initialize the widget or select
+     * one of the address options provided by the widget.
+     *
+     * @param error - The error object describing the failure of the initialization.
+     */
     onError?(error: AmazonPayWidgetError | StandardError): void;
+    /**
+     * A callback that gets called when the widget is loaded and ready to be
+     * interacted with.
+     */
     onReady?(): void;
 }
 
@@ -31,12 +107,40 @@ declare interface AmazonPayWidgetError extends Error {
     getErrorCode(): string;
 }
 
+/**
+ * A set of options that are required to initialize the Braintree payment
+ * method. You need to provide the options if you want to support 3D Secure
+ * authentication flow.
+ */
 declare interface BraintreePaymentInitializeOptions {
     threeDSecure?: BraintreeThreeDSecureOptions;
 }
 
+/**
+ * A set of options that are required to support 3D Secure authentication flow.
+ *
+ * If the customer uses a credit card that has 3D Secure enabled, they will be
+ * asked to verify their identity when they pay. The verification is done
+ * through a web page via an iframe provided by the card issuer.
+ */
 declare interface BraintreeThreeDSecureOptions {
+    /**
+     * A callback that gets called when the iframe is ready to be added to the
+     * current page. It is responsible for determining where the iframe should
+     * be inserted in the DOM.
+     *
+     * @param error - Any error raised during the verification process;
+     * undefined if there is none.
+     * @param iframe - The iframe element containing the verification web page
+     * provided by the card issuer.
+     * @param cancel - A function, when called, will cancel the verification
+     * process and remove the iframe.
+     */
     addFrame(error: Error | undefined, iframe: HTMLIFrameElement, cancel: () => Promise<BraintreeVerifyPayload> | undefined): void;
+    /**
+     * A callback that gets called when the iframe is about to be removed from
+     * the current page.
+     */
     removeFrame(): void;
 }
 
@@ -57,8 +161,25 @@ declare interface BraintreeVisaCheckoutCustomerInitializeOptions {
     onError?(error: Error): void;
 }
 
+/**
+ * A set of options that are required to initialize the Visa Checkout payment
+ * method provided by Braintree.
+ *
+ * If the customer chooses to pay with Visa Checkout, they will be asked to
+ * enter their payment details via a modal. You can hook into events emitted by
+ * the modal by providing the callbacks listed below.
+ */
 declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
+    /**
+     * A callback that gets called when Visa Checkout fails to initialize or
+     * selects a payment option.
+     *
+     * @param error - The error object describing the failure.
+     */
     onError?(error: Error): void;
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
     onPaymentSelect?(): void;
 }
 
@@ -279,15 +400,13 @@ declare class CheckoutService {
      * ```js
      * try {
      *     await service.finalizeOrderIfNeeded();
+     *
+     *     window.location.assign('/order-confirmation');
      * } catch (error) {
      *     if (error.type !== 'order_finalization_not_required') {
-     *         return;
+     *         throw error;
      *     }
-     *
-     *     throw error;
      * }
-     *
-     * window.location.assign('/order-confirmation');
      * ```
      *
      * @param options - Options for finalizing the current order.
@@ -1447,11 +1566,36 @@ declare interface CustomerCredentials {
     password?: string;
 }
 
+/**
+ * A set of options that are required to initialize the customer step of the
+ * current checkout flow.
+ *
+ * Some payment methods have specific requirements for setting the customer
+ * details for checkout. For example, Amazon Pay requires the customer to sign in
+ * using their sign-in button. As a result, you may need to provide additional
+ * information in order to initialize the customer step of checkout.
+ */
 declare interface CustomerInitializeOptions extends CustomerRequestOptions {
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Amazon Pay.
+     */
     amazon?: AmazonPayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Visa Checkout provided by Braintree.
+     */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
 }
 
+/**
+ * A set of options for configuring any requests related to the customer step of
+ * the current checkout flow.
+ *
+ * Some payment methods have their own sign-in or sign-out flow. Therefore, you
+ * need to indicate the method you want to use if you need to trigger a specific
+ * flow for signing in or out a customer. Otherwise, these options are not required.
+ */
 declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
 }
@@ -1751,8 +1895,24 @@ declare interface KlarnaLoadResponse {
     };
 }
 
+/**
+ * A set of options that are required to initialize the Klarna payment method.
+ *
+ * When Klarna is initialized, a widget will be inserted into the DOM. The
+ * widget has a list of payment options for the customer to choose from.
+ */
 declare interface KlarnaPaymentInitializeOptions {
+    /**
+     * The ID of a container which the payment widget should insert into.
+     */
     container: string;
+    /**
+     * A callback that gets called when the widget is loaded and ready to be
+     * interacted with.
+     *
+     * @param response - The result of the initialization. It indicates whether
+     * or not the widget is loaded successfully.
+     */
     onLoad?(response: KlarnaLoadResponse): void;
 }
 
@@ -1829,15 +1989,46 @@ declare interface Locales {
     [key: string]: string;
 }
 
+/**
+ * An object that contains the payment information required for submitting an
+ * order.
+ */
 declare interface OrderPaymentRequestBody {
+    /**
+     * The identifier of the payment method that is chosen for the order.
+     */
     methodId: string;
+    /**
+     * The identifier of the payment provider that is chosen for the order.
+     */
     gatewayId?: string;
+    /**
+     * An object that contains the details of a credit card or vaulted payment
+     * instrument.
+     */
     paymentData?: CreditCardInstrument | VaultedInstrument;
 }
 
+/**
+ * An object that contains the information required for submitting an order.
+ */
 declare interface OrderRequestBody {
+    /**
+     * An object that contains the payment details of a customer. In some cases,
+     * you can omit this object if the order does not require further payment.
+     * For example, the customer is able to use their store credit to pay for
+     * the entire order. Or they have already submitted thier payment details
+     * using PayPal.
+     */
     payment?: OrderPaymentRequestBody;
+    /**
+     * If true, apply the store credit of the customer to the order. It only
+     * works if the customer has previously signed in.
+     */
     useStoreCredit?: boolean;
+    /**
+     * If provided, the string will be added to the order as a comment.
+     */
     customerMessage?: string;
 }
 
@@ -1848,11 +2039,36 @@ declare interface PasswordRequirements {
     error: string;
 }
 
+/**
+ * A set of options that are required to initialize the payment step of the
+ * current checkout flow.
+ */
 declare interface PaymentInitializeOptions extends PaymentRequestOptions {
+    /**
+     * The options that are required to initialize the Amazon Pay payment
+     * method. They can be omitted unless you need to support AmazonPay.
+     */
     amazon?: AmazonPayPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Braintree payment method.
+     * They can be omitted unless you need to support Braintree.
+     */
     braintree?: BraintreePaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Visa Checkout payment
+     * method provided by Braintree. They can be omitted unless you need to
+     * support Visa Checkout.
+     */
     braintreevisacheckout?: BraintreeVisaCheckoutPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Klarna payment method.
+     * They can be omitted unless you need to support Klarna.
+     */
     klarna?: KlarnaPaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Square payment method.
+     * They can be omitted unless you need to support Square.
+     */
     square?: SquarePaymentInitializeOptions;
 }
 
@@ -1879,8 +2095,20 @@ declare interface PaymentMethodConfig {
     testMode?: boolean;
 }
 
+/**
+ * The set of options for configuring any requests related to the payment step of
+ * the current checkout flow.
+ */
 declare interface PaymentRequestOptions extends RequestOptions {
+    /**
+     * The identifier of the payment method.
+     */
     methodId: string;
+    /**
+     * The identifier of the payment provider providing the payment method. This
+     * option is only required if the provider offers multiple payment options.
+     * i.e.: Adyen and Klarna.
+     */
     gatewayId?: string;
 }
 
@@ -1894,14 +2122,45 @@ declare interface Region {
     name: string;
 }
 
+/**
+ * A set of options for configuring an asynchronous request.
+ */
 declare interface RequestOptions {
+    /**
+     * Provide this option if you want to cancel or time out the request. If the
+     * timeout object completes before the request, the request will be
+     * cancelled.
+     */
     timeout?: Timeout;
 }
 
+/**
+ * A set of options that are required to initialize the shipping step of the
+ * current checkout flow.
+ *
+ * Some payment methods have specific requirements for setting the shipping
+ * details for checkout. For example, Amazon Pay requires the customer to enter
+ * their shipping address using their address book widget. As a result, you may
+ * need to provide additional information in order to initialize the shipping
+ * step of checkout.
+ */
 declare interface ShippingInitializeOptions extends ShippingRequestOptions {
+    /**
+     * The options that are required to initialize the shipping step of checkout
+     * when using Amazon Pay.
+     */
     amazon?: AmazonPayShippingInitializeOptions;
 }
 
+/**
+ * A set of options for configuring any requests related to the shipping step of
+ * the current checkout flow.
+ *
+ * Some payment methods have their own shipping configuration flow. Therefore,
+ * you need to specify the method you intend to use if you want to trigger a
+ * specific flow for setting the shipping address or option. Otherwise, these
+ * options are not required.
+ */
 declare interface ShippingRequestOptions extends RequestOptions {
     methodId?: string;
 }
@@ -1922,17 +2181,51 @@ declare interface ShopperCurrency {
     exchangeRate: string;
 }
 
+/**
+ * Configures any form element provided by Square payment.
+ */
 declare interface SquareFormElement {
+    /**
+     * The ID of the container which the form element should insert into.
+     */
     elementId: string;
+    /**
+     * The placeholder text to use for the form element, if provided.
+     */
     placeholder?: string;
 }
 
+/**
+ * A set of options that are required to initialize the Square payment method.
+ *
+ * Once Square payment is initialized, credit card form fields, provided by the
+ * payment provider as iframes, will be inserted into the current page. These
+ * options provide a location and styling for each of the form fields.
+ */
 declare interface SquarePaymentInitializeOptions {
+    /**
+     * The location to insert the credit card number form field.
+     */
     cardNumber: SquareFormElement;
+    /**
+     * The location to insert the CVV form field.
+     */
     cvv: SquareFormElement;
+    /**
+     * The location to insert the expiration date form field.
+     */
     expirationDate: SquareFormElement;
+    /**
+     * The location to insert the postal code form field.
+     */
     postalCode: SquareFormElement;
+    /**
+     * The CSS class to apply to all form fields.
+     */
     inputClass?: string;
+    /**
+     * The set of CSS styles to apply to all form fields.
+     */
     inputStyles?: Array<{
         [key: string]: string;
     }>;

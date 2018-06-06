@@ -221,15 +221,13 @@ If the method is called before order finalization is required or for a payment m
 ```js
 try {
     await service.finalizeOrderIfNeeded();
+
+    window.location.assign('/order-confirmation');
 } catch (error) {
     if (error.type !== 'order_finalization_not_required') {
-        return;
+        throw error;
     }
-
-    throw error;
 }
-
-window.location.assign('/order-confirmation');
 ```
 *__throws__*: `OrderFinalizationNotRequiredError` error if order finalization is not required for the current order at the time of execution.
 

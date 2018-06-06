@@ -1259,15 +1259,13 @@ var CheckoutService = /** @class */ (function () {
      * ```js
      * try {
      *     await service.finalizeOrderIfNeeded();
+     *
+     *     window.location.assign('/order-confirmation');
      * } catch (error) {
      *     if (error.type !== 'order_finalization_not_required') {
-     *         return;
+     *         throw error;
      *     }
-     *
-     *     throw error;
      * }
-     *
-     * window.location.assign('/order-confirmation');
      * ```
      *
      * @param options - Options for finalizing the current order.
@@ -11393,10 +11391,10 @@ var FormSelector = /** @class */ (function () {
         if (field.name === 'countryCode') {
             return this._processCountry(field, countries, selectedCountry);
         }
-        if (field.name === 'province') {
+        if (field.name === 'stateOrProvince') {
             return this._processProvince(field, selectedCountry);
         }
-        if (field.name === 'postCode') {
+        if (field.name === 'postalCode') {
             return this._processsPostCode(field, selectedCountry);
         }
         return field;
@@ -11428,7 +11426,7 @@ var FormSelector = /** @class */ (function () {
                 label: name,
             });
         });
-        return tslib_1.__assign({}, field, { name: 'provinceCode', options: { items: items }, required: true, type: 'array', fieldType: 'dropdown', itemtype: 'string' });
+        return tslib_1.__assign({}, field, { name: 'stateOrProvinceCode', options: { items: items }, required: true, type: 'array', fieldType: 'dropdown', itemtype: 'string' });
     };
     FormSelector.prototype._processsPostCode = function (field, country) {
         var _a = (country || {}).hasPostalCodes, hasPostalCodes = _a === void 0 ? [] : _a;

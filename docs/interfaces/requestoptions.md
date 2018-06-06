@@ -2,6 +2,8 @@
 
 # RequestOptions
 
+A set of options for configuring an asynchronous request.
+
 ## Hierarchy
 
 **RequestOptions**
@@ -27,6 +29,8 @@
 ### `<Optional>` timeout
 
 **● timeout**: *`Timeout`*
+
+Provide this option if you want to cancel or time out the request. If the timeout object completes before the request, the request will be cancelled.
 
 ___
 
