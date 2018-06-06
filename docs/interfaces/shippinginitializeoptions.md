@@ -2,6 +2,10 @@
 
 # ShippingInitializeOptions
 
+A set of options that are required to initialize the shipping step of the current checkout flow.
+
+Some payment methods have specific requirements for setting the shipping details for checkout. For example, Amazon Pay requires the customer to enter their shipping address using their address book widget. As a result, you may need to provide additional information in order to initialize the shipping step of checkout.
+
 ## Hierarchy
 
 ↳  [ShippingRequestOptions](shippingrequestoptions.md)
@@ -26,6 +30,8 @@
 
 **● amazon**: *[AmazonPayShippingInitializeOptions](amazonpayshippinginitializeoptions.md)*
 
+The options that are required to initialize the shipping step of checkout when using Amazon Pay.
+
 ___
 <a id="methodid"></a>
 
@@ -40,6 +46,8 @@ ___
 ### `<Optional>` timeout
 
 **● timeout**: *`Timeout`*
+
+Provide this option if you want to cancel or time out the request. If the timeout object completes before the request, the request will be cancelled.
 
 ___
 
