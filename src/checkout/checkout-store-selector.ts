@@ -7,7 +7,7 @@ import { StoreConfig } from '../config/config';
 import { CustomerSelector, InternalCustomer } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
-import { InternalIncompleteOrder, InternalOrder, OrderSelector } from '../order';
+import { InternalOrder, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector } from '../payment';
 import { Instrument, InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
@@ -19,6 +19,8 @@ import {
     ShippingOptionSelector,
 } from '../shipping';
 
+import Checkout from './checkout';
+import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
@@ -31,6 +33,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default class CheckoutStoreSelector {
     private _billingAddress: BillingAddressSelector;
     private _cart: CartSelector;
+    private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
     private _countries: CountrySelector;
     private _customer: CustomerSelector;
@@ -49,6 +52,7 @@ export default class CheckoutStoreSelector {
     constructor(selectors: InternalCheckoutSelectors) {
         this._billingAddress = selectors.billingAddress;
         this._cart = selectors.cart;
+        this._checkout = selectors.checkout;
         this._config = selectors.config;
         this._countries = selectors.countries;
         this._customer = selectors.customer;
@@ -63,16 +67,12 @@ export default class CheckoutStoreSelector {
     }
 
     /**
-     * Gets the current order.
+     * Gets the current checkout.
      *
-     * If the order is not submitted, the method returns the order as
-     * incomplete. Otherwise, it returns the order as complete with an
-     * identifier.
-     *
-     * @returns The current order if it is loaded, otherwise undefined.
+     * @returns The current checkout if it is loaded, otherwise undefined.
      */
-    getOrder(): InternalOrder | InternalIncompleteOrder | undefined {
-        return this._order.getOrder();
+    getCheckout(): Checkout | undefined {
+        return this._checkout.getCheckout();
     }
 
     /**
@@ -83,6 +83,15 @@ export default class CheckoutStoreSelector {
      */
     getQuote(): InternalQuote | undefined {
         return this._quote.getQuote();
+    }
+
+    /**
+     * Gets the current order.
+     *
+     * @returns The current order if it is loaded, otherwise undefined.
+     */
+    getOrder(): InternalOrder | undefined {
+        return this._order.getOrder();
     }
 
     /**

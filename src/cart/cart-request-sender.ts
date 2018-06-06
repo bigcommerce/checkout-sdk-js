@@ -15,10 +15,4 @@ export default class CartRequestSender {
 
         return this._requestSender.get(url, { timeout });
     }
-
-    loadCarts({ timeout }: RequestOptions = {}): Promise<Response> {
-        const url = '/api/storefront/carts';
-
-        return this._requestSender.get(url, { timeout });
-    }
 }

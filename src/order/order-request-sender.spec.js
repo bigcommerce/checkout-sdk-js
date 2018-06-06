@@ -1,11 +1,13 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getCompleteOrderResponseBody } from './internal-orders.mock';
+import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
+import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import OrderRequestSender from './order-request-sender';
 
 describe('OrderRequestSender', () => {
     let orderRequestSender;
     let requestSender;
+    const include = 'payments,lineItems.physicalItems.socialMedia,lineItems.digitalItems.socialMedia';
 
     beforeEach(() => {
         requestSender = {
@@ -29,7 +31,13 @@ describe('OrderRequestSender', () => {
             const output = await orderRequestSender.loadOrder(295);
 
             expect(output).toEqual(response);
-            expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', { timeout: undefined });
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: { include },
+                timeout: undefined,
+            });
         });
 
         it('loads order with timeout', async () => {
@@ -37,7 +45,25 @@ describe('OrderRequestSender', () => {
             const output = await orderRequestSender.loadOrder(295, options);
 
             expect(output).toEqual(response);
-            expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', options);
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
+                ...options,
+                params: { include },
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+            });
+        });
+
+        it('loads order including payment data', async () => {
+            await orderRequestSender.loadOrder(295, { params: { include: ['payments'] } });
+
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: { include },
+                timeout: undefined,
+            });
         });
     });
 
@@ -86,7 +112,9 @@ describe('OrderRequestSender', () => {
             const output = await orderRequestSender.finalizeOrder(295);
 
             expect(output).toEqual(response);
-            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', { timeout: undefined });
+            expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/order/295', {
+                timeout: undefined,
+            });
         });
 
         it('finalizes order and returns response with timeout', async () => {

@@ -1,22 +1,32 @@
 import InternalLineItem from './internal-line-item';
 import { LineItem } from './line-item';
 
-export default function mapToInternalLineItem(item: LineItem, existingItem: InternalLineItem, type: string): InternalLineItem {
+import { AmountTransformer } from '.';
+
+export default function mapToInternalLineItem(
+    item: LineItem,
+    type: string,
+    decimalPlaces: number,
+    idKey: keyof LineItem = 'id'
+): InternalLineItem {
+    const amountTransformer = new AmountTransformer(decimalPlaces);
+
     return {
-        amount: existingItem.amount,
-        amountAfterDiscount: existingItem.amountAfterDiscount,
-        attributes: existingItem.attributes,
-        discount: item.discountAmount,
-        id: item.id,
+        id: (item[idKey] as string | number),
         imageUrl: item.imageUrl,
-        integerAmount: existingItem.integerAmount,
-        integerAmountAfterDiscount: existingItem.integerAmountAfterDiscount,
-        integerDiscount: existingItem.integerDiscount,
-        integerTax: existingItem.integerTax,
+        amount: item.extendedListPrice,
+        amountAfterDiscount: item.extendedSalePrice,
+        discount: item.discountAmount,
+        integerAmount: amountTransformer.toInteger(item.extendedListPrice),
+        integerAmountAfterDiscount: amountTransformer.toInteger(item.extendedSalePrice),
+        integerDiscount: amountTransformer.toInteger(item.discountAmount),
         name: item.name,
         quantity: item.quantity,
-        tax: existingItem.tax,
         variantId: item.variantId,
+        attributes: (item.options || []).map(option => ({
+            name: option.name,
+            value: option.value,
+        })),
         type,
     };
 }

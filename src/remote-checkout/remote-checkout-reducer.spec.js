@@ -15,7 +15,11 @@ describe('remoteCheckoutReducer', () => {
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 data: {
-                    billingAddress: response.body.billing.address,
+                    amazon: {
+                        billing: {
+                            address: response.body.billing.address,
+                        },
+                    },
                 },
             }));
     });
@@ -31,7 +35,11 @@ describe('remoteCheckoutReducer', () => {
         expect(remoteCheckoutReducer({}, action))
             .toEqual(expect.objectContaining({
                 data: {
-                    shippingAddress: response.body.shipping.address,
+                    amazon: {
+                        shipping: {
+                            address: response.body.shipping.address,
+                        },
+                    },
                 },
             }));
     });

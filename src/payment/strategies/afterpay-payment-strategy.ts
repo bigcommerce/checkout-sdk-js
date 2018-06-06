@@ -1,5 +1,4 @@
-import { CartActionCreator } from '../../cart';
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
+import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../checkout';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
@@ -17,7 +16,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
-        private _cartActionCreator: CartActionCreator,
+        private _checkoutValidator: CheckoutValidator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
@@ -76,9 +75,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
         )
-            .then(state => this._store.dispatch(
-                this._cartActionCreator.verifyCart(state.cart.getCart(), options)
-            ))
+            .then(state => this._checkoutValidator.validate(state.cart.getCart(), options))
             .then(() => this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
             ))
@@ -87,29 +84,30 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(() => new Promise<never>(() => {}));
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const state = this._store.getState();
-        const customer = state.customer.getCustomer();
-        const order = state.order.getOrder();
-        const config = state.config.getContextConfig();
+    finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(this._remoteCheckoutActionCreator.loadSettings(options.methodId))
+            .then(state => {
+                const order = state.order.getOrder();
+                const config = state.config.getContextConfig();
+                const afterpay = state.remoteCheckout.getCheckout('afterpay');
 
-        if (!order || !order.payment.id || !config || !config.payment.token || !customer) {
-            throw new MissingDataError('Unable to finalize order because "order", "customer" or "token" data is missing.');
-        }
+                if (!order || !order.payment.id || !config || !config.payment.token || !afterpay || !afterpay.settings) {
+                    throw new MissingDataError('Unable to finalize order because "order", "checkoutMeta" or "token" data is missing.');
+                }
 
-        const orderPayload = customer.remote ?
-            { useStoreCredit: customer.remote.useStoreCredit, customerMessage: customer.remote.customerMessage } :
-            {};
+                const orderPayload = {
+                    useStoreCredit: afterpay.settings.useStoreCredit,
+                    customerMessage: afterpay.settings.customerMessage,
+                };
 
-        const paymentPayload = {
-            methodId: order.payment.id,
-            paymentData: { nonce: config.payment.token },
-        };
+                const paymentPayload = {
+                    methodId: order.payment.id,
+                    paymentData: { nonce: config.payment.token },
+                };
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
-            .then(() =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
-            );
+                return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
+                    .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload)));
+            });
     }
 
     private _displayModal(countryName: string, paymentMethod?: PaymentMethod): void {

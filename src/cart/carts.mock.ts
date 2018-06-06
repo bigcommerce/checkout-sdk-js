@@ -1,8 +1,9 @@
 import { Cart } from '../cart';
-import { getCoupon } from '../coupon/coupons.mock';
+import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
 import { getCurrency } from '../currency/currencies.mock';
 import { getDiscount } from '../discount/discounts.mock';
 
+import { getGiftCertificateItem } from './line-items.mock';
 import { getPhysicalItem } from './line-items.mock';
 
 export function getCart(): Cart {
@@ -16,6 +17,7 @@ export function getCart(): Cart {
         cartAmount: 190,
         coupons: [
             getCoupon(),
+            getShippingCoupon(),
         ],
         discounts: [
             getDiscount(),
@@ -25,7 +27,9 @@ export function getCart(): Cart {
                 getPhysicalItem(),
             ],
             digitalItems: [],
-            giftCertificates: [],
+            giftCertificates: [
+                getGiftCertificateItem(),
+            ],
         },
         createdTime: '2018-03-06T04:41:49+00:00',
         updatedTime: '2018-03-07T03:44:51+00:00',

@@ -25,7 +25,7 @@ export default class ShippingOptionSelector {
             return;
         }
 
-        return find(shippingOptions[shippingAddress.id], { id: optionId });
+        return shippingAddress.id ? find(shippingOptions[shippingAddress.id], { id: optionId }) : undefined;
     }
 
     getLoadError(): Error | undefined {

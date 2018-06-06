@@ -11,6 +11,7 @@ import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
+import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
@@ -25,6 +26,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default class CheckoutStoreErrorSelector {
     private _billingAddress: BillingAddressSelector;
     private _cart: CartSelector;
+    private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
     private _countries: CountrySelector;
     private _coupons: CouponSelector;
@@ -45,6 +47,7 @@ export default class CheckoutStoreErrorSelector {
     constructor(selectors: InternalCheckoutSelectors) {
         this._billingAddress = selectors.billingAddress;
         this._cart = selectors.cart;
+        this._checkout = selectors.checkout;
         this._config = selectors.config;
         this._countries = selectors.countries;
         this._coupons = selectors.coupons;
@@ -72,7 +75,6 @@ export default class CheckoutStoreErrorSelector {
             this.getFinalizeOrderError() ||
             this.getLoadOrderError() ||
             this.getLoadCartError() ||
-            this.getVerifyCartError() ||
             this.getLoadBillingCountriesError() ||
             this.getLoadShippingCountriesError() ||
             this.getLoadPaymentMethodsError() ||
@@ -101,7 +103,7 @@ export default class CheckoutStoreErrorSelector {
      * @returns The error object if unable to load, otherwise undefined.
      */
     getLoadCheckoutError(): Error | undefined {
-        return this._quote.getLoadError();
+        return this._quote.getLoadError() || this._checkout.getLoadError();
     }
 
     /**
@@ -138,19 +140,6 @@ export default class CheckoutStoreErrorSelector {
      */
     getLoadCartError(): Error | undefined {
         return this._cart.getLoadError();
-    }
-
-    /**
-     * Returns an error if unable to verify the current cart.
-     *
-     * This method is deprecated because cart verification is an internal
-     * process, therefore should not be referred externally.
-     *
-     * @deprecated
-     * @returns The error object if unable to verify, otherwise undefined.
-     */
-    getVerifyCartError(): Error | undefined {
-        return this._cart.getVerifyError();
     }
 
     /**

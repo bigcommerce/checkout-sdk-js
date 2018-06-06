@@ -79,15 +79,15 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     }
 
     signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
-        const { customer } = this._store.getState();
-        const { remote = { provider: undefined } } = customer.getCustomer() || {};
+        const state = this._store.getState();
+        const payment = state.checkout.getHostedPayment();
 
-        if (!remote.provider) {
+        if (!payment) {
             return Promise.resolve(this._store.getState());
         }
 
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.signOut(remote.provider, options)
+            this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
     }
 

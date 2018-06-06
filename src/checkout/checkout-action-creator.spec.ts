@@ -1,8 +1,6 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { CartRequestSender } from '../cart';
-import { getCart } from '../cart/carts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
@@ -11,48 +9,48 @@ import CheckoutRequestSender from './checkout-request-sender';
 import { getCheckout } from './checkouts.mock';
 
 describe('CheckoutActionCreator', () => {
-    let checkoutRequestSender;
-    let cartRequestSender;
+    let actionCreator: CheckoutActionCreator;
+    let checkoutRequestSender: CheckoutRequestSender;
 
     beforeEach(() => {
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
-        cartRequestSender = new CartRequestSender(createRequestSender());
-
-        jest.spyOn(cartRequestSender, 'loadCarts')
-            .mockReturnValue(Promise.resolve(getResponse([getCart()])));
 
         jest.spyOn(checkoutRequestSender, 'loadCheckout')
             .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
+
+        actionCreator = new CheckoutActionCreator(checkoutRequestSender);
     });
 
-    it('emits action to notify loading progress', async () => {
-        const actionCreator = new CheckoutActionCreator(checkoutRequestSender, cartRequestSender);
-        const actions = await actionCreator.loadCheckout()
-            .toArray()
-            .toPromise();
+    describe('#loadCheckout', () => {
+        it('emits action to notify loading progress', async () => {
+            const { id } = getCheckout();
+            const actions = await actionCreator.loadCheckout(id)
+                .toArray()
+                .toPromise();
 
-        expect(actions).toEqual([
-            { type: CheckoutActionType.LoadCheckoutRequested },
-            { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
-        ]);
-    });
+            expect(actions).toEqual([
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+            ]);
+        });
 
-    it('emits error action if unable to load checkout', async () => {
-        jest.spyOn(checkoutRequestSender, 'loadCheckout')
-            .mockReturnValue(Promise.reject(getErrorResponse()));
+        it('emits error action if unable to load checkout', async () => {
+            jest.spyOn(checkoutRequestSender, 'loadCheckout')
+                .mockReturnValue(Promise.reject(getErrorResponse()));
 
-        const actionCreator = new CheckoutActionCreator(checkoutRequestSender, cartRequestSender);
-        const errorHandler = jest.fn(action => Observable.of(action));
+            const { id } = getCheckout();
+            const errorHandler = jest.fn(action => Observable.of(action));
 
-        const actions = await actionCreator.loadCheckout()
-            .catch(errorHandler)
-            .toArray()
-            .toPromise();
+            const actions = await actionCreator.loadCheckout(id)
+                .catch(errorHandler)
+                .toArray()
+                .toPromise();
 
-        expect(errorHandler).toHaveBeenCalled();
-        expect(actions).toEqual([
-            { type: CheckoutActionType.LoadCheckoutRequested },
-            { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
-        ]);
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
+            ]);
+        });
     });
 });

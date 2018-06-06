@@ -1,6 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
 import { InternalOrderResponseData } from './internal-order-responses';
+import Order from './order';
 
 export enum OrderActionType {
     LoadOrderRequested = 'LOAD_ORDER_REQUESTED',
@@ -39,7 +40,7 @@ export interface LoadOrderRequestedAction extends Action {
     type: OrderActionType.LoadOrderRequested;
 }
 
-export interface LoadOrderSucceededAction extends Action<InternalOrderResponseData> {
+export interface LoadOrderSucceededAction extends Action<Order> {
     type: OrderActionType.LoadOrderSucceeded;
 }
 

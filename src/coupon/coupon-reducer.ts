@@ -1,21 +1,20 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import { CheckoutActionType } from '../checkout';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
 
-import * as couponActionTypes from './coupon-action-types';
+import Coupon from './coupon';
+import { CouponAction, CouponActionType } from './coupon-actions';
 import CouponState, { CouponErrorsState, CouponStatusesState } from './coupon-state';
-import InternalCoupon from './internal-coupon';
 
 const DEFAULT_STATE: CouponState = {
     errors: {},
     statuses: {},
 };
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action
- */
-export default function couponReducer(state: CouponState = DEFAULT_STATE, action: Action): CouponState {
+export default function couponReducer(
+    state: CouponState = DEFAULT_STATE,
+    action: CouponAction | CheckoutAction
+): CouponState {
     const reducer = combineReducers<CouponState>({
         data: dataReducer,
         errors: errorsReducer,
@@ -25,30 +24,36 @@ export default function couponReducer(state: CouponState = DEFAULT_STATE, action
     return reducer(state, action);
 }
 
-function dataReducer(data: InternalCoupon[] | undefined, action: Action): InternalCoupon[] | undefined {
+function dataReducer(
+    data: Coupon[] | undefined,
+    action: CheckoutAction
+): Coupon[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return action.payload.coupons;
+        return action.payload ? action.payload.coupons : data;
 
     default:
         return data;
     }
 }
 
-function errorsReducer(errors: CouponErrorsState = {}, action: Action): CouponErrorsState {
+function errorsReducer(
+    errors: CouponErrorsState = {},
+    action: CouponAction
+): CouponErrorsState {
     switch (action.type) {
-    case couponActionTypes.APPLY_COUPON_REQUESTED:
-    case couponActionTypes.APPLY_COUPON_SUCCEEDED:
+    case CouponActionType.ApplyCouponRequested:
+    case CouponActionType.ApplyCouponSucceeded:
         return { ...errors, applyCouponError: undefined };
 
-    case couponActionTypes.APPLY_COUPON_FAILED:
+    case CouponActionType.ApplyCouponFailed:
         return { ...errors, applyCouponError: action.payload };
 
-    case couponActionTypes.REMOVE_COUPON_REQUESTED:
-    case couponActionTypes.REMOVE_COUPON_SUCCEEDED:
+    case CouponActionType.RemoveCouponRequested:
+    case CouponActionType.RemoveCouponSucceeded:
         return { ...errors, removeCouponError: undefined };
 
-    case couponActionTypes.REMOVE_COUPON_FAILED:
+    case CouponActionType.RemoveCouponFailed:
         return { ...errors, removeCouponError: action.payload };
 
     default:
@@ -56,20 +61,23 @@ function errorsReducer(errors: CouponErrorsState = {}, action: Action): CouponEr
     }
 }
 
-function statusesReducer(statuses: CouponStatusesState = {}, action: Action): CouponStatusesState {
+function statusesReducer(
+    statuses: CouponStatusesState = {},
+    action: CouponAction
+): CouponStatusesState {
     switch (action.type) {
-    case couponActionTypes.APPLY_COUPON_REQUESTED:
+    case CouponActionType.ApplyCouponRequested:
         return { ...statuses, isApplyingCoupon: true };
 
-    case couponActionTypes.APPLY_COUPON_SUCCEEDED:
-    case couponActionTypes.APPLY_COUPON_FAILED:
+    case CouponActionType.ApplyCouponSucceeded:
+    case CouponActionType.ApplyCouponFailed:
         return { ...statuses, isApplyingCoupon: false };
 
-    case couponActionTypes.REMOVE_COUPON_REQUESTED:
+    case CouponActionType.RemoveCouponRequested:
         return { ...statuses, isRemovingCoupon: true };
 
-    case couponActionTypes.REMOVE_COUPON_SUCCEEDED:
-    case couponActionTypes.REMOVE_COUPON_FAILED:
+    case CouponActionType.RemoveCouponSucceeded:
+    case CouponActionType.RemoveCouponFailed:
         return { ...statuses, isRemovingCoupon: false };
 
     default:

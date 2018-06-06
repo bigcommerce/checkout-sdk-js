@@ -111,7 +111,8 @@ console.log(state.checkout.getConfig());
 Afterwards, you should load the current checkout and present the information to the customer.
 
 ```js
-const state = await service.loadCheckout();
+const checkoutId = '0cfd6c06-57c3-4e29-8d7a-de55cc8a9052';
+const state = await service.loadCheckout(checkoutId);
 
 console.log(state.checkout.getCheckout());
 ```
@@ -306,7 +307,8 @@ Similarly, if the order finalization is successful, you should redirect the cust
 Once the order is created, you can make a call to retrieve it. This should be done on the order confirmation page so that you can present the final order to the customer.
 
 ```js
-const state = await service.loadOrder(123);
+const orderId = 123;
+const state = await service.loadOrder(orderId);
 
 console.log(state.checkout.getOrder());
 ```

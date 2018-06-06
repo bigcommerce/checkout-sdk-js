@@ -1,7 +1,9 @@
 import PaymentMethod from './payment-method';
+import PaymentMethodMeta from './payment-method-meta';
 
 export default interface PaymentMethodState {
     data?: PaymentMethod[];
+    meta?: PaymentMethodMeta;
     errors: PaymentMethodErrorsState;
     statuses: PaymentMethodStatusesState;
 }

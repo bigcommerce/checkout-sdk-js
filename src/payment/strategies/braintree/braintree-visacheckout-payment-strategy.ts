@@ -6,10 +6,9 @@ import {
     PaymentRequestOptions,
     PaymentStrategyActionCreator,
 } from '../..';
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { QuoteActionCreator } from '../../../quote';
 import PaymentStrategy from '../payment-strategy';
 
 import { BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '.';
@@ -20,9 +19,9 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
 
     constructor(
         store: CheckoutStore,
+        private _checkoutActionCreator: CheckoutActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
-        private _quoteActionCreator: QuoteActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
@@ -119,7 +118,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
                 state.billingAddress.getBillingAddress()
             )
             .then(() => Promise.all([
-                this._store.dispatch(this._quoteActionCreator.loadQuote()),
+                this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
                 this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
             ]));
         }, { methodId }), { queueId: 'widgetInteraction' });
