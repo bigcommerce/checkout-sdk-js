@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "private": true,
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
-    "preinstall": "npx check-node-version --node 6 --npm 6",
+    "prepare": "npx check-node-version --node 6 --npm 6",
     "prebuild": "npm run lint && npm test",
     "build": "npm run bundle && npm run bundle-dts",
     "prebundle": "rm -rf dist",

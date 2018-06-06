@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.1"></a>
+## [0.24.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.0...v0.24.1) (2018-06-06)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3072 Use prepare instead of preinstall in package.json ([a549ca3](https://github.com/bigcommerce/checkout-sdk-js/commit/a549ca3))
+
+
+
 <a name="0.24.0"></a>
 # [0.24.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.23.1...v0.24.0) (2018-06-06)
 
