@@ -139,7 +139,7 @@ export default class CheckoutService {
      * `CheckoutStoreSelector#getCheckout`.
      *
      * ```js
-     * const state = await service.loadCheckout();
+     * const state = await service.loadCheckout('0cfd6c06-57c3-4e29-8d7a-de55cc8a9052');
      *
      * console.log(state.checkout.getCheckout());
      * ```
@@ -186,7 +186,7 @@ export default class CheckoutService {
      * calling `CheckoutStoreSelector#getOrder`.
      *
      * ```js
-     * const state = await service.loadOrder();
+     * const state = await service.loadOrder(123);
      *
      * console.log(state.checkout.getOrder());
      * ```
@@ -266,15 +266,13 @@ export default class CheckoutService {
      * ```js
      * try {
      *     await service.finalizeOrderIfNeeded();
+     *
+     *     window.location.assign('/order-confirmation');
      * } catch (error) {
      *     if (error.type !== 'order_finalization_not_required') {
-     *         return;
+     *         throw error;
      *     }
-     *
-     *     throw error;
      * }
-     *
-     * window.location.assign('/order-confirmation');
      * ```
      *
      * @param options - Options for finalizing the current order.
