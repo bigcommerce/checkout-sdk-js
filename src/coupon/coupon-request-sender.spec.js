@@ -7,6 +7,13 @@ import CouponRequestSender from './coupon-request-sender';
 describe('Coupon Request Sender', () => {
     let couponRequestSender;
     let requestSender;
+    const defaultIncludes = [
+        'cart.lineItems.physicalItems.options',
+        'cart.lineItems.digitalItems.options',
+        'customer',
+        'payments',
+        'promotions.banners',
+    ].join(',');
 
     beforeEach(() => {
         requestSender = {
@@ -34,6 +41,9 @@ describe('Coupon Request Sender', () => {
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons', {
                 body: { couponCode },
+                params: {
+                    include: defaultIncludes,
+                },
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
@@ -51,6 +61,9 @@ describe('Coupon Request Sender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/checkoutId1234/coupons', {
                 ...options,
                 body: { couponCode },
+                params: {
+                    include: defaultIncludes,
+                },
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
@@ -70,6 +83,9 @@ describe('Coupon Request Sender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
+                params: {
+                    include: defaultIncludes,
+                },
             });
         });
 
@@ -85,6 +101,9 @@ describe('Coupon Request Sender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
+                },
+                params: {
+                    include: defaultIncludes,
                 },
             });
         });

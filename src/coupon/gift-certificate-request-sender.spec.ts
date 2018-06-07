@@ -9,6 +9,13 @@ import { getGiftCertificateResponseBody } from './internal-gift-certificates.moc
 describe('Gift Certificate Request Sender', () => {
     let giftCertificateRequestSender: GiftCertificateRequestSender;
     let requestSender;
+    const defaultIncludes = [
+        'cart.lineItems.physicalItems.options',
+        'cart.lineItems.digitalItems.options',
+        'customer',
+        'payments',
+        'promotions.banners',
+    ].join(',');
 
     beforeEach(() => {
         requestSender = {
@@ -39,6 +46,9 @@ describe('Gift Certificate Request Sender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
+                params: {
+                    include: defaultIncludes,
+                },
             });
         });
 
@@ -57,6 +67,9 @@ describe('Gift Certificate Request Sender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
+                params: {
+                    include: defaultIncludes,
+                },
             });
         });
     });
@@ -73,6 +86,9 @@ describe('Gift Certificate Request Sender', () => {
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
+                params: {
+                    include: defaultIncludes,
+                },
             });
         });
 
@@ -88,6 +104,9 @@ describe('Gift Certificate Request Sender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
+                },
+                params: {
+                    include: defaultIncludes,
                 },
             });
         });
