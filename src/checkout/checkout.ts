@@ -23,7 +23,6 @@ export default interface Checkout {
     handlingCostTotal: number;
     taxTotal: number;
     grandTotal: number;
-    storeCredit: number;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;

@@ -44,7 +44,6 @@ export function getCheckout(): Checkout {
         handlingCostTotal: 8,
         taxTotal: 0,
         grandTotal: 190,
-        storeCredit: 0,
         giftCertificates: [
             getGiftCertificate(),
         ],
