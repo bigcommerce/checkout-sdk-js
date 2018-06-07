@@ -41,8 +41,8 @@ export default function mapToInternalCart(checkout: Checkout): InternalCart {
             required: some(checkout.cart.lineItems.physicalItems, lineItem => lineItem.isShippingRequired),
         },
         subtotal: {
-            amount: checkout.cart.cartAmount,
-            integerAmount: amountTransformer.toInteger(checkout.cart.cartAmount),
+            amount: checkout.subtotal,
+            integerAmount: amountTransformer.toInteger(checkout.subtotal),
         },
         storeCredit: {
             amount: checkout.customer ? checkout.customer.storeCredit : 0,

@@ -22,6 +22,7 @@ export default interface Checkout {
     shippingCostBeforeDiscount: number;
     handlingCostTotal: number;
     taxTotal: number;
+    subtotal: number;
     grandTotal: number;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];

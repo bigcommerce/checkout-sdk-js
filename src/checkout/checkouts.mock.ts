@@ -43,6 +43,7 @@ export function getCheckout(): Checkout {
         shippingCostBeforeDiscount: 20,
         handlingCostTotal: 8,
         taxTotal: 0,
+        subtotal: 190,
         grandTotal: 190,
         giftCertificates: [
             getGiftCertificate(),
