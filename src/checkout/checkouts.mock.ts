@@ -72,6 +72,9 @@ export function getCheckoutWithPayments(): Checkout {
                 providerId: getPaymentMethod().id,
                 gatewayId: getPaymentMethod().gateway,
                 providerType: HOSTED,
+                detail: {
+                    step: 'ACKNOWLEDGE',
+                },
             },
         ],
     };

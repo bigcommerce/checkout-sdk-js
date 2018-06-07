@@ -50,6 +50,12 @@ export default interface InternalOrder {
     callbackUrl?: string;
 }
 
+export interface InternalIncompleteOrder {
+    isComplete: false;
+    orderId: null;
+    payment: InternalOrderPayment;
+}
+
 export interface InternalGiftCertificateList {
     totalDiscountedAmount: number;
     appliedGiftCertificates: { [code: string]: InternalGiftCertificate };
@@ -62,10 +68,6 @@ export interface InternalOrderPayment {
     returnUrl?: string;
     status?: string;
     helpText?: string;
-    detail?: {
-        step: string;
-        instructions: string;
-    };
 }
 
 export interface InternalOrderMeta {
