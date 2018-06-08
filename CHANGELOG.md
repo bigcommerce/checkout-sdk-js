@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.0"></a>
+# [0.25.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.1...v0.25.0) (2018-06-08)
+
+
+### Bug Fixes
+
+* **cart:** CHECKOUT-3044 Fix subtotal mapping ([6349ece](https://github.com/bigcommerce/checkout-sdk-js/commit/6349ece))
+* **cart:** CHECKOUT-3044 Map subTotal value properly ([4f17be8](https://github.com/bigcommerce/checkout-sdk-js/commit/4f17be8))
+* **checkout:** CHECKOUT-2932 Fix line items mapping for cart ([0dbc837](https://github.com/bigcommerce/checkout-sdk-js/commit/0dbc837))
+* **checkout:** CHECKOUT-3186 Use store credit from customer ([778f70b](https://github.com/bigcommerce/checkout-sdk-js/commit/778f70b))
+* **checkout:** CHECKOUT-3188 Rename coupon description to displayName ([6249a2e](https://github.com/bigcommerce/checkout-sdk-js/commit/6249a2e))
+* **common:** CHECKOUT-3044 Fix mappings for cart verification ([18b2adb](https://github.com/bigcommerce/checkout-sdk-js/commit/18b2adb))
+* **common:** CHECKOUT-3044 Request all includes in other request senders ([b12fead](https://github.com/bigcommerce/checkout-sdk-js/commit/b12fead))
+* **common:** CHECKOUT-3051 Include API version in request header ([cb48799](https://github.com/bigcommerce/checkout-sdk-js/commit/cb48799))
+* **common:** CHECKOUT-3182 Fix address mapper after API changes ([4934748](https://github.com/bigcommerce/checkout-sdk-js/commit/4934748))
+* **payment:** CHECKOUT-3199 Add prefix to payment step when mapping to internal order ([5895fea](https://github.com/bigcommerce/checkout-sdk-js/commit/5895fea))
+* **payment:** CHECKOUT-3214 Fix PayPal Express cart and checkout flow. ([a4c9669](https://github.com/bigcommerce/checkout-sdk-js/commit/a4c9669))
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-2954 Load checkout using storefront API ([256a0fa](https://github.com/bigcommerce/checkout-sdk-js/commit/256a0fa))
+* **checkout:** CHECKOUT-3050 Load checkout using checkout id ([5dda2e5](https://github.com/bigcommerce/checkout-sdk-js/commit/5dda2e5))
+
+
+### Features
+
+* **checkout:** CHECKOUT-2930 Apply Coupons and Gift Certificates via public API ([35ba607](https://github.com/bigcommerce/checkout-sdk-js/commit/35ba607))
+* **checkout:** CHECKOUT-3048 Remove fallback API call to quote endpoint ([0c9a066](https://github.com/bigcommerce/checkout-sdk-js/commit/0c9a066))
+* **checkout:** CHECKOUT-3169 Verify cart using Storefront API checkout endpoint ([8b143ef](https://github.com/bigcommerce/checkout-sdk-js/commit/8b143ef))
+* **order:** CHECKOUT-3047 Include payments by default in OrderRequestSender ([b056ed6](https://github.com/bigcommerce/checkout-sdk-js/commit/b056ed6))
+* **order:** CHECKOUT-3047 Remove order backfill ([d5f5cc8](https://github.com/bigcommerce/checkout-sdk-js/commit/d5f5cc8))
+* **shipping:** CHECKOUT-2928 Update billing address using Storefront API ([41d3513](https://github.com/bigcommerce/checkout-sdk-js/commit/41d3513))
+* **shipping:** CHECKOUT-2929 Use consigments endpoint to update shipping option ([da0823c](https://github.com/bigcommerce/checkout-sdk-js/commit/da0823c))
+* **shipping:** CHECKOUT-2929 Use consignments endpoint to update shipping address. ([c8f46ea](https://github.com/bigcommerce/checkout-sdk-js/commit/c8f46ea))
+* **shipping:** CHECKOUT-3183 Default to geoCountry when quote has no shipping address ([b5c18da](https://github.com/bigcommerce/checkout-sdk-js/commit/b5c18da))
+* **shopper:** CHECKOUT-3110 Provide convenience method to update guest customer email using storefront API ([89d8348](https://github.com/bigcommerce/checkout-sdk-js/commit/89d8348))
+
+
+### BREAKING CHANGES
+
+* **checkout:** You now need to pass in an ID in order to load
+checkout. i.e.: `checkoutService.loadCheckout(id);`
+* **checkout:** `CheckoutClient#loadCheckout` now returns storefront
+API response.
+
+
+
 <a name="0.24.1"></a>
 ## [0.24.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.0...v0.24.1) (2018-06-06)
 

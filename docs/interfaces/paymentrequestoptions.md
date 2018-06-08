@@ -4,6 +4,9 @@
 
 The set of options for configuring any requests related to the payment step of the current checkout flow.
 
+## Type parameters
+
+#### TParams 
 ## Hierarchy
 
  [RequestOptions](requestoptions.md)
@@ -18,6 +21,7 @@ The set of options for configuring any requests related to the payment step of t
 
 * [gatewayId](paymentrequestoptions.md#gatewayid)
 * [methodId](paymentrequestoptions.md#methodid)
+* [params](paymentrequestoptions.md#params)
 * [timeout](paymentrequestoptions.md#timeout)
 
 ---
@@ -41,6 +45,15 @@ ___
 **● methodId**: *`string`*
 
 The identifier of the payment method.
+
+___
+<a id="params"></a>
+
+### `<Optional>` params
+
+**● params**: *[TParams]()*
+
+The parameters of the request, if required.
 
 ___
 <a id="timeout"></a>

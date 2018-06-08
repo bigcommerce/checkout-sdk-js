@@ -10,14 +10,23 @@
 
 ### Properties
 
+* [discountType](discountnotification.md#discounttype)
 * [message](discountnotification.md#message)
 * [messageHtml](discountnotification.md#messagehtml)
-* [type](discountnotification.md#type)
+* [placeholders](discountnotification.md#placeholders)
 
 ---
 
 ## Properties
 
+<a id="discounttype"></a>
+
+###  discountType
+
+**● discountType**: * `string` &#124; `null`
+*
+
+___
 <a id="message"></a>
 
 ###  message
@@ -32,11 +41,11 @@ ___
 **● messageHtml**: *`string`*
 
 ___
-<a id="type"></a>
+<a id="placeholders"></a>
 
-###  type
+###  placeholders
 
-**● type**: *`string`*
+**● placeholders**: *`string`[]*
 
 ___
 

@@ -1,6 +1,30 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 
+declare interface Address extends AddressRequestBody {
+    country: string;
+}
+
+declare interface AddressRequestBody {
+    id?: string;
+    email?: string;
+    firstName: string;
+    lastName: string;
+    company: string;
+    address1: string;
+    address2: string;
+    city: string;
+    stateOrProvince: string;
+    stateOrProvinceCode: string;
+    countryCode: string;
+    postalCode: string;
+    phone: string;
+    customFields: Array<{
+        fieldId: string;
+        fieldValue: string;
+    }>;
+}
+
 /**
  * A set of options that are required to initialize the customer step of
  * checkout to support Amazon Pay.
@@ -107,6 +131,11 @@ declare interface AmazonPayWidgetError extends Error {
     getErrorCode(): string;
 }
 
+declare interface Banner {
+    type: string;
+    text: string;
+}
+
 /**
  * A set of options that are required to initialize the Braintree payment
  * method. You need to provide the options if you want to support 3D Secure
@@ -183,6 +212,55 @@ declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
     onPaymentSelect?(): void;
 }
 
+declare interface Cart {
+    id: string;
+    customerId: number;
+    currency: Currency;
+    isTaxIncluded: boolean;
+    baseAmount: number;
+    discountAmount: number;
+    cartAmount: number;
+    coupons: Coupon[];
+    discounts: Discount[];
+    lineItems: LineItemMap;
+    createdTime: string;
+    updatedTime: string;
+}
+
+declare interface Checkout {
+    id: string;
+    cart: Cart;
+    customer: Customer;
+    customerMessage: string;
+    billingAddress: Address;
+    consignments: Consignment[];
+    taxes: Tax[];
+    discounts: Discount[];
+    coupons: Coupon[];
+    orderId: number;
+    shippingCostTotal: number;
+    shippingCostBeforeDiscount: number;
+    handlingCostTotal: number;
+    taxTotal: number;
+    subtotal: number;
+    grandTotal: number;
+    giftCertificates: GiftCertificate[];
+    promotions?: Promotion[];
+    balanceDue: number;
+    createdTime: string;
+    updatedTime: string;
+    payments?: CheckoutPayment[];
+}
+
+declare interface CheckoutPayment {
+    detail: {
+        step: string;
+    };
+    providerId: string;
+    providerType: string;
+    gatewayId?: string;
+}
+
 declare interface CheckoutSelectors {
     checkout: CheckoutStoreSelector;
     errors: CheckoutStoreErrorSelector;
@@ -199,8 +277,9 @@ declare interface CheckoutSelectors {
 declare class CheckoutService {
     private _store;
     private _billingAddressActionCreator;
-    private _cartActionCreator;
+    private _checkoutActionCreator;
     private _configActionCreator;
+    private _consignmentActionCreator;
     private _countryActionCreator;
     private _couponActionCreator;
     private _customerStrategyActionCreator;
@@ -209,9 +288,7 @@ declare class CheckoutService {
     private _orderActionCreator;
     private _paymentMethodActionCreator;
     private _paymentStrategyActionCreator;
-    private _quoteActionCreator;
     private _shippingCountryActionCreator;
-    private _shippingOptionActionCreator;
     private _shippingStrategyActionCreator;
     private _state;
     /**
@@ -279,15 +356,16 @@ declare class CheckoutService {
      * `CheckoutStoreSelector#getCheckout`.
      *
      * ```js
-     * const state = await service.loadCheckout();
+     * const state = await service.loadCheckout('0cfd6c06-57c3-4e29-8d7a-de55cc8a9052');
      *
      * console.log(state.checkout.getCheckout());
      * ```
      *
+     * @param id - The identifier of the checkout to load.
      * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    loadCheckout(options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Loads the checkout configuration of a store.
      *
@@ -306,25 +384,6 @@ declare class CheckoutService {
      */
     loadConfig(options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
-     * Loads the current cart.
-     *
-     * This method can only be called if there is an active cart. Also, it can
-     * only retrieve data that belongs to the current customer.
-     *
-     * If the method is called successfully, you can retrieve the current cart
-     * by calling `CheckoutStoreSelector#getCart`
-     *
-     * ```js
-     * const state = await service.loadCart();
-     *
-     * console.log(state.checkout.getCart());
-     * ```
-     *
-     * @param options - Options for loading the current cart.
-     * @returns A promise that resolves to the current state.
-     */
-    loadCart(options?: RequestOptions): Promise<CheckoutSelectors>;
-    /**
      * Loads an order by an id.
      *
      * The method can only retrieve an order if the order belongs to the current
@@ -332,7 +391,7 @@ declare class CheckoutService {
      * calling `CheckoutStoreSelector#getOrder`.
      *
      * ```js
-     * const state = await service.loadOrder();
+     * const state = await service.loadOrder(123);
      *
      * console.log(state.checkout.getOrder());
      * ```
@@ -598,9 +657,21 @@ declare class CheckoutService {
      */
     deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
     /**
+     * Continues to check out as a guest.
+     *
+     * The customer is required to provide their email address in order to
+     * continue. Once they provide their email address, it will be stored as a
+     * part of their billing address.
+     *
+     * @param credentials - The guest credentials to use.
+     * @param options - Options for continuing as a guest.
+     * @returns A promise that resolves to the current state.
+     */
+    signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
      * Signs into a customer's registered account.
      *
-     * Once a customer is signed in successfully, the checkout state will be
+     * Once the customer is signed in successfully, the checkout state will be
      * populated with information associated with the customer, such as their
      * saved addresses. You can call `CheckoutStoreSelector#getCustomer` to
      * retrieve the data.
@@ -704,14 +775,12 @@ declare class CheckoutService {
      * console.log(state.checkout.getSelectedShippingOption());
      * ```
      *
-     * @param addressId - The identifier of the address to be assigned with the
-     * shipping option.
      * @param shippingOptionId - The identifier of the shipping option to
      * select.
      * @param options - Options for selecting the shipping option.
      * @returns A promise that resolves to the current state.
      */
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    selectShippingOption(shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
     /**
      * Updates the shipping address for the current checkout.
      *
@@ -737,7 +806,7 @@ declare class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    updateShippingAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
     /**
      * Updates the billing address for the current checkout.
      *
@@ -757,7 +826,7 @@ declare class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: InternalAddress, options?: RequestOptions): Promise<CheckoutSelectors>;
+    updateBillingAddress(address: Address, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Applies a coupon code to the current checkout.
      *
@@ -885,6 +954,7 @@ declare interface CheckoutSettings {
 declare class CheckoutStoreErrorSelector {
     private _billingAddress;
     private _cart;
+    private _checkout;
     private _config;
     private _countries;
     private _coupons;
@@ -935,16 +1005,6 @@ declare class CheckoutStoreErrorSelector {
      * @returns The error object if unable to load, otherwise undefined.
      */
     getLoadCartError(): Error | undefined;
-    /**
-     * Returns an error if unable to verify the current cart.
-     *
-     * This method is deprecated because cart verification is an internal
-     * process, therefore should not be referred externally.
-     *
-     * @deprecated
-     * @returns The error object if unable to verify, otherwise undefined.
-     */
-    getVerifyCartError(): Error | undefined;
     /**
      * Returns an error if unable to load billing countries.
      *
@@ -1083,6 +1143,7 @@ declare class CheckoutStoreErrorSelector {
 declare class CheckoutStoreSelector {
     private _billingAddress;
     private _cart;
+    private _checkout;
     private _config;
     private _countries;
     private _customer;
@@ -1095,15 +1156,11 @@ declare class CheckoutStoreSelector {
     private _shippingCountries;
     private _shippingOptions;
     /**
-     * Gets the current order.
+     * Gets the current checkout.
      *
-     * If the order is not submitted, the method returns the order as
-     * incomplete. Otherwise, it returns the order as complete with an
-     * identifier.
-     *
-     * @returns The current order if it is loaded, otherwise undefined.
+     * @returns The current checkout if it is loaded, otherwise undefined.
      */
-    getOrder(): InternalOrder | InternalIncompleteOrder | undefined;
+    getCheckout(): Checkout | undefined;
     /**
      * Gets the current quote.
      *
@@ -1111,6 +1168,12 @@ declare class CheckoutStoreSelector {
      * @returns The current quote if it is loaded, otherwise undefined.
      */
     getQuote(): InternalQuote | undefined;
+    /**
+     * Gets the current order.
+     *
+     * @returns The current order if it is loaded, otherwise undefined.
+     */
+    getOrder(): InternalOrder | InternalIncompleteOrder | undefined;
     /**
      * Gets the checkout configuration of a store.
      *
@@ -1270,6 +1333,7 @@ declare class CheckoutStoreSelector {
 declare class CheckoutStoreStatusSelector {
     private _billingAddress;
     private _cart;
+    private _checkout;
     private _config;
     private _countries;
     private _coupons;
@@ -1319,16 +1383,6 @@ declare class CheckoutStoreStatusSelector {
      * @returns True if the current cart is loading, otherwise false.
      */
     isLoadingCart(): boolean;
-    /**
-     * Checks whether the current cart is verifying.
-     *
-     * This method is deprecated because cart verification is an internal
-     * process, therefore should not be referred externally.
-     *
-     * @deprecated
-     * @returns True if the current cart is verifying, otherwise false.
-     */
-    isVerifyingCart(): boolean;
     /**
      * Checks whether billing countries are loading.
      *
@@ -1499,11 +1553,29 @@ declare class CheckoutStoreStatusSelector {
     isPaymentStepPending(): boolean;
 }
 
+declare interface Consignment {
+    id: string;
+    shippingAddress: Address;
+    handlingCost: number;
+    shippingCost: number;
+    availableShippingOptions: ShippingOption[];
+    selectedShippingOptionId?: string;
+    lineItemIds?: string[];
+}
+
 declare interface Country {
     code: string;
     name: string;
     hasPostalCodes: boolean;
     subdivisions: Region[];
+}
+
+declare interface Coupon {
+    id: string;
+    displayName: string;
+    code: string;
+    couponType: string;
+    discountedAmount: number;
 }
 
 /**
@@ -1553,6 +1625,13 @@ declare interface CreditCardInstrument {
 }
 
 declare interface Currency {
+    name: string;
+    code: string;
+    symbol: string;
+    decimalPlaces: number;
+}
+
+declare interface Currency_2 {
     code: string;
     decimalPlaces: string;
     decimalSeparator: string;
@@ -1561,9 +1640,19 @@ declare interface Currency {
     thousandsSeparator: string;
 }
 
+declare interface Customer {
+    addresses: Address[];
+    storeCredit: number;
+    email: string;
+    firstName: string;
+    fullName: string;
+    isGuest: boolean;
+    lastName: string;
+}
+
 declare interface CustomerCredentials {
     email: string;
-    password?: string;
+    password: string;
 }
 
 /**
@@ -1600,10 +1689,22 @@ declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
 }
 
+declare interface DigitalItem extends LineItem {
+    downloadFileUrls: [string];
+    downloadPageUrl: string;
+    downloadSize: string;
+}
+
+declare interface Discount {
+    id: string;
+    discountedAmount: number;
+}
+
 declare interface DiscountNotification {
     message: string;
     messageHtml: string;
-    type: string;
+    discountType: string | null;
+    placeholders: string[];
 }
 
 declare interface FormField {
@@ -1634,6 +1735,36 @@ declare interface FormFields {
     billingAddressFields: FormField[];
 }
 
+declare interface GiftCertificate {
+    balance: number;
+    remaining: number;
+    used: number;
+    code: string;
+    purchaseDate: string;
+}
+
+declare interface GiftCertificateItem {
+    id: string | number;
+    name: string;
+    theme: string;
+    amount: number;
+    taxable: boolean;
+    sender: {
+        name: string;
+        email: string;
+    };
+    recipient: {
+        name: string;
+        email: string;
+    };
+    message: string;
+}
+
+declare interface GuestCredentials {
+    id?: string;
+    email: string;
+}
+
 declare interface Instrument {
     bigpay_token: string;
     provider: string;
@@ -1647,7 +1778,7 @@ declare interface Instrument {
 }
 
 declare interface InternalAddress {
-    id: string;
+    id?: string;
     firstName: string;
     lastName: string;
     company: string;
@@ -1660,11 +1791,11 @@ declare interface InternalAddress {
     country: string;
     countryCode: string;
     phone: string;
-    type: string;
     customFields: Array<{
         fieldId: string;
         fieldValue: string;
     }>;
+    type?: string;
 }
 
 declare interface InternalCart {
@@ -1686,7 +1817,9 @@ declare interface InternalCart {
     discountNotifications: DiscountNotification[];
     giftCertificate: {
         totalDiscountedAmount: number;
-        appliedGiftCertificates: InternalGiftCertificate[];
+        appliedGiftCertificates: {
+            [code: string]: InternalGiftCertificate;
+        };
     };
     shipping: {
         amount: number;
@@ -1724,25 +1857,24 @@ declare interface InternalCoupon {
     code: string;
     discount: string;
     discountType: number;
-    name: string;
 }
 
 declare interface InternalCustomer {
     addresses: InternalAddress[];
     customerId: number;
-    customerGroupId: number;
-    customerGroupName: string;
     isGuest: boolean;
-    phoneNumber: string;
     storeCredit: number;
     email: string;
     firstName: string;
     name: string;
     remote?: {
-        customerMessage?: string;
         provider: string;
+        customerMessage?: string;
         useStoreCredit?: boolean;
     };
+    customerGroupId?: number;
+    customerGroupName?: string;
+    phoneNumber?: string;
 }
 
 declare interface InternalGiftCertificate {
@@ -1756,33 +1888,17 @@ declare interface InternalGiftCertificate {
     };
 }
 
+declare interface InternalGiftCertificateList {
+    totalDiscountedAmount: number;
+    appliedGiftCertificates: {
+        [code: string]: InternalGiftCertificate;
+    };
+}
+
 declare interface InternalIncompleteOrder {
-    orderId: number;
-    token: string;
-    payment: {
-        id?: string;
-        gateway?: string;
-        redirectUrl?: string;
-        returnUrl?: string;
-        status?: string;
-        helpText?: string;
-    };
-    socialData: {
-        [key: string]: {
-            name: string;
-            description: string;
-            image: string;
-            url: string;
-            shareText: string;
-            sharingLink: string;
-        };
-    };
-    status: string;
-    customerCreated: boolean;
-    hasDigitalItems: boolean;
-    isDownloadable: boolean;
-    isComplete: boolean;
-    callbackUrl: string;
+    isComplete: false;
+    orderId: null;
+    payment: InternalOrderPayment;
 }
 
 declare interface InternalLineItem {
@@ -1793,21 +1909,28 @@ declare interface InternalLineItem {
         value: string;
     }>;
     discount: number;
-    id: string;
-    imageUrl: string;
     integerAmount: number;
     integerAmountAfterDiscount: number;
     integerDiscount: number;
-    integerTax: number;
-    name: string;
+    id: string | number;
+    imageUrl: string;
+    name?: string;
     quantity: number;
-    tax: number;
     type: string;
-    variantId: number;
+    variantId: number | null;
+    sender?: {
+        name: string;
+        email: string;
+    };
+    recipient?: {
+        name: string;
+        email: string;
+    };
 }
 
-declare interface InternalOrder extends InternalIncompleteOrder {
+declare interface InternalOrder {
     id: number;
+    orderId: number;
     items: InternalLineItem[];
     currency: string;
     customerCanBeCreated: boolean;
@@ -1823,37 +1946,21 @@ declare interface InternalOrder extends InternalIncompleteOrder {
         amount: number;
         integerAmount: number;
     };
-    discountNotifications: Array<{
-        message: string;
-        messageHtml: string;
-        type: string;
-    }>;
-    giftCertificate: {
-        totalDiscountedAmount: number;
-        appliedGiftCertificates: InternalGiftCertificate[];
-    };
+    discountNotifications: DiscountNotification[];
+    giftCertificate: InternalGiftCertificateList;
     shipping: {
         amount: number;
         integerAmount: number;
         amountBeforeDiscount: number;
         integerAmountBeforeDiscount: number;
-        required: boolean;
     };
     storeCredit: {
         amount: number;
-    };
-    taxSubtotal: {
-        amount: number;
-        integerAmount: number;
     };
     taxes: Array<{
         name: string;
         amount: number;
     }>;
-    taxTotal: {
-        amount: number;
-        integerAmount: number;
-    };
     handling: {
         amount: number;
         integerAmount: number;
@@ -1862,21 +1969,38 @@ declare interface InternalOrder extends InternalIncompleteOrder {
         amount: number;
         integerAmount: number;
     };
+    token?: string;
+    payment: InternalOrderPayment;
+    socialData?: {
+        [itemId: string]: InternalSocialDataList;
+    };
+    status: string;
+    hasDigitalItems: boolean;
+    isDownloadable: boolean;
+    isComplete: boolean;
+    callbackUrl?: string;
+}
+
+declare interface InternalOrderPayment {
+    id?: string;
+    gateway?: string;
+    redirectUrl?: string;
+    returnUrl?: string;
+    status?: string;
+    helpText?: string;
 }
 
 declare interface InternalQuote {
     orderComment: string;
-    shippingOption: string;
+    shippingOption?: string;
     billingAddress: InternalAddress;
-    shippingAddress: InternalAddress;
+    shippingAddress?: InternalAddress;
 }
 
 declare interface InternalShippingOption {
     description: string;
     module: string;
-    method: number;
     price: number;
-    formattedPrice: string;
     id: string;
     selected: boolean;
     isRecommended: boolean;
@@ -1886,6 +2010,21 @@ declare interface InternalShippingOption {
 
 declare interface InternalShippingOptionList {
     [key: string]: InternalShippingOption[];
+}
+
+declare interface InternalSocialDataItem {
+    name: string;
+    description: string;
+    image: string;
+    url: string;
+    shareText: string;
+    sharingLink: string;
+    channelName: string;
+    channelCode: string;
+}
+
+declare interface InternalSocialDataList {
+    [key: string]: InternalSocialDataItem;
 }
 
 declare interface KlarnaLoadResponse {
@@ -1983,6 +2122,50 @@ declare class LanguageService {
     private _flattenObject(object, result?, parentKey?);
     private _transformData(data);
     private _hasTranslations();
+}
+
+declare interface LineItem {
+    id: string | number;
+    variantId: number;
+    productId: number;
+    sku: string;
+    name: string;
+    url: string;
+    quantity: number;
+    isTaxable: boolean;
+    imageUrl: string;
+    discounts: Array<{
+        name: string;
+        discountedAmount: number;
+    }>;
+    discountAmount: number;
+    couponAmount: number;
+    listPrice: number;
+    salePrice: number;
+    extendedListPrice: number;
+    extendedSalePrice: number;
+    socialMedia?: LineItemSocialData[];
+    options?: LineItemOption[];
+}
+
+declare interface LineItemMap {
+    physicalItems: PhysicalItem[];
+    digitalItems: DigitalItem[];
+    giftCertificates: GiftCertificateItem[];
+}
+
+declare interface LineItemOption {
+    name: string;
+    nameId: number;
+    value: string;
+    valueId: number;
+}
+
+declare interface LineItemSocialData {
+    channel: string;
+    code: string;
+    text: string;
+    link: string;
 }
 
 declare interface Locales {
@@ -2117,6 +2300,19 @@ declare interface PaymentSettings {
     clientSidePaymentProviders: string[];
 }
 
+declare interface PhysicalItem extends LineItem {
+    isShippingRequired: boolean;
+    giftWrapping?: {
+        name: string;
+        message: string;
+        amount: number;
+    };
+}
+
+declare interface Promotion {
+    banners: Banner[];
+}
+
 declare interface Region {
     code: string;
     name: string;
@@ -2125,13 +2321,17 @@ declare interface Region {
 /**
  * A set of options for configuring an asynchronous request.
  */
-declare interface RequestOptions {
+declare interface RequestOptions<TParams = {}> {
     /**
      * Provide this option if you want to cancel or time out the request. If the
      * timeout object completes before the request, the request will be
      * cancelled.
      */
     timeout?: Timeout;
+    /**
+     * The parameters of the request, if required.
+     */
+    params?: TParams;
 }
 
 /**
@@ -2150,6 +2350,16 @@ declare interface ShippingInitializeOptions extends ShippingRequestOptions {
      * when using Amazon Pay.
      */
     amazon?: AmazonPayShippingInitializeOptions;
+}
+
+declare interface ShippingOption {
+    description: string;
+    id: string;
+    isRecommended: boolean;
+    imageUrl: string;
+    price: number;
+    transitTime: string;
+    type: string;
 }
 
 /**
@@ -2239,7 +2449,7 @@ declare class StandardError extends Error {
 declare interface StoreConfig {
     cdnPath: string;
     checkoutSettings: CheckoutSettings;
-    currency: Currency;
+    currency: Currency_2;
     formFields: FormFields;
     links: StoreLinks;
     paymentSettings: PaymentSettings;
@@ -2265,6 +2475,11 @@ declare interface StoreProfile {
     storeName: string;
     storePhoneNumber: string;
     storeLanguage: string;
+}
+
+declare interface Tax {
+    name: string;
+    amount: number;
 }
 
 declare interface TranslationData {

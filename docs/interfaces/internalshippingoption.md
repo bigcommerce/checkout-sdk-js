@@ -11,11 +11,9 @@
 ### Properties
 
 * [description](internalshippingoption.md#description)
-* [formattedPrice](internalshippingoption.md#formattedprice)
 * [id](internalshippingoption.md#id)
 * [imageUrl](internalshippingoption.md#imageurl)
 * [isRecommended](internalshippingoption.md#isrecommended)
-* [method](internalshippingoption.md#method)
 * [module](internalshippingoption.md#module)
 * [price](internalshippingoption.md#price)
 * [selected](internalshippingoption.md#selected)
@@ -30,13 +28,6 @@
 ###  description
 
 **● description**: *`string`*
-
-___
-<a id="formattedprice"></a>
-
-###  formattedPrice
-
-**● formattedPrice**: *`string`*
 
 ___
 <a id="id"></a>
@@ -58,13 +49,6 @@ ___
 ###  isRecommended
 
 **● isRecommended**: *`boolean`*
-
-___
-<a id="method"></a>
-
-###  method
-
-**● method**: *`number`*
 
 ___
 <a id="module"></a>

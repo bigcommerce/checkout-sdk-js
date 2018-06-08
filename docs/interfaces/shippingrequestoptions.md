@@ -6,6 +6,9 @@ A set of options for configuring any requests related to the shipping step of th
 
 Some payment methods have their own shipping configuration flow. Therefore, you need to specify the method you intend to use if you want to trigger a specific flow for setting the shipping address or option. Otherwise, these options are not required.
 
+## Type parameters
+
+#### TParams 
 ## Hierarchy
 
  [RequestOptions](requestoptions.md)
@@ -19,6 +22,7 @@ Some payment methods have their own shipping configuration flow. Therefore, you 
 ### Properties
 
 * [methodId](shippingrequestoptions.md#methodid)
+* [params](shippingrequestoptions.md#params)
 * [timeout](shippingrequestoptions.md#timeout)
 
 ---
@@ -31,6 +35,15 @@ Some payment methods have their own shipping configuration flow. Therefore, you 
 
 **● methodId**: * `undefined` &#124; `string`
 *
+
+___
+<a id="params"></a>
+
+### `<Optional>` params
+
+**● params**: *[TParams]()*
+
+The parameters of the request, if required.
 
 ___
 <a id="timeout"></a>

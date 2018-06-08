@@ -35,16 +35,17 @@ ___
 ___
 <a id="shippingaddress"></a>
 
-###  shippingAddress
+### `<Optional>` shippingAddress
 
 **● shippingAddress**: *[InternalAddress](internaladdress.md)*
 
 ___
 <a id="shippingoption"></a>
 
-###  shippingOption
+### `<Optional>` shippingOption
 
-**● shippingOption**: *`string`*
+**● shippingOption**: * `undefined` &#124; `string`
+*
 
 ___
 

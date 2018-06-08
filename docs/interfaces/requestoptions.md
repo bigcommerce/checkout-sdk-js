@@ -4,6 +4,9 @@
 
 A set of options for configuring an asynchronous request.
 
+## Type parameters
+
+#### TParams 
 ## Hierarchy
 
 **RequestOptions**
@@ -18,12 +21,22 @@ A set of options for configuring an asynchronous request.
 
 ### Properties
 
+* [params](requestoptions.md#params)
 * [timeout](requestoptions.md#timeout)
 
 ---
 
 ## Properties
 
+<a id="params"></a>
+
+### `<Optional>` params
+
+**● params**: *[TParams]()*
+
+The parameters of the request, if required.
+
+___
 <a id="timeout"></a>
 
 ### `<Optional>` timeout

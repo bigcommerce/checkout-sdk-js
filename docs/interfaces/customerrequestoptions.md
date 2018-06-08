@@ -6,6 +6,9 @@ A set of options for configuring any requests related to the customer step of th
 
 Some payment methods have their own sign-in or sign-out flow. Therefore, you need to indicate the method you want to use if you need to trigger a specific flow for signing in or out a customer. Otherwise, these options are not required.
 
+## Type parameters
+
+#### TParams 
 ## Hierarchy
 
  [RequestOptions](requestoptions.md)
@@ -19,6 +22,7 @@ Some payment methods have their own sign-in or sign-out flow. Therefore, you nee
 ### Properties
 
 * [methodId](customerrequestoptions.md#methodid)
+* [params](customerrequestoptions.md#params)
 * [timeout](customerrequestoptions.md#timeout)
 
 ---
@@ -31,6 +35,15 @@ Some payment methods have their own sign-in or sign-out flow. Therefore, you nee
 
 **● methodId**: * `undefined` &#124; `string`
 *
+
+___
+<a id="params"></a>
+
+### `<Optional>` params
+
+**● params**: *[TParams]()*
+
+The parameters of the request, if required.
 
 ___
 <a id="timeout"></a>

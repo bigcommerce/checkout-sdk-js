@@ -40,7 +40,6 @@ This object has a set of getters that would return an error if an action is not 
 * [getSubmitOrderError](checkoutstoreerrorselector.md#getsubmitordererror)
 * [getUpdateBillingAddressError](checkoutstoreerrorselector.md#getupdatebillingaddresserror)
 * [getUpdateShippingAddressError](checkoutstoreerrorselector.md#getupdateshippingaddresserror)
-* [getVerifyCartError](checkoutstoreerrorselector.md#getverifycarterror)
 
 ---
 
@@ -413,22 +412,6 @@ Returns an error if unable to update a shipping address.
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to update, otherwise undefined.
-
-___
-<a id="getverifycarterror"></a>
-
-###  getVerifyCartError
-
-▸ **getVerifyCartError**():  `Error` &#124; `undefined`
-
-Returns an error if unable to verify the current cart.
-
-This method is deprecated because cart verification is an internal process, therefore should not be referred externally.
-*__deprecated__*: 
-
-**Returns:**  `Error` &#124; `undefined`
-
-The error object if unable to verify, otherwise undefined.
 
 ___
 

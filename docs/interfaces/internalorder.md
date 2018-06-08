@@ -4,9 +4,7 @@
 
 ## Hierarchy
 
- [InternalIncompleteOrder](internalincompleteorder.md)
-
-**↳ InternalOrder**
+**InternalOrder**
 
 ## Index
 
@@ -16,7 +14,6 @@
 * [coupon](internalorder.md#coupon)
 * [currency](internalorder.md#currency)
 * [customerCanBeCreated](internalorder.md#customercanbecreated)
-* [customerCreated](internalorder.md#customercreated)
 * [discount](internalorder.md#discount)
 * [discountNotifications](internalorder.md#discountnotifications)
 * [giftCertificate](internalorder.md#giftcertificate)
@@ -31,11 +28,9 @@
 * [payment](internalorder.md#payment)
 * [shipping](internalorder.md#shipping)
 * [socialData](internalorder.md#socialdata)
-* [status](internalorder.md#status-1)
+* [status](internalorder.md#status)
 * [storeCredit](internalorder.md#storecredit)
 * [subtotal](internalorder.md#subtotal)
-* [taxSubtotal](internalorder.md#taxsubtotal)
-* [taxTotal](internalorder.md#taxtotal)
 * [taxes](internalorder.md#taxes)
 * [token](internalorder.md#token)
 
@@ -45,9 +40,10 @@
 
 <a id="callbackurl"></a>
 
-###  callbackUrl
+### `<Optional>` callbackUrl
 
-**● callbackUrl**: *`string`*
+**● callbackUrl**: * `undefined` &#124; `string`
+*
 
 ___
 <a id="coupon"></a>
@@ -77,13 +73,6 @@ ___
 **● customerCanBeCreated**: *`boolean`*
 
 ___
-<a id="customercreated"></a>
-
-###  customerCreated
-
-**● customerCreated**: *`boolean`*
-
-___
 <a id="discount"></a>
 
 ###  discount
@@ -101,20 +90,14 @@ ___
 
 ###  discountNotifications
 
-**● discountNotifications**: *`Array`<`object`>*
+**● discountNotifications**: *[DiscountNotification](discountnotification.md)[]*
 
 ___
 <a id="giftcertificate"></a>
 
 ###  giftCertificate
 
-**● giftCertificate**: *`object`*
-
-#### Type declaration
-
- appliedGiftCertificates: [InternalGiftCertificate](internalgiftcertificate.md)[]
-
- totalDiscountedAmount: `number`
+**● giftCertificate**: *[InternalGiftCertificateList](internalgiftcertificatelist.md)*
 
 ___
 <a id="grandtotal"></a>
@@ -189,21 +172,7 @@ ___
 
 ###  payment
 
-**● payment**: *`object`*
-
-#### Type declaration
-
-`Optional`  gateway:  `undefined` &#124; `string`
-
-`Optional`  helpText:  `undefined` &#124; `string`
-
-`Optional`  id:  `undefined` &#124; `string`
-
-`Optional`  redirectUrl:  `undefined` &#124; `string`
-
-`Optional`  returnUrl:  `undefined` &#124; `string`
-
-`Optional`  status:  `undefined` &#124; `string`
+**● payment**: *[InternalOrderPayment](internalorderpayment.md)*
 
 ___
 <a id="shipping"></a>
@@ -222,33 +191,16 @@ ___
 
  integerAmountBeforeDiscount: `number`
 
- required: `boolean`
-
 ___
 <a id="socialdata"></a>
 
-###  socialData
+### `<Optional>` socialData
 
-**● socialData**: *`object`*
-
-#### Type declaration
-
-[key: `string`]: `object`
-
- description: `string`
-
- image: `string`
-
- name: `string`
-
- shareText: `string`
-
- sharingLink: `string`
-
- url: `string`
+**● socialData**: * `undefined` &#124; `object`
+*
 
 ___
-<a id="status-1"></a>
+<a id="status"></a>
 
 ###  status
 
@@ -279,32 +231,6 @@ ___
  integerAmount: `number`
 
 ___
-<a id="taxsubtotal"></a>
-
-###  taxSubtotal
-
-**● taxSubtotal**: *`object`*
-
-#### Type declaration
-
- amount: `number`
-
- integerAmount: `number`
-
-___
-<a id="taxtotal"></a>
-
-###  taxTotal
-
-**● taxTotal**: *`object`*
-
-#### Type declaration
-
- amount: `number`
-
- integerAmount: `number`
-
-___
 <a id="taxes"></a>
 
 ###  taxes
@@ -314,9 +240,10 @@ ___
 ___
 <a id="token"></a>
 
-###  token
+### `<Optional>` token
 
-**● token**: *`string`*
+**● token**: * `undefined` &#124; `string`
+*
 
 ___
 

@@ -6,6 +6,9 @@ A set of options that are required to initialize the shipping step of the curren
 
 Some payment methods have specific requirements for setting the shipping details for checkout. For example, Amazon Pay requires the customer to enter their shipping address using their address book widget. As a result, you may need to provide additional information in order to initialize the shipping step of checkout.
 
+## Type parameters
+
+#### TParams 
 ## Hierarchy
 
 ↳  [ShippingRequestOptions](shippingrequestoptions.md)
@@ -18,6 +21,7 @@ Some payment methods have specific requirements for setting the shipping details
 
 * [amazon](shippinginitializeoptions.md#amazon)
 * [methodId](shippinginitializeoptions.md#methodid)
+* [params](shippinginitializeoptions.md#params)
 * [timeout](shippinginitializeoptions.md#timeout)
 
 ---
@@ -39,6 +43,15 @@ ___
 
 **● methodId**: * `undefined` &#124; `string`
 *
+
+___
+<a id="params"></a>
+
+### `<Optional>` params
+
+**● params**: *[TParams]()*
+
+The parameters of the request, if required.
 
 ___
 <a id="timeout"></a>

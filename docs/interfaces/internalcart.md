@@ -78,7 +78,9 @@ ___
 
 #### Type declaration
 
- appliedGiftCertificates: [InternalGiftCertificate](internalgiftcertificate.md)[]
+ appliedGiftCertificates: `object`
+
+[code: `string`]: [InternalGiftCertificate](internalgiftcertificate.md)
 
  totalDiscountedAmount: `number`
 

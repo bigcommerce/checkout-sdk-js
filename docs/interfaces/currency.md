@@ -12,10 +12,8 @@
 
 * [code](currency.md#code)
 * [decimalPlaces](currency.md#decimalplaces)
-* [decimalSeparator](currency.md#decimalseparator)
+* [name](currency.md#name)
 * [symbol](currency.md#symbol)
-* [symbolLocation](currency.md#symbollocation)
-* [thousandsSeparator](currency.md#thousandsseparator)
 
 ---
 
@@ -32,14 +30,14 @@ ___
 
 ###  decimalPlaces
 
-**● decimalPlaces**: *`string`*
+**● decimalPlaces**: *`number`*
 
 ___
-<a id="decimalseparator"></a>
+<a id="name"></a>
 
-###  decimalSeparator
+###  name
 
-**● decimalSeparator**: *`string`*
+**● name**: *`string`*
 
 ___
 <a id="symbol"></a>
@@ -47,20 +45,6 @@ ___
 ###  symbol
 
 **● symbol**: *`string`*
-
-___
-<a id="symbollocation"></a>
-
-###  symbolLocation
-
-**● symbolLocation**: *`string`*
-
-___
-<a id="thousandsseparator"></a>
-
-###  thousandsSeparator
-
-**● thousandsSeparator**: *`string`*
 
 ___
 

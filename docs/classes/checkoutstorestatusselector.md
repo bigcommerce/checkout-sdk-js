@@ -42,7 +42,6 @@ This object has a set of getters that return true if an action is in progress. F
 * [isSubmittingOrder](checkoutstorestatusselector.md#issubmittingorder)
 * [isUpdatingBillingAddress](checkoutstorestatusselector.md#isupdatingbillingaddress)
 * [isUpdatingShippingAddress](checkoutstorestatusselector.md#isupdatingshippingaddress)
-* [isVerifyingCart](checkoutstorestatusselector.md#isverifyingcart)
 
 ---
 
@@ -440,21 +439,6 @@ Checks whether the current customer is updating their shipping address.
 
 **Returns:** `boolean`
 True if updating their shipping address, otherwise false.
-
-___
-<a id="isverifyingcart"></a>
-
-###  isVerifyingCart
-
-▸ **isVerifyingCart**(): `boolean`
-
-Checks whether the current cart is verifying.
-
-This method is deprecated because cart verification is an internal process, therefore should not be referred externally.
-*__deprecated__*: 
-
-**Returns:** `boolean`
-True if the current cart is verifying, otherwise false.
 
 ___
 

@@ -19,10 +19,10 @@
 * [integerAmount](internallineitem.md#integeramount)
 * [integerAmountAfterDiscount](internallineitem.md#integeramountafterdiscount)
 * [integerDiscount](internallineitem.md#integerdiscount)
-* [integerTax](internallineitem.md#integertax)
 * [name](internallineitem.md#name)
 * [quantity](internallineitem.md#quantity)
-* [tax](internallineitem.md#tax)
+* [recipient](internallineitem.md#recipient)
+* [sender](internallineitem.md#sender)
 * [type](internallineitem.md#type)
 * [variantId](internallineitem.md#variantid)
 
@@ -62,7 +62,8 @@ ___
 
 ###  id
 
-**● id**: *`string`*
+**● id**: * `string` &#124; `number`
+*
 
 ___
 <a id="imageurl"></a>
@@ -93,18 +94,12 @@ ___
 **● integerDiscount**: *`number`*
 
 ___
-<a id="integertax"></a>
-
-###  integerTax
-
-**● integerTax**: *`number`*
-
-___
 <a id="name"></a>
 
-###  name
+### `<Optional>` name
 
-**● name**: *`string`*
+**● name**: * `undefined` &#124; `string`
+*
 
 ___
 <a id="quantity"></a>
@@ -114,11 +109,20 @@ ___
 **● quantity**: *`number`*
 
 ___
-<a id="tax"></a>
+<a id="recipient"></a>
 
-###  tax
+### `<Optional>` recipient
 
-**● tax**: *`number`*
+**● recipient**: * `undefined` &#124; `object`
+*
+
+___
+<a id="sender"></a>
+
+### `<Optional>` sender
+
+**● sender**: * `undefined` &#124; `object`
+*
 
 ___
 <a id="type"></a>
@@ -132,7 +136,8 @@ ___
 
 ###  variantId
 
-**● variantId**: *`number`*
+**● variantId**: * `number` &#124; `null`
+*
 
 ___
 

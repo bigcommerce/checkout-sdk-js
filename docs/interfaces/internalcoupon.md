@@ -13,7 +13,6 @@
 * [code](internalcoupon.md#code)
 * [discount](internalcoupon.md#discount)
 * [discountType](internalcoupon.md#discounttype)
-* [name](internalcoupon.md#name)
 
 ---
 
@@ -38,13 +37,6 @@ ___
 ###  discountType
 
 **● discountType**: *`number`*
-
-___
-<a id="name"></a>
-
-###  name
-
-**● name**: *`string`*
 
 ___
 

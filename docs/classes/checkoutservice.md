@@ -27,7 +27,6 @@ This object can be used to collect all information that is required for checkout
 * [initializeShipping](checkoutservice.md#initializeshipping)
 * [loadBillingAddressFields](checkoutservice.md#loadbillingaddressfields)
 * [loadBillingCountries](checkoutservice.md#loadbillingcountries)
-* [loadCart](checkoutservice.md#loadcart)
 * [loadCheckout](checkoutservice.md#loadcheckout)
 * [loadConfig](checkoutservice.md#loadconfig)
 * [loadInstruments](checkoutservice.md#loadinstruments)
@@ -42,6 +41,7 @@ This object can be used to collect all information that is required for checkout
 * [removeGiftCertificate](checkoutservice.md#removegiftcertificate)
 * [selectShippingOption](checkoutservice.md#selectshippingoption)
 * [signInCustomer](checkoutservice.md#signincustomer)
+* [signInGuest](checkoutservice.md#signinguest)
 * [signOutCustomer](checkoutservice.md#signoutcustomer)
 * [submitOrder](checkoutservice.md#submitorder)
 * [subscribe](checkoutservice.md#subscribe)
@@ -402,46 +402,18 @@ console.log(state.checkout.getBillingCountries());
 A promise that resolves to the current state.
 
 ___
-<a id="loadcart"></a>
-
-###  loadCart
-
-▸ **loadCart**(options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-
-Loads the current cart.
-
-This method can only be called if there is an active cart. Also, it can only retrieve data that belongs to the current customer.
-
-If the method is called successfully, you can retrieve the current cart by calling `CheckoutStoreSelector#getCart`
-
-```js
-const state = await service.loadCart();
-
-console.log(state.checkout.getCart());
-```
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for loading the current cart. |
-
-**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-A promise that resolves to the current state.
-
-___
 <a id="loadcheckout"></a>
 
 ###  loadCheckout
 
-▸ **loadCheckout**(options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **loadCheckout**(id: *`string`*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Loads the current checkout.
 
 This method can only be called if there is an active checkout. Also, it can only retrieve data that belongs to the current customer. When it is successfully executed, you can retrieve the data by calling `CheckoutStoreSelector#getCheckout`.
 
 ```js
-const state = await service.loadCheckout();
+const state = await service.loadCheckout('0cfd6c06-57c3-4e29-8d7a-de55cc8a9052');
 
 console.log(state.checkout.getCheckout());
 ```
@@ -450,6 +422,7 @@ console.log(state.checkout.getCheckout());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
+| id | `string` |  The identifier of the checkout to load. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for loading the current checkout. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
@@ -513,7 +486,7 @@ Loads an order by an id.
 The method can only retrieve an order if the order belongs to the current customer. If it is successfully executed, the data can be retrieved by calling `CheckoutStoreSelector#getOrder`.
 
 ```js
-const state = await service.loadOrder();
+const state = await service.loadOrder(123);
 
 console.log(state.checkout.getOrder());
 ```
@@ -724,7 +697,7 @@ ___
 
 ###  selectShippingOption
 
-▸ **selectShippingOption**(addressId: *`string`*, shippingOptionId: *`string`*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **selectShippingOption**(shippingOptionId: *`string`*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Selects a shipping option for a given address.
 
@@ -740,7 +713,6 @@ console.log(state.checkout.getSelectedShippingOption());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| addressId | `string` |  The identifier of the address to be assigned with the shipping option. |
 | shippingOptionId | `string` |  The identifier of the shipping option to select. |
 | `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md) |  Options for selecting the shipping option. |
 
@@ -756,7 +728,7 @@ ___
 
 Signs into a customer's registered account.
 
-Once a customer is signed in successfully, the checkout state will be populated with information associated with the customer, such as their saved addresses. You can call `CheckoutStoreSelector#getCustomer` to retrieve the data.
+Once the customer is signed in successfully, the checkout state will be populated with information associated with the customer, such as their saved addresses. You can call `CheckoutStoreSelector#getCustomer` to retrieve the data.
 
 ```js
 const state = await service.signInCustomer({
@@ -773,6 +745,27 @@ console.log(state.checkout.getCustomer());
 | ------ | ------ | ------ |
 | credentials | [CustomerCredentials](../interfaces/customercredentials.md) |  The credentials to be used for signing in the customer. |
 | `Optional` options | [CustomerRequestOptions](../interfaces/customerrequestoptions.md) |  Options for signing in the customer. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="signinguest"></a>
+
+###  signInGuest
+
+▸ **signInGuest**(credentials: *[GuestCredentials](../interfaces/guestcredentials.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Continues to check out as a guest.
+
+The customer is required to provide their email address in order to continue. Once they provide their email address, it will be stored as a part of their billing address.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| credentials | [GuestCredentials](../interfaces/guestcredentials.md) |  The guest credentials to use. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for continuing as a guest. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.
@@ -894,7 +887,7 @@ ___
 
 ###  updateBillingAddress
 
-▸ **updateBillingAddress**(address: *[InternalAddress](../interfaces/internaladdress.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **updateBillingAddress**(address: *[Address](../interfaces/address.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Updates the billing address for the current checkout.
 
@@ -912,7 +905,7 @@ console.log(state.checkout.getBillingAddress());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| address | [InternalAddress](../interfaces/internaladdress.md) |  The address to be used for billing. |
+| address | [Address](../interfaces/address.md) |  The address to be used for billing. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for updating the billing address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
@@ -923,7 +916,7 @@ ___
 
 ###  updateShippingAddress
 
-▸ **updateShippingAddress**(address: *[InternalAddress](../interfaces/internaladdress.md)*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **updateShippingAddress**(address: *[Address](../interfaces/address.md)*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Updates the shipping address for the current checkout.
 
@@ -943,7 +936,7 @@ console.log(state.checkout.getShippingAddress());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| address | [InternalAddress](../interfaces/internaladdress.md) |  The address to be used for shipping. |
+| address | [Address](../interfaces/address.md) |  The address to be used for shipping. |
 | `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md) |  Options for updating the shipping address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>

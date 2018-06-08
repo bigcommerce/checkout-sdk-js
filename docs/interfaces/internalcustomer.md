@@ -35,16 +35,18 @@
 ___
 <a id="customergroupid"></a>
 
-###  customerGroupId
+### `<Optional>` customerGroupId
 
-**● customerGroupId**: *`number`*
+**● customerGroupId**: * `undefined` &#124; `number`
+*
 
 ___
 <a id="customergroupname"></a>
 
-###  customerGroupName
+### `<Optional>` customerGroupName
 
-**● customerGroupName**: *`string`*
+**● customerGroupName**: * `undefined` &#124; `string`
+*
 
 ___
 <a id="customerid"></a>
@@ -84,9 +86,10 @@ ___
 ___
 <a id="phonenumber"></a>
 
-###  phoneNumber
+### `<Optional>` phoneNumber
 
-**● phoneNumber**: *`string`*
+**● phoneNumber**: * `undefined` &#124; `string`
+*
 
 ___
 <a id="remote"></a>

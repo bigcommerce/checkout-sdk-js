@@ -18,6 +18,7 @@ This object has a set of methods that allow you to get a specific piece of check
 * [getBillingAddressFields](checkoutstoreselector.md#getbillingaddressfields)
 * [getBillingCountries](checkoutstoreselector.md#getbillingcountries)
 * [getCart](checkoutstoreselector.md#getcart)
+* [getCheckout](checkoutstoreselector.md#getcheckout)
 * [getConfig](checkoutstoreselector.md#getconfig)
 * [getCustomer](checkoutstoreselector.md#getcustomer)
 * [getInstruments](checkoutstoreselector.md#getinstruments)
@@ -96,6 +97,19 @@ Gets the current cart.
 The current cart object if it is loaded, otherwise undefined.
 
 ___
+<a id="getcheckout"></a>
+
+###  getCheckout
+
+▸ **getCheckout**():  [Checkout](../interfaces/checkout.md) &#124; `undefined`
+
+Gets the current checkout.
+
+**Returns:**  [Checkout](../interfaces/checkout.md) &#124; `undefined`
+
+The current checkout if it is loaded, otherwise undefined.
+
+___
 <a id="getconfig"></a>
 
 ###  getConfig
@@ -143,8 +157,6 @@ ___
 ▸ **getOrder**():  [InternalOrder](../interfaces/internalorder.md) &#124; [InternalIncompleteOrder](../interfaces/internalincompleteorder.md) &#124; `undefined`
 
 Gets the current order.
-
-If the order is not submitted, the method returns the order as incomplete. Otherwise, it returns the order as complete with an identifier.
 
 **Returns:**  [InternalOrder](../interfaces/internalorder.md) &#124; [InternalIncompleteOrder](../interfaces/internalincompleteorder.md) &#124; `undefined`
 

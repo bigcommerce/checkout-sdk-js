@@ -4,6 +4,9 @@
 
 A set of options that are required to initialize the payment step of the current checkout flow.
 
+## Type parameters
+
+#### TParams 
 ## Hierarchy
 
 ↳  [PaymentRequestOptions](paymentrequestoptions.md)
@@ -20,6 +23,7 @@ A set of options that are required to initialize the payment step of the current
 * [gatewayId](paymentinitializeoptions.md#gatewayid)
 * [klarna](paymentinitializeoptions.md#klarna)
 * [methodId](paymentinitializeoptions.md#methodid)
+* [params](paymentinitializeoptions.md#params)
 * [square](paymentinitializeoptions.md#square)
 * [timeout](paymentinitializeoptions.md#timeout)
 
@@ -80,6 +84,15 @@ ___
 **● methodId**: *`string`*
 
 The identifier of the payment method.
+
+___
+<a id="params"></a>
+
+### `<Optional>` params
+
+**● params**: *[TParams]()*
+
+The parameters of the request, if required.
 
 ___
 <a id="square"></a>

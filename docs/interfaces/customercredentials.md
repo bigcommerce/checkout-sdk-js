@@ -26,10 +26,9 @@
 ___
 <a id="password"></a>
 
-### `<Optional>` password
+###  password
 
-**● password**: * `undefined` &#124; `string`
-*
+**● password**: *`string`*
 
 ___
 

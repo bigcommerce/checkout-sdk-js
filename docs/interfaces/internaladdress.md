@@ -88,9 +88,10 @@ ___
 ___
 <a id="id"></a>
 
-###  id
+### `<Optional>` id
 
-**● id**: *`string`*
+**● id**: * `undefined` &#124; `string`
+*
 
 ___
 <a id="lastname"></a>
@@ -130,9 +131,10 @@ ___
 ___
 <a id="type"></a>
 
-###  type
+### `<Optional>` type
 
-**● type**: *`string`*
+**● type**: * `undefined` &#124; `string`
+*
 
 ___
 
