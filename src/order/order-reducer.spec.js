@@ -1,6 +1,10 @@
-import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
-import { getOrder } from './orders.mock';
+import { CheckoutActionType } from '../checkout';
+import { getCheckoutWithPayments } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+
+import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
+import { mapToInternalIncompleteOrder } from './map-to-internal-order';
+import { getOrder } from './orders.mock';
 import { OrderActionType } from './order-actions';
 import orderReducer from './order-reducer';
 
@@ -47,6 +51,17 @@ describe('orderReducer()', () => {
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
             errors: { loadError: action.payload },
             statuses: { isLoading: false },
+        }));
+    });
+
+    it('returns new data if checkout is fetched successfully', () => {
+        const action = {
+            type: CheckoutActionType.LoadCheckoutSucceeded,
+            payload: getCheckoutWithPayments(),
+        };
+
+        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: mapToInternalIncompleteOrder(action.payload),
         }));
     });
 

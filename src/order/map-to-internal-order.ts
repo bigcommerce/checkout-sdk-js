@@ -2,9 +2,11 @@ import { filter, find, keyBy, reduce } from 'lodash';
 
 import { AmountTransformer, LineItem } from '../cart';
 import { mapToInternalLineItems } from '../cart';
+import { Checkout } from '../checkout';
 import { mapToInternalCoupon } from '../coupon';
+import { HOSTED } from '../payment';
 
-import InternalOrder, { InternalGiftCertificateList, InternalOrderPayment, InternalSocialDataList } from './internal-order';
+import InternalOrder, { InternalGiftCertificateList, InternalIncompleteOrder, InternalOrderPayment, InternalSocialDataList } from './internal-order';
 import Order, { DefaultOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
 
 export default function mapToInternalOrder(order: Order): InternalOrder {
@@ -60,6 +62,24 @@ export default function mapToInternalOrder(order: Order): InternalOrder {
     };
 }
 
+export function mapToInternalIncompleteOrder(checkout: Checkout): InternalIncompleteOrder {
+    const payment = find(checkout.payments, { providerType: HOSTED });
+
+    return {
+        orderId: null,
+        isComplete: false,
+        payment: !payment ? {} : {
+            id: payment.providerId,
+            gateway: payment.gatewayId,
+            status: mapToInternalPaymentStatus(payment.detail.step),
+        },
+    };
+}
+
+function mapToInternalPaymentStatus(status: string): string {
+    return `PAYMENT_STATUS_${status}`;
+}
+
 function mapToStoreCredit(payments?: OrderPayments): number {
     const item = find(payments, { providerId: 'storecredit' });
 
@@ -93,7 +113,7 @@ function mapToInteralOrderPayment(payments?: OrderPayments): InternalOrderPaymen
 
     return {
         id: item.providerId,
-        status: `PAYMENT_STATUS_${item.detail.step}`,
+        status: mapToInternalPaymentStatus(item.detail.step),
         helpText: item.detail.instructions,
     };
 }
@@ -102,7 +122,7 @@ function isDefaultOrderPayment(payment: OrderPayment): payment is DefaultOrderPa
     return payment.providerId !== 'giftcertificate' && payment.providerId !== 'storecredit';
 }
 
-export function mapToInternalSocialDataList(order: Order): { [itemId: string]: InternalSocialDataList } | undefined {
+function mapToInternalSocialDataList(order: Order): { [itemId: string]: InternalSocialDataList } | undefined {
     const socialDataObject: { [itemId: string]: InternalSocialDataList } = {};
     const items = [
         ...order.lineItems.physicalItems,
@@ -116,7 +136,7 @@ export function mapToInternalSocialDataList(order: Order): { [itemId: string]: I
     return socialDataObject;
 }
 
-export function mapToInternalSocialData(lineItem: LineItem): InternalSocialDataList {
+function mapToInternalSocialData(lineItem: LineItem): InternalSocialDataList {
     const codes = ['fb', 'tw', 'gp'];
 
     return codes.reduce((socialData, code) => {

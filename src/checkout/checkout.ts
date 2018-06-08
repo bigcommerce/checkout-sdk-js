@@ -33,6 +33,9 @@ export default interface Checkout {
 }
 
 export interface CheckoutPayment {
+    detail: {
+        step: string;
+    };
     providerId: string;
     providerType: string;
     gatewayId?: string;

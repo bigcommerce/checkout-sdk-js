@@ -4,7 +4,7 @@ import { CustomerState } from '../customer';
 import { PaymentMethod } from '../payment';
 import * as paymentStatusTypes from '../payment/payment-status-types';
 
-import InternalOrder, { InternalOrderMeta, InternalOrderPayment } from './internal-order';
+import InternalOrder, { InternalIncompleteOrder, InternalOrderMeta, InternalOrderPayment } from './internal-order';
 import OrderState from './order-state';
 
 @selector
@@ -15,7 +15,7 @@ export default class OrderSelector {
         private _cart: CartState
     ) {}
 
-    getOrder(): InternalOrder | undefined {
+    getOrder(): InternalOrder | InternalIncompleteOrder | undefined {
         return this._order.data;
     }
 
