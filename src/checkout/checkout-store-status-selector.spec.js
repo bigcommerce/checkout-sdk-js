@@ -91,22 +91,6 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
-    describe('#isVerifyingCart()', () => {
-        it('returns true if verifying cart', () => {
-            jest.spyOn(selectors.cart, 'isVerifying').mockReturnValue(true);
-
-            expect(statuses.isVerifyingCart()).toEqual(true);
-            expect(selectors.cart.isVerifying).toHaveBeenCalled();
-        });
-
-        it('returns false if verifying cart', () => {
-            jest.spyOn(selectors.cart, 'isVerifying').mockReturnValue(false);
-
-            expect(statuses.isVerifyingCart()).toEqual(false);
-            expect(selectors.cart.isVerifying).toHaveBeenCalled();
-        });
-    });
-
     describe('#isLoadingBillingCountries()', () => {
         it('returns true if loading countries', () => {
             jest.spyOn(selectors.countries, 'isLoading').mockReturnValue(true);

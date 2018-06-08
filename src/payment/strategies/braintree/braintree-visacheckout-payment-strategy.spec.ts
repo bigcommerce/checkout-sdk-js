@@ -1,4 +1,5 @@
 import { createAction, Action } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
@@ -14,13 +15,13 @@ import {
 } from '../..';
 import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
 import { getCartState } from '../../../cart/internal-carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { QuoteActionCreator } from '../../../quote';
 import { getQuoteState } from '../../../quote/internal-quotes.mock';
 import { getShippingAddress } from '../../../shipping/internal-shipping-addresses.mock';
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
@@ -38,12 +39,12 @@ import { VisaCheckoutSDK } from './visacheckout';
 describe('BraintreeVisaCheckoutPaymentStrategy', () => {
     let braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor;
     let container: HTMLDivElement;
+    let checkoutActionCreator: CheckoutActionCreator;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
     let paymentStrategyActionCreator: PaymentStrategyActionCreator;
-    let quoteActionCreator: QuoteActionCreator;
     let store: CheckoutStore;
     let strategy: BraintreeVisaCheckoutPaymentStrategy;
     let visaCheckoutScriptLoader: VisaCheckoutScriptLoader;
@@ -58,11 +59,12 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         paymentMethodMock = { ...getBraintreeVisaCheckout(), clientToken: 'clientToken' };
 
         store = createCheckoutStore({
+            checkout: getCheckoutState(),
             customer: getCustomerState(),
-            quote: getQuoteState(),
             config: getConfigState(),
             cart: getCartState(),
             paymentMethods: getPaymentMethodsState(),
+            quote: getQuoteState(),
         });
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
@@ -78,22 +80,23 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         const client = createCheckoutClient();
         const paymentClient = createPaymentClient(store);
         const registry = createPaymentStrategyRegistry(store, client, paymentClient);
+        const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
+        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender);
+        orderActionCreator = new OrderActionCreator(client, checkoutValidator);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
-        paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry);
-        quoteActionCreator = new QuoteActionCreator(client);
+        paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient(store)),
-            new OrderActionCreator(client)
+            orderActionCreator
         );
-
-        orderActionCreator = new OrderActionCreator(client);
 
         strategy = new BraintreeVisaCheckoutPaymentStrategy(
             store,
+            checkoutActionCreator,
             paymentMethodActionCreator,
             paymentStrategyActionCreator,
-            quoteActionCreator,
             paymentActionCreator,
             orderActionCreator,
             braintreeVisaCheckoutPaymentProcessor,
@@ -143,7 +146,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
                 collectShipping: false,
                 currencyCode: 'USD',
                 locale: 'en_US',
-                subtotal: 200,
+                subtotal: 190,
             });
         });
 
@@ -186,13 +189,13 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
                 );
             });
 
-            it('reloads quote and payment method', async () => {
-                jest.spyOn(quoteActionCreator, 'loadQuote');
+            it('reloads checkout and payment method', async () => {
+                jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout');
                 jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod');
 
                 await strategy.initialize(visaCheckoutOptions);
 
-                expect(quoteActionCreator.loadQuote).toHaveBeenCalledTimes(1);
+                expect(checkoutActionCreator.loadCurrentCheckout).toHaveBeenCalledTimes(1);
                 expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledTimes(2);
                 expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('braintreevisacheckout');
             });

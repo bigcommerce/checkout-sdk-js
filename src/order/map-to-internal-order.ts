@@ -1,72 +1,162 @@
-import { find } from 'lodash';
+import { filter, find, keyBy, reduce } from 'lodash';
 
+import { AmountTransformer, LineItem } from '../cart';
 import { mapToInternalLineItems } from '../cart';
 import { Checkout } from '../checkout';
-import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
+import { mapToInternalCoupon } from '../coupon';
+import { HOSTED } from '../payment';
 
-import { default as InternalOrder } from './internal-order';
-import mapToInternalIncompleteOrder from './map-to-internal-incomplete-order';
-import Order from './order';
+import InternalOrder, { InternalGiftCertificateList, InternalIncompleteOrder, InternalOrderPayment, InternalSocialDataList } from './internal-order';
+import Order, { DefaultOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
 
-export default function mapToInternalOrder(checkout: Checkout, order: Order, existingOrder: InternalOrder): InternalOrder {
+export default function mapToInternalOrder(order: Order): InternalOrder {
+    const decimalPlaces = order.currency.decimalPlaces;
+    const amountTransformer = new AmountTransformer(decimalPlaces);
+
     return {
-        ...mapToInternalIncompleteOrder(checkout, existingOrder),
         id: order.orderId,
-        items: mapToInternalLineItems(order.lineItems, existingOrder.items),
+        items: mapToInternalLineItems(order.lineItems, order.currency.decimalPlaces, 'productId'),
+        orderId: order.orderId,
         currency: order.currency.code,
-        customerCanBeCreated: existingOrder.customerCanBeCreated,
+        customerCanBeCreated: order.customerCanBeCreated,
+        payment: mapToInteralOrderPayment(order.payments),
         subtotal: {
-            amount: existingOrder.subtotal.amount,
-            integerAmount: existingOrder.subtotal.integerAmount,
+            amount: order.baseAmount,
+            integerAmount: amountTransformer.toInteger(order.baseAmount),
         },
         coupon: {
-            discountedAmount: existingOrder.coupon.discountedAmount,
-            coupons: checkout.cart.coupons.map(coupon =>
-                mapToInternalCoupon(
-                    coupon,
-                    // tslint:disable-next-line:no-non-null-assertion
-                    find(existingOrder.coupon.coupons, { code: coupon.code })!
-                )
-            ),
+            discountedAmount: reduce(order.coupons, (sum, coupon) => {
+                return sum + coupon.discountedAmount;
+            }, 0),
+            coupons: order.coupons.map(mapToInternalCoupon),
         },
         discount: {
             amount: order.discountAmount,
-            integerAmount: existingOrder.discount.integerAmount,
+            integerAmount: amountTransformer.toInteger(order.discountAmount),
         },
-        discountNotifications: existingOrder.discountNotifications,
-        giftCertificate: {
-            totalDiscountedAmount: existingOrder.giftCertificate.totalDiscountedAmount,
-            appliedGiftCertificates: checkout.giftCertificates.map(giftCertificate =>
-                mapToInternalGiftCertificate(
-                    giftCertificate,
-                    // tslint:disable-next-line:no-non-null-assertion
-                    find(existingOrder.giftCertificate.appliedGiftCertificates, { code: giftCertificate.code })!
-                )
-            ),
-        },
+        discountNotifications: [],
+        giftCertificate: mapToGiftCertificates(order.payments),
+        socialData: mapToInternalSocialDataList(order),
+        status: order.status,
+        hasDigitalItems: order.hasDigitalItems,
+        isDownloadable: order.isDownloadable,
+        isComplete: order.isComplete,
         shipping: {
-            amount: checkout.shippingCostTotal,
-            integerAmount: existingOrder.shipping.integerAmount,
-            amountBeforeDiscount: existingOrder.shipping.amountBeforeDiscount,
-            integerAmountBeforeDiscount: existingOrder.shipping.integerAmountBeforeDiscount,
-            required: existingOrder.shipping.required,
+            amount: order.shippingCostTotal,
+            integerAmount: amountTransformer.toInteger(order.shippingCostTotal),
+            amountBeforeDiscount: order.shippingCostBeforeDiscount,
+            integerAmountBeforeDiscount: amountTransformer.toInteger(order.shippingCostBeforeDiscount),
         },
         storeCredit: {
-            amount: checkout.storeCredit,
+            amount: mapToStoreCredit(order.payments),
         },
-        taxSubtotal: existingOrder.taxSubtotal,
-        taxes: existingOrder.taxes,
-        taxTotal: {
-            amount: checkout.taxTotal,
-            integerAmount: existingOrder.taxTotal.integerAmount,
-        },
+        taxes: order.taxes,
         handling: {
-            amount: existingOrder.handling.amount,
-            integerAmount: existingOrder.handling.integerAmount,
+            amount: order.handlingCostTotal,
+            integerAmount: amountTransformer.toInteger(order.handlingCostTotal),
         },
         grandTotal: {
-            amount: checkout.grandTotal,
-            integerAmount: existingOrder.grandTotal.integerAmount,
+            amount: order.orderAmount,
+            integerAmount: order.orderAmountAsInteger,
         },
     };
+}
+
+export function mapToInternalIncompleteOrder(checkout: Checkout): InternalIncompleteOrder {
+    const payment = find(checkout.payments, { providerType: HOSTED });
+
+    return {
+        orderId: null,
+        isComplete: false,
+        payment: !payment ? {} : {
+            id: payment.providerId,
+            gateway: payment.gatewayId,
+            status: mapToInternalPaymentStatus(payment.detail.step),
+        },
+    };
+}
+
+function mapToInternalPaymentStatus(status: string): string {
+    return `PAYMENT_STATUS_${status}`;
+}
+
+function mapToStoreCredit(payments?: OrderPayments): number {
+    const item = find(payments, { providerId: 'storecredit' });
+
+    return item ? item.amount : 0;
+}
+
+function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificateList {
+    const items = filter(payments, { providerId: 'giftcertificate' }) as GiftCertificateOrderPayment[];
+
+    return {
+        totalDiscountedAmount: reduce(items, (sum, item) => item.amount + sum, 0),
+        appliedGiftCertificates: keyBy(items.map(item => ({
+            code: item.detail.code,
+            discountedAmount: item.amount,
+            remainingBalance: item.detail.remaining,
+            giftCertificate: {
+                balance: item.amount + item.detail.remaining,
+                code: item.detail.code,
+                purchaseDate: '',
+            },
+        })), 'code'),
+    };
+}
+
+function mapToInteralOrderPayment(payments?: OrderPayments): InternalOrderPayment {
+    const item = find(payments, isDefaultOrderPayment) as DefaultOrderPayment;
+
+    if (!item) {
+        return {};
+    }
+
+    return {
+        id: item.providerId,
+        status: mapToInternalPaymentStatus(item.detail.step),
+        helpText: item.detail.instructions,
+    };
+}
+
+function isDefaultOrderPayment(payment: OrderPayment): payment is DefaultOrderPayment {
+    return payment.providerId !== 'giftcertificate' && payment.providerId !== 'storecredit';
+}
+
+function mapToInternalSocialDataList(order: Order): { [itemId: string]: InternalSocialDataList } | undefined {
+    const socialDataObject: { [itemId: string]: InternalSocialDataList } = {};
+    const items = [
+        ...order.lineItems.physicalItems,
+        ...order.lineItems.digitalItems,
+    ];
+
+    items.forEach(item => {
+        socialDataObject[item.id] = mapToInternalSocialData(item);
+    });
+
+    return socialDataObject;
+}
+
+function mapToInternalSocialData(lineItem: LineItem): InternalSocialDataList {
+    const codes = ['fb', 'tw', 'gp'];
+
+    return codes.reduce((socialData, code) => {
+        const item = lineItem.socialMedia && lineItem.socialMedia.find(item => item.code === code);
+
+        if (!item) {
+            return socialData;
+        }
+
+        socialData[code] = {
+            name: lineItem.name,
+            description: lineItem.name,
+            image: lineItem.imageUrl,
+            url: item.link,
+            shareText: item.text,
+            sharingLink: item.link,
+            channelName: item.channel,
+            channelCode: item.code,
+        };
+
+        return socialData;
+    }, {} as InternalSocialDataList);
 }

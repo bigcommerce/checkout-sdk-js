@@ -110,9 +110,9 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             throw new MissingDataError('Unable to finalize order because "order" data is missing.');
         }
 
-        if (order.orderId &&
-            this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
-            this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
+        const status = this._getPaymentStatus();
+
+        if (order.orderId && (status === paymentStatusTypes.ACKNOWLEDGE || status === paymentStatusTypes.FINALIZE)) {
             return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
         }
 

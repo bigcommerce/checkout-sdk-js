@@ -1,23 +1,22 @@
-import { InternalAddress } from '../address';
+import { Address } from '../address';
 import { BillingAddressActionCreator } from '../billing';
-import { CartActionCreator } from '../cart';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator } from '../customer';
+import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
-import { QuoteActionCreator } from '../quote';
 import {
+    ConsignmentActionCreator,
     ShippingCountryActionCreator,
     ShippingInitializeOptions,
-    ShippingOptionActionCreator,
     ShippingRequestOptions,
     ShippingStrategyActionCreator,
 } from '../shipping';
 
+import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
 import createCheckoutSelectors from './create-checkout-selectors';
@@ -39,8 +38,9 @@ export default class CheckoutService {
     constructor(
         private _store: CheckoutStore,
         private _billingAddressActionCreator: BillingAddressActionCreator,
-        private _cartActionCreator: CartActionCreator,
+        private _checkoutActionCreator: CheckoutActionCreator,
         private _configActionCreator: ConfigActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator,
         private _countryActionCreator: CountryActionCreator,
         private _couponActionCreator: CouponActionCreator,
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
@@ -49,9 +49,7 @@ export default class CheckoutService {
         private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
-        private _quoteActionCreator: QuoteActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
-        private _shippingOptionActionCreator: ShippingOptionActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator
     ) {
         this._state = createCheckoutSelectors(this._store.getState());
@@ -141,16 +139,17 @@ export default class CheckoutService {
      * `CheckoutStoreSelector#getCheckout`.
      *
      * ```js
-     * const state = await service.loadCheckout();
+     * const state = await service.loadCheckout('0cfd6c06-57c3-4e29-8d7a-de55cc8a9052');
      *
      * console.log(state.checkout.getCheckout());
      * ```
      *
+     * @param id - The identifier of the checkout to load.
      * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    loadCheckout(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._quoteActionCreator.loadQuote(options);
+    loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._checkoutActionCreator.loadCheckout(id, options);
 
         return this._store.dispatch(action)
             .then(() => this.getState());
@@ -180,31 +179,6 @@ export default class CheckoutService {
     }
 
     /**
-     * Loads the current cart.
-     *
-     * This method can only be called if there is an active cart. Also, it can
-     * only retrieve data that belongs to the current customer.
-     *
-     * If the method is called successfully, you can retrieve the current cart
-     * by calling `CheckoutStoreSelector#getCart`
-     *
-     * ```js
-     * const state = await service.loadCart();
-     *
-     * console.log(state.checkout.getCart());
-     * ```
-     *
-     * @param options - Options for loading the current cart.
-     * @returns A promise that resolves to the current state.
-     */
-    loadCart(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._cartActionCreator.loadCart(options);
-
-        return this._store.dispatch(action)
-            .then(() => this.getState());
-    }
-
-    /**
      * Loads an order by an id.
      *
      * The method can only retrieve an order if the order belongs to the current
@@ -212,7 +186,7 @@ export default class CheckoutService {
      * calling `CheckoutStoreSelector#getOrder`.
      *
      * ```js
-     * const state = await service.loadOrder();
+     * const state = await service.loadOrder(123);
      *
      * console.log(state.checkout.getOrder());
      * ```
@@ -550,9 +524,27 @@ export default class CheckoutService {
     }
 
     /**
+     * Continues to check out as a guest.
+     *
+     * The customer is required to provide their email address in order to
+     * continue. Once they provide their email address, it will be stored as a
+     * part of their billing address.
+     *
+     * @param credentials - The guest credentials to use.
+     * @param options - Options for continuing as a guest.
+     * @returns A promise that resolves to the current state.
+     */
+    signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._billingAddressActionCreator.updateAddress(credentials, options);
+
+        return this._store.dispatch(action)
+            .then(() => this.getState());
+    }
+
+    /**
      * Signs into a customer's registered account.
      *
-     * Once a customer is signed in successfully, the checkout state will be
+     * Once the customer is signed in successfully, the checkout state will be
      * populated with information associated with the customer, such as their
      * saved addresses. You can call `CheckoutStoreSelector#getCustomer` to
      * retrieve the data.
@@ -618,7 +610,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._shippingOptionActionCreator.loadShippingOptions(options);
+        const action = this._consignmentActionCreator.loadShippingOptions(options);
 
         return this._store.dispatch(action)
             .then(() => this.getState());
@@ -686,15 +678,13 @@ export default class CheckoutService {
      * console.log(state.checkout.getSelectedShippingOption());
      * ```
      *
-     * @param addressId - The identifier of the address to be assigned with the
-     * shipping option.
      * @param shippingOptionId - The identifier of the shipping option to
      * select.
      * @param options - Options for selecting the shipping option.
      * @returns A promise that resolves to the current state.
      */
-    selectShippingOption(addressId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
-        const action = this._shippingStrategyActionCreator.selectOption(addressId, shippingOptionId, options);
+    selectShippingOption(shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+        const action = this._shippingStrategyActionCreator.selectOption(shippingOptionId, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' })
             .then(() => this.getState());
@@ -725,7 +715,7 @@ export default class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: InternalAddress, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateShippingAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
         return this._store.dispatch(action, { queueId: 'shippingStrategy' })
@@ -751,7 +741,7 @@ export default class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: InternalAddress, options?: RequestOptions): Promise<CheckoutSelectors> {
+    updateBillingAddress(address: Address, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
         return this._store.dispatch(action)

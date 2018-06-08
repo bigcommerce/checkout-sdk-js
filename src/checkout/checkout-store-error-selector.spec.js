@@ -95,22 +95,6 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
-    describe('#getVerifyCartError()', () => {
-        it('returns error if there is an error when verifying cart', () => {
-            jest.spyOn(selectors.cart, 'getVerifyError').mockReturnValue(errorResponse);
-
-            expect(errors.getVerifyCartError()).toEqual(errorResponse);
-            expect(selectors.cart.getVerifyError).toHaveBeenCalled();
-        });
-
-        it('returns undefined if there is no error when verifying cart', () => {
-            jest.spyOn(selectors.cart, 'getVerifyError').mockReturnValue();
-
-            expect(errors.getVerifyCartError()).toEqual(undefined);
-            expect(selectors.cart.getVerifyError).toHaveBeenCalled();
-        });
-    });
-
     describe('#getLoadBillingCountriesError()', () => {
         it('returns error if there is an error when loading billing countries', () => {
             jest.spyOn(selectors.countries, 'getLoadError').mockReturnValue(errorResponse);

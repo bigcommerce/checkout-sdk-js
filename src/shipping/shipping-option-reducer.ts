@@ -1,21 +1,23 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import { CheckoutActionType } from '../checkout';
-import * as customerActionTypes from '../customer/customer-action-types';
-import * as quoteActionTypes from '../quote/quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { CustomerAction, CustomerActionType } from '../customer';
+import { ConsignmentAction, ConsignmentActionTypes } from '../shipping/consignment-actions';
 
+import { InternalShippingOptionList, ShippingOptionState } from '.';
 import mapToInternalShippingOptions from './map-to-internal-shipping-options';
+import { ShippingOptionErrorsState, ShippingOptionStatusesState } from './shipping-option-state';
 
-/**
- * @todo Convert this file into TypeScript properly
- * @param {ShippingOptionsState} state
- * @param {Action} action
- * @return {ShippingOptionsState}
- */
-export default function shippingOptionReducer(state: any = {}, action: Action): any {
-    const reducer = combineReducers({
+const DEFAULT_STATE: ShippingOptionState = {
+    errors: {},
+    statuses: {},
+};
+
+export default function shippingOptionReducer(
+    state: ShippingOptionState = DEFAULT_STATE,
+    action: CheckoutAction | ConsignmentAction | CustomerAction
+): ShippingOptionState {
+    const reducer = combineReducers<ShippingOptionState>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -24,23 +26,17 @@ export default function shippingOptionReducer(state: any = {}, action: Action): 
     return reducer(state, action);
 }
 
-/**
- * @private
- * @param {?ShippingOptionList} data
- * @param {Action} action
- * @return {?ShippingOptionList}
- */
-function dataReducer(data: any, action: Action): any {
+function dataReducer(
+    data: InternalShippingOptionList | undefined,
+    action: CheckoutAction | ConsignmentAction | CustomerAction
+): InternalShippingOptionList | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...data, ...mapToInternalShippingOptions(action.payload.consignments, data) };
+    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
+    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
+        return action.payload ? { ...data, ...mapToInternalShippingOptions(action.payload.consignments) } : data;
 
-    case customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED:
-    case customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED:
-    case quoteActionTypes.LOAD_QUOTE_SUCCEEDED:
-    case shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
-    case shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED:
+    case CustomerActionType.SignOutCustomerSucceeded:
         return action.payload ? action.payload.shippingOptions : data;
 
     default:
@@ -48,13 +44,16 @@ function dataReducer(data: any, action: Action): any {
     }
 }
 
-function statusesReducer(statuses: any = {}, action: Action): any {
+function statusesReducer(
+    statuses: ShippingOptionStatusesState = DEFAULT_STATE.statuses,
+    action: CheckoutAction
+): ShippingOptionStatusesState {
     switch (action.type) {
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_REQUESTED:
+    case CheckoutActionType.LoadCheckoutRequested:
         return { ...statuses, isLoading: true };
 
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_FAILED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
+    case CheckoutActionType.LoadCheckoutFailed:
+    case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...statuses, isLoading: false };
 
     default:
@@ -62,13 +61,16 @@ function statusesReducer(statuses: any = {}, action: Action): any {
     }
 }
 
-function errorsReducer(errors: any = {}, action: Action): any {
+function errorsReducer(
+    errors: ShippingOptionErrorsState = DEFAULT_STATE.errors,
+    action: CheckoutAction
+): ShippingOptionErrorsState {
     switch (action.type) {
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_REQUESTED:
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED:
+    case CheckoutActionType.LoadCheckoutRequested:
+    case CheckoutActionType.LoadCheckoutSucceeded:
         return { ...errors, loadError: undefined };
 
-    case shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_FAILED:
+    case CheckoutActionType.LoadCheckoutFailed:
         return { ...errors, loadError: action.payload };
 
     default:

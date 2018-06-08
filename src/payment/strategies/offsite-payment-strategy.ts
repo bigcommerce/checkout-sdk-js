@@ -42,9 +42,7 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
 
         const { orderId, payment = {} } = order;
 
-        if (orderId &&
-            payment.status === paymentStatusTypes.ACKNOWLEDGE ||
-            payment.status === paymentStatusTypes.FINALIZE) {
+        if (orderId && (payment.status === paymentStatusTypes.ACKNOWLEDGE || payment.status === paymentStatusTypes.FINALIZE)) {
             return this._store.dispatch(this._orderActionCreator.finalizeOrder(orderId, options));
         }
 

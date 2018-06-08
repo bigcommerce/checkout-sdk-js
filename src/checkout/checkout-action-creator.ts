@@ -1,40 +1,44 @@
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { Cart, CartRequestSender } from '../cart';
-import { CartUnavailableError } from '../cart/errors';
+import { MissingDataError } from '../common/error/errors';
+import { RequestOptions } from '../common/http-request';
 
-import Checkout from './checkout';
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
 import CheckoutRequestSender from './checkout-request-sender';
+import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 export default class CheckoutActionCreator {
     constructor(
-        private _checkoutRequestSender: CheckoutRequestSender,
-        private _cartRequestSender: CartRequestSender
+        private _checkoutRequestSender: CheckoutRequestSender
     ) {}
 
-    loadCheckout(options?: any): Observable<CheckoutAction> {
+    loadCheckout(id: string, options?: RequestOptions): Observable<CheckoutAction> {
         return Observable.create((observer: Observer<CheckoutAction>) => {
             observer.next(createAction(CheckoutActionType.LoadCheckoutRequested));
 
-            this._cartRequestSender.loadCarts(options)
-                .then(({ body: [cart] }: { body: Cart[] }) => {
-                    if (!cart) {
-                        throw new CartUnavailableError();
-                    }
-
-                    return cart.id;
-                })
-                .then((id: string) => this._checkoutRequestSender.loadCheckout(id, options))
-                .then(({ body }: { body: Checkout }) => {
+            this._checkoutRequestSender.loadCheckout(id, options)
+                .then(({ body }) => {
                     observer.next(createAction(CheckoutActionType.LoadCheckoutSucceeded, body));
                     observer.complete();
                 })
-                .catch((response: any) => {
+                .catch(response => {
                     observer.error(createErrorAction(CheckoutActionType.LoadCheckoutFailed, response));
                 });
         });
+    }
+
+    loadCurrentCheckout(options?: RequestOptions): ThunkAction<CheckoutAction, InternalCheckoutSelectors> {
+        return store => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError('Unable to reload the current checkout because "checkout.id" is missing.');
+            }
+
+            return this.loadCheckout(checkout.id, options);
+        };
     }
 }

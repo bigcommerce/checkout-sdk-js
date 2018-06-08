@@ -1,8 +1,14 @@
 import { Observable } from 'rxjs';
+
+import { createCheckoutStore } from '../checkout';
+import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
+import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getBillingAddress, getBillingAddressResponseBody } from './internal-billing-addresses.mock';
-import * as actionTypes from './billing-address-action-types';
+import { getQuoteState } from '../quote/internal-quotes.mock';
 import BillingAddressActionCreator from './billing-address-action-creator';
+import { BillingAddressActionTypes } from './billing-address-actions';
+import { getBillingAddress } from './internal-billing-addresses.mock';
+import { getCustomerState } from '../customer/internal-customers.mock';
 
 describe('BillingAddressActionCreator', () => {
     let address;
@@ -10,52 +16,177 @@ describe('BillingAddressActionCreator', () => {
     let checkoutClient;
     let errorResponse;
     let response;
+    let store;
+    let actions;
 
     beforeEach(() => {
-        response = getResponse(getBillingAddressResponseBody());
+        response = getResponse(getCheckout());
         errorResponse = getErrorResponse();
 
         checkoutClient = {
             updateBillingAddress: jest.fn(() => Promise.resolve(response)),
+            createBillingAddress: jest.fn(() => Promise.resolve(response)),
         };
 
         billingAddressActionCreator = new BillingAddressActionCreator(checkoutClient);
         address = getBillingAddress();
     });
 
-    describe('#updateBillingAddress()', () => {
-        it('emits actions if able to update billing address', () => {
-            billingAddressActionCreator.updateAddress(address)
-                .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: actionTypes.UPDATE_BILLING_ADDRESS_REQUESTED },
-                        { type: actionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED, payload: response.body.data },
-                    ]);
-                });
+    describe('#updateAddress()', () => {
+        describe('when store has no checkout data', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({});
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
+                        .toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(MissingDataError);
+                    expect(actions).toEqual(undefined);
+                    expect(checkoutClient.updateBillingAddress).not.toHaveBeenCalled();
+                }
+            });
         });
 
-        it('emits error actions if unable to update billing address', () => {
-            checkoutClient.updateBillingAddress.mockImplementation(() => Promise.reject(errorResponse));
-
-            const errorHandler = jest.fn((action) => Observable.of(action));
-
-            billingAddressActionCreator.updateAddress(address)
-                .catch(errorHandler)
-                .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: actionTypes.UPDATE_BILLING_ADDRESS_REQUESTED },
-                        { type: actionTypes.UPDATE_BILLING_ADDRESS_FAILED, payload: errorResponse, error: true },
-                    ]);
+        describe('when store has checkout data but no billing address data', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({
+                    checkout: getCheckoutState(),
                 });
+            });
+
+            it('emits actions if able to update billing address', async () => {
+                actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
+                    .toArray()
+                    .toPromise();
+
+                expect(actions).toEqual([
+                    { type: BillingAddressActionTypes.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionTypes.UpdateBillingAddressSucceeded, payload: response.body },
+                ]);
+            });
+
+            it('emits error actions if unable to create billing address', async () => {
+                jest.spyOn(checkoutClient, 'createBillingAddress')
+                    .mockReturnValue(Promise.reject(getErrorResponse()));
+
+                const errorHandler = jest.fn((action) => Observable.of(action));
+
+                actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
+                    .catch(errorHandler)
+                    .toArray()
+                    .toPromise();
+
+                expect(errorHandler).toHaveBeenCalled();
+                expect(actions).toEqual([
+                    { type: BillingAddressActionTypes.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionTypes.UpdateBillingAddressFailed, payload: errorResponse, error: true },
+                ]);
+            });
+
+            it('sends request to create billing address', async () => {
+                await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(getCheckout().id, address, {});
+            });
+
+            it('sends request to update email', async () => {
+                const payload = { email: 'foo' };
+                await Observable.from(billingAddressActionCreator.updateAddress(payload, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(getCheckout().id, payload, {});
+            });
         });
 
-        it('sends request to update billing address', async () => {
-            await billingAddressActionCreator.updateAddress(address, {}).toPromise();
+        describe('when store has checkout and billing address data from quote', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({
+                    quote: getQuoteState(),
+                    customer: getCustomerState(),
+                    checkout: getCheckoutState(),
+                });
+            });
 
-            expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(address, {});
+            it('emits actions if able to update billing address', async () => {
+                actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
+                    .toArray()
+                    .toPromise();
+
+                expect(actions).toEqual([
+                    { type: BillingAddressActionTypes.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionTypes.UpdateBillingAddressSucceeded, payload: response.body },
+                ]);
+            });
+
+            it('emits error actions if unable to update billing address', async () => {
+                jest.spyOn(checkoutClient, 'updateBillingAddress')
+                    .mockReturnValue(Promise.reject(getErrorResponse()));
+
+                const errorHandler = jest.fn((action) => Observable.of(action));
+
+                actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
+                    .catch(errorHandler)
+                    .toArray()
+                    .toPromise();
+
+                expect(errorHandler).toHaveBeenCalled();
+                expect(actions).toEqual([
+                    { type: BillingAddressActionTypes.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionTypes.UpdateBillingAddressFailed, payload: errorResponse, error: true },
+                ]);
+            });
+
+            it('sends request to update billing address, using customer email if not provided', async () => {
+                await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email: 'test@bigcommerce.com',
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+
+            it('sends request to update billing address, using blank email when provided', async () => {
+                const email = '';
+                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                    .toPromise();
+
+
+                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email,
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+
+            it('sends request to update billing address, using provided email', async () => {
+                const email = 'foo@bar.com';
+                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email,
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
         });
     });
 });

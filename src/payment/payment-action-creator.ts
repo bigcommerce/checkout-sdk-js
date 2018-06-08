@@ -74,7 +74,8 @@ export default class PaymentActionCreator {
     }
 
     private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
-        const deviceSessionId = state.quote.getQuoteMeta().request.deviceSessionId;
+        const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
+        const deviceSessionId = paymentMeta && paymentMeta.request.deviceSessionId;
         const billingAddress = state.billingAddress.getBillingAddress();
         const cart = state.cart.getCart();
         const customer = state.customer.getCustomer();
@@ -97,6 +98,10 @@ export default class PaymentActionCreator {
             throw new MissingDataError('Unable to submit payment because "authToken" or "paymentData" is missing.');
         }
 
+        if (!authToken) {
+            throw new MissingDataError('Unable to submit payment because "authToken" is missing.');
+        }
+
         return {
             billingAddress,
             cart,
@@ -110,7 +115,7 @@ export default class PaymentActionCreator {
             payment: payment.paymentData,
             quoteMeta: {
                 request: {
-                    ...state.quote.getQuoteMeta().request,
+                    ...(paymentMeta && paymentMeta.request),
                     deviceSessionId,
                 },
             },

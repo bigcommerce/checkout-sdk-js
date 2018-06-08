@@ -22,7 +22,7 @@ export default interface InternalCart {
     discountNotifications: DiscountNotification[];
     giftCertificate: {
         totalDiscountedAmount: number;
-        appliedGiftCertificates: InternalGiftCertificate[];
+        appliedGiftCertificates: { [code: string]: InternalGiftCertificate };
     };
     shipping: {
         amount: number;

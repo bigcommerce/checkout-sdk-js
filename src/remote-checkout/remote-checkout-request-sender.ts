@@ -28,6 +28,12 @@ export default class RemoteCheckoutRequestSender {
         return this._requestSender.get(url, { params, timeout });
     }
 
+    loadSettings(methodName: string, { timeout }: RequestOptions = {}): Promise<Response> {
+        const url = `/remote-checkout/${methodName}/settings`;
+
+        return this._requestSender.get(url, { timeout });
+    }
+
     signOut(methodName: string, { timeout }: RequestOptions = {}): Promise<Response> {
         const url = `/remote-checkout/${methodName}/signout`;
 

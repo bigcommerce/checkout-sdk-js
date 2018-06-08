@@ -1,79 +1,23 @@
-import { getBillingAddressResponseBody } from '../billing/internal-billing-addresses.mock';
-import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { CheckoutActionType } from '../checkout';
+import { CustomerActionType } from '../customer';
+import { getCheckout } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuote, getQuoteResponseBody } from './internal-quotes.mock';
-import { getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
-import * as billingAddressActionTypes from '../billing/billing-address-action-types';
-import * as customerActionTypes from '../customer/customer-action-types';
-import * as quoteActionTypes from './quote-action-types';
-import * as shippingAddressActionTypes from '../shipping/shipping-address-action-types';
-import * as shippingOptionActionTypes from '../shipping/shipping-option-action-types';
+import { getCustomerResponseBody } from '../customer/internal-customers.mock';
+import { ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { getQuote } from './internal-quotes.mock';
 import quoteReducer from './quote-reducer';
 
 describe('quoteReducer()', () => {
     let initialState;
 
     beforeEach(() => {
-        initialState = {
-            data: getQuote(),
-        };
-    });
-
-    it('returns a new state with loading flag set to true', () => {
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_REQUESTED,
-        };
-
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            ...initialState,
-            statuses: { isLoading: true },
-        }));
-    });
-
-    it('returns new data while fetching quote', () => {
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_REQUESTED,
-        };
-
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            statuses: { isLoading: true },
-        }));
-    });
-
-    it('returns new data if quote is fetched successfully', () => {
-        const response = getQuoteResponseBody();
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            meta: expect.objectContaining({
-                request: action.meta.request,
-            }),
-            data: action.payload.quote,
-            statuses: { isLoading: false },
-        }));
-    });
-
-    it('returns new data if quote is not fetched successfully', () => {
-        const action = {
-            type: quoteActionTypes.LOAD_QUOTE_FAILED,
-            payload: getErrorResponse(),
-        };
-
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            ...initialState,
-            errors: { loadError: action.payload },
-            statuses: { isLoading: false },
-        }));
+        initialState = {};
     });
 
     it('returns new data if customer has signed in successfully', () => {
         const action = {
-            type: customerActionTypes.SIGN_IN_CUSTOMER_SUCCEEDED,
+            type: CustomerActionType.SignOutCustomerSucceeded,
             payload: getCustomerResponseBody().data,
         };
 
@@ -84,7 +28,7 @@ describe('quoteReducer()', () => {
 
     it('returns new data if customer has signed out successfully', () => {
         const action = {
-            type: customerActionTypes.SIGN_OUT_CUSTOMER_SUCCEEDED,
+            type: CustomerActionType.SignOutCustomerSucceeded,
             payload: getCustomerResponseBody().data,
         };
 
@@ -93,50 +37,43 @@ describe('quoteReducer()', () => {
         }));
     });
 
-    it('returns new data when shipping options gets updated', () => {
-        const response = getShippingOptionResponseBody();
+    it('returns new data when checkout is loaded', () => {
         const action = {
-            type: shippingOptionActionTypes.LOAD_SHIPPING_OPTIONS_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
+            type: CheckoutActionType.LoadCheckoutSucceeded,
+            payload: getCheckout(),
         };
 
         expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.quote,
+            data: getQuote(),
         }));
     });
 
-    it('returns new data when shipping options gets selected', () => {
-        const response = getShippingOptionResponseBody();
+    it('returns new data when creating consignments', () => {
         const action = {
-            type: shippingOptionActionTypes.SELECT_SHIPPING_OPTION_SUCCEEDED,
-            meta: response.meta,
-            payload: response.data,
+            type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
+            payload: getCheckout(),
         };
 
         expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.quote,
+            data: getQuote(),
         }));
     });
 
-    describe('when updating shipping address', () => {
-        it('saves the payload when update succeeds', () => {
-            const response = getShippingAddressResponseBody();
-            const action = {
-                type: shippingAddressActionTypes.UPDATE_SHIPPING_ADDRESS_SUCCEEDED,
-                payload: response.data,
-            };
+    it('returns new data when updating a consignment', () => {
+        const action = {
+            type: ConsignmentActionTypes.UpdateConsignmentSucceeded,
+            payload: getCheckout(),
+        };
 
-            expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                data: action.payload.quote,
-            }));
-        });
+        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getQuote(),
+        }));
     });
 
     describe('when updating billing address', () => {
         it('sets updating flag to true while updating', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_REQUESTED,
+                type: BillingAddressActionTypes.UpdateBillingAddressRequested,
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -146,7 +83,7 @@ describe('quoteReducer()', () => {
 
         it('cleans errors while updating', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_REQUESTED,
+                type: BillingAddressActionTypes.UpdateBillingAddressRequested,
             };
 
             initialState.errors = {
@@ -161,21 +98,20 @@ describe('quoteReducer()', () => {
         });
 
         it('saves the payload when update succeeds', () => {
-            const response = getBillingAddressResponseBody();
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED,
-                payload: response.data,
+                type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+                payload: getCheckout(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
-                data: action.payload.quote,
+                data: getQuote(),
             }));
         });
 
         it('sets updating flag to false if succeeded', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED,
-                payload: getErrorResponse(),
+                type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+                payload: getCheckout(),
             };
 
             expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining({
@@ -185,7 +121,8 @@ describe('quoteReducer()', () => {
 
         it('cleans errors when update succeeds', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_SUCCEEDED,
+                type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+                payload: getCheckout(),
             };
 
             initialState.errors = {
@@ -201,7 +138,7 @@ describe('quoteReducer()', () => {
 
         it('saves the error when update fails', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED,
+                type: BillingAddressActionTypes.UpdateBillingAddressFailed,
                 payload: getErrorResponse(),
             };
 
@@ -212,7 +149,7 @@ describe('quoteReducer()', () => {
 
         it('sets the updating flag to false when update fails', () => {
             const action = {
-                type: billingAddressActionTypes.UPDATE_BILLING_ADDRESS_FAILED,
+                type: BillingAddressActionTypes.UpdateBillingAddressFailed,
                 payload: getErrorResponse(),
             };
 

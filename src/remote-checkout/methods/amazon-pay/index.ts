@@ -1,3 +1,4 @@
+export { default as AmazonPayRemoteCheckout } from './amazon-pay-remote-checkout';
 export { default as AmazonPayScriptLoader } from './amazon-pay-script-loader';
 
 export { default as AmazonPayAddressBook, AmazonPayAddressBookOptions } from './amazon-pay-address-book';

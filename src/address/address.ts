@@ -1,14 +1,18 @@
-export default interface Address {
-    id: string;
+export default interface Address extends AddressRequestBody {
+    country: string;
+}
+
+export interface AddressRequestBody {
+    id?: string;
+    email?: string;
     firstName: string;
     lastName: string;
     company: string;
-    street1: string;
-    street2: string;
+    address1: string;
+    address2: string;
     city: string;
-    region: string;
-    regionCode: string;
-    country: string;
+    stateOrProvince: string;
+    stateOrProvinceCode: string;
     countryCode: string;
     postalCode: string;
     phone: string;

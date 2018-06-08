@@ -12,9 +12,12 @@ import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
+import CheckoutSelector from './checkout-selector';
+
 export default interface InternalCheckoutSelectors {
     billingAddress: BillingAddressSelector;
     cart: CartSelector;
+    checkout: CheckoutSelector;
     config: ConfigSelector;
     countries: CountrySelector;
     coupons: CouponSelector;

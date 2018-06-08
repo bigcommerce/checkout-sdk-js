@@ -1,14 +1,17 @@
 import { Address } from '../address';
 import { Cart } from '../cart';
 import { Coupon, GiftCertificate } from '../coupon';
-import { Shopper } from '../customer';
+import { Customer } from '../customer';
 import { Discount } from '../discount';
+import { Promotion } from '../promotion';
 import { Consignment } from '../shipping';
 import { Tax } from '../tax';
 
 export default interface Checkout {
     id: string;
     cart: Cart;
+    customer: Customer;
+    customerMessage: string;
     billingAddress: Address;
     consignments: Consignment[];
     taxes: Tax[];
@@ -16,12 +19,24 @@ export default interface Checkout {
     coupons: Coupon[];
     orderId: number;
     shippingCostTotal: number;
+    shippingCostBeforeDiscount: number;
+    handlingCostTotal: number;
     taxTotal: number;
+    subtotal: number;
     grandTotal: number;
-    storeCredit: number;
     giftCertificates: GiftCertificate[];
+    promotions?: Promotion[];
     balanceDue: number;
     createdTime: string;
     updatedTime: string;
-    shopper?: Shopper;
+    payments?: CheckoutPayment[];
+}
+
+export interface CheckoutPayment {
+    detail: {
+        step: string;
+    };
+    providerId: string;
+    providerType: string;
+    gatewayId?: string;
 }
