@@ -1,6 +1,7 @@
 export * from './checkout-actions';
 
 export { default as Checkout, CheckoutPayment } from './checkout';
+export { default as CheckoutDefaultIncludes } from './checkout-default-includes';
 export { default as CheckoutActionCreator } from './checkout-action-creator';
 export { default as CheckoutClient } from './checkout-client';
 export { default as CheckoutParams } from './checkout-params';

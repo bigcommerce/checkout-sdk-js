@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { Checkout } from '../checkout';
+import { Checkout, CheckoutDefaultIncludes } from '../checkout';
 import { ContentType, RequestOptions } from '../common/http-request';
 
 export default class GiftCertificateRequestSender {
@@ -12,13 +12,26 @@ export default class GiftCertificateRequestSender {
         const url = `/api/storefront/checkouts/${checkoutId}/gift-certificates`;
         const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.post(url, { headers, timeout, body: { giftCertificateCode } });
+        return this._requestSender.post(url, {
+            headers,
+            timeout,
+            params: {
+                include: CheckoutDefaultIncludes.join(','),
+            },
+            body: { giftCertificateCode },
+        });
     }
 
     removeGiftCertificate(checkoutId: string, giftCertificateCode: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkouts/${checkoutId}/gift-certificates/${giftCertificateCode}`;
         const headers = { Accept: ContentType.JsonV1 };
 
-        return this._requestSender.delete(url, { headers, timeout });
+        return this._requestSender.delete(url, {
+            headers,
+            timeout,
+            params: {
+                include: CheckoutDefaultIncludes.join(','),
+            },
+        });
     }
 }
