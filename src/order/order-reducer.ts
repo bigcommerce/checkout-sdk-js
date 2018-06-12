@@ -30,7 +30,7 @@ function dataReducer(
 ): Order | undefined {
     switch (action.type) {
     case OrderActionType.LoadOrderSucceeded:
-        return action.payload ? action.payload : data;
+        return action.payload ? { ...data, ...action.payload } : data;
 
     default:
         return data;

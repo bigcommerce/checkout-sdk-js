@@ -1,7 +1,6 @@
 import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
 import { pick } from 'lodash';
 import { concat } from 'rxjs/observable/concat';
-import { defer } from 'rxjs/observable/defer';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -39,16 +38,7 @@ export default class PaymentActionCreator {
                         observer.error(createErrorAction(actionTypes.SUBMIT_PAYMENT_FAILED, response));
                     });
             }),
-            defer(() => {
-                const state = store.getState();
-                const order = state.order.getOrder();
-
-                if (!order || !order.orderId) {
-                    throw new MissingDataError('Unable to reload order data because "order.orderId" is missing');
-                }
-
-                return this._orderActionCreator.loadOrder(order.orderId);
-            })
+            this._orderActionCreator.loadCurrentOrder()(store)
         );
     }
 

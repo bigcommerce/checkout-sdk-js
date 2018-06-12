@@ -1,8 +1,11 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { concat } from 'rxjs/observable/concat';
+import { defer } from 'rxjs/observable/defer';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { CheckoutClient, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
+import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import InternalOrderRequestBody from './internal-order-request-body';
@@ -13,10 +16,10 @@ export default class OrderActionCreator {
     constructor(
         private _checkoutClient: CheckoutClient,
         private _checkoutValidator: CheckoutValidator
-    ) { }
+    ) {}
 
     loadOrder(orderId: number, options?: RequestOptions): Observable<LoadOrderAction> {
-        return Observable.create((observer: Observer<LoadOrderAction>) => {
+        return new Observable((observer: Observer<LoadOrderAction>) => {
             observer.next(createAction(OrderActionType.LoadOrderRequested));
 
             this._checkoutClient.loadOrder(orderId, options)
@@ -30,38 +33,61 @@ export default class OrderActionCreator {
         });
     }
 
-    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<SubmitOrderAction>) => {
-            observer.next(createAction(OrderActionType.SubmitOrderRequested));
-
+    loadCurrentOrder(options?: RequestOptions): ThunkAction<LoadOrderAction, InternalCheckoutSelectors> {
+        return store => defer(() => {
             const state = store.getState();
-            const cart = state.cart.getCart();
+            const order = state.order.getOrder();
+            const checkout = state.checkout.getCheckout();
+            const orderId = (order && order.orderId) || (checkout && checkout.orderId);
 
-            this._checkoutValidator.validate(cart, options)
-                .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload), options))
-                .then(response => {
-                    observer.next(createAction(OrderActionType.SubmitOrderSucceeded, response.body.data, { ...response.body.meta, token: response.headers.token }));
-                    observer.complete();
-                })
-                .catch(response => {
-                    observer.error(createErrorAction(OrderActionType.SubmitOrderFailed, response));
-                });
+            if (!orderId) {
+                throw new MissingDataError('Unable to reload order data because "orderId" is missing');
+            }
+
+            return this.loadOrder(orderId, options);
         });
     }
 
-    finalizeOrder(orderId: number, options?: RequestOptions): Observable<FinalizeOrderAction> {
-        return Observable.create((observer: Observer<FinalizeOrderAction>) => {
-            observer.next(createAction(OrderActionType.FinalizeOrderRequested));
+    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction | LoadOrderAction, InternalCheckoutSelectors> {
+        return store => concat(
+            new Observable((observer: Observer<SubmitOrderAction>) => {
+                observer.next(createAction(OrderActionType.SubmitOrderRequested));
 
-            this._checkoutClient.finalizeOrder(orderId, options)
-                .then(response => {
-                    observer.next(createAction(OrderActionType.FinalizeOrderSucceeded, response.body.data));
-                    observer.complete();
-                })
-                .catch(response => {
-                    observer.error(createErrorAction(OrderActionType.FinalizeOrderFailed, response));
-                });
-        });
+                const state = store.getState();
+                const cart = state.cart.getCart();
+
+                this._checkoutValidator.validate(cart, options)
+                    .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload), options))
+                    .then(response => {
+                        observer.next(createAction(OrderActionType.SubmitOrderSucceeded, response.body.data, { ...response.body.meta, token: response.headers.token }));
+                        observer.complete();
+                    })
+                    .catch(response => {
+                        observer.error(createErrorAction(OrderActionType.SubmitOrderFailed, response));
+                    });
+            }),
+            // TODO: Remove once we can submit orders using storefront API
+            this.loadCurrentOrder(options)(store)
+        );
+    }
+
+    finalizeOrder(orderId: number, options?: RequestOptions): Observable<FinalizeOrderAction | LoadOrderAction> {
+        return concat(
+            new Observable((observer: Observer<FinalizeOrderAction>) => {
+                observer.next(createAction(OrderActionType.FinalizeOrderRequested));
+
+                this._checkoutClient.finalizeOrder(orderId, options)
+                    .then(response => {
+                        observer.next(createAction(OrderActionType.FinalizeOrderSucceeded, response.body.data));
+                        observer.complete();
+                    })
+                    .catch(response => {
+                        observer.error(createErrorAction(OrderActionType.FinalizeOrderFailed, response));
+                    });
+            }),
+            // TODO: Remove once we can submit orders using storefront API
+            this.loadOrder(orderId, options)
+        );
     }
 
     private _mapToOrderRequestBody(payload: OrderRequestBody): InternalOrderRequestBody {

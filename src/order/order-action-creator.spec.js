@@ -1,6 +1,14 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
-import { createCheckoutStore } from '../checkout';
+
+import { getCart, getCartState } from '../cart/internal-carts.mock';
+import { MissingDataError } from '../common/error/errors';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../checkout';
+import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
+import { getConfigState } from '../config/configs.mock';
+
 import {
     getCompleteOrderResponseBody,
     getInternalOrderRequestBody,
@@ -8,29 +16,26 @@ import {
     getSubmitOrderResponseBody,
     getSubmitOrderResponseHeaders,
 } from './internal-orders.mock';
-import { getCart, getCartState } from '../cart/internal-carts.mock';
-import { getConfigState } from '../config/configs.mock';
-import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import OrderActionCreator from './order-action-creator';
-import { getOrder } from './orders.mock';
 import { OrderActionType } from './order-actions';
-import CheckoutRequestSender from '../checkout/checkout-request-sender';
-import { createRequestSender } from '@bigcommerce/request-sender';
-import CheckoutValidator from '../checkout/checkout-validator';
-import { getCheckout } from '../checkout/checkouts.mock';
+import { getOrder, getOrderState } from './orders.mock';
 
 describe('OrderActionCreator', () => {
     let checkoutClient;
     let checkoutValidator;
     let checkoutRequestSender;
     let orderActionCreator;
+    let state;
     let store;
 
     beforeEach(() => {
-        store = createCheckoutStore({
+        state = {
             cart: getCartState(),
             config: getConfigState(),
-        });
+            checkout: getCheckoutState(),
+        };
+
+        store = createCheckoutStore(state);
 
         jest.spyOn(store, 'dispatch');
 
@@ -43,9 +48,6 @@ describe('OrderActionCreator', () => {
             finalizeOrder: jest.fn(() => {}),
         };
 
-        jest.spyOn(checkoutClient, 'loadOrder')
-            .mockReturnValue(Promise.resolve(getResponse(getOrder())));
-
         jest.spyOn(checkoutValidator, 'validate')
             .mockReturnValue(Promise.resolve());
 
@@ -53,6 +55,11 @@ describe('OrderActionCreator', () => {
     });
 
     describe('#loadOrder()', () => {
+        beforeEach(() => {
+            jest.spyOn(checkoutClient, 'loadOrder')
+                .mockReturnValue(Promise.resolve(getResponse(getOrder())));
+        });
+
         it('emits actions if able to load order', async () => {
             const actions = await orderActionCreator.loadOrder(295)
                 .toArray()
@@ -82,13 +89,61 @@ describe('OrderActionCreator', () => {
         });
     });
 
+    describe('#loadCurrentOrder()', () => {
+        beforeEach(() => {
+            jest.spyOn(checkoutClient, 'loadOrder')
+                .mockReturnValue(Promise.resolve(getResponse(getOrder())));
+        });
+
+        it('loads order by using order id from order object', async () => {
+            await orderActionCreator.loadCurrentOrder()(store)
+                .toPromise();
+
+            expect(checkoutClient.loadOrder).toHaveBeenCalledWith(295, undefined);
+        });
+
+        it('loads order by using order id from checkout object if order object is unavailable', async () => {
+            store = createCheckoutStore({
+                ...state,
+                checkout: undefined,
+                order: getOrderState(),
+            });
+
+            await orderActionCreator.loadCurrentOrder()(store)
+                .toPromise();
+
+            expect(checkoutClient.loadOrder).toHaveBeenCalledWith(295, undefined);
+        });
+
+        it('throws error if there is no existing order id', async () => {
+            store = createCheckoutStore();
+
+            try {
+                await orderActionCreator.loadCurrentOrder()(store)
+                    .toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('loads order only when action is dispatched', async () => {
+            const action = orderActionCreator.loadCurrentOrder()(store);
+
+            expect(checkoutClient.loadOrder).not.toHaveBeenCalled();
+
+            await store.dispatch(action);
+
+            expect(checkoutClient.loadOrder).toHaveBeenCalled();
+        });
+    });
+
     describe('#submitOrder()', () => {
         let errorResponse;
         let loadResponse;
         let submitResponse;
 
         beforeEach(() => {
-            loadResponse = getResponse(getCompleteOrderResponseBody());
+            loadResponse = getResponse(getOrder());
             submitResponse = getResponse(getSubmitOrderResponseBody(), getSubmitOrderResponseHeaders());
             errorResponse = getErrorResponse();
 
@@ -117,6 +172,8 @@ describe('OrderActionCreator', () => {
                         token: submitResponse.headers.token,
                     },
                 },
+                { type: OrderActionType.LoadOrderRequested },
+                { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
             ]);
         });
 
@@ -155,6 +212,7 @@ describe('OrderActionCreator', () => {
                 .mockReturnValue(Promise.reject('foo'));
 
             store = createCheckoutStore({
+                ...state,
                 cart: merge({}, getCartState(), { data: { ...getCart(), currency: 'JPY' } }),
                 config: getConfigState(),
             });
@@ -175,6 +233,9 @@ describe('OrderActionCreator', () => {
         beforeEach(() => {
             response = getResponse(getCompleteOrderResponseBody());
             errorResponse = getErrorResponse();
+
+            jest.spyOn(checkoutClient, 'loadOrder')
+                .mockReturnValue(Promise.resolve(getResponse(getOrder())));
         });
 
         it('emits actions if able to finalize order', async () => {
@@ -188,6 +249,8 @@ describe('OrderActionCreator', () => {
             expect(actions).toEqual([
                 { type: OrderActionType.FinalizeOrderRequested },
                 { type: OrderActionType.FinalizeOrderSucceeded, payload: response.body.data },
+                { type: OrderActionType.LoadOrderRequested },
+                { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
             ]);
         });
 
