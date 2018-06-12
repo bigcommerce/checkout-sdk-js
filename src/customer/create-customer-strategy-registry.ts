@@ -8,7 +8,7 @@ import { createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader }
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 
-import { CustomerStrategyActionCreator } from '.';
+import { CustomerRequestSender, CustomerStrategyActionCreator } from '.';
 import CustomerActionCreator from './customer-action-creator';
 import {
     AmazonPayCustomerStrategy,
@@ -24,6 +24,7 @@ export default function createCustomerStrategyRegistry(
     const registry = new Registry<CustomerStrategy>();
     const requestSender = createRequestSender();
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
+    const checkoutActionCreator = new CheckoutActionCreator(new CheckoutRequestSender(requestSender));
 
     registry.register('amazon', () =>
         new AmazonPayCustomerStrategy(
@@ -38,7 +39,7 @@ export default function createCustomerStrategyRegistry(
     registry.register('braintreevisacheckout', () =>
         new BraintreeVisaCheckoutCustomerStrategy(
             store,
-            new CheckoutActionCreator(new CheckoutRequestSender(requestSender)),
+            checkoutActionCreator,
             new PaymentMethodActionCreator(client),
             new CustomerStrategyActionCreator(registry),
             new RemoteCheckoutActionCreator(remoteCheckoutRequestSender),
@@ -50,7 +51,10 @@ export default function createCustomerStrategyRegistry(
     registry.register('default', () =>
         new DefaultCustomerStrategy(
             store,
-            new CustomerActionCreator(client)
+            new CustomerActionCreator(
+                new CustomerRequestSender(requestSender),
+                checkoutActionCreator
+            )
         )
     );
 

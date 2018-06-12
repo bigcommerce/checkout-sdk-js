@@ -1,27 +1,27 @@
-import { isEqual, mapValues, omit } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
 import { omitPrivate } from '../common/utility';
 
-import InternalCart from './internal-cart';
+import Cart from './cart';
+import { LineItem } from './line-item';
+import LineItemMap from './line-item-map';
 
 export default class CartComparator {
-    isEqual(cartA: InternalCart, cartB: InternalCart): boolean {
+    isEqual(cartA: Cart, cartB: Cart): boolean {
         return isEqual(
             this._normalize(cartA),
             this._normalize(cartB)
         );
     }
 
-    _normalize(cart: InternalCart): InternalCart {
-        return omitPrivate({
-            ...cart,
-            taxSubtotal: cart.taxTotal,
-            giftCertificate: {
-                appliedGiftCertificates: mapValues(cart.giftCertificate.appliedGiftCertificates, gc => omit(gc, 'giftCertificate')),
-            },
-            items: cart.items && cart.items.map(
-                (item: any) => omit(item, ['id', 'imageUrl', 'tax', 'integerTax'])
-            ),
-        });
+    private _normalize(cart: Cart): Cart {
+        const lineItems = Object.keys(cart.lineItems)
+            .reduce((result, key) => ({
+                ...result,
+                [key]: (cart.lineItems[key as keyof LineItemMap] as LineItem[])
+                    .map(item => omit(item, ['id', 'imageUrl'])),
+            }), {} as LineItemMap);
+
+        return omitPrivate(omit({ ...cart, lineItems }, ['updatedTime']));
     }
 }

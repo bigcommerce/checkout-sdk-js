@@ -1,6 +1,6 @@
 import { InternalAddress } from '../address';
 import { BillingAddressSelector } from '../billing';
-import { CartSelector, InternalCart } from '../cart';
+import { mapToInternalCart, InternalCart } from '../cart';
 import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
@@ -32,7 +32,6 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 @selector
 export default class CheckoutStoreSelector {
     private _billingAddress: BillingAddressSelector;
-    private _cart: CartSelector;
     private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
     private _countries: CountrySelector;
@@ -52,7 +51,6 @@ export default class CheckoutStoreSelector {
      */
     constructor(selectors: InternalCheckoutSelectors) {
         this._billingAddress = selectors.billingAddress;
-        this._cart = selectors.cart;
         this._checkout = selectors.checkout;
         this._config = selectors.config;
         this._countries = selectors.countries;
@@ -214,7 +212,9 @@ export default class CheckoutStoreSelector {
      * @returns The current cart object if it is loaded, otherwise undefined.
      */
     getCart(): InternalCart | undefined {
-        return this._cart.getCart();
+        const checkout = this._checkout.getCheckout();
+
+        return checkout ? mapToInternalCart(checkout) : undefined;
     }
 
     /**

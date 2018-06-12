@@ -11,7 +11,6 @@ import { ConfigActionCreator } from '../config';
 import { getConfig, getConfigState } from '../config/configs.mock';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
-import { getCustomerResponseBody, getGuestCustomer } from '../customer/internal-customers.mock';
 import { getFormFields } from '../form/form.mocks';
 import { CountryActionCreator } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
@@ -21,7 +20,7 @@ import { getOrder } from '../order/orders.mock';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
 import { InstrumentActionCreator } from '../payment/instrument';
-import { deleteInstrumentResponseBody, getInstrumentsMeta, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
+import { deleteInstrumentResponseBody, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
@@ -36,12 +35,14 @@ import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 
 describe('CheckoutService', () => {
+    let billingAddressActionCreator;
     let checkoutClient;
     let checkoutService;
     let checkoutValidator;
     let checkoutRequestSender;
     let couponRequestSender;
-    let customerStrategyRegistry;
+    let customerStrategyActionCreator;
+    let instrumentActionCreator;
     let paymentStrategy;
     let paymentStrategyRegistry;
     let shippingStrategyActionCreator;
@@ -84,14 +85,6 @@ describe('CheckoutService', () => {
 
             loadShippingCountries: jest.fn(() =>
                 Promise.resolve(getResponse(getCountriesResponseBody()))
-            ),
-
-            signInCustomer: jest.fn(() =>
-                Promise.resolve(getResponse(getCustomerResponseBody())),
-            ),
-
-            signOutCustomer: jest.fn(() =>
-                Promise.resolve(getResponse(getCustomerResponseBody())),
             ),
 
             loadShippingOptions: jest.fn(() =>
@@ -159,12 +152,6 @@ describe('CheckoutService', () => {
             ),
         };
 
-        shippingStrategyActionCreator = new ShippingStrategyActionCreator(
-            createShippingStrategyRegistry(store, checkoutClient)
-        );
-
-        customerStrategyRegistry = createCustomerStrategyRegistry(store, checkoutClient);
-
         checkoutRequestSender = {
             loadCheckout: jest.fn(() =>
                 Promise.resolve(getResponse(getCheckout())),
@@ -185,17 +172,29 @@ describe('CheckoutService', () => {
             validate: jest.fn(() => Promise.resolve()),
         };
 
+        billingAddressActionCreator = new BillingAddressActionCreator(checkoutClient);
+
+        customerStrategyActionCreator = new CustomerStrategyActionCreator(
+            createCustomerStrategyRegistry(store, checkoutClient)
+        );
+
+        instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
+
+        shippingStrategyActionCreator = new ShippingStrategyActionCreator(
+            createShippingStrategyRegistry(store, checkoutClient)
+        );
+
         checkoutService = new CheckoutService(
             store,
-            new BillingAddressActionCreator(checkoutClient),
+            billingAddressActionCreator,
             new CheckoutActionCreator(checkoutRequestSender),
             new ConfigActionCreator(checkoutClient),
             new ConsignmentActionCreator(checkoutClient, checkoutRequestSender),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(couponRequestSender),
-            new CustomerStrategyActionCreator(customerStrategyRegistry),
+            customerStrategyActionCreator,
             new GiftCertificateActionCreator(giftCertificateRequestSender),
-            new InstrumentActionCreator(checkoutClient),
+            instrumentActionCreator,
             new OrderActionCreator(checkoutClient, checkoutValidator),
             new PaymentMethodActionCreator(checkoutClient),
             new PaymentStrategyActionCreator(
@@ -551,138 +550,86 @@ describe('CheckoutService', () => {
     });
 
     describe('#initializeCustomer()', () => {
-        it('finds customer strategy by id', async () => {
+        it('dispatches action to initialize customer', async () => {
             const options = { methodId: getPaymentMethod().id };
+            const action = Observable.of(createAction('INITIALIZE_CUSTOMER'));
 
-            jest.spyOn(customerStrategyRegistry, 'get');
+            jest.spyOn(customerStrategyActionCreator, 'initialize')
+                .mockReturnValue(action);
 
-            await checkoutService.initializeCustomer(options);
-
-            expect(customerStrategyRegistry.get).toHaveBeenCalledWith(options.methodId);
-        });
-
-        it('initializes default customer strategy if method id is not provided', async () => {
-            const strategy = customerStrategyRegistry.get('default');
-            const options = {};
-
-            jest.spyOn(strategy, 'initialize');
+            jest.spyOn(store, 'dispatch');
 
             await checkoutService.initializeCustomer(options);
 
-            expect(strategy.initialize).toHaveBeenCalledWith(options);
-        });
-
-        it('returns current state', async () => {
-            const output = await checkoutService.initializeCustomer();
-
-            expect(output).toEqual(checkoutService.getState());
+            expect(customerStrategyActionCreator.initialize).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'customerStrategy' });
         });
     });
 
     describe('#deinitializeCustomer()', () => {
-        it('finds and uses customer strategy by id', async () => {
-            const methodId = 'amazon';
-            const strategy = customerStrategyRegistry.get(methodId);
+        it('dispatches action to deinitialize customer', async () => {
+            const options = { methodId: getPaymentMethod().id };
+            const action = Observable.of(createAction('DEINITIALIZE_CUSTOMER'));
 
-            jest.spyOn(customerStrategyRegistry, 'get');
-            jest.spyOn(strategy, 'deinitialize');
+            jest.spyOn(customerStrategyActionCreator, 'deinitialize')
+                .mockReturnValue(action);
 
-            await checkoutService.deinitializeCustomer({ methodId });
+            jest.spyOn(store, 'dispatch');
 
-            expect(customerStrategyRegistry.get).toHaveBeenCalledWith(methodId);
-            expect(strategy.deinitialize).toHaveBeenCalled();
-        });
+            await checkoutService.deinitializeCustomer(options);
 
-        it('uses default customer strategy by default', async () => {
-            const strategy = customerStrategyRegistry.get('default');
-
-            jest.spyOn(strategy, 'deinitialize');
-
-            await checkoutService.deinitializeCustomer();
-
-            expect(strategy.deinitialize).toHaveBeenCalled();
-        });
-
-        it('returns current state', async () => {
-            const output = await checkoutService.deinitializeCustomer();
-
-            expect(output).toEqual(checkoutService.getState());
+            expect(customerStrategyActionCreator.deinitialize).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'customerStrategy' });
         });
     });
 
-    describe('#signInGuest()', () => {
-        const credentials = { email: 'foo@bar.com' };
+    describe('#continueAsGuest()', () => {
+        it('dispatches action to continue as guest', async () => {
+            const action = Observable.of(createAction('SIGN_IN_GUEST'));
 
-        it('stores the email in the customer store', async () => {
-            const { checkout } = await checkoutService.signInGuest(credentials);
+            jest.spyOn(billingAddressActionCreator, 'updateAddress')
+                .mockReturnValue(action);
 
-            expect(checkout.getCustomer().email).toEqual('foo@bar.com');
-        });
+            jest.spyOn(store, 'dispatch');
 
-        it('sends a request to update billing address', async () => {
-            await checkoutService.signInGuest(credentials);
-            expect(checkoutClient.updateBillingAddress).toHaveBeenCalled();
+            await checkoutService.continueAsGuest({ email: 'foo@bar.com' });
+
+            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith({ email: 'foo@bar.com' }, undefined);
+            expect(store.dispatch).toHaveBeenCalledWith(action);
         });
     });
 
     describe('#signInCustomer()', () => {
-        it('finds customer strategy by id', async () => {
-            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+        it('dispatches action to sign in customer', async () => {
             const options = { methodId: getPaymentMethod().id };
+            const action = Observable.of(createAction('SIGN_IN_CUSTOMER'));
 
-            jest.spyOn(customerStrategyRegistry, 'get');
+            jest.spyOn(customerStrategyActionCreator, 'signIn')
+                .mockReturnValue(action);
 
-            await checkoutService.signInCustomer(credentials, options);
+            jest.spyOn(store, 'dispatch');
 
-            expect(customerStrategyRegistry.get).toHaveBeenCalledWith(options.methodId);
-        });
+            await checkoutService.signInCustomer({ email: 'foo@bar.com', password: 'password1' }, options);
 
-        it('uses default customer strategy by default', async () => {
-            const strategy = customerStrategyRegistry.get('default');
-            const credentials = { email: 'foo@bar.com', password: 'foobar' };
-            const options = {};
-
-            jest.spyOn(strategy, 'signIn');
-
-            await checkoutService.signInCustomer(credentials, options);
-
-            expect(strategy.signIn).toHaveBeenCalledWith(credentials, options);
-        });
-
-        it('signs in customer', async () => {
-            const credentials = { email: 'foo@bar.com', password: 'foobar' };
-            const { checkout } = await checkoutService.signInCustomer(credentials);
-
-            expect(checkout.getCustomer()).toEqual(getCustomerResponseBody().data.customer);
+            expect(customerStrategyActionCreator.signIn).toHaveBeenCalledWith({ email: 'foo@bar.com', password: 'password1' }, options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'customerStrategy' });
         });
     });
 
     describe('#signOutCustomer()', () => {
-        it('finds customer strategy by id', async () => {
+        it('dispatches action to sign out customer', async () => {
             const options = { methodId: getPaymentMethod().id };
+            const action = Observable.of(createAction('SIGN_OUT_CUSTOMER'));
 
-            jest.spyOn(customerStrategyRegistry, 'get');
+            jest.spyOn(customerStrategyActionCreator, 'signOut')
+                .mockReturnValue(action);
 
-            await checkoutService.signOutCustomer(options);
-
-            expect(customerStrategyRegistry.get).toHaveBeenCalledWith(options.methodId);
-        });
-
-        it('uses default customer strategy by default', async () => {
-            const strategy = customerStrategyRegistry.get('default');
-            const options = {};
-
-            jest.spyOn(strategy, 'signOut');
+            jest.spyOn(store, 'dispatch');
 
             await checkoutService.signOutCustomer(options);
 
-            expect(strategy.signOut).toHaveBeenCalledWith(options);
-        });
-
-        it('signs in customer', async () => {
-            const { checkout } = await checkoutService.signOutCustomer();
-
-            expect(checkout.getCustomer()).toEqual(getCustomerResponseBody().data.customer);
+            expect(customerStrategyActionCreator.signOut).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'customerStrategy' });
         });
     });
 
@@ -822,31 +769,34 @@ describe('CheckoutService', () => {
 
     describe('#loadInstruments()', () => {
         it('loads instruments', async () => {
-            const { storeId } = getConfig().storeConfig.storeProfile;
-            const { customerId } = getGuestCustomer();
-            const { vaultAccessToken } = getInstrumentsMeta();
-            const shippingAddress = getShippingAddress();
+            const action = Observable.of(createAction('LOAD_INSTRUMENTS'));
 
-            await checkoutService.signInCustomer();
+            jest.spyOn(instrumentActionCreator, 'loadInstruments')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
             await checkoutService.loadInstruments();
 
-            expect(checkoutClient.loadInstruments)
-                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, shippingAddress);
+            expect(instrumentActionCreator.loadInstruments).toHaveBeenCalled();
+            expect(store.dispatch).toHaveBeenCalledWith(action);
         });
     });
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
             const instrumentId = '456';
-            const { storeId } = getConfig().storeConfig.storeProfile;
-            const { customerId } = getGuestCustomer();
-            const { vaultAccessToken } = getInstrumentsMeta();
+            const action = Observable.of(createAction('DELETE_INSTRUMENT'));
 
-            await checkoutService.signInCustomer();
+            jest.spyOn(instrumentActionCreator, 'deleteInstrument')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
             await checkoutService.deleteInstrument(instrumentId);
 
-            expect(checkoutClient.deleteInstrument)
-                .toHaveBeenCalledWith({ storeId, customerId, authToken: vaultAccessToken }, instrumentId);
+            expect(instrumentActionCreator.deleteInstrument).toHaveBeenCalledWith(instrumentId);
+            expect(store.dispatch).toHaveBeenCalledWith(action);
         });
     });
 });

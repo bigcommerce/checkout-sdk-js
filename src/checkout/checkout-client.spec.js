@@ -2,7 +2,6 @@ import { createTimeout } from '@bigcommerce/request-sender';
 import { getConfig } from '../config/configs.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
-import { getCart } from '../cart/internal-carts.mock';
 import { getCompleteOrder } from '../order/internal-orders.mock';
 import { getCheckout } from './checkouts.mock';
 import { getCountries } from '../geography/countries.mock';
@@ -15,7 +14,6 @@ import { getConsignmentRequestBody } from '../shipping/consignments.mock';
 describe('CheckoutClient', () => {
     let client;
     let billingAddressRequestSender;
-    let cartRequestSender;
     let configRequestSender;
     let countryRequestSender;
     let customerRequestSender;
@@ -29,10 +27,6 @@ describe('CheckoutClient', () => {
         billingAddressRequestSender = {
             updateAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
             createAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
-        };
-
-        cartRequestSender = {
-            loadCart: jest.fn(() => Promise.resolve(getResponse(getCart()))),
         };
 
         configRequestSender = {
@@ -79,7 +73,6 @@ describe('CheckoutClient', () => {
 
         client = new CheckoutClient(
             billingAddressRequestSender,
-            cartRequestSender,
             configRequestSender,
             consignmentRequestSender,
             countryRequestSender,
@@ -192,23 +185,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getResponse(getPaymentMethod()));
             expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledWith('braintree', options);
-        });
-    });
-
-    describe('#loadCart()', () => {
-        it('loads cart', async () => {
-            const output = await client.loadCart();
-
-            expect(output).toEqual(getResponse(getCart()));
-            expect(cartRequestSender.loadCart).toHaveBeenCalled();
-        });
-
-        it('loads cart with timeout', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.loadCart(options);
-
-            expect(output).toEqual(getResponse(getCart()));
-            expect(cartRequestSender.loadCart).toHaveBeenCalledWith(options);
         });
     });
 

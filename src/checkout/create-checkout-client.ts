@@ -1,7 +1,6 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressRequestSender } from '../billing';
-import { CartRequestSender } from '../cart';
 import { ConfigRequestSender } from '../config';
 import { CustomerRequestSender } from '../customer';
 import { CountryRequestSender } from '../geography';
@@ -16,7 +15,6 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
     const requestSender = createRequestSender();
 
     const billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
-    const cartRequestSender = new CartRequestSender(requestSender);
     const configRequestSender = new ConfigRequestSender(requestSender);
     const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const countryRequestSender = new CountryRequestSender(requestSender, config);
@@ -28,7 +26,6 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
 
     return new CheckoutClient(
         billingAddressRequestSender,
-        cartRequestSender,
         configRequestSender,
         consignmentRequestSender,
         countryRequestSender,

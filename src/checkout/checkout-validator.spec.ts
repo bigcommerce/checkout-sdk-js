@@ -1,9 +1,11 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
+import { getCart } from '../cart/carts.mock';
 import { CartChangedError } from '../cart/errors';
-import { getCart } from '../cart/internal-carts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getResponse } from '../common/http-request/responses.mock';
+import { getCoupon } from '../coupon/coupons.mock';
+import { getGiftCertificate } from '../coupon/gift-certificates.mock';
 
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutValidator from './checkout-validator';
@@ -12,7 +14,7 @@ import { getCheckout } from './checkouts.mock';
 describe('CheckoutValidator', () => {
     const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const cart = getCart();
+    const checkout = getCheckout();
 
     describe('validate()', () => {
         beforeEach(() => {
@@ -25,7 +27,7 @@ describe('CheckoutValidator', () => {
         });
 
         it('calls loadCheckout when cart is passed', () => {
-            checkoutValidator.validate(cart, {});
+            checkoutValidator.validate(checkout, {});
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith('b20deef40f9699e48671bbc3fef6ca44dc80e3c7', {});
         });
@@ -39,7 +41,7 @@ describe('CheckoutValidator', () => {
             it('returns a rejected promise containing the original reason', async () => {
                 const errorHandler = jest.fn(() => {});
 
-                await checkoutValidator.validate(cart, {})
+                await checkoutValidator.validate(checkout, {})
                     .catch(errorHandler);
 
                 expect(errorHandler).toHaveBeenCalledWith({ foo: 'bar' });
@@ -55,7 +57,7 @@ describe('CheckoutValidator', () => {
             it('resolves when cart content matches', async () => {
                 const successHandler = jest.fn(() => {});
 
-                await checkoutValidator.validate(cart)
+                await checkoutValidator.validate(checkout)
                     .then(successHandler);
 
                 expect(successHandler).toHaveBeenCalled();
@@ -63,11 +65,61 @@ describe('CheckoutValidator', () => {
 
             it('rejects with "cart changed error" when carts do not match', async () => {
                 const errorHandler = jest.fn(() => {});
+                const cart = getCart();
 
-                await checkoutValidator.validate({ ...cart, id: 'foo' })
+                await checkoutValidator.validate({
+                    ...checkout,
+                    cart: {
+                        ...cart,
+                        lineItems: {
+                            ...cart.lineItems,
+                            physicalItems: [],
+                        },
+                    },
+                })
                     .catch(errorHandler);
 
                 expect(errorHandler).toHaveBeenCalledWith(new CartChangedError());
+            });
+
+            it('rejects with "cart changed error" if grand totals are different', async () => {
+                try {
+                    await checkoutValidator.validate({
+                        ...checkout,
+                        grandTotal: 10,
+                    });
+                } catch (error) {
+                    expect(error).toBeInstanceOf(CartChangedError);
+                }
+            });
+
+            it('rejects with "cart changed error" if coupons are different', async () => {
+                try {
+                    await checkoutValidator.validate({
+                        ...checkout,
+                        coupons: [getCoupon(), getCoupon()],
+                    });
+                } catch (error) {
+                    expect(error).toBeInstanceOf(CartChangedError);
+                }
+            });
+
+            it('rejects with "cart changed error" if gift certificates are different', async () => {
+                try {
+                    await checkoutValidator.validate({
+                        ...checkout,
+                        giftCertificates: [getGiftCertificate(), getGiftCertificate()],
+                    });
+                } catch (error) {
+                    expect(error).toBeInstanceOf(CartChangedError);
+                }
+            });
+
+            it('does not reject "cart changed error" if only update timestamp is different', async () => {
+                await expect(checkoutValidator.validate({
+                    ...checkout,
+                    updatedTime: '2018-06-01T14:31:40+00:00',
+                })).resolves.toBeUndefined();
             });
         });
     });

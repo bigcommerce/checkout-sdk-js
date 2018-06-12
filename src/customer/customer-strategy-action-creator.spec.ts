@@ -1,10 +1,12 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 
 import createCustomerStrategyRegistry from './create-customer-strategy-registry';
 import CustomerActionCreator from './customer-action-creator';
+import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategyActionType } from './customer-strategy-actions';
 import { CustomerStrategy, DefaultCustomerStrategy } from './strategies';
@@ -21,7 +23,12 @@ describe('CustomerStrategyActionCreator', () => {
         registry = createCustomerStrategyRegistry(store, client);
         strategy = new DefaultCustomerStrategy(
             store,
-            new CustomerActionCreator(client)
+            new CustomerActionCreator(
+                new CustomerRequestSender(createRequestSender()),
+                new CheckoutActionCreator(
+                    new CheckoutRequestSender(createRequestSender())
+                )
+            )
         );
 
         jest.spyOn(registry, 'get')

@@ -34,7 +34,7 @@ describe('CustomerRequestSender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
                 body: credentials,
                 params: {
-                    includes: 'cart,quote,shippingOptions',
+                    includes: 'quote,shippingOptions',
                 },
             });
         });
@@ -48,7 +48,7 @@ describe('CustomerRequestSender', () => {
                 ...options,
                 body: credentials,
                 params: {
-                    includes: 'cart,quote,shippingOptions',
+                    includes: 'quote,shippingOptions',
                 },
             });
         });
@@ -69,7 +69,7 @@ describe('CustomerRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
                 params: {
-                    includes: 'cart,quote,shippingOptions',
+                    includes: 'quote,shippingOptions',
                 },
             });
         });
@@ -82,7 +82,7 @@ describe('CustomerRequestSender', () => {
             expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
                 ...options,
                 params: {
-                    includes: 'cart,quote,shippingOptions',
+                    includes: 'quote,shippingOptions',
                 },
             });
         });

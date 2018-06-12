@@ -17,6 +17,13 @@ export default class CheckoutSelector {
         return this._checkout.errors.loadError;
     }
 
+    isPaymentDataRequired(useStoreCredit: boolean = false): boolean {
+        const grandTotal = this._checkout.data && this._checkout.data.grandTotal || 0;
+        const storeCredit = this._checkout.data && this._checkout.data.customer.storeCredit || 0;
+
+        return (useStoreCredit ? grandTotal - storeCredit : grandTotal) > 0;
+    }
+
     isLoading(): boolean {
         return this._checkout.statuses.isLoading === true;
     }

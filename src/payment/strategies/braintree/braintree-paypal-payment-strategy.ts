@@ -82,14 +82,13 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
     private _preparePaymentData(payment: OrderPaymentRequestBody): Promise<Payment> {
         const state = this._store.getState();
-        const cart = state.cart.getCart();
+        const checkout = state.checkout.getCheckout();
         const config = state.config.getStoreConfig();
 
-        if (!cart || !config || !this._paymentMethod) {
-            throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (${payment.methodId})" data is missing.`);
+        if (!checkout || !config || !this._paymentMethod) {
+            throw new MissingDataError(`Unable to prepare payment data because "checkout", "config" or "paymentMethod (${payment.methodId})" data is missing.`);
         }
 
-        const { amount } = cart.grandTotal;
         const { currency, storeProfile: { storeLanguage } } = config;
         const { method, nonce } = this._paymentMethod;
 
@@ -98,7 +97,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         }
 
         const tokenizedCard = this._braintreePaymentProcessor
-            .paypal(amount, storeLanguage, currency.code, this._credit);
+            .paypal(checkout.grandTotal, storeLanguage, currency.code, this._credit);
 
         return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
             .then(paymentData => ({ ...payment, paymentData: { ...paymentData, method } }));

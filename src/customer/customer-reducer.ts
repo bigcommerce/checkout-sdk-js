@@ -15,7 +15,7 @@ export default function customerReducer(
     state: CustomerState = DEFAULT_STATE,
     action: CheckoutAction | BillingAddressAction | CustomerAction | OrderAction
 ): CustomerState {
-    const reducer = combineReducers<any>({
+    const reducer = combineReducers<CustomerState, CheckoutAction | BillingAddressAction | CustomerAction | OrderAction>({
         data: dataReducer,
     });
 

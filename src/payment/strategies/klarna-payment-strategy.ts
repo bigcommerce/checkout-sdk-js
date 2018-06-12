@@ -29,9 +29,9 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                 this._unsubscribe = this._store.subscribe(
                     () => this._loadWidget(options),
                     state => {
-                        const cart = state.cart.getCart();
+                        const checkout = state.checkout.getCheckout();
 
-                        return cart && cart.grandTotal;
+                        return checkout && checkout.grandTotal;
                     }
                 );
 

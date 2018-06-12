@@ -41,10 +41,10 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
             .then(state => {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
-                const cart = state.cart.getCart();
+                const checkout = state.checkout.getCheckout();
                 const storeConfig = state.config.getStoreConfig();
 
-                if (!cart || !storeConfig || !this._paymentMethod || !this._paymentMethod.clientToken) {
+                if (!checkout || !storeConfig || !this._paymentMethod || !this._paymentMethod.clientToken) {
                     throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (Visa Checkout)" data is missing.`);
                 }
 
@@ -56,7 +56,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
                 const initOptions = {
                     locale: storeConfig.storeProfile.storeLanguage,
                     collectShipping: false,
-                    subtotal: cart.subtotal.amount,
+                    subtotal: checkout.subtotal,
                     currencyCode: storeConfig.currency.code,
                 };
 

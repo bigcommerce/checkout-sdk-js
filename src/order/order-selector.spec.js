@@ -22,7 +22,7 @@ describe('OrderSelector', () => {
 
     describe('#getOrder()', () => {
         it('returns the current order', () => {
-            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order);
 
             expect(orderSelector.getOrder()).toEqual(order);
         });
@@ -30,7 +30,7 @@ describe('OrderSelector', () => {
 
     describe('#getOrderMeta()', () => {
         it('returns order meta', () => {
-            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order);
 
             expect(orderSelector.getOrderMeta()).toEqual(getSubmittedOrderState().meta);
         });
@@ -43,13 +43,13 @@ describe('OrderSelector', () => {
             orderSelector = new OrderSelector({
                 ...state.order,
                 errors: { loadError },
-            }, state.payment, state.customer, state.cart);
+            });
 
             expect(orderSelector.getLoadError()).toEqual(loadError);
         });
 
         it('does not returns error if able to load', () => {
-            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order);
 
             expect(orderSelector.getLoadError()).toBeUndefined();
         });
@@ -60,13 +60,13 @@ describe('OrderSelector', () => {
             orderSelector = new OrderSelector({
                 ...state.order,
                 statuses: { isLoading: true },
-            }, state.payment, state.customer, state.cart);
+            });
 
             expect(orderSelector.isLoading()).toEqual(true);
         });
 
         it('returns false if not loading order', () => {
-            orderSelector = new OrderSelector(state.order, state.customer, state.cart);
+            orderSelector = new OrderSelector(state.order);
 
             expect(orderSelector.isLoading()).toEqual(false);
         });

@@ -1,7 +1,7 @@
 import { selector } from '../common/selector';
 
+import Cart from './cart';
 import CartState from './cart-state';
-import InternalCart from './internal-cart';
 
 @selector
 export default class CartSelector {
@@ -9,7 +9,7 @@ export default class CartSelector {
         private _cart: CartState
     ) {}
 
-    getCart(): InternalCart | undefined {
+    getCart(): Cart | undefined {
         return this._cart.data;
     }
 
