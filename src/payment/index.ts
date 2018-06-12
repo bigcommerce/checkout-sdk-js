@@ -1,6 +1,7 @@
 export * from './payment-request-options';
 export * from './payment-method-responses';
 export * from './payment-method-types';
+export * from './payment-status-types';
 
 export { default as createPaymentClient } from './create-payment-client';
 export { default as createPaymentStrategyRegistry } from './create-payment-strategy-registry';
@@ -16,6 +17,7 @@ export { default as PaymentMethodSelector } from './payment-method-selector';
 export { default as PaymentMethodState } from './payment-method-state';
 export { default as paymentReducer } from './payment-reducer';
 export { default as PaymentRequestSender } from './payment-request-sender';
+export { default as PaymentSelector } from './payment-selector';
 export { default as PaymentState } from './payment-state';
 export { default as PaymentStrategyActionCreator } from './payment-strategy-action-creator';
 export { default as paymentStrategyReducer } from './payment-strategy-reducer';

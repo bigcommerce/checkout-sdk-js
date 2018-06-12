@@ -1,9 +1,6 @@
-import { CheckoutActionType } from '../checkout';
-import { getCheckoutWithPayments } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
-import { mapToInternalIncompleteOrder } from './map-to-internal-order';
 import { getOrder } from './orders.mock';
 import { OrderActionType } from './order-actions';
 import orderReducer from './order-reducer';
@@ -31,12 +28,8 @@ describe('orderReducer()', () => {
             payload: getOrder(),
         };
 
-        initialState = {
-            data: getCompleteOrderResponseBody().data.order,
-        };
-
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: initialState.data,
+            data: action.payload,
             statuses: { isLoading: false },
         }));
     });
@@ -54,17 +47,6 @@ describe('orderReducer()', () => {
         }));
     });
 
-    it('returns new data if checkout is fetched successfully', () => {
-        const action = {
-            type: CheckoutActionType.LoadCheckoutSucceeded,
-            payload: getCheckoutWithPayments(),
-        };
-
-        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: mapToInternalIncompleteOrder(action.payload),
-        }));
-    });
-
     it('returns new data if it is submitted successfully', () => {
         const response = getSubmitOrderResponseBody();
         const headers = getSubmitOrderResponseHeaders();
@@ -78,12 +60,11 @@ describe('orderReducer()', () => {
         };
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            meta: expect.objectContaining({
+            meta: {
                 deviceFingerprint: response.meta.deviceFingerprint,
                 token: headers.token,
                 payment: action.payload.order.payment,
-            }),
-            data: action.payload.order,
+            },
         }));
     });
 
@@ -96,7 +77,9 @@ describe('orderReducer()', () => {
         };
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.order,
+            meta: {
+                payment: action.payload.order.payment,
+            },
         }));
     });
 });

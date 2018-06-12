@@ -28,10 +28,4 @@ describe('CheckoutSelector', () => {
 
         expect(selector.isLoading()).toEqual(true);
     });
-
-    it('returns payment method used for checkout', () => {
-        const selector = new CheckoutSelector({ ...getCheckoutState(), data: getCheckoutWithPayments() });
-
-        expect(selector.getHostedPayment().providerId).toEqual(getPaymentMethod().id);
-    });
 });

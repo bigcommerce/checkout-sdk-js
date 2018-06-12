@@ -1,9 +1,6 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
-import { CheckoutAction, CheckoutActionType } from '../checkout';
-
-import InternalOrder, { InternalIncompleteOrder } from './internal-order';
-import mapToInternalOrder, { mapToInternalIncompleteOrder } from './map-to-internal-order';
+import Order from './order';
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 
@@ -15,7 +12,7 @@ const DEFAULT_STATE: OrderState = {
 
 export default function orderReducer(
     state: OrderState = DEFAULT_STATE,
-    action: OrderAction | CheckoutAction
+    action: OrderAction
 ): OrderState {
     const reducer = combineReducers<OrderState>({
         data: dataReducer,
@@ -28,19 +25,12 @@ export default function orderReducer(
 }
 
 function dataReducer(
-    data: InternalOrder | InternalIncompleteOrder | undefined,
-    action: OrderAction | CheckoutAction
-): InternalOrder | InternalIncompleteOrder | undefined {
+    data: Order | undefined,
+    action: OrderAction
+): Order | undefined {
     switch (action.type) {
     case OrderActionType.LoadOrderSucceeded:
-        return action.payload ? { ...data, ...mapToInternalOrder(action.payload) } : data;
-
-    case CheckoutActionType.LoadCheckoutSucceeded:
-        return action.payload ? { ...data, ...mapToInternalIncompleteOrder(action.payload) } : data;
-
-    case OrderActionType.FinalizeOrderSucceeded:
-    case OrderActionType.SubmitOrderSucceeded:
-        return action.payload ? { ...data, ...action.payload.order } : data;
+        return action.payload ? action.payload : data;
 
     default:
         return data;
@@ -52,6 +42,7 @@ function metaReducer(
     action: OrderAction
 ): OrderMetaState | undefined {
     switch (action.type) {
+    case OrderActionType.FinalizeOrderSucceeded:
     case OrderActionType.SubmitOrderSucceeded:
         return action.payload ? {
             ...meta,

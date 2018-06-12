@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import { merge, omit } from 'lodash';
 
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
-import { MissingDataError } from '../../common/error/errors';
-import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
+import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
+import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import PaymentActionCreator from '../payment-action-creator';
 import { INITIALIZE_OFFSITE_PAYMENT_REQUESTED } from '../payment-action-types';
@@ -25,7 +25,7 @@ describe('OffsitePaymentStrategy', () => {
     let submitOrderAction;
 
     beforeEach(() => {
-        store = createCheckoutStore();
+        store = createCheckoutStore(getCheckoutStoreState());
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
@@ -85,11 +85,8 @@ describe('OffsitePaymentStrategy', () => {
         const state = store.getState();
         const options = {};
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
-            payment: {
-                status: paymentStatusTypes.ACKNOWLEDGE,
-            },
-        }));
+        jest.spyOn(state.payment, 'getPaymentStatus')
+            .mockReturnValue(paymentStatusTypes.ACKNOWLEDGE);
 
         await strategy.finalize(options);
 
@@ -101,11 +98,8 @@ describe('OffsitePaymentStrategy', () => {
         const state = store.getState();
         const options = {};
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
-            payment: {
-                status: paymentStatusTypes.FINALIZE,
-            },
-        }));
+        jest.spyOn(state.payment, 'getPaymentStatus')
+            .mockReturnValue(paymentStatusTypes.FINALIZE);
 
         await strategy.finalize(options);
 
@@ -146,10 +140,15 @@ describe('OffsitePaymentStrategy', () => {
     });
 
     it('throws error if unable to finalize due to missing data', async () => {
+        const state = store.getState();
+
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue();
+
         try {
             await strategy.finalize();
         } catch (error) {
-            expect(error).toBeInstanceOf(MissingDataError);
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
         }
     });
 

@@ -1,9 +1,6 @@
-import { find } from 'lodash';
-
 import { selector } from '../common/selector';
-import { HOSTED } from '../payment/payment-method-types';
 
-import Checkout, { CheckoutPayment } from './checkout';
+import Checkout from './checkout';
 import CheckoutState from './checkout-state';
 
 @selector
@@ -14,12 +11,6 @@ export default class CheckoutSelector {
 
     getCheckout(): Checkout | undefined {
         return this._checkout.data;
-    }
-
-    getHostedPayment(): CheckoutPayment | undefined {
-        const payments = this._checkout.data && this._checkout.data.payments;
-
-        return find(payments, { providerType: HOSTED });
     }
 
     getLoadError(): Error | undefined {

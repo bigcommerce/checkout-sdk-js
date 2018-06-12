@@ -9,7 +9,6 @@ export enum CheckoutActionType {
 }
 
 export type CheckoutAction =
-    Action |
     LoadCheckoutRequestedAction |
     LoadCheckoutSucceededAction |
     LoadCheckoutFailedAction;

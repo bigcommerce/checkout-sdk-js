@@ -38,7 +38,7 @@ export default class PaymentStrategyActionCreator {
 
                 let strategy: PaymentStrategy;
 
-                if (state.order.isPaymentDataRequired(useStoreCredit)) {
+                if (state.payment.isPaymentDataRequired(useStoreCredit)) {
                     const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
 
                     if (!method) {
@@ -75,20 +75,21 @@ export default class PaymentStrategyActionCreator {
             const finalizeAction = Observable.create((observer: Observer<PaymentStrategyFinalizeAction>) => {
                 const state = store.getState();
                 const order = state.order.getOrder();
+                const payment = state.payment.getPaymentId();
 
                 if (!order) {
                     throw new MissingDataError('Unable to finalize order because "order" data is missing.');
                 }
 
-                if (!order.payment || !order.payment.id) {
+                if (!payment) {
                     throw new OrderFinalizationNotRequiredError();
                 }
 
-                const method = state.paymentMethods.getPaymentMethod(order.payment.id, order.payment.gateway);
-                const meta = { methodId: order.payment.id };
+                const method = state.paymentMethods.getPaymentMethod(payment.providerId, payment.gatewayId);
+                const meta = { methodId: payment.providerId };
 
                 if (!method) {
-                    throw new MissingDataError(`Unable to finalize payment because "paymentMethod (${order.payment.id})" data is missing.`);
+                    throw new MissingDataError(`Unable to finalize payment because "paymentMethod (${payment.providerId})" data is missing.`);
                 }
 
                 observer.next(createAction(PaymentStrategyActionType.FinalizeRequested, undefined, meta));

@@ -33,12 +33,11 @@ function dataReducer(
 
     case CustomerActionType.SignInCustomerSucceeded:
     case CustomerActionType.SignOutCustomerSucceeded:
-        return action.payload ? { ...data, ...(action as CustomerAction).payload.customer } : data;
+        return action.payload ? { ...data, ...action.payload.customer } : data;
 
-    case OrderActionType.LoadOrderSucceeded:
     case OrderActionType.FinalizeOrderSucceeded:
     case OrderActionType.SubmitOrderSucceeded:
-        return action.payload ? { ...data, ...(action as OrderAction).payload.customer } : data;
+        return action.payload ? { ...data, ...action.payload.customer } : data;
 
     default:
         return data;

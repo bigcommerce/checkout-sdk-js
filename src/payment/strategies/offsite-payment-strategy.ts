@@ -1,5 +1,4 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { PaymentArgumentInvalidError } from '../errors';
 import PaymentActionCreator from '../payment-action-creator';
@@ -35,15 +34,10 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const order = state.order.getOrder();
+        const status = state.payment.getPaymentStatus();
 
-        if (!order) {
-            throw new MissingDataError('Unable to finalize order because "order" data is missing.');
-        }
-
-        const { orderId, payment = {} } = order;
-
-        if (orderId && (payment.status === paymentStatusTypes.ACKNOWLEDGE || payment.status === paymentStatusTypes.FINALIZE)) {
-            return this._store.dispatch(this._orderActionCreator.finalizeOrder(orderId, options));
+        if (order && (status === paymentStatusTypes.ACKNOWLEDGE || status === paymentStatusTypes.FINALIZE)) {
+            return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
         }
 
         return super.finalize();

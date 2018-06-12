@@ -1,17 +1,10 @@
 import { Observable } from 'rxjs';
 
-import { getCartState } from '../cart/internal-carts.mock';
 import { createCheckoutStore } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
-import { getConfigState } from '../config/configs.mock';
-import { getCustomerState } from '../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType } from '../order';
 import { getOrder } from '../order/orders.mock';
-import { getSubmittedOrderState } from '../order/internal-orders.mock';
-import { getInstrumentsState } from '../payment/instrument/instrument.mock';
-import { getPaymentMethodsState } from '../payment/payment-methods.mock';
-import { getQuoteState } from '../quote/internal-quotes.mock';
-import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
 
 import PaymentActionCreator from './payment-action-creator';
 import * as actionTypes from './payment-action-types';
@@ -36,16 +29,7 @@ describe('PaymentActionCreator', () => {
 
         orderActionCreator = new OrderActionCreator(client);
 
-        store = createCheckoutStore({
-            cart: getCartState(),
-            config: getConfigState(),
-            customer: getCustomerState(),
-            instruments: getInstrumentsState(),
-            order: getSubmittedOrderState(),
-            quote: getQuoteState(),
-            paymentMethods: getPaymentMethodsState(),
-            shippingOptions: getShippingOptionsState(),
-        });
+        store = createCheckoutStore(getCheckoutStoreState());
 
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
     });

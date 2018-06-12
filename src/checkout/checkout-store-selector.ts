@@ -7,8 +7,8 @@ import { StoreConfig } from '../config/config';
 import { CustomerSelector, InternalCustomer } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
-import { InternalIncompleteOrder, InternalOrder, OrderSelector } from '../order';
-import { PaymentMethod, PaymentMethodSelector } from '../payment';
+import { mapToInternalOrder, InternalOrder, OrderSelector } from '../order';
+import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../payment';
 import { Instrument, InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
 import {
@@ -40,6 +40,7 @@ export default class CheckoutStoreSelector {
     private _form: FormSelector;
     private _instruments: InstrumentSelector;
     private _order: OrderSelector;
+    private _payment: PaymentSelector;
     private _paymentMethods: PaymentMethodSelector;
     private _quote: QuoteSelector;
     private _shippingAddress: ShippingAddressSelector;
@@ -59,6 +60,7 @@ export default class CheckoutStoreSelector {
         this._form = selectors.form;
         this._instruments = selectors.instruments;
         this._order = selectors.order;
+        this._payment = selectors.payment;
         this._paymentMethods = selectors.paymentMethods;
         this._quote = selectors.quote;
         this._shippingAddress = selectors.shippingAddress;
@@ -90,8 +92,10 @@ export default class CheckoutStoreSelector {
      *
      * @returns The current order if it is loaded, otherwise undefined.
      */
-    getOrder(): InternalOrder | InternalIncompleteOrder | undefined {
-        return this._order.getOrder();
+    getOrder(): InternalOrder | undefined {
+        const order = this._order.getOrder();
+
+        return order ? mapToInternalOrder(order) : undefined;
     }
 
     /**
@@ -199,7 +203,9 @@ export default class CheckoutStoreSelector {
      * undefined if otherwise.
      */
     getSelectedPaymentMethod(): PaymentMethod | undefined {
-        return this._paymentMethods.getSelectedPaymentMethod();
+        const payment = this._payment.getPaymentId();
+
+        return payment && this._paymentMethods.getPaymentMethod(payment.providerId, payment.gatewayId);
     }
 
     /**
@@ -240,7 +246,7 @@ export default class CheckoutStoreSelector {
      * @returns True if payment data is required, otherwise false.
      */
     isPaymentDataRequired(useStoreCredit?: boolean): boolean {
-        return this._order.isPaymentDataRequired(useStoreCredit);
+        return this._payment.isPaymentDataRequired(useStoreCredit);
     }
 
     /**
@@ -255,7 +261,7 @@ export default class CheckoutStoreSelector {
      * @returns True if payment data is submitted, otherwise false.
      */
     isPaymentDataSubmitted(methodId: string, gatewayId?: string): boolean {
-        return this._order.isPaymentDataSubmitted(this.getPaymentMethod(methodId, gatewayId));
+        return this._payment.isPaymentDataSubmitted(this.getPaymentMethod(methodId, gatewayId));
     }
 
     /**

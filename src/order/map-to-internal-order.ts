@@ -7,7 +7,7 @@ import { mapToInternalCoupon } from '../coupon';
 import { HOSTED } from '../payment';
 
 import InternalOrder, { InternalGiftCertificateList, InternalIncompleteOrder, InternalOrderPayment, InternalSocialDataList } from './internal-order';
-import Order, { DefaultOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
+import Order, { GatewayOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
 
 export default function mapToInternalOrder(order: Order): InternalOrder {
     const decimalPlaces = order.currency.decimalPlaces;
@@ -105,7 +105,7 @@ function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificat
 }
 
 function mapToInteralOrderPayment(payments?: OrderPayments): InternalOrderPayment {
-    const item = find(payments, isDefaultOrderPayment) as DefaultOrderPayment;
+    const item = find(payments, isDefaultOrderPayment) as GatewayOrderPayment;
 
     if (!item) {
         return {};
@@ -118,7 +118,7 @@ function mapToInteralOrderPayment(payments?: OrderPayments): InternalOrderPaymen
     };
 }
 
-function isDefaultOrderPayment(payment: OrderPayment): payment is DefaultOrderPayment {
+function isDefaultOrderPayment(payment: OrderPayment): payment is GatewayOrderPayment {
     return payment.providerId !== 'giftcertificate' && payment.providerId !== 'storecredit';
 }
 

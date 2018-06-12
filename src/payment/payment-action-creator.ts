@@ -6,8 +6,8 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { InternalCheckoutSelectors } from '../checkout';
-import { MissingDataError, NotInitializedError } from '../common/error/errors';
-import { InternalOrder, OrderActionCreator } from '../order';
+import { MissingDataError } from '../common/error/errors';
+import { mapToInternalOrder, OrderActionCreator } from '../order';
 
 import isVaultedInstrument from './is-vaulted-instrument';
 import Payment from './payment';
@@ -17,9 +17,6 @@ import PaymentMethodSelector from './payment-method-selector';
 import PaymentRequestBody from './payment-request-body';
 import PaymentRequestSender from './payment-request-sender';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 export default class PaymentActionCreator {
     constructor(
         private _paymentRequestSender: PaymentRequestSender,
@@ -74,53 +71,43 @@ export default class PaymentActionCreator {
     }
 
     private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
-        const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
-        const deviceSessionId = paymentMeta && paymentMeta.request.deviceSessionId;
         const billingAddress = state.billingAddress.getBillingAddress();
         const cart = state.cart.getCart();
         const customer = state.customer.getCustomer();
-        const order = state.order.getOrder() as InternalOrder;
+        const order = state.order.getOrder();
         const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
         const shippingAddress = state.shippingAddress.getShippingAddress();
         const shippingOption = state.shippingOptions.getSelectedShippingOption();
         const config = state.config.getStoreConfig();
         const instrumentMeta = state.instruments.getInstrumentsMeta();
-
-        if (!config) {
-            throw new NotInitializedError('Config data is missing');
-        }
+        const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
 
         const authToken = payment.paymentData && instrumentMeta && isVaultedInstrument(payment.paymentData) ?
-            `${state.order.getPaymentAuthToken()}, ${instrumentMeta.vaultAccessToken}` :
-            state.order.getPaymentAuthToken();
+            `${state.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}` :
+            state.payment.getPaymentToken();
 
         if (!authToken || !payment.paymentData) {
             throw new MissingDataError('Unable to submit payment because "authToken" or "paymentData" is missing.');
         }
 
-        if (!authToken) {
-            throw new MissingDataError('Unable to submit payment because "authToken" is missing.');
-        }
-
         return {
+            authToken,
             billingAddress,
             cart,
             customer,
-            order,
             paymentMethod,
             shippingAddress,
             shippingOption,
-            authToken,
-            orderMeta: state.order.getOrderMeta(),
+            order: order ? mapToInternalOrder(order) : undefined,
+            orderMeta: pick(state.order.getOrderMeta(), [
+                'deviceFingerprint',
+            ]),
             payment: payment.paymentData,
             quoteMeta: {
-                request: {
-                    ...(paymentMeta && paymentMeta.request),
-                    deviceSessionId,
-                },
+                request: paymentMeta && paymentMeta.request,
             },
             source: 'bigcommerce-checkout-js-sdk',
-            store: pick(config.storeProfile, [
+            store: pick(config && config.storeProfile, [
                 'storeHash',
                 'storeId',
                 'storeLanguage',

@@ -1,7 +1,6 @@
 import { find } from 'lodash';
 
 import { selector } from '../common/selector';
-import { OrderState } from '../order';
 
 import PaymentMethod from './payment-method';
 import PaymentMethodMeta from './payment-method-meta';
@@ -10,8 +9,7 @@ import PaymentMethodState from './payment-method-state';
 @selector
 export default class PaymentMethodSelector {
     constructor(
-        private _paymentMethods: PaymentMethodState,
-        private _order: OrderState
+        private _paymentMethods: PaymentMethodState
     ) {}
 
     getPaymentMethods(): PaymentMethod[] | undefined {
@@ -26,17 +24,6 @@ export default class PaymentMethodSelector {
         return gatewayId ?
             find(this._paymentMethods.data, { id: methodId, gateway: gatewayId }) :
             find(this._paymentMethods.data, { id: methodId });
-    }
-
-    getSelectedPaymentMethod(): PaymentMethod | undefined {
-        if (!this._order.data || !this._order.data.payment || !this._order.data.payment.id) {
-            return;
-        }
-
-        return this.getPaymentMethod(
-            this._order.data.payment.id,
-            this._order.data.payment.gateway
-        );
     }
 
     getLoadError(): Error | undefined {

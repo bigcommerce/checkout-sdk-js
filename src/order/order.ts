@@ -29,16 +29,16 @@ export default interface Order {
     status: string;
 }
 
-export type OrderPayments = Array<DefaultOrderPayment | GiftCertificateOrderPayment>;
+export type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
 
 export interface OrderPayment {
     providerId: string;
-    gatewayId?: string | null;
+    gatewayId?: string;
     description: string;
     amount: number;
 }
 
-export interface DefaultOrderPayment extends OrderPayment {
+export interface GatewayOrderPayment extends OrderPayment {
     detail: {
         step: string;
         instructions: string;

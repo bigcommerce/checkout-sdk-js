@@ -1,11 +1,14 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getGiftCertificateItem } from '../cart/line-items.mock';
+import { getResponse } from '../common/http-request/responses.mock';
 import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
 import { getGiftCertificate } from '../coupon/gift-certificates.mock';
 import { getCurrency } from '../currency/currencies.mock';
 
+import { getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getPhysicalItem } from './line-items.mock';
-import Order from './order';
+import Order, { GatewayOrderPayment, GiftCertificateOrderPayment } from './order';
+import OrderState from './order-state';
 
 export function getOrder(): Order {
     return {
@@ -47,24 +50,50 @@ export function getOrder(): Order {
         orderAmountAsInteger: 19000,
         orderId: 295,
         payments: [
-            {
-                providerId: 'authorizenet',
-                description: 'credit-card',
-                amount: 190,
-                detail: {
-                    step: 'FINALIZE',
-                    instructions: '%%OrderID%% text %%OrderID%%',
-                },
-            },
-            {
-                providerId: 'giftcertificate',
-                description: 'gc',
-                amount: 7,
-                detail: {
-                    code: 'gc',
-                    remaining: 3,
-                },
-            },
+            getGatewayOrderPayment(),
+            getGiftCertificateOrderPayment(),
         ],
+    };
+}
+
+export function getGatewayOrderPayment(): GatewayOrderPayment {
+    return {
+        providerId: 'authorizenet',
+        description: 'credit-card',
+        amount: 190,
+        detail: {
+            step: 'FINALIZE',
+            instructions: '%%OrderID%% text %%OrderID%%',
+        },
+    };
+}
+
+export function getGiftCertificateOrderPayment(): GiftCertificateOrderPayment {
+    return {
+        providerId: 'giftcertificate',
+        description: 'gc',
+        amount: 7,
+        detail: {
+            code: 'gc',
+            remaining: 3,
+        },
+    };
+}
+
+export function getOrderState(): OrderState {
+    const response = getResponse(
+        getSubmitOrderResponseBody(),
+        getSubmitOrderResponseHeaders()
+    );
+
+    return {
+        data: getOrder(),
+        meta: {
+            deviceFingerprint: response.body.meta.deviceFingerprint,
+            token: response.headers.token,
+            payment: response.body.data.payment,
+        },
+        errors: {},
+        statuses: {},
     };
 }

@@ -63,18 +63,17 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (this._getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE ||
-            this._getPaymentStatus() === paymentStatusTypes.FINALIZE) {
+        if (this._isAcknowledgedOrFinalized()) {
             return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
         }
 
         if (!this._isInContextEnabled()) {
             return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
                 .then(state => {
-                    const order = state.order.getOrder();
+                    const redirectUrl = state.payment.getPaymentRedirectUrl();
 
-                    if (order && order.payment.redirectUrl) {
-                        window.location.assign(order.payment.redirectUrl);
+                    if (redirectUrl) {
+                        window.location.assign(redirectUrl);
                     }
 
                     // We need to hold execution so the consumer does not redirect us somewhere else
@@ -86,10 +85,10 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
             .then(state => {
-                const order = state.order.getOrder();
+                const redirectUrl = state.payment.getPaymentRedirectUrl();
 
-                if (order && order.payment.redirectUrl) {
-                    this._paypalSdk.checkout.startFlow(order.payment.redirectUrl);
+                if (redirectUrl) {
+                    this._paypalSdk.checkout.startFlow(redirectUrl);
                 }
 
                 // We need to hold execution so the consumer does not redirect us somewhere else
@@ -106,28 +105,18 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         const state = this._store.getState();
         const order = state.order.getOrder();
 
-        if (!order) {
-            throw new MissingDataError('Unable to finalize order because "order" data is missing.');
-        }
-
-        const status = this._getPaymentStatus();
-
-        if (order.orderId && (status === paymentStatusTypes.ACKNOWLEDGE || status === paymentStatusTypes.FINALIZE)) {
+        if (order && this._isAcknowledgedOrFinalized()) {
             return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
         }
 
         return super.finalize();
     }
 
-    private _getPaymentStatus(): string | undefined {
+    private _isAcknowledgedOrFinalized(): boolean {
         const state = this._store.getState();
-        const order = state.order.getOrder();
 
-        if (!order) {
-            throw new MissingDataError('Unable to determine payment status because "order" data is missing.');
-        }
-
-        return order.payment && order.payment.status;
+        return state.payment.getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE
+            || state.payment.getPaymentStatus() === paymentStatusTypes.FINALIZE;
     }
 
     private _isInContextEnabled(): boolean {

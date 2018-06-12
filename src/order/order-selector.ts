@@ -1,51 +1,20 @@
-import { CartState } from '../cart';
 import { selector } from '../common/selector';
-import { CustomerState } from '../customer';
-import { PaymentMethod } from '../payment';
-import * as paymentStatusTypes from '../payment/payment-status-types';
 
-import InternalOrder, { InternalIncompleteOrder, InternalOrderMeta, InternalOrderPayment } from './internal-order';
-import OrderState from './order-state';
+import Order from './order';
+import OrderState, { OrderMetaState } from './order-state';
 
 @selector
 export default class OrderSelector {
     constructor(
-        private _order: OrderState,
-        private _customer: CustomerState,
-        private _cart: CartState
+        private _order: OrderState
     ) {}
 
-    getOrder(): InternalOrder | InternalIncompleteOrder | undefined {
+    getOrder(): Order | undefined {
         return this._order.data;
     }
 
-    getOrderMeta(): InternalOrderMeta {
-        return {
-            deviceFingerprint: this._order.meta && this._order.meta.deviceFingerprint,
-        };
-    }
-
-    getPaymentAuthToken(): string | undefined {
-        return this._order.meta && this._order.meta.token;
-    }
-
-    getInternalOrderPayment(): InternalOrderPayment | undefined {
-        return this._order.meta && this._order.meta.payment;
-    }
-
-    isPaymentDataRequired(useStoreCredit: boolean = false): boolean {
-        const grandTotal = this._cart.data && this._cart.data.grandTotal && this._cart.data.grandTotal.amount || 0;
-        const storeCredit = this._customer.data && this._customer.data.storeCredit || 0;
-
-        return (useStoreCredit ? grandTotal - storeCredit : grandTotal) > 0;
-    }
-
-    isPaymentDataSubmitted(paymentMethod?: PaymentMethod): boolean {
-        const { payment = {} } = this.getOrder() || {};
-
-        return !!(paymentMethod && paymentMethod.nonce) ||
-            payment.status === paymentStatusTypes.ACKNOWLEDGE ||
-            payment.status === paymentStatusTypes.FINALIZE;
+    getOrderMeta(): OrderMetaState | undefined {
+        return this._order.meta;
     }
 
     getLoadError(): Error | undefined {

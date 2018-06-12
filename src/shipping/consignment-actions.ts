@@ -15,13 +15,11 @@ export type ConsignmentAction =
     UpdateConsignmentAction;
 
 export type CreateConsignmentsAction =
-    Action |
     CreateConsignmentsRequestedAction |
     CreateConsignmentsSucceededAction |
     CreateConsignmentsFailedAction;
 
 export type UpdateConsignmentAction =
-    Action |
     UpdateConsignmentRequestedAction |
     UpdateConsignmentSucceededAction |
     UpdateConsignmentFailedAction;
