@@ -9,6 +9,7 @@ import BillingAddressActionCreator from './billing-address-action-creator';
 import { BillingAddressActionTypes } from './billing-address-actions';
 import { getBillingAddress } from './internal-billing-addresses.mock';
 import { getCustomerState } from '../customer/internal-customers.mock';
+import { getBillingAddressState } from './billing-addresses.mock';
 
 describe('BillingAddressActionCreator', () => {
     let address;
@@ -106,6 +107,7 @@ describe('BillingAddressActionCreator', () => {
             beforeEach(() => {
                 store = createCheckoutStore({
                     quote: getQuoteState(),
+                    billingAddress: getBillingAddressState(),
                     customer: getCustomerState(),
                     checkout: getCheckoutState(),
                 });

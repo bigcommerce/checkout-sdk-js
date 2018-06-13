@@ -20,7 +20,7 @@ import CheckoutStoreState from './checkout-store-state';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 export default function createInternalCheckoutSelectors(state: CheckoutStoreState, options: CheckoutStoreOptions = {}): InternalCheckoutSelectors {
-    const billingAddress = new BillingAddressSelector(state.quote);
+    const billingAddress = new BillingAddressSelector(state.billingAddress);
     const cart = new CartSelector(state.cart);
     const checkout = new CheckoutSelector(state.checkout);
     const config = new ConfigSelector(state.config);
@@ -42,7 +42,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
 
     // Compose selectors
     const payment = new PaymentSelector(checkout, order);
-    const quote = new QuoteSelector(state.quote, shippingAddress);
+    const quote = new QuoteSelector(state.quote, billingAddress, shippingAddress);
 
     const selectors = {
         billingAddress,

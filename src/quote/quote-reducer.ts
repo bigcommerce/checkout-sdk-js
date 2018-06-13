@@ -60,13 +60,6 @@ function errorsReducer(
     case CheckoutActionType.LoadCheckoutFailed:
         return { ...errors, loadError: action.payload };
 
-    case BillingAddressActionTypes.UpdateBillingAddressRequested:
-    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
-        return { ...errors, updateBillingAddressError: undefined };
-
-    case BillingAddressActionTypes.UpdateBillingAddressFailed:
-        return { ...errors, updateBillingAddressError: action.payload };
-
     default:
         return errors;
     }
@@ -83,13 +76,6 @@ function statusesReducer(
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CheckoutActionType.LoadCheckoutFailed:
         return { ...statuses, isLoading: false };
-
-    case BillingAddressActionTypes.UpdateBillingAddressRequested:
-        return { ...statuses, isUpdatingBillingAddress: true };
-
-    case BillingAddressActionTypes.UpdateBillingAddressFailed:
-    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
-        return { ...statuses, isUpdatingBillingAddress: false };
 
     default:
         return statuses;

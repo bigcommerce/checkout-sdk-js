@@ -179,7 +179,14 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         });
 
         it('throws error if unable to submit payment due to missing data', async () => {
-            store = createCheckoutStore(merge({}, getCheckoutStoreState(), { quote: { data: null } }));
+            store = createCheckoutStore(
+                merge({},
+                    getCheckoutStoreState(),
+                    {
+                        quote: { data: null },
+                        billingAddress: { data: null },
+                    },
+                ));
 
             braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
                 store,

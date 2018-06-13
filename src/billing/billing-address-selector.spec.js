@@ -1,6 +1,7 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuoteState } from '../quote/internal-quotes.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
 import BillingAddressSelector from './billing-address-selector';
+import { getBillingAddressState } from './billing-addresses.mock';
 
 describe('BillingAddressSelector', () => {
     let billingAddressSelector;
@@ -8,19 +9,19 @@ describe('BillingAddressSelector', () => {
 
     beforeEach(() => {
         state = {
-            quote: getQuoteState(),
+            billingAddress: getBillingAddressState(),
         };
     });
 
     describe('#getBillingAddress()', () => {
         it('returns the current billing address', () => {
-            billingAddressSelector = new BillingAddressSelector(state.quote);
+            billingAddressSelector = new BillingAddressSelector(state.billingAddress);
 
-            expect(billingAddressSelector.getBillingAddress()).toEqual(state.quote.data.billingAddress);
+            expect(billingAddressSelector.getBillingAddress()).toEqual(getQuote().billingAddress);
         });
 
         it('returns undefined if quote is not available', () => {
-            billingAddressSelector = new BillingAddressSelector({ ...state.quote, data: undefined });
+            billingAddressSelector = new BillingAddressSelector({ ...state.billingAddress, data: undefined });
 
             expect(billingAddressSelector.getBillingAddress()).toEqual();
         });
@@ -28,18 +29,18 @@ describe('BillingAddressSelector', () => {
 
     describe('#getUpdateError()', () => {
         it('returns error if unable to update', () => {
-            const updateBillingAddressError = getErrorResponse();
+            const updateError = getErrorResponse();
 
             billingAddressSelector = new BillingAddressSelector({
-                ...state.quote,
-                errors: { updateBillingAddressError },
+                ...state.billingAddress,
+                errors: { updateError },
             });
 
-            expect(billingAddressSelector.getUpdateError()).toEqual(updateBillingAddressError);
+            expect(billingAddressSelector.getUpdateError()).toEqual(updateError);
         });
 
         it('does not returns error if able to update', () => {
-            billingAddressSelector = new BillingAddressSelector(state.quote);
+            billingAddressSelector = new BillingAddressSelector(state.billingAddress);
 
             expect(billingAddressSelector.getUpdateError()).toBeUndefined();
         });
@@ -48,15 +49,15 @@ describe('BillingAddressSelector', () => {
     describe('#isUpdating()', () => {
         it('returns true if updating billing address', () => {
             billingAddressSelector = new BillingAddressSelector({
-                ...state.quote,
-                statuses: { isUpdatingBillingAddress: true },
+                ...state.billingAddress,
+                statuses: { isUpdating: true },
             });
 
             expect(billingAddressSelector.isUpdating()).toEqual(true);
         });
 
         it('returns false if not updating billing address', () => {
-            billingAddressSelector = new BillingAddressSelector(state.quote);
+            billingAddressSelector = new BillingAddressSelector(state.billingAddress);
 
             expect(billingAddressSelector.isUpdating()).toEqual(false);
         });

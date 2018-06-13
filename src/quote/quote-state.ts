@@ -17,12 +17,8 @@ export interface QuoteMetaState {
 
 export interface QuoteErrorsState {
     loadError?: Error;
-    updateBillingAddressError?: Error;
-    updateShippingAddressError?: Error;
 }
 
 export interface QuoteStatusesState {
     isLoading?: boolean;
-    isUpdatingBillingAddress?: boolean;
-    isUpdatingShippingAddress?: boolean;
 }

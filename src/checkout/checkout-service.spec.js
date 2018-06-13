@@ -4,7 +4,7 @@ import { map, merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
-import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
+import { getBillingAddress, getBillingAddressState } from '../billing/billing-addresses.mock';
 import { getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator } from '../config';
@@ -125,6 +125,7 @@ describe('CheckoutService', () => {
 
         store = createCheckoutStore({
             cart: getCartState(),
+            billingAddress: getBillingAddressState(),
             checkout: getCheckoutState(),
             config: getConfigState(),
             quote: getQuoteState(),

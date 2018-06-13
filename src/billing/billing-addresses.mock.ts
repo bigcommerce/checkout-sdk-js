@@ -1,6 +1,8 @@
 
 import { Address } from '../address';
 
+import { BillingAddressState } from '.';
+
 export function getBillingAddress(): Address {
     return {
         id: '55c96cda6f04c',
@@ -17,5 +19,13 @@ export function getBillingAddress(): Address {
         postalCode: '95555',
         phone: '555-555-5555',
         customFields: [],
+    };
+}
+
+export function getBillingAddressState(): BillingAddressState {
+    return {
+        data: getBillingAddress(),
+        errors: {},
+        statuses: {},
     };
 }
