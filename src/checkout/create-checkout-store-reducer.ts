@@ -10,7 +10,7 @@ import { paymentMethodReducer, paymentReducer, paymentStrategyReducer } from '..
 import { instrumentReducer } from '../payment/instrument';
 import { quoteReducer } from '../quote';
 import { remoteCheckoutReducer } from '../remote-checkout';
-import { consignmentReducer, shippingCountryReducer, shippingOptionReducer, shippingStrategyReducer } from '../shipping';
+import { consignmentReducer, shippingCountryReducer, shippingStrategyReducer } from '../shipping';
 
 import checkoutReducer from './checkout-reducer';
 import CheckoutStoreState from './checkout-store-state';
@@ -34,7 +34,6 @@ export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState
         quote: quoteReducer,
         remoteCheckout: remoteCheckoutReducer,
         shippingCountries: shippingCountryReducer,
-        shippingOptions: shippingOptionReducer,
         shippingStrategies: shippingStrategyReducer,
     });
 }

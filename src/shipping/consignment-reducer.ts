@@ -1,6 +1,7 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { CustomerAction, CustomerActionType } from '../customer';
 
 import Consignment from './consignment';
 import { ConsignmentAction, ConsignmentActionTypes } from './consignment-actions';
@@ -26,13 +27,16 @@ export default function consignmentReducer(
 
 function dataReducer(
     data: Consignment[] | undefined,
-    action: ConsignmentAction | CheckoutAction
+    action: ConsignmentAction | CheckoutAction | CustomerAction
 ): Consignment[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionTypes.CreateConsignmentsSucceeded:
     case ConsignmentActionTypes.UpdateConsignmentSucceeded:
         return action.payload ? action.payload.consignments : data;
+
+    case CustomerActionType.SignOutCustomerSucceeded:
+        return [];
 
     default:
         return data;

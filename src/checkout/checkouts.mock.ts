@@ -110,6 +110,5 @@ export function getCheckoutStoreState() {
         quote: getQuoteState(),
         remoteCheckout: getRemoteCheckoutState(),
         shippingCountries: getShippingCountriesState(),
-        shippingOptions: getShippingOptionsState(),
     };
 }
