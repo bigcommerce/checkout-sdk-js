@@ -4,6 +4,7 @@ import { concat } from 'rxjs/observable/concat';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
+import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { mapToInternalOrder, OrderActionCreator } from '../order';
@@ -62,7 +63,7 @@ export default class PaymentActionCreator {
 
     private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
         const billingAddress = state.billingAddress.getBillingAddress();
-        const cart = state.cart.getCart();
+        const checkout = state.checkout.getCheckout();
         const customer = state.customer.getCustomer();
         const order = state.order.getOrder();
         const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
@@ -83,15 +84,13 @@ export default class PaymentActionCreator {
         return {
             authToken,
             billingAddress,
-            cart,
             customer,
             paymentMethod,
             shippingAddress,
             shippingOption,
+            cart: checkout ? mapToInternalCart(checkout) : undefined,
             order: order ? mapToInternalOrder(order) : undefined,
-            orderMeta: pick(state.order.getOrderMeta(), [
-                'deviceFingerprint',
-            ]),
+            orderMeta: state.order.getOrderMeta(),
             payment: payment.paymentData,
             quoteMeta: {
                 request: paymentMeta && paymentMeta.request,

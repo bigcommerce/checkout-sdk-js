@@ -1,22 +1,27 @@
 import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { CustomerActionType } from '..';
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutStore } from '../../checkout';
 import { getQuote } from '../../quote/internal-quotes.mock';
 import CustomerActionCreator from '../customer-action-creator';
+import { CustomerActionType } from '../customer-actions';
+import CustomerRequestSender from '../customer-request-sender';
 
 import DefaultCustomerStrategy from './default-customer-strategy';
 
 describe('DefaultCustomerStrategy', () => {
     let customerActionCreator: CustomerActionCreator;
-    let client: CheckoutClient;
     let store: CheckoutStore;
 
     beforeEach(() => {
         store = createCheckoutStore();
-        client = createCheckoutClient();
-        customerActionCreator = new CustomerActionCreator(client);
+        customerActionCreator = new CustomerActionCreator(
+            new CustomerRequestSender(createRequestSender()),
+            new CheckoutActionCreator(
+                new CheckoutRequestSender(createRequestSender())
+            )
+        );
     });
 
     it('dispatches action to sign in customer', async () => {

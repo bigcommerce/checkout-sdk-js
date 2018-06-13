@@ -77,7 +77,7 @@ export default class ConsignmentActionCreator {
             const checkout = store.getState().checkout.getCheckout();
 
             if (!consignments || !checkout || !checkout.id) {
-                throw new MissingDataError('Unable to update shipping address: "checkout.id" or "cart.lineItems" are missing.');
+                throw new MissingDataError('Unable to update shipping address: "checkout.id" is missing.');
             }
 
             observer.next(createAction(ConsignmentActionTypes.CreateConsignmentsRequested));
@@ -100,14 +100,13 @@ export default class ConsignmentActionCreator {
         const state = store.getState();
         const cart = state.cart.getCart();
 
-        if (!cart || !cart.items) {
+        if (!cart) {
             return;
         }
 
         return [{
             shippingAddress,
-            lineItems: cart.items
-                .filter(item => item.type === 'ItemPhysicalEntity')
+            lineItems: (cart.lineItems && cart.lineItems.physicalItems || [])
                 .map(item => ({
                     itemId: item.id,
                     quantity: item.quantity,

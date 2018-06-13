@@ -8,7 +8,7 @@ import { BillingAddressActionCreator } from '../../billing';
 import { BillingAddressActionTypes } from '../../billing/billing-address-actions';
 import { getBillingAddress } from '../../billing/billing-addresses.mock';
 import { getCartResponseBody } from '../../cart/internal-carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
@@ -89,7 +89,10 @@ describe('AmazonPayPaymentStrategy', () => {
             remoteCheckout: getRemoteCheckoutState(),
         });
         billingAddressActionCreator = new BillingAddressActionCreator(client);
-        orderActionCreator = new OrderActionCreator(client);
+        orderActionCreator = new OrderActionCreator(
+            client,
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+        );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );
@@ -125,9 +128,6 @@ describe('AmazonPayPaymentStrategy', () => {
 
             return Promise.resolve();
         });
-
-        jest.spyOn(client, 'loadCart')
-            .mockReturnValue(Promise.resolve(getResponse(getCartResponseBody())));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);

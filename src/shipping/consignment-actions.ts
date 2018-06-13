@@ -1,5 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { Checkout } from '../checkout';
+
 export enum ConsignmentActionTypes {
     CreateConsignmentsRequested = 'CREATE_CONSIGNMENTS_REQUESTED',
     CreateConsignmentsSucceeded = 'CREATE_CONSIGNMENTS_SUCCEEDED',
@@ -28,7 +30,7 @@ export interface CreateConsignmentsRequestedAction extends Action {
     type: ConsignmentActionTypes.CreateConsignmentsRequested;
 }
 
-export interface CreateConsignmentsSucceededAction extends Action {
+export interface CreateConsignmentsSucceededAction extends Action<Checkout> {
     type: ConsignmentActionTypes.CreateConsignmentsSucceeded;
 }
 
@@ -40,7 +42,7 @@ export interface UpdateConsignmentRequestedAction extends Action {
     type: ConsignmentActionTypes.UpdateConsignmentRequested;
 }
 
-export interface UpdateConsignmentSucceededAction extends Action {
+export interface UpdateConsignmentSucceededAction extends Action<Checkout> {
     type: ConsignmentActionTypes.UpdateConsignmentSucceeded;
 }
 

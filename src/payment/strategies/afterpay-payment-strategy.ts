@@ -75,7 +75,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
         )
-            .then(state => this._checkoutValidator.validate(state.cart.getCart(), options))
+            .then(state => this._checkoutValidator.validate(state.checkout.getCheckout(), options))
             .then(() => this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
             ))

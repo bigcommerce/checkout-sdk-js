@@ -8,7 +8,9 @@ export enum CheckoutActionType {
     LoadCheckoutFailed = 'LOAD_CHECKOUT_FAILED',
 }
 
-export type CheckoutAction =
+export type CheckoutAction = LoadCheckoutAction;
+
+export type LoadCheckoutAction =
     LoadCheckoutRequestedAction |
     LoadCheckoutSucceededAction |
     LoadCheckoutFailedAction;

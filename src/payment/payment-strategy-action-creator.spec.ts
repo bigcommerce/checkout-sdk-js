@@ -291,8 +291,6 @@ describe('PaymentStrategyActionCreator', () => {
 
             try {
                 await Observable.from(actionCreator.execute(getOrderRequestBody())(store)).toPromise();
-
-                expect(true).toBe(true);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
             }

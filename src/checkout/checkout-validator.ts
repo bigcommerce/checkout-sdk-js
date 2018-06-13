@@ -1,10 +1,12 @@
-import { mapToInternalCart } from '../cart';
-import CartComparator from '../cart/cart-comparator';
+import { isEqual, map } from 'lodash';
+
+import { CartComparator } from '../cart';
 import { CartChangedError } from '../cart/errors';
-import InternalCart from '../cart/internal-cart';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
+import { Coupon, GiftCertificate } from '../coupon';
 
+import Checkout from './checkout';
 import CheckoutRequestSender from './checkout-request-sender';
 
 export default class CheckoutValidator {
@@ -12,21 +14,32 @@ export default class CheckoutValidator {
         private _checkoutRequestSender: CheckoutRequestSender
     ) {}
 
-    validate(cart?: InternalCart, options?: RequestOptions): Promise<void> {
-        if (!cart) {
+    validate(checkout?: Checkout, options?: RequestOptions): Promise<void> {
+        if (!checkout) {
             throw new MissingDataError();
         }
 
-        return this._checkoutRequestSender.loadCheckout(cart.id, options)
+        return this._checkoutRequestSender.loadCheckout(checkout.id, options)
             .then(response => {
                 const comparator = new CartComparator();
-                const serverCart = mapToInternalCart(response.body);
 
-                if (cart && comparator.isEqual(cart, serverCart)) {
+                if (checkout.grandTotal === response.body.grandTotal
+                    && this._compareCoupons(checkout.coupons, response.body.coupons)
+                    && this._compareGiftCertificates(checkout.giftCertificates, response.body.giftCertificates)
+                    && comparator.isEqual(checkout.cart, response.body.cart)
+                ) {
                     return;
                 }
 
                 throw new CartChangedError();
             });
+    }
+
+    private _compareCoupons(couponsA: Coupon[], couponsB: Coupon[]): boolean {
+        return isEqual(map(couponsA, 'code'), map(couponsB, 'code'));
+    }
+
+    private _compareGiftCertificates(giftCertificatesA: GiftCertificate[], giftCertificatesB: GiftCertificate[]): boolean {
+        return isEqual(map(giftCertificatesA, 'code'), map(giftCertificatesB, 'code'));
     }
 }

@@ -2,12 +2,11 @@ import { BillingAddressActionTypes } from '../billing/billing-address-actions';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { CouponActionType } from '../coupon/coupon-actions';
-import { getCustomerResponseBody } from '../customer/internal-customers.mock';
-import { ConsignmentActionTypes } from '../shipping/consignment-actions';
-import cartReducer from './cart-reducer';
-import { getCart } from './internal-carts.mock';
 import { GiftCertificateActionType } from '../coupon/gift-certificate-actions';
-import { CustomerActionType } from '../customer';
+import { ConsignmentActionTypes } from '../shipping';
+
+import cartReducer from './cart-reducer';
+import { getCart } from './carts.mock';
 
 describe('cartReducer()', () => {
     let initialState;
@@ -16,28 +15,6 @@ describe('cartReducer()', () => {
         initialState = {
             data: getCart(),
         };
-    });
-
-    it('returns new data if customer has signed in successfully', () => {
-        const action = {
-            type: CustomerActionType.SignInCustomerRequested,
-            payload: getCustomerResponseBody().data,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
-        }));
-    });
-
-    it('returns new data if customer has signed out successfully', () => {
-        const action = {
-            type: CustomerActionType.SignOutCustomerSucceeded,
-            payload: getCustomerResponseBody().data,
-        };
-
-        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.cart,
-        }));
     });
 
     it('returns new data when checkout is loaded', () => {

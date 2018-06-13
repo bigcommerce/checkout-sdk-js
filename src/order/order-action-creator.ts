@@ -54,9 +54,9 @@ export default class OrderActionCreator {
                 observer.next(createAction(OrderActionType.SubmitOrderRequested));
 
                 const state = store.getState();
-                const cart = state.cart.getCart();
+                const checkout = state.checkout.getCheckout();
 
-                this._checkoutValidator.validate(cart, options)
+                this._checkoutValidator.validate(checkout, options)
                     .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload), options))
                     .then(response => {
                         observer.next(createAction(OrderActionType.SubmitOrderSucceeded, response.body.data, { ...response.body.meta, token: response.headers.token }));

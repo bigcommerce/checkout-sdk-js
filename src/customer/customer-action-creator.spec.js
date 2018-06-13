@@ -1,89 +1,124 @@
+import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutActionType } from '../checkout';
 
 import { getCustomerResponseBody } from './internal-customers.mock';
 import CustomerActionCreator from './customer-action-creator';
 import { CustomerActionType } from './customer-actions';
 
 describe('CustomerActionCreator', () => {
-    let checkoutClient;
+    let checkoutActionCreator;
     let customerActionCreator;
+    let customerRequestSender;
     let errorResponse;
     let response;
+    let store;
 
     beforeEach(() => {
         response = getResponse(getCustomerResponseBody());
         errorResponse = getErrorResponse();
+        store = createCheckoutStore();
 
-        checkoutClient = {
+        customerRequestSender = {
             signInCustomer: jest.fn(() => Promise.resolve(response)),
             signOutCustomer: jest.fn(() => Promise.resolve(response)),
         };
 
-        customerActionCreator = new CustomerActionCreator(checkoutClient);
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(createRequestSender())
+        );
+
+        jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout')
+            .mockReturnValue(() => Observable.of(createAction(CheckoutActionType.LoadCheckoutRequested)));
+
+        customerActionCreator = new CustomerActionCreator(
+            customerRequestSender,
+            checkoutActionCreator
+        );
     });
 
     describe('#signInCustomer()', () => {
-        it('emits actions if able to sign in customer', () => {
+        it('emits actions if able to sign in customer', async () => {
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
-
-            customerActionCreator.signInCustomer(credentials)
+            const actions = await customerActionCreator.signInCustomer(credentials)(store)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: CustomerActionType.SignInCustomerRequested },
-                        { type: CustomerActionType.SignInCustomerSucceeded, payload: response.body.data },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CustomerActionType.SignInCustomerRequested },
+                { type: CustomerActionType.SignInCustomerSucceeded, payload: response.body.data },
+                { type: CheckoutActionType.LoadCheckoutRequested },
+            ]);
         });
 
-        it('emits error actions if unable to sign in customer', () => {
-            checkoutClient.signInCustomer.mockReturnValue(Promise.reject(errorResponse));
+        it('emits error actions if unable to sign in customer', async () => {
+            customerRequestSender.signInCustomer.mockReturnValue(Promise.reject(errorResponse));
 
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            customerActionCreator.signInCustomer(credentials)
+            const actions = await customerActionCreator.signInCustomer(credentials)(store)
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: CustomerActionType.SignInCustomerRequested },
-                        { type: CustomerActionType.SignInCustomerFailed, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CustomerActionType.SignInCustomerRequested },
+                { type: CustomerActionType.SignInCustomerFailed, payload: errorResponse, error: true },
+            ]);
+        });
+
+        it('emits actions to reload current checkout', async () => {
+            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+
+            await customerActionCreator.signInCustomer(credentials)(store)
+                .toPromise();
+
+            expect(checkoutActionCreator.loadCurrentCheckout)
+                .toHaveBeenCalled();
         });
     });
 
     describe('#signOutCustomer()', () => {
-        it('emits actions if able to sign out customer', () => {
-            customerActionCreator.signOutCustomer()
+        it('emits actions if able to sign out customer', async () => {
+            const actions = await customerActionCreator.signOutCustomer()(store)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(actions).toEqual([
-                        { type: CustomerActionType.SignOutCustomerRequested },
-                        { type: CustomerActionType.SignOutCustomerSucceeded, payload: response.body.data },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CustomerActionType.SignOutCustomerRequested },
+                { type: CustomerActionType.SignOutCustomerSucceeded, payload: response.body.data },
+                { type: CheckoutActionType.LoadCheckoutRequested },
+            ]);
         });
 
-        it('emits error actions if unable to sign out customer', () => {
-            checkoutClient.signOutCustomer.mockReturnValue(Promise.reject(errorResponse));
+        it('emits error actions if unable to sign out customer', async () => {
+            customerRequestSender.signOutCustomer.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-
-            customerActionCreator.signOutCustomer()
+            const actions = await customerActionCreator.signOutCustomer()(store)
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: CustomerActionType.SignOutCustomerRequested },
-                        { type: CustomerActionType.SignOutCustomerFailed, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CustomerActionType.SignOutCustomerRequested },
+                { type: CustomerActionType.SignOutCustomerFailed, payload: errorResponse, error: true },
+            ]);
+        });
+
+        it('emits actions to reload current checkout', async () => {
+            const credentials = { email: 'foo@bar.com', password: 'foobar' };
+
+            await customerActionCreator.signInCustomer(credentials)(store)
+                .toPromise();
+
+            expect(checkoutActionCreator.loadCurrentCheckout)
+                .toHaveBeenCalled();
         });
     });
 });

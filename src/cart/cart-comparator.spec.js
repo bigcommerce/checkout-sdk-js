@@ -1,4 +1,4 @@
-import { getCart } from './internal-carts.mock';
+import { getCart } from './carts.mock';
 import CartComparator from './cart-comparator';
 
 describe('CartComparator', () => {
@@ -27,18 +27,14 @@ describe('CartComparator', () => {
             const cartA = getCart();
             const cartB = {
                 ...cartA,
-                items: [
-                    {
-                        ...cartA.items[0],
-                        id: '22e11c8f-7dce-4da3-9413-b649533f8bad',
-                        imageUrl: '/images/canvas-laundry-cart-2.jpg',
-                    },
-                    {
-                        ...cartA.items[1],
-                        id: '22e11c8f-7dce-4da3-9413-b649533f8bad',
-                        imageUrl: '/images/canvas-laundry-cart-2.jpg',
-                    },
-                ],
+                lineItems: {
+                    ...cartA.lineItems,
+                    physicalItems: cartA.lineItems.physicalItems.map(item => ({
+                        ...item,
+                        id: `${item.id}123`,
+                        imageUrl: `${item.imageUrl}123`,
+                    })),
+                },
             };
 
             expect(comparator.isEqual(cartA, cartB)).toEqual(true);
