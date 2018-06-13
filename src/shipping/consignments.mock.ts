@@ -2,6 +2,7 @@ import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
 import Consignment, { ConsignmentRequestBody } from './consignment';
+import ConsignmentState from './consignment-state';
 
 export function getConsignment(): Consignment {
     return {
@@ -15,6 +16,16 @@ export function getConsignment(): Consignment {
         availableShippingOptions: [
             getShippingOption(),
         ],
+    };
+}
+
+export function getConsignmentState(): ConsignmentState {
+    return {
+        data: [
+            getConsignment(),
+        ],
+        errors: {},
+        statuses: {},
     };
 }
 

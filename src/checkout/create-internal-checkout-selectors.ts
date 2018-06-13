@@ -37,7 +37,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const shippingAddress = new ShippingAddressSelector(state.quote, state.config);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
-    const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
+    const shippingOptions = new ShippingOptionSelector(state.consignments);
     const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
 
     // Compose selectors

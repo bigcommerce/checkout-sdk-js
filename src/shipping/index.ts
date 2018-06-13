@@ -21,7 +21,6 @@ export { default as ShippingOption } from './shipping-option';
 export { default as ShippingOptionState } from './shipping-option-state';
 export { default as InternalShippingOption, InternalShippingOptionList } from './internal-shipping-option';
 export { default as ShippingOptionSelector } from './shipping-option-selector';
-export { default as shippingOptionReducer } from './shipping-option-reducer';
 
 export { default as ShippingStrategyActionCreator } from './shipping-strategy-action-creator';
 export { default as ShippingStrategySelector } from './shipping-strategy-selector';

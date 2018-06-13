@@ -1,38 +1,56 @@
 import { find } from 'lodash';
 
 import { selector } from '../common/selector';
-import { QuoteState } from '../quote';
 
+import ConsignmentState from './consignment-state';
 import InternalShippingOption, { InternalShippingOptionList } from './internal-shipping-option';
-import ShippingOptionState from './shipping-option-state';
+import mapToInternalShippingOption from './map-to-internal-shipping-option';
+import mapToInternalShippingOptions from './map-to-internal-shipping-options';
 
 @selector
 export default class ShippingOptionSelector {
     constructor(
-        private _shippingOptions: ShippingOptionState,
-        private _quote: QuoteState
+        private _consignments: ConsignmentState
     ) {}
 
     getShippingOptions(): InternalShippingOptionList | undefined {
-        return this._shippingOptions.data;
+        return this._consignments.data && mapToInternalShippingOptions(this._consignments.data);
     }
 
     getSelectedShippingOption(): InternalShippingOption | undefined {
-        const { shippingAddress = null, shippingOption: optionId = null } = this._quote.data || {};
-        const shippingOptions = this.getShippingOptions();
-
-        if (!shippingAddress || !shippingOptions || !optionId) {
+        if (!this._consignments.data) {
             return;
         }
 
-        return shippingAddress.id ? find(shippingOptions[shippingAddress.id], { id: optionId }) : undefined;
+        const { selectedShippingOptionId, availableShippingOptions } = this._consignments.data[0];
+        const shippingOption = find(availableShippingOptions, { id: selectedShippingOptionId });
+
+        return shippingOption ?
+            mapToInternalShippingOption(shippingOption, true)
+            : undefined;
     }
 
     getLoadError(): Error | undefined {
-        return this._shippingOptions.errors.loadError;
+        return this._consignments.errors.loadError;
     }
 
     isLoading(): boolean {
-        return !!this._shippingOptions.statuses.isLoading;
+        return !!this._consignments.statuses.isLoading;
+    }
+
+    getUpdateError(): Error | undefined {
+        return this._consignments.errors.updateError;
+    }
+
+    isUpdating(): boolean {
+        return !!this._consignments.statuses.isUpdating;
+    }
+
+    getCreateError(): Error | undefined {
+        return this._consignments.errors.createError;
+    }
+
+    isCreating(): boolean {
+        return !!this._consignments.statuses.isCreating;
     }
 }

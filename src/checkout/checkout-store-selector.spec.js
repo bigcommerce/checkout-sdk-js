@@ -9,6 +9,7 @@ import { getAustralia } from '../shipping/shipping-countries.mock';
 import { getCheckoutStoreState } from './checkouts.mock';
 import CheckoutStoreSelector from './checkout-store-selector';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
+import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 
 describe('CheckoutStoreSelector', () => {
     let selector;
@@ -36,7 +37,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns shipping options', () => {
-        expect(selector.getShippingOptions()).toEqual(state.shippingOptions.data);
+        expect(selector.getShippingOptions()).toEqual(getShippingOptions());
     });
 
     it('returns shipping countries', () => {
