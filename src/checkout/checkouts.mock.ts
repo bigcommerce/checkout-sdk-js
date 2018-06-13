@@ -1,9 +1,10 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getBillingAddressState } from '../billing/billing-addresses.mock';
 import { getCart } from '../cart/carts.mock';
-import { getCartState } from '../cart/internal-carts.mock';
+import { getCartState } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
-import { getGiftCertificate } from '../coupon/gift-certificates.mock';
+import { getCoupon, getCouponsState } from '../coupon/coupons.mock';
+import { getGiftCertificate, getGiftCertificatesState } from '../coupon/gift-certificates.mock';
 import { getGuestCustomer } from '../customer/customers.mock';
 import { getCustomerState, getCustomerStrategyState } from '../customer/internal-customers.mock';
 import { getCountriesState } from '../geography/countries.mock';
@@ -12,15 +13,15 @@ import { ACKNOWLEDGE } from '../payment';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { HOSTED } from '../payment/payment-method-types';
 import { getPaymentMethod, getPaymentMethodsState } from '../payment/payment-methods.mock';
+import { getPaymentState } from '../payment/payments.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../remote-checkout/remote-checkout.mock';
-import { getConsignment, getConsignmentState } from '../shipping/consignments.mock';
-import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
+import { getConsignment, getConsignmentsState } from '../shipping/consignments.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
 
-import { CheckoutStoreState } from '.';
 import Checkout, { CheckoutPayment } from './checkout';
 import CheckoutState from './checkout-state';
+import CheckoutStoreState from './checkout-store-state';
 
 export function getCheckout(): Checkout {
     return {
@@ -47,9 +48,7 @@ export function getCheckout(): Checkout {
         taxTotal: 0,
         subtotal: 190,
         grandTotal: 190,
-        giftCertificates: [
-            getGiftCertificate(),
-        ],
+        giftCertificates: [],
         balanceDue: 0,
         createdTime: '2018-03-06T04:41:49+00:00',
         updatedTime: '2018-03-07T03:44:51+00:00',
@@ -75,6 +74,25 @@ export function getCheckoutWithPayments(): Checkout {
     };
 }
 
+export function getCheckoutWithCoupons(): Checkout {
+    return {
+        ...getCheckout(),
+        coupons: [
+            getCoupon(),
+            getCoupon(),
+        ],
+    };
+}
+
+export function getCheckoutWithGiftCertificates(): Checkout {
+    return {
+        ...getCheckout(),
+        giftCertificates: [
+            getGiftCertificate(),
+        ],
+    };
+}
+
 export function getCheckoutPayment(): CheckoutPayment {
     return {
         providerId: getPaymentMethod().id,
@@ -94,21 +112,26 @@ export function getCheckoutState(): CheckoutState {
     };
 }
 
-export function getCheckoutStoreState() {
+export function getCheckoutStoreState(): CheckoutStoreState {
     return {
         billingAddress: getBillingAddressState(),
         cart: getCartState(),
         checkout: getCheckoutState(),
         config: getConfigState(),
-        consignments: getConsignmentState(),
+        consignments: getConsignmentsState(),
         countries: getCountriesState(),
+        coupons: getCouponsState(),
         customer: getCustomerState(),
         customerStrategies: getCustomerStrategyState(),
+        giftCertificates: getGiftCertificatesState(),
         instruments: getInstrumentsState(),
         order: getOrderState(),
+        payment: getPaymentState(),
         paymentMethods: getPaymentMethodsState(),
+        paymentStrategies: { errors: {}, statuses: {} },
         quote: getQuoteState(),
         remoteCheckout: getRemoteCheckoutState(),
         shippingCountries: getShippingCountriesState(),
+        shippingStrategies: { errors: {}, statuses: {} },
     };
 }

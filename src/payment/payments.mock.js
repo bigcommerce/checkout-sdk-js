@@ -75,7 +75,6 @@ export function getErrorPaymentResponseBody() {
 
 export function getPaymentState() {
     return {
-        meta: {},
-        data: getPaymentRequestBody(),
+        data: getPaymentResponseBody(),
     };
 }

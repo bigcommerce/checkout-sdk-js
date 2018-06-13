@@ -1,4 +1,5 @@
 import GiftCertificate from './gift-certificate';
+import GiftCertificateState from './gift-certificate-state';
 
 export function getGiftCertificate(): GiftCertificate {
     return {
@@ -7,5 +8,16 @@ export function getGiftCertificate(): GiftCertificate {
         remaining: 3,
         code: 'gc',
         purchaseDate: 'ddmmyy',
+    };
+}
+
+export function getGiftCertificatesState(): GiftCertificateState {
+    return {
+        data: [
+            getGiftCertificate(),
+            getGiftCertificate(),
+        ],
+        errors: {},
+        statuses: {},
     };
 }

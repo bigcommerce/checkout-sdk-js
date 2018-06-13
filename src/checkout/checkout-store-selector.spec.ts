@@ -1,20 +1,22 @@
 import { find, reject } from 'lodash';
 
+import { mapToInternalCart } from '../cart';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
 import { mapToInternalOrder } from '../order';
 import { getBraintree } from '../payment/payment-methods.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
 
-import { getCheckoutStoreState } from './checkouts.mock';
 import CheckoutStoreSelector from './checkout-store-selector';
+import CheckoutStoreState from './checkout-store-state';
+import { getCheckoutStoreState } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 
 describe('CheckoutStoreSelector', () => {
-    let selector;
-    let state;
+    let selector: CheckoutStoreSelector;
+    let state: CheckoutStoreState;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
@@ -58,7 +60,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns cart', () => {
-        expect(selector.getCart()).toEqual(state.cart.data);
+        expect(selector.getCart()).toEqual(mapToInternalCart(state.checkout.data));
     });
 
     it('returns customer', () => {

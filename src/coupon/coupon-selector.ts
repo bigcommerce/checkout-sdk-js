@@ -1,5 +1,6 @@
 import { selector } from '../common/selector';
 
+import Coupon from './coupon';
 import CouponState from './coupon-state';
 
 @selector
@@ -7,6 +8,10 @@ export default class CouponSelector {
     constructor(
         private _coupon: CouponState
     ) {}
+
+    getCoupons(): Coupon[] | undefined {
+        return this._coupon.data;
+    }
 
     getRemoveError(): Error | undefined {
         return this._coupon.errors.removeCouponError;
