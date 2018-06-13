@@ -5,10 +5,8 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
-import CheckoutRequestSender from '../../checkout/checkout-request-sender';
-import CheckoutValidator from '../../checkout/checkout-validator';
-import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
+import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { getGuestCustomer } from '../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
@@ -208,15 +206,17 @@ describe('AfterpayPaymentStrategy', () => {
                         context: { payment: { token: nonce } },
                     },
                 },
-                order: {
+                checkout: {
                     data: {
-                        ...getIncompleteOrder(),
-                        payment: {
-                            id: paymentMethod.id,
-                            gateway: paymentMethod.gateway,
-                        },
+                        ...getCheckout(),
+                        payments: [{
+                            ...getCheckoutPayment(),
+                            providerId: paymentMethod.id,
+                            gatewayId: paymentMethod.gateway,
+                        }],
                     },
                 },
+                order: null,
             }));
 
             strategy = new AfterpayPaymentStrategy(

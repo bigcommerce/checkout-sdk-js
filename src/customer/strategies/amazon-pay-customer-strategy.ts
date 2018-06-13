@@ -80,7 +80,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
 
     signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
-        const payment = state.checkout.getHostedPayment();
+        const payment = state.payment.getPaymentId();
 
         if (!payment) {
             return Promise.resolve(this._store.getState());

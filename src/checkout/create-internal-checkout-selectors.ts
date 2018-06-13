@@ -8,6 +8,7 @@ import { FormSelector } from '../form';
 import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
+import { PaymentSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
@@ -30,15 +31,18 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const form = new FormSelector(state.config);
     const giftCertificates = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
-    const order = new OrderSelector(state.order, state.customer, state.cart);
-    const paymentMethods = new PaymentMethodSelector(state.paymentMethods, state.order);
+    const order = new OrderSelector(state.order);
+    const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
     const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
     const shippingAddress = new ShippingAddressSelector(state.quote, state.config);
-    const quote = new QuoteSelector(state.quote, shippingAddress);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingOptions = new ShippingOptionSelector(state.shippingOptions, state.quote);
     const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
+
+    // Compose selectors
+    const payment = new PaymentSelector(checkout, order);
+    const quote = new QuoteSelector(state.quote, shippingAddress);
 
     const selectors = {
         billingAddress,
@@ -53,6 +57,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
         giftCertificates,
         instruments,
         order,
+        payment,
         paymentMethods,
         paymentStrategies,
         quote,

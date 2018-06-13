@@ -1,4 +1,3 @@
-import { find, merge } from 'lodash';
 import { getAdyenAmex, getBraintree, getPaymentMethodsState } from './payment-methods.mock';
 import { getSubmittedOrderState } from '../order/internal-orders.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
@@ -55,26 +54,6 @@ describe('PaymentMethodSelector', () => {
             paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
 
             expect(paymentMethodSelector.getPaymentMethod('amex')).toEqual(getAdyenAmex());
-        });
-    });
-
-    describe('#getSelectedPaymentMethod()', () => {
-        it('returns selected payment method', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
-
-            expect(paymentMethodSelector.getSelectedPaymentMethod()).toEqual(
-                find(state.paymentMethods.data, { id: state.order.data.payment.id })
-            );
-        });
-
-        it('returns undefined if payment method is not selected', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, merge({}, state.order, {
-                data: {
-                    payment: null,
-                },
-            }));
-
-            expect(paymentMethodSelector.getSelectedPaymentMethod()).toEqual();
         });
     });
 

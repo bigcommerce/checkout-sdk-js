@@ -1,13 +1,14 @@
-import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat } from 'rxjs/observable/concat';
 import { empty } from 'rxjs/observable/empty';
+import { from } from 'rxjs/observable/from';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { OrderActionCreator, OrderRequestBody } from '../order';
+import { LoadOrderAction, OrderActionCreator, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import Payment from './payment';
@@ -29,16 +30,16 @@ export default class PaymentStrategyActionCreator {
         private _orderActionCreator: OrderActionCreator
     ) {}
 
-    execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction, InternalCheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction | LoadOrderAction, InternalCheckoutSelectors> {
         return store => {
-            const executeAction = Observable.create((observer: Observer<PaymentStrategyExecuteAction>) => {
+            const executeAction = new Observable((observer: Observer<PaymentStrategyExecuteAction>) => {
                 const state = store.getState();
                 const { payment = {} as Payment, useStoreCredit } = payload;
                 const meta = { methodId: payment.methodId };
 
                 let strategy: PaymentStrategy;
 
-                if (state.order.isPaymentDataRequired(useStoreCredit)) {
+                if (state.payment.isPaymentDataRequired(useStoreCredit)) {
                     const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
 
                     if (!method) {
@@ -64,31 +65,32 @@ export default class PaymentStrategyActionCreator {
             });
 
             return concat(
-                this._loadOrder(store, options),
+                this._loadOrderIfNeeded(store, options),
                 executeAction
             );
         };
     }
 
-    finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction, InternalCheckoutSelectors> {
+    finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction | LoadOrderAction, InternalCheckoutSelectors> {
         return store => {
-            const finalizeAction = Observable.create((observer: Observer<PaymentStrategyFinalizeAction>) => {
+            const finalizeAction = new Observable((observer: Observer<PaymentStrategyFinalizeAction>) => {
                 const state = store.getState();
                 const order = state.order.getOrder();
+                const payment = state.payment.getPaymentId();
 
                 if (!order) {
                     throw new MissingDataError('Unable to finalize order because "order" data is missing.');
                 }
 
-                if (!order.payment || !order.payment.id) {
+                if (!payment) {
                     throw new OrderFinalizationNotRequiredError();
                 }
 
-                const method = state.paymentMethods.getPaymentMethod(order.payment.id, order.payment.gateway);
-                const meta = { methodId: order.payment.id };
+                const method = state.paymentMethods.getPaymentMethod(payment.providerId, payment.gatewayId);
+                const meta = { methodId: payment.providerId };
 
                 if (!method) {
-                    throw new MissingDataError(`Unable to finalize payment because "paymentMethod (${order.payment.id})" data is missing.`);
+                    throw new MissingDataError(`Unable to finalize payment because "paymentMethod (${payment.providerId})" data is missing.`);
                 }
 
                 observer.next(createAction(PaymentStrategyActionType.FinalizeRequested, undefined, meta));
@@ -105,7 +107,7 @@ export default class PaymentStrategyActionCreator {
             });
 
             return concat(
-                this._loadOrder(store, options),
+                this._loadOrderIfNeeded(store, options),
                 finalizeAction
             );
         };
@@ -176,18 +178,13 @@ export default class PaymentStrategyActionCreator {
         });
     }
 
-    private _loadOrder(store: ReadableCheckoutStore, options?: RequestOptions): Observable<Action> {
-        const state = store.getState();
-        const checkout = state.checkout.getCheckout();
+    private _loadOrderIfNeeded(store: ReadableCheckoutStore, options?: RequestOptions): Observable<LoadOrderAction> {
+        const checkout = store.getState().checkout.getCheckout();
 
-        if (!checkout) {
-            throw new MissingDataError('Unable to load order because "checkout" is missing.');
+        if (checkout && checkout.orderId) {
+            return from(this._orderActionCreator.loadCurrentOrder(options)(store));
         }
 
-        if (!checkout.orderId) {
-            return empty();
-        }
-
-        return this._orderActionCreator.loadOrder(checkout.orderId, options);
+        return empty();
     }
 }

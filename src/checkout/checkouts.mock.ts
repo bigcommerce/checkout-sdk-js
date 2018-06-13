@@ -7,7 +7,8 @@ import { getGiftCertificate } from '../coupon/gift-certificates.mock';
 import { getGuestCustomer } from '../customer/customers.mock';
 import { getCustomerState, getCustomerStrategyState } from '../customer/internal-customers.mock';
 import { getCountriesState } from '../geography/countries.mock';
-import { getCompleteOrderState } from '../order/internal-orders.mock';
+import { getOrderState } from '../order/orders.mock';
+import { ACKNOWLEDGE } from '../payment';
 import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { HOSTED } from '../payment/payment-method-types';
 import { getPaymentMethod, getPaymentMethodsState } from '../payment/payment-methods.mock';
@@ -17,7 +18,8 @@ import { getConsignment } from '../shipping/consignments.mock';
 import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
 
-import Checkout from './checkout';
+import { CheckoutStoreState } from '.';
+import Checkout, { CheckoutPayment } from './checkout';
 import CheckoutState from './checkout-state';
 
 export function getCheckout(): Checkout {
@@ -68,15 +70,19 @@ export function getCheckoutWithPayments(): Checkout {
     return {
         ...getCheckout(),
         payments: [
-            {
-                providerId: getPaymentMethod().id,
-                gatewayId: getPaymentMethod().gateway,
-                providerType: HOSTED,
-                detail: {
-                    step: 'ACKNOWLEDGE',
-                },
-            },
+            getCheckoutPayment(),
         ],
+    };
+}
+
+export function getCheckoutPayment(): CheckoutPayment {
+    return {
+        providerId: getPaymentMethod().id,
+        gatewayId: getPaymentMethod().gateway,
+        providerType: HOSTED,
+        detail: {
+            step: ACKNOWLEDGE,
+        },
     };
 }
 
@@ -88,15 +94,8 @@ export function getCheckoutState(): CheckoutState {
     };
 }
 
-export function getCheckoutMeta() {
-    return {
-        remoteCheckout: getRemoteCheckoutStateData(),
-    };
-}
-
 export function getCheckoutStoreState() {
     return {
-        billingAddress: getBillingAddressState(),
         cart: getCartState(),
         checkout: getCheckoutState(),
         config: getConfigState(),
@@ -104,7 +103,7 @@ export function getCheckoutStoreState() {
         customer: getCustomerState(),
         customerStrategies: getCustomerStrategyState(),
         instruments: getInstrumentsState(),
-        order: getCompleteOrderState(),
+        order: getOrderState(),
         paymentMethods: getPaymentMethodsState(),
         quote: getQuoteState(),
         remoteCheckout: getRemoteCheckoutState(),

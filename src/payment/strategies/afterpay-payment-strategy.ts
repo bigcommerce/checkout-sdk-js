@@ -87,11 +87,11 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
     finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(this._remoteCheckoutActionCreator.loadSettings(options.methodId))
             .then(state => {
-                const order = state.order.getOrder();
+                const payment = state.payment.getPaymentId();
                 const config = state.config.getContextConfig();
                 const afterpay = state.remoteCheckout.getCheckout('afterpay');
 
-                if (!order || !order.payment.id || !config || !config.payment.token || !afterpay || !afterpay.settings) {
+                if (!payment || !config || !config.payment.token || !afterpay || !afterpay.settings) {
                     throw new MissingDataError('Unable to finalize order because "order", "checkoutMeta" or "token" data is missing.');
                 }
 
@@ -101,7 +101,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
                 };
 
                 const paymentPayload = {
-                    methodId: order.payment.id,
+                    methodId: payment.providerId,
                     paymentData: { nonce: config.payment.token },
                 };
 

@@ -1,11 +1,12 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { getCartState } from '../cart/internal-carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../checkout';
-import { getCheckoutState } from '../checkout/checkouts.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
+import { getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType } from '../order';
@@ -32,28 +33,26 @@ describe('PaymentStrategyActionCreator', () => {
     let noPaymentDataStrategy: PaymentStrategy;
 
     beforeEach(() => {
-        state = {
-            cart: getCartState(),
-            checkout: getCheckoutState(),
-            order: getCompleteOrderState(),
-            paymentMethods: getPaymentMethodsState(),
-        };
+        state = getCheckoutStoreState();
         store = createCheckoutStore(state);
         client = createCheckoutClient();
         paymentClient = createPaymentClient();
         registry = createPaymentStrategyRegistry(store, client, paymentClient);
-        orderActionCreator = new OrderActionCreator(client);
+        orderActionCreator = new OrderActionCreator(
+            client,
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+        );
         strategy = new CreditCardPaymentStrategy(
             store,
             orderActionCreator,
             new PaymentActionCreator(
                 new PaymentRequestSender(createPaymentClient()),
-                new OrderActionCreator(client)
+                orderActionCreator
             )
         );
         noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(
             store,
-            new OrderActionCreator(client)
+            orderActionCreator
         );
 
         jest.spyOn(registry, 'getByMethod')
@@ -292,17 +291,21 @@ describe('PaymentStrategyActionCreator', () => {
 
             try {
                 await Observable.from(actionCreator.execute(getOrderRequestBody())(store)).toPromise();
-            } catch (action) {
-                expect(action.payload).toBeInstanceOf(MissingDataError);
+
+                expect(true).toBe(true);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
             }
         });
 
         it('finds `nopaymentrequired` strategy if payment data is not required', async () => {
             store = createCheckoutStore({
                 ...state,
-                customer: merge({}, getCustomerState(), {
+                checkout: merge({}, getCheckoutState(), {
                     data: {
-                        storeCredit: 9999,
+                        customer: {
+                            storeCredit: 9999,
+                        },
                     },
                 }),
             });
@@ -433,7 +436,7 @@ describe('PaymentStrategyActionCreator', () => {
 
     describe('#widgetInteraction()', () => {
         it('executes widget interaction callback', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const options = { methodId: 'default' };
             const fakeMethod = jest.fn(() => Promise.resolve());
             await Observable.from(actionCreator.widgetInteraction(fakeMethod, options)(store))
@@ -444,7 +447,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits action to notify widget interaction in progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const actions = await Observable.from(actionCreator.widgetInteraction(jest.fn(() => Promise.resolve()), { methodId: 'default' })(store))
                 .toArray()
                 .toPromise();
@@ -456,7 +459,7 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits error action if widget interaction fails', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const signInError = new Error();
             const errorHandler = jest.fn(action => Observable.of(action));
 

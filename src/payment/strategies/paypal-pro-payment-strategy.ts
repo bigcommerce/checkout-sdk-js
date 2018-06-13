@@ -1,5 +1,4 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { MissingDataError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { PaymentArgumentInvalidError } from '../errors';
 import PaymentActionCreator from '../payment-action-creator';
@@ -42,12 +41,7 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
 
     private _isPaymentAcknowledged(): boolean {
         const state = this._store.getState();
-        const order = state.order.getOrder();
 
-        if (!order) {
-            throw new MissingDataError('Unable to determine payment status because "order" data is missing.');
-        }
-
-        return order.payment && order.payment.status === paymentStatusTypes.ACKNOWLEDGE;
+        return state.payment.getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE;
     }
 }

@@ -1,12 +1,13 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
-import { merge, omit } from 'lodash';
+import { omit } from 'lodash';
 
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
-import { MissingDataError, RequestError } from '../../common/error/errors';
+import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
+import { RequestError } from '../../common/error/errors';
 import { getResponse } from '../../common/http-request/responses.mock';
-import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
+import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
@@ -38,7 +39,7 @@ describe('SagePayPaymentStrategy', () => {
             postForm: jest.fn((url, data, callback = () => {}) => callback()),
         };
 
-        store = createCheckoutStore();
+        store = createCheckoutStore(getCheckoutStoreState());
 
         finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
@@ -134,11 +135,8 @@ describe('SagePayPaymentStrategy', () => {
     it('finalizes order if order is created and payment is finalized', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
-            payment: {
-                status: paymentStatusTypes.FINALIZE,
-            },
-        }));
+        jest.spyOn(state.payment, 'getPaymentStatus')
+            .mockReturnValue(paymentStatusTypes.FINALIZE);
 
         await strategy.finalize();
 
@@ -149,7 +147,7 @@ describe('SagePayPaymentStrategy', () => {
     it('does not finalize order if order is not created', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(getIncompleteOrder());
+        jest.spyOn(state.order, 'getOrder').mockReturnValue();
 
         try {
             await strategy.finalize();
@@ -163,11 +161,8 @@ describe('SagePayPaymentStrategy', () => {
     it('does not finalize order if order is not finalized', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue(merge({}, getSubmittedOrder(), {
-            payment: {
-                status: paymentStatusTypes.INITIALIZE,
-            },
-        }));
+        jest.spyOn(state.payment, 'getPaymentStatus')
+            .mockReturnValue(paymentStatusTypes.INITIALIZE);
 
         try {
             await strategy.finalize();
@@ -186,7 +181,7 @@ describe('SagePayPaymentStrategy', () => {
         try {
             await strategy.finalize();
         } catch (error) {
-            expect(error).toBeInstanceOf(MissingDataError);
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
         }
     });
 });

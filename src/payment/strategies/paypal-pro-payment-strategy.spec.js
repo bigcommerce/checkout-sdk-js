@@ -1,13 +1,12 @@
 import { createAction } from '@bigcommerce/data-store';
-import { merge, omit } from 'lodash';
+import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../../checkout';
-import { MissingDataError } from '../../common/error/errors';
 import { OrderActionType } from '../../order';
 import { getOrderRequestBody, getIncompleteOrderState } from '../../order/internal-orders.mock';
 import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
-import * as paymentStatusTypes from '../payment-status-types';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
+import { getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
 
 describe('PaypalProPaymentStrategy', () => {
     let orderActionCreator;
@@ -62,25 +61,13 @@ describe('PaypalProPaymentStrategy', () => {
         expect(output).toEqual(store.getState());
     });
 
-    it('throws error if order is missing', async () => {
-        store = createCheckoutStore();
-        strategy = new PaypalProPaymentStrategy(store, orderActionCreator);
-
-        try {
-            await strategy.execute(getOrderRequestBody());
-        } catch (error) {
-            expect(error).toBeInstanceOf(MissingDataError);
-        }
-    });
-
     describe('if payment is acknowledged', () => {
         beforeEach(() => {
             store = createCheckoutStore({
-                order: merge({}, getIncompleteOrderState(), {
-                    data: {
-                        payment: { status: paymentStatusTypes.ACKNOWLEDGE },
-                    },
-                }),
+                ...getCheckoutStoreState(),
+                checkout: {
+                    data: getCheckoutWithPayments(),
+                },
             });
 
             strategy = new PaypalProPaymentStrategy(store, orderActionCreator);

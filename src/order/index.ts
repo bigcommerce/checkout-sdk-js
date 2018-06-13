@@ -1,8 +1,8 @@
 export * from './internal-order-responses';
 export * from './order-actions';
 
-export { default as Order } from './order';
-export { default as InternalOrder, InternalIncompleteOrder } from './internal-order';
+export { default as Order, GatewayOrderPayment } from './order';
+export { default as InternalOrder, InternalIncompleteOrder, InternalOrderPayment } from './internal-order';
 export { default as InternalOrderRequestBody } from './internal-order-request-body';
 
 export { default as OrderActionCreator } from './order-action-creator';

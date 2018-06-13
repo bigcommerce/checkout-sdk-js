@@ -3,11 +3,12 @@ import { Observable } from 'rxjs';
 import { merge } from 'lodash';
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import { getOrderRequestBody, getIncompleteOrder, getIncompleteOrderState, getSubmittedOrder } from '../../order/internal-orders.mock';
+import { getOrderRequestBody, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
 import { getPaypalExpress, getPaymentMethodsState } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalExpressPaymentStrategy from './paypal-express-payment-strategy';
+import { getCheckoutPayment, getCheckoutStoreState } from '../../checkout/checkouts.mock';
 
 describe('PaypalExpressPaymentStrategy', () => {
     let finalizeOrderAction;
@@ -42,7 +43,6 @@ describe('PaypalExpressPaymentStrategy', () => {
         };
 
         state = {
-            order: getIncompleteOrderState(),
             paymentMethods: getPaymentMethodsState(),
         };
 
@@ -164,8 +164,16 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             it('does not open in-context modal if payment is already acknowledged', async () => {
                 store = createCheckoutStore({
-                    order: merge(getIncompleteOrderState(), {
-                        data: { payment: { status: paymentStatusTypes.ACKNOWLEDGE } },
+                    ...state,
+                    checkout: merge(state.checkout, {
+                        data: {
+                            payments: [{
+                                ...getCheckoutPayment(),
+                                detail: {
+                                    step: paymentStatusTypes.ACKNOWLEDGE,
+                                },
+                            }],
+                        },
                     }),
                 });
 
@@ -180,8 +188,16 @@ describe('PaypalExpressPaymentStrategy', () => {
 
             it('does not open in-context modal if payment is already finalized', async () => {
                 store = createCheckoutStore({
-                    order: merge(getIncompleteOrderState(), {
-                        data: { payment: { status: paymentStatusTypes.FINALIZE } },
+                    ...state,
+                    checkout: merge(state.checkout, {
+                        data: {
+                            payments: [{
+                                ...getCheckoutPayment(),
+                                detail: {
+                                    step: paymentStatusTypes.FINALIZE,
+                                },
+                            }],
+                        },
                     }),
                 });
 
@@ -264,8 +280,15 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not redirect shopper if payment is already acknowledged', async () => {
                 store = createCheckoutStore({
                     ...state,
-                    order: merge(getIncompleteOrderState(), {
-                        data: { payment: { status: paymentStatusTypes.ACKNOWLEDGE } },
+                    checkout: merge(state.checkout, {
+                        data: {
+                            payments: [{
+                                ...getCheckoutPayment(),
+                                detail: {
+                                    step: paymentStatusTypes.ACKNOWLEDGE,
+                                },
+                            }],
+                        },
                     }),
                 });
 
@@ -280,8 +303,15 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not redirect shopper if payment is already finalized', async () => {
                 store = createCheckoutStore({
                     ...state,
-                    order: merge(getIncompleteOrderState(), {
-                        data: { payment: { status: paymentStatusTypes.FINALIZE } },
+                    checkout: merge(state.checkout, {
+                        data: {
+                            payments: [{
+                                ...getCheckoutPayment(),
+                                detail: {
+                                    step: paymentStatusTypes.FINALIZE,
+                                },
+                            }],
+                        },
                     }),
                 });
 
@@ -296,23 +326,21 @@ describe('PaypalExpressPaymentStrategy', () => {
     });
 
     describe('#finalize()', () => {
-        let order;
-
         beforeEach(async () => {
-            order = merge({}, getSubmittedOrder(), {
-                payment: {
-                    id: 'paypalexpress',
-                    redirectUrl: 'https://s1504075966.bcapp.dev/checkout',
-                },
-            });
+            store = createCheckoutStore(getCheckoutStoreState());
+            strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
-            jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(order);
+            jest.spyOn(store.getState().payment, 'getPaymentRedirectUrl')
+                .mockReturnValue('https://s1504075966.bcapp.dev/checkout');
+
+            jest.spyOn(store, 'dispatch');
 
             await strategy.initialize({ methodId: paymentMethod.id });
         });
 
         it('finalizes order if order is created and payment is acknowledged', async () => {
-            order.payment.status = paymentStatusTypes.ACKNOWLEDGE;
+            jest.spyOn(store.getState().payment, 'getPaymentStatus')
+                .mockReturnValue(paymentStatusTypes.ACKNOWLEDGE);
 
             await strategy.finalize();
 
@@ -321,7 +349,8 @@ describe('PaypalExpressPaymentStrategy', () => {
         });
 
         it('finalizes order if order is created and payment is finalized', async () => {
-            order.payment.status = paymentStatusTypes.FINALIZE;
+            jest.spyOn(store.getState().payment, 'getPaymentStatus')
+                .mockReturnValue(paymentStatusTypes.FINALIZE);
 
             await strategy.finalize();
 
@@ -330,7 +359,8 @@ describe('PaypalExpressPaymentStrategy', () => {
         });
 
         it('does not finalize order if order is not created', async () => {
-            jest.spyOn(store.getState().order, 'getOrder').mockReturnValue(getIncompleteOrder());
+            jest.spyOn(store.getState().order, 'getOrder')
+                .mockReturnValue(undefined);
 
             try {
                 await strategy.finalize();
@@ -342,6 +372,9 @@ describe('PaypalExpressPaymentStrategy', () => {
         });
 
         it('does not finalize order if order is not finalized or acknowledged', async () => {
+            jest.spyOn(store.getState().payment, 'getPaymentStatus')
+                .mockReturnValue(undefined);
+
             try {
                 await strategy.finalize();
             } catch (error) {

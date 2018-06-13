@@ -1,4 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { defer } from 'rxjs/observable/defer';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -30,7 +31,7 @@ export default class CheckoutActionCreator {
     }
 
     loadCurrentCheckout(options?: RequestOptions): ThunkAction<CheckoutAction, InternalCheckoutSelectors> {
-        return store => {
+        return store => defer(() => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
 
@@ -39,6 +40,6 @@ export default class CheckoutActionCreator {
             }
 
             return this.loadCheckout(checkout.id, options);
-        };
+        });
     }
 }

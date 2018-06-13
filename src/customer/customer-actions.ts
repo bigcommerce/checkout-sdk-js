@@ -1,6 +1,6 @@
 import { Action } from '@bigcommerce/data-store';
 
-import { InternalCheckout } from '../checkout';
+import { InternalCustomerResponseData } from './internal-customer-responses';
 
 export enum CustomerActionType {
     SignInCustomerRequested = 'SIGN_IN_CUSTOMER_REQUESTED',
@@ -30,7 +30,7 @@ export interface SignInCustomerRequestedAction extends Action {
     type: CustomerActionType.SignInCustomerRequested;
 }
 
-export interface SignInCustomerSucceededAction extends Action<InternalCheckout> {
+export interface SignInCustomerSucceededAction extends Action<InternalCustomerResponseData> {
     type: CustomerActionType.SignInCustomerSucceeded;
 }
 
@@ -42,7 +42,7 @@ export interface SignOutCustomerRequestedAction extends Action {
     type: CustomerActionType.SignOutCustomerRequested;
 }
 
-export interface SignOutCustomerSucceededAction extends Action<InternalCheckout> {
+export interface SignOutCustomerSucceededAction extends Action<InternalCustomerResponseData> {
     type: CustomerActionType.SignOutCustomerSucceeded;
 }
 

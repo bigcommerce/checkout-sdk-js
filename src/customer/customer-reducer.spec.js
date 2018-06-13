@@ -42,19 +42,6 @@ describe('customerReducer()', () => {
         }));
     });
 
-    it('returns new customer data if order is fetched successfully', () => {
-        const response = getCompleteOrderResponseBody();
-        const action = {
-            type: OrderActionType.LoadOrderSucceeded,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.customer,
-        }));
-    });
-
     it('returns new customer data if order is submitted successfully', () => {
         const response = getCompleteOrderResponseBody();
         const action = {

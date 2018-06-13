@@ -23,7 +23,7 @@ export default class ShippingStrategyActionCreator {
 
     updateAddress(address: Address, options?: ShippingRequestOptions): ThunkAction<ShippingStrategyUpdateAddressAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<ShippingStrategyUpdateAddressAction>) => {
-            const payment = store.getState().checkout.getHostedPayment();
+            const payment = store.getState().payment.getPaymentId();
             const methodId = options && options.methodId || payment && payment.providerId;
 
             observer.next(createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId }));
@@ -42,7 +42,7 @@ export default class ShippingStrategyActionCreator {
 
     selectOption(shippingOptionId: string, options?: ShippingRequestOptions): ThunkAction<ShippingStrategySelectOptionAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<ShippingStrategySelectOptionAction>) => {
-            const payment = store.getState().checkout.getHostedPayment();
+            const payment = store.getState().payment.getPaymentId();
             const methodId = options && options.methodId || payment && payment.providerId;
 
             observer.next(createAction(ShippingStrategyActionType.SelectOptionRequested, undefined, { methodId }));
@@ -61,7 +61,7 @@ export default class ShippingStrategyActionCreator {
 
     initialize(options?: ShippingInitializeOptions): ThunkAction<ShippingStrategyInitializeAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<ShippingStrategyInitializeAction>) => {
-            const payment = store.getState().checkout.getHostedPayment();
+            const payment = store.getState().payment.getPaymentId();
             const methodId = options && options.methodId || payment && payment.providerId;
             const mergedOptions = { ...options, methodId };
 
@@ -81,7 +81,7 @@ export default class ShippingStrategyActionCreator {
 
     deinitialize(options?: ShippingRequestOptions): ThunkAction<ShippingStrategyDeinitializeAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<ShippingStrategyDeinitializeAction>) => {
-            const payment = store.getState().checkout.getHostedPayment();
+            const payment = store.getState().payment.getPaymentId();
             const methodId = options && options.methodId || payment && payment.providerId;
 
             observer.next(createAction(ShippingStrategyActionType.DeinitializeRequested, undefined, { methodId }));

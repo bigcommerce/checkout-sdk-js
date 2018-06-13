@@ -1,5 +1,7 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
+import { OrderAction, OrderActionType } from '../order';
+
 import Checkout from './checkout';
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
 import CheckoutState, { CheckoutErrorsState, CheckoutStatusesState } from './checkout-state';
@@ -11,9 +13,9 @@ const DEFAULT_STATE: CheckoutState = {
 
 export default function checkoutReducer(
     state: CheckoutState = DEFAULT_STATE,
-    action: CheckoutAction
+    action: CheckoutAction | OrderAction
 ): CheckoutState {
-    const reducer = combineReducers<CheckoutState, CheckoutAction>({
+    const reducer = combineReducers<CheckoutState, CheckoutAction | OrderAction>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -24,11 +26,14 @@ export default function checkoutReducer(
 
 function dataReducer(
     data: Checkout | undefined,
-    action: CheckoutAction
+    action: CheckoutAction | OrderAction
 ): Checkout | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return action.payload ? action.payload : data;
+
+    case OrderActionType.SubmitOrderSucceeded:
+        return action.payload && data ? { ...data, orderId: action.payload.order.orderId } : data;
 
     default:
         return data;
@@ -37,7 +42,7 @@ function dataReducer(
 
 function errorsReducer(
     errors: CheckoutErrorsState = DEFAULT_STATE.errors,
-    action: CheckoutAction
+    action: CheckoutAction | OrderAction
 ): CheckoutErrorsState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
@@ -60,7 +65,7 @@ function errorsReducer(
 
 function statusesReducer(
     statuses: CheckoutStatusesState = DEFAULT_STATE.statuses,
-    action: CheckoutAction
+    action: CheckoutAction | OrderAction
 ): CheckoutStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
