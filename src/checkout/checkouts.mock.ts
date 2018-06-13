@@ -13,7 +13,7 @@ import { HOSTED } from '../payment/payment-method-types';
 import { getPaymentMethod, getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../remote-checkout/remote-checkout.mock';
-import { getConsignment } from '../shipping/consignments.mock';
+import { getConsignment, getConsignmentState } from '../shipping/consignments.mock';
 import { getShippingOptionsState } from '../shipping/internal-shipping-options.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
 
@@ -100,6 +100,7 @@ export function getCheckoutStoreState() {
         cart: getCartState(),
         checkout: getCheckoutState(),
         config: getConfigState(),
+        consignments: getConsignmentState(),
         countries: getCountriesState(),
         customer: getCustomerState(),
         customerStrategies: getCustomerStrategyState(),
