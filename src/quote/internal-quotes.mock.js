@@ -59,7 +59,6 @@ export function getQuoteResponseBody() {
 
 export function getQuoteState() {
     return {
-        meta: {},
         data: getQuote(),
         statuses: {},
         errors: {},

@@ -42,7 +42,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
 
     // Compose selectors
     const payment = new PaymentSelector(checkout, order);
-    const quote = new QuoteSelector(state.quote, billingAddress, shippingAddress);
+    const quote = new QuoteSelector(state.checkout, billingAddress, shippingAddress, shippingOptions);
 
     const selectors = {
         billingAddress,

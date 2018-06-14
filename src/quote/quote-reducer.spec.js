@@ -8,12 +8,7 @@ import quoteReducer from './quote-reducer';
 
 describe('quoteReducer()', () => {
     let initialState;
-    const quoteState = {
-        data: {
-            ...getQuote(),
-            billingAddress: {},
-        },
-    };
+    const quoteState = getQuoteState();
 
     beforeEach(() => {
         initialState = {};
@@ -47,7 +42,15 @@ describe('quoteReducer()', () => {
             payload: getCheckout(),
         };
 
-        expect(quoteReducer(initialState, action)).toEqual(expect.objectContaining(quoteState));
+        expect(quoteReducer(initialState, action)).toEqual({
+            ...quoteState,
+            errors: {
+                loadError: undefined,
+            },
+            statuses: {
+                isLoading: false,
+            },
+        });
     });
 
     it('returns new data when creating consignments', () => {

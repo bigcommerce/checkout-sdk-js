@@ -3,27 +3,32 @@ import { getBillingAddressState } from '../billing/billing-addresses.mock';
 import { getCheckoutState } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getConfig } from '../config/configs.mock';
-import { ShippingAddressSelector } from '../shipping';
+import { ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
 
 import { getQuoteState } from './internal-quotes.mock';
 import QuoteSelector from './quote-selector';
+import { getConsignmentState } from '../shipping/consignments.mock';
 
 describe('QuoteSelector', () => {
     let quoteSelector;
     let shippingAddressSelector;
+    let shippingOptionsSelector;
     let billingAddressSelector;
     let state;
 
     beforeEach(() => {
         state = {
+            checkout: getCheckoutState(),
+            consignments: getConsignmentState(),
             quote: getQuoteState(),
             billingAddress: getBillingAddressState(),
             config: getConfig(),
         };
 
+        shippingOptionsSelector = new ShippingOptionSelector(state.consignments);
         shippingAddressSelector = new ShippingAddressSelector(state.quote, state.config);
         billingAddressSelector = new BillingAddressSelector(state.billingAddress);
-        quoteSelector = new QuoteSelector(state.quote, billingAddressSelector, shippingAddressSelector);
+        quoteSelector = new QuoteSelector(state.checkout, billingAddressSelector, shippingAddressSelector, shippingOptionsSelector);
     });
 
     describe('#getQuote()', () => {
