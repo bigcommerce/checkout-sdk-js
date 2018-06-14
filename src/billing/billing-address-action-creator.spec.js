@@ -4,12 +4,12 @@ import { createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getQuoteState } from '../quote/internal-quotes.mock';
 import BillingAddressActionCreator from './billing-address-action-creator';
 import { BillingAddressActionType } from './billing-address-actions';
 import { getBillingAddress } from './internal-billing-addresses.mock';
 import { getCustomerState } from '../customer/internal-customers.mock';
 import { getBillingAddressState } from './billing-addresses.mock';
+import { getConsignmentsState } from '../shipping/consignments.mock';
 
 describe('BillingAddressActionCreator', () => {
     let address;
@@ -106,7 +106,7 @@ describe('BillingAddressActionCreator', () => {
         describe('when store has checkout and billing address data from quote', () => {
             beforeEach(() => {
                 store = createCheckoutStore({
-                    quote: getQuoteState(),
+                    consignments: getConsignmentsState(),
                     billingAddress: getBillingAddressState(),
                     customer: getCustomerState(),
                     checkout: getCheckoutState(),

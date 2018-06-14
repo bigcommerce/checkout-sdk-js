@@ -13,6 +13,8 @@ import { getCheckoutStoreState } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
+import { getQuote } from '../quote/internal-quotes.mock';
+import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
 
 describe('CheckoutStoreSelector', () => {
     let selector: CheckoutStoreSelector;
@@ -32,7 +34,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns quote', () => {
-        expect(selector.getQuote()).toEqual(state.quote.data);
+        expect(selector.getQuote()).toEqual(getQuote());
     });
 
     it('returns config', () => {
@@ -72,7 +74,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns shipping address', () => {
-        expect(selector.getShippingAddress()).toEqual(state.quote.data.shippingAddress);
+        expect(selector.getShippingAddress()).toEqual(getShippingAddress());
     });
 
     it('returns instruments', () => {

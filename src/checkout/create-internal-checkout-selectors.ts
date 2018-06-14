@@ -34,7 +34,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const order = new OrderSelector(state.order);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
     const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
-    const shippingAddress = new ShippingAddressSelector(state.quote, state.config);
+    const shippingAddress = new ShippingAddressSelector(state.consignments, state.config);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingOptions = new ShippingOptionSelector(state.consignments);
@@ -42,7 +42,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
 
     // Compose selectors
     const payment = new PaymentSelector(checkout, order);
-    const quote = new QuoteSelector(state.quote, billingAddress, shippingAddress);
+    const quote = new QuoteSelector(state.checkout, billingAddress, shippingAddress, shippingOptions);
 
     const selectors = {
         billingAddress,

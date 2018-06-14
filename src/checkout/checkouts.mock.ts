@@ -14,7 +14,6 @@ import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { HOSTED } from '../payment/payment-method-types';
 import { getPaymentMethod, getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getPaymentState } from '../payment/payments.mock';
-import { getQuoteState } from '../quote/internal-quotes.mock';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../remote-checkout/remote-checkout.mock';
 import { getConsignment, getConsignmentsState } from '../shipping/consignments.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
@@ -129,7 +128,6 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         payment: getPaymentState(),
         paymentMethods: getPaymentMethodsState(),
         paymentStrategies: { errors: {}, statuses: {} },
-        quote: getQuoteState(),
         remoteCheckout: getRemoteCheckoutState(),
         shippingCountries: getShippingCountriesState(),
         shippingStrategies: { errors: {}, statuses: {} },

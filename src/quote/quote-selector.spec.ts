@@ -3,33 +3,37 @@ import { getBillingAddressState } from '../billing/billing-addresses.mock';
 import { getCheckoutState } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getConfig } from '../config/configs.mock';
-import { ShippingAddressSelector } from '../shipping';
+import { ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
+import { getConsignmentsState } from '../shipping/consignments.mock';
 
-import { getQuoteState } from './internal-quotes.mock';
+import { getQuote } from './internal-quotes.mock';
 import QuoteSelector from './quote-selector';
 
 describe('QuoteSelector', () => {
     let quoteSelector;
     let shippingAddressSelector;
+    let shippingOptionsSelector;
     let billingAddressSelector;
     let state;
 
     beforeEach(() => {
         state = {
-            quote: getQuoteState(),
+            checkout: getCheckoutState(),
+            consignments: getConsignmentsState(),
             billingAddress: getBillingAddressState(),
             config: getConfig(),
         };
 
-        shippingAddressSelector = new ShippingAddressSelector(state.quote, state.config);
+        shippingOptionsSelector = new ShippingOptionSelector(state.consignments);
+        shippingAddressSelector = new ShippingAddressSelector(state.consignments, state.config);
         billingAddressSelector = new BillingAddressSelector(state.billingAddress);
-        quoteSelector = new QuoteSelector(state.quote, billingAddressSelector, shippingAddressSelector);
+        quoteSelector = new QuoteSelector(state.checkout, billingAddressSelector, shippingAddressSelector, shippingOptionsSelector);
     });
 
     describe('#getQuote()', () => {
         it('returns the current quote', () => {
             expect(quoteSelector.getQuote())
-                .toEqual(state.quote.data);
+                .toEqual(getQuote());
         });
 
         it('returns the same instance as the shipping selector', () => {
@@ -45,7 +49,7 @@ describe('QuoteSelector', () => {
             quoteSelector = new QuoteSelector({
                 ...state.checkout,
                 errors: { loadError },
-            }, billingAddressSelector, shippingAddressSelector);
+            }, billingAddressSelector, shippingAddressSelector, shippingOptionsSelector);
 
             expect(quoteSelector.getLoadError()).toEqual(loadError);
         });
@@ -60,7 +64,7 @@ describe('QuoteSelector', () => {
             quoteSelector = new QuoteSelector({
                 ...state.checkout,
                 statuses: { isLoading: true },
-            }, billingAddressSelector, shippingAddressSelector);
+            }, billingAddressSelector, shippingAddressSelector, shippingOptionsSelector);
 
             expect(quoteSelector.isLoading()).toEqual(true);
         });

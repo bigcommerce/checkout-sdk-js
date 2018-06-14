@@ -23,7 +23,7 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { getQuoteState } from '../../../quote/internal-quotes.mock';
+import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import { getShippingAddress } from '../../../shipping/internal-shipping-addresses.mock';
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import { getBraintreeVisaCheckout, getPaymentMethodsState } from '../../payment-methods.mock';
@@ -66,7 +66,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             config: getConfigState(),
             cart: getCartState(),
             paymentMethods: getPaymentMethodsState(),
-            quote: getQuoteState(),
+            consignments: getConsignmentsState(),
         });
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));

@@ -18,8 +18,8 @@ import {
 } from '../../payment/strategies/braintree';
 import { VisaCheckoutSDK } from '../../payment/strategies/braintree/visacheckout';
 import VisaCheckoutScriptLoader from '../../payment/strategies/braintree/visacheckout-script-loader';
-import { getQuoteState } from '../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
+import { getConsignmentsState } from '../../shipping/consignments.mock';
 import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
 import { CustomerStrategyActionType } from '../customer-strategy-actions';
 import { getCustomerState, getRemoteCustomer } from '../internal-customers.mock';
@@ -54,7 +54,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             config: getConfigState(),
             cart: getCartState(),
             paymentMethods: getPaymentMethodsState(),
-            quote: getQuoteState(),
+            consignments: getConsignmentsState(),
         });
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));

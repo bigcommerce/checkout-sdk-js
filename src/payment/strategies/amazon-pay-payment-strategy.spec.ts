@@ -16,7 +16,6 @@ import { getRemoteCustomer } from '../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getAmazonPay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
-import { getQuoteState } from '../../quote/internal-quotes.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import {
     AmazonPayOrderReference,
@@ -34,6 +33,7 @@ import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../remote
 import PaymentMethod from '../payment-method';
 
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
+import { getConsignmentsState } from '../../shipping/consignments.mock';
 
 describe('AmazonPayPaymentStrategy', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
@@ -345,7 +345,7 @@ describe('AmazonPayPaymentStrategy', () => {
                 data: getRemoteCustomer(),
             },
             billingAddress: getBillingAddressState(),
-            quote: getQuoteState(),
+            consignments: getConsignmentsState(),
             paymentMethods: getPaymentMethodsState(),
             remoteCheckout: getRemoteCheckoutState(),
         });
@@ -376,7 +376,7 @@ describe('AmazonPayPaymentStrategy', () => {
                 data: getRemoteCustomer(),
             },
             billingAddress: getBillingAddressState(),
-            quote: getQuoteState(),
+            consignments: getConsignmentsState(),
             paymentMethods: getPaymentMethodsState(),
             remoteCheckout: merge({}, getRemoteCheckoutState(), {
                 data: { amazon: { billing: { address: undefined } } },
