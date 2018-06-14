@@ -1,5 +1,5 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { getBillingAddressState } from '../billing/internal-billing-addresses.mock';
+import { getBillingAddressState } from '../billing/billing-addresses.mock';
 import { getCart } from '../cart/carts.mock';
 import { getCartState } from '../cart/internal-carts.mock';
 import { getConfigState } from '../config/configs.mock';
@@ -96,6 +96,7 @@ export function getCheckoutState(): CheckoutState {
 
 export function getCheckoutStoreState() {
     return {
+        billingAddress: getBillingAddressState(),
         cart: getCartState(),
         checkout: getCheckoutState(),
         config: getConfigState(),

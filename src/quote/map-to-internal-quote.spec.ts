@@ -6,6 +6,9 @@ import mapToInternalQuote from './map-to-internal-quote';
 describe('mapToInternalQuote()', () => {
     it('maps to internal quote', () => {
         expect(mapToInternalQuote(getCheckout()))
-            .toEqual(getInternalQuote());
+            .toEqual({
+                ...getInternalQuote(),
+                billingAddress: {},
+            });
     });
 });

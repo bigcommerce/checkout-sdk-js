@@ -1,3 +1,5 @@
+import { InternalAddress } from '../address';
+import { BillingAddressSelector } from '../billing';
 import { selector } from '../common/selector';
 import { ShippingAddressSelector } from '../shipping';
 
@@ -8,6 +10,7 @@ import QuoteState from './quote-state';
 export default class QuoteSelector {
     constructor(
         private _quote: QuoteState,
+        private _billingAddressSelector: BillingAddressSelector,
         private _shippingAddressSelector: ShippingAddressSelector
     ) {}
 
@@ -19,6 +22,7 @@ export default class QuoteSelector {
         return {
             ...this._quote.data,
             shippingAddress: this._shippingAddressSelector.getShippingAddress(),
+            billingAddress: this._billingAddressSelector.getBillingAddress() || {}  as InternalAddress,
         };
     }
 

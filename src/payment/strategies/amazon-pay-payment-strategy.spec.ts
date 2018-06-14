@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { BillingAddressActionCreator } from '../../billing';
 import { BillingAddressActionTypes } from '../../billing/billing-address-actions';
 import { getBillingAddress } from '../../billing/billing-addresses.mock';
+import { getBillingAddressState } from '../../billing/billing-addresses.mock';
 import { getCartResponseBody } from '../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
@@ -343,6 +344,7 @@ describe('AmazonPayPaymentStrategy', () => {
             customer: {
                 data: getRemoteCustomer(),
             },
+            billingAddress: getBillingAddressState(),
             quote: getQuoteState(),
             paymentMethods: getPaymentMethodsState(),
             remoteCheckout: getRemoteCheckoutState(),
@@ -373,6 +375,7 @@ describe('AmazonPayPaymentStrategy', () => {
             customer: {
                 data: getRemoteCustomer(),
             },
+            billingAddress: getBillingAddressState(),
             quote: getQuoteState(),
             paymentMethods: getPaymentMethodsState(),
             remoteCheckout: merge({}, getRemoteCheckoutState(), {

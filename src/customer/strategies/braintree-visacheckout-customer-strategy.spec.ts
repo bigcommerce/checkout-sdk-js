@@ -4,6 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '..';
+import { getBillingAddressState } from '../../billing/billing-addresses.mock';
 import { getBillingAddress } from '../../billing/internal-billing-addresses.mock';
 import { getCartState } from '../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
@@ -47,6 +48,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         paymentMethodMock = { ...getBraintreeVisaCheckout(), clientToken: 'clientToken' };
 
         store = createCheckoutStore({
+            billingAddress: getBillingAddressState(),
             checkout: getCheckoutState(),
             customer: getCustomerState(),
             config: getConfigState(),

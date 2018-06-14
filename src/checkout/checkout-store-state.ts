@@ -1,3 +1,4 @@
+import { BillingAddressState } from '../billing';
 import { CartState } from '../cart';
 import { ConfigState } from '../config';
 import { CouponState, GiftCertificateState } from '../coupon';
@@ -15,6 +16,7 @@ import CheckoutState from './checkout-state';
  * @todo Convert this file into TypeScript properly
  */
 export default interface CheckoutStoreState {
+    billingAddress: BillingAddressState;
     cart: CartState;
     checkout: CheckoutState;
     config: ConfigState;
