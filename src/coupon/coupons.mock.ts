@@ -1,4 +1,5 @@
 import Coupon from './coupon';
+import CouponState from './coupon-state';
 
 export function getCoupon(): Coupon {
     return {
@@ -17,5 +18,16 @@ export function getShippingCoupon(): Coupon {
         couponType: 'shipping_discount',
         discountedAmount: 5,
         id: '4',
+    };
+}
+
+export function getCouponsState(): CouponState {
+    return {
+        data: [
+            getCoupon(),
+            getCoupon(),
+        ],
+        errors: {},
+        statuses: {},
     };
 }

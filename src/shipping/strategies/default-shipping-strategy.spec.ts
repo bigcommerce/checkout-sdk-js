@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
 import ConsignmentActionCreator from '../consignment-action-creator';
-import { ConsignmentActionTypes } from '../consignment-actions';
+import { ConsignmentActionType } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
 import { getShippingAddress } from '../shipping-addresses.mock';
 
@@ -24,7 +24,7 @@ describe('DefaultShippingStrategy', () => {
         const strategy = new DefaultShippingStrategy(store, consignmentActionCreator);
         const address = getShippingAddress();
         const options = {};
-        const action = Observable.of(createAction(ConsignmentActionTypes.CreateConsignmentsRequested));
+        const action = Observable.of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
         jest.spyOn(consignmentActionCreator, 'updateAddress')
             .mockReturnValue(action);
@@ -43,7 +43,7 @@ describe('DefaultShippingStrategy', () => {
         const address = getShippingAddress();
         const method = getFlatRateOption();
         const options = {};
-        const action = Observable.of(createAction(ConsignmentActionTypes.UpdateConsignmentRequested));
+        const action = Observable.of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
         jest.spyOn(consignmentActionCreator, 'selectShippingOption')
             .mockReturnValue(action);

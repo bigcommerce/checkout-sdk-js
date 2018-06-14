@@ -1,7 +1,7 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { getFlatRateOption, getShippingOptions } from './internal-shipping-options.mock';
 import ShippingOptionSelector from './shipping-option-selector';
-import { getConsignment, getConsignmentState } from './consignments.mock';
+import { getConsignment, getConsignmentsState } from './consignments.mock';
 
 describe('ShippingOptionSelector', () => {
     let shippingOptionSelector;
@@ -9,7 +9,7 @@ describe('ShippingOptionSelector', () => {
 
     beforeEach(() => {
         state = {
-            consignments: getConsignmentState(),
+            consignments: getConsignmentsState(),
         };
 
         shippingOptionSelector = new ShippingOptionSelector(state.consignments);

@@ -4,6 +4,7 @@ import { mapToInternalCart, InternalCart } from '../cart';
 import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
+import { mapToInternalCoupon, mapToInternalGiftCertificate, CouponSelector, GiftCertificateSelector, InternalCoupon, InternalGiftCertificate } from '../coupon';
 import { CustomerSelector, InternalCustomer } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
@@ -35,8 +36,10 @@ export default class CheckoutStoreSelector {
     private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
     private _countries: CountrySelector;
+    private _coupons: CouponSelector;
     private _customer: CustomerSelector;
     private _form: FormSelector;
+    private _giftCertificates: GiftCertificateSelector;
     private _instruments: InstrumentSelector;
     private _order: OrderSelector;
     private _payment: PaymentSelector;
@@ -54,8 +57,10 @@ export default class CheckoutStoreSelector {
         this._checkout = selectors.checkout;
         this._config = selectors.config;
         this._countries = selectors.countries;
+        this._coupons = selectors.coupons;
         this._customer = selectors.customer;
         this._form = selectors.form;
+        this._giftCertificates = selectors.giftCertificates;
         this._instruments = selectors.instruments;
         this._order = selectors.order;
         this._payment = selectors.payment;
@@ -215,6 +220,28 @@ export default class CheckoutStoreSelector {
         const checkout = this._checkout.getCheckout();
 
         return checkout ? mapToInternalCart(checkout) : undefined;
+    }
+
+    /**
+     * Gets a list of coupons that are applied to the current checkout.
+     *
+     * @returns The list of applied coupons if there is any, otherwise undefined.
+     */
+    getCoupons(): InternalCoupon[] | undefined {
+        const coupons = this._coupons.getCoupons();
+
+        return coupons ? coupons.map(mapToInternalCoupon) : undefined;
+    }
+
+    /**
+     * Gets a list of gift certificates that are applied to the current checkout.
+     *
+     * @returns The list of applied gift certificates if there is any, otherwise undefined.
+     */
+    getGiftCertificates(): InternalGiftCertificate[] | undefined {
+        const giftCertificates = this._giftCertificates.getGiftCertificates();
+
+        return giftCertificates ? giftCertificates.map(mapToInternalGiftCertificate) : undefined;
     }
 
     /**

@@ -5,7 +5,7 @@ import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../../billing';
-import { BillingAddressActionTypes } from '../../billing/billing-address-actions';
+import { BillingAddressActionType } from '../../billing/billing-address-actions';
 import { getBillingAddress } from '../../billing/billing-addresses.mock';
 import { getBillingAddressState } from '../../billing/billing-addresses.mock';
 import { getCartResponseBody } from '../../cart/internal-carts.mock';
@@ -116,7 +116,7 @@ describe('AmazonPayPaymentStrategy', () => {
         paymentMethod = getAmazonPay();
         initializeBillingAction = Observable.of(createAction(INITIALIZE_REMOTE_BILLING_REQUESTED));
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
-        updateAddressAction = Observable.of(createAction(BillingAddressActionTypes.UpdateBillingAddressRequested));
+        updateAddressAction = Observable.of(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         container.setAttribute('id', 'wallet');

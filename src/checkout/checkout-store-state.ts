@@ -6,15 +6,13 @@ import { CustomerState, CustomerStrategyState } from '../customer';
 import { CountryState } from '../geography';
 import { OrderState } from '../order';
 import { PaymentMethodState, PaymentState, PaymentStrategyState } from '../payment';
+import { InstrumentState } from '../payment/instrument';
 import { QuoteState } from '../quote';
 import { RemoteCheckoutState } from '../remote-checkout';
 import { ConsignmentState, ShippingCountryState, ShippingStrategyState } from '../shipping';
 
 import CheckoutState from './checkout-state';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 export default interface CheckoutStoreState {
     billingAddress: BillingAddressState;
     cart: CartState;
@@ -26,7 +24,7 @@ export default interface CheckoutStoreState {
     customer: CustomerState;
     customerStrategies: CustomerStrategyState;
     giftCertificates: GiftCertificateState;
-    instruments: any;
+    instruments: InstrumentState;
     order: OrderState;
     payment: PaymentState;
     paymentMethods: PaymentMethodState;

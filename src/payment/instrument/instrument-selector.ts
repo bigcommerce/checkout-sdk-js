@@ -1,9 +1,9 @@
 import Instrument from './instrument';
-import InstrumentState, { DEFAULT_STATE, InstrumentMeta } from './instrument-state';
+import InstrumentState, { InstrumentMeta } from './instrument-state';
 
 export default class InstrumentSelector {
     constructor(
-        private _instruments: InstrumentState = DEFAULT_STATE
+        private _instruments: InstrumentState
     ) {}
 
     getInstruments(): Instrument[] | undefined {

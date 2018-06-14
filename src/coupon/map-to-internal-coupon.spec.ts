@@ -4,7 +4,7 @@ import mapToInternalCoupon from './map-to-internal-coupon';
 
 describe('mapToInternalCoupon', () => {
     it('maps to internal coupon', () => {
-        expect(mapToInternalCoupon(getCoupon(), getInternalCoupon()))
+        expect(mapToInternalCoupon(getCoupon()))
             .toEqual(getInternalCoupon());
     });
 });

@@ -1,9 +1,9 @@
-import { BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { BillingAddressActionType } from '../billing/billing-address-actions';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { CouponActionType } from '../coupon/coupon-actions';
 import { GiftCertificateActionType } from '../coupon/gift-certificate-actions';
-import { ConsignmentActionTypes } from '../shipping';
+import { ConsignmentActionType } from '../shipping';
 
 import cartReducer from './cart-reducer';
 import { getCart } from './carts.mock';
@@ -30,7 +30,7 @@ describe('cartReducer()', () => {
 
     it('returns new data when a consignment is updated', () => {
         const action = {
-            type: ConsignmentActionTypes.UpdateConsignmentSucceeded,
+            type: ConsignmentActionType.UpdateConsignmentSucceeded,
             payload: getCheckout(),
         };
 
@@ -41,7 +41,7 @@ describe('cartReducer()', () => {
 
     it('returns new data when consignments are created', () => {
         const action = {
-            type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
+            type: ConsignmentActionType.CreateConsignmentsSucceeded,
             payload: getCheckout(),
         };
 
@@ -52,7 +52,7 @@ describe('cartReducer()', () => {
 
     it('returns new data when billing address gets updated', () => {
         const action = {
-            type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+            type: BillingAddressActionType.UpdateBillingAddressSucceeded,
             payload: getCheckout(),
         };
 

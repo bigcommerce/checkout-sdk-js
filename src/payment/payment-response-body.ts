@@ -1,9 +1,9 @@
 export default interface PaymentResponseBody {
     status: string;
     id: string;
-    avs_result: AvsResult;
-    cvv_result: CvvResult;
-    three_ds_result: ThreeDsResult;
+    avs_result: AvsResult | {};
+    cvv_result: CvvResult | {};
+    three_ds_result: ThreeDsResult | {};
     fraud_review: boolean;
     transaction_type: string;
     errors?: Array<{

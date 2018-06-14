@@ -1,10 +1,10 @@
 import Instrument, { VaultAccessToken } from './instrument';
 
 export default interface InstrumentState {
-    data: Instrument[];
+    data?: Instrument[];
+    meta?: InstrumentMeta;
     errors: InstrumentErrorState;
     statuses: InstrumentStatusState;
-    meta?: InstrumentMeta;
 }
 
 export interface InstrumentErrorState {
@@ -22,9 +22,3 @@ export interface InstrumentStatusState {
 }
 
 export type InstrumentMeta = VaultAccessToken;
-
-export const DEFAULT_STATE: InstrumentState = {
-    data: [],
-    errors: {},
-    statuses: {},
-};

@@ -9,6 +9,7 @@ export function getConsignment(): Consignment {
         id: '55c96cda6f04c',
         selectedShippingOptionId: '0:61d4bb52f746477e1d4fb411221318c3',
         shippingCost: 0,
+        handlingCost: 0,
         lineItemIds: [
             '12e11c8f-7dce-4da3-9413-b649533f8bad',
         ],
@@ -19,9 +20,10 @@ export function getConsignment(): Consignment {
     };
 }
 
-export function getConsignmentState(): ConsignmentState {
+export function getConsignmentsState(): ConsignmentState {
     return {
         data: [
+            getConsignment(),
             getConsignment(),
         ],
         errors: {},

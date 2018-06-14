@@ -67,6 +67,8 @@ export function getInstrumentsState() {
     return {
         data: getInstruments(),
         meta: getInstrumentsMeta(),
+        errors: {},
+        statuses: {},
     };
 }
 

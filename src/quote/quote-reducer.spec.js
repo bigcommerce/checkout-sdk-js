@@ -2,7 +2,7 @@ import { CheckoutActionType } from '../checkout';
 import { CustomerActionType } from '../customer';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
-import { ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { ConsignmentActionType } from '../shipping/consignment-actions';
 import { getQuote } from './internal-quotes.mock';
 import quoteReducer from './quote-reducer';
 
@@ -52,7 +52,7 @@ describe('quoteReducer()', () => {
 
     it('returns new data when creating consignments', () => {
         const action = {
-            type: ConsignmentActionTypes.CreateConsignmentsSucceeded,
+            type: ConsignmentActionType.CreateConsignmentsSucceeded,
             payload: getCheckout(),
         };
 
@@ -61,7 +61,7 @@ describe('quoteReducer()', () => {
 
     it('returns new data when updating a consignment', () => {
         const action = {
-            type: ConsignmentActionTypes.UpdateConsignmentSucceeded,
+            type: ConsignmentActionType.UpdateConsignmentSucceeded,
             payload: getCheckout(),
         };
 

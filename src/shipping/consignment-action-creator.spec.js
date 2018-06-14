@@ -9,7 +9,7 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import { getQuoteState } from '../quote/internal-quotes.mock';
 
 import ConsignmentActionCreator from './consignment-action-creator';
-import { ConsignmentActionTypes } from './consignment-actions';
+import { ConsignmentActionType } from './consignment-actions';
 import { getShippingAddress } from './internal-shipping-addresses.mock';
 
 describe('consignmentActionCreator', () => {
@@ -145,8 +145,8 @@ describe('consignmentActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: ConsignmentActionTypes.CreateConsignmentsRequested },
-                { type: ConsignmentActionTypes.CreateConsignmentsSucceeded, payload: response.body },
+                { type: ConsignmentActionType.CreateConsignmentsRequested },
+                { type: ConsignmentActionType.CreateConsignmentsSucceeded, payload: response.body },
             ]);
         });
 
@@ -160,8 +160,8 @@ describe('consignmentActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: ConsignmentActionTypes.CreateConsignmentsRequested },
-                        { type: ConsignmentActionTypes.CreateConsignmentsFailed, payload: errorResponse, error: true },
+                        { type: ConsignmentActionType.CreateConsignmentsRequested },
+                        { type: ConsignmentActionType.CreateConsignmentsFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });
@@ -231,8 +231,8 @@ describe('consignmentActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: ConsignmentActionTypes.UpdateConsignmentRequested },
-                { type: ConsignmentActionTypes.UpdateConsignmentSucceeded, payload: response.body },
+                { type: ConsignmentActionType.UpdateConsignmentRequested },
+                { type: ConsignmentActionType.UpdateConsignmentSucceeded, payload: response.body },
             ]);
         });
 
@@ -246,8 +246,8 @@ describe('consignmentActionCreator', () => {
                 .toArray()
                 .subscribe((actions) => {
                     expect(actions).toEqual([
-                        { type: ConsignmentActionTypes.UpdateConsignmentRequested },
-                        { type: ConsignmentActionTypes.UpdateConsignmentFailed, payload: errorResponse, error: true },
+                        { type: ConsignmentActionType.UpdateConsignmentRequested },
+                        { type: ConsignmentActionType.UpdateConsignmentFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });

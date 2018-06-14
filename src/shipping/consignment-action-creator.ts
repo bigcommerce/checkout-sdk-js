@@ -9,7 +9,7 @@ import { MissingDataError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { ConsignmentsRequestBody } from './consignment';
-import { ConsignmentActionTypes, CreateConsignmentsAction, UpdateConsignmentAction } from './consignment-actions';
+import { ConsignmentActionType, CreateConsignmentsAction, UpdateConsignmentAction } from './consignment-actions';
 
 export default class ConsignmentActionCreator {
     constructor(
@@ -27,7 +27,7 @@ export default class ConsignmentActionCreator {
                 throw new MissingDataError('Unable to update shipping address: "checkout.id" or "shippingAddress.id" is missing.');
             }
 
-            observer.next(createAction(ConsignmentActionTypes.UpdateConsignmentRequested));
+            observer.next(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
             const consignmentUpdateBody = {
                 id: address.id,
@@ -36,11 +36,11 @@ export default class ConsignmentActionCreator {
 
             this._checkoutClient.updateConsignment(checkout.id, consignmentUpdateBody, options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(ConsignmentActionTypes.UpdateConsignmentSucceeded, body));
+                    observer.next(createAction(ConsignmentActionType.UpdateConsignmentSucceeded, body));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(ConsignmentActionTypes.UpdateConsignmentFailed, response));
+                    observer.error(createErrorAction(ConsignmentActionType.UpdateConsignmentFailed, response));
                 });
         });
     }
@@ -80,15 +80,15 @@ export default class ConsignmentActionCreator {
                 throw new MissingDataError('Unable to update shipping address: "checkout.id" is missing.');
             }
 
-            observer.next(createAction(ConsignmentActionTypes.CreateConsignmentsRequested));
+            observer.next(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
             this._checkoutClient.createConsignments(checkout.id, consignments, options)
                 .then(({ body = {} }) => {
-                    observer.next(createAction(ConsignmentActionTypes.CreateConsignmentsSucceeded, body));
+                    observer.next(createAction(ConsignmentActionType.CreateConsignmentsSucceeded, body));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(ConsignmentActionTypes.CreateConsignmentsFailed, response));
+                    observer.error(createErrorAction(ConsignmentActionType.CreateConsignmentsFailed, response));
                 });
         });
     }

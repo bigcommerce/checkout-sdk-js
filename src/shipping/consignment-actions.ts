@@ -2,7 +2,7 @@ import { Action } from '@bigcommerce/data-store';
 
 import { Checkout } from '../checkout';
 
-export enum ConsignmentActionTypes {
+export enum ConsignmentActionType {
     CreateConsignmentsRequested = 'CREATE_CONSIGNMENTS_REQUESTED',
     CreateConsignmentsSucceeded = 'CREATE_CONSIGNMENTS_SUCCEEDED',
     CreateConsignmentsFailed = 'CREATE_CONSIGNMENTS_FAILED',
@@ -27,25 +27,25 @@ export type UpdateConsignmentAction =
     UpdateConsignmentFailedAction;
 
 export interface CreateConsignmentsRequestedAction extends Action {
-    type: ConsignmentActionTypes.CreateConsignmentsRequested;
+    type: ConsignmentActionType.CreateConsignmentsRequested;
 }
 
 export interface CreateConsignmentsSucceededAction extends Action<Checkout> {
-    type: ConsignmentActionTypes.CreateConsignmentsSucceeded;
+    type: ConsignmentActionType.CreateConsignmentsSucceeded;
 }
 
 export interface CreateConsignmentsFailedAction extends Action<Error> {
-    type: ConsignmentActionTypes.CreateConsignmentsFailed;
+    type: ConsignmentActionType.CreateConsignmentsFailed;
 }
 
 export interface UpdateConsignmentRequestedAction extends Action {
-    type: ConsignmentActionTypes.UpdateConsignmentRequested;
+    type: ConsignmentActionType.UpdateConsignmentRequested;
 }
 
 export interface UpdateConsignmentSucceededAction extends Action<Checkout> {
-    type: ConsignmentActionTypes.UpdateConsignmentSucceeded;
+    type: ConsignmentActionType.UpdateConsignmentSucceeded;
 }
 
 export interface UpdateConsignmentFailedAction extends Action<Error> {
-    type: ConsignmentActionTypes.UpdateConsignmentFailed;
+    type: ConsignmentActionType.UpdateConsignmentFailed;
 }

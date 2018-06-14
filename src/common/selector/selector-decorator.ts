@@ -1,6 +1,6 @@
 import { isEqual, memoize } from 'lodash';
 
-import { bindDecorator } from '../utility';
+import { bindDecorator, omitPrivate } from '../utility';
 
 import CacheKeyResolver from './cache-key-resolver';
 
@@ -51,7 +51,7 @@ function selectorMethodDecorator<T extends Method>(target: object, key: string, 
 
                 const newValue = method.call(this, ...args);
 
-                if (isEqual(newValue, cachedValue)) {
+                if (isEqual(omitPrivate(newValue), omitPrivate(cachedValue))) {
                     return cachedValue;
                 }
 

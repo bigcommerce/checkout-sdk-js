@@ -26,10 +26,12 @@ export default function giftCertificateReducer(
 
 function dataReducer(
     data: GiftCertificate[] | undefined,
-    action: CheckoutAction
+    action: CheckoutAction | GiftCertificateAction
 ): GiftCertificate[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
+    case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
         return action.payload ? action.payload.giftCertificates : data;
 
     default:

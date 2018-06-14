@@ -3,7 +3,13 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import * as actionTypes from './instrument-action-types';
 
 import Instrument from './instrument';
-import InstrumentState, { DEFAULT_STATE, InstrumentErrorState, InstrumentMeta, InstrumentStatusState } from './instrument-state';
+import InstrumentState, { InstrumentErrorState, InstrumentMeta, InstrumentStatusState } from './instrument-state';
+
+const DEFAULT_STATE = {
+    data: [],
+    errors: {},
+    statuses: {},
+};
 
 export default function instrumentReducer(state: InstrumentState = DEFAULT_STATE, action: Action): InstrumentState {
     const reducer = combineReducers<InstrumentState>({
@@ -22,7 +28,7 @@ function dataReducer(data: Instrument[] = DEFAULT_STATE.data, action: Action): I
         return action.payload.vaulted_instruments || [];
 
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
-        return (data || []).filter((instrument: any) =>
+        return data.filter(instrument =>
             instrument.bigpay_token !== action.meta.instrumentId
         );
 

@@ -1,6 +1,9 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
+import { BillingAddressAction, BillingAddressActionType } from '../billing';
+import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateActionType } from '../coupon';
 import { OrderAction, OrderActionType } from '../order';
+import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 
 import Checkout from './checkout';
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
@@ -13,9 +16,9 @@ const DEFAULT_STATE: CheckoutState = {
 
 export default function checkoutReducer(
     state: CheckoutState = DEFAULT_STATE,
-    action: CheckoutAction | OrderAction
+    action: CheckoutAction | BillingAddressAction | ConsignmentAction | CouponAction | GiftCertificateAction | OrderAction
 ): CheckoutState {
-    const reducer = combineReducers<CheckoutState, CheckoutAction | OrderAction>({
+    const reducer = combineReducers<CheckoutState>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -26,11 +29,18 @@ export default function checkoutReducer(
 
 function dataReducer(
     data: Checkout | undefined,
-    action: CheckoutAction | OrderAction
+    action: CheckoutAction | BillingAddressAction | ConsignmentAction | CouponAction | GiftCertificateAction | OrderAction
 ): Checkout | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return action.payload ? action.payload : data;
+    case BillingAddressActionType.UpdateBillingAddressSucceeded:
+    case CouponActionType.ApplyCouponSucceeded:
+    case CouponActionType.RemoveCouponSucceeded:
+    case ConsignmentActionType.CreateConsignmentsSucceeded:
+    case ConsignmentActionType.UpdateConsignmentSucceeded:
+    case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
+    case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
+        return action.payload ? { ...data, ...action.payload } : data;
 
     case OrderActionType.SubmitOrderSucceeded:
         return action.payload && data ? { ...data, orderId: action.payload.order.orderId } : data;

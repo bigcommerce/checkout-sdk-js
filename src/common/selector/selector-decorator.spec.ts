@@ -39,6 +39,17 @@ describe('SelectorDecorator', () => {
         expect(foo.serialize('Hello world')).toBe(foo2.serialize('Hello world'));
     });
 
+    it('returns cached value if new value is same as old except private members', () => {
+        const foo = new Foo('foo');
+        const foo2 = new Foo('foo');
+        const output = foo.serialize();
+
+        (output as any).$$internalProp = 123;
+        (output as any)._internalProp = 'abc';
+
+        expect(output).toBe(foo2.serialize());
+    });
+
     it('returns different values if instances belong to different classes', () => {
         const foo = new Foo('foo');
         const bar = new Bar('foo');
