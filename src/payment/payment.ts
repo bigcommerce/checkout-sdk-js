@@ -42,4 +42,5 @@ export interface CryptogramInstrument {
         year: string,
     };
     ccNumber: string;
+    accountMask: string;
 }
