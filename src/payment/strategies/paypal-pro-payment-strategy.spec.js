@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../../checkout';
 import { OrderActionType } from '../../order';
 import { getOrderRequestBody, getIncompleteOrderState } from '../../order/internal-orders.mock';
-import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
+import { PaymentActionType } from '../payment-actions';
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 import { getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
 
@@ -18,7 +18,7 @@ describe('PaypalProPaymentStrategy', () => {
 
     beforeEach(() => {
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         orderActionCreator = {
             submitOrder: jest.fn(() => submitOrderAction),

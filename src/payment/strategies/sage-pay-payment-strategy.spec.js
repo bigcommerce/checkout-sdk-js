@@ -12,8 +12,8 @@ import { OrderActionCreator, OrderActionType } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaymentActionCreator from '../payment-action-creator';
+import { PaymentActionType } from '../payment-actions';
 import PaymentRequestSender from '../payment-request-sender';
-import { SUBMIT_PAYMENT_REQUESTED, SUBMIT_PAYMENT_FAILED } from '../payment-action-types';
 import { getErrorPaymentResponseBody } from '../payments.mock';
 
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
@@ -43,7 +43,7 @@ describe('SagePayPaymentStrategy', () => {
 
         finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         jest.spyOn(store, 'dispatch');
 
@@ -106,7 +106,7 @@ describe('SagePayPaymentStrategy', () => {
         }));
 
         jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(Observable.of(createErrorAction(SUBMIT_PAYMENT_FAILED, error)));
+            .mockReturnValue(Observable.of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
 
         strategy.execute(getOrderRequestBody());
 
@@ -123,7 +123,7 @@ describe('SagePayPaymentStrategy', () => {
         const respons = new RequestError(getResponse(getErrorPaymentResponseBody()));
 
         jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(Observable.of(createErrorAction(SUBMIT_PAYMENT_FAILED, respons)));
+            .mockReturnValue(Observable.of(createErrorAction(PaymentActionType.SubmitPaymentFailed, respons)));
 
         try {
             await strategy.execute(getOrderRequestBody());

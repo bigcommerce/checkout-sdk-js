@@ -1,24 +1,20 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import * as actionTypes from './payment-action-types';
+import { PaymentAction, PaymentActionType } from './payment-actions';
 import PaymentResponseBody from './payment-response-body';
 import PaymentState from './payment-state';
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action
- */
-export default function paymentReducer(state: PaymentState = {}, action: Action): PaymentState {
-    const reducer = combineReducers<PaymentState>({
+export default function paymentReducer(state: PaymentState = {}, action: PaymentAction): PaymentState {
+    const reducer = combineReducers<PaymentState, PaymentAction>({
         data: dataReducer,
     });
 
     return reducer(state, action);
 }
 
-function dataReducer(data: PaymentResponseBody | undefined, action: Action): PaymentResponseBody | undefined {
+function dataReducer(data: PaymentResponseBody | undefined, action: PaymentAction): PaymentResponseBody | undefined {
     switch (action.type) {
-    case actionTypes.SUBMIT_PAYMENT_SUCCEEDED:
+    case PaymentActionType.SubmitPaymentSucceeded:
         return action.payload;
 
     default:

@@ -8,8 +8,8 @@ import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
+import { PaymentActionType } from '../payment-actions';
 import PaymentActionCreator from '../payment-action-creator';
-import { INITIALIZE_OFFSITE_PAYMENT_REQUESTED } from '../payment-action-types';
 import PaymentRequestSender from '../payment-request-sender';
 import * as paymentStatusTypes from '../payment-status-types';
 
@@ -32,7 +32,7 @@ describe('OffsitePaymentStrategy', () => {
             orderActionCreator
         );
         finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
-        initializeOffsitePaymentAction = Observable.of(createAction(INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
+        initializeOffsitePaymentAction = Observable.of(createAction(PaymentActionType.InitializeOffsitePaymentRequested));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(store, 'dispatch');

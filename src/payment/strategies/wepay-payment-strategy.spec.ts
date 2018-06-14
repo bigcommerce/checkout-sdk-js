@@ -10,9 +10,9 @@ import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../ord
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getWepay } from '../../payment/payment-methods.mock';
 import { WepayRiskClient } from '../../remote-checkout/methods/wepay';
-import { CreditCard } from '../payment';
+import { CreditCardInstrument } from '../payment';
 import PaymentActionCreator from '../payment-action-creator';
-import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
+import { PaymentActionType } from '../payment-actions';
 import PaymentMethod from '../payment-method';
 import PaymentRequestSender from '../payment-request-sender';
 
@@ -61,7 +61,7 @@ describe('WepayPaymentStrategy', () => {
         });
 
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         jest.spyOn(wepayRiskClient, 'initialize')
             .mockReturnValue(Promise.resolve(wepayRiskClient));
@@ -97,7 +97,7 @@ describe('WepayPaymentStrategy', () => {
             await strategy.execute(payload);
 
             const paymentWithToken = { ...payload.payment };
-            (paymentWithToken.paymentData as CreditCard)
+            (paymentWithToken.paymentData as CreditCardInstrument)
                 .extraData = { riskToken: testRiskToken };
 
             expect(paymentActionCreator.submitPayment)

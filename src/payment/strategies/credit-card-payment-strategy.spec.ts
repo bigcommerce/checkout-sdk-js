@@ -7,7 +7,7 @@ import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../
 import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import PaymentActionCreator from '../payment-action-creator';
-import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
+import { PaymentActionType } from '../payment-actions';
 import PaymentRequestSender from '../payment-request-sender';
 
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
@@ -29,7 +29,7 @@ describe('CreditCardPaymentStrategy', () => {
         );
 
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         orderActionCreator = new OrderActionCreator(createCheckoutClient());
 

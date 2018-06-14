@@ -15,7 +15,7 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../
 import { AfterpayScriptLoader } from '../../remote-checkout/methods/afterpay';
 import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED, LOAD_REMOTE_SETTINGS_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
 import PaymentActionCreator from '../payment-action-creator';
-import { SUBMIT_PAYMENT_REQUESTED } from '../payment-action-types';
+import { PaymentActionType } from '../payment-actions';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../payment-method-action-types';
@@ -94,7 +94,7 @@ describe('AfterpayPaymentStrategy', () => {
             { methodId: paymentMethod.gateway }
         ));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
