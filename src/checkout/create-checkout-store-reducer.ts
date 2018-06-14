@@ -9,7 +9,6 @@ import { countryReducer } from '../geography';
 import { orderReducer } from '../order';
 import { paymentMethodReducer, paymentReducer, paymentStrategyReducer } from '../payment';
 import { instrumentReducer } from '../payment/instrument';
-import { quoteReducer } from '../quote';
 import { remoteCheckoutReducer } from '../remote-checkout';
 import { consignmentReducer, shippingCountryReducer, shippingStrategyReducer } from '../shipping';
 
@@ -33,7 +32,6 @@ export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState
         payment: paymentReducer,
         paymentMethods: paymentMethodReducer,
         paymentStrategies: paymentStrategyReducer,
-        quote: quoteReducer,
         remoteCheckout: remoteCheckoutReducer,
         shippingCountries: shippingCountryReducer,
         shippingStrategies: shippingStrategyReducer,

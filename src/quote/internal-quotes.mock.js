@@ -56,11 +56,3 @@ export function getQuoteResponseBody() {
         statuses: {},
     };
 }
-
-export function getQuoteState() {
-    return {
-        data: getQuote(),
-        statuses: {},
-        errors: {},
-    };
-}

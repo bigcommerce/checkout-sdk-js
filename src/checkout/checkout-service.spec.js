@@ -21,7 +21,6 @@ import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../pay
 import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { deleteInstrumentResponseBody, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
-import { getQuoteState } from '../quote/internal-quotes.mock';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
@@ -33,6 +32,7 @@ import createCheckoutStore from './create-checkout-store';
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
+import { getConsignmentsState } from '../shipping/consignments.mock';
 
 describe('CheckoutService', () => {
     let billingAddressActionCreator;
@@ -128,7 +128,7 @@ describe('CheckoutService', () => {
             billingAddress: getBillingAddressState(),
             checkout: getCheckoutState(),
             config: getConfigState(),
-            quote: getQuoteState(),
+            consignments: getConsignmentsState(),
             order: getCompleteOrderState(),
         });
 

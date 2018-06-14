@@ -6,11 +6,11 @@ import { createCheckoutStore, CheckoutActionType } from '../checkout';
 import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getQuoteState } from '../quote/internal-quotes.mock';
 
 import ConsignmentActionCreator from './consignment-action-creator';
 import { ConsignmentActionType } from './consignment-actions';
 import { getShippingAddress } from './internal-shipping-addresses.mock';
+import { getConsignmentsState } from './consignments.mock';
 
 describe('consignmentActionCreator', () => {
     let address;
@@ -29,7 +29,7 @@ describe('consignmentActionCreator', () => {
 
         store = createCheckoutStore({
             checkout: getCheckoutState(),
-            quote: getQuoteState(),
+            consignments: getConsignmentsState(),
             cart: getCartState(),
         });
 

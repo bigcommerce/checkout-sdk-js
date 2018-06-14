@@ -1,26 +1,26 @@
 import { selector } from '../common/selector';
 
-import { InternalAddress } from '../address';
-import { QuoteState } from '../quote';
-
+import { mapToInternalAddress, InternalAddress } from '../address';
 import ConfigState from '../config/config-state';
+
+import ConsignmentState from './consignment-state';
 
 @selector
 export default class ShippingAddressSelector {
     constructor(
-        private _quote: QuoteState,
+        private _consignments: ConsignmentState,
         private _config: ConfigState
     ) {}
 
     getShippingAddress(): InternalAddress | undefined {
-        const quote = this._quote.data;
+        const consignments = this._consignments.data;
         const context = this._config.data && this._config.data.context;
 
-        if (quote
-            && !quote.shippingAddress
-            && context
-            && context.geoCountryCode
-        ) {
+        if (!consignments || !consignments[0]) {
+            if (!context || !context.geoCountryCode) {
+                return;
+            }
+
             return {
                 firstName: '',
                 lastName: '',
@@ -38,6 +38,6 @@ export default class ShippingAddressSelector {
             };
         }
 
-        return quote && quote.shippingAddress;
+        return mapToInternalAddress(consignments[0].shippingAddress);
     }
 }

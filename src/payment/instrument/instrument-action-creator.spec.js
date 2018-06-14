@@ -2,7 +2,6 @@ import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../../checkout';
 import { getConfigState } from '../../config/configs.mock';
 import { getCustomerState } from '../../customer/internal-customers.mock';
-import { getQuoteState } from '../../quote/internal-quotes.mock';
 import { getInstrumentsState, getInstrumentsMeta } from './instrument.mock';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import * as actionTypes from './instrument-action-types';
@@ -12,6 +11,8 @@ import {
     getLoadInstrumentsResponseBody,
     deleteInstrumentResponseBody,
 } from './instrument.mock';
+import { getConsignmentsState } from '../../shipping/consignments.mock';
+import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
 
 describe('InstrumentActionCreator', () => {
     let instrumentActionCreator;
@@ -28,9 +29,9 @@ describe('InstrumentActionCreator', () => {
     let vaultAccessExpiry;
     let vaultAccessToken;
     let configState;
+    let consignmentsState;
     let customerState;
     let instrumentsState;
-    let quoteState;
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
@@ -49,18 +50,18 @@ describe('InstrumentActionCreator', () => {
         configState = getConfigState();
         customerState = getCustomerState();
         instrumentsState = getInstrumentsState();
-        quoteState = getQuoteState();
+        consignmentsState = getConsignmentsState();
 
         store = createCheckoutStore({
             config: configState,
             customer: customerState,
+            consignments: consignmentsState,
             instruments: instrumentsState,
-            quote: quoteState,
         });
 
         storeId = configState.data.storeConfig.storeProfile.storeId;
         customerId = customerState.data.customerId;
-        shippingAddress = quoteState.data.shippingAddress;
+        shippingAddress = getShippingAddress();
         instrumentId = '123';
 
         const instrumentsMeta = getInstrumentsMeta();
@@ -83,7 +84,7 @@ describe('InstrumentActionCreator', () => {
             store = createCheckoutStore({
                 config: configState,
                 customer: customerState,
-                quote: quoteState,
+                consignments: consignmentsState,
                 instruments: {
                     ...getInstrumentsState(),
                     meta: {
