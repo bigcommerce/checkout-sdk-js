@@ -8,7 +8,7 @@ import { getCartState } from '../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../checkout';
 import { getCheckoutState, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
-import { getCustomerState } from '../customer/internal-customers.mock';
+import { getCustomerState } from '../customer/customers.mock';
 import { OrderActionCreator, OrderActionType } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getCompleteOrderState, getIncompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';

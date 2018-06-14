@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../../checkout';
 import { getConfigState } from '../../config/configs.mock';
-import { getCustomerState } from '../../customer/internal-customers.mock';
 import { getInstrumentsState, getInstrumentsMeta } from './instrument.mock';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import * as actionTypes from './instrument-action-types';
@@ -13,6 +12,7 @@ import {
 } from './instrument.mock';
 import { getConsignmentsState } from '../../shipping/consignments.mock';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
+import { getCartState } from '../../cart/carts.mock';
 
 describe('InstrumentActionCreator', () => {
     let instrumentActionCreator;
@@ -30,7 +30,7 @@ describe('InstrumentActionCreator', () => {
     let vaultAccessToken;
     let configState;
     let consignmentsState;
-    let customerState;
+    let cartState;
     let instrumentsState;
 
     beforeEach(() => {
@@ -48,19 +48,19 @@ describe('InstrumentActionCreator', () => {
         instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
 
         configState = getConfigState();
-        customerState = getCustomerState();
         instrumentsState = getInstrumentsState();
         consignmentsState = getConsignmentsState();
+        cartState = getCartState();
 
         store = createCheckoutStore({
             config: configState,
-            customer: customerState,
+            cart: cartState,
             consignments: consignmentsState,
             instruments: instrumentsState,
         });
 
         storeId = configState.data.storeConfig.storeProfile.storeId;
-        customerId = customerState.data.customerId;
+        customerId = cartState.data.customerId;
         shippingAddress = getShippingAddress();
         instrumentId = '123';
 
@@ -83,7 +83,7 @@ describe('InstrumentActionCreator', () => {
         it('does not send a request to get a list of instruments if valid token is supplied', async () => {
             store = createCheckoutStore({
                 config: configState,
-                customer: customerState,
+                cart: cartState,
                 consignments: consignmentsState,
                 instruments: {
                     ...getInstrumentsState(),
@@ -168,7 +168,7 @@ describe('InstrumentActionCreator', () => {
         it('does not send a request to get a list of instruments if valid token is supplied', async () => {
             store = createCheckoutStore({
                 config: configState,
-                customer: customerState,
+                cart: cartState,
                 instruments: {
                     ...getInstrumentsState(),
                     meta: {

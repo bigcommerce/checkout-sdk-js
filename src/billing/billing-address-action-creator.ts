@@ -44,14 +44,8 @@ export default class BillingAddressActionCreator {
             return this._checkoutClient.createBillingAddress(checkout.id, address, options);
         }
 
-        // @todo: once we remove mappers, we should only rely on billingAddress.email
-        // as customer.email is empty for guests users.
-        const customer = state.customer.getCustomer();
-        const fallbackEmail = customer ? customer.email : '';
-
         const updatedBillingAddress = {
             ...address,
-            email: typeof address.email !== 'undefined' ? address.email : fallbackEmail,
             id: billingAddress.id,
         };
 

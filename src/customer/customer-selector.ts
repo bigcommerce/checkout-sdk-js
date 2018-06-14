@@ -1,7 +1,7 @@
 import { selector } from '../common/selector';
 
+import Customer from './customer';
 import CustomerState from './customer-state';
-import InternalCustomer from './internal-customer';
 
 @selector
 export default class CustomerSelector {
@@ -9,7 +9,7 @@ export default class CustomerSelector {
         private _customer: CustomerState
     ) {}
 
-    getCustomer(): InternalCustomer | undefined {
+    getCustomer(): Customer | undefined {
         return this._customer.data;
     }
 }

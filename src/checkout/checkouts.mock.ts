@@ -6,7 +6,8 @@ import { getConfigState } from '../config/configs.mock';
 import { getCoupon, getCouponsState } from '../coupon/coupons.mock';
 import { getGiftCertificate, getGiftCertificatesState } from '../coupon/gift-certificates.mock';
 import { getGuestCustomer } from '../customer/customers.mock';
-import { getCustomerState, getCustomerStrategyState } from '../customer/internal-customers.mock';
+import { getCustomer, getCustomerState } from '../customer/customers.mock';
+import { getCustomerStrategyState } from '../customer/internal-customers.mock';
 import { getCountriesState } from '../geography/countries.mock';
 import { getOrderState } from '../order/orders.mock';
 import { ACKNOWLEDGE } from '../payment';
@@ -26,7 +27,7 @@ export function getCheckout(): Checkout {
     return {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         cart: getCart(),
-        customer: getGuestCustomer(),
+        customer: getCustomer(),
         customerMessage: '',
         billingAddress: getBillingAddress(),
         consignments: [

@@ -8,6 +8,7 @@ import { mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
+import { mapToInternalCustomer } from '../customer';
 import { mapToInternalOrder, OrderActionCreator } from '../order';
 
 import isVaultedInstrument from './is-vaulted-instrument';
@@ -73,6 +74,8 @@ export default class PaymentActionCreator {
         const config = state.config.getStoreConfig();
         const instrumentMeta = state.instruments.getInstrumentsMeta();
         const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
+        const internalCustomer = customer && billingAddress && checkout && checkout.cart &&
+            mapToInternalCustomer(customer, checkout.cart, billingAddress);
 
         const authToken = payment.paymentData && instrumentMeta && isVaultedInstrument(payment.paymentData) ?
             `${state.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}` :
@@ -85,7 +88,7 @@ export default class PaymentActionCreator {
         return {
             authToken,
             billingAddress: billingAddress && mapToInternalAddress(billingAddress),
-            customer,
+            customer: internalCustomer,
             paymentMethod,
             shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress),
             shippingOption,

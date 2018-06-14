@@ -2,20 +2,17 @@ import { combineReducers } from '@bigcommerce/data-store';
 
 import { BillingAddressAction, BillingAddressActionType } from '../billing/billing-address-actions';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
-import { OrderAction, OrderActionType } from '../order';
 
-import { CustomerAction, CustomerActionType } from './customer-actions';
+import Customer from './customer';
 import CustomerState from './customer-state';
-import InternalCustomer from './internal-customer';
-import mapToInternalCustomer from './map-to-internal-customer';
 
 const DEFAULT_STATE: CustomerState = {};
 
 export default function customerReducer(
     state: CustomerState = DEFAULT_STATE,
-    action: CheckoutAction | BillingAddressAction | CustomerAction | OrderAction
+    action: CheckoutAction | BillingAddressAction
 ): CustomerState {
-    const reducer = combineReducers<CustomerState, CheckoutAction | BillingAddressAction | CustomerAction | OrderAction>({
+    const reducer = combineReducers<CustomerState, CheckoutAction | BillingAddressAction >({
         data: dataReducer,
     });
 
@@ -23,21 +20,15 @@ export default function customerReducer(
 }
 
 function dataReducer(
-    data: InternalCustomer | undefined,
-    action: CheckoutAction | BillingAddressAction | CustomerAction | OrderAction
-): InternalCustomer | undefined {
+    data: Customer | undefined,
+    action: CheckoutAction | BillingAddressAction
+): Customer | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+        return action.payload ? { ...data, ...action.payload.customer } : data;
+
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
-        return action.payload ? { ...data, ...mapToInternalCustomer(action.payload) } : data;
-
-    case CustomerActionType.SignInCustomerSucceeded:
-    case CustomerActionType.SignOutCustomerSucceeded:
-        return action.payload ? { ...data, ...action.payload.customer } : data;
-
-    case OrderActionType.FinalizeOrderSucceeded:
-    case OrderActionType.SubmitOrderSucceeded:
-        return action.payload ? { ...data, ...action.payload.customer } : data;
+        return action.payload && action.payload.billingAddress ? { ...data, email: action.payload.billingAddress.email } as Customer : data;
 
     default:
         return data;

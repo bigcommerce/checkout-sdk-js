@@ -111,13 +111,13 @@ export default class InstrumentActionCreator {
     private _getSessionContext(store: ReadableCheckoutStore): SessionContext {
         const state = store.getState();
         const config = state.config.getStoreConfig();
-        const customer = state.customer.getCustomer();
+        const cart = state.cart.getCart();
 
-        if (!config || !customer) {
-            throw new MissingDataError('Unable to proceed because "config" or "customer" data is missing.');
+        if (!config || !cart) {
+            throw new MissingDataError('Unable to proceed because "config" or "cart" data is missing.');
         }
 
-        const { customerId } = customer;
+        const { customerId } = cart;
         const { storeId } = config.storeProfile;
 
         return {

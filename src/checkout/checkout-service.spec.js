@@ -722,7 +722,7 @@ describe('CheckoutService', () => {
             await checkoutService.updateBillingAddress(address, options);
 
             expect(checkoutClient.updateBillingAddress)
-                .toHaveBeenCalledWith(getCheckout().id, { ...address, email: '' }, options);
+                .toHaveBeenCalledWith(getCheckout().id, address, options);
         });
     });
 

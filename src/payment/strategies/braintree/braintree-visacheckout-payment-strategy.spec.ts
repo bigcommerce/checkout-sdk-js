@@ -20,7 +20,7 @@ import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, Check
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
-import { getCustomerState } from '../../../customer/internal-customers.mock';
+import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';

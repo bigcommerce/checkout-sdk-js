@@ -85,15 +85,8 @@ export default class BraintreeVisaCheckoutCustomerStrategy extends CustomerStrat
     }
 
     signOut(options?: any): Promise<InternalCheckoutSelectors> {
-        const state = this._store.getState();
-        const { remote = { provider: undefined } } = state.customer.getCustomer() || {};
-
-        if (!remote.provider) {
-            return Promise.resolve(this._store.getState());
-        }
-
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.signOut(remote.provider, options)
+            this._remoteCheckoutActionCreator.signOut('braintreevisacheckout', options)
         );
     }
 

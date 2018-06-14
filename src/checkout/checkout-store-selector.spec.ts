@@ -3,6 +3,7 @@ import { find, reject } from 'lodash';
 import { mapToInternalAddress } from '../address';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { mapToInternalCart } from '../cart';
+import { getCustomer } from '../customer/internal-customers.mock';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
 import { mapToInternalOrder } from '../order';
@@ -71,7 +72,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns customer', () => {
-        expect(selector.getCustomer()).toEqual(internalSelectors.customer.getCustomer());
+        expect(selector.getCustomer()).toEqual(getCustomer()) ;
     });
 
     it('returns billing address', () => {

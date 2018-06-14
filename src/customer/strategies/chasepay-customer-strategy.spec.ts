@@ -6,22 +6,21 @@ import { Observable } from 'rxjs';
 
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '..';
 import { getBillingAddress } from '../../billing/internal-billing-addresses.mock';
-import { getCartState } from '../../cart/internal-carts.mock';
+import { getCartState } from '../../cart/carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { getCheckoutState } from '../../checkout/checkouts.mock';
 import { getConfigState } from '../../config/configs.mock';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { getChasePay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
-
 import { ChasePayScriptLoader } from '../../payment/strategies/chasepay';
-import { getQuoteState } from '../../quote/internal-quotes.mock';
+import { ChasePayEventMap, ChasePayScript, JPMC } from '../../payment/strategies/chasepay/chasepay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
 import { CustomerStrategyActionType } from '../customer-strategy-actions';
-import { getCustomerState, getRemoteCustomer } from '../internal-customers.mock';
+import { getCustomerState } from '../customers.mock';
+import { getRemoteCustomer } from '../internal-customers.mock';
 
 import { ChasePayCustomerStrategy, CustomerStrategy } from './';
-import {ChasePayEventMap, ChasePayScript, JPMC} from '../../payment/strategies/chasepay/chasepay';
 
 describe('ChasePayCustomerStrategy', () => {
     let checkoutActionCreator: CheckoutActionCreator;
@@ -37,11 +36,11 @@ describe('ChasePayCustomerStrategy', () => {
     let JPMC: JPMC;
     let requestSender: RequestSender;
     let formPoster;
-    let EventType: ChasePayEventMap;
+    let EventType:  ChasePayEventMap;
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
-        paymentMethodMock = { ...getChasePay(), initializationData: {digitalSessionId: 'digitalSessionId'}, };
+        paymentMethodMock = { ...getChasePay(), initializationData: {digitalSessionId: 'digitalSessionId'} };
 
         store = createCheckoutStore({
             checkout: getCheckoutState(),

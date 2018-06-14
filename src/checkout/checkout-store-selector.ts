@@ -5,7 +5,7 @@ import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
 import { mapToInternalCoupon, mapToInternalGiftCertificate, CouponSelector, GiftCertificateSelector, InternalCoupon, InternalGiftCertificate } from '../coupon';
-import { CustomerSelector, InternalCustomer } from '../customer';
+import { mapToInternalCustomer, CustomerSelector, InternalCustomer } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
 import { mapToInternalOrder, InternalOrder, OrderSelector } from '../order';
@@ -255,7 +255,16 @@ export default class CheckoutStoreSelector {
      * undefined.
      */
     getCustomer(): InternalCustomer | undefined {
-        return this._customer.getCustomer();
+        const customer = this._customer.getCustomer();
+        const checkout = this._checkout.getCheckout();
+        const cart = checkout && checkout.cart;
+        const billingAddress = checkout && checkout.billingAddress;
+
+        if (!customer || !billingAddress || !cart) {
+            return;
+        }
+
+        return mapToInternalCustomer(customer, cart, billingAddress);
     }
 
     /**

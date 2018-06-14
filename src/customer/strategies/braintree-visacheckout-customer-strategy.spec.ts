@@ -22,7 +22,8 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../
 import { getConsignmentsState } from '../../shipping/consignments.mock';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 import { CustomerStrategyActionType } from '../customer-strategy-actions';
-import { getCustomerState, getRemoteCustomer } from '../internal-customers.mock';
+import { getCustomerState } from '../customers.mock';
+import { getRemoteCustomer } from '../internal-customers.mock';
 
 import { BraintreeVisaCheckoutCustomerStrategy, CustomerStrategy } from './';
 

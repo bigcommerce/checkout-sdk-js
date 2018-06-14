@@ -145,7 +145,6 @@ describe('BillingAddressActionCreator', () => {
                     getCheckout().id,
                     {
                         ...address,
-                        email: 'test@bigcommerce.com',
                         id: '55c96cda6f04c',
                     },
                     {}

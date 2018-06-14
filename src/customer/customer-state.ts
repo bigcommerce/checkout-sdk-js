@@ -1,5 +1,5 @@
-import InternalCustomer from './internal-customer';
+import Customer from './customer';
 
 export default interface CustomerState {
-    data?: InternalCustomer;
+    data?: Customer;
 }
