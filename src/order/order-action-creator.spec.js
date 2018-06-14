@@ -6,7 +6,7 @@ import { getCart, getCartState } from '../cart/internal-carts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../checkout';
-import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
+import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getConfigState } from '../config/configs.mock';
 
 import {
@@ -29,12 +29,7 @@ describe('OrderActionCreator', () => {
     let store;
 
     beforeEach(() => {
-        state = {
-            cart: getCartState(),
-            config: getConfigState(),
-            checkout: getCheckoutState(),
-        };
-
+        state = getCheckoutStoreState();
         store = createCheckoutStore(state);
 
         jest.spyOn(store, 'dispatch');

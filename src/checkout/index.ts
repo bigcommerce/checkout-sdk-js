@@ -21,3 +21,4 @@ export { default as InternalCheckoutSelectors } from './internal-checkout-select
 export { default as createCheckoutClient } from './create-checkout-client';
 export { default as createCheckoutService } from './create-checkout-service';
 export { default as createCheckoutStore } from './create-checkout-store';
+export { default as createInternalCheckoutSelectors } from './create-internal-checkout-selectors';

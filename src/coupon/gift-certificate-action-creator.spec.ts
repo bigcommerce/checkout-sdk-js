@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 
 import { createCheckoutStore } from '../checkout';
-import { getCheckoutState } from '../checkout/checkouts.mock';
+import { getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import GiftCertificateActionCreator from './gift-certificate-action-creator';
@@ -13,14 +13,14 @@ describe('GiftCertificateActionCreator', () => {
     let errorResponse;
     let giftCertificateActionCreator;
     let response;
+    let state;
     let store;
 
     beforeEach(() => {
         response = getResponse(getGiftCertificateResponseBody());
         errorResponse = getErrorResponse();
-        store = createCheckoutStore({
-            checkout: getCheckoutState(),
-        });
+        state = getCheckoutStoreState();
+        store = createCheckoutStore(state);
 
         checkoutClient = {
             applyGiftCertificate: jest.fn(() => Promise.resolve(response)),

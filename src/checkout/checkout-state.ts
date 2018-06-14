@@ -1,10 +1,14 @@
+import { Omit } from '../common/types';
+
 import Checkout from './checkout';
 
 export default interface CheckoutState {
-    data?: Checkout;
+    data?: CheckoutDataState;
     errors: CheckoutErrorsState;
     statuses: CheckoutStatusesState;
 }
+
+export type CheckoutDataState = Omit<Checkout, 'billingAddress' | 'cart' | 'consignments' | 'coupons' | 'giftCertificates'>;
 
 export interface CheckoutErrorsState {
     loadError?: Error;

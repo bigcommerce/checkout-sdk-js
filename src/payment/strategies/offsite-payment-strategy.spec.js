@@ -6,6 +6,7 @@ import { merge, omit } from 'lodash';
 import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
+import { getOrder } from '../../order/orders.mock';
 import { getOrderRequestBody, getIncompleteOrder, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { PaymentActionType } from '../payment-actions';
@@ -85,6 +86,9 @@ describe('OffsitePaymentStrategy', () => {
         const state = store.getState();
         const options = {};
 
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue(getOrder());
+
         jest.spyOn(state.payment, 'getPaymentStatus')
             .mockReturnValue(paymentStatusTypes.ACKNOWLEDGE);
 
@@ -97,6 +101,9 @@ describe('OffsitePaymentStrategy', () => {
     it('finalizes order if order is created and payment is finalized', async () => {
         const state = store.getState();
         const options = {};
+
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue(getOrder());
 
         jest.spyOn(state.payment, 'getPaymentStatus')
             .mockReturnValue(paymentStatusTypes.FINALIZE);

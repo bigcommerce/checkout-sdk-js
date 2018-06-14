@@ -1,13 +1,28 @@
-import { getPaymentMethod } from '../payment/payment-methods.mock';
-
 import CheckoutSelector from './checkout-selector';
-import { getCheckout, getCheckoutState, getCheckoutWithPayments } from './checkouts.mock';
+import CheckoutStoreState from './checkout-store-state';
+import { getCheckout, getCheckoutState, getCheckoutStoreState } from './checkouts.mock';
+import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
+import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 describe('CheckoutSelector', () => {
-    it('returns checkout', () => {
-        const selector = new CheckoutSelector(getCheckoutState());
+    let selectors: InternalCheckoutSelectors;
+    let state: CheckoutStoreState;
 
-        expect(selector.getCheckout()).toEqual(getCheckout());
+    beforeEach(() => {
+        state = getCheckoutStoreState();
+        selectors = createInternalCheckoutSelectors(state);
+    });
+
+    it('returns checkout', () => {
+        const selector = new CheckoutSelector(state.checkout, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.giftCertificates);
+
+        expect(selector.getCheckout()).toEqual({
+            ...getCheckout(),
+            cart: selectors.cart.getCart(),
+            consignments: selectors.consignments.getConsignments(),
+            coupons: selectors.coupons.getCoupons(),
+            giftCertificates: selectors.giftCertificates.getGiftCertificates(),
+        });
     });
 
     it('returns load error', () => {
@@ -15,7 +30,7 @@ describe('CheckoutSelector', () => {
         const selector = new CheckoutSelector({
             ...getCheckoutState(),
             errors: { loadError },
-        });
+        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.giftCertificates);
 
         expect(selector.getLoadError()).toEqual(loadError);
     });
@@ -24,7 +39,7 @@ describe('CheckoutSelector', () => {
         const selector = new CheckoutSelector({
             ...getCheckoutState(),
             statuses: { isLoading: true },
-        });
+        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.giftCertificates);
 
         expect(selector.isLoading()).toEqual(true);
     });

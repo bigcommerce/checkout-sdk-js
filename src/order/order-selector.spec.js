@@ -1,30 +1,21 @@
-import { getCartState } from '../cart/internal-carts.mock';
-import { getCustomerState } from '../customer/internal-customers.mock';
-import { getSubmittedOrder, getSubmittedOrderState } from './internal-orders.mock';
-import { getPaymentState } from '../payment/payments.mock';
+import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+
 import OrderSelector from './order-selector';
 
 describe('OrderSelector', () => {
-    let order;
     let orderSelector;
     let state;
 
     beforeEach(() => {
-        order = getSubmittedOrder();
-        state = {
-            cart: getCartState(),
-            customer: getCustomerState(),
-            order: getSubmittedOrderState(),
-            payment: getPaymentState(),
-        };
+        state = getCheckoutStoreStateWithOrder();
     });
 
     describe('#getOrder()', () => {
         it('returns the current order', () => {
             orderSelector = new OrderSelector(state.order);
 
-            expect(orderSelector.getOrder()).toEqual(order);
+            expect(orderSelector.getOrder()).toEqual(state.order.data);
         });
     });
 
@@ -32,7 +23,7 @@ describe('OrderSelector', () => {
         it('returns order meta', () => {
             orderSelector = new OrderSelector(state.order);
 
-            expect(orderSelector.getOrderMeta()).toEqual(getSubmittedOrderState().meta);
+            expect(orderSelector.getOrderMeta()).toEqual(state.order.meta);
         });
     });
 

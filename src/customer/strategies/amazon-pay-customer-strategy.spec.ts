@@ -3,8 +3,8 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { getCheckoutState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../../checkout';
+import { getCheckoutState, getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
 import { MissingDataError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
@@ -37,6 +37,7 @@ describe('AmazonPayCustomerStrategy', () => {
     let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
     let scriptLoader: AmazonPayScriptLoader;
     let strategy: AmazonPayCustomerStrategy;
+    let state: CheckoutStoreState;
     let store: CheckoutStore;
 
     class MockLoginButton implements AmazonPayLoginButton {
@@ -72,7 +73,8 @@ describe('AmazonPayCustomerStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
         remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
-        store = createCheckoutStore();
+        state = getCheckoutStoreState();
+        store = createCheckoutStore(state);
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
         strategy = new AmazonPayCustomerStrategy(
             store,
@@ -218,8 +220,9 @@ describe('AmazonPayCustomerStrategy', () => {
         const action = Observable.of(createAction(SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
 
         store = createCheckoutStore({
+            ...state,
             checkout: {
-                ...getCheckoutState(),
+                ...state.checkout,
                 data: {
                     ...getCheckoutWithPayments(),
                     payments: [{ providerId: 'amazon', providerType: HOSTED }],

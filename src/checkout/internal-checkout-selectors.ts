@@ -10,6 +10,7 @@ import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from 
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ConsignmentSelector } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
 
@@ -18,6 +19,7 @@ export default interface InternalCheckoutSelectors {
     cart: CartSelector;
     checkout: CheckoutSelector;
     config: ConfigSelector;
+    consignments: ConsignmentSelector;
     countries: CountrySelector;
     coupons: CouponSelector;
     customer: CustomerSelector;

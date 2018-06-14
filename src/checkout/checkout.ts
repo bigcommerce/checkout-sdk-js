@@ -9,10 +9,10 @@ import { Tax } from '../tax';
 
 export default interface Checkout {
     id: string;
+    billingAddress?: Address;
     cart: Cart;
     customer: Customer;
     customerMessage: string;
-    billingAddress: Address;
     consignments: Consignment[];
     taxes: Tax[];
     discounts: Discount[];

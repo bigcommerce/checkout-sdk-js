@@ -1,84 +1,89 @@
 import { find, reject } from 'lodash';
 
+import { mapToInternalAddress } from '../address';
+import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { mapToInternalCart } from '../cart';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
 import { mapToInternalOrder } from '../order';
 import { getBraintree } from '../payment/payment-methods.mock';
+import { QuoteSelector } from '../quote';
+import { getQuote } from '../quote/internal-quotes.mock';
+import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
+import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
 
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreState from './checkout-store-state';
-import { getCheckoutStoreState } from './checkouts.mock';
+import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
-import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
-import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
-import { getQuote } from '../quote/internal-quotes.mock';
-import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
+import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 describe('CheckoutStoreSelector', () => {
-    let selector: CheckoutStoreSelector;
     let state: CheckoutStoreState;
+    let internalSelectors: InternalCheckoutSelectors;
+    let selector: CheckoutStoreSelector;
 
     beforeEach(() => {
-        state = getCheckoutStoreState();
-        selector = new CheckoutStoreSelector(createInternalCheckoutSelectors(state));
+        state = getCheckoutStoreStateWithOrder();
+        internalSelectors = createInternalCheckoutSelectors(state);
+        selector = new CheckoutStoreSelector(internalSelectors);
     });
 
     it('returns checkout data', () => {
-        expect(selector.getCheckout()).toEqual(state.checkout.data);
+        expect(selector.getCheckout()).toEqual(internalSelectors.checkout.getCheckout());
     });
 
     it('returns order', () => {
-        expect(selector.getOrder()).toEqual(mapToInternalOrder(state.order.data));
+        expect(selector.getOrder()).toEqual(mapToInternalOrder(internalSelectors.order.getOrder()));
     });
 
     it('returns quote', () => {
-        expect(selector.getQuote()).toEqual(getQuote());
+        expect(selector.getQuote()).toEqual(new QuoteSelector(internalSelectors).getQuote());
     });
 
     it('returns config', () => {
-        expect(selector.getConfig()).toEqual(state.config.data.storeConfig);
+        expect(selector.getConfig()).toEqual(internalSelectors.config.getStoreConfig());
     });
 
     it('returns shipping options', () => {
-        expect(selector.getShippingOptions()).toEqual(getShippingOptions());
+        expect(selector.getShippingOptions()).toEqual(internalSelectors.shippingOptions.getShippingOptions());
     });
 
     it('returns shipping countries', () => {
-        expect(selector.getShippingCountries()).toEqual(state.shippingCountries.data);
+        expect(selector.getShippingCountries()).toEqual(internalSelectors.shippingCountries.getShippingCountries());
     });
 
     it('returns billing countries', () => {
-        expect(selector.getBillingCountries()).toEqual(state.countries.data);
+        expect(selector.getBillingCountries()).toEqual(internalSelectors.countries.getCountries());
     });
 
     it('returns payment methods', () => {
-        expect(selector.getPaymentMethods()).toEqual(state.paymentMethods.data);
+        expect(selector.getPaymentMethods()).toEqual(internalSelectors.paymentMethods.getPaymentMethods());
     });
 
     it('returns payment method', () => {
-        expect(selector.getPaymentMethod('braintree')).toEqual(getBraintree());
+        expect(selector.getPaymentMethod('braintree')).toEqual(internalSelectors.paymentMethods.getPaymentMethod('braintree'));
     });
 
     it('returns cart', () => {
-        expect(selector.getCart()).toEqual(mapToInternalCart(state.checkout.data));
+        expect(selector.getCart()).toEqual(mapToInternalCart(internalSelectors.checkout.getCheckout()));
     });
 
     it('returns customer', () => {
-        expect(selector.getCustomer()).toEqual(state.customer.data);
+        expect(selector.getCustomer()).toEqual(internalSelectors.customer.getCustomer());
     });
 
     it('returns billing address', () => {
-        expect(selector.getBillingAddress()).toEqual(getBillingAddress());
+        expect(selector.getBillingAddress()).toEqual(mapToInternalAddress(internalSelectors.billingAddress.getBillingAddress()));
     });
 
     it('returns shipping address', () => {
-        expect(selector.getShippingAddress()).toEqual(getShippingAddress());
+        expect(selector.getShippingAddress()).toEqual(mapToInternalAddress(internalSelectors.shippingAddress.getShippingAddress()));
     });
 
     it('returns instruments', () => {
-        expect(selector.getInstruments()).toEqual(state.instruments.data);
+        expect(selector.getInstruments()).toEqual(internalSelectors.instruments.getInstruments());
     });
 
     it('returns flag indicating if payment is submitted', () => {

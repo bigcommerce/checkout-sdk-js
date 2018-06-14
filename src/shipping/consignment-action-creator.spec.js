@@ -1,16 +1,14 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { getCartState } from '../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionType } from '../checkout';
-import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
+import { getCheckout, getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import ConsignmentActionCreator from './consignment-action-creator';
 import { ConsignmentActionType } from './consignment-actions';
 import { getShippingAddress } from './internal-shipping-addresses.mock';
-import { getConsignmentsState } from './consignments.mock';
 
 describe('consignmentActionCreator', () => {
     let address;
@@ -26,12 +24,7 @@ describe('consignmentActionCreator', () => {
     beforeEach(() => {
         response = getResponse(getCheckout());
         errorResponse = getErrorResponse();
-
-        store = createCheckoutStore({
-            checkout: getCheckoutState(),
-            consignments: getConsignmentsState(),
-            cart: getCartState(),
-        });
+        store = createCheckoutStore(getCheckoutStoreState());
 
         checkoutClient = {
             createConsignments: jest.fn(() => Promise.resolve(response)),

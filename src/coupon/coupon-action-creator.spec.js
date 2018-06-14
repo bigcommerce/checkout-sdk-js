@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../checkout';
-import { getCheckoutState } from '../checkout/checkouts.mock';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getCouponResponseBody } from './internal-coupons.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import CouponActionCreator from './coupon-action-creator';
@@ -11,14 +11,14 @@ describe('CouponActionCreator', () => {
     let couponActionCreator;
     let errorResponse;
     let response;
+    let state;
     let store;
 
     beforeEach(() => {
         response = getResponse(getCouponResponseBody());
         errorResponse = getErrorResponse();
-        store = createCheckoutStore({
-            checkout: getCheckoutState(),
-        });
+        state = getCheckoutStoreState();
+        store = createCheckoutStore(state);
 
         checkoutClient = {
             applyCoupon: jest.fn(() => Promise.resolve(response)),

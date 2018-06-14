@@ -11,7 +11,7 @@ import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { PaymentSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ConsignmentSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
 import { CheckoutStoreOptions } from './checkout-store';
@@ -21,8 +21,8 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default function createInternalCheckoutSelectors(state: CheckoutStoreState, options: CheckoutStoreOptions = {}): InternalCheckoutSelectors {
     const billingAddress = new BillingAddressSelector(state.billingAddress);
     const cart = new CartSelector(state.cart);
-    const checkout = new CheckoutSelector(state.checkout);
     const config = new ConfigSelector(state.config);
+    const consignments = new ConsignmentSelector(state.consignments);
     const countries = new CountrySelector(state.countries);
     const coupons = new CouponSelector(state.coupons);
     const customer = new CustomerSelector(state.customer);
@@ -40,6 +40,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
 
     // Compose selectors
+    const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, giftCertificates);
     const payment = new PaymentSelector(checkout, order);
 
     const selectors = {
@@ -47,6 +48,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
         cart,
         checkout,
         config,
+        consignments,
         countries,
         coupons,
         customer,

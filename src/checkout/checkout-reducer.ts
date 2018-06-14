@@ -1,13 +1,13 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, Action } from '@bigcommerce/data-store';
+import { omit } from 'lodash';
 
 import { BillingAddressAction, BillingAddressActionType } from '../billing';
 import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateActionType } from '../coupon';
 import { OrderAction, OrderActionType } from '../order';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 
-import Checkout from './checkout';
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
-import CheckoutState, { CheckoutErrorsState, CheckoutStatusesState } from './checkout-state';
+import CheckoutState, { CheckoutDataState, CheckoutErrorsState, CheckoutStatusesState } from './checkout-state';
 
 const DEFAULT_STATE: CheckoutState = {
     errors: {},
@@ -16,7 +16,7 @@ const DEFAULT_STATE: CheckoutState = {
 
 export default function checkoutReducer(
     state: CheckoutState = DEFAULT_STATE,
-    action: CheckoutAction | BillingAddressAction | ConsignmentAction | CouponAction | GiftCertificateAction | OrderAction
+    action: Action
 ): CheckoutState {
     const reducer = combineReducers<CheckoutState>({
         data: dataReducer,
@@ -28,9 +28,9 @@ export default function checkoutReducer(
 }
 
 function dataReducer(
-    data: Checkout | undefined,
+    data: CheckoutDataState | undefined,
     action: CheckoutAction | BillingAddressAction | ConsignmentAction | CouponAction | GiftCertificateAction | OrderAction
-): Checkout | undefined {
+): CheckoutDataState | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
@@ -40,10 +40,14 @@ function dataReducer(
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
-        return action.payload ? { ...data, ...action.payload } : data;
+        return action.payload
+            ? omit({ ...data, ...action.payload }, ['billingAddress', 'cart', 'consignments', 'coupons', 'giftCertifcates'])
+            : data;
 
     case OrderActionType.SubmitOrderSucceeded:
-        return action.payload && data ? { ...data, orderId: action.payload.order.orderId } : data;
+        return action.payload && data
+            ? { ...data, orderId: action.payload.order.orderId }
+            : data;
 
     default:
         return data;

@@ -9,6 +9,7 @@ import { RequestError } from '../../common/error/errors';
 import { getResponse } from '../../common/http-request/responses.mock';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
+import { getOrder } from '../../order/orders.mock';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaymentActionCreator from '../payment-action-creator';
@@ -134,6 +135,9 @@ describe('SagePayPaymentStrategy', () => {
 
     it('finalizes order if order is created and payment is finalized', async () => {
         const state = store.getState();
+
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue(getOrder());
 
         jest.spyOn(state.payment, 'getPaymentStatus')
             .mockReturnValue(paymentStatusTypes.FINALIZE);
