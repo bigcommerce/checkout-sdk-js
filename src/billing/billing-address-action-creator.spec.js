@@ -6,7 +6,7 @@ import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
 import BillingAddressActionCreator from './billing-address-action-creator';
-import { BillingAddressActionTypes } from './billing-address-actions';
+import { BillingAddressActionType } from './billing-address-actions';
 import { getBillingAddress } from './internal-billing-addresses.mock';
 import { getCustomerState } from '../customer/internal-customers.mock';
 import { getBillingAddressState } from './billing-addresses.mock';
@@ -64,8 +64,8 @@ describe('BillingAddressActionCreator', () => {
                     .toPromise();
 
                 expect(actions).toEqual([
-                    { type: BillingAddressActionTypes.UpdateBillingAddressRequested },
-                    { type: BillingAddressActionTypes.UpdateBillingAddressSucceeded, payload: response.body },
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionType.UpdateBillingAddressSucceeded, payload: response.body },
                 ]);
             });
 
@@ -82,8 +82,8 @@ describe('BillingAddressActionCreator', () => {
 
                 expect(errorHandler).toHaveBeenCalled();
                 expect(actions).toEqual([
-                    { type: BillingAddressActionTypes.UpdateBillingAddressRequested },
-                    { type: BillingAddressActionTypes.UpdateBillingAddressFailed, payload: errorResponse, error: true },
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionType.UpdateBillingAddressFailed, payload: errorResponse, error: true },
                 ]);
             });
 
@@ -119,8 +119,8 @@ describe('BillingAddressActionCreator', () => {
                     .toPromise();
 
                 expect(actions).toEqual([
-                    { type: BillingAddressActionTypes.UpdateBillingAddressRequested },
-                    { type: BillingAddressActionTypes.UpdateBillingAddressSucceeded, payload: response.body },
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionType.UpdateBillingAddressSucceeded, payload: response.body },
                 ]);
             });
 
@@ -137,8 +137,8 @@ describe('BillingAddressActionCreator', () => {
 
                 expect(errorHandler).toHaveBeenCalled();
                 expect(actions).toEqual([
-                    { type: BillingAddressActionTypes.UpdateBillingAddressRequested },
-                    { type: BillingAddressActionTypes.UpdateBillingAddressFailed, payload: errorResponse, error: true },
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionType.UpdateBillingAddressFailed, payload: errorResponse, error: true },
                 ]);
             });
 

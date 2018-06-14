@@ -3,7 +3,7 @@ import { combineReducers } from '@bigcommerce/data-store';
 import { Address } from '../address';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 
-import { BillingAddressAction, BillingAddressActionTypes } from './billing-address-actions';
+import { BillingAddressAction, BillingAddressActionType } from './billing-address-actions';
 import BillingAddressState, { BillingAddressErrorsState, BillingAddressStatusesState } from './billing-address-state';
 
 const DEFAULT_STATE: BillingAddressState = {
@@ -29,7 +29,7 @@ function dataReducer(
     action: CheckoutAction | BillingAddressAction
 ): Address | undefined {
     switch (action.type) {
-    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
+    case BillingAddressActionType.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
         return action.payload ? action.payload.billingAddress : data;
 
@@ -50,11 +50,11 @@ function errorsReducer(
     case CheckoutActionType.LoadCheckoutFailed:
         return { ...errors, loadError: action.payload };
 
-    case BillingAddressActionTypes.UpdateBillingAddressRequested:
-    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
+    case BillingAddressActionType.UpdateBillingAddressRequested:
+    case BillingAddressActionType.UpdateBillingAddressSucceeded:
         return { ...errors, updateError: undefined };
 
-    case BillingAddressActionTypes.UpdateBillingAddressFailed:
+    case BillingAddressActionType.UpdateBillingAddressFailed:
         return { ...errors, updateError: action.payload };
 
     default:
@@ -74,11 +74,11 @@ function statusesReducer(
     case CheckoutActionType.LoadCheckoutFailed:
         return { ...statuses, isLoading: false };
 
-    case BillingAddressActionTypes.UpdateBillingAddressRequested:
+    case BillingAddressActionType.UpdateBillingAddressRequested:
         return { ...statuses, isUpdating: true };
 
-    case BillingAddressActionTypes.UpdateBillingAddressFailed:
-    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
+    case BillingAddressActionType.UpdateBillingAddressFailed:
+    case BillingAddressActionType.UpdateBillingAddressSucceeded:
         return { ...statuses, isUpdating: false };
 
     default:

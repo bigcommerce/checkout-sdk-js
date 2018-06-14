@@ -20,7 +20,7 @@ import {
 import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../remote-checkout/remote-checkout.mock';
 import ConsignmentActionCreator from '../consignment-action-creator';
-import { ConsignmentActionTypes } from '../consignment-actions';
+import { ConsignmentActionType } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
 import { getShippingAddress } from '../shipping-addresses.mock';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';
@@ -156,7 +156,7 @@ describe('AmazonPayShippingStrategy', () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
         const initializeShippingAction = Observable.of(createAction(INITIALIZE_REMOTE_SHIPPING_REQUESTED));
-        const updateAddressAction = Observable.of(createAction(ConsignmentActionTypes.CreateConsignmentsRequested));
+        const updateAddressAction = Observable.of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
             .mockReturnValue(initializeShippingAction);
@@ -192,7 +192,7 @@ describe('AmazonPayShippingStrategy', () => {
             .mockReturnValue(Observable.of(createAction(INITIALIZE_REMOTE_SHIPPING_REQUESTED)));
 
         jest.spyOn(consignmentActionCreator, 'updateAddress')
-            .mockReturnValue(Observable.of(createAction(ConsignmentActionTypes.CreateConsignmentsRequested)));
+            .mockReturnValue(Observable.of(createAction(ConsignmentActionType.CreateConsignmentsRequested)));
 
         jest.spyOn(store, 'dispatch');
 
@@ -257,7 +257,7 @@ describe('AmazonPayShippingStrategy', () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const method = getFlatRateOption();
         const options = {};
-        const action = Observable.of(createAction(ConsignmentActionTypes.UpdateConsignmentRequested));
+        const action = Observable.of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
         jest.spyOn(consignmentActionCreator, 'selectShippingOption')
             .mockReturnValue(action);

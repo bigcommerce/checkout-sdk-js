@@ -7,7 +7,7 @@ import { getCompleteOrderResponseBody } from '../order/internal-orders.mock';
 import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
-import { BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { BillingAddressActionType } from '../billing/billing-address-actions';
 
 describe('customerReducer()', () => {
     let initialState;
@@ -32,7 +32,7 @@ describe('customerReducer()', () => {
     it('returns new state with customer data when billing address is updated successfully', () => {
         const response = getQuoteResponseBody();
         const action = {
-            type: BillingAddressActionTypes.UpdateBillingAddressSucceeded,
+            type: BillingAddressActionType.UpdateBillingAddressSucceeded,
             meta: response.meta,
             payload: getCheckout(),
         };

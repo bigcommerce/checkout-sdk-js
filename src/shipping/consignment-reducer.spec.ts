@@ -4,7 +4,7 @@ import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 
 import { ConsignmentState } from '.';
-import { ConsignmentActionTypes } from './consignment-actions';
+import { ConsignmentActionType } from './consignment-actions';
 import consignmentReducer from './consignment-reducer';
 
 describe('consignmentReducer', () => {
@@ -60,7 +60,7 @@ describe('consignmentReducer', () => {
     });
 
     it('returns new data when consignment is created', () => {
-        const action = createAction(ConsignmentActionTypes.CreateConsignmentsSucceeded, getCheckout());
+        const action = createAction(ConsignmentActionType.CreateConsignmentsSucceeded, getCheckout());
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: action.payload.consignments,
@@ -74,7 +74,7 @@ describe('consignmentReducer', () => {
     });
 
     it('returns loading state when creating consignment', () => {
-        const action = createAction(ConsignmentActionTypes.CreateConsignmentsRequested);
+        const action = createAction(ConsignmentActionType.CreateConsignmentsRequested);
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: undefined,
@@ -88,7 +88,7 @@ describe('consignmentReducer', () => {
     });
 
     it('returns error when consignment creation fails', () => {
-        const action = createAction(ConsignmentActionTypes.CreateConsignmentsFailed, {});
+        const action = createAction(ConsignmentActionType.CreateConsignmentsFailed, {});
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: undefined,
@@ -102,7 +102,7 @@ describe('consignmentReducer', () => {
     });
 
     it('returns loading state when updating consignment', () => {
-        const action = createAction(ConsignmentActionTypes.UpdateConsignmentRequested);
+        const action = createAction(ConsignmentActionType.UpdateConsignmentRequested);
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: undefined,
@@ -116,7 +116,7 @@ describe('consignmentReducer', () => {
     });
 
     it('returns new data when consignment is updated', () => {
-        const action = createAction(ConsignmentActionTypes.UpdateConsignmentSucceeded, getCheckout());
+        const action = createAction(ConsignmentActionType.UpdateConsignmentSucceeded, getCheckout());
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: action.payload.consignments,
@@ -130,7 +130,7 @@ describe('consignmentReducer', () => {
     });
 
     it('returns error when consignment update fails', () => {
-        const action = createAction(ConsignmentActionTypes.UpdateConsignmentFailed, {});
+        const action = createAction(ConsignmentActionType.UpdateConsignmentFailed, {});
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: undefined,

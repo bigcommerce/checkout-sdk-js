@@ -4,7 +4,7 @@ import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { CustomerAction, CustomerActionType } from '../customer';
 
 import Consignment from './consignment';
-import { ConsignmentAction, ConsignmentActionTypes } from './consignment-actions';
+import { ConsignmentAction, ConsignmentActionType } from './consignment-actions';
 import ConsignmentState, { ConsignmentErrorsState, ConsignmentStatusesState } from './consignment-state';
 
 const DEFAULT_STATE: ConsignmentState = {
@@ -31,8 +31,8 @@ function dataReducer(
 ): Consignment[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
-    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.CreateConsignmentsSucceeded:
+    case ConsignmentActionType.UpdateConsignmentSucceeded:
         return action.payload ? action.payload.consignments : data;
 
     case CustomerActionType.SignOutCustomerSucceeded:
@@ -55,18 +55,18 @@ function errorsReducer(
     case CheckoutActionType.LoadCheckoutFailed:
         return { ...errors, loadError: action.payload };
 
-    case ConsignmentActionTypes.CreateConsignmentsRequested:
-    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
+    case ConsignmentActionType.CreateConsignmentsRequested:
+    case ConsignmentActionType.CreateConsignmentsSucceeded:
         return { ...errors, createError: undefined };
 
-    case ConsignmentActionTypes.CreateConsignmentsFailed:
+    case ConsignmentActionType.CreateConsignmentsFailed:
         return { ...errors, createError: action.payload };
 
-    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
-    case ConsignmentActionTypes.UpdateConsignmentRequested:
+    case ConsignmentActionType.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.UpdateConsignmentRequested:
         return { ...errors, updateError: undefined };
 
-    case ConsignmentActionTypes.UpdateConsignmentFailed:
+    case ConsignmentActionType.UpdateConsignmentFailed:
         return { ...errors, updateError: action.payload };
 
     default:
@@ -86,18 +86,18 @@ function statusesReducer(
     case CheckoutActionType.LoadCheckoutFailed:
         return { ...statuses, isLoading: false };
 
-    case ConsignmentActionTypes.CreateConsignmentsRequested:
+    case ConsignmentActionType.CreateConsignmentsRequested:
         return { ...statuses, isCreating: true };
 
-    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
-    case ConsignmentActionTypes.CreateConsignmentsFailed:
+    case ConsignmentActionType.CreateConsignmentsSucceeded:
+    case ConsignmentActionType.CreateConsignmentsFailed:
         return { ...statuses, isCreating: false };
 
-    case ConsignmentActionTypes.UpdateConsignmentRequested:
+    case ConsignmentActionType.UpdateConsignmentRequested:
         return { ...statuses, isUpdating: true };
 
-    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
-    case ConsignmentActionTypes.UpdateConsignmentFailed:
+    case ConsignmentActionType.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.UpdateConsignmentFailed:
         return { ...statuses, isUpdating: false };
 
     default:

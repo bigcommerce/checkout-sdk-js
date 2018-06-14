@@ -1,9 +1,9 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
-import { BillingAddressAction, BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { BillingAddressAction, BillingAddressActionType } from '../billing/billing-address-actions';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { CustomerAction, CustomerActionType } from '../customer';
-import { ConsignmentAction, ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
 
 import InternalQuote from './internal-quote';
 import mapToInternalQuote from './map-to-internal-quote';
@@ -33,10 +33,10 @@ function dataReducer(
     action: BillingAddressAction | CheckoutAction | ConsignmentAction | CustomerAction
 ): InternalQuote | undefined {
     switch (action.type) {
-    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
+    case BillingAddressActionType.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
-    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.CreateConsignmentsSucceeded:
+    case ConsignmentActionType.UpdateConsignmentSucceeded:
         return action.payload ? { ...data, ...mapToInternalQuote(action.payload) } : data;
 
     case CustomerActionType.SignInCustomerSucceeded:

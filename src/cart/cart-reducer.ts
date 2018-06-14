@@ -1,10 +1,10 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
-import { BillingAddressAction, BillingAddressActionTypes } from '../billing/billing-address-actions';
+import { BillingAddressAction, BillingAddressActionType } from '../billing/billing-address-actions';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { CouponAction, CouponActionType } from '../coupon/coupon-actions';
 import { GiftCertificateAction, GiftCertificateActionType } from '../coupon/gift-certificate-actions';
-import { ConsignmentAction, ConsignmentActionTypes } from '../shipping/consignment-actions';
+import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
 
 import Cart from './cart';
 import CartState, { CartErrorsState, CartStatusesState } from './cart-state';
@@ -32,10 +32,10 @@ function dataReducer(
     action: BillingAddressAction | CheckoutAction | ConsignmentAction | CouponAction | GiftCertificateAction
 ): Cart | undefined {
     switch (action.type) {
-    case BillingAddressActionTypes.UpdateBillingAddressSucceeded:
+    case BillingAddressActionType.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case ConsignmentActionTypes.CreateConsignmentsSucceeded:
-    case ConsignmentActionTypes.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.CreateConsignmentsSucceeded:
+    case ConsignmentActionType.UpdateConsignmentSucceeded:
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
