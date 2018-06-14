@@ -7,7 +7,6 @@ import { getCheckout } from './checkouts.mock';
 import { getCountries } from '../geography/countries.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
-import { getQuote } from '../quote/internal-quotes.mock';
 import CheckoutClient from './checkout-client';
 import { getConsignmentRequestBody } from '../shipping/consignments.mock';
 
@@ -19,7 +18,6 @@ describe('CheckoutClient', () => {
     let customerRequestSender;
     let orderRequestSender;
     let paymentMethodRequestSender;
-    let quoteRequestSender;
     let consignmentRequestSender;
     let shippingCountryRequestSender;
 
@@ -59,10 +57,6 @@ describe('CheckoutClient', () => {
             loadPaymentMethod: jest.fn(() => Promise.resolve(getResponse(getPaymentMethod()))),
         };
 
-        quoteRequestSender = {
-            loadQuote: jest.fn(() => Promise.resolve(getResponse(getQuote()))),
-        };
-
         shippingCountryRequestSender = {
             loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
         };
@@ -79,26 +73,8 @@ describe('CheckoutClient', () => {
             customerRequestSender,
             orderRequestSender,
             paymentMethodRequestSender,
-            quoteRequestSender,
             shippingCountryRequestSender
         );
-    });
-
-    describe('#loadQuote()', () => {
-        it('loads checkout', async () => {
-            const output = await client.loadQuote();
-
-            expect(output).toEqual(getResponse(getQuote()));
-            expect(quoteRequestSender.loadQuote).toHaveBeenCalled();
-        });
-
-        it('loads checkout with timeout', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.loadQuote(options);
-
-            expect(output).toEqual(getResponse(getQuote()));
-            expect(quoteRequestSender.loadQuote).toHaveBeenCalledWith(options);
-        });
     });
 
     describe('#loadOrder()', () => {

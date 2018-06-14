@@ -8,7 +8,6 @@ import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
 import { InternalOrderRequestBody, InternalOrderResponseBody, Order, OrderRequestSender } from '../order';
 import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
-import { QuoteRequestSender } from '../quote';
 import { ConsignmentsRequestBody, ConsignmentRequestBody, ConsignmentRequestSender, ShippingCountryRequestSender } from '../shipping';
 
 import Checkout from './checkout';
@@ -28,13 +27,8 @@ export default class CheckoutClient {
         private _customerRequestSender: CustomerRequestSender,
         private _orderRequestSender: OrderRequestSender,
         private _paymentMethodRequestSender: PaymentMethodRequestSender,
-        private _quoteRequestSender: QuoteRequestSender,
         private _shippingCountryRequestSender: ShippingCountryRequestSender
     ) {}
-
-    loadQuote(options?: RequestOptions): Promise<Response> {
-        return this._quoteRequestSender.loadQuote(options);
-    }
 
     loadOrder(orderId: number, options?: RequestOptions): Promise<Response<Order>> {
         return this._orderRequestSender.loadOrder(orderId, options);

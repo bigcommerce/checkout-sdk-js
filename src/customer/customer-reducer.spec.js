@@ -4,7 +4,6 @@ import customerReducer from './customer-reducer';
 
 import { OrderActionType } from '../order';
 import { getCompleteOrderResponseBody } from '../order/internal-orders.mock';
-import { getQuoteResponseBody } from '../quote/internal-quotes.mock';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { BillingAddressActionType } from '../billing/billing-address-actions';
@@ -17,10 +16,8 @@ describe('customerReducer()', () => {
     });
 
     it('returns new state with customer data when checkout is loaded successfully', () => {
-        const response = getQuoteResponseBody();
         const action = {
             type: CheckoutActionType.LoadCheckoutSucceeded,
-            meta: response.meta,
             payload: getCheckout(),
         };
 
@@ -30,10 +27,8 @@ describe('customerReducer()', () => {
     });
 
     it('returns new state with customer data when billing address is updated successfully', () => {
-        const response = getQuoteResponseBody();
         const action = {
             type: BillingAddressActionType.UpdateBillingAddressSucceeded,
-            meta: response.meta,
             payload: getCheckout(),
         };
 
