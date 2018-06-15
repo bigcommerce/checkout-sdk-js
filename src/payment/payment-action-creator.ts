@@ -4,6 +4,7 @@ import { concat } from 'rxjs/observable/concat';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
+import { mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
@@ -83,13 +84,13 @@ export default class PaymentActionCreator {
 
         return {
             authToken,
-            billingAddress,
+            billingAddress: billingAddress && mapToInternalAddress(billingAddress),
             customer,
             paymentMethod,
-            shippingAddress,
+            shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress),
             shippingOption,
-            cart: checkout ? mapToInternalCart(checkout) : undefined,
-            order: order ? mapToInternalOrder(order) : undefined,
+            cart: checkout && mapToInternalCart(checkout),
+            order: order && mapToInternalOrder(order),
             orderMeta: state.order.getOrderMeta(),
             payment: payment.paymentData,
             quoteMeta: {

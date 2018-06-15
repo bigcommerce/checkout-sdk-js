@@ -12,7 +12,7 @@ import {
     deleteInstrumentResponseBody,
 } from './instrument.mock';
 import { getConsignmentsState } from '../../shipping/consignments.mock';
-import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
+import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 
 describe('InstrumentActionCreator', () => {
     let instrumentActionCreator;

@@ -1,4 +1,4 @@
-import { InternalAddress } from '../../../address';
+import { Address } from '../../../address';
 import { NotInitializedError } from '../../../common/error/errors';
 import { CancellablePromise } from '../../../common/utility';
 import { OrderPaymentRequestBody } from '../../../order';
@@ -25,7 +25,7 @@ export default class BraintreePaymentProcessor {
         return this._braintreeSDKCreator.getPaypal();
     }
 
-    tokenizeCard(payment: OrderPaymentRequestBody, billingAddress: InternalAddress): Promise<NonceInstrument> {
+    tokenizeCard(payment: OrderPaymentRequestBody, billingAddress: Address): Promise<NonceInstrument> {
         const { paymentData } = payment;
         const requestData = this._mapToCreditCard(paymentData as CreditCardInstrument, billingAddress);
 
@@ -49,7 +49,7 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    verifyCard(payment: OrderPaymentRequestBody, billingAddress: InternalAddress, amount: number): Promise<NonceInstrument> {
+    verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<NonceInstrument> {
         if (!this._threeDSecureOptions) {
             throw new NotInitializedError('Unable to verify card because the choosen payment method has not been initialized.');
         }
@@ -93,11 +93,11 @@ export default class BraintreePaymentProcessor {
         return this._braintreeSDKCreator.teardown();
     }
 
-    private _mapToCreditCard(creditCard: CreditCardInstrument, billingAddress: InternalAddress): BraintreeRequestData {
-        let streetAddress = billingAddress.addressLine1;
+    private _mapToCreditCard(creditCard: CreditCardInstrument, billingAddress: Address): BraintreeRequestData {
+        let streetAddress = billingAddress.address1;
 
-        if (billingAddress.addressLine2) {
-            streetAddress = ` ${billingAddress.addressLine2}`;
+        if (billingAddress.address2) {
+            streetAddress = ` ${billingAddress.address2}`;
         }
 
         return {
@@ -112,7 +112,7 @@ export default class BraintreePaymentProcessor {
                     },
                     billingAddress: {
                         countryName: billingAddress.country,
-                        postalCode: billingAddress.postCode,
+                        postalCode: billingAddress.postalCode,
                         streetAddress,
                     },
                 },

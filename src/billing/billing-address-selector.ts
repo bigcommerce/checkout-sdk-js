@@ -1,4 +1,4 @@
-import { mapToInternalAddress, InternalAddress } from '../address';
+import { Address } from '../address';
 import { selector } from '../common/selector';
 
 import BillingAddressState from './billing-address-state';
@@ -9,8 +9,8 @@ export default class BillingAddressSelector {
         private _billingAddress: BillingAddressState
     ) {}
 
-    getBillingAddress(): InternalAddress | undefined {
-        return this._billingAddress.data && mapToInternalAddress(this._billingAddress.data);
+    getBillingAddress(): Address | undefined {
+        return this._billingAddress.data;
     }
 
     getUpdateError(): Error | undefined {

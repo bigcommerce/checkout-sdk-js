@@ -99,8 +99,8 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                         throw new NotInitializedError();
                     }
 
-                    if (billingAddress && billingAddress.postCode) {
-                        this._paymentForm.setPostalCode(billingAddress.postCode);
+                    if (billingAddress && billingAddress.postalCode) {
+                        this._paymentForm.setPostalCode(billingAddress.postalCode);
                     }
                 },
                 unsupportedBrowserDetected: () => {

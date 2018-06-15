@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { InternalAddress } from '../../address';
+import { mapToInternalAddress, Address } from '../../address';
 import { RequestOptions } from '../../common/http-request';
 
 import { InstrumentRequestContext } from './instrument';
@@ -18,7 +18,7 @@ export default class InstrumentRequestSender {
         return this._requestSender.get(url, { timeout });
     }
 
-    loadInstruments(requestContext: InstrumentRequestContext, shippingAddress?: InternalAddress): Promise<Response<InstrumentsResponseBody>> {
+    loadInstruments(requestContext: InstrumentRequestContext, shippingAddress?: Address): Promise<Response<InstrumentsResponseBody>> {
         return (shippingAddress) ?
             this._loadInstrumentsWithAddress(requestContext, shippingAddress) :
             this._loadInstruments(requestContext);
@@ -53,10 +53,10 @@ export default class InstrumentRequestSender {
         });
     }
 
-    private _loadInstrumentsWithAddress(requestContext: InstrumentRequestContext, shippingAddress: InternalAddress): Promise<Response<InstrumentsResponseBody>> {
+    private _loadInstrumentsWithAddress(requestContext: InstrumentRequestContext, shippingAddress: Address): Promise<Response<InstrumentsResponseBody>> {
         const payload = {
             ...requestContext,
-            shippingAddress,
+            shippingAddress: mapToInternalAddress(shippingAddress),
         };
 
         return new Promise((resolve, reject) => {

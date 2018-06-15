@@ -1,6 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { InternalAddress } from '../../../address';
+import { Address } from '../../../address';
 import { NotInitializedError } from '../../../common/error/errors';
 
 import { BraintreeDataCollector } from './braintree';
@@ -44,7 +44,7 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
         return this._braintreeSDKCreator.teardown();
     }
 
-    handleSuccess(payment: VisaCheckoutPaymentSuccessPayload, shipping?: InternalAddress, billing?: InternalAddress): Promise<any> {
+    handleSuccess(payment: VisaCheckoutPaymentSuccessPayload, shipping?: Address, billing?: Address): Promise<any> {
         return this._braintreeSDKCreator.getVisaCheckout()
             .then(braintreeVisaCheckout => Promise.all([
                 braintreeVisaCheckout.tokenize(payment),
@@ -107,7 +107,7 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
             .join('&');
     }
 
-    private _toVisaCheckoutAddress(address?: InternalAddress): VisaCheckoutAddress {
+    private _toVisaCheckoutAddress(address?: Address): VisaCheckoutAddress {
         if (!address) {
             return {};
         }
@@ -116,12 +116,12 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
             firstName: address.firstName,
             lastName: address.lastName,
             phoneNumber: address.phone,
-            streetAddress: address.addressLine1,
-            extendedAddress: address.addressLine2,
+            streetAddress: address.address1,
+            extendedAddress: address.address2,
             locality: address.city,
-            region: address.provinceCode,
+            region: address.stateOrProvinceCode,
             countryCode: address.countryCode,
-            postalCode: address.postCode,
+            postalCode: address.postalCode,
         };
     }
 

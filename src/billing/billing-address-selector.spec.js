@@ -1,5 +1,4 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getQuote } from '../quote/internal-quotes.mock';
 import BillingAddressSelector from './billing-address-selector';
 import { getBillingAddressState } from './billing-addresses.mock';
 
@@ -17,7 +16,7 @@ describe('BillingAddressSelector', () => {
         it('returns the current billing address', () => {
             billingAddressSelector = new BillingAddressSelector(state.billingAddress);
 
-            expect(billingAddressSelector.getBillingAddress()).toEqual(getQuote().billingAddress);
+            expect(billingAddressSelector.getBillingAddress()).toEqual(state.billingAddress.data);
         });
 
         it('returns undefined if quote is not available', () => {

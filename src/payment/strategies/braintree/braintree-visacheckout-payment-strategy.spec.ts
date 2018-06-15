@@ -14,7 +14,7 @@ import {
     PaymentStrategyActionCreator,
 } from '../..';
 import { getBillingAddressState } from '../../../billing/billing-addresses.mock';
-import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
+import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { getCartState } from '../../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
@@ -24,7 +24,7 @@ import { getCustomerState } from '../../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
-import { getShippingAddress } from '../../../shipping/internal-shipping-addresses.mock';
+import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
 import { getBraintreeVisaCheckout, getPaymentMethodsState } from '../../payment-methods.mock';
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';

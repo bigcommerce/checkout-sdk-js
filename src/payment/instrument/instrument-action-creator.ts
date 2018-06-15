@@ -2,7 +2,7 @@ import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommer
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { InternalAddress } from '../../address';
+import { Address } from '../../address';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../../checkout';
 import { addMinutes, isFuture } from '../../common/date-time';
 import { MissingDataError } from '../../common/error/errors';
@@ -102,7 +102,7 @@ export default class InstrumentActionCreator {
                 }));
     }
 
-    private _getShippingAddress(store: ReadableCheckoutStore): InternalAddress | undefined {
+    private _getShippingAddress(store: ReadableCheckoutStore): Address | undefined {
         const state = store.getState();
 
         return state.shippingAddress.getShippingAddress();

@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
+import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { getBraintree } from '../../../payment/payment-methods.mock';
 import { PaymentMethodCancelledError } from '../../errors';
 import { TokenizedCreditCard } from '../../payment';

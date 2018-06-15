@@ -1,4 +1,4 @@
-import { InternalAddress } from '../address';
+import { mapToInternalAddress, InternalAddress } from '../address';
 import { BillingAddressSelector } from '../billing';
 import { mapToInternalCart, InternalCart } from '../cart';
 import { selector } from '../common/selector';
@@ -120,7 +120,9 @@ export default class CheckoutStoreSelector {
      * undefined.
      */
     getShippingAddress(): InternalAddress | undefined {
-        return this._shippingAddress.getShippingAddress();
+        const shippingAddress = this._shippingAddress.getShippingAddress();
+
+        return shippingAddress && mapToInternalAddress(shippingAddress);
     }
 
     /**
@@ -161,7 +163,9 @@ export default class CheckoutStoreSelector {
      * @returns The billing address object if it is loaded, otherwise undefined.
      */
     getBillingAddress(): InternalAddress | undefined {
-        return this._billingAddress.getBillingAddress();
+        const billingAddress = this._billingAddress.getBillingAddress();
+
+        return billingAddress && mapToInternalAddress(billingAddress);
     }
 
     /**

@@ -1,7 +1,6 @@
 import ShippingAddressSelector from './shipping-address-selector';
 import { getConfigState } from '../config/configs.mock';
 import { getConsignmentsState } from './consignments.mock';
-import { getShippingAddress } from './internal-shipping-addresses.mock';
 
 describe('ShippingAddressSelector', () => {
     let shippingAddressSelector;
@@ -18,7 +17,7 @@ describe('ShippingAddressSelector', () => {
         it('returns the current shipping address', () => {
             shippingAddressSelector = new ShippingAddressSelector(state.consignments, state.config);
 
-            expect(shippingAddressSelector.getShippingAddress()).toEqual(getShippingAddress());
+            expect(shippingAddressSelector.getShippingAddress()).toEqual(state.consignments.data[0].shippingAddress);
         });
 
         describe('when there is no shipping information', () => {

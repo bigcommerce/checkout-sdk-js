@@ -1,6 +1,6 @@
 import { selector } from '../common/selector';
 
-import { mapToInternalAddress, InternalAddress } from '../address';
+import { Address } from '../address';
 import ConfigState from '../config/config-state';
 
 import ConsignmentState from './consignment-state';
@@ -12,7 +12,7 @@ export default class ShippingAddressSelector {
         private _config: ConfigState
     ) {}
 
-    getShippingAddress(): InternalAddress | undefined {
+    getShippingAddress(): Address | undefined {
         const consignments = this._consignments.data;
         const context = this._config.data && this._config.data.context;
 
@@ -25,12 +25,12 @@ export default class ShippingAddressSelector {
                 firstName: '',
                 lastName: '',
                 company: '',
-                addressLine1: '',
-                addressLine2: '',
+                address1: '',
+                address2: '',
                 city: '',
-                province: '',
-                provinceCode: '',
-                postCode: '',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+                postalCode: '',
                 country: '',
                 phone: '',
                 customFields: [],
@@ -38,6 +38,6 @@ export default class ShippingAddressSelector {
             };
         }
 
-        return mapToInternalAddress(consignments[0].shippingAddress);
+        return consignments[0].shippingAddress;
     }
 }

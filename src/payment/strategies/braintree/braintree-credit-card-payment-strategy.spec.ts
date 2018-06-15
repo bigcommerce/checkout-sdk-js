@@ -3,7 +3,7 @@ import { createAction, Action } from '@bigcommerce/data-store';
 import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { getBillingAddress } from '../../../billing/internal-billing-addresses.mock';
+import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { getCart } from '../../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
