@@ -16,18 +16,18 @@ describe('CheckoutStoreErrorSelector', () => {
     });
 
     describe('#getLoadCheckoutError()', () => {
-        it('returns error if there is an error when loading quote', () => {
-            jest.spyOn(selectors.quote, 'getLoadError').mockReturnValue(errorResponse);
+        it('returns error if there is an error when loading checkout', () => {
+            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(errorResponse);
 
             expect(errors.getLoadCheckoutError()).toEqual(errorResponse);
-            expect(selectors.quote.getLoadError).toHaveBeenCalled();
+            expect(selectors.checkout.getLoadError).toHaveBeenCalled();
         });
 
-        it('returns undefined if there is no error when loading quote', () => {
-            jest.spyOn(selectors.quote, 'getLoadError').mockReturnValue();
+        it('returns undefined if there is no error when loading checkout', () => {
+            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue();
 
             expect(errors.getLoadCheckoutError()).toEqual(undefined);
-            expect(selectors.quote.getLoadError).toHaveBeenCalled();
+            expect(selectors.checkout.getLoadError).toHaveBeenCalled();
         });
     });
 

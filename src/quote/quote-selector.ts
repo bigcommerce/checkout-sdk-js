@@ -1,39 +1,33 @@
-import { InternalAddress } from '../address';
-import { BillingAddressSelector } from '../billing';
-import { CheckoutState } from '../checkout';
+import { InternalCheckoutSelectors } from '../checkout';
 import { selector } from '../common/selector';
-import { ShippingAddressSelector, ShippingOptionSelector } from '../shipping';
 
 import InternalQuote from './internal-quote';
+import mapToInternalQuote from './map-to-internal-quote';
 
+/**
+ * @deprecated This method will be replaced in the future.
+ */
 @selector
 export default class QuoteSelector {
     constructor(
-        private _checkout: CheckoutState,
-        private _billingAddressSelector: BillingAddressSelector,
-        private _shippingAddressSelector: ShippingAddressSelector,
-        private _shippingOptionSelector: ShippingOptionSelector
+        private _selectors: InternalCheckoutSelectors
     ) {}
 
     getQuote(): InternalQuote | undefined {
-        if (!this._checkout.data) {
+        const checkout = this._selectors.checkout.getCheckout();
+
+        if (!checkout) {
             return;
         }
-        const shippingOption = this._shippingOptionSelector.getSelectedShippingOption();
 
-        return {
-            shippingOption: shippingOption && shippingOption.id,
-            orderComment: this._checkout.data.customerMessage,
-            shippingAddress: this._shippingAddressSelector.getShippingAddress() || {} as InternalAddress,
-            billingAddress: this._billingAddressSelector.getBillingAddress() || {}  as InternalAddress,
-        };
+        return mapToInternalQuote(checkout);
     }
 
     getLoadError(): Error | undefined {
-        return this._checkout.errors.loadError;
+        return this._selectors.checkout.getLoadError();
     }
 
     isLoading(): boolean {
-        return !! this._checkout.statuses.isLoading;
+        return !! this._selectors.checkout.isLoading();
     }
 }
