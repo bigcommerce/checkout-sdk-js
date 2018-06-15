@@ -4,7 +4,7 @@ import LineItemMap from './line-item-map';
 import mapGiftCertificateToInternalLineItem from './map-gift-certificate-to-internal-line-item';
 import mapToInternalLineItem from './map-to-internal-line-item';
 
-export default function notificationsmapToInternalLineItems(
+export default function mapToInternalLineItems(
     itemMap: LineItemMap,
     decimalPlaces: number,
     idKey: keyof LineItem = 'id'

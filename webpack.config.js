@@ -8,6 +8,7 @@ const assetConfig = {
 
     entry: {
         'checkout-sdk': './src/index.ts',
+        'internal-mappers': './src/internal-mappers.ts',
     },
 
     output: {
