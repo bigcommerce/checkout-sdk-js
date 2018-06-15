@@ -11,3 +11,7 @@ export function getShippingOption(): ShippingOption {
         type: 'shipping_flatrate',
     };
 }
+
+export function getShippingOptions(): ShippingOption[] {
+    return [getShippingOption()];
+}

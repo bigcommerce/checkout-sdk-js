@@ -2,10 +2,9 @@ import { find } from 'lodash';
 
 import { selector } from '../common/selector';
 
+import Consignment from './consignment';
 import ConsignmentState from './consignment-state';
-import InternalShippingOption, { InternalShippingOptionList } from './internal-shipping-option';
-import mapToInternalShippingOption from './map-to-internal-shipping-option';
-import mapToInternalShippingOptions from './map-to-internal-shipping-options';
+import ShippingOption from './shipping-option';
 
 @selector
 export default class ShippingOptionSelector {
@@ -13,21 +12,23 @@ export default class ShippingOptionSelector {
         private _consignments: ConsignmentState
     ) {}
 
-    getShippingOptions(): InternalShippingOptionList | undefined {
-        return this._consignments.data && mapToInternalShippingOptions(this._consignments.data);
+    getShippingOptions(): ShippingOption[] | undefined {
+        const consignment = this._getConsignment();
+
+        return consignment && consignment.availableShippingOptions;
     }
 
-    getSelectedShippingOption(): InternalShippingOption | undefined {
-        if (!this._consignments.data) {
+    getSelectedShippingOption(): ShippingOption | undefined {
+        const consignment = this._getConsignment();
+
+        if (!consignment) {
             return;
         }
 
-        const { selectedShippingOptionId, availableShippingOptions } = this._consignments.data[0];
+        const { selectedShippingOptionId, availableShippingOptions } = consignment;
         const shippingOption = find(availableShippingOptions, { id: selectedShippingOptionId });
 
-        return shippingOption ?
-            mapToInternalShippingOption(shippingOption, true)
-            : undefined;
+        return shippingOption;
     }
 
     getLoadError(): Error | undefined {
@@ -52,5 +53,13 @@ export default class ShippingOptionSelector {
 
     isCreating(): boolean {
         return !!this._consignments.statuses.isCreating;
+    }
+
+    private _getConsignment(): Consignment | undefined {
+        if (!this._consignments.data) {
+            return;
+        }
+
+        return this._consignments.data[0];
     }
 }

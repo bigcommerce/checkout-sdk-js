@@ -23,7 +23,7 @@ import { InstrumentActionCreator } from '../payment/instrument';
 import { deleteInstrumentResponseBody, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptionResponseBody } from '../shipping/internal-shipping-options.mock';
+import { getShippingOptionResponseBody, getShippingOptions } from '../shipping/internal-shipping-options.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
@@ -639,7 +639,7 @@ describe('CheckoutService', () => {
             const state = await checkoutService.loadShippingOptions();
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
-            expect(state.data.getShippingOptions()).toEqual(store.getState().shippingOptions.getShippingOptions());
+            expect(state.data.getShippingOptions()).toEqual(getShippingOptions());
         });
     });
 

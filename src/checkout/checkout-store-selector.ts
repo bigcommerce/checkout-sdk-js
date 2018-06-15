@@ -13,12 +13,15 @@ import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../paymen
 import { Instrument, InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
 import {
+    mapToInternalShippingOption,
+    mapToInternalShippingOptions,
     InternalShippingOption,
     InternalShippingOptionList,
     ShippingAddressSelector,
     ShippingCountrySelector,
     ShippingOptionSelector,
 } from '../shipping';
+import ConsignmentSelector from '../shipping/consignment-selector';
 
 import Checkout from './checkout';
 import CheckoutSelector from './checkout-selector';
@@ -35,6 +38,7 @@ export default class CheckoutStoreSelector {
     private _billingAddress: BillingAddressSelector;
     private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
+    private _consignments: ConsignmentSelector;
     private _countries: CountrySelector;
     private _coupons: CouponSelector;
     private _customer: CustomerSelector;
@@ -56,6 +60,7 @@ export default class CheckoutStoreSelector {
         this._billingAddress = selectors.billingAddress;
         this._checkout = selectors.checkout;
         this._config = selectors.config;
+        this._consignments = selectors.consignments;
         this._countries = selectors.countries;
         this._coupons = selectors.coupons;
         this._customer = selectors.customer;
@@ -135,7 +140,10 @@ export default class CheckoutStoreSelector {
      * undefined.
      */
     getShippingOptions(): InternalShippingOptionList | undefined {
-        return this._shippingOptions.getShippingOptions();
+        // @todo: once we remove the mappers, this should use the shippingOption selector
+        const consignments = this._consignments.getConsignments();
+
+        return consignments && mapToInternalShippingOptions(consignments);
     }
 
     /**
@@ -145,7 +153,9 @@ export default class CheckoutStoreSelector {
      * otherwise undefined.
      */
     getSelectedShippingOption(): InternalShippingOption | undefined {
-        return this._shippingOptions.getSelectedShippingOption();
+        const shippingOption = this._shippingOptions.getSelectedShippingOption();
+
+        return shippingOption  && mapToInternalShippingOption(shippingOption, true);
     }
 
     /**

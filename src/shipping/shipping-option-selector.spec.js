@@ -1,5 +1,5 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getFlatRateOption, getShippingOptions } from './internal-shipping-options.mock';
+import { getShippingOption, getShippingOptions } from './shipping-options.mock';
 import ShippingOptionSelector from './shipping-option-selector';
 import { getConsignment, getConsignmentsState } from './consignments.mock';
 
@@ -23,7 +23,7 @@ describe('ShippingOptionSelector', () => {
 
     describe('#getSelectedShippingOption()', () => {
         it('returns selected shipping option', () => {
-            expect(shippingOptionSelector.getSelectedShippingOption()).toEqual(getFlatRateOption());
+            expect(shippingOptionSelector.getSelectedShippingOption()).toEqual(getShippingOption());
         });
 
         it('returns undefined if shipping option is not selected', () => {
