@@ -10,9 +10,9 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import Payment, { CreditCard, VaultedInstrument } from '../../payment';
+import Payment, { CreditCardInstrument, VaultedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
-import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
+import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment-method-action-types';
@@ -55,7 +55,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
 
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
         loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod: paymentMethodMock }, { methodId: paymentMethodMock.id }));
 
         jest.spyOn(store, 'dispatch');
@@ -125,7 +125,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         });
 
         it('does not touch the card if it is going to be saved in the vault (shouldSaveInstrument: true)', async () => {
-            const paymentData = orderRequestBody.payment.paymentData as CreditCard;
+            const paymentData = orderRequestBody.payment.paymentData as CreditCardInstrument;
 
             paymentData.shouldSaveInstrument = true;
 
@@ -185,7 +185,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     {
                         quote: { data: null },
                         billingAddress: { data: null },
-                    },
+                    }
                 ));
 
             braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(

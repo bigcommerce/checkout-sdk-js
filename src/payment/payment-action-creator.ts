@@ -1,4 +1,4 @@
-import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { pick } from 'lodash';
 import { concat } from 'rxjs/observable/concat';
 import { Observable } from 'rxjs/Observable';
@@ -12,7 +12,7 @@ import { mapToInternalOrder, OrderActionCreator } from '../order';
 
 import isVaultedInstrument from './is-vaulted-instrument';
 import Payment from './payment';
-import * as actionTypes from './payment-action-types';
+import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction } from './payment-actions';
 import PaymentMethod from './payment-method';
 import PaymentMethodSelector from './payment-method-selector';
 import PaymentRequestBody from './payment-request-body';
@@ -24,40 +24,40 @@ export default class PaymentActionCreator {
         private _orderActionCreator: OrderActionCreator
     ) {}
 
-    submitPayment(payment: Payment): ThunkAction<Action, InternalCheckoutSelectors> {
+    submitPayment(payment: Payment): ThunkAction<SubmitPaymentAction, InternalCheckoutSelectors> {
         return store => concat(
-            Observable.create((observer: Observer<Action>) => {
-                observer.next(createAction(actionTypes.SUBMIT_PAYMENT_REQUESTED));
+            Observable.create((observer: Observer<SubmitPaymentAction>) => {
+                observer.next(createAction(PaymentActionType.SubmitPaymentRequested));
 
                 return this._paymentRequestSender.submitPayment(
                     this._getPaymentRequestBody(payment, store.getState())
                 )
                     .then(({ body }) => {
-                        observer.next(createAction(actionTypes.SUBMIT_PAYMENT_SUCCEEDED, body));
+                        observer.next(createAction(PaymentActionType.SubmitPaymentSucceeded, body));
                         observer.complete();
                     })
                     .catch(response => {
-                        observer.error(createErrorAction(actionTypes.SUBMIT_PAYMENT_FAILED, response));
+                        observer.error(createErrorAction(PaymentActionType.SubmitPaymentFailed, response));
                     });
             }),
             this._orderActionCreator.loadCurrentOrder()(store)
         );
     }
 
-    initializeOffsitePayment(payment: Payment): ThunkAction<Action, InternalCheckoutSelectors> {
+    initializeOffsitePayment(payment: Payment): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
         return store =>
-            Observable.create((observer: Observer<Action>) => {
-                observer.next(createAction(actionTypes.INITIALIZE_OFFSITE_PAYMENT_REQUESTED));
+            Observable.create((observer: Observer<InitializeOffsitePaymentAction>) => {
+                observer.next(createAction(PaymentActionType.InitializeOffsitePaymentRequested));
 
                 return this._paymentRequestSender.initializeOffsitePayment(
                     this._getPaymentRequestBody(payment, store.getState())
                 )
                     .then(() => {
-                        observer.next(createAction(actionTypes.INITIALIZE_OFFSITE_PAYMENT_SUCCEEDED));
+                        observer.next(createAction(PaymentActionType.InitializeOffsitePaymentSucceeded));
                         observer.complete();
                     })
                     .catch(() => {
-                        observer.error(createErrorAction(actionTypes.INITIALIZE_OFFSITE_PAYMENT_FAILED));
+                        observer.error(createErrorAction(PaymentActionType.InitializeOffsitePaymentFailed));
                     });
             });
     }

@@ -1,51 +1,54 @@
 import { Observable } from 'rxjs';
 
-import { createCheckoutStore } from '../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore, CheckoutValidator } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType } from '../order';
 import { getOrder } from '../order/orders.mock';
 
+import createPaymentClient from './create-payment-client';
 import PaymentActionCreator from './payment-action-creator';
-import * as actionTypes from './payment-action-types';
+import { PaymentActionType } from './payment-actions';
+import PaymentRequestSender from './payment-request-sender';
 import { getErrorPaymentResponseBody, getPayment, getPaymentResponseBody } from './payments.mock';
 
 describe('PaymentActionCreator', () => {
-    let client;
-    let orderActionCreator;
-    let paymentActionCreator;
-    let paymentRequestSender;
-    let store;
+    let client: CheckoutClient;
+    let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
+    let paymentRequestSender: PaymentRequestSender;
+    let store: CheckoutStore;
 
     beforeEach(() => {
-        client = {
-            loadOrder: jest.fn(() => Promise.resolve(getResponse(getOrder()))),
-        };
-
-        paymentRequestSender = {
-            initializeOffsitePayment: jest.fn(() => Promise.resolve()),
-            submitPayment: jest.fn(() => Promise.resolve(getResponse(getPaymentResponseBody()))),
-        };
-
-        orderActionCreator = new OrderActionCreator(client);
-
         store = createCheckoutStore(getCheckoutStoreState());
+        client = createCheckoutClient();
+        paymentRequestSender = new PaymentRequestSender(createPaymentClient(store));
 
+        jest.spyOn(client, 'loadOrder')
+            .mockReturnValue(Promise.resolve(getResponse(getOrder())));
+
+        jest.spyOn(paymentRequestSender, 'initializeOffsitePayment')
+            .mockReturnValue(Promise.resolve());
+
+        jest.spyOn(paymentRequestSender, 'submitPayment')
+            .mockReturnValue(Promise.resolve(getResponse(getPaymentResponseBody())));
+
+        orderActionCreator = new OrderActionCreator(client, {} as CheckoutValidator);
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
     });
 
     describe('#submitPayment()', () => {
         it('dispatches actions to data store', async () => {
-            const actions = await paymentActionCreator.submitPayment(getPayment())(store)
+            const actions = await Observable.from(paymentActionCreator.submitPayment(getPayment())(store))
                 .toArray()
                 .toPromise();
 
             expect(actions).toEqual([
                 {
-                    type: actionTypes.SUBMIT_PAYMENT_REQUESTED,
+                    type: PaymentActionType.SubmitPaymentRequested,
                 },
                 {
-                    type: actionTypes.SUBMIT_PAYMENT_SUCCEEDED,
+                    type: PaymentActionType.SubmitPaymentSucceeded,
                     payload: getPaymentResponseBody(),
                 },
                 {
@@ -63,8 +66,8 @@ describe('PaymentActionCreator', () => {
                 Promise.reject(getResponse(getErrorPaymentResponseBody()))
             );
 
-            const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await paymentActionCreator.submitPayment(getPayment())(store)
+            const errorHandler = jest.fn(action => Observable.of(action));
+            const actions = await Observable.from(paymentActionCreator.submitPayment(getPayment())(store))
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -72,10 +75,10 @@ describe('PaymentActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 {
-                    type: actionTypes.SUBMIT_PAYMENT_REQUESTED,
+                    type: PaymentActionType.SubmitPaymentRequested,
                 },
                 {
-                    type: actionTypes.SUBMIT_PAYMENT_FAILED,
+                    type: PaymentActionType.SubmitPaymentFailed,
                     payload: getResponse(getErrorPaymentResponseBody()),
                     error: true,
                 },
@@ -85,23 +88,24 @@ describe('PaymentActionCreator', () => {
 
     describe('#initializeOffsitePayment()', () => {
         it('dispatches actions to data store', async () => {
-            const actions = await paymentActionCreator.initializeOffsitePayment(getPayment())(store)
+            const actions = await Observable.from(paymentActionCreator.initializeOffsitePayment(getPayment())(store))
                 .toArray()
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: actionTypes.INITIALIZE_OFFSITE_PAYMENT_REQUESTED },
-                { type: actionTypes.INITIALIZE_OFFSITE_PAYMENT_SUCCEEDED },
+                { type: PaymentActionType.InitializeOffsitePaymentRequested },
+                { type: PaymentActionType.InitializeOffsitePaymentSucceeded },
             ]);
         });
 
         it('dispatches error actions to data store if unsuccessful', async () => {
-            jest.spyOn(paymentRequestSender, 'initializeOffsitePayment').mockReturnValue(
-                Promise.reject()
-            );
+            jest.spyOn(paymentRequestSender, 'initializeOffsitePayment')
+                .mockReturnValue(
+                    Promise.reject(new Error())
+                );
 
-            const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await paymentActionCreator.initializeOffsitePayment(getPayment())(store)
+            const errorHandler = jest.fn(action => Observable.of(action));
+            const actions = await Observable.from(paymentActionCreator.initializeOffsitePayment(getPayment())(store))
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -109,10 +113,10 @@ describe('PaymentActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 {
-                    type: actionTypes.INITIALIZE_OFFSITE_PAYMENT_REQUESTED,
+                    type: PaymentActionType.InitializeOffsitePaymentRequested,
                 },
                 {
-                    type: actionTypes.INITIALIZE_OFFSITE_PAYMENT_FAILED,
+                    type: PaymentActionType.InitializeOffsitePaymentFailed,
                     error: true,
                 },
             ]);

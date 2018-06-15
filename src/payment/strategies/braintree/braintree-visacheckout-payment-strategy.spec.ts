@@ -25,7 +25,7 @@ import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
-import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
+import { PaymentActionType } from '../../payment-actions';
 import { getBraintreeVisaCheckout, getPaymentMethodsState } from '../../payment-methods.mock';
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 
@@ -242,7 +242,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         beforeEach(() => {
             orderRequestBody = getOrderRequestBody();
             submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-            submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+            submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
             paymentMethodMock.initializationData = { nonce: 'payment-nonce-for-visacheckout' };
 
             visaCheckoutOptions = { methodId: 'braintreevisacheckout', braintreevisacheckout: {} };

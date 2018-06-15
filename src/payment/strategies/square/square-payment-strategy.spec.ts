@@ -8,7 +8,7 @@ import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStor
 import { MissingDataError, TimeoutError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType } from '../../../order';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
-import { SUBMIT_PAYMENT_REQUESTED } from '../../payment-action-types';
+import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 
 import { SquareFormCallbacks } from './square-form';
@@ -58,7 +58,7 @@ describe('SquarePaymentStrategy', () => {
         scriptLoader = new SquareScriptLoader(createScriptLoader());
         strategy = new SquarePaymentStrategy(store, orderActionCreator, paymentActionCreator, scriptLoader);
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(SUBMIT_PAYMENT_REQUESTED));
+        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
