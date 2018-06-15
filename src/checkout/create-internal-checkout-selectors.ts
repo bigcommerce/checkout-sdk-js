@@ -30,7 +30,6 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const form = new FormSelector(state.config);
     const giftCertificates = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
-    const order = new OrderSelector(state.order);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
     const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
     const shippingAddress = new ShippingAddressSelector(state.consignments, state.config);
@@ -41,6 +40,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
 
     // Compose selectors
     const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, giftCertificates);
+    const order = new OrderSelector(state.order, billingAddress, coupons);
     const payment = new PaymentSelector(checkout, order);
 
     const selectors = {

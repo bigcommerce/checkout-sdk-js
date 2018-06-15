@@ -1,12 +1,16 @@
+import { Omit } from '../common/types';
+
 import { InternalOrderMeta, InternalOrderPayment } from './internal-order';
 import Order from './order';
 
 export default interface OrderState {
-    data?: Order;
+    data?: OrderDataState;
     meta?: OrderMetaState;
     errors: OrderErrorsState;
     statuses: OrderStatusesState;
 }
+
+export type OrderDataState = Omit<Order, 'billingAddress' | 'coupons'>;
 
 export interface OrderMetaState extends InternalOrderMeta {
     token?: string;
