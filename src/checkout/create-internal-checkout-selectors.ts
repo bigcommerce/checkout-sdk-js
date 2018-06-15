@@ -10,7 +10,6 @@ import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { PaymentSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
-import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
@@ -42,7 +41,6 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
 
     // Compose selectors
     const payment = new PaymentSelector(checkout, order);
-    const quote = new QuoteSelector(state.checkout, billingAddress, shippingAddress, shippingOptions);
 
     const selectors = {
         billingAddress,
@@ -60,7 +58,6 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
         payment,
         paymentMethods,
         paymentStrategies,
-        quote,
         remoteCheckout,
         shippingAddress,
         shippingCountries,

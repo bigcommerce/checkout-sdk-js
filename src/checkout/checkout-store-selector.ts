@@ -65,7 +65,7 @@ export default class CheckoutStoreSelector {
         this._order = selectors.order;
         this._payment = selectors.payment;
         this._paymentMethods = selectors.paymentMethods;
-        this._quote = selectors.quote;
+        this._quote = new QuoteSelector(selectors);
         this._shippingAddress = selectors.shippingAddress;
         this._shippingCountries = selectors.shippingCountries;
         this._shippingOptions = selectors.shippingOptions;

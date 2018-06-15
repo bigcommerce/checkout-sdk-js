@@ -12,18 +12,18 @@ describe('CheckoutStoreStatusSelector', () => {
     });
 
     describe('#isLoadingCheckout()', () => {
-        it('returns true if loading quote', () => {
-            jest.spyOn(selectors.quote, 'isLoading').mockReturnValue(true);
+        it('returns true if loading checkout', () => {
+            jest.spyOn(selectors.checkout, 'isLoading').mockReturnValue(true);
 
             expect(statuses.isLoadingCheckout()).toEqual(true);
-            expect(selectors.quote.isLoading).toHaveBeenCalled();
+            expect(selectors.checkout.isLoading).toHaveBeenCalled();
         });
 
-        it('returns false if loading quote', () => {
-            jest.spyOn(selectors.quote, 'isLoading').mockReturnValue(false);
+        it('returns false if loading checkout', () => {
+            jest.spyOn(selectors.checkout, 'isLoading').mockReturnValue(false);
 
             expect(statuses.isLoadingCheckout()).toEqual(false);
-            expect(selectors.quote.isLoading).toHaveBeenCalled();
+            expect(selectors.checkout.isLoading).toHaveBeenCalled();
         });
     });
 

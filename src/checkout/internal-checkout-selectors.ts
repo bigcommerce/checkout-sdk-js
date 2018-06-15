@@ -8,7 +8,6 @@ import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
-import { QuoteSelector } from '../quote';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
 
@@ -30,7 +29,6 @@ export default interface InternalCheckoutSelectors {
     payment: PaymentSelector;
     paymentMethods: PaymentMethodSelector;
     paymentStrategies: PaymentStrategySelector;
-    quote: QuoteSelector;
     remoteCheckout: RemoteCheckoutSelector;
     shippingAddress: ShippingAddressSelector;
     shippingCountries: ShippingCountrySelector;
