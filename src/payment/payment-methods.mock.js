@@ -321,6 +321,29 @@ export function getSquare() {
         returnUrl: null,
     };
 }
+export function getChasePay() {
+    return {
+        id: 'chasepay',
+        gateway: null,
+        logoUrl: '',
+        method: 'chasepay',
+        supportedCards: [],
+        config: {
+            displayName: 'Chase Pay',
+            cardCode: null,
+            helpText: null,
+            merchantId: null,
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        nonce: null,
+        initializationData: {
+            digitalSessionId: 'digitalSessionId',
+        },
+        clientToken: null,
+        returnUrl: null,
+    };
+}
 
 export function getWepay() {
     return {
