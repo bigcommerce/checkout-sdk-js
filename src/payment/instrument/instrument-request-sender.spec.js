@@ -1,6 +1,7 @@
 import { createTimeout } from '@bigcommerce/request-sender';
 import { getResponse } from '../../common/http-request/responses.mock';
-import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
+import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
+import { getShippingAddress as getInternalShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
 import {
     deleteInstrumentResponseBody,
     getErrorInstrumentResponseBody,
@@ -123,7 +124,7 @@ describe('InstrumentMethodRequestSender', () => {
             expect(client.loadInstrumentsWithAddress).toHaveBeenCalledWith(
                 {
                     ...requestContext,
-                    shippingAddress,
+                    shippingAddress: getInternalShippingAddress(),
                 },
                 expect.any(Function)
             );

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '..';
 import { getBillingAddressState } from '../../billing/billing-addresses.mock';
-import { getBillingAddress } from '../../billing/internal-billing-addresses.mock';
+import { getBillingAddress } from '../../billing/billing-addresses.mock';
 import { getCartState } from '../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { getCheckoutState } from '../../checkout/checkouts.mock';
@@ -20,7 +20,7 @@ import { VisaCheckoutSDK } from '../../payment/strategies/braintree/visacheckout
 import VisaCheckoutScriptLoader from '../../payment/strategies/braintree/visacheckout-script-loader';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { getConsignmentsState } from '../../shipping/consignments.mock';
-import { getShippingAddress } from '../../shipping/internal-shipping-addresses.mock';
+import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 import { CustomerStrategyActionType } from '../customer-strategy-actions';
 import { getCustomerState, getRemoteCustomer } from '../internal-customers.mock';
 
