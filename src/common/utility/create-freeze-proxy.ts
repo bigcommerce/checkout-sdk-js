@@ -1,5 +1,8 @@
 import { deepFreeze } from '@bigcommerce/data-store';
 
+// tslint:disable-next-line:ban-types
+type FunctionProperties<T> = { [K in keyof T]: T[K] extends Function ? T[K] : never };
+
 export default function createFreezeProxy<T extends object>(target: T): T {
     return createProxy(target, (target, name) =>
         (...args: any[]) => deepFreeze(target[name].call(target, ...args))
@@ -15,7 +18,7 @@ export function createFreezeProxies<T extends { [key: string]: object }>(map: T)
         }, {} as T);
 }
 
-function createProxy<T extends object>(target: T, trap: (target: T, name: keyof T, proxy: T) => any): T {
+function createProxy<T extends object>(target: T, trap: (target: FunctionProperties<T>, name: keyof FunctionProperties<T>, proxy: T) => any): T {
     const proxy = Object.create(target);
 
     traversePrototypeOf(target, prototype => {
@@ -25,7 +28,7 @@ function createProxy<T extends object>(target: T, trap: (target: T, name: keyof 
                     return;
                 }
 
-                proxy[name] = trap(target, name as keyof T, proxy);
+                proxy[name] = trap(target as FunctionProperties<T>, name as keyof T, proxy);
             });
     });
 
