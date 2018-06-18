@@ -38,6 +38,9 @@ export default class ShippingAddressSelector {
             };
         }
 
-        return consignments[0].shippingAddress;
+        return {
+            ...consignments[0].shippingAddress,
+            id: consignments[0].id,
+        };
     }
 }

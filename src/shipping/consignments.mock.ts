@@ -1,3 +1,6 @@
+import { omit } from 'lodash';
+
+import { Address } from '../address';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
@@ -13,7 +16,7 @@ export function getConsignment(): Consignment {
         lineItemIds: [
             '12e11c8f-7dce-4da3-9413-b649533f8bad',
         ],
-        shippingAddress: getShippingAddress(),
+        shippingAddress: omit(getShippingAddress(), 'id') as Address,
         availableShippingOptions: [
             getShippingOption(),
         ],
