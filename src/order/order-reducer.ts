@@ -1,8 +1,8 @@
 import { combineReducers } from '@bigcommerce/data-store';
+import { omit } from 'lodash';
 
-import Order from './order';
 import { OrderAction, OrderActionType } from './order-actions';
-import OrderState, { OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
+import OrderState, { OrderDataState, OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 
 const DEFAULT_STATE: OrderState = {
     errors: {},
@@ -25,12 +25,14 @@ export default function orderReducer(
 }
 
 function dataReducer(
-    data: Order | undefined,
+    data: OrderDataState | undefined,
     action: OrderAction
-): Order | undefined {
+): OrderDataState | undefined {
     switch (action.type) {
     case OrderActionType.LoadOrderSucceeded:
-        return action.payload ? { ...data, ...action.payload } : data;
+        return action.payload
+            ? omit({ ...data, ...action.payload }, ['billingAddress', 'coupons'])
+            : data;
 
     default:
         return data;

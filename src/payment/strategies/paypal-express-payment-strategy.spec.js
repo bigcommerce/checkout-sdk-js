@@ -5,10 +5,10 @@ import { createCheckoutClient, createCheckoutStore } from '../../checkout';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
-import { getPaypalExpress, getPaymentMethodsState } from '../payment-methods.mock';
+import { getPaypalExpress } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 import PaypalExpressPaymentStrategy from './paypal-express-payment-strategy';
-import { getCheckoutPayment, getCheckoutStoreState } from '../../checkout/checkouts.mock';
+import { getCheckoutPayment, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../checkout/checkouts.mock';
 
 describe('PaypalExpressPaymentStrategy', () => {
     let finalizeOrderAction;
@@ -42,15 +42,8 @@ describe('PaypalExpressPaymentStrategy', () => {
             }),
         };
 
-        state = {
-            paymentMethods: getPaymentMethodsState(),
-        };
-
+        state = getCheckoutStoreState();
         store = createCheckoutStore(state);
-
-        paymentMethod = getPaypalExpress();
-        finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderSucceeded, { order }));
 
         order = merge({}, getSubmittedOrder(), {
             payment: {
@@ -58,6 +51,10 @@ describe('PaypalExpressPaymentStrategy', () => {
                 redirectUrl: 'https://s1504075966.bcapp.dev/checkout',
             },
         });
+
+        paymentMethod = getPaypalExpress();
+        finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
+        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderSucceeded, { order }));
 
         jest.spyOn(window.location, 'assign').mockImplementation(() => {});
 
@@ -327,7 +324,7 @@ describe('PaypalExpressPaymentStrategy', () => {
 
     describe('#finalize()', () => {
         beforeEach(async () => {
-            store = createCheckoutStore(getCheckoutStoreState());
+            store = createCheckoutStore(getCheckoutStoreStateWithOrder());
             strategy = new PaypalExpressPaymentStrategy(store, orderActionCreator, scriptLoader);
 
             jest.spyOn(store.getState().payment, 'getPaymentRedirectUrl')

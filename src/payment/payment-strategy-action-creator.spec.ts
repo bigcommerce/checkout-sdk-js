@@ -5,8 +5,8 @@ import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { getCartState } from '../cart/internal-carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
-import { getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../checkout';
+import { getCheckoutState, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType } from '../order';
@@ -27,7 +27,7 @@ describe('PaymentStrategyActionCreator', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentClient: any;
     let registry: PaymentStrategyRegistry;
-    let state: any;
+    let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: PaymentStrategy;
     let noPaymentDataStrategy: PaymentStrategy;
@@ -284,7 +284,10 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('throws error if payment method is not found or loaded', async () => {
-            store = createCheckoutStore({ checkout: getCheckoutState() });
+            store = createCheckoutStore({
+                ...state,
+                paymentMethods: { ...state.paymentMethods, data: [] },
+            });
             registry = createPaymentStrategyRegistry(store, client, paymentClient);
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
@@ -329,6 +332,9 @@ describe('PaymentStrategyActionCreator', () => {
 
     describe('#finalize()', () => {
         beforeEach(() => {
+            state = getCheckoutStoreStateWithOrder();
+            store = createCheckoutStore(state);
+
             jest.spyOn(strategy, 'finalize')
                 .mockReturnValue(Promise.resolve(store.getState()));
 

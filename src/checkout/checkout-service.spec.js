@@ -279,9 +279,10 @@ describe('CheckoutService', () => {
 
         it('loads checkout data', async () => {
             const { checkout } = await checkoutService.loadCheckout(id);
+            const state = store.getState();
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
-            expect(checkout.getCheckout()).toEqual(getCheckout());
+            expect(checkout.getCheckout()).toEqual(state.checkout.getCheckout());
         });
     });
 
@@ -635,11 +636,12 @@ describe('CheckoutService', () => {
     });
 
     describe('#loadShippingOptions()', () => {
-        it('loads checkout data', async () => {
+        it('loads shipping options', async () => {
             const { checkout } = await checkoutService.loadShippingOptions();
+            const { shippingOptions } = store.getState();
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
-            expect(checkout.getCheckout()).toEqual(getCheckout());
+            expect(checkout.getShippingOptions()).toEqual(shippingOptions.getShippingOptions());
         });
     });
 

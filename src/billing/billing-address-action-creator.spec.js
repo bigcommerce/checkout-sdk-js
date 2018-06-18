@@ -1,15 +1,12 @@
 import { Observable } from 'rxjs';
 
 import { createCheckoutStore } from '../checkout';
-import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
+import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import BillingAddressActionCreator from './billing-address-action-creator';
 import { BillingAddressActionType } from './billing-address-actions';
 import { getBillingAddress } from './internal-billing-addresses.mock';
-import { getCustomerState } from '../customer/internal-customers.mock';
-import { getBillingAddressState } from './billing-addresses.mock';
-import { getConsignmentsState } from '../shipping/consignments.mock';
 
 describe('BillingAddressActionCreator', () => {
     let address;
@@ -17,12 +14,14 @@ describe('BillingAddressActionCreator', () => {
     let checkoutClient;
     let errorResponse;
     let response;
+    let state;
     let store;
     let actions;
 
     beforeEach(() => {
         response = getResponse(getCheckout());
         errorResponse = getErrorResponse();
+        state = getCheckoutStoreState();
 
         checkoutClient = {
             updateBillingAddress: jest.fn(() => Promise.resolve(response)),
@@ -54,7 +53,8 @@ describe('BillingAddressActionCreator', () => {
         describe('when store has checkout data but no billing address data', () => {
             beforeEach(() => {
                 store = createCheckoutStore({
-                    checkout: getCheckoutState(),
+                    ...state,
+                    billingAddress: undefined,
                 });
             });
 
@@ -105,12 +105,7 @@ describe('BillingAddressActionCreator', () => {
 
         describe('when store has checkout and billing address data from quote', () => {
             beforeEach(() => {
-                store = createCheckoutStore({
-                    consignments: getConsignmentsState(),
-                    billingAddress: getBillingAddressState(),
-                    customer: getCustomerState(),
-                    checkout: getCheckoutState(),
-                });
+                store = createCheckoutStore(state);
             });
 
             it('emits actions if able to update billing address', async () => {

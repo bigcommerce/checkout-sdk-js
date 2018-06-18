@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
@@ -29,7 +30,7 @@ describe('orderReducer()', () => {
         };
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload,
+            data: omit(action.payload, ['billingAddress', 'coupons']),
             statuses: { isLoading: false },
         }));
     });

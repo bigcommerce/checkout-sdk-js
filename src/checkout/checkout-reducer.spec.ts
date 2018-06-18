@@ -1,4 +1,5 @@
 import { createAction } from '@bigcommerce/data-store';
+import { omit } from 'lodash';
 
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
@@ -20,7 +21,7 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual({
-            data: action.payload,
+            data: omit(action.payload, ['billingAddress', 'cart', 'consignments', 'coupons', 'giftCertifcates']),
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });

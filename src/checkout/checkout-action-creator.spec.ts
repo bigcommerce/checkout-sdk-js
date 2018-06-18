@@ -10,7 +10,7 @@ import { CheckoutActionType } from './checkout-actions';
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutStore from './checkout-store';
 import CheckoutStoreState from './checkout-store-state';
-import { getCheckout, getCheckoutState } from './checkouts.mock';
+import { getCheckout, getCheckoutStoreState } from './checkouts.mock';
 import createCheckoutStore from './create-checkout-store';
 
 describe('CheckoutActionCreator', () => {
@@ -20,9 +20,7 @@ describe('CheckoutActionCreator', () => {
 
     beforeEach(() => {
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
-        store = createCheckoutStore({
-            checkout: getCheckoutState(),
-        });
+        store = createCheckoutStore(getCheckoutStoreState());
 
         jest.spyOn(checkoutRequestSender, 'loadCheckout')
             .mockReturnValue(Promise.resolve(getResponse(getCheckout())));

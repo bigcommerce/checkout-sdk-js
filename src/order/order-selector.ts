@@ -1,4 +1,6 @@
+import { BillingAddressSelector } from '../billing';
 import { selector } from '../common/selector';
+import { CouponSelector } from '../coupon';
 
 import Order from './order';
 import OrderState, { OrderMetaState } from './order-state';
@@ -6,11 +8,25 @@ import OrderState, { OrderMetaState } from './order-state';
 @selector
 export default class OrderSelector {
     constructor(
-        private _order: OrderState
+        private _order: OrderState,
+        private _billingAddress: BillingAddressSelector,
+        private _coupons: CouponSelector
     ) {}
 
     getOrder(): Order | undefined {
-        return this._order.data;
+        const { data } = this._order;
+        const billingAddress = this._billingAddress.getBillingAddress();
+        const coupons = this._coupons.getCoupons() || [];
+
+        if (!data || !billingAddress) {
+            return;
+        }
+
+        return {
+            ...data,
+            billingAddress,
+            coupons,
+        };
     }
 
     getOrderMeta(): OrderMetaState | undefined {

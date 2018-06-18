@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore, CheckoutValidator } from '../checkout';
-import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType } from '../order';
 import { getOrder } from '../order/orders.mock';
@@ -20,7 +20,7 @@ describe('PaymentActionCreator', () => {
     let store: CheckoutStore;
 
     beforeEach(() => {
-        store = createCheckoutStore(getCheckoutStoreState());
+        store = createCheckoutStore(getCheckoutStoreStateWithOrder());
         client = createCheckoutClient();
         paymentRequestSender = new PaymentRequestSender(createPaymentClient(store));
 

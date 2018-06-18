@@ -124,12 +124,19 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         customerStrategies: getCustomerStrategyState(),
         giftCertificates: getGiftCertificatesState(),
         instruments: getInstrumentsState(),
-        order: getOrderState(),
+        order: { errors: {}, statuses: {} },
         payment: getPaymentState(),
         paymentMethods: getPaymentMethodsState(),
         paymentStrategies: { errors: {}, statuses: {} },
         remoteCheckout: getRemoteCheckoutState(),
         shippingCountries: getShippingCountriesState(),
         shippingStrategies: { errors: {}, statuses: {} },
+    };
+}
+
+export function getCheckoutStoreStateWithOrder(): CheckoutStoreState {
+    return {
+        ...getCheckoutStoreState(),
+        order: getOrderState(),
     };
 }
