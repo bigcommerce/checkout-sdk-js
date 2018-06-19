@@ -1,5 +1,3 @@
-import { find } from 'lodash';
-
 import { selector } from '../common/selector';
 
 import Consignment from './consignment';
@@ -21,14 +19,7 @@ export default class ShippingOptionSelector {
     getSelectedShippingOption(): ShippingOption | undefined {
         const consignment = this._getConsignment();
 
-        if (!consignment) {
-            return;
-        }
-
-        const { selectedShippingOptionId, availableShippingOptions } = consignment;
-        const shippingOption = find(availableShippingOptions, { id: selectedShippingOptionId });
-
-        return shippingOption;
+        return consignment && consignment.selectedShippingOption;
     }
 
     getLoadError(): Error | undefined {
