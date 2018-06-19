@@ -7,12 +7,13 @@ import {
 } from '../checkout';
 
 export default function createCheckoutSelectors(selectors: InternalCheckoutSelectors): CheckoutSelectors {
-    const checkout = new CheckoutStoreSelector(selectors);
+    const data = new CheckoutStoreSelector(selectors);
     const errors = new CheckoutStoreErrorSelector(selectors);
     const statuses = new CheckoutStoreStatusSelector(selectors);
 
     return {
-        checkout,
+        checkout: data, // Deprecated
+        data,
         errors,
         statuses,
     };
