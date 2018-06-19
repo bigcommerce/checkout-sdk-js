@@ -6,7 +6,7 @@ import Consignment, { ConsignmentRequestBody } from './consignment';
 export function getConsignment(): Consignment {
     return {
         id: '55c96cda6f04c',
-        selectedShippingOptionId: '0:61d4bb52f746477e1d4fb411221318c3',
+        selectedShippingOption: getShippingOption(),
         shippingCost: 0,
         lineItemIds: [
             '12e11c8f-7dce-4da3-9413-b649533f8bad',
