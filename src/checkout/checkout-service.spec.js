@@ -209,11 +209,11 @@ describe('CheckoutService', () => {
 
     describe('#getState()', () => {
         it('returns state', () => {
-            expect(checkoutService.getState()).toEqual({
-                checkout: expect.any(CheckoutStoreSelector),
+            expect(checkoutService.getState()).toEqual(expect.objectContaining({
+                data: expect.any(CheckoutStoreSelector),
                 errors: expect.any(CheckoutStoreErrorSelector),
                 statuses: expect.any(CheckoutStoreStatusSelector),
-            });
+            }));
         });
 
         it('returns same state unless it is changed', () => {
@@ -249,7 +249,7 @@ describe('CheckoutService', () => {
         it('calls subscriber on state change', async () => {
             const subscriber = jest.fn();
 
-            checkoutService.subscribe(subscriber, ({ checkout }) => checkout.getConfig());
+            checkoutService.subscribe(subscriber, state => state.data.getConfig());
             subscriber.mockReset();
 
             jest.spyOn(checkoutClient, 'loadConfig')
@@ -278,20 +278,19 @@ describe('CheckoutService', () => {
         const { id } = getCheckout();
 
         it('loads checkout data', async () => {
-            const { checkout } = await checkoutService.loadCheckout(id);
-            const state = store.getState();
+            const state = await checkoutService.loadCheckout(id);
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
-            expect(checkout.getCheckout()).toEqual(state.checkout.getCheckout());
+            expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
         });
     });
 
     describe('#loadConfig()', () => {
         it('loads config data', async () => {
-            const { checkout } = await checkoutService.loadConfig();
+            const state = await checkoutService.loadConfig();
 
             expect(checkoutClient.loadConfig).toHaveBeenCalled();
-            expect(checkout.getConfig()).toEqual(getConfig().storeConfig);
+            expect(state.data.getConfig()).toEqual(getConfig().storeConfig);
         });
 
         it('dispatches load config action with queue id', async () => {
@@ -305,41 +304,41 @@ describe('CheckoutService', () => {
 
     describe('#loadShippingAddressFields()', () => {
         it('loads config data', async () => {
-            const { checkout } = await checkoutService.loadCheckout();
-            const result = checkout.getShippingAddressFields();
+            const state = await checkoutService.loadCheckout();
+            const result = state.data.getShippingAddressFields();
             const expected = getFormFields();
 
             expect(map(result, 'id')).toEqual(map(expected, 'id'));
         });
 
         it('loads extra countries data', async () => {
-            const { checkout } = await checkoutService.loadShippingAddressFields();
+            const state = await checkoutService.loadShippingAddressFields();
 
-            expect(checkout.getShippingCountries()).toEqual(getCountriesResponseBody().data);
+            expect(state.data.getShippingCountries()).toEqual(getCountriesResponseBody().data);
         });
     });
 
     describe('#loadBillingAddressFields()', () => {
         it('loads config data', async () => {
-            const { checkout } = await checkoutService.loadCheckout();
-            const result = checkout.getBillingAddressFields();
+            const state = await checkoutService.loadCheckout();
+            const result = state.data.getBillingAddressFields();
             const expected = getFormFields();
 
             expect(map(result, 'id')).toEqual(map(expected, 'id'));
         });
 
         it('loads extra countries data', async () => {
-            const { checkout } = await checkoutService.loadBillingAddressFields();
+            const state = await checkoutService.loadBillingAddressFields();
 
-            expect(checkout.getBillingCountries()).toEqual(getCountriesResponseBody().data);
+            expect(state.data.getBillingCountries()).toEqual(getCountriesResponseBody().data);
         });
     });
 
     describe('#loadOrder()', () => {
         it('loads order data', async () => {
-            const { checkout } = await checkoutService.loadOrder(295);
+            const state = await checkoutService.loadOrder(295);
 
-            expect(checkout.getOrder()).toEqual(getCompleteOrderResponseBody().data.order);
+            expect(state.data.getOrder()).toEqual(getCompleteOrderResponseBody().data.order);
         });
     });
 
@@ -440,9 +439,9 @@ describe('CheckoutService', () => {
         });
 
         it('returns payment methods', async () => {
-            const { checkout } = await checkoutService.loadPaymentMethods();
+            const state = await checkoutService.loadPaymentMethods();
 
-            expect(checkout.getPaymentMethods()).toEqual(getPaymentMethodsResponseBody().data.paymentMethods);
+            expect(state.data.getPaymentMethods()).toEqual(getPaymentMethodsResponseBody().data.paymentMethods);
         });
 
         it('dispatches action with queue id', async () => {
@@ -470,9 +469,9 @@ describe('CheckoutService', () => {
         });
 
         it('returns payment method', async () => {
-            const { checkout } = await checkoutService.loadPaymentMethod('authorizenet');
+            const state = await checkoutService.loadPaymentMethod('authorizenet');
 
-            expect(checkout.getPaymentMethod('authorizenet')).toEqual(getPaymentMethodResponseBody().data.paymentMethod);
+            expect(state.data.getPaymentMethod('authorizenet')).toEqual(getPaymentMethodResponseBody().data.paymentMethod);
         });
 
         it('dispatches action with queue id', async () => {
@@ -521,9 +520,9 @@ describe('CheckoutService', () => {
 
     describe('#loadBillingCountries()', () => {
         it('loads billing countries data', async () => {
-            const { checkout } = await checkoutService.loadBillingCountries();
+            const state = await checkoutService.loadBillingCountries();
 
-            expect(checkout.getBillingCountries()).toEqual(getCountriesResponseBody().data);
+            expect(state.data.getBillingCountries()).toEqual(getCountriesResponseBody().data);
         });
 
         it('dispatches action with queue id', async () => {
@@ -537,9 +536,9 @@ describe('CheckoutService', () => {
 
     describe('#loadShippingCountries()', () => {
         it('loads shipping countries data', async () => {
-            const { checkout } = await checkoutService.loadShippingCountries();
+            const state = await checkoutService.loadShippingCountries();
 
-            expect(checkout.getShippingCountries()).toEqual(getCountriesResponseBody().data);
+            expect(state.data.getShippingCountries()).toEqual(getCountriesResponseBody().data);
         });
 
         it('dispatches action with queue id', async () => {
@@ -637,11 +636,10 @@ describe('CheckoutService', () => {
 
     describe('#loadShippingOptions()', () => {
         it('loads shipping options', async () => {
-            const { checkout } = await checkoutService.loadShippingOptions();
-            const { shippingOptions } = store.getState();
+            const state = await checkoutService.loadShippingOptions();
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
-            expect(checkout.getShippingOptions()).toEqual(shippingOptions.getShippingOptions());
+            expect(state.data.getShippingOptions()).toEqual(store.getState().shippingOptions.getShippingOptions());
         });
     });
 
