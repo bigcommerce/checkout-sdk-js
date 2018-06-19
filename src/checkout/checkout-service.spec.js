@@ -274,6 +274,59 @@ describe('CheckoutService', () => {
         });
     });
 
+    describe('#initialize()', () => {
+        const checkoutId = 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7';
+        const options = { timeout: createTimeout() };
+
+        it('loads checkout configuration', async () => {
+            jest.spyOn(checkoutService, 'loadConfig');
+
+            await checkoutService.initialize(checkoutId, options);
+
+            expect(checkoutService.loadConfig).toHaveBeenCalledWith(options);
+        });
+
+        it('loads checkout', async () => {
+            jest.spyOn(checkoutService, 'loadCheckout');
+
+            await checkoutService.initialize(checkoutId, options);
+
+            expect(checkoutService.loadCheckout).toHaveBeenCalledWith(checkoutId, options);
+        });
+
+        it('loads address fields', async () => {
+            jest.spyOn(checkoutService, 'loadBillingAddressFields');
+            jest.spyOn(checkoutService, 'loadShippingAddressFields');
+
+            await checkoutService.initialize(checkoutId, options);
+
+            expect(checkoutService.loadBillingAddressFields).toHaveBeenCalledWith(options);
+            expect(checkoutService.loadShippingAddressFields).toHaveBeenCalledWith(options);
+        });
+
+        it('loads shipping options', async () => {
+            jest.spyOn(checkoutService, 'loadShippingOptions');
+
+            await checkoutService.initialize(checkoutId, options);
+
+            expect(checkoutService.loadShippingOptions).toHaveBeenCalledWith(options);
+        });
+
+        it('loads payment methods', async () => {
+            jest.spyOn(checkoutService, 'loadPaymentMethods');
+
+            await checkoutService.initialize(checkoutId, options);
+
+            expect(checkoutService.loadPaymentMethods).toHaveBeenCalledWith(options);
+        });
+
+        it('returns promise that resolves to current state', async () => {
+            const state = await checkoutService.initialize(checkoutId, options);
+
+            expect(state).toEqual(checkoutService.getState());
+        });
+    });
+
     describe('#loadCheckout()', () => {
         const { id } = getCheckout();
 

@@ -131,6 +131,35 @@ export default class CheckoutService {
     }
 
     /**
+     * Initialize the instance by loading the initial checkout state.
+     *
+     * The method is a convenience method for populating the following data:
+     * checkout, configuration, billing address fields, shipping address fields,
+     * shipping options and payment methods.
+     *
+     * ```js
+     * const state = await service.initialize('0cfd6c06-57c3-4e29-8d7a-de55cc8a9052');
+     *
+     * console.log(state.checkout.getCheckout());
+     * ```
+     *
+     * @param checkoutId - The identifier of the checkout to load.
+     * @param options - Options for the initialization.
+     * @returns A promise that resolves to the current state.
+     */
+    initialize(checkoutId: string, options?: RequestOptions): Promise<CheckoutSelectors> {
+        return Promise.all([
+            this.loadCheckout(checkoutId, options),
+            this.loadConfig(options),
+            this.loadBillingAddressFields(options),
+            this.loadShippingAddressFields(options),
+            this.loadShippingOptions(options),
+            this.loadPaymentMethods(options),
+        ])
+            .then(() => this.getState());
+    }
+
+    /**
      * Loads the current checkout.
      *
      * This method can only be called if there is an active checkout. Also, it
