@@ -33,6 +33,7 @@ import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 import { getConsignmentsState } from '../shipping/consignments.mock';
+import { getCustomerState } from '../customer/customers.mock';
 
 describe('CheckoutService', () => {
     let billingAddressActionCreator;
@@ -125,6 +126,7 @@ describe('CheckoutService', () => {
 
         store = createCheckoutStore({
             cart: getCartState(),
+            customer: getCustomerState(),
             billingAddress: getBillingAddressState(),
             checkout: getCheckoutState(),
             config: getConfigState(),

@@ -41,7 +41,7 @@ function dataReducer(
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
         return action.payload
-            ? omit({ ...data, ...action.payload }, ['billingAddress', 'cart', 'consignments', 'coupons', 'giftCertifcates'])
+            ? omit({ ...data, ...action.payload }, ['billingAddress', 'cart', 'consignments', 'customer', 'coupons', 'giftCertifcates'])
             : data;
 
     case OrderActionType.SubmitOrderSucceeded:

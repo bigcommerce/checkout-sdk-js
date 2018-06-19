@@ -39,7 +39,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
 
     // Compose selectors
-    const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, giftCertificates);
+    const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
     const order = new OrderSelector(state.order, billingAddress, coupons);
     const payment = new PaymentSelector(checkout, order);
 

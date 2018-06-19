@@ -14,7 +14,7 @@ describe('CheckoutSelector', () => {
     });
 
     it('returns checkout', () => {
-        const selector = new CheckoutSelector(state.checkout, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.giftCertificates);
+        const selector = new CheckoutSelector(state.checkout, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
 
         expect(selector.getCheckout()).toEqual({
             ...getCheckout(),
@@ -30,7 +30,7 @@ describe('CheckoutSelector', () => {
         const selector = new CheckoutSelector({
             ...getCheckoutState(),
             errors: { loadError },
-        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.giftCertificates);
+        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
 
         expect(selector.getLoadError()).toEqual(loadError);
     });
@@ -39,7 +39,7 @@ describe('CheckoutSelector', () => {
         const selector = new CheckoutSelector({
             ...getCheckoutState(),
             statuses: { isLoading: true },
-        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.giftCertificates);
+        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
 
         expect(selector.isLoading()).toEqual(true);
     });
