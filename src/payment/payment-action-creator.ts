@@ -10,6 +10,7 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError } from '../common/error/errors';
 import { mapToInternalCustomer } from '../customer';
 import { mapToInternalOrder, OrderActionCreator } from '../order';
+import { mapToInternalShippingOption } from '../shipping';
 
 import isVaultedInstrument from './is-vaulted-instrument';
 import Payment from './payment';
@@ -91,7 +92,7 @@ export default class PaymentActionCreator {
             customer: internalCustomer,
             paymentMethod,
             shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress),
-            shippingOption,
+            shippingOption: shippingOption && mapToInternalShippingOption(shippingOption, true),
             cart: checkout && mapToInternalCart(checkout),
             order: order && mapToInternalOrder(order),
             orderMeta: state.order.getOrderMeta(),

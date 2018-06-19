@@ -48,7 +48,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns shipping options', () => {
-        expect(selector.getShippingOptions()).toEqual(internalSelectors.shippingOptions.getShippingOptions());
+        expect(selector.getShippingOptions()).toEqual(getShippingOptions());
     });
 
     it('returns shipping countries', () => {
