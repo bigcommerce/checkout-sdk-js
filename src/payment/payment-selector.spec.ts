@@ -155,11 +155,9 @@ describe('PaymentSelector', () => {
 
         it('returns false if store credit exceeds grand total', () => {
             selectors = createInternalCheckoutSelectors(merge({}, state, {
-                checkout: {
+                customer: {
                     data: {
-                        customer: {
-                            storeCredit: 100000000000,
-                        },
+                        storeCredit: 100000000000,
                     },
                 },
             }));
@@ -170,11 +168,9 @@ describe('PaymentSelector', () => {
 
         it('returns true if store credit exceeds grand total but not using store credit', () => {
             selectors = createInternalCheckoutSelectors(merge({}, state, {
-                checkout: {
+                customer: {
                     data: {
-                        customer: {
-                            storeCredit: 100000000000,
-                        },
+                        storeCredit: 100000000000,
                     },
                 },
             }));

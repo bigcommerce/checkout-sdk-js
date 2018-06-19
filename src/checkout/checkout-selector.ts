@@ -2,6 +2,7 @@ import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
 import { selector } from '../common/selector';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
+import { CustomerSelector } from '../customer';
 import { ConsignmentSelector } from '../shipping';
 
 import Checkout from './checkout';
@@ -15,6 +16,7 @@ export default class CheckoutSelector {
         private _cart: CartSelector,
         private _consignments: ConsignmentSelector,
         private _coupons: CouponSelector,
+        private _customer: CustomerSelector,
         private _giftCertificates: GiftCertificateSelector
     ) {}
 
@@ -22,11 +24,12 @@ export default class CheckoutSelector {
         const { data } = this._checkout;
         const billingAddress = this._billingAddress.getBillingAddress();
         const cart = this._cart.getCart();
+        const customer = this._customer.getCustomer();
         const consignments = this._consignments.getConsignments() || [];
         const coupons = this._coupons.getCoupons() || [];
         const giftCertificates = this._giftCertificates.getGiftCertificates() || [];
 
-        if (!data || !cart) {
+        if (!data || !cart || !customer) {
             return;
         }
 
@@ -34,6 +37,7 @@ export default class CheckoutSelector {
             ...data,
             billingAddress,
             cart,
+            customer,
             consignments,
             coupons,
             giftCertificates,

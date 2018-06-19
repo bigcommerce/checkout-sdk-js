@@ -302,11 +302,9 @@ describe('PaymentStrategyActionCreator', () => {
         it('finds `nopaymentrequired` strategy if payment data is not required', async () => {
             store = createCheckoutStore({
                 ...state,
-                checkout: merge({}, getCheckoutState(), {
+                customer: merge({}, getCustomerState(), {
                     data: {
-                        customer: {
-                            storeCredit: 9999,
-                        },
+                        storeCredit: 9999,
                     },
                 }),
             });

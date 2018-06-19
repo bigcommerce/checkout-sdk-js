@@ -21,7 +21,7 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual({
-            data: omit(action.payload, ['billingAddress', 'cart', 'consignments', 'coupons', 'giftCertifcates']),
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });
