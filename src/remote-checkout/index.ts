@@ -1,3 +1,5 @@
+export * from './remote-checkout-action-types';
+
 export { default as RemoteCheckoutActionCreator } from './remote-checkout-action-creator';
 export { default as RemoteCheckoutRequestSender } from './remote-checkout-request-sender';
 export { default as RemoteCheckoutSelector } from './remote-checkout-selector';

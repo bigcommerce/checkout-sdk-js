@@ -1,4 +1,6 @@
-export function getCart() {
+import InternalCart from './internal-cart';
+
+export function getCart(): InternalCart {
     return {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         items: [

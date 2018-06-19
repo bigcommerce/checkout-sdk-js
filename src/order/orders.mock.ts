@@ -2,7 +2,6 @@ import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getGiftCertificateItem } from '../cart/line-items.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
-import { getGiftCertificate } from '../coupon/gift-certificates.mock';
 import { getCurrency } from '../currency/currencies.mock';
 
 import { getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
@@ -25,7 +24,7 @@ export function getOrder(): Order {
         discountAmount: 10,
         hasDigitalItems: false,
         isComplete: true,
-        status: 'ORDER_STATUS_INCOMPLETE',
+        status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
         isDownloadable: false,
         isTaxIncluded: false,
         lineItems: {
@@ -91,7 +90,7 @@ export function getOrderState(): OrderState {
         meta: {
             deviceFingerprint: response.body.meta.deviceFingerprint,
             token: response.headers.token,
-            payment: response.body.data.payment,
+            payment: response.body.data.order.payment,
         },
         errors: {},
         statuses: {},

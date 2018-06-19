@@ -3,15 +3,13 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../../checkout';
-import { getCheckoutState, getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../checkout';
+import { getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
 import { MissingDataError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
-import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
-import { HOSTED } from '../../payment/payment-method-types';
+import { HOSTED, INITIALIZE, LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_SUCCEEDED, PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender, SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout';
 import {
     AmazonPayLogin,
     AmazonPayLoginButton,
@@ -20,9 +18,7 @@ import {
     AmazonPayScriptLoader,
     AmazonPayWindow,
 } from '../../remote-checkout/methods/amazon-pay';
-import { SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
-import { getGuestCustomer } from '../internal-customers.mock';
 
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
 
@@ -48,9 +44,13 @@ describe('AmazonPayCustomerStrategy', () => {
         ) {
             const element = document.getElementById(container);
 
-            element.addEventListener('authorize', event => {
-                options.authorization();
-            });
+            if (element) {
+                element.addEventListener('authorize', event => {
+                    if (options.authorization) {
+                        options.authorization();
+                    }
+                });
+            }
 
             buttonConstructorSpy(container, merchantId, options);
         }
@@ -100,7 +100,7 @@ describe('AmazonPayCustomerStrategy', () => {
             .mockReturnValue(Promise.resolve(getResponse(getRemoteTokenResponseBody())));
 
         jest.spyOn(remoteCheckoutRequestSender, 'trackAuthorizationEvent')
-            .mockReturnValue(Promise.resolve(getResponse()));
+            .mockReturnValue(Promise.resolve(getResponse('')));
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
             .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
@@ -184,8 +184,11 @@ describe('AmazonPayCustomerStrategy', () => {
     it('generates request token', async () => {
         await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
-        document.getElementById('login')
-            .dispatchEvent(new CustomEvent('authorize'));
+        const element = document.getElementById('login');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('authorize'));
+        }
 
         expect(remoteCheckoutRequestSender.generateToken).toHaveBeenCalled();
     });
@@ -193,8 +196,11 @@ describe('AmazonPayCustomerStrategy', () => {
     it('tracks authorization event', async () => {
         await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
-        document.getElementById('login')
-            .dispatchEvent(new CustomEvent('authorize'));
+        const element = document.getElementById('login');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('authorize'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -204,8 +210,11 @@ describe('AmazonPayCustomerStrategy', () => {
     it('sends authorization request', async () => {
         await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 
-        document.getElementById('login')
-            .dispatchEvent(new CustomEvent('authorize'));
+        const element = document.getElementById('login');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('authorize'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -225,9 +234,13 @@ describe('AmazonPayCustomerStrategy', () => {
                 ...state.checkout,
                 data: {
                     ...getCheckoutWithPayments(),
-                    payments: [{ providerId: 'amazon', providerType: HOSTED }],
+                    payments: [{
+                        providerId: 'amazon',
+                        providerType: HOSTED,
+                        detail: { step: INITIALIZE },
+                    }],
                 },
-            },
+            } as CheckoutState,
         });
 
         strategy = new AmazonPayCustomerStrategy(

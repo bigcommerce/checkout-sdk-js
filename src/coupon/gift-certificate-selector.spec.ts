@@ -1,11 +1,8 @@
-import { createErrorAction } from '@bigcommerce/data-store';
-
 import { createRequestErrorFactory } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import { GiftCertificateActionType } from './gift-certificate-actions';
 import GiftCertificateSelector from './gift-certificate-selector';
-import GiftCertificateState, { GiftCertificateErrorsState } from './gift-certificate-state';
+import GiftCertificateState from './gift-certificate-state';
 
 describe('GiftCertificateSelector', () => {
     let giftCertificateSelector: GiftCertificateSelector;

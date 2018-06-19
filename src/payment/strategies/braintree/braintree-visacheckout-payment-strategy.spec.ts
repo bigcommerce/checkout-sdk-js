@@ -13,20 +13,15 @@ import {
     PaymentRequestSender,
     PaymentStrategyActionCreator,
 } from '../..';
-import { getBillingAddressState } from '../../../billing/billing-addresses.mock';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { getCartState } from '../../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
-import { getConfigState } from '../../../config/configs.mock';
-import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentActionType } from '../../payment-actions';
-import { getBraintreeVisaCheckout, getPaymentMethodsState } from '../../payment-methods.mock';
+import { getBraintreeVisaCheckout } from '../../payment-methods.mock';
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 
 import {
@@ -59,15 +54,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
 
         paymentMethodMock = { ...getBraintreeVisaCheckout(), clientToken: 'clientToken' };
 
-        store = createCheckoutStore({
-            billingAddress: getBillingAddressState(),
-            checkout: getCheckoutState(),
-            customer: getCustomerState(),
-            config: getConfigState(),
-            cart: getCartState(),
-            paymentMethods: getPaymentMethodsState(),
-            consignments: getConsignmentsState(),
-        });
+        store = createCheckoutStore(getCheckoutStoreState());
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);
@@ -214,22 +201,35 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             });
 
             it('fires onPaymentSelect when there is been a change in payment method', async () => {
-                visaCheckoutOptions.braintreevisacheckout.onPaymentSelect = jest.fn();
-                await strategy.initialize(visaCheckoutOptions);
+                const onPaymentSelect = jest.fn();
+
+                await strategy.initialize({
+                    ...visaCheckoutOptions,
+                    braintreevisacheckout: {
+                        onPaymentSelect,
+                    },
+                });
 
                 await new Promise(resolve => process.nextTick(resolve));
 
-                expect(visaCheckoutOptions.braintreevisacheckout.onPaymentSelect).toHaveBeenCalled();
+                expect(onPaymentSelect).toHaveBeenCalled();
             });
         });
 
         it('triggers onError from the options when there is a payment error', async () => {
-            visaCheckoutOptions.braintreevisacheckout.onError = jest.fn();
+            const onError = jest.fn();
             const errorMock = new Error();
-            visaCheckoutSDK.on = jest.fn((type, callback) => type === 'payment.error' ? callback('data', errorMock) : undefined);
-            await strategy.initialize(visaCheckoutOptions);
 
-            expect(visaCheckoutOptions.braintreevisacheckout.onError).toHaveBeenCalledWith(errorMock);
+            visaCheckoutSDK.on = jest.fn((type, callback) => type === 'payment.error' ? callback('data', errorMock) : undefined);
+
+            await strategy.initialize({
+                ...visaCheckoutOptions,
+                braintreevisacheckout: {
+                    onError,
+                },
+            });
+
+            expect(onError).toHaveBeenCalledWith(errorMock);
         });
     });
 

@@ -1,8 +1,7 @@
 import { merge } from 'lodash';
 
-import { createInternalCheckoutSelectors, CheckoutSelector, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
-import { getCheckoutPayment, getCheckoutStoreState, getCheckoutStoreStateWithOrder, getCheckoutWithPayments } from '../checkout/checkouts.mock';
-import { OrderSelector } from '../order';
+import { createInternalCheckoutSelectors, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
+import { getCheckoutStoreStateWithOrder, getCheckoutWithPayments } from '../checkout/checkouts.mock';
 import { getCompleteOrder as getInternalCompleteOrder } from '../order/internal-orders.mock';
 
 import { getPaymentMethod } from './payment-methods.mock';
@@ -23,7 +22,9 @@ describe('PaymentSelector', () => {
         it('returns payment ID from order if order has been created', () => {
             paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentId().providerId).toEqual('authorizenet');
+            const payment = paymentSelector.getPaymentId();
+
+            expect(payment && payment.providerId).toEqual('authorizenet');
         });
 
         it('returns payment ID from internal order if order has just been created before order is loaded', () => {
@@ -37,7 +38,9 @@ describe('PaymentSelector', () => {
             });
             paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentId().providerId).toEqual('authorizenet');
+            const payment = paymentSelector.getPaymentId();
+
+            expect(payment && payment.providerId).toEqual('authorizenet');
         });
 
         it('returns payment ID from checkout if order has not been created', () => {
@@ -54,7 +57,9 @@ describe('PaymentSelector', () => {
             });
             paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentId().providerId).toEqual('authorizenet');
+            const payment = paymentSelector.getPaymentId();
+
+            expect(payment && payment.providerId).toEqual('authorizenet');
         });
     });
 
@@ -128,7 +133,7 @@ describe('PaymentSelector', () => {
         it('returns payment token if available', () => {
             paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
 
-            expect(paymentSelector.getPaymentToken()).toEqual(state.order.meta.token);
+            expect(paymentSelector.getPaymentToken()).toEqual(state.order.meta && state.order.meta.token);
         });
 
         it('returns undefined if unavailable', () => {
@@ -207,7 +212,9 @@ describe('PaymentSelector', () => {
         it('returns true if payment is finalized', () => {
             const checkout = getCheckoutWithPayments();
 
-            checkout.payments[0].detail.step = FINALIZE;
+            if (checkout.payments) {
+                checkout.payments[0].detail.step = FINALIZE;
+            }
 
             selectors = createInternalCheckoutSelectors({
                 ...state,

@@ -1,16 +1,15 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import CheckoutClient from '../../checkout/checkout-client';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getWepay } from '../../payment/payment-methods.mock';
 import { WepayRiskClient } from '../../remote-checkout/methods/wepay';
-import { CreditCardInstrument } from '../payment';
 import PaymentActionCreator from '../payment-action-creator';
 import { PaymentActionType } from '../payment-actions';
 import PaymentMethod from '../payment-method';
@@ -37,7 +36,10 @@ describe('WepayPaymentStrategy', () => {
         store = createCheckoutStore();
         scriptLoader = createScriptLoader();
         wepayRiskClient = new WepayRiskClient(scriptLoader);
-        orderActionCreator = new OrderActionCreator(client);
+        orderActionCreator = new OrderActionCreator(
+            client,
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+        );
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
@@ -96,9 +98,15 @@ describe('WepayPaymentStrategy', () => {
             await strategy.initialize({ methodId: paymentMethod.id });
             await strategy.execute(payload);
 
-            const paymentWithToken = { ...payload.payment };
-            (paymentWithToken.paymentData as CreditCardInstrument)
-                .extraData = { riskToken: testRiskToken };
+            const paymentWithToken = {
+                ...payload.payment,
+                paymentData: {
+                    ...(payload.payment && payload.payment.paymentData),
+                    extraData: {
+                        riskToken: testRiskToken,
+                    },
+                },
+            };
 
             expect(paymentActionCreator.submitPayment)
                 .toHaveBeenCalledWith(paymentWithToken);

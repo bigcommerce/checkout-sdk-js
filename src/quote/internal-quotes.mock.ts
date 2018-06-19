@@ -1,4 +1,6 @@
-export function getQuote() {
+import InternalQuote from './internal-quote';
+
+export function getQuote(): InternalQuote {
     return {
         orderComment: '',
         shippingOption: '0:61d4bb52f746477e1d4fb411221318c3',

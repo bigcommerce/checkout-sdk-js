@@ -4,18 +4,18 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { getCartState } from '../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../checkout';
-import { getCheckoutState, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
+import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/customers.mock';
 import { OrderActionCreator, OrderActionType } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
-import { getCompleteOrderState, getIncompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
+import { getOrderRequestBody } from '../order/internal-orders.mock';
+import { getOrderState } from '../order/orders.mock';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentActionCreator from './payment-action-creator';
-import { getPaymentMethod, getPaymentMethodsState } from './payment-methods.mock';
+import { getPaymentMethod } from './payment-methods.mock';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
@@ -232,7 +232,10 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(strategy.execute).toHaveBeenCalledWith(
                 payload,
-                { methodId: payload.payment.methodId, gatewayId: payload.payment.gatewayId }
+                {
+                    methodId: payload.payment && payload.payment.methodId,
+                    gatewayId: payload.payment && payload.payment.gatewayId,
+                }
             );
         });
 
@@ -244,26 +247,30 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.execute(payload)(store))
                 .toPromise();
 
-            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(state.checkout.getCheckout().orderId, undefined);
+            const checkout = state.checkout.getCheckout();
+
+            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(checkout && checkout.orderId, undefined);
         });
 
         it('emits action to load order and notify execution progress', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
+            const methodId = payload.payment && payload.payment.methodId;
             const actions = await Observable.from(actionCreator.execute(payload)(store))
                 .toArray()
                 .toPromise();
 
             expect(actions).toEqual([
                 { type: OrderActionType.SubmitOrderRequested },
-                { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.methodId } },
-                { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId: payload.payment.methodId } },
+                { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
+                { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId } },
             ]);
         });
 
         it('emits error action if unable to execute', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
+            const methodId = payload.payment && payload.payment.methodId;
             const executeError = new Error();
             const errorHandler = jest.fn(action => Observable.of(action));
 
@@ -278,8 +285,8 @@ describe('PaymentStrategyActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: OrderActionType.SubmitOrderRequested },
-                { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId: payload.payment.methodId } },
-                { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId: payload.payment.methodId } },
+                { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
+                { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId } },
             ]);
         });
 
@@ -323,7 +330,10 @@ describe('PaymentStrategyActionCreator', () => {
             expect(registry.get).toHaveBeenCalledWith('nopaymentdatarequired');
             expect(noPaymentDataStrategy.execute).toHaveBeenCalledWith(
                 payload,
-                { methodId: payload.payment.methodId, gatewayId: payload.payment.gatewayId }
+                {
+                    methodId: payload.payment && payload.payment.methodId,
+                    gatewayId: payload.payment && payload.payment.gatewayId,
+                }
             );
         });
     });
@@ -352,7 +362,6 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('finalizes order using payment strategy', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const payload = getOrderRequestBody();
 
             await Observable.from(actionCreator.finalize()(store))
                 .toPromise();
@@ -367,7 +376,9 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.finalize()(store))
                 .toPromise();
 
-            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(state.checkout.getCheckout().orderId, undefined);
+            const checkout = state.checkout.getCheckout();
+
+            expect(orderActionCreator.loadOrder).toHaveBeenCalledWith(checkout && checkout.orderId, undefined);
         });
 
         it('emits action to load order and notify finalization progress', async () => {
@@ -422,7 +433,7 @@ describe('PaymentStrategyActionCreator', () => {
         it('returns rejected promise if order does not require finalization', async () => {
             store = createCheckoutStore({
                 ...state,
-                order: getIncompleteOrderState(),
+                order: getOrderState(),
             });
             registry = createPaymentStrategyRegistry(store, client, paymentClient);
 
@@ -430,8 +441,8 @@ describe('PaymentStrategyActionCreator', () => {
 
             try {
                 await Observable.from(actionCreator.finalize()(store)).toPromise();
-            } catch (error) {
-                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            } catch (action) {
+                expect(action.payload).toBeInstanceOf(OrderFinalizationNotRequiredError);
             }
         });
     });

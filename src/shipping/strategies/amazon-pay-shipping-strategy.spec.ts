@@ -3,9 +3,9 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
-import { getRemoteCustomer } from '../../customer/internal-customers.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../checkout';
+import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
+import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
 import { PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
@@ -18,7 +18,6 @@ import {
     AmazonPayWindow,
 } from '../../remote-checkout/methods/amazon-pay';
 import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
-import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../remote-checkout/remote-checkout.mock';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ConsignmentActionType } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
@@ -33,6 +32,7 @@ describe('AmazonPayShippingStrategy', () => {
     let container: HTMLDivElement;
     let hostWindow: AmazonPayWindow;
     let orderReference: AmazonPayOrderReference;
+    let state: CheckoutStoreState;
     let store: CheckoutStore;
     let scriptLoader: AmazonPayScriptLoader;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
@@ -48,13 +48,17 @@ describe('AmazonPayShippingStrategy', () => {
         bind(id: string) {
             const element = document.getElementById(id);
 
+            if (!element) {
+                return;
+            }
+
             element.addEventListener('addressSelect', () => {
                 this.options.onAddressSelect(orderReference);
             });
 
-            element.addEventListener('error', (event: CustomEvent) => {
+            element.addEventListener('error', event => {
                 this.options.onError(Object.assign(new Error(), {
-                    getErrorCode: () => event.detail.code,
+                    getErrorCode: () => (event as any).detail.code,
                 }));
             });
 
@@ -65,23 +69,22 @@ describe('AmazonPayShippingStrategy', () => {
     }
 
     beforeEach(() => {
-        consignmentActionCreator = new ConsignmentActionCreator(createCheckoutClient());
+        consignmentActionCreator = new ConsignmentActionCreator(
+            createCheckoutClient(),
+            new CheckoutRequestSender(createRequestSender())
+        );
         addressBookSpy = jest.fn();
         container = document.createElement('div');
         hostWindow = window;
-        store = createCheckoutStore({
-            customer: {
-                data: getRemoteCustomer(),
-            },
-            remoteCheckout: getRemoteCheckoutState(),
-        });
+        state = getCheckoutStoreState();
+        store = createCheckoutStore(state);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(createRequestSender()));
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
 
         orderReference = {
             getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
-            getAmazonOrderReferenceId: () => getRemoteCheckoutStateData().amazon.referenceId,
+            getAmazonOrderReferenceId: () => '511ed7ed-221c-418c-8286-f5102e49220b',
         };
 
         container.setAttribute('id', 'addressBook');
@@ -168,13 +171,17 @@ describe('AmazonPayShippingStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
-        document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
+        const element = document.getElementById('addressBook');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('addressSelect'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 
         expect(remoteCheckoutActionCreator.initializeShipping)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getRemoteCheckoutStateData().amazon.referenceId,
+                referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
             });
 
         expect(consignmentActionCreator.updateAddress)
@@ -198,7 +205,11 @@ describe('AmazonPayShippingStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
-        document.getElementById('addressBook').dispatchEvent(new CustomEvent('addressSelect'));
+        const element = document.getElementById('addressBook');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('addressSelect'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -214,11 +225,15 @@ describe('AmazonPayShippingStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
 
-        document.getElementById('addressBook').dispatchEvent(new CustomEvent('orderReferenceCreate'));
+        const element = document.getElementById('addressBook');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('orderReferenceCreate'));
+        }
 
         expect(remoteCheckoutActionCreator.updateCheckout)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getRemoteCheckoutStateData().amazon.referenceId,
+                referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
             });
     });
 
@@ -230,7 +245,10 @@ describe('AmazonPayShippingStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook', onError } });
 
-        element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
+        if (element) {
+            element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
+        }
+
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
     });
 
@@ -245,8 +263,11 @@ describe('AmazonPayShippingStrategy', () => {
         jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
             .mockReturnValue(Promise.reject(error));
 
-        document.getElementById('addressBook')
-            .dispatchEvent(new CustomEvent('addressSelect'));
+        const element = document.getElementById('addressBook');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('addressSelect'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 

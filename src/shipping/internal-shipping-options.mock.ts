@@ -1,7 +1,9 @@
 import { getCart } from '../cart/internal-carts.mock';
 import { getQuote } from '../quote/internal-quotes.mock';
 
-export function getShippingOptions() {
+import InternalShippingOption, { InternalShippingOptionList } from './internal-shipping-option';
+
+export function getShippingOptions(): InternalShippingOptionList {
     return {
         '55c96cda6f04c': [
             getFlatRateOption(),
@@ -9,7 +11,7 @@ export function getShippingOptions() {
     };
 }
 
-export function getFlatRateOption() {
+export function getFlatRateOption(): InternalShippingOption {
     return {
         description: 'Flat Rate',
         module: 'shipping_flatrate',

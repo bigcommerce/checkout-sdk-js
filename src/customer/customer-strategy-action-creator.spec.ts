@@ -167,7 +167,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('finds customer strategy by id', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
 
-            await actionCreator.signIn({ email: 'foo@bar.com' }, { methodId: 'default' })
+            await actionCreator.signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
                 .toArray()
                 .toPromise();
 
@@ -176,7 +176,7 @@ describe('CustomerStrategyActionCreator', () => {
 
         it('executes customer strategy', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
-            const credentials = { email: 'foo@bar.com' };
+            const credentials = { email: 'foo@bar.com', password: 'password1' };
             const options = { methodId: 'default' };
 
             await actionCreator.signIn(credentials, options)
@@ -188,7 +188,7 @@ describe('CustomerStrategyActionCreator', () => {
 
         it('emits action to notify sign-in progress', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
-            const actions = await actionCreator.signIn({ email: 'foo@bar.com' }, { methodId: 'default' })
+            const actions = await actionCreator.signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
                 .toArray()
                 .toPromise();
 
@@ -206,7 +206,7 @@ describe('CustomerStrategyActionCreator', () => {
             jest.spyOn(strategy, 'signIn')
                 .mockReturnValue(Promise.reject(signInError));
 
-            const actions = await actionCreator.signIn({ email: 'foo@bar.com' }, { methodId: 'default' })
+            const actions = await actionCreator.signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
