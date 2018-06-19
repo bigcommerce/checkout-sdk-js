@@ -1,9 +1,6 @@
-import { getCustomerResponseBody, getGuestCustomer } from './internal-customers.mock';
-import { CustomerActionType } from './customer-actions';
+import { getCustomer } from './customers.mock';
 import customerReducer from './customer-reducer';
 
-import { OrderActionType } from '../order';
-import { getCompleteOrderResponseBody } from '../order/internal-orders.mock';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { BillingAddressActionType } from '../billing/billing-address-actions';
@@ -22,7 +19,7 @@ describe('customerReducer()', () => {
         };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getGuestCustomer(),
+            data: getCustomer(),
         }));
     });
 
@@ -33,55 +30,7 @@ describe('customerReducer()', () => {
         };
 
         expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: getGuestCustomer(),
-        }));
-    });
-
-    it('returns new customer data if order is submitted successfully', () => {
-        const response = getCompleteOrderResponseBody();
-        const action = {
-            type: OrderActionType.SubmitOrderSucceeded,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.customer,
-        }));
-    });
-
-    it('returns new customer data if order is finalized successfully', () => {
-        const response = getCompleteOrderResponseBody();
-        const action = {
-            type: OrderActionType.SubmitOrderSucceeded,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.customer,
-        }));
-    });
-
-    it('returns new customer data if customer has signed in successfully', () => {
-        const action = {
-            type: CustomerActionType.SignInCustomerSucceeded,
-            payload: getCustomerResponseBody().data,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.customer,
-        }));
-    });
-
-    it('returns new customer data if customer has signed out successfully', () => {
-        const action = {
-            type: CustomerActionType.SignOutCustomerSucceeded,
-            payload: getCustomerResponseBody().data,
-        };
-
-        expect(customerReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.customer,
+            data: { email: getCustomer().email },
         }));
     });
 });

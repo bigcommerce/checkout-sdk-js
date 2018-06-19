@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckoutState, getCheckoutStoreState, getCheckoutWithPayments } from '../checkout/checkouts.mock';
 import { Registry } from '../common/registry';
-import { getCustomerState, getGuestCustomer } from '../customer/internal-customers.mock';
+import { getCustomerState, getGuestCustomer } from '../customer/customers.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';

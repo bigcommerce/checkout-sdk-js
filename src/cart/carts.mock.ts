@@ -9,7 +9,7 @@ import { getPhysicalItem } from './line-items.mock';
 export function getCart(): Cart {
     return {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
-        customerId: 0,
+        customerId: 4,
         currency: getCurrency(),
         isTaxIncluded: false,
         baseAmount: 200,

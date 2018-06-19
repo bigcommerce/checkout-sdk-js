@@ -8,9 +8,9 @@ export function getGuestCustomer() {
         addresses: [],
         customerId: 0,
         email: 'test@bigcommerce.com',
-        firstName: 'Foo',
+        firstName: '',
         isGuest: true,
-        name: 'Foo Bar',
+        name: '',
         storeCredit: 0,
     };
 }
@@ -23,6 +23,9 @@ export function getCustomer() {
         ],
         customerId: 4,
         isGuest: false,
+        email: 'test@bigcommerce.com',
+        firstName: 'Foo',
+        name: 'Foo Bar',
     };
 }
 
@@ -52,11 +55,6 @@ export function getCustomerResponseBody() {
     };
 }
 
-export function getCustomerState() {
-    return {
-        data: getGuestCustomer(),
-    };
-}
 
 export function getCustomerStrategyState() {
     return {

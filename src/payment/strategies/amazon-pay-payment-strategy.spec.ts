@@ -12,6 +12,7 @@ import { getCartResponseBody } from '../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { NotInitializedError, RequestError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
+import { getCustomerState } from '../../customer/customers.mock';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
@@ -30,10 +31,10 @@ import {
     INITIALIZE_REMOTE_PAYMENT_REQUESTED,
 } from '../../remote-checkout/remote-checkout-action-types';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../remote-checkout/remote-checkout.mock';
+import { getConsignmentsState } from '../../shipping/consignments.mock';
 import PaymentMethod from '../payment-method';
 
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
-import { getConsignmentsState } from '../../shipping/consignments.mock';
 
 describe('AmazonPayPaymentStrategy', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
@@ -332,8 +333,10 @@ describe('AmazonPayPaymentStrategy', () => {
                 referenceId: getRemoteCheckoutStateData().amazon.referenceId,
             }));
 
+        const { email, ...address } = getBillingAddress();
+
         expect(billingAddressActionCreator.updateAddress)
-            .toHaveBeenCalledWith(getBillingAddress());
+            .toHaveBeenCalledWith(address);
 
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);
         expect(store.dispatch).toHaveBeenCalledWith(updateAddressAction);
@@ -341,9 +344,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('does not synchronize billing addresses if they are the same', async () => {
         store = createCheckoutStore({
-            customer: {
-                data: getRemoteCustomer(),
-            },
+            customer: getCustomerState(),
             billingAddress: getBillingAddressState(),
             consignments: getConsignmentsState(),
             paymentMethods: getPaymentMethodsState(),
@@ -372,9 +373,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('does not synchronize billing addresses if remote address is unavailable', async () => {
         store = createCheckoutStore({
-            customer: {
-                data: getRemoteCustomer(),
-            },
+            customer: getCustomerState(),
             billingAddress: getBillingAddressState(),
             consignments: getConsignmentsState(),
             paymentMethods: getPaymentMethodsState(),

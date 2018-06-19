@@ -5,21 +5,31 @@ import Customer from './customer';
 export function getGuestCustomer(): Customer {
     return {
         addresses: [],
-        email: 'test@bigcommerce.com',
-        firstName: 'Foo',
-        fullName: 'Foo Bar',
+        email: '',
+        firstName: '',
+        fullName: '',
         isGuest: true,
-        lastName: 'Bar',
+        lastName: '',
         storeCredit: 0,
     };
 }
 
 export function getCustomer(): Customer {
     return {
-        ...getGuestCustomer(),
+        email: 'test@bigcommerce.com',
+        firstName: 'Foo',
+        fullName: 'Foo Bar',
+        lastName: 'Bar',
+        storeCredit: 0,
         addresses: [
             getShippingAddress(),
         ],
         isGuest: false,
+    };
+}
+
+export function getCustomerState() {
+    return {
+        data: getCustomer(),
     };
 }

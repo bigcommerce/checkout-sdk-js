@@ -8,6 +8,7 @@ export function getBillingAddress(): Address {
         id: '55c96cda6f04c',
         firstName: 'Test',
         lastName: 'Tester',
+        email: 'test@bigcommerce.com',
         company: 'Bigcommerce',
         address1: '12345 Testing Way',
         address2: '',
