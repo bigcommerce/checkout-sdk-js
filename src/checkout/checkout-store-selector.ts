@@ -13,12 +13,12 @@ import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../paymen
 import { Instrument, InstrumentSelector } from '../payment/instrument';
 import {
     Consignment,
+    ConsignmentSelector,
     ShippingAddressSelector,
     ShippingCountrySelector,
     ShippingOption,
     ShippingOptionSelector,
 } from '../shipping';
-import ConsignmentSelector from '../shipping/consignment-selector';
 
 import Checkout from './checkout';
 import CheckoutSelector from './checkout-selector';

@@ -156,31 +156,14 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._checkoutActionCreator.loadCheckout(id, options);
+        const loadCheckoutAction = this._checkoutActionCreator.loadCheckout(id, options);
+        const loadConfigAction = this._configActionCreator.loadConfig(options);
 
-        return this._dispatch(action);
-    }
-
-    /**
-     * Loads the checkout configuration of a store.
-     *
-     * This method should be called before performing any other actions using
-     * this service. If it is successfully executed, the data can be retrieved
-     * by calling `CheckoutStoreSelector#getConfig`.
-     *
-     * ```js
-     * const state = await service.loadConfig();
-     *
-     * console.log(state.checkout.getConfig());
-     * ```
-     *
-     * @param options - Options for loading the checkout configuration.
-     * @returns A promise that resolves to the current state.
-     */
-    loadConfig(options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._configActionCreator.loadConfig(options);
-
-        return this._dispatch(action, { queueId: 'config' });
+        return Promise.all([
+            this._dispatch(loadCheckoutAction),
+            this._dispatch(loadConfigAction, { queueId: 'config' }),
+        ])
+            .then(() => this.getState());
     }
 
     /**
@@ -201,9 +184,14 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._orderActionCreator.loadOrder(orderId, options);
+        const loadCheckoutAction = this._orderActionCreator.loadOrder(orderId, options);
+        const loadConfigAction = this._configActionCreator.loadConfig(options);
 
-        return this._dispatch(action);
+        return Promise.all([
+            this._dispatch(loadCheckoutAction),
+            this._dispatch(loadConfigAction, { queueId: 'config' }),
+        ])
+            .then(() => this.getState());
     }
 
     /**

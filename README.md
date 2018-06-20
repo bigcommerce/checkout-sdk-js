@@ -16,7 +16,6 @@ The SDK has a convenient application interface for starting and completing a che
     - [CORS](#cors)
 - [Usage](#usage)
     - [Initialize instance](#initialize-instance)
-        - [Load configuration](#load-configuration)
         - [Load checkout](#load-checkout)
     - [Sign in customer](#sign-in-customer)
     - [Set shipping details](#set-shipping-details)
@@ -96,19 +95,9 @@ import { createCheckoutService } from '@bigcommerce/checkout-sdk';
 const service = createCheckoutService();
 ```
 
-#### Load configuration
-
-Once you have the instance, you need to load the store's checkout configuration. The configuration object contains information about various settings related to checkout, such as the default currency of the store etc...
-
-```js
-const state = await service.loadConfig();
-
-console.log(state.data.getConfig());
-```
-
 #### Load checkout
 
-Afterwards, you should load the current checkout and present the information to the customer.
+Once you have the instance, you should load the current checkout and present the information to the customer.
 
 ```js
 const checkoutId = '0cfd6c06-57c3-4e29-8d7a-de55cc8a9052';
@@ -123,6 +112,12 @@ The checkout object contains various information about the checkout process, suc
 console.log(state.data.getCart());
 console.log(state.data.getBillingAddress());
 console.log(state.data.getShippingAddress());
+```
+
+In addition, you can also access the store's checkout configuration. The configuration object contains information about various settings related to checkout, such as the default currency of the store etc...
+
+```js
+console.log(state.data.getConfig());
 ```
 
 ### Sign in customer

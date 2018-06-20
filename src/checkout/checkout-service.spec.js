@@ -27,7 +27,7 @@ import { getShippingOptions } from '../shipping/shipping-options.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
-import { getCheckout, getCheckoutState } from './checkouts.mock';
+import { getCheckout, getCheckoutState, getCheckoutWithCoupons } from './checkouts.mock';
 import createCheckoutStore from './create-checkout-store';
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
@@ -37,18 +37,21 @@ import { getCustomerState } from '../customer/customers.mock';
 
 describe('CheckoutService', () => {
     let billingAddressActionCreator;
+    let checkoutActionCreator;
     let checkoutClient;
+    let checkoutRequestSender;
     let checkoutService;
     let checkoutValidator;
-    let checkoutRequestSender;
+    let configActionCreator;
     let couponRequestSender;
     let customerStrategyActionCreator;
+    let giftCertificateRequestSender;
     let instrumentActionCreator;
+    let orderActionCreator;
     let paymentStrategy;
     let paymentStrategyRegistry;
     let shippingStrategyActionCreator;
     let store;
-    let giftCertificateRequestSender;
 
     beforeEach(() => {
         checkoutClient = {
@@ -177,11 +180,17 @@ describe('CheckoutService', () => {
 
         billingAddressActionCreator = new BillingAddressActionCreator(checkoutClient);
 
+        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender);
+
+        configActionCreator = new ConfigActionCreator(checkoutClient);
+
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
             createCustomerStrategyRegistry(store, checkoutClient)
         );
 
         instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
+
+        orderActionCreator = new OrderActionCreator(checkoutClient, checkoutValidator);
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
             createShippingStrategyRegistry(store, checkoutClient)
@@ -190,15 +199,15 @@ describe('CheckoutService', () => {
         checkoutService = new CheckoutService(
             store,
             billingAddressActionCreator,
-            new CheckoutActionCreator(checkoutRequestSender),
-            new ConfigActionCreator(checkoutClient),
+            checkoutActionCreator,
+            configActionCreator,
             new ConsignmentActionCreator(checkoutClient, checkoutRequestSender),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(couponRequestSender),
             customerStrategyActionCreator,
             new GiftCertificateActionCreator(giftCertificateRequestSender),
             instrumentActionCreator,
-            new OrderActionCreator(checkoutClient, checkoutValidator),
+            orderActionCreator,
             new PaymentMethodActionCreator(checkoutClient),
             new PaymentStrategyActionCreator(
                 paymentStrategyRegistry,
@@ -251,14 +260,14 @@ describe('CheckoutService', () => {
         it('calls subscriber on state change', async () => {
             const subscriber = jest.fn();
 
-            checkoutService.subscribe(subscriber, state => state.data.getConfig());
+            checkoutService.subscribe(subscriber, state => state.data.getCheckout());
             subscriber.mockReset();
 
-            jest.spyOn(checkoutClient, 'loadConfig')
-                .mockReturnValue(Promise.resolve(getResponse({ ...getConfig(), storeConfig: {} })));
+            jest.spyOn(checkoutRequestSender, 'loadCheckout')
+                .mockReturnValue(Promise.resolve(getResponse(getCheckoutWithCoupons())));
 
-            await checkoutService.loadConfig();
-            await checkoutService.loadConfig();
+            await checkoutService.loadCheckout('abc');
+            await checkoutService.loadCheckout('abc');
 
             expect(subscriber).toHaveBeenCalledTimes(1);
         });
@@ -279,28 +288,23 @@ describe('CheckoutService', () => {
     describe('#loadCheckout()', () => {
         const { id } = getCheckout();
 
+        beforeEach(() => {
+            jest.spyOn(checkoutActionCreator, 'loadCheckout');
+            jest.spyOn(configActionCreator, 'loadConfig');
+        });
+
         it('loads checkout data', async () => {
             const state = await checkoutService.loadCheckout(id);
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
             expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
         });
-    });
 
-    describe('#loadConfig()', () => {
         it('loads config data', async () => {
-            const state = await checkoutService.loadConfig();
+            const state = await checkoutService.loadCheckout(id);
 
-            expect(checkoutClient.loadConfig).toHaveBeenCalled();
+            expect(configActionCreator.loadConfig).toHaveBeenCalled();
             expect(state.data.getConfig()).toEqual(getConfig().storeConfig);
-        });
-
-        it('dispatches load config action with queue id', async () => {
-            jest.spyOn(store, 'dispatch');
-
-            await checkoutService.loadConfig();
-
-            expect(store.dispatch).toHaveBeenCalledWith(expect.any(Observable), { queueId: 'config' });
         });
     });
 
@@ -337,10 +341,23 @@ describe('CheckoutService', () => {
     });
 
     describe('#loadOrder()', () => {
+        beforeEach(() => {
+            jest.spyOn(orderActionCreator, 'loadOrder');
+            jest.spyOn(configActionCreator, 'loadConfig');
+        });
+
         it('loads order data', async () => {
             const state = await checkoutService.loadOrder(295);
 
+            expect(orderActionCreator.loadOrder).toHaveBeenCalled();
             expect(state.data.getOrder()).toEqual(store.getState().order.getOrder());
+        });
+
+        it('loads config data', async () => {
+            const state = await checkoutService.loadOrder(295);
+
+            expect(configActionCreator.loadConfig).toHaveBeenCalled();
+            expect(state.data.getConfig()).toEqual(getConfig().storeConfig);
         });
     });
 
