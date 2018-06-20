@@ -4,10 +4,12 @@ import { Checkout } from '../checkout';
 import InternalQuote from './internal-quote';
 
 export default function mapToInternalQuote(checkout: Checkout): InternalQuote {
+    const consignment = checkout.consignments && checkout.consignments[0];
+
     return {
         orderComment: checkout.customerMessage,
-        shippingOption: checkout.consignments[0] ? checkout.consignments[0].selectedShippingOptionId : undefined,
+        shippingOption: consignment && consignment.selectedShippingOption ? consignment.selectedShippingOption.id : undefined,
         billingAddress: checkout.billingAddress ? mapToInternalAddress(checkout.billingAddress) : {} as InternalAddress,
-        shippingAddress: checkout.consignments[0] ? mapToInternalAddress(checkout.consignments[0].shippingAddress, checkout.consignments[0].id) : undefined,
+        shippingAddress: consignment ? mapToInternalAddress(checkout.consignments[0].shippingAddress, checkout.consignments[0].id) : undefined,
     };
 }

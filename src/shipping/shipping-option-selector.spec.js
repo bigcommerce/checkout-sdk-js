@@ -30,7 +30,7 @@ describe('ShippingOptionSelector', () => {
             const consignmentState = {
                 data: [{
                     ...getConsignment(),
-                    selectedShippingOptionId: undefined,
+                    selectedShippingOption: undefined,
                 }],
             };
 
