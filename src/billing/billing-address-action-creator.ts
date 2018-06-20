@@ -46,6 +46,7 @@ export default class BillingAddressActionCreator {
 
         const updatedBillingAddress = {
             ...address,
+            email: typeof address.email === 'undefined' ? billingAddress.email : address.email,
             id: billingAddress.id,
         };
 
