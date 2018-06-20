@@ -4,7 +4,7 @@ import { Cart, CartSelector } from '../cart';
 import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
-import { mapToInternalCoupon, mapToInternalGiftCertificate, CouponSelector, GiftCertificateSelector, InternalCoupon, InternalGiftCertificate } from '../coupon';
+import { Coupon, CouponSelector, GiftCertificate, GiftCertificateSelector } from '../coupon';
 import { mapToInternalCustomer, CustomerSelector, InternalCustomer } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
@@ -239,10 +239,8 @@ export default class CheckoutStoreSelector {
      *
      * @returns The list of applied coupons if there is any, otherwise undefined.
      */
-    getCoupons(): InternalCoupon[] | undefined {
-        const coupons = this._coupons.getCoupons();
-
-        return coupons ? coupons.map(mapToInternalCoupon) : undefined;
+    getCoupons(): Coupon[] | undefined {
+        return this._coupons.getCoupons();
     }
 
     /**
@@ -250,10 +248,8 @@ export default class CheckoutStoreSelector {
      *
      * @returns The list of applied gift certificates if there is any, otherwise undefined.
      */
-    getGiftCertificates(): InternalGiftCertificate[] | undefined {
-        const giftCertificates = this._giftCertificates.getGiftCertificates();
-
-        return giftCertificates ? giftCertificates.map(mapToInternalGiftCertificate) : undefined;
+    getGiftCertificates(): GiftCertificate[] | undefined {
+        return this._giftCertificates.getGiftCertificates();
     }
 
     /**
