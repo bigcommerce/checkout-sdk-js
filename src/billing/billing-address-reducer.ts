@@ -2,6 +2,7 @@ import { combineReducers } from '@bigcommerce/data-store';
 
 import { Address } from '../address';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { OrderAction, OrderActionType } from '../order';
 
 import { BillingAddressAction, BillingAddressActionType } from './billing-address-actions';
 import BillingAddressState, { BillingAddressErrorsState, BillingAddressStatusesState } from './billing-address-state';
@@ -13,9 +14,9 @@ const DEFAULT_STATE: BillingAddressState = {
 
 export default function billingAddressReducer(
     state: BillingAddressState = DEFAULT_STATE,
-    action: CheckoutAction
+    action: CheckoutAction | BillingAddressAction | OrderAction
 ): BillingAddressState {
-    const reducer = combineReducers<BillingAddressState, CheckoutAction | BillingAddressAction>({
+    const reducer = combineReducers<BillingAddressState, CheckoutAction | BillingAddressAction | OrderAction>({
         data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
@@ -26,11 +27,12 @@ export default function billingAddressReducer(
 
 function dataReducer(
     data: Address | undefined,
-    action: CheckoutAction | BillingAddressAction
+    action: CheckoutAction | BillingAddressAction | OrderAction
 ): Address | undefined {
     switch (action.type) {
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case OrderActionType.LoadOrderSucceeded:
         return action.payload ? action.payload.billingAddress : data;
 
     default:
@@ -40,7 +42,7 @@ function dataReducer(
 
 function errorsReducer(
     errors: BillingAddressErrorsState = DEFAULT_STATE.errors,
-    action: CheckoutAction | BillingAddressAction
+    action: CheckoutAction | BillingAddressAction | OrderAction
 ): BillingAddressErrorsState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
@@ -64,7 +66,7 @@ function errorsReducer(
 
 function statusesReducer(
     statuses: BillingAddressStatusesState = DEFAULT_STATE.statuses,
-    action: CheckoutAction | BillingAddressAction
+    action: CheckoutAction | BillingAddressAction | OrderAction
 ): BillingAddressStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:

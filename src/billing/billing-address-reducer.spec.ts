@@ -7,6 +7,8 @@ import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import billingAddressReducer from './billing-address-reducer';
 import BillingAddressState from './billing-address-state';
+import { OrderActionType } from '../order';
+import { getOrder } from '../order/orders.mock';
 
 describe('billingAddressReducer', () => {
     let initialState: BillingAddressState;
@@ -23,6 +25,17 @@ describe('billingAddressReducer', () => {
             data: action.payload.billingAddress,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
+        });
+    });
+
+    it('returns billing address when order loads', () => {
+        const action = createAction(OrderActionType.LoadOrderSucceeded, getOrder());
+        const output = billingAddressReducer(initialState, action);
+
+        expect(output).toEqual({
+            data: action.payload.billingAddress,
+            errors: {},
+            statuses: {},
         });
     });
 
