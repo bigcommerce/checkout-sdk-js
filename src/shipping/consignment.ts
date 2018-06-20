@@ -8,7 +8,7 @@ export default interface Consignment {
     handlingCost: number;
     shippingCost: number;
     availableShippingOptions: ShippingOption[];
-    selectedShippingOptionId?: string;
+    selectedShippingOption?: ShippingOption;
     lineItemIds?: string[];
 }
 
