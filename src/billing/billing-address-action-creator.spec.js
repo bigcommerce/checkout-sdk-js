@@ -137,7 +137,7 @@ describe('BillingAddressActionCreator', () => {
                 ]);
             });
 
-            it('sends request to update billing address, using customer email if not provided', async () => {
+            it('sends request to update billing address, using billing address email if not provided', async () => {
                 await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
@@ -145,6 +145,7 @@ describe('BillingAddressActionCreator', () => {
                     getCheckout().id,
                     {
                         ...address,
+                        email: 'test@bigcommerce.com',
                         id: '55c96cda6f04c',
                     },
                     {}
