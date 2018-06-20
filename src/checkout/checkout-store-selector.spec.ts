@@ -67,7 +67,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns cart', () => {
-        expect(selector.getCart()).toEqual(mapToInternalCart(internalSelectors.checkout.getCheckout()));
+        expect(selector.getCart()).toEqual(internalSelectors.cart.getCart());
     });
 
     it('returns customer', () => {
