@@ -5,7 +5,7 @@ export default function mapToInternalShippingOption(option: ShippingOption, isSe
     return {
         description: option.description,
         module: option.type,
-        price: option.price,
+        price: option.cost,
         id: option.id,
         selected: isSelected,
         isRecommended: option.isRecommended,

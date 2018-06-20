@@ -3,7 +3,7 @@ export default interface ShippingOption {
     id: string;
     isRecommended: boolean;
     imageUrl: string;
-    price: number;
+    cost: number;
     transitTime: string;
     type: string;
 }
