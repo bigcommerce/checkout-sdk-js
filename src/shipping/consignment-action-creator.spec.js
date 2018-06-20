@@ -1,10 +1,11 @@
 import { createTimeout } from '@bigcommerce/request-sender';
+import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { getCartState } from '../cart/internal-carts.mock';
 import { createCheckoutStore } from '../checkout';
 import { CheckoutActionType } from '../checkout/checkout-actions';
-import { getCheckout, getCheckoutState } from '../checkout/checkouts.mock';
+import { getCheckout, getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getQuoteState } from '../quote/internal-quotes.mock';
@@ -166,7 +167,29 @@ describe('consignmentActionCreator', () => {
                 });
         });
 
-        it('sends request to update shipping address', async () => {
+        it('sends request to update shipping address in first consigment', async () => {
+            await Observable.from(consignmentActionCreator.updateAddress(address, options)(store))
+                .toPromise();
+
+            expect(checkoutClient.updateConsignment).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                {
+                    id: '55c96cda6f04c',
+                    shippingAddress: address,
+                    lineItems: [
+                        {
+                            itemId: '666',
+                            quantity: 1,
+                        },
+                    ],
+                },
+                options
+            );
+        });
+
+        it('sends request to create consigments', async () => {
+            store = createCheckoutStore(omit(getCheckoutStoreState(), 'checkout.data.consignments'));
+
             await Observable.from(consignmentActionCreator.updateAddress(address, options)(store))
                 .toPromise();
 
