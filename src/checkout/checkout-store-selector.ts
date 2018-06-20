@@ -8,7 +8,7 @@ import { mapToInternalCoupon, mapToInternalGiftCertificate, CouponSelector, Gift
 import { mapToInternalCustomer, CustomerSelector, InternalCustomer } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
-import { mapToInternalOrder, InternalOrder, OrderSelector } from '../order';
+import { Order, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../payment';
 import { Instrument, InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
@@ -100,10 +100,8 @@ export default class CheckoutStoreSelector {
      *
      * @returns The current order if it is loaded, otherwise undefined.
      */
-    getOrder(): InternalOrder | undefined {
-        const order = this._order.getOrder();
-
-        return order ? mapToInternalOrder(order) : undefined;
+    getOrder(): Order | undefined {
+        return this._order.getOrder();
     }
 
     /**
