@@ -340,7 +340,7 @@ describe('CheckoutService', () => {
         it('loads order data', async () => {
             const state = await checkoutService.loadOrder(295);
 
-            expect(state.data.getOrder()).toEqual(getCompleteOrderResponseBody().data.order);
+            expect(state.data.getOrder()).toEqual(store.getState().order.getOrder());
         });
     });
 
