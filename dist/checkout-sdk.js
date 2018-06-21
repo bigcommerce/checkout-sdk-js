@@ -3446,11 +3446,12 @@ exports.LOAD_COUNTRIES_FAILED = 'LOAD_COUNTRIES_FAILED';
 Object.defineProperty(exports, "__esModule", { value: true });
 var address_1 = __webpack_require__(23);
 function mapToInternalQuote(checkout) {
+    var consignment = checkout.consignments && checkout.consignments[0];
     return {
         orderComment: checkout.customerMessage,
-        shippingOption: checkout.consignments[0] ? checkout.consignments[0].selectedShippingOptionId : undefined,
+        shippingOption: consignment && consignment.selectedShippingOption ? consignment.selectedShippingOption.id : undefined,
         billingAddress: checkout.billingAddress ? address_1.mapToInternalAddress(checkout.billingAddress) : {},
-        shippingAddress: checkout.consignments[0] ? address_1.mapToInternalAddress(checkout.consignments[0].shippingAddress, checkout.consignments[0].id) : undefined,
+        shippingAddress: consignment ? address_1.mapToInternalAddress(consignment.shippingAddress, consignment.id) : undefined,
     };
 }
 exports.default = mapToInternalQuote;
@@ -3523,13 +3524,17 @@ var ConsignmentActionCreator = /** @class */ (function () {
     ConsignmentActionCreator.prototype.updateAddress = function (address, options) {
         var _this = this;
         return function (store) { return Observable_1.Observable.create(function (observer) {
-            var consignments = _this._getConsignmentsRequestBody(address, store);
+            var consignment = _this._getConsignmentRequestBody(address, store);
             var checkout = store.getState().checkout.getCheckout();
-            if (!consignments || !checkout || !checkout.id) {
+            if (!consignment || !checkout || !checkout.id) {
                 throw new errors_1.MissingDataError('Unable to update shipping address: "checkout.id" or "cart.lineItems" are missing.');
             }
+            var consignments = checkout.consignments;
+            if (consignments && consignments.length) {
+                consignment.id = consignments[0].id;
+            }
             observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionTypes.CreateConsignmentsRequested));
-            _this._checkoutClient.createConsignments(checkout.id, consignments, options)
+            _this._createOrUpdateConsignment(checkout.id, consignment, options)
                 .then(function (_a) {
                 var _b = _a.body, body = _b === void 0 ? {} : _b;
                 observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionTypes.CreateConsignmentsSucceeded, body));
@@ -3540,21 +3545,27 @@ var ConsignmentActionCreator = /** @class */ (function () {
             });
         }); };
     };
-    ConsignmentActionCreator.prototype._getConsignmentsRequestBody = function (shippingAddress, store) {
+    ConsignmentActionCreator.prototype._createOrUpdateConsignment = function (checkoutId, consignment, options) {
+        if (consignment.id) {
+            return this._checkoutClient.updateConsignment(checkoutId, consignment, options);
+        }
+        return this._checkoutClient.createConsignments(checkoutId, [consignment], options);
+    };
+    ConsignmentActionCreator.prototype._getConsignmentRequestBody = function (shippingAddress, store) {
         var state = store.getState();
         var cart = state.cart.getCart();
         if (!cart || !cart.items) {
             return;
         }
-        return [{
-                shippingAddress: shippingAddress,
-                lineItems: cart.items
-                    .filter(function (item) { return item.type === 'ItemPhysicalEntity'; })
-                    .map(function (item) { return ({
-                    itemId: item.id,
-                    quantity: item.quantity,
-                }); }),
-            }];
+        return {
+            shippingAddress: shippingAddress,
+            lineItems: cart.items
+                .filter(function (item) { return item.type === 'ItemPhysicalEntity'; })
+                .map(function (item) { return ({
+                itemId: item.id,
+                quantity: item.quantity,
+            }); }),
+        };
     };
     return ConsignmentActionCreator;
 }());
@@ -3584,8 +3595,16 @@ var tslib_1 = __webpack_require__(0);
 var map_to_internal_shipping_option_1 = __webpack_require__(86);
 function mapToInternalShippingOptions(consignments) {
     return consignments.reduce(function (result, consignment) {
-        return (tslib_1.__assign({}, result, (_a = {}, _a[consignment.id] = (consignment.availableShippingOptions || []).map(function (option) {
-            return map_to_internal_shipping_option_1.default(option, option.id === consignment.selectedShippingOptionId);
+        var shippingOptions;
+        if (consignment.availableShippingOptions) {
+            shippingOptions = consignment.availableShippingOptions;
+        }
+        else {
+            shippingOptions = consignment.selectedShippingOption ? [consignment.selectedShippingOption] : [];
+        }
+        return (tslib_1.__assign({}, result, (_a = {}, _a[consignment.id] = shippingOptions.map(function (option) {
+            var selectedOptionId = consignment.selectedShippingOption && consignment.selectedShippingOption.id;
+            return map_to_internal_shipping_option_1.default(option, option.id === selectedOptionId);
         }), _a)));
         var _a;
     }, {});
@@ -3604,7 +3623,7 @@ function mapToInternalShippingOption(option, isSelected) {
     return {
         description: option.description,
         module: option.type,
-        price: option.price,
+        price: option.cost,
         id: option.id,
         selected: isSelected,
         isRecommended: option.isRecommended,

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.1"></a>
+## [0.25.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.25.0...v0.25.1) (2018-06-21)
+
+
+### Bug Fixes
+
+* **shipping:** CHECKOUT-3253 Change consigment schema to store selected shipping option object ([7a085c4](https://github.com/bigcommerce/checkout-sdk-js/commit/7a085c4))
+* **shipping:** CHECKOUT-3280 Use POST/PUT to update consignments so we retain shippingOptions ([f0639b2](https://github.com/bigcommerce/checkout-sdk-js/commit/f0639b2))
+
+
+
 <a name="0.25.0"></a>
 # [0.25.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.1...v0.25.0) (2018-06-08)
 

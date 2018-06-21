@@ -1559,7 +1559,7 @@ declare interface Consignment {
     handlingCost: number;
     shippingCost: number;
     availableShippingOptions: ShippingOption[];
-    selectedShippingOptionId?: string;
+    selectedShippingOption?: ShippingOption;
     lineItemIds?: string[];
 }
 
@@ -2357,7 +2357,7 @@ declare interface ShippingOption {
     id: string;
     isRecommended: boolean;
     imageUrl: string;
-    price: number;
+    cost: number;
     transitTime: string;
     type: string;
 }
