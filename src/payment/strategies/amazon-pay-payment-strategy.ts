@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 import { isAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError, StandardError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, RequestError, StandardError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
@@ -51,7 +51,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         }
 
         if (!paymentMethod) {
-            throw new MissingDataError(`Unable to initialize because "paymentMethod (${options.methodId})" data is missing.`);
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         this._walletOptions = amazonOptions;

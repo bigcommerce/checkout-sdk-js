@@ -1,7 +1,6 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
-    MissingDataError,
     NotInitializedError,
     StandardError,
     TimeoutError,
@@ -46,7 +45,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         const { payment, ...order } = payload;
 
         if (!payment || !payment.methodId) {
-            throw new MissingDataError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
         }
 
         const paymentName = payment.methodId;

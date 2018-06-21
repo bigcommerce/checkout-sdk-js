@@ -2,7 +2,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { isAddressEqual, mapFromInternalAddress, Address } from '../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, StandardError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
@@ -45,7 +45,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
-                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 const onReady = () => {

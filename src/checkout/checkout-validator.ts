@@ -2,7 +2,7 @@ import { isEqual, map } from 'lodash';
 
 import { CartComparator } from '../cart';
 import { CartChangedError } from '../cart/errors';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { Coupon, GiftCertificate } from '../coupon';
 
@@ -16,7 +16,7 @@ export default class CheckoutValidator {
 
     validate(checkout?: Checkout, options?: RequestOptions): Promise<void> {
         if (!checkout) {
-            throw new MissingDataError();
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
         return this._checkoutRequestSender.loadCheckout(checkout.id, options)

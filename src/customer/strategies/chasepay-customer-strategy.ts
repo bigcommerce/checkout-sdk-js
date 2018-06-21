@@ -2,7 +2,7 @@ import FormPoster from '@bigcommerce/form-poster/lib/form-poster';
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotImplementedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError } from '../../common/error/errors';
 import { toFormUrlEncoded } from '../../common/http-request';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { ChasePayScriptLoader } from '../../payment/strategies/chasepay';
@@ -41,26 +41,35 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
                 const cart = state.cart.getCart();
                 const storeConfig = state.config.getStoreConfig();
 
-                if (!cart || !storeConfig || !this._paymentMethod || !this._paymentMethod.initializationData.digitalSessionId) {
-                    throw new MissingDataError('Unable to prepare payment data because "cart", "config" or "paymentMethod (Chase Pay)" data is missing.');
+                if (!cart) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCart);
                 }
 
-                const {
-                    container,
-                } = chasePayOptions;
+                if (!storeConfig) {
+                    throw new MissingDataError(MissingDataErrorType.MissingConfig);
+                }
+
+                if (!this._paymentMethod || !this._paymentMethod.initializationData.digitalSessionId) {
+                    throw new NotInitializedError();
+                }
+
+                const { container } = chasePayOptions;
 
                 return this._chasePayScriptLoader.load(this._paymentMethod.config.testMode)
                     .then(JPMC => {
                         const ChasePay = JPMC.ChasePay;
+
                         if (ChasePay.isChasePayUp) {
                             ChasePay.insertButtons({
                                 containers: [container],
                             });
                         }
+
                         ChasePay.on(ChasePay.EventType.START_CHECKOUT, () => {
                             this._refreshDigitalSessionId(methodId)
                                 .then(digitalSessionId => ChasePay.startCheckout(digitalSessionId));
                         });
+
                         ChasePay.on(ChasePay.EventType.COMPLETE_CHECKOUT, (payload: ChasePaySuccessPayload) => {
                             this._setExternalCheckoutData(payload)
                                 .then(() => {
@@ -95,9 +104,11 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(state => {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+
                 if (!this._paymentMethod) {
                     return (null);
                 }
+
                 return this._paymentMethod.initializationData.digitalSessionId;
             });
     }

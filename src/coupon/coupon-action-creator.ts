@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { InternalCheckoutSelectors } from '../checkout';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { ApplyCouponAction, CouponAction, CouponActionType, RemoveCouponAction } from './coupon-actions';
@@ -20,7 +20,7 @@ export default class CouponActionCreator {
             const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
-                throw new MissingDataError('Unable to apply coupon because "checkout" data is missing.');
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
             observer.next(createAction(CouponActionType.ApplyCouponRequested));
@@ -42,7 +42,7 @@ export default class CouponActionCreator {
             const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
-                throw new MissingDataError('Unable to remove coupon because "checkout" data is missing.');
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
             observer.next(createAction(CouponActionType.RemoveCouponRequested));

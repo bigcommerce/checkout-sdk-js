@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { PaymentActionCreator, PaymentRequestSender } from '../..';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../../checkout';
-import { MissingDataError, TimeoutError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, TimeoutError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType } from '../../../order';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
 import { PaymentActionType } from '../../payment-actions';
@@ -159,7 +159,7 @@ describe('SquarePaymentStrategy', () => {
                 try {
                     strategy.execute({});
                 } catch (error) {
-                    expect(error).toBeInstanceOf(MissingDataError);
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
                     expect(squareForm.requestCardNonce).toHaveBeenCalledTimes(0);
                 }
             });
