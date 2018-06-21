@@ -8,7 +8,7 @@ import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
 import { mapToInternalOrder } from '../order';
 import { getBraintree } from '../payment/payment-methods.mock';
-import { QuoteSelector } from '../quote';
+import { mapToInternalQuote } from '../quote';
 import { getQuote } from '../quote/internal-quotes.mock';
 import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
@@ -40,7 +40,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns quote', () => {
-        expect(selector.getQuote()).toEqual(new QuoteSelector(internalSelectors).getQuote());
+        expect(selector.getQuote()).toEqual(mapToInternalQuote(selector.getCheckout()));
     });
 
     it('returns config', () => {

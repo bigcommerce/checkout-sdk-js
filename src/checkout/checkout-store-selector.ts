@@ -11,7 +11,7 @@ import { Country, CountrySelector } from '../geography';
 import { mapToInternalOrder, InternalOrder, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../payment';
 import { Instrument, InstrumentSelector } from '../payment/instrument';
-import { InternalQuote, QuoteSelector } from '../quote';
+import { mapToInternalQuote, InternalQuote } from '../quote';
 import {
     mapToInternalShippingOption,
     mapToInternalShippingOptions,
@@ -48,7 +48,6 @@ export default class CheckoutStoreSelector {
     private _order: OrderSelector;
     private _payment: PaymentSelector;
     private _paymentMethods: PaymentMethodSelector;
-    private _quote: QuoteSelector;
     private _shippingAddress: ShippingAddressSelector;
     private _shippingCountries: ShippingCountrySelector;
     private _shippingOptions: ShippingOptionSelector;
@@ -70,7 +69,6 @@ export default class CheckoutStoreSelector {
         this._order = selectors.order;
         this._payment = selectors.payment;
         this._paymentMethods = selectors.paymentMethods;
-        this._quote = new QuoteSelector(selectors);
         this._shippingAddress = selectors.shippingAddress;
         this._shippingCountries = selectors.shippingCountries;
         this._shippingOptions = selectors.shippingOptions;
@@ -92,7 +90,9 @@ export default class CheckoutStoreSelector {
      * @returns The current quote if it is loaded, otherwise undefined.
      */
     getQuote(): InternalQuote | undefined {
-        return this._quote.getQuote();
+        const checkout = this._checkout.getCheckout();
+
+        return checkout && mapToInternalQuote(checkout);
     }
 
     /**
