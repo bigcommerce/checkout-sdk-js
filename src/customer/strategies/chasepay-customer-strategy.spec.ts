@@ -33,7 +33,7 @@ describe('ChasePayCustomerStrategy', () => {
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
-        paymentMethodMock = { ...getChasePay(), initializationData: {digitalSessionId: 'digitalSessionId'} };
+        paymentMethodMock = { ...getChasePay(), initializationData: {digitalSessionId: 'digitalSessionId', merchantRequestId: '1234567890'} };
 
         store = createCheckoutStore({
             customer: getCustomerState(),
