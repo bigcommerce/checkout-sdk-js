@@ -71,7 +71,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns customer', () => {
-        expect(selector.getCustomer()).toEqual(getCustomer()) ;
+        expect(selector.getCustomer()).toEqual(internalSelectors.customer.getCustomer());
     });
 
     it('returns billing address', () => {

@@ -5,7 +5,7 @@ import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
 import { Coupon, CouponSelector, GiftCertificate, GiftCertificateSelector } from '../coupon';
-import { mapToInternalCustomer, CustomerSelector, InternalCustomer } from '../customer';
+import { Customer, CustomerSelector } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
 import { Order, OrderSelector } from '../order';
@@ -259,17 +259,8 @@ export default class CheckoutStoreSelector {
      * @returns The current customer object if it is loaded, otherwise
      * undefined.
      */
-    getCustomer(): InternalCustomer | undefined {
-        const customer = this._customer.getCustomer();
-        const checkout = this._checkout.getCheckout();
-        const cart = checkout && checkout.cart;
-        const billingAddress = checkout && checkout.billingAddress;
-
-        if (!customer || !billingAddress || !cart) {
-            return;
-        }
-
-        return mapToInternalCustomer(customer, cart, billingAddress);
+    getCustomer(): Customer | undefined {
+        return this._customer.getCustomer();
     }
 
     /**
