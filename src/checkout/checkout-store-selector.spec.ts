@@ -6,7 +6,6 @@ import { mapToInternalCart } from '../cart';
 import { getCustomer } from '../customer/internal-customers.mock';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
-import { mapToInternalOrder } from '../order';
 import { getBraintree } from '../payment/payment-methods.mock';
 import { QuoteSelector } from '../quote';
 import { getQuote } from '../quote/internal-quotes.mock';
@@ -36,7 +35,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns order', () => {
-        expect(selector.getOrder()).toEqual(mapToInternalOrder(internalSelectors.order.getOrder()));
+        expect(selector.getOrder()).toEqual(internalSelectors.order.getOrder());
     });
 
     it('returns quote', () => {
@@ -68,7 +67,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns cart', () => {
-        expect(selector.getCart()).toEqual(mapToInternalCart(internalSelectors.checkout.getCheckout()));
+        expect(selector.getCart()).toEqual(internalSelectors.cart.getCart());
     });
 
     it('returns customer', () => {
