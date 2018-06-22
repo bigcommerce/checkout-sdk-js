@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 import { isAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../address';
 import { BillingAddressActionCreator } from '../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, RequestError, StandardError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError, StandardError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
@@ -84,7 +84,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
         const referenceId = this._getOrderReferenceId();
 
         if (!referenceId) {
-            throw new NotInitializedError('Unable to submit payment without order reference ID');
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         if (!payload.payment) {
@@ -129,8 +129,16 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             const referenceId = this._getOrderReferenceId();
             const merchantId = this._getMerchantId();
 
-            if (!merchantId || !document.getElementById(container) || !this._window.OffAmazonPayments) {
-                return reject(new NotInitializedError('Unable to create AmazonPay Wallet widget without valid merchant ID or container ID.'));
+            if (!document.getElementById(container)) {
+                return reject(new InvalidArgumentError('Unable to create AmazonPay Wallet widget without valid container ID.'));
+            }
+
+            if (!this._window.OffAmazonPayments) {
+                return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+            }
+
+            if (!merchantId) {
+                return reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
             }
 
             const walletOptions: AmazonPayWalletOptions = {
@@ -157,7 +165,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             } else {
                 walletOptions.onOrderReferenceCreate = orderReference => {
                     if (!this._paymentMethod) {
-                        throw new NotInitializedError('Unable to create Amazon wallet because payment method has not been initialized.');
+                        throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                     }
 
                     this._store.dispatch(

@@ -2,7 +2,7 @@ import FormPoster from '@bigcommerce/form-poster/lib/form-poster';
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
 import { toFormUrlEncoded } from '../../common/http-request';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { ChasePayScriptLoader } from '../../payment/strategies/chasepay';
@@ -50,7 +50,7 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
                 }
 
                 if (!this._paymentMethod || !this._paymentMethod.initializationData.digitalSessionId) {
-                    throw new NotInitializedError();
+                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                 }
 
                 const { container } = chasePayOptions;

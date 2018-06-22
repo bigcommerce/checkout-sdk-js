@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { NotInitializedError } from '../../../common/error/errors';
+import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
 import WepayRisk from './wepay-risk';
 import WepayWindow from './wepay-window';
@@ -23,7 +23,7 @@ export default class WepayRiskClient {
 
     getRiskToken(): string {
         if (!this._riskClient) {
-            throw new NotInitializedError();
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         this._riskClient.generate_risk_token();

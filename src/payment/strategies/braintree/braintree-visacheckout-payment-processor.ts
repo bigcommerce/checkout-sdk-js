@@ -1,7 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import { Address } from '../../../address';
-import { NotInitializedError } from '../../../common/error/errors';
 import { toFormUrlEncoded } from '../../../common/http-request';
 
 import { BraintreeDataCollector } from './braintree';
@@ -20,10 +19,6 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
     ) {}
 
     initialize(clientToken: string, options: VisaCheckoutInitializeOptions): Promise<VisaCheckoutInitOptions> {
-        if (!clientToken) {
-            throw new NotInitializedError();
-        }
-
         this._braintreeSDKCreator.initialize(clientToken);
 
         return this._braintreeSDKCreator.getVisaCheckout()

@@ -1,5 +1,5 @@
 import { Address } from '../../../address';
-import { NotInitializedError } from '../../../common/error/errors';
+import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { CancellablePromise } from '../../../common/utility';
 import { OrderPaymentRequestBody } from '../../../order';
 import { PaymentMethodCancelledError } from '../../errors';
@@ -51,7 +51,7 @@ export default class BraintreePaymentProcessor {
 
     verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<NonceInstrument> {
         if (!this._threeDSecureOptions) {
-            throw new NotInitializedError('Unable to verify card because the choosen payment method has not been initialized.');
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         const { addFrame, removeFrame } = this._threeDSecureOptions;

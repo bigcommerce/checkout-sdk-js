@@ -1,5 +1,5 @@
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError } from '../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { AfterpayScriptLoader, AfterpaySdk } from '../../remote-checkout/methods/afterpay';
@@ -100,7 +100,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
                 }
 
                 if (!afterpay || !afterpay.settings) {
-                    throw new NotInitializedError();
+                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                 }
 
                 const orderPayload = {
@@ -120,7 +120,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
     private _displayModal(countryName: string, paymentMethod?: PaymentMethod): void {
         if (!this._afterpaySdk || !paymentMethod || !paymentMethod.clientToken) {
-            throw new NotInitializedError('Unable to display payment modal because payment method has not been initialized.');
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         this._afterpaySdk.initialize({ countryCode: this._mapCountryToISO2(countryName)});

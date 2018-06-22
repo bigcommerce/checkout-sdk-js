@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, StandardError } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError } from '../../errors';
 import Payment from '../../payment';
@@ -94,7 +94,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         }
 
         if (!this._paymentMethod) {
-            throw new NotInitializedError();
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         const { currency, storeProfile: { storeLanguage } } = config;
