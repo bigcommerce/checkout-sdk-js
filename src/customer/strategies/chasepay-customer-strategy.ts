@@ -6,7 +6,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { toFormUrlEncoded } from '../../common/http-request';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { ChasePayScriptLoader } from '../../payment/strategies/chasepay';
-import {ChasePaySuccessPayload} from '../../payment/strategies/chasepay/chasepay';
+import { ChasePaySuccessPayload } from '../../payment/strategies/chasepay/chasepay';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import CustomerCredentials from '../customer-credentials';
 import {CustomerInitializeOptions, CustomerRequestOptions} from '../customer-request-options';
@@ -66,15 +66,29 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
                         }
 
                         ChasePay.on(ChasePay.EventType.START_CHECKOUT, () => {
-                            this._refreshDigitalSessionId(methodId)
-                                .then(digitalSessionId => ChasePay.startCheckout(digitalSessionId));
+                            this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+                                .then(() => {
+                                    const state = this._store.getState();
+                                    const method = state.paymentMethods.getPaymentMethod(methodId);
+                                    const sessionId = method && method.initializationData && method.initializationData.digitalSessionId;
+
+                                    if (sessionId) {
+                                        ChasePay.startCheckout(sessionId);
+                                    }
+                                });
                         });
 
                         ChasePay.on(ChasePay.EventType.COMPLETE_CHECKOUT, (payload: ChasePaySuccessPayload) => {
-                            this._setExternalCheckoutData(payload)
-                                .then(() => {
-                                    this._reloadPage();
+                            const state = this._store.getState();
+                            const method = state.paymentMethods.getPaymentMethod(methodId);
+                            const requestId = method && method.initializationData && method.initializationData.merchantRequestId;
+
+                            if (requestId) {
+                                this._setExternalCheckoutData(payload, requestId)
+                                    .then(() => {
+                                        this._reloadPage();
                                 });
+                            }
                         });
                     });
             })
@@ -100,20 +114,7 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
         );
     }
 
-    private _refreshDigitalSessionId(methodId: string): Promise<string | undefined> {
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => {
-                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-
-                if (!this._paymentMethod) {
-                    return (null);
-                }
-
-                return this._paymentMethod.initializationData.digitalSessionId;
-            });
-    }
-
-    private _setExternalCheckoutData(payload: ChasePaySuccessPayload): Promise<Response> {
+    private _setExternalCheckoutData(payload: ChasePaySuccessPayload, requestId: string): Promise<Response> {
         const url = `checkout.php?provider=chasepay&action=set_external_checkout`;
         const options = {
             headers: {
@@ -122,6 +123,7 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
             },
             body: toFormUrlEncoded({
                 sessionToken: payload.sessionToken,
+                merchantRequestId: requestId,
             }),
             method: 'post',
         };
