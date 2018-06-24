@@ -55,7 +55,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
         const config = this._store.getState().config.getStoreConfig();
 
         if (!config) {
-            throw new MissingDataError(MissingDataErrorType.MissingConfig);
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
         const { clientSidePaymentProviders } = config.paymentSettings;

@@ -46,7 +46,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy extends CustomerStrat
                 }
 
                 if (!storeConfig) {
-                    throw new MissingDataError(MissingDataErrorType.MissingConfig);
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
                 if (!this._paymentMethod || !this._paymentMethod.clientToken) {

@@ -1,7 +1,7 @@
 import { setPrototypeOf } from '../../utility';
 
 export default class StandardError extends Error {
-    protected type = 'standard';
+    type = 'standard';
 
     constructor(message?: string) {
         super(message || 'An unexpected error has occurred.');

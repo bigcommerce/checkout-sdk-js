@@ -96,7 +96,7 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
                 }
 
                 if (!config || !config.payment.token) {
-                    throw new MissingDataError(MissingDataErrorType.MissingConfig);
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
                 if (!afterpay || !afterpay.settings) {

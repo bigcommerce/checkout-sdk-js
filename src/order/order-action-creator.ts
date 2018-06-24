@@ -41,7 +41,7 @@ export default class OrderActionCreator {
             const orderId = (order && order.orderId) || (checkout && checkout.orderId);
 
             if (!orderId) {
-                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                throw new MissingDataError(MissingDataErrorType.MissingOrderId);
             }
 
             return this.loadOrder(orderId, options);

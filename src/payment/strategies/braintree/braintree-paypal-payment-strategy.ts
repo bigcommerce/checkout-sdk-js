@@ -90,7 +90,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         }
 
         if (!config) {
-            throw new MissingDataError(MissingDataErrorType.MissingConfig);
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
         if (!this._paymentMethod) {

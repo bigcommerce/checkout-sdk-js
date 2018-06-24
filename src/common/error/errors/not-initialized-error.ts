@@ -1,5 +1,3 @@
-import { getEnvironment, toSingleLine } from '../../utility';
-
 import StandardError from './standard-error';
 
 export enum NotInitializedErrorType {
@@ -10,13 +8,9 @@ export enum NotInitializedErrorType {
 
 export default class NotInitializedError extends StandardError {
     constructor(
-        type: NotInitializedErrorType,
-        isDevelopment = getEnvironment() === 'development'
+        public subtype: NotInitializedErrorType
     ) {
-        const debugMessage = isDevelopment && getDebugMessage(type);
-        const message = debugMessage ? `${getErrorMessage(type)}\n\n${debugMessage}` : getErrorMessage(type);
-
-        super(message);
+        super(getErrorMessage(subtype));
 
         this.type = 'not_initialized';
     }
@@ -35,30 +29,5 @@ function getErrorMessage(type: NotInitializedErrorType): string {
 
     default:
         return 'Unable to proceed because the required component has not been initialized.';
-    }
-}
-
-function getDebugMessage(type: NotInitializedErrorType): string | undefined {
-    switch (type) {
-    case NotInitializedErrorType.CustomerNotInitialized:
-        return toSingleLine(`
-            In order to initialize the customer step of checkout, you need to call
-            \`CheckoutService#initializeCustomer\`. Afterwards, you should be able to
-            submit customer details.
-        `);
-
-    case NotInitializedErrorType.PaymentNotInitialized:
-        return toSingleLine(`
-            In order to initialize the payment step of checkout, you need to call
-            \`CheckoutService#initializePayment\`. Afterwards, you should be able to
-            submit payment details.
-        `);
-
-    case NotInitializedErrorType.ShippingNotInitialized:
-        return toSingleLine(`
-            In order to initialize the shipping step of checkout, you need to call
-            \`CheckoutService#initializeShipping\`. Afterwards, you should be able to
-            submit shipping details.
-        `);
     }
 }

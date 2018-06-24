@@ -114,7 +114,7 @@ export default class InstrumentActionCreator {
         const cart = state.cart.getCart();
 
         if (!config) {
-            throw new MissingDataError(MissingDataErrorType.MissingConfig);
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
         if (!cart) {
