@@ -23,7 +23,7 @@ import { InstrumentActionCreator } from '../payment/instrument';
 import { deleteInstrumentResponseBody, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptionResponseBody, getShippingOptions } from '../shipping/internal-shipping-options.mock';
+import { getShippingOptions } from '../shipping/shipping-options.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
@@ -89,7 +89,7 @@ describe('CheckoutService', () => {
             ),
 
             loadShippingOptions: jest.fn(() =>
-                Promise.resolve(getResponse(getShippingOptionResponseBody())),
+                Promise.resolve(getResponse(getCheckout())),
             ),
 
             updateBillingAddress: jest.fn(() =>
@@ -108,7 +108,7 @@ describe('CheckoutService', () => {
             ),
 
             selectShippingOption: jest.fn(() =>
-                Promise.resolve(getResponse(getShippingOptionResponseBody())),
+                Promise.resolve(getResponse(getCheckout())),
             ),
 
             getVaultAccessToken: jest.fn(() =>
