@@ -1,4 +1,4 @@
-import { mapToInternalAddress, InternalAddress } from '../address';
+import { Address } from '../address';
 import { BillingAddressSelector } from '../billing';
 import { Cart, CartSelector } from '../cart';
 import { selector } from '../common/selector';
@@ -13,12 +13,9 @@ import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../paymen
 import { Instrument, InstrumentSelector } from '../payment/instrument';
 import { InternalQuote, QuoteSelector } from '../quote';
 import {
-    mapToInternalShippingOption,
-    mapToInternalShippingOptions,
-    InternalShippingOption,
-    InternalShippingOptionList,
     ShippingAddressSelector,
     ShippingCountrySelector,
+    ShippingOption,
     ShippingOptionSelector,
 } from '../shipping';
 import ConsignmentSelector from '../shipping/consignment-selector';
@@ -124,10 +121,8 @@ export default class CheckoutStoreSelector {
      * @returns The shipping address object if it is loaded, otherwise
      * undefined.
      */
-    getShippingAddress(): InternalAddress | undefined {
-        const shippingAddress = this._shippingAddress.getShippingAddress();
-
-        return shippingAddress && mapToInternalAddress(shippingAddress);
+    getShippingAddress(): Address | undefined {
+        return this._shippingAddress.getShippingAddress();
     }
 
     /**
@@ -139,11 +134,14 @@ export default class CheckoutStoreSelector {
      * @returns The list of shipping options per address if loaded, otherwise
      * undefined.
      */
-    getShippingOptions(): InternalShippingOptionList | undefined {
-        // @todo: once we remove the mappers, this should use the shippingOption selector
+    getShippingOptions(): ShippingOption[] | undefined {
         const consignments = this._consignments.getConsignments();
 
-        return consignments && mapToInternalShippingOptions(consignments);
+        if (consignments && consignments.length) {
+            return consignments[0].availableShippingOptions;
+        }
+
+        return;
     }
 
     /**
@@ -152,10 +150,8 @@ export default class CheckoutStoreSelector {
      * @returns The shipping option object if there is a selected option,
      * otherwise undefined.
      */
-    getSelectedShippingOption(): InternalShippingOption | undefined {
-        const shippingOption = this._shippingOptions.getSelectedShippingOption();
-
-        return shippingOption  && mapToInternalShippingOption(shippingOption, true);
+    getSelectedShippingOption(): ShippingOption | undefined {
+        return this._shippingOptions.getSelectedShippingOption();
     }
 
     /**
@@ -172,10 +168,8 @@ export default class CheckoutStoreSelector {
      *
      * @returns The billing address object if it is loaded, otherwise undefined.
      */
-    getBillingAddress(): InternalAddress | undefined {
-        const billingAddress = this._billingAddress.getBillingAddress();
-
-        return billingAddress && mapToInternalAddress(billingAddress);
+    getBillingAddress(): Address | undefined {
+        return this._billingAddress.getBillingAddress();
     }
 
     /**
