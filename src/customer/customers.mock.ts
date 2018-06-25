@@ -4,6 +4,7 @@ import Customer from './customer';
 
 export function getGuestCustomer(): Customer {
     return {
+        id: 0,
         addresses: [],
         email: '',
         firstName: '',
@@ -16,6 +17,7 @@ export function getGuestCustomer(): Customer {
 
 export function getCustomer(): Customer {
     return {
+        id: 4,
         email: 'test@bigcommerce.com',
         firstName: 'Foo',
         fullName: 'Foo Bar',
