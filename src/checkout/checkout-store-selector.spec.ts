@@ -1,16 +1,13 @@
 import { find, reject } from 'lodash';
 
-import { mapToInternalAddress } from '../address';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
-import { mapToInternalCart } from '../cart';
 import { getCustomer } from '../customer/internal-customers.mock';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
 import { getBraintree } from '../payment/payment-methods.mock';
 import { mapToInternalQuote } from '../quote';
 import { getQuote } from '../quote/internal-quotes.mock';
-import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
+import { getShippingOptions } from '../shipping/shipping-options.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
 
 import CheckoutStoreSelector from './checkout-store-selector';
@@ -75,11 +72,11 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns billing address', () => {
-        expect(selector.getBillingAddress()).toEqual(mapToInternalAddress(internalSelectors.billingAddress.getBillingAddress()));
+        expect(selector.getBillingAddress()).toEqual(internalSelectors.billingAddress.getBillingAddress());
     });
 
     it('returns shipping address', () => {
-        expect(selector.getShippingAddress()).toEqual(mapToInternalAddress(internalSelectors.shippingAddress.getShippingAddress()));
+        expect(selector.getShippingAddress()).toEqual(internalSelectors.shippingAddress.getShippingAddress());
     });
 
     it('returns instruments', () => {
