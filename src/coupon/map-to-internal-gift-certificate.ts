@@ -5,7 +5,7 @@ export default function mapToInternalGiftCertificate(giftCertificate: GiftCertif
     return {
         code: giftCertificate.code,
         discountedAmount: giftCertificate.used,
-        remainingBalance: giftCertificate.balance - giftCertificate.used,
+        remainingBalance: giftCertificate.remaining,
         giftCertificate: {
             balance: giftCertificate.balance,
             code: giftCertificate.code,
