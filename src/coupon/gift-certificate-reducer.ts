@@ -1,7 +1,9 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
 
+import { CouponAction, CouponActionType } from './coupon-actions';
 import GiftCertificate from './gift-certificate';
 import { GiftCertificateAction, GiftCertificateActionType } from './gift-certificate-actions';
 import GiftCertificateState, { GiftCertificateErrorsState, GiftCertificateStatusesState } from './gift-certificate-state';
@@ -26,10 +28,14 @@ export default function giftCertificateReducer(
 
 function dataReducer(
     data: GiftCertificate[] | undefined,
-    action: CheckoutAction | GiftCertificateAction
+    action: CheckoutAction | GiftCertificateAction | ConsignmentAction | CouponAction
 ): GiftCertificate[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case ConsignmentActionType.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.CreateConsignmentsSucceeded:
+    case CouponActionType.ApplyCouponSucceeded:
+    case CouponActionType.RemoveCouponSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
         return action.payload ? action.payload.giftCertificates : data;
