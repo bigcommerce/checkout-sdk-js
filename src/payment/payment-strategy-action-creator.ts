@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { LoadOrderAction, OrderActionCreator, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
@@ -43,7 +43,7 @@ export default class PaymentStrategyActionCreator {
                     const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
 
                     if (!method) {
-                        throw new MissingDataError(`Unable to submit payment because "paymentMethod (${payment.methodId})" data is missing.`);
+                        throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                     }
 
                     strategy = this._strategyRegistry.getByMethod(method);
@@ -79,7 +79,7 @@ export default class PaymentStrategyActionCreator {
                 const payment = state.payment.getPaymentId();
 
                 if (!order) {
-                    throw new MissingDataError('Unable to finalize order because "order" data is missing.');
+                    throw new MissingDataError(MissingDataErrorType.MissingOrder);
                 }
 
                 if (!payment) {
@@ -90,7 +90,7 @@ export default class PaymentStrategyActionCreator {
                 const meta = { methodId: payment.providerId };
 
                 if (!method) {
-                    throw new MissingDataError(`Unable to finalize payment because "paymentMethod (${payment.providerId})" data is missing.`);
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 observer.next(createAction(PaymentStrategyActionType.FinalizeRequested, undefined, meta));
@@ -120,7 +120,7 @@ export default class PaymentStrategyActionCreator {
             const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
 
             if (!method) {
-                throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
             observer.next(createAction(PaymentStrategyActionType.InitializeRequested, undefined, { methodId }));
@@ -144,7 +144,7 @@ export default class PaymentStrategyActionCreator {
             const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
 
             if (!method) {
-                throw new MissingDataError(`Unable to deinitialize because "paymentMethod (${methodId})" data is missing.`);
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
             observer.next(createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, { methodId }));

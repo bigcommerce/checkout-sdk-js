@@ -5,7 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { Address } from '../../address';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../../checkout';
 import { addMinutes, isFuture } from '../../common/date-time';
-import { MissingDataError } from '../../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../../common/error/errors';
 
 import { SessionContext, VaultAccessToken } from './instrument';
 import * as actionTypes from './instrument-action-types';
@@ -113,8 +113,12 @@ export default class InstrumentActionCreator {
         const config = state.config.getStoreConfig();
         const cart = state.cart.getCart();
 
-        if (!config || !cart) {
-            throw new MissingDataError('Unable to proceed because "config" or "cart" data is missing.');
+        if (!config) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        if (!cart) {
+            throw new MissingDataError(MissingDataErrorType.MissingCart);
         }
 
         const { customerId } = cart;

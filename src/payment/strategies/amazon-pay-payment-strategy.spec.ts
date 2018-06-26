@@ -10,7 +10,7 @@ import { getBillingAddress } from '../../billing/billing-addresses.mock';
 import { getBillingAddressState } from '../../billing/billing-addresses.mock';
 import { getCartResponseBody } from '../../cart/internal-carts.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { NotInitializedError, RequestError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, RequestError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { getCustomerState } from '../../customer/customers.mock';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
@@ -223,7 +223,7 @@ describe('AmazonPayPaymentStrategy', () => {
         try {
             await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
         } catch (error) {
-            expect(error).toBeInstanceOf(NotInitializedError);
+            expect(error).toBeInstanceOf(MissingDataError);
         }
     });
 
@@ -231,7 +231,7 @@ describe('AmazonPayPaymentStrategy', () => {
         try {
             await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'missingWallet' } });
         } catch (error) {
-            expect(error).toBeInstanceOf(NotInitializedError);
+            expect(error).toBeInstanceOf(InvalidArgumentError);
         }
     });
 

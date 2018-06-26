@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { CheckoutClient, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import InternalOrderRequestBody from './internal-order-request-body';
@@ -41,7 +41,7 @@ export default class OrderActionCreator {
             const orderId = (order && order.orderId) || (checkout && checkout.orderId);
 
             if (!orderId) {
-                throw new MissingDataError('Unable to reload order data because "orderId" is missing');
+                throw new MissingDataError(MissingDataErrorType.MissingOrderId);
             }
 
             return this.loadOrder(orderId, options);

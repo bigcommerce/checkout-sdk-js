@@ -1,6 +1,6 @@
 import { CustomerStrategyActionCreator } from '..';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotImplementedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { BraintreeVisaCheckoutPaymentProcessor } from '../../payment/strategies/braintree';
 import { VisaCheckoutPaymentSuccessPayload } from '../../payment/strategies/braintree/visacheckout';
@@ -41,8 +41,16 @@ export default class BraintreeVisaCheckoutCustomerStrategy extends CustomerStrat
                 const checkout = state.checkout.getCheckout();
                 const storeConfig = state.config.getStoreConfig();
 
-                if (!checkout || !storeConfig || !this._paymentMethod || !this._paymentMethod.clientToken) {
-                    throw new MissingDataError('Unable to prepare payment data because "checkout", "config" or "paymentMethod (Visa Checkout)" data is missing.');
+                if (!checkout) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                }
+
+                if (!storeConfig) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
+
+                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 const {

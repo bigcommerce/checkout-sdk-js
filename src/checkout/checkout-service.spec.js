@@ -598,7 +598,7 @@ describe('CheckoutService', () => {
             await checkoutService.continueAsGuest({ email: 'foo@bar.com' });
 
             expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith({ email: 'foo@bar.com' }, undefined);
-            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -782,7 +782,7 @@ describe('CheckoutService', () => {
             await checkoutService.loadInstruments();
 
             expect(instrumentActionCreator.loadInstruments).toHaveBeenCalled();
-            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 
@@ -799,7 +799,7 @@ describe('CheckoutService', () => {
             await checkoutService.deleteInstrument(instrumentId);
 
             expect(instrumentActionCreator.deleteInstrument).toHaveBeenCalledWith(instrumentId);
-            expect(store.dispatch).toHaveBeenCalledWith(action);
+            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
 });

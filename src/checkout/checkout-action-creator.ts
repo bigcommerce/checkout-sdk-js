@@ -3,7 +3,7 @@ import { defer } from 'rxjs/observable/defer';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
@@ -36,7 +36,7 @@ export default class CheckoutActionCreator {
             const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
-                throw new MissingDataError('Unable to reload the current checkout because "checkout.id" is missing.');
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
             return this.loadCheckout(checkout.id, options);

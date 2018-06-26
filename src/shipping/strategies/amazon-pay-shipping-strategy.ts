@@ -2,7 +2,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { isAddressEqual, mapFromInternalAddress, Address } from '../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotInitializedError, StandardError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
@@ -45,7 +45,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
-                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 const onReady = () => {
@@ -85,8 +85,16 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             const { container, onAddressSelect = () => {}, onError = () => {}, onReady = () => {} } = options;
             const merchantId = this._paymentMethod && this._paymentMethod.config.merchantId;
 
-            if (!merchantId || !document.getElementById(container) || !this._window.OffAmazonPayments) {
-                return reject(new NotInitializedError('Unable to create AmazonPay AddressBook widget without valid merchant ID or container ID.'));
+            if (!document.getElementById(container)) {
+                return reject(new InvalidArgumentError('Unable to create AmazonPay AddressBook widget without valid container ID.'));
+            }
+
+            if (!this._window.OffAmazonPayments) {
+                return reject(new NotInitializedError(NotInitializedErrorType.ShippingNotInitialized));
+            }
+
+            if (!merchantId) {
+                return reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
             }
 
             const widget = new this._window.OffAmazonPayments.Widgets.AddressBook({
@@ -125,7 +133,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         const referenceId = amazon ? amazon.referenceId : undefined;
 
         if (!methodId || !referenceId) {
-            throw new NotInitializedError();
+            throw new NotInitializedError(NotInitializedErrorType.ShippingNotInitialized);
         }
 
         return this._store.dispatch(
@@ -161,7 +169,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
 
     private _handleOrderReferenceCreate(orderReference: AmazonPayOrderReference): void {
         if (!this._paymentMethod) {
-            throw new NotInitializedError();
+            throw new NotInitializedError(NotInitializedErrorType.ShippingNotInitialized);
         }
 
         this._store.dispatch(

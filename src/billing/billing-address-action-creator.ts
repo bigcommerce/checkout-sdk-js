@@ -5,7 +5,7 @@ import { Observer } from 'rxjs/Observer';
 
 import { AddressRequestBody } from '../address';
 import { Checkout, CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { BillingAddressActionType, UpdateBillingAddressAction } from './billing-address-actions';
@@ -34,8 +34,8 @@ export default class BillingAddressActionCreator {
         const state = store.getState();
         const checkout = state.checkout.getCheckout();
 
-        if (!checkout || !checkout.id) {
-            throw new MissingDataError('Unable to update shipping address: "checkout.id" is missing.');
+        if (!checkout) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
         const billingAddress = state.billingAddress.getBillingAddress();

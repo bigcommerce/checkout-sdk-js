@@ -1,5 +1,9 @@
+import { Action, ThunkAction } from '@bigcommerce/data-store';
+import { Observable } from 'rxjs/Observable';
+
 import { Address } from '../address';
 import { BillingAddressActionCreator } from '../billing';
+import { ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
@@ -20,6 +24,7 @@ import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
 import createCheckoutSelectors from './create-checkout-selectors';
+import createCheckoutServiceErrorTransformer from './create-checkout-service-error-transformer';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
@@ -31,6 +36,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
  */
 export default class CheckoutService {
     private _state: CheckoutSelectors;
+    private _errorTransformer: ErrorMessageTransformer;
 
     /**
      * @internal
@@ -53,6 +59,7 @@ export default class CheckoutService {
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator
     ) {
         this._state = createCheckoutSelectors(this._store.getState());
+        this._errorTransformer = createCheckoutServiceErrorTransformer();
 
         this._store.subscribe(state => {
             this._state = createCheckoutSelectors(state);
@@ -151,8 +158,7 @@ export default class CheckoutService {
     loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._checkoutActionCreator.loadCheckout(id, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -174,8 +180,7 @@ export default class CheckoutService {
     loadConfig(options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._configActionCreator.loadConfig(options);
 
-        return this._store.dispatch(action, { queueId: 'config' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'config' });
     }
 
     /**
@@ -198,8 +203,7 @@ export default class CheckoutService {
     loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._orderActionCreator.loadOrder(orderId, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -246,8 +250,7 @@ export default class CheckoutService {
     submitOrder(payload: OrderRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.execute(payload, options);
 
-        return this._store.dispatch(action, { queueId: 'paymentStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'paymentStrategy' });
     }
 
     /**
@@ -283,8 +286,7 @@ export default class CheckoutService {
     finalizeOrderIfNeeded(options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.finalize(options);
 
-        return this._store.dispatch(action, { queueId: 'paymentStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'paymentStrategy' });
     }
 
     /**
@@ -313,8 +315,7 @@ export default class CheckoutService {
     loadPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentMethodActionCreator.loadPaymentMethods(options);
 
-        return this._store.dispatch(action, { queueId: 'paymentMethods' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'paymentMethods' });
     }
 
     /**
@@ -331,8 +332,7 @@ export default class CheckoutService {
     loadPaymentMethod(methodId: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentMethodActionCreator.loadPaymentMethod(methodId, options);
 
-        return this._store.dispatch(action, { queueId: 'paymentMethods' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'paymentMethods' });
     }
 
     /**
@@ -358,8 +358,7 @@ export default class CheckoutService {
     initializePayment(options: PaymentInitializeOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.initialize(options);
 
-        return this._store.dispatch(action, { queueId: 'paymentStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'paymentStrategy' });
     }
 
     /**
@@ -382,8 +381,7 @@ export default class CheckoutService {
     deinitializePayment(options: PaymentRequestOptions): Promise<CheckoutSelectors> {
         const action = this._paymentStrategyActionCreator.deinitialize(options);
 
-        return this._store.dispatch(action, { queueId: 'paymentStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'paymentStrategy' });
     }
 
     /**
@@ -404,8 +402,7 @@ export default class CheckoutService {
     loadBillingCountries(options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._countryActionCreator.loadCountries(options);
 
-        return this._store.dispatch(action, { queueId: 'billingCountries' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'billingCountries' });
     }
 
     /**
@@ -428,8 +425,7 @@ export default class CheckoutService {
     loadShippingCountries(options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingCountryActionCreator.loadCountries(options);
 
-        return this._store.dispatch(action, { queueId: 'shippingCountries' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'shippingCountries' });
     }
 
     /**
@@ -495,8 +491,7 @@ export default class CheckoutService {
     initializeCustomer(options?: CustomerInitializeOptions): Promise<CheckoutSelectors> {
         const action = this._customerStrategyActionCreator.initialize(options);
 
-        return this._store.dispatch(action, { queueId: 'customerStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'customerStrategy' });
     }
 
     /**
@@ -519,8 +514,7 @@ export default class CheckoutService {
     deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
         const action = this._customerStrategyActionCreator.deinitialize(options);
 
-        return this._store.dispatch(action, { queueId: 'customerStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'customerStrategy' });
     }
 
     /**
@@ -532,8 +526,7 @@ export default class CheckoutService {
     signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(credentials, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -550,8 +543,7 @@ export default class CheckoutService {
     continueAsGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(credentials, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -578,8 +570,7 @@ export default class CheckoutService {
     signInCustomer(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
         const action = this._customerStrategyActionCreator.signIn(credentials, options);
 
-        return this._store.dispatch(action, { queueId: 'customerStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'customerStrategy' });
     }
 
     /**
@@ -601,8 +592,7 @@ export default class CheckoutService {
     signOutCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors> {
         const action = this._customerStrategyActionCreator.signOut(options);
 
-        return this._store.dispatch(action, { queueId: 'customerStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'customerStrategy' });
     }
 
     /**
@@ -625,8 +615,7 @@ export default class CheckoutService {
     loadShippingOptions(options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.loadShippingOptions(options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -651,8 +640,7 @@ export default class CheckoutService {
     initializeShipping(options?: ShippingInitializeOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.initialize(options);
 
-        return this._store.dispatch(action, { queueId: 'shippingStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
     }
 
     /**
@@ -675,8 +663,7 @@ export default class CheckoutService {
     deinitializeShipping(options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.deinitialize(options);
 
-        return this._store.dispatch(action, { queueId: 'shippingStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
     }
 
     /**
@@ -699,8 +686,7 @@ export default class CheckoutService {
     selectShippingOption(shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.selectOption(shippingOptionId, options);
 
-        return this._store.dispatch(action, { queueId: 'shippingStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
     }
 
     /**
@@ -731,8 +717,7 @@ export default class CheckoutService {
     updateShippingAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
-        return this._store.dispatch(action, { queueId: 'shippingStrategy' })
-            .then(() => this.getState());
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
     }
 
     /**
@@ -757,8 +742,7 @@ export default class CheckoutService {
     updateBillingAddress(address: Address, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -779,8 +763,7 @@ export default class CheckoutService {
     applyCoupon(code: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._couponActionCreator.applyCoupon(code, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -800,8 +783,7 @@ export default class CheckoutService {
     removeCoupon(code: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._couponActionCreator.removeCoupon(code, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -821,8 +803,7 @@ export default class CheckoutService {
     applyGiftCertificate(code: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._giftCertificateActionCreator.applyGiftCertificate(code, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -842,8 +823,7 @@ export default class CheckoutService {
     removeGiftCertificate(code: string, options?: RequestOptions): Promise<CheckoutSelectors> {
         const action = this._giftCertificateActionCreator.removeGiftCertificate(code, options);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -865,8 +845,7 @@ export default class CheckoutService {
     loadInstruments(): Promise<CheckoutSelectors> {
         const action = this._instrumentActionCreator.loadInstruments();
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
     }
 
     /**
@@ -887,7 +866,21 @@ export default class CheckoutService {
     deleteInstrument(instrumentId: string): Promise<CheckoutSelectors> {
         const action = this._instrumentActionCreator.deleteInstrument(instrumentId);
 
-        return this._store.dispatch(action)
-            .then(() => this.getState());
+        return this._dispatch(action);
+    }
+
+    /**
+     * Dispatches an action through the data store and returns the current state
+     * once the action is dispatched.
+     *
+     * @param action - The action to dispatch.
+     * @returns A promise that resolves to the current state.
+     */
+    private _dispatch(action: Observable<Action> | ThunkAction<Action>, options?: { queueId?: string }): Promise<CheckoutSelectors> {
+        return this._store.dispatch(action, options)
+            .then(() => this.getState())
+            .catch(error => {
+                throw this._errorTransformer.transform(error);
+            });
     }
 }

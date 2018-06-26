@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { InternalCheckoutSelectors } from '../checkout';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { GiftCertificateRequestSender } from '.';
@@ -20,7 +20,7 @@ export default class GiftCertificateActionCreator {
             const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
-                throw new MissingDataError('Unable to apply gift certificate because "checkout" data is missing.');
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
             observer.next(createAction(GiftCertificateActionType.ApplyGiftCertificateRequested));
@@ -42,7 +42,7 @@ export default class GiftCertificateActionCreator {
             const checkout = state.checkout.getCheckout();
 
             if (!checkout) {
-                throw new MissingDataError('Unable to remove gift certificate because "checkout" data is missing.');
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
             observer.next(createAction(GiftCertificateActionType.RemoveGiftCertificateRequested));

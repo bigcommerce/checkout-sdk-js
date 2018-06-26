@@ -7,7 +7,7 @@ import {
     PaymentStrategyActionCreator,
 } from '../..';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentStrategy from '../payment-strategy';
 
@@ -44,8 +44,16 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
                 const checkout = state.checkout.getCheckout();
                 const storeConfig = state.config.getStoreConfig();
 
-                if (!checkout || !storeConfig || !this._paymentMethod || !this._paymentMethod.clientToken) {
-                    throw new MissingDataError(`Unable to prepare payment data because "cart", "config" or "paymentMethod (Visa Checkout)" data is missing.`);
+                if (!checkout) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                }
+
+                if (!storeConfig) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
+
+                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 const {
@@ -85,7 +93,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
         }
 
         if (!this._paymentMethod || !this._paymentMethod.initializationData || !this._paymentMethod.initializationData.nonce) {
-            throw new MissingDataError(`Unable to prepare payment data because "paymentMethod (${payment.methodId})" data is missing.`);
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const { nonce } = this._paymentMethod.initializationData;

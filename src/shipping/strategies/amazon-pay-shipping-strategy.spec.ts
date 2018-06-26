@@ -4,7 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
-import { NotInitializedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
 import { getRemoteCustomer } from '../../customer/internal-customers.mock';
 import { PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
@@ -137,7 +137,7 @@ describe('AmazonPayShippingStrategy', () => {
         try {
             await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
         } catch (error) {
-            expect(error).toBeInstanceOf(NotInitializedError);
+            expect(error).toBeInstanceOf(MissingDataError);
         }
     });
 
@@ -148,7 +148,7 @@ describe('AmazonPayShippingStrategy', () => {
         try {
             await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook123' } });
         } catch (error) {
-            expect(error).toBeInstanceOf(NotInitializedError);
+            expect(error).toBeInstanceOf(InvalidArgumentError);
         }
     });
 

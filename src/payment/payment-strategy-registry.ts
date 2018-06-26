@@ -2,7 +2,7 @@ import { ReadableDataStore } from '@bigcommerce/data-store';
 import { some } from 'lodash';
 
 import { InternalCheckoutSelectors } from '../checkout';
-import { NotInitializedError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { Registry } from '../common/registry';
 import { RegistryOptions } from '../common/registry/registry';
 
@@ -55,7 +55,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
         const config = this._store.getState().config.getStoreConfig();
 
         if (!config) {
-            throw new NotInitializedError('Config data is missing');
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
         }
 
         const { clientSidePaymentProviders } = config.paymentSettings;

@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors} from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotImplementedError, NotInitializedError, StandardError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { AmazonPayLoginButton, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../remote-checkout/methods/amazon-pay';
@@ -40,7 +40,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod) {
-                    throw new MissingDataError(`Unable to initialize because "paymentMethod (${methodId})" data is missing.`);
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 const { onError = () => {} } = amazonOptions;
@@ -92,8 +92,12 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
     }
 
     private _createSignInButton(options: AmazonPayCustomerInitializeOptions): AmazonPayLoginButton {
-        if (!this._paymentMethod || !this._paymentMethod.config.merchantId || !this._window.OffAmazonPayments) {
-            throw new MissingDataError('Unable to create sign-in button because "paymentMethod.config.merchantId" field is missing.');
+        if (!this._paymentMethod || !this._window.OffAmazonPayments) {
+            throw new NotInitializedError(NotInitializedErrorType.CustomerNotInitialized);
+        }
+
+        if (!this._paymentMethod.config.merchantId) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const { initializationData } = this._paymentMethod;
@@ -114,7 +118,7 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
         this._remoteCheckoutRequestSender.generateToken()
             .then(({ body }) => {
                 if (!this._window.amazon) {
-                    throw new NotInitializedError();
+                    throw new NotInitializedError(NotInitializedErrorType.ShippingNotInitialized);
                 }
 
                 this._window.amazon.Login.authorize({

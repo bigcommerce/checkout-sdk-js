@@ -1,8 +1,8 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
-    MissingDataError,
     NotInitializedError,
+    NotInitializedErrorType,
     StandardError,
     TimeoutError,
     UnsupportedBrowserError,
@@ -46,14 +46,14 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         const { payment, ...order } = payload;
 
         if (!payment || !payment.methodId) {
-            throw new MissingDataError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
         }
 
         const paymentName = payment.methodId;
 
         return new Promise<NonceInstrument>((resolve, reject) => {
             if (!this._paymentForm) {
-                throw new NotInitializedError('Unable to submit payment because the choosen payment method has not been initialized.');
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
             if (this._deferredRequestNonce) {
@@ -96,7 +96,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                     const billingAddress = state.billingAddress.getBillingAddress();
 
                     if (!this._paymentForm) {
-                        throw new NotInitializedError();
+                        throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                     }
 
                     if (billingAddress && billingAddress.postalCode) {

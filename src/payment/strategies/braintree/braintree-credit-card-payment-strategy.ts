@@ -1,6 +1,6 @@
 import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, StandardError } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError } from '../../errors';
 import isCreditCardLike from '../../is-credit-card-like';
@@ -31,7 +31,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
                 const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
 
                 if (!paymentMethod || !paymentMethod.clientToken) {
-                    throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 this._braintreePaymentProcessor.initialize(paymentMethod.clientToken, options.braintree);
@@ -95,8 +95,12 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
         const checkout = state.checkout.getCheckout();
         const billingAddress = state.billingAddress.getBillingAddress();
 
-        if (!checkout || !billingAddress) {
-            throw new MissingDataError('Unable to prepare payment data because "checkout" and "billingAddress" data is missing.');
+        if (!checkout) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        if (!billingAddress) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
         const tokenizedCard = this._is3dsEnabled ?

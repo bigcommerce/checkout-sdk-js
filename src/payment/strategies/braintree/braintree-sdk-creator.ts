@@ -1,4 +1,4 @@
-import { NotInitializedError } from '../../../common/error/errors';
+import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
 import {
     BraintreeClient,
@@ -28,7 +28,7 @@ export default class BraintreeSDKCreator {
 
     getClient(): Promise<BraintreeClient> {
         if (!this._clientToken) {
-            throw new NotInitializedError();
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         if (!this._client) {

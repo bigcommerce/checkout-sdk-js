@@ -1,7 +1,7 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { MissingDataError } from '../../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import PaymentMethod from '../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
@@ -38,7 +38,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
                 this._paypalSdk = (window as any).paypal;
 
                 if (!this._paymentMethod || !this._paymentMethod.config.merchantId) {
-                    throw new MissingDataError('Unable to initialize because "paymentMethod.config.merchantId" field is missing.');
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 this._paypalSdk.checkout.setup(this._paymentMethod.config.merchantId, {

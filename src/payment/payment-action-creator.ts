@@ -7,7 +7,7 @@ import { Observer } from 'rxjs/Observer';
 import { mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
-import { MissingDataError } from '../common/error/errors';
+import { InvalidArgumentError, StandardError } from '../common/error/errors';
 import { mapToInternalCustomer } from '../customer';
 import { mapToInternalOrder, OrderActionCreator } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
@@ -65,6 +65,10 @@ export default class PaymentActionCreator {
     }
 
     private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
+        if (!payment.paymentData) {
+            throw new InvalidArgumentError('Unable to construct payment request because `payment.paymentData` is not provided.');
+        }
+
         const billingAddress = state.billingAddress.getBillingAddress();
         const checkout = state.checkout.getCheckout();
         const customer = state.customer.getCustomer();
@@ -78,19 +82,19 @@ export default class PaymentActionCreator {
         const internalCustomer = customer && billingAddress && checkout && checkout.cart &&
             mapToInternalCustomer(customer, checkout.cart, billingAddress);
 
-        const authToken = payment.paymentData && instrumentMeta && isVaultedInstrument(payment.paymentData) ?
+        const authToken = instrumentMeta && isVaultedInstrument(payment.paymentData) ?
             `${state.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}` :
             state.payment.getPaymentToken();
 
-        if (!authToken || !payment.paymentData) {
-            throw new MissingDataError('Unable to submit payment because "authToken" or "paymentData" is missing.');
+        if (!authToken) {
+            throw new StandardError();
         }
 
         return {
             authToken,
-            billingAddress: billingAddress && mapToInternalAddress(billingAddress),
-            customer: internalCustomer,
             paymentMethod,
+            customer: internalCustomer,
+            billingAddress: billingAddress && mapToInternalAddress(billingAddress),
             shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress),
             shippingOption: shippingOption && mapToInternalShippingOption(shippingOption, true),
             cart: checkout && mapToInternalCart(checkout),

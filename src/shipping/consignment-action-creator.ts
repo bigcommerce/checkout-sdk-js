@@ -5,7 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { Address } from '../address';
 import { CheckoutAction, CheckoutActionType, CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import CheckoutRequestSender from '../checkout/checkout-request-sender';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { ConsignmentRequestBody } from './consignment';
@@ -23,8 +23,12 @@ export default class ConsignmentActionCreator {
             const checkout = state.checkout.getCheckout();
             const address = state.shippingAddress.getShippingAddress();
 
-            if (!checkout || !checkout.id || !address || !address.id ) {
-                throw new MissingDataError('Unable to update shipping address: "checkout.id" or "shippingAddress.id" is missing.');
+            if (!checkout) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
+
+            if (!address) {
+                throw new MissingDataError(MissingDataErrorType.MissingShippingAddress);
             }
 
             observer.next(createAction(ConsignmentActionType.UpdateConsignmentRequested));
@@ -49,8 +53,8 @@ export default class ConsignmentActionCreator {
         return store => Observable.create((observer: Observer<CheckoutAction>) => {
             const checkout = store.getState().checkout.getCheckout();
 
-            if (!checkout || !checkout.id) {
-                throw new MissingDataError('Unable to load shipping options: "checkout.id" is missing.');
+            if (!checkout) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
             observer.next(createAction(CheckoutActionType.LoadCheckoutRequested));
@@ -77,8 +81,8 @@ export default class ConsignmentActionCreator {
             const checkout = store.getState().checkout.getCheckout();
             const consignments = store.getState().consignments.getConsignments();
 
-            if (!consignment || !checkout || !checkout.id) {
-                throw new MissingDataError('Unable to update shipping address: "checkout.id" is missing.');
+            if (!checkout || !checkout.id) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
             if (consignments && consignments.length) {
@@ -109,12 +113,12 @@ export default class ConsignmentActionCreator {
     private _getConsignmentRequestBody(
         shippingAddress: Address,
         store: ReadableCheckoutStore
-    ): ConsignmentRequestBody | undefined {
+    ): ConsignmentRequestBody {
         const state = store.getState();
         const cart = state.cart.getCart();
 
         if (!cart) {
-            return;
+            throw new MissingDataError(MissingDataErrorType.MissingCart);
         }
 
         return {

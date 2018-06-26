@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, StandardError } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError } from '../../errors';
 import Payment from '../../payment';
@@ -39,7 +39,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!this._paymentMethod || !this._paymentMethod.clientToken) {
-                    throw new MissingDataError('Unable to initialize because "paymentMethod.clientToken" field is missing.');
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 this._braintreePaymentProcessor.initialize(this._paymentMethod.clientToken, braintreeOptions);
@@ -85,8 +85,16 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         const checkout = state.checkout.getCheckout();
         const config = state.config.getStoreConfig();
 
-        if (!checkout || !config || !this._paymentMethod) {
-            throw new MissingDataError(`Unable to prepare payment data because "checkout", "config" or "paymentMethod (${payment.methodId})" data is missing.`);
+        if (!checkout) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        if (!config) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        if (!this._paymentMethod) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         const { currency, storeProfile: { storeLanguage } } = config;

@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { KlarnaCredit, KlarnaLoadResponse, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
@@ -81,12 +81,12 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             .then(state => new Promise<KlarnaLoadResponse>((resolve, reject) => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
-                if (!paymentMethod || !paymentMethod.clientToken) {
-                    throw new MissingDataError('Unable to load payment widget because "paymentMethod.clientToken" field is missing.');
+                if (!paymentMethod) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                if (!this._klarnaCredit) {
-                    throw new NotInitializedError();
+                if (!this._klarnaCredit || !paymentMethod.clientToken) {
+                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                 }
 
                 this._klarnaCredit.init({ client_token: paymentMethod.clientToken });
@@ -108,7 +108,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     private _authorize(): Promise<any> {
         return new Promise((resolve, reject) => {
             if (!this._klarnaCredit) {
-                throw new NotInitializedError();
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
             this._klarnaCredit.authorize({}, res => {
