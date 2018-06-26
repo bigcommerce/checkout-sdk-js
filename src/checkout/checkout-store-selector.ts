@@ -91,8 +91,9 @@ export default class CheckoutStoreSelector {
      */
     getQuote(): InternalQuote | undefined {
         const checkout = this._checkout.getCheckout();
+        const shippingAddress = this._shippingAddress.getShippingAddress();
 
-        return checkout && mapToInternalQuote(checkout);
+        return checkout && mapToInternalQuote(checkout, shippingAddress);
     }
 
     /**

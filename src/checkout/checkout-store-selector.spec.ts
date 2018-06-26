@@ -40,7 +40,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns quote', () => {
-        expect(selector.getQuote()).toEqual(mapToInternalQuote(selector.getCheckout()));
+        expect(selector.getQuote()).toEqual(getQuote());
     });
 
     it('returns config', () => {
