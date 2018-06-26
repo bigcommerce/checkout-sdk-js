@@ -36,11 +36,11 @@ describe('ChasePayCustomerStrategy', () => {
     let JPMC: JPMC;
     let requestSender: RequestSender;
     let formPoster;
-    let EventType:  ChasePayEventMap;
+    let EventType: ChasePayEventMap;
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
-        paymentMethodMock = { ...getChasePay(), initializationData: {digitalSessionId: 'digitalSessionId'} };
+        paymentMethodMock = { ...getChasePay(), initializationData: {digitalSessionId: 'digitalSessionId', merchantRequestId: '1234567890'} };
 
         store = createCheckoutStore({
             checkout: getCheckoutState(),
