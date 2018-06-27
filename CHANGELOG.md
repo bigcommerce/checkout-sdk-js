@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.26.1"></a>
+## [0.26.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.26.0...v0.26.1) (2018-06-27)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3299 Filter keys recursively when comparing objects ([68da93e](https://github.com/bigcommerce/checkout-sdk-js/commit/68da93e))
+
+
+
 <a name="0.26.0"></a>
 # [0.26.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.25.0...v0.26.0) (2018-06-27)
 

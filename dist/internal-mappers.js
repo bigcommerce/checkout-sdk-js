@@ -1360,8 +1360,8 @@ var CheckoutService = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             filters[_i - 1] = arguments[_i];
         }
-        return (_a = this._store).subscribe.apply(_a, [function () { return subscriber(_this.getState()); }].concat(filters.map(function (filter) { return function (state) { return filter(create_checkout_selectors_1.default(state)); }; })));
         var _a;
+        return (_a = this._store).subscribe.apply(_a, [function () { return subscriber(_this.getState()); }].concat(filters.map(function (filter) { return function (state) { return filter(create_checkout_selectors_1.default(state)); }; })));
     };
     /**
      * Loads the current checkout.
@@ -3739,8 +3739,8 @@ function createFreezeProxy(target) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            return data_store_1.deepFreeze((_a = target[name]).call.apply(_a, [target].concat(args)));
             var _a;
+            return data_store_1.deepFreeze((_a = target[name]).call.apply(_a, [target].concat(args)));
         };
     });
 }
@@ -3826,7 +3826,7 @@ function isEqual(objectA, objectB, options) {
     }
     if (objectA && objectB && typeof objectA === 'object' && typeof objectB === 'object') {
         if (Array.isArray(objectA) && Array.isArray(objectB)) {
-            return isArrayEqual(objectA, objectB);
+            return isArrayEqual(objectA, objectB, options);
         }
         if (Array.isArray(objectA) || Array.isArray(objectB)) {
             return false;
@@ -3843,7 +3843,7 @@ function isEqual(objectA, objectB, options) {
         if ((objectA instanceof RegExp) || (objectB instanceof RegExp)) {
             return false;
         }
-        return isObjectEqual(objectA, objectB, options && options.keyFilter);
+        return isObjectEqual(objectA, objectB, options);
     }
     return objectA === objectB;
 }
@@ -3854,18 +3854,19 @@ function isRegExpEqual(objectA, objectB) {
 function isDateEqual(objectA, objectB) {
     return objectA.getTime() === objectB.getTime();
 }
-function isArrayEqual(objectA, objectB) {
+function isArrayEqual(objectA, objectB, options) {
     if (objectA.length !== objectB.length) {
         return false;
     }
     for (var index = 0, length_1 = objectA.length; index < length_1; index++) {
-        if (!isEqual(objectA[index], objectB[index])) {
+        if (!isEqual(objectA[index], objectB[index], options)) {
             return false;
         }
     }
     return true;
 }
-function isObjectEqual(objectA, objectB, filter) {
+function isObjectEqual(objectA, objectB, options) {
+    var filter = options && options.keyFilter;
     var keysA = filter ? Object.keys(objectA).filter(filter) : Object.keys(objectA);
     var keysB = filter ? Object.keys(objectB).filter(filter) : Object.keys(objectB);
     if (keysA.length !== keysB.length) {
@@ -3876,7 +3877,7 @@ function isObjectEqual(objectA, objectB, filter) {
         if (!objectB.hasOwnProperty(key)) {
             return false;
         }
-        if (!isEqual(objectA[key], objectB[key])) {
+        if (!isEqual(objectA[key], objectB[key], options)) {
             return false;
         }
     }
@@ -5054,9 +5055,9 @@ function normalize(address) {
     var ignoredKeys = ['id', 'provinceCode'];
     return Object.keys(utility_1.omitPrivate(address) || {})
         .reduce(function (result, key) {
+        var _a;
         return ignoredKeys.indexOf(key) === -1 && address[key] ? tslib_1.__assign({}, result, (_a = {}, _a[key] = address[key], _a)) :
             result;
-        var _a;
     }, {});
 }
 
@@ -5155,9 +5156,9 @@ var CartComparator = /** @class */ (function () {
     CartComparator.prototype._normalize = function (cart) {
         var lineItems = Object.keys(cart.lineItems)
             .reduce(function (result, key) {
+            var _a;
             return (tslib_1.__assign({}, result, (_a = {}, _a[key] = cart.lineItems[key]
                 .map(function (item) { return lodash_1.omit(item, ['id', 'imageUrl']); }), _a)));
-            var _a;
         }, {});
         return utility_1.omitPrivate(lodash_1.omit(tslib_1.__assign({}, cart, { lineItems: lineItems }), ['updatedTime']));
     };
@@ -6413,6 +6414,7 @@ var DEFAULT_STATE = {
 };
 function remoteCheckoutReducer(state, action) {
     if (state === void 0) { state = DEFAULT_STATE; }
+    var _a;
     if (!action.meta || !action.meta.methodId) {
         return state;
     }
@@ -6422,7 +6424,6 @@ function remoteCheckoutReducer(state, action) {
             _a)),
     });
     return reducer(state, action);
-    var _a;
 }
 exports.default = remoteCheckoutReducer;
 function dataReducer(data, action) {
@@ -8841,6 +8842,7 @@ var tslib_1 = __webpack_require__(0);
 var map_to_internal_shipping_option_1 = __webpack_require__(70);
 function mapToInternalShippingOptions(consignments) {
     return consignments.reduce(function (result, consignment) {
+        var _a;
         var shippingOptions;
         if (consignment.availableShippingOptions && consignment.availableShippingOptions.length) {
             shippingOptions = consignment.availableShippingOptions;
@@ -8852,7 +8854,6 @@ function mapToInternalShippingOptions(consignments) {
             var selectedOptionId = consignment.selectedShippingOption && consignment.selectedShippingOption.id;
             return map_to_internal_shipping_option_1.default(option, option.id === selectedOptionId);
         }), _a));
-        var _a;
     }, {});
 }
 exports.default = mapToInternalShippingOptions;
@@ -11483,11 +11484,11 @@ var ConsoleLogger = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             messages[_i - 1] = arguments[_i];
         }
+        var _a;
         if (!this._console || !this._console[type]) {
             return;
         }
         (_a = this._console[type]).call.apply(_a, [this._console].concat(messages));
-        var _a;
     };
     return ConsoleLogger;
 }());

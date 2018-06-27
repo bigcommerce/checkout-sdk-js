@@ -944,7 +944,7 @@ declare class CheckoutService {
      * @param action - The action to dispatch.
      * @returns A promise that resolves to the current state.
      */
-    private _dispatch(action, options?);
+    private _dispatch;
 }
 
 declare interface CheckoutServiceOptions {
@@ -2149,10 +2149,10 @@ declare class LanguageService {
      * @returns The translated language string.
      */
     translate(key: string, data?: TranslationData): string;
-    private _transformConfig(config?);
-    private _flattenObject(object, result?, parentKey?);
-    private _transformData(data);
-    private _hasTranslations();
+    private _transformConfig;
+    private _flattenObject;
+    private _transformData;
+    private _hasTranslations;
 }
 
 declare interface LineItem {
