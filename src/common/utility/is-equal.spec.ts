@@ -26,8 +26,8 @@ describe('isEqual', () => {
     });
 
     it('returns true if objects are equal except ignored properties', () => {
-        const objectA = { a: 'a', b: 'b', _c: 'c' };
-        const objectB = { a: 'a', b: 'b' };
+        const objectA = { a: 'a', b: 'b', _c: 'c', d: [{ $$a: 'a' }] };
+        const objectB = { a: 'a', b: 'b', d: [{}] };
 
         expect(isEqual(objectA, objectB, { keyFilter: key => !isPrivate(key) }))
             .toEqual(true);

@@ -9,7 +9,7 @@ export default function isEqual(objectA: any, objectB: any, options?: CompareOpt
 
     if (objectA && objectB && typeof objectA === 'object' && typeof objectB === 'object') {
         if (Array.isArray(objectA) && Array.isArray(objectB)) {
-            return isArrayEqual(objectA, objectB);
+            return isArrayEqual(objectA, objectB, options);
         }
 
         if (Array.isArray(objectA) || Array.isArray(objectB)) {
@@ -32,7 +32,7 @@ export default function isEqual(objectA: any, objectB: any, options?: CompareOpt
             return false;
         }
 
-        return isObjectEqual(objectA, objectB, options && options.keyFilter);
+        return isObjectEqual(objectA, objectB, options);
     }
 
     return objectA === objectB;
@@ -46,13 +46,13 @@ function isDateEqual(objectA: Date, objectB: Date): boolean {
     return objectA.getTime() === objectB.getTime();
 }
 
-function isArrayEqual(objectA: any[], objectB: any[]): boolean {
+function isArrayEqual(objectA: any[], objectB: any[], options?: CompareOptions): boolean {
     if (objectA.length !== objectB.length) {
         return false;
     }
 
     for (let index = 0, length = objectA.length; index < length; index++) {
-        if (!isEqual(objectA[index], objectB[index])) {
+        if (!isEqual(objectA[index], objectB[index], options)) {
             return false;
         }
     }
@@ -63,8 +63,9 @@ function isArrayEqual(objectA: any[], objectB: any[]): boolean {
 function isObjectEqual(
     objectA: { [key: string]: any },
     objectB: { [key: string]: any },
-    filter?: (key: string) => boolean
+    options?: CompareOptions
 ): boolean {
+    const filter = options && options.keyFilter;
     const keysA = filter ? Object.keys(objectA).filter(filter) : Object.keys(objectA);
     const keysB = filter ? Object.keys(objectB).filter(filter) : Object.keys(objectB);
 
@@ -79,7 +80,7 @@ function isObjectEqual(
             return false;
         }
 
-        if (!isEqual(objectA[key], objectB[key])) {
+        if (!isEqual(objectA[key], objectB[key], options)) {
             return false;
         }
     }
