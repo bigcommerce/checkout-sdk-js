@@ -11,7 +11,6 @@ import { Country, CountrySelector } from '../geography';
 import { Order, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../payment';
 import { Instrument, InstrumentSelector } from '../payment/instrument';
-import { mapToInternalQuote, InternalQuote } from '../quote';
 import {
     Consignment,
     ShippingAddressSelector,
@@ -81,19 +80,6 @@ export default class CheckoutStoreSelector {
      */
     getCheckout(): Checkout | undefined {
         return this._checkout.getCheckout();
-    }
-
-    /**
-     * Gets the current quote.
-     *
-     * @deprecated This method will be replaced in the future.
-     * @returns The current quote if it is loaded, otherwise undefined.
-     */
-    getQuote(): InternalQuote | undefined {
-        const checkout = this._checkout.getCheckout();
-        const shippingAddress = this._shippingAddress.getShippingAddress();
-
-        return checkout && mapToInternalQuote(checkout, shippingAddress);
     }
 
     /**
