@@ -14,7 +14,7 @@
 * [handlingCost](consignment.md#handlingcost)
 * [id](consignment.md#id)
 * [lineItemIds](consignment.md#lineitemids)
-* [selectedShippingOptionId](consignment.md#selectedshippingoptionid)
+* [selectedShippingOption](consignment.md#selectedshippingoption)
 * [shippingAddress](consignment.md#shippingaddress)
 * [shippingCost](consignment.md#shippingcost)
 
@@ -24,7 +24,7 @@
 
 <a id="availableshippingoptions"></a>
 
-###  availableShippingOptions
+### `<Optional>` availableShippingOptions
 
 **● availableShippingOptions**: *[ShippingOption](shippingoption.md)[]*
 
@@ -50,12 +50,11 @@ ___
 **● lineItemIds**: *`string`[]*
 
 ___
-<a id="selectedshippingoptionid"></a>
+<a id="selectedshippingoption"></a>
 
-### `<Optional>` selectedShippingOptionId
+### `<Optional>` selectedShippingOption
 
-**● selectedShippingOptionId**: * `undefined` &#124; `string`
-*
+**● selectedShippingOption**: *[ShippingOption](shippingoption.md)*
 
 ___
 <a id="shippingaddress"></a>

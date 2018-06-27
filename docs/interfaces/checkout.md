@@ -46,7 +46,7 @@
 ___
 <a id="billingaddress"></a>
 
-###  billingAddress
+### `<Optional>` billingAddress
 
 **● billingAddress**: *[Address](address.md)*
 

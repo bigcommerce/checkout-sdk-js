@@ -10,11 +10,11 @@
 
 ### Properties
 
+* [cost](shippingoption.md#cost)
 * [description](shippingoption.md#description)
 * [id](shippingoption.md#id)
 * [imageUrl](shippingoption.md#imageurl)
 * [isRecommended](shippingoption.md#isrecommended)
-* [price](shippingoption.md#price)
 * [transitTime](shippingoption.md#transittime)
 * [type](shippingoption.md#type)
 
@@ -22,6 +22,13 @@
 
 ## Properties
 
+<a id="cost"></a>
+
+###  cost
+
+**● cost**: *`number`*
+
+___
 <a id="description"></a>
 
 ###  description
@@ -48,13 +55,6 @@ ___
 ###  isRecommended
 
 **● isRecommended**: *`boolean`*
-
-___
-<a id="price"></a>
-
-###  price
-
-**● price**: *`number`*
 
 ___
 <a id="transittime"></a>

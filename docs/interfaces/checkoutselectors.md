@@ -11,6 +11,7 @@
 ### Properties
 
 * [checkout](checkoutselectors.md#checkout)
+* [data](checkoutselectors.md#data)
 * [errors](checkoutselectors.md#errors)
 * [statuses](checkoutselectors.md#statuses)
 
@@ -23,6 +24,15 @@
 ###  checkout
 
 **● checkout**: *[CheckoutStoreSelector](../classes/checkoutstoreselector.md)*
+
+*__deprecated__*: This property has been renamed to `data`.
+
+___
+<a id="data"></a>
+
+###  data
+
+**● data**: *[CheckoutStoreSelector](../classes/checkoutstoreselector.md)*
 
 ___
 <a id="errors"></a>

@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 260);
+/******/ 	return __webpack_require__(__webpack_require__.s = 264);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -12126,221 +12126,42 @@ exports.default = FormSelector;
 
 
 /***/ }),
-/* 259 */
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="./messageformat.d.ts" />
-var lodash_1 = __webpack_require__(4);
-var MessageFormat = __webpack_require__(263);
-var DEFAULT_LOCALE = 'en';
-var KEY_PREFIX = 'optimized_checkout';
 /**
- * Responsible for getting language strings.
- *
- * This object can be used to retrieve language strings that are most
- * appropriate for a given locale.
- *
- * The language strings provided to the object should follow [ICU
- * MessageFormat](http://userguide.icu-project.org/formatparse/messages) syntax.
+ * Please note that these mappers are for internal use only. DO NOT USE. They
+ * can be removed or changed at any time.
  */
-var LanguageService = /** @class */ (function () {
-    /**
-     * @internal
-     */
-    function LanguageService(config, _logger) {
-        this._logger = _logger;
-        var _a = this._transformConfig(config), locale = _a.locale, locales = _a.locales, translations = _a.translations;
-        this._locale = locale;
-        this._locales = locales;
-        this._translations = translations;
-        this._formatters = {};
-    }
-    /**
-     * Remaps a set of language strings with a different set of keys.
-     *
-     * ```js
-     * service.mapKeys({
-     *     'new_key': 'existing_key',
-     * });
-     *
-     * console.log(service.translate('new_key'));
-     * ```
-     *
-     * @param maps - The set of language strings.
-     */
-    LanguageService.prototype.mapKeys = function (maps) {
-        var _this = this;
-        Object.keys(maps).forEach(function (key) {
-            var translationKey = KEY_PREFIX + "." + maps[key];
-            _this._translations[KEY_PREFIX + "." + key] = _this._translations[translationKey];
-        });
-    };
-    /**
-     * Gets the preferred locale of the current customer.
-     *
-     * @returns The preferred locale code.
-     */
-    LanguageService.prototype.getLocale = function () {
-        return this._hasTranslations() ? this._locale : DEFAULT_LOCALE;
-    };
-    /**
-     * Gets a language string by a key.
-     *
-     * ```js
-     * service.translate('language_key');
-     * ```
-     *
-     * If the language string contains a placeholder, you can replace it by
-     * providing a second argument.
-     *
-     * ```js
-     * service.translate('language_key', { placeholder: 'Hello' });
-     * ```
-     *
-     * @param key - The language key.
-     * @param data - Data for replacing placeholders in the language string.
-     * @returns The translated language string.
-     */
-    LanguageService.prototype.translate = function (key, data) {
-        if (data === void 0) { data = {}; }
-        var prefixedKey = KEY_PREFIX + "." + key;
-        if (typeof this._translations[prefixedKey] !== 'string') {
-            this._logger.warn("Translation key \"" + prefixedKey + "\" is missing");
-            return prefixedKey;
-        }
-        if (!this._formatters[prefixedKey]) {
-            var messageFormat = new MessageFormat(this._locales[prefixedKey]);
-            this._formatters[prefixedKey] = messageFormat.compile(this._translations[prefixedKey] || '');
-        }
-        return this._formatters[prefixedKey](this._transformData(data));
-    };
-    LanguageService.prototype._transformConfig = function (config) {
-        if (config === void 0) { config = {}; }
-        var output = {
-            defaultTranslations: {},
-            translations: {},
-            locales: {},
-            locale: config.locale || DEFAULT_LOCALE,
-        };
-        var locales = config.locales || {};
-        var translations = this._flattenObject(config.translations || {});
-        var defaultTranslations = this._flattenObject(config.defaultTranslations || {});
-        var translationKeys = lodash_1.union(Object.keys(defaultTranslations), Object.keys(translations));
-        translationKeys.forEach(function (key) {
-            if (translations && translations[key]) {
-                output.translations[key] = translations[key];
-                output.locales[key] = locales[key] || output.locale;
-            }
-            else {
-                output.translations[key] = defaultTranslations[key];
-                output.locales[key] = DEFAULT_LOCALE;
-            }
-        });
-        return output;
-    };
-    LanguageService.prototype._flattenObject = function (object, result, parentKey) {
-        var _this = this;
-        if (result === void 0) { result = {}; }
-        if (parentKey === void 0) { parentKey = ''; }
-        try {
-            Object.keys(object).forEach(function (key) {
-                var value = object[key];
-                var resultKey = parentKey ? parentKey + "." + key : key;
-                if (lodash_1.isObject(value)) {
-                    return _this._flattenObject(value, result, resultKey);
-                }
-                result[resultKey] = value;
-            });
-        }
-        catch (err) {
-            this._logger.warn("Unable to parse object: " + err);
-        }
-        return result;
-    };
-    LanguageService.prototype._transformData = function (data) {
-        return Object.keys(data).reduce(function (result, key) {
-            var value = data[key];
-            result[key] = value === null || value === undefined ? '' : value;
-            return result;
-        }, {});
-    };
-    LanguageService.prototype._hasTranslations = function () {
-        var _this = this;
-        return Object.keys(this._locales).map(function (key) { return _this._locales[key]; })
-            .filter(function (code) { return code.split('-')[0] === _this._locale.split('-')[0]; })
-            .length > 0;
-    };
-    return LanguageService;
-}());
-exports.default = LanguageService;
+var address_1 = __webpack_require__(15);
+exports.mapToInternalAddress = address_1.mapToInternalAddress;
+var cart_1 = __webpack_require__(9);
+exports.mapToInternalCart = cart_1.mapToInternalCart;
+var coupon_1 = __webpack_require__(16);
+exports.mapToInternalCoupon = coupon_1.mapToInternalCoupon;
+exports.mapToInternalGiftCertificate = coupon_1.mapToInternalGiftCertificate;
+var customer_1 = __webpack_require__(14);
+exports.mapToInternalCustomer = customer_1.mapToInternalCustomer;
+var cart_2 = __webpack_require__(9);
+exports.mapToInternalLineItem = cart_2.mapToInternalLineItem;
+exports.mapToInternalLineItems = cart_2.mapToInternalLineItems;
+var order_1 = __webpack_require__(10);
+exports.mapToInternalOrder = order_1.mapToInternalOrder;
+var quote_1 = __webpack_require__(91);
+exports.mapToInternalQuote = quote_1.mapToInternalQuote;
+var shipping_1 = __webpack_require__(17);
+exports.mapToInternalShippingOption = shipping_1.mapToInternalShippingOption;
+exports.mapToInternalShippingOptions = shipping_1.mapToInternalShippingOptions;
 
-
-/***/ }),
-/* 260 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(19);
-exports.createTimeout = request_sender_1.createTimeout;
-var checkout_1 = __webpack_require__(7);
-exports.createCheckoutService = checkout_1.createCheckoutService;
-var locale_1 = __webpack_require__(261);
-exports.createLanguageService = locale_1.createLanguageService;
-
-
-/***/ }),
-/* 261 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var create_language_service_1 = __webpack_require__(262);
-exports.createLanguageService = create_language_service_1.default;
-var language_service_1 = __webpack_require__(259);
-exports.LanguageService = language_service_1.default;
-
-
-/***/ }),
-/* 262 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var log_1 = __webpack_require__(92);
-var language_service_1 = __webpack_require__(259);
-/**
- * Creates an instance of `LanguageService`.
- *
- * ```js
- * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
- * const service = createLanguageService(language);
- *
- * console.log(service.translate('address.city_label'));
- * ```
- *
- * @param config - A configuration object.
- * @returns An instance of `LanguageService`.
- */
-function createLanguageService(config) {
-    if (config === void 0) { config = {}; }
-    return new language_service_1.default(config, log_1.getDefaultLogger());
-}
-exports.default = createLanguageService;
-
-
-/***/ }),
-/* 263 */
-/***/ (function(module, exports) {
-
-module.exports = require("messageformat");
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=checkout-sdk.js.map
+//# sourceMappingURL=internal-mappers.js.map

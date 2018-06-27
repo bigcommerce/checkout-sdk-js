@@ -227,12 +227,16 @@ declare interface Cart {
     updatedTime: string;
 }
 
+declare interface ChasePayCustomerInitializeOptions {
+    container: string;
+}
+
 declare interface Checkout {
     id: string;
+    billingAddress?: Address;
     cart: Cart;
     customer: Customer;
     customerMessage: string;
-    billingAddress: Address;
     consignments: Consignment[];
     taxes: Tax[];
     discounts: Discount[];
@@ -262,7 +266,11 @@ declare interface CheckoutPayment {
 }
 
 declare interface CheckoutSelectors {
+    /**
+     * @deprecated This property has been renamed to `data`.
+     */
     checkout: CheckoutStoreSelector;
+    data: CheckoutStoreSelector;
     errors: CheckoutStoreErrorSelector;
     statuses: CheckoutStoreStatusSelector;
 }
@@ -291,6 +299,7 @@ declare class CheckoutService {
     private _shippingCountryActionCreator;
     private _shippingStrategyActionCreator;
     private _state;
+    private _errorTransformer;
     /**
      * Returns a snapshot of the current checkout state.
      *
@@ -657,6 +666,13 @@ declare class CheckoutService {
      */
     deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
     /**
+     * @deprecated This method has been renamed to `continueAsGuest`.
+     * @param credentials - The guest credentials to use.
+     * @param options - Options for continuing as a guest.
+     * @returns A promise that resolves to the current state.
+     */
+    signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
      * Continues to check out as a guest.
      *
      * The customer is required to provide their email address in order to
@@ -667,7 +683,7 @@ declare class CheckoutService {
      * @param options - Options for continuing as a guest.
      * @returns A promise that resolves to the current state.
      */
-    signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors>;
+    continueAsGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Signs into a customer's registered account.
      *
@@ -921,6 +937,14 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     deleteInstrument(instrumentId: string): Promise<CheckoutSelectors>;
+    /**
+     * Dispatches an action through the data store and returns the current state
+     * once the action is dispatched.
+     *
+     * @param action - The action to dispatch.
+     * @returns A promise that resolves to the current state.
+     */
+    private _dispatch(action, options?);
 }
 
 declare interface CheckoutServiceOptions {
@@ -964,7 +988,6 @@ declare class CheckoutStoreErrorSelector {
     private _order;
     private _paymentMethods;
     private _paymentStrategies;
-    private _quote;
     private _shippingCountries;
     private _shippingOptions;
     private _shippingStrategies;
@@ -1142,16 +1165,18 @@ declare class CheckoutStoreErrorSelector {
  */
 declare class CheckoutStoreSelector {
     private _billingAddress;
-    private _cart;
     private _checkout;
     private _config;
+    private _consignments;
     private _countries;
+    private _coupons;
     private _customer;
     private _form;
+    private _giftCertificates;
     private _instruments;
     private _order;
+    private _payment;
     private _paymentMethods;
-    private _quote;
     private _shippingAddress;
     private _shippingCountries;
     private _shippingOptions;
@@ -1173,7 +1198,7 @@ declare class CheckoutStoreSelector {
      *
      * @returns The current order if it is loaded, otherwise undefined.
      */
-    getOrder(): InternalOrder | InternalIncompleteOrder | undefined;
+    getOrder(): InternalOrder | undefined;
     /**
      * Gets the checkout configuration of a store.
      *
@@ -1259,6 +1284,18 @@ declare class CheckoutStoreSelector {
      */
     getCart(): InternalCart | undefined;
     /**
+     * Gets a list of coupons that are applied to the current checkout.
+     *
+     * @returns The list of applied coupons if there is any, otherwise undefined.
+     */
+    getCoupons(): InternalCoupon[] | undefined;
+    /**
+     * Gets a list of gift certificates that are applied to the current checkout.
+     *
+     * @returns The list of applied gift certificates if there is any, otherwise undefined.
+     */
+    getGiftCertificates(): InternalGiftCertificate[] | undefined;
+    /**
      * Gets the current customer.
      *
      * @returns The current customer object if it is loaded, otherwise
@@ -1343,7 +1380,6 @@ declare class CheckoutStoreStatusSelector {
     private _order;
     private _paymentMethods;
     private _paymentStrategies;
-    private _quote;
     private _shippingCountries;
     private _shippingOptions;
     private _shippingStrategies;
@@ -1558,8 +1594,8 @@ declare interface Consignment {
     shippingAddress: Address;
     handlingCost: number;
     shippingCost: number;
-    availableShippingOptions: ShippingOption[];
-    selectedShippingOptionId?: string;
+    availableShippingOptions?: ShippingOption[];
+    selectedShippingOption?: ShippingOption;
     lineItemIds?: string[];
 }
 
@@ -1675,6 +1711,7 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
+    chasepay?: ChasePayCustomerInitializeOptions;
 }
 
 /**
@@ -1893,12 +1930,6 @@ declare interface InternalGiftCertificateList {
     appliedGiftCertificates: {
         [code: string]: InternalGiftCertificate;
     };
-}
-
-declare interface InternalIncompleteOrder {
-    isComplete: false;
-    orderId: null;
-    payment: InternalOrderPayment;
 }
 
 declare interface InternalLineItem {
@@ -2357,7 +2388,7 @@ declare interface ShippingOption {
     id: string;
     isRecommended: boolean;
     imageUrl: string;
-    price: number;
+    cost: number;
     transitTime: string;
     type: string;
 }
@@ -2442,7 +2473,7 @@ declare interface SquarePaymentInitializeOptions {
 }
 
 declare class StandardError extends Error {
-    protected type: string;
+    type: string;
     constructor(message?: string);
 }
 

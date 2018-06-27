@@ -12,6 +12,7 @@
 
 ### Properties
 
+* [type](standarderror.md#type)
 * [Error](standarderror.md#error)
 * [message](standarderror.md#message)
 * [name](standarderror.md#name)
@@ -39,6 +40,13 @@ ___
 
 ## Properties
 
+<a id="type"></a>
+
+###  type
+
+**● type**: *`string`*
+
+___
 <a id="error"></a>
 
 ### `<Static>` Error

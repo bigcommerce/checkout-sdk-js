@@ -16,6 +16,7 @@ This object can be used to collect all information that is required for checkout
 
 * [applyCoupon](checkoutservice.md#applycoupon)
 * [applyGiftCertificate](checkoutservice.md#applygiftcertificate)
+* [continueAsGuest](checkoutservice.md#continueasguest)
 * [deinitializeCustomer](checkoutservice.md#deinitializecustomer)
 * [deinitializePayment](checkoutservice.md#deinitializepayment)
 * [deinitializeShipping](checkoutservice.md#deinitializeshipping)
@@ -97,6 +98,27 @@ await service.applyGiftCertificate('GIFT_CERTIFICATE');
 | ------ | ------ | ------ |
 | code | `string` |  The gift certificate to apply to the current checkout. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for applying the gift certificate. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="continueasguest"></a>
+
+###  continueAsGuest
+
+▸ **continueAsGuest**(credentials: *[GuestCredentials](../interfaces/guestcredentials.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Continues to check out as a guest.
+
+The customer is required to provide their email address in order to continue. Once they provide their email address, it will be stored as a part of their billing address.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| credentials | [GuestCredentials](../interfaces/guestcredentials.md) |  The guest credentials to use. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for continuing as a guest. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.
@@ -756,9 +778,7 @@ ___
 
 ▸ **signInGuest**(credentials: *[GuestCredentials](../interfaces/guestcredentials.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
-Continues to check out as a guest.
-
-The customer is required to provide their email address in order to continue. Once they provide their email address, it will be stored as a part of their billing address.
+*__deprecated__*: This method has been renamed to `continueAsGuest`.
 
 **Parameters:**
 

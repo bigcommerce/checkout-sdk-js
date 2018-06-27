@@ -21,6 +21,7 @@ Some payment methods have specific requirements for setting the customer details
 
 * [amazon](customerinitializeoptions.md#amazon)
 * [braintreevisacheckout](customerinitializeoptions.md#braintreevisacheckout)
+* [chasepay](customerinitializeoptions.md#chasepay)
 * [methodId](customerinitializeoptions.md#methodid)
 * [params](customerinitializeoptions.md#params)
 * [timeout](customerinitializeoptions.md#timeout)
@@ -45,6 +46,13 @@ ___
 **● braintreevisacheckout**: *[BraintreeVisaCheckoutCustomerInitializeOptions](braintreevisacheckoutcustomerinitializeoptions.md)*
 
 The options that are required to initialize the customer step of checkout when using Visa Checkout provided by Braintree.
+
+___
+<a id="chasepay"></a>
+
+### `<Optional>` chasepay
+
+**● chasepay**: *[ChasePayCustomerInitializeOptions](chasepaycustomerinitializeoptions.md)*
 
 ___
 <a id="methodid"></a>

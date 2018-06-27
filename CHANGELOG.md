@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.26.0"></a>
+# [0.26.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.25.0...v0.26.0) (2018-06-27)
+
+
+### Bug Fixes
+
+* **billing:** CHECKOUT-3052 Fall back in billing email when not provided ([d2893ca](https://github.com/bigcommerce/checkout-sdk-js/commit/d2893ca))
+* **common:** CHECKOUT-3170 Remove engine requirement for consumers ([9d2adbc](https://github.com/bigcommerce/checkout-sdk-js/commit/9d2adbc))
+* **common:** CHECKOUT-3299 Fix performance of object comparison ([1a69d2f](https://github.com/bigcommerce/checkout-sdk-js/commit/1a69d2f))
+* **order:** CHECKOUT-3056 Store billing address state when order loads ([44f40a9](https://github.com/bigcommerce/checkout-sdk-js/commit/44f40a9))
+* **payment:** CHECKOUT-3054 Update gift certificate state when relevant actions are dispatched ([412990d](https://github.com/bigcommerce/checkout-sdk-js/commit/412990d))
+* **payment:** CHECKOUT-3054 Use remaining balance from API ([a2989d4](https://github.com/bigcommerce/checkout-sdk-js/commit/a2989d4))
+* **shipping:** CHECKOUT-3052 Pass consignment id to address mapper ([56de8e3](https://github.com/bigcommerce/checkout-sdk-js/commit/56de8e3))
+* **shipping:** CHECKOUT-3052 Return Quote based on external checkout object ([0f5bab7](https://github.com/bigcommerce/checkout-sdk-js/commit/0f5bab7))
+* **shipping:** CHECKOUT-3183 Return shipping address in quote using shipping selector ([988fcd1](https://github.com/bigcommerce/checkout-sdk-js/commit/988fcd1))
+* **shipping:** CHECKOUT-3253 Change consigment schema to store selected shipping option object ([08d4a7e](https://github.com/bigcommerce/checkout-sdk-js/commit/08d4a7e))
+* **shipping:** CHECKOUT-3253 Return selected shipping option as available shipping options ([9bc034f](https://github.com/bigcommerce/checkout-sdk-js/commit/9bc034f))
+* **shipping:** CHECKOUT-3253 Update shipping option schema ([566e251](https://github.com/bigcommerce/checkout-sdk-js/commit/566e251))
+* **shipping:** CHECKOUT-3280 Use POST/PUT to update consignments so we retain shippingOptions ([6aebfc5](https://github.com/bigcommerce/checkout-sdk-js/commit/6aebfc5))
+
+
+### Features
+
+* **checkout:** CHECKOUT-3053 Access data getters via `data` property ([aba3115](https://github.com/bigcommerce/checkout-sdk-js/commit/aba3115))
+* **checkout:** INT-475 Chase Pay button to display on Customer section UCO page ([672d132](https://github.com/bigcommerce/checkout-sdk-js/commit/672d132))
+* **checkout:** INT-660 Update checkout SDK to accept merchantRequestid ([9abc234](https://github.com/bigcommerce/checkout-sdk-js/commit/9abc234))
+* **common:** CHECKOUT-3284 Throw better error when required data is missing ([#302](https://github.com/bigcommerce/checkout-sdk-js/issues/302)) ([3ddfd37](https://github.com/bigcommerce/checkout-sdk-js/commit/3ddfd37))
+* **payment:** INT-594 Send ChasePay CheckoutData needed for WePay ([4433ac4](https://github.com/bigcommerce/checkout-sdk-js/commit/4433ac4))
+* **shopper:** CHECKOUT-3278 Read from customer selector in checkout selector ([e7678d8](https://github.com/bigcommerce/checkout-sdk-js/commit/e7678d8))
+
+
+
 <a name="0.25.0"></a>
 # [0.25.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.1...v0.25.0) (2018-06-08)
 

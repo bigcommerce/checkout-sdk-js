@@ -20,7 +20,9 @@ This object has a set of methods that allow you to get a specific piece of check
 * [getCart](checkoutstoreselector.md#getcart)
 * [getCheckout](checkoutstoreselector.md#getcheckout)
 * [getConfig](checkoutstoreselector.md#getconfig)
+* [getCoupons](checkoutstoreselector.md#getcoupons)
 * [getCustomer](checkoutstoreselector.md#getcustomer)
+* [getGiftCertificates](checkoutstoreselector.md#getgiftcertificates)
 * [getInstruments](checkoutstoreselector.md#getinstruments)
 * [getOrder](checkoutstoreselector.md#getorder)
 * [getPaymentMethod](checkoutstoreselector.md#getpaymentmethod)
@@ -123,6 +125,19 @@ Gets the checkout configuration of a store.
 The configuration object if it is loaded, otherwise undefined.
 
 ___
+<a id="getcoupons"></a>
+
+###  getCoupons
+
+▸ **getCoupons**():  [InternalCoupon](../interfaces/internalcoupon.md)[] &#124; `undefined`
+
+Gets a list of coupons that are applied to the current checkout.
+
+**Returns:**  [InternalCoupon](../interfaces/internalcoupon.md)[] &#124; `undefined`
+
+The list of applied coupons if there is any, otherwise undefined.
+
+___
 <a id="getcustomer"></a>
 
 ###  getCustomer
@@ -135,6 +150,19 @@ Gets the current customer.
 
 The current customer object if it is loaded, otherwise
 undefined.
+
+___
+<a id="getgiftcertificates"></a>
+
+###  getGiftCertificates
+
+▸ **getGiftCertificates**():  [InternalGiftCertificate](../interfaces/internalgiftcertificate.md)[] &#124; `undefined`
+
+Gets a list of gift certificates that are applied to the current checkout.
+
+**Returns:**  [InternalGiftCertificate](../interfaces/internalgiftcertificate.md)[] &#124; `undefined`
+
+The list of applied gift certificates if there is any, otherwise undefined.
 
 ___
 <a id="getinstruments"></a>
@@ -154,11 +182,11 @@ ___
 
 ###  getOrder
 
-▸ **getOrder**():  [InternalOrder](../interfaces/internalorder.md) &#124; [InternalIncompleteOrder](../interfaces/internalincompleteorder.md) &#124; `undefined`
+▸ **getOrder**():  [InternalOrder](../interfaces/internalorder.md) &#124; `undefined`
 
 Gets the current order.
 
-**Returns:**  [InternalOrder](../interfaces/internalorder.md) &#124; [InternalIncompleteOrder](../interfaces/internalincompleteorder.md) &#124; `undefined`
+**Returns:**  [InternalOrder](../interfaces/internalorder.md) &#124; `undefined`
 
 The current order if it is loaded, otherwise undefined.
 
