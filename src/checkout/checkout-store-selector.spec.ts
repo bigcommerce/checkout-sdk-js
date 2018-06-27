@@ -5,8 +5,6 @@ import { getCustomer } from '../customer/internal-customers.mock';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
 import { getBraintree } from '../payment/payment-methods.mock';
-import { mapToInternalQuote } from '../quote';
-import { getQuote } from '../quote/internal-quotes.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
 
@@ -33,10 +31,6 @@ describe('CheckoutStoreSelector', () => {
 
     it('returns order', () => {
         expect(selector.getOrder()).toEqual(internalSelectors.order.getOrder());
-    });
-
-    it('returns quote', () => {
-        expect(selector.getQuote()).toEqual(getQuote());
     });
 
     it('returns config', () => {
