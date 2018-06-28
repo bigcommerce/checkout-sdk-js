@@ -183,6 +183,10 @@ declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
     onPaymentSelect?(): void;
 }
 
+declare interface ChasePayCustomerInitializeOptions {
+    container: string;
+}
+
 declare interface CheckoutSelectors {
     checkout: CheckoutStoreSelector;
     errors: CheckoutStoreErrorSelector;
@@ -1586,6 +1590,7 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
+    chasepay?: ChasePayCustomerInitializeOptions;
 }
 
 /**

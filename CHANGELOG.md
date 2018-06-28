@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.2"></a>
+## [0.24.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.1...v0.24.2) (2018-06-28)
+
+
+### Features
+
+* **checkout:** INT-475 Chase Pay button to display on Customer section UCO page ([ddcb436](https://github.com/bigcommerce/checkout-sdk-js/commit/ddcb436))
+* **checkout:** INT-660 Update checkout SDK to accept merchantRequestid ([8da6535](https://github.com/bigcommerce/checkout-sdk-js/commit/8da6535))
+* **payment:** INT-594 Send ChasePay CheckoutData needed for WePay ([3712b1e](https://github.com/bigcommerce/checkout-sdk-js/commit/3712b1e))
+
+
+
 <a name="0.24.1"></a>
 ## [0.24.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.0...v0.24.1) (2018-06-06)
 
