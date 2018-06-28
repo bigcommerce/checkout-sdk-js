@@ -13,6 +13,7 @@ import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../paymen
 import { Instrument, InstrumentSelector } from '../payment/instrument';
 import { mapToInternalQuote, InternalQuote } from '../quote';
 import {
+    Consignment,
     ShippingAddressSelector,
     ShippingCountrySelector,
     ShippingOption,
@@ -127,13 +128,12 @@ export default class CheckoutStoreSelector {
     }
 
     /**
-     * Gets a list of shipping options available for each shipping address.
+     * Gets a list of shipping options available for the shipping address.
      *
      * If there is no shipping address assigned to the current checkout, the
      * list of shipping options will be empty.
      *
-     * @returns The list of shipping options per address if loaded, otherwise
-     * undefined.
+     * @returns The list of shipping options if any, otherwise undefined.
      */
     getShippingOptions(): ShippingOption[] | undefined {
         const consignments = this._consignments.getConsignments();
@@ -143,6 +143,18 @@ export default class CheckoutStoreSelector {
         }
 
         return;
+    }
+
+    /**
+     * Gets a list of consignments.
+     *
+     * If there are no consignments created for to the current checkout, the
+     * list will be empty.
+     *
+     * @returns The list of consignments if any, otherwise undefined.
+     */
+    getConsignments(): Consignment[] | undefined {
+        return this._consignments.getConsignments();
     }
 
     /**
