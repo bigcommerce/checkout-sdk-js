@@ -1,5 +1,5 @@
 import { getAdyenAmex, getBraintree, getPaymentMethodsState } from './payment-methods.mock';
-import { getSubmittedOrderState } from '../order/internal-orders.mock';
+import { getOrderState } from '../order/orders.mock';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import PaymentMethodSelector from './payment-method-selector';
 
@@ -10,7 +10,7 @@ describe('PaymentMethodSelector', () => {
     beforeEach(() => {
         state = {
             paymentMethods: getPaymentMethodsState(),
-            order: getSubmittedOrderState(),
+            order: getOrderState(),
         };
     });
 

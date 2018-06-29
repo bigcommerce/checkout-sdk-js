@@ -1,5 +1,6 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getCouponResponseBody } from './internal-coupons.mock';
+
+import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 import CouponRequestSender from './coupon-request-sender';
@@ -33,7 +34,7 @@ describe('Coupon Request Sender', () => {
 
     describe('#applyCoupon()', () => {
         it('applies coupon code', async () => {
-            const response = getResponse(getCouponResponseBody());
+            const response = getResponse(getCheckoutWithCoupons());
             requestSender.post.mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.applyCoupon(checkoutId, couponCode);
@@ -52,7 +53,7 @@ describe('Coupon Request Sender', () => {
 
         it('applies coupon with timeout', async () => {
             const options = { timeout: createTimeout() };
-            const response = getResponse(getCouponResponseBody());
+            const response = getResponse(getCheckoutWithCoupons());
             requestSender.post.mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.applyCoupon(checkoutId, couponCode, options);
@@ -73,7 +74,7 @@ describe('Coupon Request Sender', () => {
 
     describe('#removeCoupon()', () => {
         it('removes coupon code', async () => {
-            const response = getResponse(getCouponResponseBody());
+            const response = getResponse(getCheckoutWithCoupons());
             requestSender.delete.mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.removeCoupon(checkoutId, couponCode);
@@ -91,7 +92,7 @@ describe('Coupon Request Sender', () => {
 
         it('removes coupon code with timeout', async () => {
             const options = { timeout: createTimeout() };
-            const response = getResponse(getCouponResponseBody());
+            const response = getResponse(getCheckoutWithCoupons());
             requestSender.delete.mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.removeCoupon(checkoutId, couponCode, options);
