@@ -1,28 +1,20 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '..';
-import { getBillingAddressState } from '../../billing/billing-addresses.mock';
+import { createCustomerStrategyRegistry, CustomerInitializeOptions, CustomerStrategyActionCreator } from '..';
 import { getBillingAddress } from '../../billing/billing-addresses.mock';
-import { getCartState } from '../../cart/internal-carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { getCheckoutState } from '../../checkout/checkouts.mock';
-import { getConfigState } from '../../config/configs.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../checkout';
+import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { getBraintreeVisaCheckout, getPaymentMethodsState } from '../../payment/payment-methods.mock';
-import {
-    createBraintreeVisaCheckoutPaymentProcessor,
-    BraintreeVisaCheckoutPaymentProcessor,
-} from '../../payment/strategies/braintree';
-import { VisaCheckoutSDK } from '../../payment/strategies/braintree/visacheckout';
-import VisaCheckoutScriptLoader from '../../payment/strategies/braintree/visacheckout-script-loader';
+import { getBraintreeVisaCheckout } from '../../payment/payment-methods.mock';
+import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPaymentProcessor } from '../../payment/strategies/braintree';
+import { VisaCheckoutScriptLoader, VisaCheckoutSDK } from '../../payment/strategies/braintree';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { getConsignmentsState } from '../../shipping/consignments.mock';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 import { CustomerStrategyActionType } from '../customer-strategy-actions';
-import { getCustomerState } from '../customers.mock';
 import { getRemoteCustomer } from '../internal-customers.mock';
 
 import { BraintreeVisaCheckoutCustomerStrategy, CustomerStrategy } from './';
@@ -48,15 +40,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
 
         paymentMethodMock = { ...getBraintreeVisaCheckout(), clientToken: 'clientToken' };
 
-        store = createCheckoutStore({
-            billingAddress: getBillingAddressState(),
-            checkout: getCheckoutState(),
-            customer: getCustomerState(),
-            config: getConfigState(),
-            cart: getCartState(),
-            paymentMethods: getPaymentMethodsState(),
-            consignments: getConsignmentsState(),
-        });
+        store = createCheckoutStore(getCheckoutStoreState());
 
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);
@@ -74,7 +58,6 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         const client = createCheckoutClient();
         const registry = createCustomerStrategyRegistry(store, client);
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
-        const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender);
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
@@ -104,7 +87,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     });
 
     describe('#initialize()', () => {
-        let visaCheckoutOptions;
+        let visaCheckoutOptions: CustomerInitializeOptions;
 
         beforeEach(() => {
             visaCheckoutOptions = { methodId: 'braintreevisacheckout', braintreevisacheckout: { container: 'login' } };
@@ -127,10 +110,10 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         });
 
         it('throws if the container is not available', async () => {
-            visaCheckoutOptions.braintreevisacheckout.container = 'non-existing';
-
             try {
-                await strategy.initialize(visaCheckoutOptions);
+                await strategy.initialize(merge({}, visaCheckoutOptions, {
+                    braintreevisacheckout: { container: 'non-existing' },
+                }));
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);
             }
@@ -213,12 +196,16 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         });
 
         it('payment error triggers onError from the options', async () => {
-            visaCheckoutOptions.braintreevisacheckout.onError = jest.fn();
+            const onError = jest.fn();
             const errorMock = new Error();
-            visaCheckoutSDK.on = jest.fn((type, callback) => type === 'payment.error' ? callback('data', errorMock) : undefined);
-            await strategy.initialize(visaCheckoutOptions);
 
-            expect(visaCheckoutOptions.braintreevisacheckout.onError).toHaveBeenCalledWith(errorMock);
+            visaCheckoutSDK.on = jest.fn((type, callback) => type === 'payment.error' ? callback('data', errorMock) : undefined);
+
+            await strategy.initialize(merge({}, visaCheckoutOptions, {
+                braintreevisacheckout: { onError },
+            }));
+
+            expect(onError).toHaveBeenCalledWith(errorMock);
         });
     });
 
@@ -234,12 +221,15 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
 
     describe('#signOut()', () => {
         beforeEach(async () => {
-            const remoteCustomer = getRemoteCustomer();
-            remoteCustomer.remote.provider = 'braintreevisacheckout';
-            jest.spyOn(store.getState().customer, 'getCustomer').mockReturnValue(remoteCustomer);
+            const remoteCustomer = merge({}, getRemoteCustomer(), {
+                remote: { provider: 'braintreevisacheckout' },
+            });
 
-            store.getState().customer.getCustomer().remote.provider = 'braintreevisacheckout';
+            jest.spyOn(store.getState().customer, 'getCustomer')
+                .mockReturnValue(remoteCustomer);
+
             remoteCheckoutActionCreator.signOut = jest.fn(() => 'data');
+
             await strategy.initialize({ methodId: 'visaCheckout', braintreevisacheckout: { container: 'login' } });
         });
 

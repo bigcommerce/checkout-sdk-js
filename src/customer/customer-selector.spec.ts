@@ -1,19 +1,15 @@
-import { getBillingAddressState } from '../billing/billing-addresses.mock';
-import { getCartState } from '../cart/carts.mock';
+import { CheckoutStoreState } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
 import CustomerSelector from './customer-selector';
-import { getCustomer, getCustomerState } from './customers.mock';
+import { getCustomer } from './customers.mock';
 
 describe('CustomerSelector', () => {
     let selector: CustomerSelector;
-    let state;
+    let state: CheckoutStoreState;
 
     beforeEach(() => {
-        state = {
-            customer: getCustomerState(),
-            billingAddress: getBillingAddressState(),
-            cart: getCartState(),
-        };
+        state = getCheckoutStoreState();
     });
 
     describe('#getCustomer()', () => {

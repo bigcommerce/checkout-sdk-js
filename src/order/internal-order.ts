@@ -28,6 +28,7 @@ export default interface InternalOrder {
         amountBeforeDiscount: number;
         integerAmountBeforeDiscount: number;
     };
+    status: string;
     storeCredit: {
         amount: number;
     };
@@ -43,7 +44,6 @@ export default interface InternalOrder {
     token?: string;
     payment: InternalOrderPayment;
     socialData?: { [itemId: string]: InternalSocialDataList };
-    status: string;
     hasDigitalItems: boolean;
     isDownloadable: boolean;
     isComplete: boolean;
@@ -54,6 +54,9 @@ export interface InternalIncompleteOrder {
     isComplete: false;
     orderId: null;
     payment: InternalOrderPayment;
+    status?: string;
+    hasDigitalItems?: boolean;
+    isDownloadable?: boolean;
 }
 
 export interface InternalGiftCertificateList {

@@ -9,19 +9,16 @@ import { getOrder } from '../order/orders.mock';
 
 import { CouponActionType } from './coupon-actions';
 import couponReducer from './coupon-reducer';
+import CouponState from './coupon-state';
 
 describe('couponReducer()', () => {
-    let initialState;
-
-    beforeEach(() => {
-        initialState = {};
-    });
+    const initialState: CouponState = { errors: {}, statuses: {} };
 
     it('returns new state when coupon gets applied', () => {
         const action = createAction(CouponActionType.ApplyCouponSucceeded, getCheckoutWithCoupons());
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.coupons,
+            data: action.payload && action.payload.coupons,
         }));
     });
 
@@ -37,7 +34,7 @@ describe('couponReducer()', () => {
         const action = createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckoutWithCoupons());
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.coupons,
+            data: action.payload && action.payload.coupons,
         }));
     });
 
@@ -45,7 +42,7 @@ describe('couponReducer()', () => {
         const action = createAction(OrderActionType.LoadOrderSucceeded, getOrder());
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.coupons,
+            data: action.payload && action.payload.coupons,
         }));
     });
 

@@ -7,6 +7,7 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -35,7 +36,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.preloadPaypal = jest.fn(() => Promise.resolve());
         braintreePaymentProcessorMock.paypal = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card' }));
-        braintreePaymentProcessorMock.appendSessionId = jest.fn(tokenizedCard => tokenizedCard.then(card => ({ ...card, deviceSessionId: 'my_session_id' })));
+        braintreePaymentProcessorMock.appendSessionId = jest.fn(tokenizedCard => tokenizedCard.then((card: NonceInstrument) => ({ ...card, deviceSessionId: 'my_session_id' })));
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
         paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };

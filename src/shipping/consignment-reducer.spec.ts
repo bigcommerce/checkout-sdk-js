@@ -21,7 +21,7 @@ describe('consignmentReducer', () => {
         const action = createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout());
 
         expect(consignmentReducer(initialState, action)).toEqual({
-            data: action.payload.consignments,
+            data: action.payload && action.payload.consignments,
             errors: {
                 loadError: undefined,
             },
@@ -32,12 +32,12 @@ describe('consignmentReducer', () => {
     });
 
     it('returns error when checkout fails to load', () => {
-        const action = createAction(CheckoutActionType.LoadCheckoutFailed, {});
+        const action = createAction(CheckoutActionType.LoadCheckoutFailed, new Error());
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: undefined,
             errors: {
-                loadError: {},
+                loadError: action.payload,
             },
             statuses: {
                 isLoading: false,
@@ -63,7 +63,7 @@ describe('consignmentReducer', () => {
         const action = createAction(ConsignmentActionType.CreateConsignmentsSucceeded, getCheckout());
 
         expect(consignmentReducer(initialState, action)).toEqual({
-            data: action.payload.consignments,
+            data: action.payload && action.payload.consignments,
             errors: {
                 createError: undefined,
             },
@@ -88,12 +88,12 @@ describe('consignmentReducer', () => {
     });
 
     it('returns error when consignment creation fails', () => {
-        const action = createAction(ConsignmentActionType.CreateConsignmentsFailed, {});
+        const action = createAction(ConsignmentActionType.CreateConsignmentsFailed, new Error());
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: undefined,
             errors: {
-                createError: {},
+                createError: action.payload,
             },
             statuses: {
                 isCreating: false,
@@ -119,7 +119,7 @@ describe('consignmentReducer', () => {
         const action = createAction(ConsignmentActionType.UpdateConsignmentSucceeded, getCheckout());
 
         expect(consignmentReducer(initialState, action)).toEqual({
-            data: action.payload.consignments,
+            data: action.payload && action.payload.consignments,
             errors: {
                 updateError: undefined,
             },
@@ -130,12 +130,12 @@ describe('consignmentReducer', () => {
     });
 
     it('returns error when consignment update fails', () => {
-        const action = createAction(ConsignmentActionType.UpdateConsignmentFailed, {});
+        const action = createAction(ConsignmentActionType.UpdateConsignmentFailed, new Error());
 
         expect(consignmentReducer(initialState, action)).toEqual({
             data: undefined,
             errors: {
-                updateError: {},
+                updateError: action.payload,
             },
             statuses: {
                 isUpdating: false,

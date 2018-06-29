@@ -1,15 +1,20 @@
 import { getGuestCustomer } from '../customer/internal-customers.mock';
 import { getPayment } from '../payment/payments.mock';
 
-export function getOrderRequestBody() {
+import InternalOrder, { InternalIncompleteOrder } from './internal-order';
+import InternalOrderRequestBody from './internal-order-request-body';
+import { InternalOrderResponseBody } from './internal-order-responses';
+import OrderRequestBody, { OrderPaymentRequestBody } from './order-request-body';
+
+export function getOrderRequestBody(): OrderRequestBody {
     return {
         customerMessage: '',
         useStoreCredit: false,
-        payment: getPayment(),
+        payment: getPayment() as OrderPaymentRequestBody,
     };
 }
 
-export function getInternalOrderRequestBody() {
+export function getInternalOrderRequestBody(): InternalOrderRequestBody {
     const payment = getPayment();
 
     return {
@@ -23,11 +28,10 @@ export function getInternalOrderRequestBody() {
     };
 }
 
-export function getIncompleteOrder() {
+export function getIncompleteOrder(): InternalIncompleteOrder {
     return {
         orderId: null,
         payment: {},
-        socialData: null,
         status: 'ORDER_STATUS_INCOMPLETE',
         hasDigitalItems: false,
         isDownloadable: false,
@@ -44,7 +48,7 @@ export function getIncompleteOrderState() {
     };
 }
 
-export function getCompleteOrder() {
+export function getCompleteOrder(): InternalOrder {
     return {
         ...getIncompleteOrder(),
         id: 295,
@@ -163,8 +167,10 @@ export function getCompleteOrder() {
             helpText: '%%OrderID%% text %%OrderID%%',
         },
         isDownloadable: false,
+        hasDigitalItems: false,
         customerCanBeCreated: true,
         isComplete: true,
+        status: 'ORDER_STATUS_AWAITING_FULFILLMENT',
         socialData: {
             5: {
                 fb: {
@@ -202,7 +208,7 @@ export function getCompleteOrder() {
     };
 }
 
-export function getCompleteOrderResponseBody() {
+export function getCompleteOrderResponseBody(): InternalOrderResponseBody {
     return {
         meta: {},
         data: {

@@ -1,10 +1,8 @@
-import { omit } from 'lodash';
-
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { getBraintree } from '../../../payment/payment-methods.mock';
 import { PaymentMethodCancelledError } from '../../errors';
-import { TokenizedCreditCard } from '../../payment';
+import { NonceInstrument } from '../../payment';
 
+import { BraintreeClient, BraintreeThreeDSecure } from './braintree';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import {
@@ -40,12 +38,13 @@ describe('BraintreePaymentProcessor', () => {
     });
 
     describe('#tokenizeCard()', () => {
-        let clientMock;
-        let braintreePaymentProcessor;
+        let clientMock: BraintreeClient;
+        let braintreePaymentProcessor: BraintreePaymentProcessor;
 
         beforeEach(() => {
             clientMock = getClientMock();
-            clientMock.request.mockReturnValue(Promise.resolve(getTokenizeResponseBody()));
+            jest.spyOn(clientMock, 'request')
+                .mockReturnValue(Promise.resolve(getTokenizeResponseBody()));
             braintreeSDKCreator.getClient = jest.fn().mockReturnValue(Promise.resolve(clientMock));
             braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
         });
@@ -56,19 +55,17 @@ describe('BraintreePaymentProcessor', () => {
         });
 
         it('calls the braintree client request with the correct information', async () => {
-            const tokenizedCard = await braintreePaymentProcessor.tokenizeCard(getBraintreePaymentData(), getBillingAddress());
+            await braintreePaymentProcessor.tokenizeCard(getBraintreePaymentData(), getBillingAddress());
             expect(clientMock.request).toHaveBeenCalledWith(getBraintreeRequestData());
         });
     });
 
     describe('#verifyCard()', () => {
-        let threeDSecureMock;
-        let braintreePaymentProcessor;
-        let threeDSecureOptionsMock;
-        let cancelVerifyCard;
+        let threeDSecureMock: BraintreeThreeDSecure;
+        let braintreePaymentProcessor: BraintreePaymentProcessor;
+        let cancelVerifyCard: () => void;
 
         beforeEach(() => {
-            threeDSecureOptionsMock = getThreeDSecureOptionsMock();
             threeDSecureMock = getThreeDSecureMock();
 
             braintreeSDKCreator.initialize = jest.fn();
@@ -101,13 +98,14 @@ describe('BraintreePaymentProcessor', () => {
         });
 
         it('verifies the card using 3', async () => {
-            threeDSecureMock.verifyCard.mockReturnValue(Promise.resolve({ nonce: 'my_nonce' }));
+            jest.spyOn(threeDSecureMock, 'verifyCard')
+                .mockReturnValue(Promise.resolve({ nonce: 'my_nonce' }));
             const verifiedCard = await braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
             expect(verifiedCard).toEqual({ nonce: 'my_nonce' });
         });
 
         it('calls the verification service with the right values', async () => {
-            const verifiedCard = await braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
+            await braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
 
             expect(threeDSecureMock.verifyCard)
                 .toHaveBeenCalledWith({
@@ -120,13 +118,15 @@ describe('BraintreePaymentProcessor', () => {
 
         describe('when cancel function gets called', () => {
             beforeEach(() => {
-                threeDSecureMock.verifyCard.mockImplementation(({ addFrame }) => {
-                    addFrame();
+                jest.spyOn(threeDSecureMock, 'verifyCard')
+                    .mockImplementation(({ addFrame }) => {
+                        addFrame();
 
-                    return new Promise(() => {});
-                });
+                        return new Promise(() => { });
+                    });
 
-                threeDSecureMock.cancelVerifyCard.mockReturnValue(Promise.resolve(getVerifyPayload()));
+                jest.spyOn(threeDSecureMock, 'cancelVerifyCard')
+                    .mockReturnValue(Promise.resolve(getVerifyPayload()));
             });
 
             it('cancels card verification', async () => {
@@ -150,7 +150,7 @@ describe('BraintreePaymentProcessor', () => {
             });
 
             it('resolves with verify payload', async () => {
-                const promise = braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
+                braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122);
 
                 await new Promise(resolve => process.nextTick(resolve));
                 const response = await cancelVerifyCard();
@@ -161,7 +161,7 @@ describe('BraintreePaymentProcessor', () => {
     });
 
     describe('#appendSessionId()', () => {
-        let processedPayment: TokenizedCreditCard;
+        let processedPayment: NonceInstrument;
 
         beforeEach(() => {
             const dataCollector = getDataCollectorMock();

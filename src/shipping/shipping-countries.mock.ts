@@ -1,18 +1,22 @@
-export function getShippingCountries() {
+import { Country, CountryResponseBody } from '../geography';
+
+import ShippingCountryState from './shipping-country-state';
+
+export function getShippingCountries(): Country[] {
     return [
         getAustralia(),
         getJapan(),
     ];
 }
 
-export function getShippingCountriesResponseBody() {
+export function getShippingCountriesResponseBody(): CountryResponseBody {
     return {
         meta: {},
         data: getShippingCountries(),
     };
 }
 
-export function getShippingCountriesState() {
+export function getShippingCountriesState(): ShippingCountryState {
     return {
         data: getShippingCountries(),
         errors: {},
@@ -20,7 +24,7 @@ export function getShippingCountriesState() {
     };
 }
 
-export function getAustralia() {
+export function getAustralia(): Country {
     return {
         code: 'AU',
         name: 'Australia',
@@ -31,7 +35,7 @@ export function getAustralia() {
     };
 }
 
-export function getJapan() {
+export function getJapan(): Country {
     return {
         code: 'JP',
         name: 'Japan',

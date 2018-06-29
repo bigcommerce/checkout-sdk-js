@@ -18,7 +18,6 @@ describe('mapToInternalIncompleteOrder()', () => {
                 isComplete: false,
                 orderId: null,
                 payment: {
-                    gateway: null,
                     id: 'authorizenet',
                     status: 'PAYMENT_STATUS_ACKNOWLEDGE',
                 },

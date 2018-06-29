@@ -1,4 +1,8 @@
-export function getCountries() {
+import Country from './country';
+import { CountryResponseBody } from './country-responses';
+import CountryState from './country-state';
+
+export function getCountries(): Country[] {
     return [
         getAustralia(),
         getUnitedStates(),
@@ -6,14 +10,14 @@ export function getCountries() {
     ];
 }
 
-export function getCountriesResponseBody() {
+export function getCountriesResponseBody(): CountryResponseBody {
     return {
         meta: {},
         data: getCountries(),
     };
 }
 
-export function getCountriesState() {
+export function getCountriesState(): CountryState {
     return {
         data: getCountries(),
         errors: {},
@@ -21,7 +25,7 @@ export function getCountriesState() {
     };
 }
 
-export function getAustralia() {
+export function getAustralia(): Country {
     return {
         code: 'AU',
         name: 'Australia',
@@ -33,7 +37,7 @@ export function getAustralia() {
     };
 }
 
-export function getUnitedStates() {
+export function getUnitedStates(): Country {
     return {
         code: 'US',
         name: 'United States',
@@ -45,7 +49,7 @@ export function getUnitedStates() {
     };
 }
 
-export function getJapan() {
+export function getJapan(): Country {
     return {
         code: 'JP',
         name: 'Japan',
