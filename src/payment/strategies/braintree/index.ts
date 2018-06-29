@@ -1,3 +1,5 @@
+export * from './visacheckout';
+
 export { BraintreePaymentInitializeOptions } from './braintree-payment-options';
 export { default as BraintreeCreditCardPaymentStrategy } from './braintree-credit-card-payment-strategy';
 export { default as BraintreePaymentProcessor } from './braintree-payment-processor';

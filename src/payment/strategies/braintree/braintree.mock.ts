@@ -1,5 +1,5 @@
-import { Payment } from '../..';
-import { getPayment } from '../../payments.mock';
+import { OrderPaymentRequestBody } from '../../../order';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
 import {
     BraintreeClient,
@@ -95,9 +95,9 @@ export function getBraintreeRequestData(): BraintreeRequestData {
     };
 }
 
-export function getBraintreePaymentData(): Payment {
+export function getBraintreePaymentData(): OrderPaymentRequestBody {
     return {
-        ...getPayment(),
+        ...getOrderRequestBody().payment,
         methodId: 'braintree',
     };
 }

@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { ChasePayHostWindow } from '../chasepay/chasepay';
+import { ChasePayHostWindow, JPMC } from '../chasepay/chasepay';
 
 export default class ChasePayScriptLoader {
     constructor(
@@ -10,7 +10,7 @@ export default class ChasePayScriptLoader {
         public _window: ChasePayHostWindow = window
     ) {}
 
-    load(testMode?: boolean): Promise<any> {
+    load(testMode?: boolean): Promise<JPMC> {
         return this._scriptLoader
             .loadScript(`//pwc${testMode ? 'psb' : ''}.chase.com/pwc/checkout/js/v20170521/list.action?type=raw&applId=PWC&channelId=CWC&version=1`)
             .then(() => {

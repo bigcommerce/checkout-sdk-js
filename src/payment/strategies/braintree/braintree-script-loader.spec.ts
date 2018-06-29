@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { BraintreeClientCreator, BraintreeHostWindow } from './braintree';
+import { BraintreeClientCreator, BraintreeDataCollector, BraintreeHostWindow, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
     getClientMock,
@@ -27,7 +27,10 @@ describe('BraintreeScriptLoader', () => {
         beforeEach(() => {
             clientMock = getModuleCreatorMock(getClientMock());
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.braintree.client = clientMock;
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.client = clientMock;
+                }
+
                 return Promise.resolve();
             });
         });
@@ -44,12 +47,15 @@ describe('BraintreeScriptLoader', () => {
     });
 
     describe('#load3DS()', () => {
-        let threeDSecureMock;
+        let threeDSecureMock: BraintreeModuleCreator<BraintreeThreeDSecure>;
 
         beforeEach(() => {
             threeDSecureMock = getModuleCreatorMock(getThreeDSecureMock());
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.braintree.threeDSecure = threeDSecureMock;
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.threeDSecure = threeDSecureMock;
+                }
+
                 return Promise.resolve();
             });
         });
@@ -66,12 +72,15 @@ describe('BraintreeScriptLoader', () => {
     });
 
     describe('#loadDataCollector()', () => {
-        let dataCollectorMock;
+        let dataCollectorMock: BraintreeModuleCreator<BraintreeDataCollector>;
 
         beforeEach(() => {
             dataCollectorMock = getModuleCreatorMock(getDataCollectorMock());
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.braintree.dataCollector = dataCollectorMock;
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.dataCollector = dataCollectorMock;
+                }
+
                 return Promise.resolve();
             });
         });
@@ -88,12 +97,15 @@ describe('BraintreeScriptLoader', () => {
     });
 
     describe('#loadVisaCheckout()', () => {
-        let visaCheckoutMock;
+        let visaCheckoutMock: BraintreeModuleCreator<BraintreeVisaCheckout>;
 
         beforeEach(() => {
             visaCheckoutMock = getModuleCreatorMock(getVisaCheckoutMock());
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.braintree.visaCheckout = visaCheckoutMock;
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.visaCheckout = visaCheckoutMock;
+                }
+
                 return Promise.resolve();
             });
         });

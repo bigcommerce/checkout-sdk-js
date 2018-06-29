@@ -10,7 +10,7 @@ describe('ChasePayScriptLoader', () => {
     let mockWindow: ChasePayHostWindow;
 
     beforeEach(() => {
-        mockWindow = { } as ChasePayHostWindow;
+        mockWindow = {} as ChasePayHostWindow;
         scriptLoader = {} as ScriptLoader;
         chasePayScriptLoader = new ChasePayScriptLoader(scriptLoader, mockWindow);
     });
@@ -20,6 +20,7 @@ describe('ChasePayScriptLoader', () => {
 
         beforeEach(() => {
             chasePayScript = getChasePayScriptMock();
+
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.JPMC = chasePayScript;
                 return Promise.resolve();

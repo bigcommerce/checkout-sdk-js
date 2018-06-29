@@ -1,5 +1,6 @@
 import { NotInitializedError } from '../../../common/error/errors';
 
+import { BraintreeClient, BraintreeDataCollector, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import {
@@ -12,8 +13,8 @@ import {
 
 describe('Braintree SDK Creator', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;
-    let clientMock;
-    let clientCreatorMock;
+    let clientMock: BraintreeClient;
+    let clientCreatorMock: BraintreeModuleCreator<BraintreeClient>;
 
     beforeEach(() => {
         clientMock = getClientMock();
@@ -36,7 +37,7 @@ describe('Braintree SDK Creator', () => {
         it('uses the right arguments to create the client', async () => {
             const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
             braintreeSDKCreator.initialize('clientToken');
-            const client = await braintreeSDKCreator.getClient();
+            await braintreeSDKCreator.getClient();
             expect(clientCreatorMock.create).toHaveBeenCalledWith({ authorization: 'clientToken' });
         });
 
@@ -66,9 +67,9 @@ describe('Braintree SDK Creator', () => {
     });
 
     describe('#get3DS()', () => {
-        let threeDSecureMock;
-        let threeDSecureCreatorMock;
-        let braintreeSDKCreator;
+        let threeDSecureMock: BraintreeThreeDSecure;
+        let threeDSecureCreatorMock: BraintreeModuleCreator<BraintreeThreeDSecure>;
+        let braintreeSDKCreator: BraintreeSDKCreator;
 
         beforeEach(() => {
             threeDSecureMock = getThreeDSecureMock();
@@ -96,16 +97,18 @@ describe('Braintree SDK Creator', () => {
 
         it('throws if getting the client throws', async () => {
             const errorMessage = 'some_error';
-            braintreeSDKCreator.getClient.mockImplementation(() => { throw new Error(errorMessage); });
+
+            jest.spyOn(braintreeSDKCreator, 'getClient')
+                .mockImplementation(() => { throw new Error(errorMessage); });
 
             expect(() => braintreeSDKCreator.get3DS()).toThrow(errorMessage);
         });
     });
 
     describe('#getDataCollector()', () => {
-        let dataCollectorMock;
-        let dataCollectorCreatorMock;
-        let braintreeSDKCreator;
+        let dataCollectorMock: BraintreeDataCollector;
+        let dataCollectorCreatorMock: BraintreeModuleCreator<BraintreeDataCollector>;
+        let braintreeSDKCreator: BraintreeSDKCreator;
 
         beforeEach(() => {
             dataCollectorMock = getDataCollectorMock();
@@ -116,7 +119,7 @@ describe('Braintree SDK Creator', () => {
         });
 
         it('uses the right parameters to instanciate a data collector', async () => {
-            const dataCollector = await braintreeSDKCreator.getDataCollector();
+            await braintreeSDKCreator.getDataCollector();
             expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({ client: clientMock, kount: true });
         });
 
@@ -134,20 +137,24 @@ describe('Braintree SDK Creator', () => {
         });
 
         it('catches the KOUNT_IS_NOT_ENABLED error ', async () => {
-            dataCollectorCreatorMock.create.mockReturnValue(Promise.reject({ code: 'DATA_COLLECTOR_KOUNT_NOT_ENABLED' }));
+            jest.spyOn(dataCollectorCreatorMock, 'create')
+                .mockReturnValue(Promise.reject({ code: 'DATA_COLLECTOR_KOUNT_NOT_ENABLED' }));
+
             await expect(braintreeSDKCreator.getDataCollector()).resolves.toEqual(expect.objectContaining({ deviceData: undefined }));
         });
 
         it('throws if some other error is returned', async () => {
-            dataCollectorCreatorMock.create.mockReturnValue(Promise.reject({ code: 'OTHER_RANDOM_ERROR' }));
+            jest.spyOn(dataCollectorCreatorMock, 'create')
+                .mockReturnValue(Promise.reject({ code: 'OTHER_RANDOM_ERROR' }));
+
             await expect(braintreeSDKCreator.getDataCollector()).rejects.toEqual({ code: 'OTHER_RANDOM_ERROR' });
         });
     });
 
     describe('#getVisaCheckout()', () => {
-        let visaCheckoutMock;
-        let visaCheckoutCreatorMock;
-        let braintreeSDKCreator;
+        let visaCheckoutMock: BraintreeVisaCheckout;
+        let visaCheckoutCreatorMock: BraintreeModuleCreator<BraintreeVisaCheckout>;
+        let braintreeSDKCreator: BraintreeSDKCreator;
 
         beforeEach(() => {
             visaCheckoutMock = getVisaCheckoutMock();
@@ -175,17 +182,19 @@ describe('Braintree SDK Creator', () => {
 
         it('throws if getting the client throws', async () => {
             const errorMessage = 'some_error';
-            braintreeSDKCreator.getClient.mockImplementation(() => { throw new Error(errorMessage); });
+
+            jest.spyOn(braintreeSDKCreator, 'getClient')
+                .mockImplementation(() => { throw new Error(errorMessage); });
 
             expect(() => braintreeSDKCreator.getVisaCheckout()).toThrow(errorMessage);
         });
     });
 
     describe('#teardown()', () => {
-        let braintreeSDKCreator;
-        let dataCollectorMock;
-        let threeDSecureMock;
-        let visaCheckoutMock;
+        let braintreeSDKCreator: BraintreeSDKCreator;
+        let dataCollectorMock: BraintreeDataCollector;
+        let threeDSecureMock: BraintreeThreeDSecure;
+        let visaCheckoutMock: BraintreeVisaCheckout;
 
         beforeEach(() => {
             dataCollectorMock = getDataCollectorMock();

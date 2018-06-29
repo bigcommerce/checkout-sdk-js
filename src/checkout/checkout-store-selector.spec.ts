@@ -1,16 +1,14 @@
 import { find, reject } from 'lodash';
 
-import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
-import { getCustomer } from '../customer/internal-customers.mock';
+import { FormField } from '../form';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
-import { getBraintree } from '../payment/payment-methods.mock';
-import { getShippingOptions } from '../shipping/shipping-options.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
+import { getShippingOptions } from '../shipping/shipping-options.mock';
 
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreState from './checkout-store-state';
-import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from './checkouts.mock';
+import { getCheckoutStoreStateWithOrder } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
@@ -87,19 +85,21 @@ describe('CheckoutStoreSelector', () => {
 
     it('returns shipping address fields', () => {
         const results = selector.getShippingAddressFields('AU');
-        const predicate = ({ name }) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
+        const predicate = ({ name }: FormField) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
+        const field = find(results, { name: 'stateOrProvinceCode' });
 
         expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
-        expect(find(results, { name: 'stateOrProvinceCode' }).options.items)
+        expect(field && field.options && field.options.items)
             .toEqual(getAustralia().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 
     it('returns billing address fields', () => {
         const results = selector.getBillingAddressFields('US');
-        const predicate = ({ name }) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
+        const predicate = ({ name }: FormField) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
+        const field = find(results, { name: 'stateOrProvinceCode' });
 
         expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
-        expect(find(results, { name: 'stateOrProvinceCode' }).options.items)
+        expect(field && field.options && field.options.items)
             .toEqual(getUnitedStates().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
 });

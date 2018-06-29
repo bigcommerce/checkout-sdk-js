@@ -1,16 +1,15 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { getCart } from '../../../cart/internal-carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import Payment, { CreditCardInstrument, VaultedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -40,14 +39,17 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.tokenizeCard = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card' }));
         braintreePaymentProcessorMock.verifyCard = jest.fn(() => Promise.resolve({ nonce: 'my_verified_card' }));
-        braintreePaymentProcessorMock.appendSessionId = jest.fn(tokenizedCard => tokenizedCard.then(card => ({ ...card, deviceSessionId: 'my_session_id' })));
+        braintreePaymentProcessorMock.appendSessionId = jest.fn(tokenizedCard => tokenizedCard.then((card: any) => ({ ...card, deviceSessionId: 'my_session_id' })));
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
         paymentMethodMock = { ...getBraintree(), clientToken: 'myToken' };
 
         store = createCheckoutStore(getCheckoutStoreState());
 
-        orderActionCreator = new OrderActionCreator(createCheckoutClient());
+        orderActionCreator = new OrderActionCreator(
+            createCheckoutClient(),
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+        );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator
@@ -125,25 +127,31 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         });
 
         it('does not touch the card if it is going to be saved in the vault (shouldSaveInstrument: true)', async () => {
-            const paymentData = orderRequestBody.payment.paymentData as CreditCardInstrument;
+            const payload = merge({}, orderRequestBody, {
+                payment: { paymentData: { shouldSaveInstrument: true } },
+            });
 
-            paymentData.shouldSaveInstrument = true;
-
-            await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
+            await braintreeCreditCardPaymentStrategy.execute(payload, options);
 
             expect(paymentActionCreator.submitPayment)
-                .toHaveBeenCalledWith(orderRequestBody.payment);
+                .toHaveBeenCalledWith(payload.payment);
         });
 
         it('does nothing to VaultedInstruments', async () => {
-            const vaultedInstrument = { instrumentId: 'my_instrument_id' } as VaultedInstrument;
+            const payload = {
+                ...orderRequestBody,
+                payment: {
+                    methodId: 'braintree',
+                    paymentData: {
+                        instrumentId: 'my_instrument_id',
+                    },
+                },
+            };
 
-            orderRequestBody.payment.paymentData = vaultedInstrument;
-
-            await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
+            await braintreeCreditCardPaymentStrategy.execute(payload, options);
 
             expect(paymentActionCreator.submitPayment)
-                .toHaveBeenCalledWith(orderRequestBody.payment);
+                .toHaveBeenCalledWith(payload.payment);
         });
 
         it('tokenizes the card', async () => {

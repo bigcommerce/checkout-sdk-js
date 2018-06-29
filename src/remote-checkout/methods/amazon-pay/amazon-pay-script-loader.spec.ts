@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
 
-import Login, { LoginOptions } from './amazon-pay-login';
+import AmazonPayLogin, { AmazonPayLoginOptions } from './amazon-pay-login';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
 import AmazonPayWindow from './amazon-pay-window';
 
@@ -14,8 +14,8 @@ describe('AmazonPayScriptLoader', () => {
     let setClientIdSpy: jest.Mock;
     let setUseCookieSpy: jest.Mock;
 
-    const MockLogin: Login = {
-        authorize(options: LoginOptions, redirectUrl: string): void {},
+    const MockLogin: AmazonPayLogin = {
+        authorize(options: AmazonPayLoginOptions, redirectUrl: string): void {},
 
         setClientId(clientId: string): void {
             setClientIdSpy(clientId);
@@ -78,7 +78,9 @@ describe('AmazonPayScriptLoader', () => {
 
         expect(hostWindow.onAmazonLoginReady).not.toBeUndefined();
 
-        hostWindow.onAmazonLoginReady();
+        if (hostWindow.onAmazonLoginReady) {
+            hostWindow.onAmazonLoginReady();
+        }
 
         expect(setClientIdSpy).toHaveBeenCalledWith(method.initializationData.clientId);
         expect(setUseCookieSpy).toHaveBeenCalledWith(true);
@@ -97,7 +99,13 @@ describe('AmazonPayScriptLoader', () => {
     it('triggers payment callback directly if `OffAmazonPayments` module is already loaded', () => {
         const onReady = jest.fn();
 
-        hostWindow.OffAmazonPayments = {};
+        hostWindow.OffAmazonPayments = {
+            Button: jest.fn(),
+            Widgets: {
+                AddressBook: jest.fn(),
+                Wallet: jest.fn(),
+            },
+        };
 
         amazonPayScriptLoader.loadWidget(getAmazonPay(), onReady);
 

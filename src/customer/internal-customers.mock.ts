@@ -1,9 +1,12 @@
-import { getCart } from '../cart/internal-carts.mock';
 import { getQuote } from '../quote/internal-quotes.mock';
 import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 
-export function getGuestCustomer() {
+import CustomerStrategyState from './customer-strategy-state';
+import InternalCustomer from './internal-customer';
+import { InternalCustomerResponseBody } from './internal-customer-responses';
+
+export function getGuestCustomer(): InternalCustomer {
     return {
         addresses: [],
         customerId: 0,
@@ -15,7 +18,7 @@ export function getGuestCustomer() {
     };
 }
 
-export function getCustomer() {
+export function getCustomer(): InternalCustomer {
     return {
         ...getGuestCustomer(),
         addresses: [
@@ -29,7 +32,7 @@ export function getCustomer() {
     };
 }
 
-export function getRemoteCustomer() {
+export function getRemoteCustomer(): InternalCustomer {
     return {
         ...getGuestCustomer(),
         remote: {
@@ -43,20 +46,18 @@ export function getRemoteCustomer() {
     };
 }
 
-export function getCustomerResponseBody() {
+export function getCustomerResponseBody(): InternalCustomerResponseBody {
     return {
         data: {
             quote: getQuote(),
             customer: getGuestCustomer(),
-            cart: getCart(),
             shippingOptions: getShippingOptions(),
         },
         meta: {},
     };
 }
 
-
-export function getCustomerStrategyState() {
+export function getCustomerStrategyState(): CustomerStrategyState {
     return {
         errors: {},
         statuses: {},

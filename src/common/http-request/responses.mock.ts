@@ -1,4 +1,8 @@
-export function getResponse(body, headers = {}, status = 200, statusText = 'OK') {
+import { Response } from '@bigcommerce/request-sender';
+
+import ErrorResponseBody from '../error/error-response-body';
+
+export function getResponse<T>(body: T, headers = {}, status = 200, statusText = 'OK'): Response<T> {
     return {
         body,
         status,
@@ -10,7 +14,7 @@ export function getResponse(body, headers = {}, status = 200, statusText = 'OK')
     };
 }
 
-export function getErrorResponse(body = getErrorResponseBody(), headers = {}, status = 400, statusText = 'Bad Request') {
+export function getErrorResponse(body = getErrorResponseBody(), headers = {}, status = 400, statusText = 'Bad Request'): Response {
     return {
         body,
         status,
@@ -22,7 +26,7 @@ export function getErrorResponse(body = getErrorResponseBody(), headers = {}, st
     };
 }
 
-export function getErrorResponseBody(error) {
+export function getErrorResponseBody(error?: any): ErrorResponseBody {
     return {
         detail: 'Something went wrong',
         errors: ['Bad Request'],
@@ -32,11 +36,11 @@ export function getErrorResponseBody(error) {
     };
 }
 
-export function getTimeoutResponse() {
+export function getTimeoutResponse(): Response<string> {
     return {
         body: '',
         headers: {},
         status: 0,
-        statusText: undefined,
+        statusText: '',
     };
 }

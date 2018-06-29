@@ -1,5 +1,4 @@
 import { createClient } from '@bigcommerce/bigpay-client';
-import { DataStore } from '@bigcommerce/data-store';
 
 import { createCheckoutStore, CheckoutStore } from '../checkout';
 import { getConfigState } from '../config/configs.mock';

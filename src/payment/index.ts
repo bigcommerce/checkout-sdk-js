@@ -1,3 +1,4 @@
+export * from './payment-method-action-types';
 export * from './payment-request-options';
 export * from './payment-method-responses';
 export * from './payment-method-types';

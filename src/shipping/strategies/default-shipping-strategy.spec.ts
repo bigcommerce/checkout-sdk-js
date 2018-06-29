@@ -1,7 +1,8 @@
 import { createAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
+import { createRequestSender } from '../../../node_modules/@bigcommerce/request-sender';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore } from '../../checkout';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ConsignmentActionType } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
@@ -17,7 +18,10 @@ describe('DefaultShippingStrategy', () => {
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore();
-        consignmentActionCreator = new ConsignmentActionCreator(client);
+        consignmentActionCreator = new ConsignmentActionCreator(
+            client,
+            new CheckoutRequestSender(createRequestSender())
+        );
     });
 
     it('updates shipping address', async () => {
@@ -40,7 +44,6 @@ describe('DefaultShippingStrategy', () => {
 
     it('selects shipping option', async () => {
         const strategy = new DefaultShippingStrategy(store, consignmentActionCreator);
-        const address = getShippingAddress();
         const method = getFlatRateOption();
         const options = {};
         const action = Observable.of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
