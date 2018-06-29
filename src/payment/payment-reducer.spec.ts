@@ -2,10 +2,11 @@ import { createAction } from '@bigcommerce/data-store';
 
 import { PaymentActionType } from './payment-actions';
 import paymentReducer from './payment-reducer';
+import PaymentState from './payment-state';
 import { getPaymentResponseBody } from './payments.mock';
 
 describe('paymentReducer', () => {
-    let initialState;
+    let initialState: PaymentState;
 
     beforeEach(() => {
         initialState = {};

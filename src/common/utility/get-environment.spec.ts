@@ -1,8 +1,8 @@
-import { getEnvironment } from '.';
+import getEnvironment from './get-environment';
 
 describe('getEnvironment', () => {
-    let savedEnvironment;
-    let savedProcess;
+    let savedEnvironment: string;
+    let savedProcess: any;
 
     beforeEach(() => {
         savedEnvironment = process.env;

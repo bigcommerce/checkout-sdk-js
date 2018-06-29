@@ -5,7 +5,6 @@ import { getCartState } from '../cart/carts.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCoupon, getCouponsState } from '../coupon/coupons.mock';
 import { getGiftCertificate, getGiftCertificatesState } from '../coupon/gift-certificates.mock';
-import { getGuestCustomer } from '../customer/customers.mock';
 import { getCustomer, getCustomerState } from '../customer/customers.mock';
 import { getCustomerStrategyState } from '../customer/internal-customers.mock';
 import { getCountriesState } from '../geography/countries.mock';
@@ -15,7 +14,7 @@ import { getInstrumentsState } from '../payment/instrument/instrument.mock';
 import { HOSTED } from '../payment/payment-method-types';
 import { getPaymentMethod, getPaymentMethodsState } from '../payment/payment-methods.mock';
 import { getPaymentState } from '../payment/payments.mock';
-import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../remote-checkout/remote-checkout.mock';
+import { getRemoteCheckoutState } from '../remote-checkout/remote-checkout.mock';
 import { getConsignment, getConsignmentsState } from '../shipping/consignments.mock';
 import { getShippingCountriesState } from '../shipping/shipping-countries.mock';
 

@@ -1,7 +1,8 @@
+import { InternalAddress } from '../address';
 import { getCart } from '../cart/internal-carts.mock';
 import { getQuote } from '../quote/internal-quotes.mock';
 
-export function getBillingAddress() {
+export function getBillingAddress(): InternalAddress {
     return {
         id: '55c96cda6f04c',
         firstName: 'Test',

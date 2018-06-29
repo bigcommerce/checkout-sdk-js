@@ -1,7 +1,10 @@
-export function getBraintree() {
+import PaymentMethod from './payment-method';
+import { PaymentMethodsResponseBody, PaymentMethodResponseBody } from './payment-method-responses';
+import PaymentMethodState from './payment-method-state';
+
+export function getBraintree(): PaymentMethod {
     return {
         id: 'braintree',
-        gateway: null,
         logoUrl: 'https://cdn.bcapp.dev/rHEAD/modules/checkout/braintree/images/paypal_powered_braintree_horizontal.png',
         method: 'credit-card',
         supportedCards: [
@@ -15,97 +18,57 @@ export function getBraintree() {
         config: {
             displayName: 'Credit Card',
             cardCode: true,
-            helpText: null,
             enablePaypal: true,
             merchantId: '',
-            is3dsEnabled: null,
             testMode: true,
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getBraintreePaypal() {
+export function getBraintreePaypal(): PaymentMethod {
     return {
         id: 'braintreepaypal',
-        gateway: null,
         logoUrl: '',
         method: 'paypal',
         supportedCards: [],
         config: {
-            displayName: null,
-            cardCode: null,
-            helpText: null,
-            enablePaypal: null,
-            merchantId: null,
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getBraintreeVisaCheckout() {
+export function getBraintreeVisaCheckout(): PaymentMethod {
     return {
         id: 'braintreevisacheckout',
-        gateway: null,
         logoUrl: '',
         method: 'paypal',
         supportedCards: [],
         config: {
-            displayName: null,
-            cardCode: null,
-            helpText: null,
-            enablePaypal: null,
-            merchantId: null,
-            is3dsEnabled: null,
             testMode: false,
             isVisaCheckoutEnabled: true,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getPaypalExpress() {
+export function getPaypalExpress(): PaymentMethod {
     return {
         id: 'paypalexpress',
-        gateway: null,
         logoUrl: '',
         method: 'paypal',
         supportedCards: [],
         config: {
-            displayName: null,
-            cardCode: null,
-            helpText: null,
-            enablePaypal: null,
             merchantId: 'h3hxn44tdd8wxkzd',
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getAdyenAmex() {
+export function getAdyenAmex(): PaymentMethod {
     return {
         id: 'amex',
         gateway: 'adyen',
@@ -114,124 +77,72 @@ export function getAdyenAmex() {
         supportedCards: [],
         config: {
             displayName: 'AMEX',
-            cardCode: null,
-            helpText: null,
-            enablePaypal: null,
-            merchantId: null,
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_HOSTED',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getAuthorizenet() {
+export function getAuthorizenet(): PaymentMethod {
     return {
         id: 'authorizenet',
-        gateway: null,
         logoUrl: '',
         method: 'credit-card',
         supportedCards: [],
         config: {
             displayName: 'Authorizenet',
-            cardCode: null,
-            helpText: null,
-            enablePaypal: null,
-            merchantId: null,
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getCybersource() {
+export function getCybersource(): PaymentMethod {
     return {
         id: 'cybersource',
-        gateway: null,
         logoUrl: '',
         method: 'credit-card',
         supportedCards: [],
         config: {
             displayName: 'Cybersource',
-            cardCode: null,
-            helpText: null,
-            enablePaypal: null,
-            merchantId: null,
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getBankDeposit() {
+export function getBankDeposit(): PaymentMethod {
     return {
         id: 'bankdeposit',
-        gateway: null,
         logoUrl: '',
-        method: null,
+        method: 'offline',
         supportedCards: [],
         config: {
             displayName: 'Bank Deposit',
-            cardCode: null,
             helpText: 'Type any special instructions in here.',
-            enablePaypal: null,
-            merchantId: null,
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_OFFLINE',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getKlarna() {
+export function getKlarna(): PaymentMethod {
     return {
         id: 'klarna',
-        gateway: null,
         logoUrl: '',
         method: 'widget',
         supportedCards: [],
         config: {
             displayName: 'Pay Over Time',
-            cardCode: null,
             helpText: 'Type any special instructions in here.',
-            enablePaypal: null,
-            merchantId: null,
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
         clientToken: 'foo',
-        returnUrl: null,
     };
 }
 
-
-export function getAfterpay() {
+export function getAfterpay(): PaymentMethod {
     return {
         id: 'PAY_BY_INSTALLMENT',
         gateway: 'afterpay',
@@ -240,56 +151,38 @@ export function getAfterpay() {
         supportedCards: [],
         config: {
             displayName: 'Pay over time',
-            cardCode: null,
-            helpText: null,
-            enablePaypal: null,
             merchantId: '33133',
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
         clientToken: 'foo',
-        returnUrl: null,
     };
 }
 
-export function getAmazonPay() {
+export function getAmazonPay(): PaymentMethod {
     return {
         id: 'amazon',
-        gateway: null,
         logoUrl: '',
         method: 'widget',
         supportedCards: [],
         config: {
             displayName: 'AmazonPay',
-            cardCode: null,
-            helpText: null,
-            enablePaypal: null,
             merchantId: '0c173620-beb6-4421-99ef-03dc71a60685',
-            is3dsEnabled: null,
             testMode: false,
-            isVisaCheckoutEnabled: null,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
         initializationData: {
             clientId: '087eccf4-7f68-4384-b0a9-5f2fd6b0d344',
             region: 'US',
             redirectUrl: '/remote-checkout/amazon/redirect',
             tokenPrefix: 'ABCD|',
         },
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getSquare() {
+export function getSquare(): PaymentMethod {
     return {
         id: 'square',
-        gateway: null,
         logoUrl: '',
         method: 'credit-card',
         supportedCards: [
@@ -303,52 +196,39 @@ export function getSquare() {
         config: {
             displayName: 'Credit Card',
             cardCode: true,
-            helpText: null,
             enablePaypal: true,
             merchantId: '',
-            is3dsEnabled: null,
             testMode: true,
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
         initializationData: {
             applicationId: 'test',
             env: 'bar',
             locationId: 'foo',
         },
-        clientToken: null,
-        returnUrl: null,
     };
 }
-export function getChasePay() {
+export function getChasePay(): PaymentMethod {
     return {
         id: 'chasepay',
-        gateway: null,
         logoUrl: '',
         method: 'chasepay',
         supportedCards: [],
         config: {
             displayName: 'Chase Pay',
-            cardCode: null,
-            helpText: null,
-            merchantId: null,
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
         initializationData: {
             digitalSessionId: 'digitalSessionId',
         },
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getWepay() {
+export function getWepay(): PaymentMethod {
     return {
         id: 'wepay',
-        gateway: null,
         logoUrl: '',
         method: 'credit-card',
         supportedCards: [
@@ -361,27 +241,20 @@ export function getWepay() {
         ],
         config: {
             displayName: 'Credit Card',
-            cardCode: null,
-            helpText: null,
             enablePaypal: false,
             merchantId: '',
-            is3dsEnabled: null,
             testMode: true,
             isVisaCheckoutEnabled: false,
         },
         type: 'PAYMENT_TYPE_API',
-        nonce: null,
-        initializationData: null,
-        clientToken: null,
-        returnUrl: null,
     };
 }
 
-export function getPaymentMethod() {
+export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
 
-export function getPaymentMethods() {
+export function getPaymentMethods(): PaymentMethod[] {
     return [
         getBraintree(),
         getBraintreePaypal(),
@@ -406,7 +279,7 @@ export function getPaymentMethodsMeta() {
     };
 }
 
-export function getPaymentMethodResponseBody() {
+export function getPaymentMethodResponseBody(): PaymentMethodResponseBody {
     return {
         data: {
             paymentMethod: getPaymentMethod(),
@@ -415,7 +288,7 @@ export function getPaymentMethodResponseBody() {
     };
 }
 
-export function getPaymentMethodsResponseBody() {
+export function getPaymentMethodsResponseBody(): PaymentMethodsResponseBody {
     return {
         data: {
             paymentMethods: getPaymentMethods(),
@@ -424,7 +297,7 @@ export function getPaymentMethodsResponseBody() {
     };
 }
 
-export function getPaymentMethodsState() {
+export function getPaymentMethodsState(): PaymentMethodState {
     return {
         data: getPaymentMethods(),
         meta: getPaymentMethodsMeta(),

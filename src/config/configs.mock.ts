@@ -1,13 +1,14 @@
 import { getFormFields } from '../form/form.mocks';
 
-export function getConfig() {
+import Config from './config';
+import ConfigState from './config-state';
+
+export function getConfig(): Config {
     return {
         context: {
             flashMessages: [],
             geoCountryCode: 'AU',
-            payment: {
-                token: null,
-            },
+            payment: {},
         },
         customization: {
             languageData: [],
@@ -108,7 +109,7 @@ export function getConfig() {
     };
 }
 
-export function getConfigState() {
+export function getConfigState(): ConfigState {
     return {
         data: getConfig(),
         errors: {},

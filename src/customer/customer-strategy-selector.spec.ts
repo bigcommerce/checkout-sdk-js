@@ -1,7 +1,6 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import CustomerStrategySelector from './customer-strategy-selector';
-import CustomerStrategyState from './customer-strategy-state';
 import { getCustomerStrategyState } from './internal-customers.mock';
 
 describe('CustomerStrategySelector', () => {

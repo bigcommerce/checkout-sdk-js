@@ -7,19 +7,16 @@ import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import { GiftCertificateActionType } from './gift-certificate-actions';
 import giftCertificateReducer from './gift-certificate-reducer';
+import GiftCertificateState from './gift-certificate-state';
 
 describe('giftCertificateReducer()', () => {
-    let initialState;
-
-    beforeEach(() => {
-        initialState = {};
-    });
+    const initialState: GiftCertificateState = { errors: {}, statuses: {} };
 
     it('returns new state when gift certificate gets applied', () => {
         const action = createAction(GiftCertificateActionType.ApplyGiftCertificateSucceeded, getCheckoutWithGiftCertificates());
 
         expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.giftCertificates,
+            data: action.payload && action.payload.giftCertificates,
         }));
     });
 
@@ -35,7 +32,7 @@ describe('giftCertificateReducer()', () => {
         const action = createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckoutWithGiftCertificates());
 
         expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
-            data: action.payload.giftCertificates,
+            data: action.payload && action.payload.giftCertificates,
         }));
     });
 

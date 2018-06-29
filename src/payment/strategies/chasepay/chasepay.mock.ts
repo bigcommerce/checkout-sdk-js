@@ -1,14 +1,17 @@
-import {
-    ChasePayEventMap,
-    ChasePayPaymentSuccessPayload,
-    JPMC,
-} from './chasepay';
+import { JPMC } from './chasepay';
 
 export function getChasePayScriptMock(): JPMC {
     return {
-        EventType: {} as ChasePayEventMap,
-        isChasePayUp: jest.fn(),
-        insertButtons: jest.fn(),
-        on: jest.fn(),
+        ChasePay: {
+            insertButtons: jest.fn(),
+            isChasePayUp: jest.fn(),
+            startCheckout: jest.fn(),
+            on: jest.fn(),
+            EventType: {
+                START_CHECKOUT: 'START_CHECKOUT',
+                COMPLETE_CHECKOUT: 'COMPLETE_CHECKOUT',
+                CANCEL_CHECKOUT: 'CANCEL_CHECKOUT',
+            },
+        },
     };
 }

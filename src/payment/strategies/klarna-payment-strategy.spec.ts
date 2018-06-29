@@ -1,11 +1,10 @@
-import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getKlarna, getPaymentMethodsState } from '../../payment/payment-methods.mock';
@@ -38,7 +37,10 @@ describe('KlarnaPaymentStrategy', () => {
         store = createCheckoutStore({
             paymentMethods: getPaymentMethodsState(),
         });
-        orderActionCreator = new OrderActionCreator(client);
+        orderActionCreator = new OrderActionCreator(
+            client,
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+        );
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())

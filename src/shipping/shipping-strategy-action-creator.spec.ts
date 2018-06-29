@@ -3,11 +3,9 @@ import { Observable } from 'rxjs';
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckoutState, getCheckoutStoreState, getCheckoutWithPayments } from '../checkout/checkouts.mock';
 import { Registry } from '../common/registry';
-import { getCustomerState, getGuestCustomer } from '../customer/customers.mock';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
-import { getShippingOptions } from './internal-shipping-options.mock';
 import { getShippingAddress } from './shipping-addresses.mock';
 import ShippingStrategyActionCreator from './shipping-strategy-action-creator';
 import { ShippingStrategyActionType } from './shipping-strategy-actions';
@@ -257,8 +255,6 @@ describe('ShippingStrategyActionCreator', () => {
 
         it('finds shipping strategy by id', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
-            const address = getShippingAddress();
-            const option = getShippingOptions();
             const methodId = 'default';
 
             jest.spyOn(registry, 'get');

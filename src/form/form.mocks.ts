@@ -1,7 +1,6 @@
-/**
- * @returns {Field[]}
- */
-export function getFormFields() {
+import FormField from './form-field';
+
+export function getFormFields(): FormField[] {
     return [{
         id: 'field_4',
         name: 'firstName',
@@ -57,14 +56,12 @@ export function getFormFields() {
         custom: false,
         label: 'Country',
         required: true,
-        default: null,
     }, {
         id: 'field_12',
         name: 'stateOrProvince',
         custom: false,
         label: 'State/Province',
         required: true,
-        default: null,
     }, {
         id: 'field_13',
         name: 'postalCode',
@@ -78,7 +75,6 @@ export function getFormFields() {
         custom: true,
         label: 'picklist',
         required: false,
-        default: null,
         type: 'array',
         fieldType: 'dropdown',
         itemtype: 'string',
@@ -97,4 +93,3 @@ export function getFormFields() {
         },
     }];
 }
-

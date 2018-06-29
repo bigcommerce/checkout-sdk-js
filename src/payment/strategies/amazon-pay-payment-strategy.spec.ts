@@ -6,14 +6,12 @@ import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../../billing';
 import { BillingAddressActionType } from '../../billing/billing-address-actions';
-import { getBillingAddress } from '../../billing/billing-addresses.mock';
-import { getBillingAddressState } from '../../billing/billing-addresses.mock';
-import { getCartResponseBody } from '../../cart/internal-carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
+import { getBillingAddress, getBillingAddressState } from '../../billing/billing-addresses.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../checkout';
+import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, RequestError } from '../../common/error/errors';
-import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
+import { getErrorResponse } from '../../common/http-request/responses.mock';
 import { getCustomerState } from '../../customer/customers.mock';
-import { getRemoteCustomer } from '../../customer/internal-customers.mock';
 import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getAmazonPay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
@@ -49,6 +47,7 @@ describe('AmazonPayPaymentStrategy', () => {
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let scriptLoader: AmazonPayScriptLoader;
     let submitOrderAction: Observable<Action>;
+    let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: AmazonPayPaymentStrategy;
     let updateAddressAction: Observable<Action>;
@@ -64,17 +63,23 @@ describe('AmazonPayPaymentStrategy', () => {
         bind(id: string) {
             const element = document.getElementById(id);
 
+            if (!element) {
+                return;
+            }
+
             element.addEventListener('paymentSelect', () => {
                 this.options.onPaymentSelect(orderReference);
             });
 
             element.addEventListener('orderReferenceCreate', () => {
-                this.options.onOrderReferenceCreate(orderReference);
+                if (this.options.onOrderReferenceCreate) {
+                    this.options.onOrderReferenceCreate(orderReference);
+                }
             });
 
-            element.addEventListener('error', (event: CustomEvent) => {
+            element.addEventListener('error', event => {
                 this.options.onError(Object.assign(new Error(), {
-                    getErrorCode: () => event.detail.code,
+                    getErrorCode: () => (event as any).detail.code,
                 }));
             });
         }
@@ -83,12 +88,13 @@ describe('AmazonPayPaymentStrategy', () => {
     beforeEach(() => {
         container = document.createElement('div');
         client = createCheckoutClient();
+        state = getCheckoutStoreState();
         store = createCheckoutStore({
-            customer: {
-                data: getRemoteCustomer(),
+            ...state,
+            billingAddress: {
+                ...state.billingAddress,
+                data: undefined,
             },
-            paymentMethods: getPaymentMethodsState(),
-            remoteCheckout: getRemoteCheckoutState(),
         });
         billingAddressActionCreator = new BillingAddressActionCreator(client);
         orderActionCreator = new OrderActionCreator(
@@ -111,7 +117,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         orderReference = {
             getAmazonBillingAgreementId: () => '102e0feb-5c40-4609-9fe1-06a62bc78b14',
-            getAmazonOrderReferenceId: () => getRemoteCheckoutStateData().amazon.referenceId,
+            getAmazonOrderReferenceId: () => '511ed7ed-221c-418c-8286-f5102e49220b',
         };
 
         paymentMethod = getAmazonPay();
@@ -155,7 +161,7 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     it('creates wallet widget with required properties', async () => {
-        const { referenceId } = getRemoteCheckoutStateData().amazon;
+        const { referenceId = '' } = getRemoteCheckoutStateData().amazon || {};
         const { merchantId } = paymentMethod.config;
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
@@ -208,11 +214,15 @@ describe('AmazonPayPaymentStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
-        document.getElementById('wallet').dispatchEvent(new CustomEvent('orderReferenceCreate'));
+        const element = document.getElementById('wallet');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('orderReferenceCreate'));
+        }
 
         expect(remoteCheckoutActionCreator.updateCheckout)
             .toHaveBeenCalledWith(paymentMethod.id, {
-                referenceId: getRemoteCheckoutStateData().amazon.referenceId,
+                referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
             });
     });
 
@@ -241,12 +251,18 @@ describe('AmazonPayPaymentStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError } });
 
-        element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
+        if (element) {
+            element.dispatchEvent(new CustomEvent('error', { detail: { code: 'BuyerSessionExpired' } }));
+        }
+
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
 
         onError.mockReset();
 
-        element.dispatchEvent(new CustomEvent('error', { detail: { code: 'PeriodicAmountExceeded' } }));
+        if (element) {
+            element.dispatchEvent(new CustomEvent('error', { detail: { code: 'PeriodicAmountExceeded' } }));
+        }
+
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
     });
 
@@ -259,7 +275,9 @@ describe('AmazonPayPaymentStrategy', () => {
         jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling')
             .mockReturnValue(Observable.of(createErrorAction(INITIALIZE_REMOTE_BILLING_FAILED, new Error())));
 
-        element.dispatchEvent(new CustomEvent('paymentSelect'));
+        if (element) {
+            element.dispatchEvent(new CustomEvent('paymentSelect'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -269,7 +287,7 @@ describe('AmazonPayPaymentStrategy', () => {
     it('reinitializes payment method before submitting order', async () => {
         const payload = getOrderRequestBody();
         const options = { methodId: paymentMethod.id };
-        const { referenceId } = getRemoteCheckoutStateData().amazon;
+        const { referenceId = '' } = getRemoteCheckoutStateData().amazon || {};
 
         jest.spyOn(store, 'dispatch');
 
@@ -277,7 +295,7 @@ describe('AmazonPayPaymentStrategy', () => {
         await strategy.execute(payload, options);
 
         expect(remoteCheckoutActionCreator.initializePayment)
-            .toHaveBeenCalledWith(payload.payment.methodId, { referenceId, useStoreCredit: false });
+            .toHaveBeenCalledWith(payload.payment && payload.payment.methodId, { referenceId, useStoreCredit: false });
 
         expect(orderActionCreator.submitOrder)
             .toHaveBeenCalledWith({
@@ -324,20 +342,22 @@ describe('AmazonPayPaymentStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
-        document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
+        const element = document.getElementById('wallet');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('paymentSelect'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 
         expect(remoteCheckoutActionCreator.initializeBilling)
             .toHaveBeenCalledWith(paymentMethod.id, expect.objectContaining({
-                referenceId: getRemoteCheckoutStateData().amazon.referenceId,
+                referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
             }));
 
         const { email, ...address } = getBillingAddress();
 
-        expect(billingAddressActionCreator.updateAddress)
-            .toHaveBeenCalledWith(address);
-
+        expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(address);
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);
         expect(store.dispatch).toHaveBeenCalledWith(updateAddressAction);
     });
@@ -363,7 +383,11 @@ describe('AmazonPayPaymentStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
-        document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
+        const element = document.getElementById('wallet');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('paymentSelect'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 
@@ -394,7 +418,11 @@ describe('AmazonPayPaymentStrategy', () => {
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 
-        document.getElementById('wallet').dispatchEvent(new CustomEvent('paymentSelect'));
+        const element = document.getElementById('wallet');
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('paymentSelect'));
+        }
 
         await new Promise(resolve => process.nextTick(resolve));
 

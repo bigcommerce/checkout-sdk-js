@@ -1,9 +1,10 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { OrderActionCreator, OrderActionType } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import PaymentActionCreator from '../payment-action-creator';
@@ -31,7 +32,10 @@ describe('CreditCardPaymentStrategy', () => {
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
-        orderActionCreator = new OrderActionCreator(createCheckoutClient());
+        orderActionCreator = new OrderActionCreator(
+            createCheckoutClient(),
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+        );
 
         strategy = new CreditCardPaymentStrategy(store, orderActionCreator, paymentActionCreator);
 

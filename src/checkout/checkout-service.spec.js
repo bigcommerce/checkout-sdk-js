@@ -406,7 +406,6 @@ describe('CheckoutService', () => {
 
             expect(paymentStrategy.finalize).toHaveBeenCalledWith({
                 methodId: getAuthorizenet().id,
-                gatewayId: null,
             });
         });
 
@@ -420,7 +419,6 @@ describe('CheckoutService', () => {
             expect(paymentStrategy.finalize).toHaveBeenCalledWith({
                 ...options,
                 methodId: getAuthorizenet().id,
-                gatewayId: null,
             });
         });
     });
