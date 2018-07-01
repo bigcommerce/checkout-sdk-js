@@ -1,10 +1,10 @@
 import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
+import { getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
 import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import GiftCertificateRequestSender from './gift-certificate-request-sender';
-import { getGiftCertificateResponseBody } from './internal-gift-certificates.mock';
 
 describe('Gift Certificate Request Sender', () => {
     let giftCertificateRequestSender: GiftCertificateRequestSender;
@@ -39,7 +39,7 @@ describe('Gift Certificate Request Sender', () => {
 
     describe('#applyGiftCertificate()', () => {
         it('applies gift certificate code', async () => {
-            const response = getResponse(getGiftCertificateResponseBody());
+            const response = getResponse(getCheckoutWithGiftCertificates());
 
             jest.spyOn(requestSender, 'post')
                 .mockReturnValue(Promise.resolve(response));
@@ -60,7 +60,7 @@ describe('Gift Certificate Request Sender', () => {
 
         it('applies gift certificate with timeout', async () => {
             const options = { timeout: createTimeout() };
-            const response = getResponse(getGiftCertificateResponseBody());
+            const response = getResponse(getCheckoutWithGiftCertificates());
 
             jest.spyOn(requestSender, 'post')
                 .mockReturnValue(Promise.resolve(response));
@@ -83,7 +83,7 @@ describe('Gift Certificate Request Sender', () => {
 
     describe('#removeGiftCertificate()', () => {
         it('removes gift certificate code', async () => {
-            const response = getResponse(getGiftCertificateResponseBody());
+            const response = getResponse(getCheckoutWithGiftCertificates());
 
             jest.spyOn(requestSender, 'delete')
                 .mockReturnValue(Promise.resolve(response));
@@ -103,7 +103,7 @@ describe('Gift Certificate Request Sender', () => {
 
         it('removes gift certificate code with timeout', async () => {
             const options = { timeout: createTimeout() };
-            const response = getResponse(getGiftCertificateResponseBody());
+            const response = getResponse(getCheckoutWithGiftCertificates());
 
             jest.spyOn(requestSender, 'delete')
                 .mockReturnValue(Promise.resolve(response));

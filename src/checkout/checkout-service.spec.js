@@ -4,36 +4,34 @@ import { map, merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
-import { getBillingAddress, getBillingAddressState } from '../billing/billing-addresses.mock';
-import { getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
+import { getBillingAddress } from '../billing/billing-addresses.mock';
+import { getCartResponseBody } from '../cart/internal-carts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator } from '../config';
-import { getConfig, getConfigState } from '../config/configs.mock';
+import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { getFormFields } from '../form/form.mocks';
 import { CountryActionCreator } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator } from '../order';
-import { getCompleteOrderResponseBody, getCompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
+import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { deleteInstrumentResponseBody, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
-import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptionResponseBody, getShippingOptions } from '../shipping/internal-shipping-options.mock';
+import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
+import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
-import { getCheckout, getCheckoutState } from './checkouts.mock';
+import { getCheckout, getCheckoutStoreState } from './checkouts.mock';
 import createCheckoutStore from './create-checkout-store';
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
-import { getConsignmentsState } from '../shipping/consignments.mock';
-import { getCustomerState } from '../customer/customers.mock';
 
 describe('CheckoutService', () => {
     let billingAddressActionCreator;
@@ -88,10 +86,6 @@ describe('CheckoutService', () => {
                 Promise.resolve(getResponse(getCountriesResponseBody()))
             ),
 
-            loadShippingOptions: jest.fn(() =>
-                Promise.resolve(getResponse(getShippingOptionResponseBody())),
-            ),
-
             updateBillingAddress: jest.fn(() =>
                 Promise.resolve(getResponse(merge({}, getCheckout(), {
                     customer: {
@@ -101,14 +95,6 @@ describe('CheckoutService', () => {
                         email: 'foo@bar.com',
                     },
                 })))
-            ),
-
-            updateShippingAddress: jest.fn(() =>
-                Promise.resolve(getResponse(getShippingAddressResponseBody())),
-            ),
-
-            selectShippingOption: jest.fn(() =>
-                Promise.resolve(getResponse(getShippingOptionResponseBody())),
             ),
 
             getVaultAccessToken: jest.fn(() =>
@@ -124,15 +110,7 @@ describe('CheckoutService', () => {
             ),
         };
 
-        store = createCheckoutStore({
-            cart: getCartState(),
-            customer: getCustomerState(),
-            billingAddress: getBillingAddressState(),
-            checkout: getCheckoutState(),
-            config: getConfigState(),
-            consignments: getConsignmentsState(),
-            order: getCompleteOrderState(),
-        });
+        store = createCheckoutStore(getCheckoutStoreState());
 
         paymentStrategy = {
             execute: jest.fn(() => Promise.resolve(store.getState())),
