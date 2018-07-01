@@ -1,13 +1,13 @@
 import { getCheckoutWithPayments } from '../checkout/checkouts.mock';
 
-import { getCompleteOrder as getInternalOrder } from './internal-orders.mock';
+import { getAwaitingOrder } from './internal-orders.mock';
 import mapToInternalOrder, { mapToInternalIncompleteOrder } from './map-to-internal-order';
-import { getOrder } from './orders.mock';
+import { getOrder, getOrderMeta } from './orders.mock';
 
 describe('mapToInternalOrder()', () => {
     it('maps to internal line items', () => {
-        expect(mapToInternalOrder(getOrder()))
-            .toEqual(getInternalOrder());
+        expect(mapToInternalOrder(getOrder(), getOrderMeta()))
+            .toEqual(getAwaitingOrder());
     });
 });
 

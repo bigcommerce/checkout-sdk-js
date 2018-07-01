@@ -48,6 +48,14 @@ export function getIncompleteOrderState() {
     };
 }
 
+export function getAwaitingOrder(): InternalOrder {
+    return {
+        ...getCompleteOrder(),
+        token: '77d92d6e1b1b7d1017aa84ad0a9fe6ae',
+        callbackUrl: 'https://internalapi-999425555.mybigcommerce.com/internalapi/v1/checkout/order/505/payment',
+    };
+}
+
 export function getCompleteOrder(): InternalOrder {
     return {
         ...getIncompleteOrder(),
@@ -237,7 +245,9 @@ export function getSubmitOrderResponseBody() {
     return {
         data: {
             customer: getGuestCustomer(),
-            order: getSubmittedOrder(),
+            order: {
+                ...getSubmittedOrder(),
+            },
         },
         meta: {
             deviceFingerprint: 'a084205e-1b1f-487d-9087-e072d20747e5',

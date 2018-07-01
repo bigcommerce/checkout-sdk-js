@@ -8,8 +8,9 @@ import { HOSTED } from '../payment';
 
 import InternalOrder, { InternalGiftCertificateList, InternalIncompleteOrder, InternalOrderPayment, InternalSocialDataList } from './internal-order';
 import Order, { GatewayOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
+import { OrderMetaState } from './order-state';
 
-export default function mapToInternalOrder(order: Order): InternalOrder {
+export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaState = {}): InternalOrder {
     const decimalPlaces = order.currency.decimalPlaces;
     const amountTransformer = new AmountTransformer(decimalPlaces);
 
@@ -34,6 +35,8 @@ export default function mapToInternalOrder(order: Order): InternalOrder {
             amount: order.discountAmount,
             integerAmount: amountTransformer.toInteger(order.discountAmount),
         },
+        token: orderMeta.orderToken,
+        callbackUrl: orderMeta.callbackUrl,
         discountNotifications: [],
         giftCertificate: mapToGiftCertificates(order.payments),
         socialData: mapToInternalSocialDataList(order),

@@ -14,6 +14,8 @@ export type OrderDataState = Omit<Order, 'billingAddress' | 'coupons'>;
 
 export interface OrderMetaState extends InternalOrderMeta {
     token?: string;
+    orderToken?: string;
+    callbackUrl?: string;
     payment?: InternalOrderPayment;
 }
 
