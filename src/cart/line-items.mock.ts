@@ -1,4 +1,4 @@
-import { GiftCertificateItem, PhysicalItem } from '../cart';
+import { DigitalItem, GiftCertificateItem, PhysicalItem } from '../cart';
 
 export function getPhysicalItem(): PhysicalItem {
     return {
@@ -19,6 +19,38 @@ export function getPhysicalItem(): PhysicalItem {
         extendedListPrice: 200,
         extendedSalePrice: 200,
         isShippingRequired: true,
+        options: [
+            {
+                name: 'n',
+                nameId: 1,
+                value: 'v',
+                valueId: 3,
+            },
+        ],
+    };
+}
+
+export function getDigitalItem(): DigitalItem {
+    return {
+        id: '667',
+        variantId: 71,
+        productId: 103,
+        sku: 'CLC',
+        name: 'Canvas Laundry Cart',
+        url: '/canvas-laundry-cart/',
+        quantity: 1,
+        isTaxable: true,
+        imageUrl: '/images/canvas-laundry-cart.jpg',
+        discounts: [],
+        discountAmount: 0,
+        couponAmount: 0,
+        listPrice: 200,
+        salePrice: 200,
+        downloadPageUrl: 'url.php',
+        downloadFileUrls: [],
+        downloadSize: '',
+        extendedListPrice: 200,
+        extendedSalePrice: 200,
         options: [
             {
                 name: 'n',

@@ -4,6 +4,7 @@ export default interface InternalLineItem {
     attributes: Array<{ name: string, value: string }>;
     discount: number;
     integerAmount: number;
+    downloadsPageUrl?: string;
     integerAmountAfterDiscount: number;
     integerDiscount: number;
     id: string | number;

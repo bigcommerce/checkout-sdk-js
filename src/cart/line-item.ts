@@ -8,9 +8,7 @@ export interface PhysicalItem extends LineItem {
 }
 
 export interface DigitalItem extends LineItem {
-    downloadFileUrls: [
-        string
-    ];
+    downloadFileUrls: string[];
     downloadPageUrl: string;
     downloadSize: string;
 }

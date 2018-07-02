@@ -25,6 +25,27 @@ export function getCart(): InternalCart {
                 variantId: 71,
             },
             {
+                id: '667',
+                type: 'ItemDigitalEntity',
+                name: 'Canvas Laundry Cart',
+                downloadsPageUrl: 'url.php',
+                imageUrl: '/images/canvas-laundry-cart.jpg',
+                quantity: 1,
+                amount: 200,
+                discount: 0,
+                amountAfterDiscount: 200,
+                attributes: [
+                    {
+                        name: 'n',
+                        value: 'v',
+                    },
+                ],
+                integerAmount: 20000,
+                integerDiscount: 0,
+                integerAmountAfterDiscount: 20000,
+                variantId: 71,
+            },
+            {
                 id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
                 name: '$100 Gift Certificate',
                 type: 'ItemGiftCertificateEntity',
