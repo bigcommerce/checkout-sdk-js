@@ -18,7 +18,7 @@ export function getInternalOrderRequestBody(): InternalOrderRequestBody {
     const payment = getPayment();
 
     return {
-        customerMessage: '',
+        customerMessage: 'comment',
         useStoreCredit: false,
         payment: {
             name: payment.methodId,

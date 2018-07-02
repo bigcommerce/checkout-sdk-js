@@ -137,6 +137,10 @@ describe('CheckoutService', () => {
             loadCheckout: jest.fn(() =>
                 Promise.resolve(getResponse(getCheckout())),
             ),
+
+            updateCheckout: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout())),
+            ),
         };
 
         couponRequestSender = {
@@ -262,6 +266,20 @@ describe('CheckoutService', () => {
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
             expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
+        });
+    });
+
+    describe('#updateCheckout()', () => {
+        const { id } = getCheckout();
+
+        it('updates checkout data', async () => {
+            const state = await checkoutService.updateCheckout({ customerMessage: 'foo' });
+
+            expect(checkoutRequestSender.updateCheckout)
+                .toHaveBeenCalledWith(id, { customerMessage: 'foo' }, undefined);
+
+            expect(state.data.getCheckout())
+                .toEqual(store.getState().checkout.getCheckout());
         });
     });
 

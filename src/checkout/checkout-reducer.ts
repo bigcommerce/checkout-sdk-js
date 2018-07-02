@@ -33,6 +33,7 @@ function dataReducer(
 ): CheckoutDataState | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case CheckoutActionType.UpdateCheckoutSucceeded:
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
@@ -72,6 +73,19 @@ function errorsReducer(
             loadError: action.payload,
         };
 
+    case CheckoutActionType.UpdateCheckoutRequested:
+    case CheckoutActionType.UpdateCheckoutSucceeded:
+        return {
+            ...errors,
+            updateError: undefined,
+        };
+
+    case CheckoutActionType.UpdateCheckoutFailed:
+        return {
+            ...errors,
+            updateError: action.payload,
+        };
+
     default:
         return errors;
     }
@@ -93,6 +107,19 @@ function statusesReducer(
         return {
             ...statuses,
             isLoading: false,
+        };
+
+    case CheckoutActionType.UpdateCheckoutRequested:
+        return {
+            ...statuses,
+            isUpdating: true,
+        };
+
+    case CheckoutActionType.UpdateCheckoutFailed:
+    case CheckoutActionType.UpdateCheckoutSucceeded:
+        return {
+            ...statuses,
+            isUpdating: false,
         };
 
     default:

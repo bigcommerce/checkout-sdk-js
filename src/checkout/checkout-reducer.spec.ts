@@ -46,4 +46,35 @@ describe('checkoutReducer', () => {
             statuses: { isLoading: false },
         });
     });
+
+    it('returns updated state', () => {
+        const action = createAction(CheckoutActionType.UpdateCheckoutSucceeded, getCheckout());
+        const output = checkoutReducer(initialState, action);
+
+        expect(output).toEqual({
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+            errors: { updateError: undefined },
+            statuses: { isUpdating: false },
+        });
+    });
+
+    it('returns loading state', () => {
+        const action = createAction(CheckoutActionType.UpdateCheckoutRequested);
+        const output = checkoutReducer(initialState, action);
+
+        expect(output).toEqual({
+            errors: { updateError: undefined },
+            statuses: { isUpdating: true },
+        });
+    });
+
+    it('returns error state', () => {
+        const action = createAction(CheckoutActionType.UpdateCheckoutFailed, new RequestError(getErrorResponse()));
+        const output = checkoutReducer(initialState, action);
+
+        expect(output).toEqual({
+            errors: { updateError: action.payload },
+            statuses: { isUpdating: false },
+        });
+    });
 });

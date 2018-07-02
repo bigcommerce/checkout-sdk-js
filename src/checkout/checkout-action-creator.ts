@@ -6,7 +6,8 @@ import { Observer } from 'rxjs/Observer';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import { CheckoutAction, CheckoutActionType } from './checkout-actions';
+import { CheckoutRequestBody } from './checkout';
+import { CheckoutActionType, LoadCheckoutAction, UpdateCheckoutAction } from './checkout-actions';
 import CheckoutRequestSender from './checkout-request-sender';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
@@ -15,8 +16,8 @@ export default class CheckoutActionCreator {
         private _checkoutRequestSender: CheckoutRequestSender
     ) {}
 
-    loadCheckout(id: string, options?: RequestOptions): Observable<CheckoutAction> {
-        return Observable.create((observer: Observer<CheckoutAction>) => {
+    loadCheckout(id: string, options?: RequestOptions): Observable<LoadCheckoutAction> {
+        return Observable.create((observer: Observer<LoadCheckoutAction>) => {
             observer.next(createAction(CheckoutActionType.LoadCheckoutRequested));
 
             this._checkoutRequestSender.loadCheckout(id, options)
@@ -30,7 +31,29 @@ export default class CheckoutActionCreator {
         });
     }
 
-    loadCurrentCheckout(options?: RequestOptions): ThunkAction<CheckoutAction, InternalCheckoutSelectors> {
+    updateCheckout(body: CheckoutRequestBody, options?: RequestOptions): ThunkAction<UpdateCheckoutAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<UpdateCheckoutAction>) => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
+
+            observer.next(createAction(CheckoutActionType.UpdateCheckoutRequested));
+
+            this._checkoutRequestSender.updateCheckout(checkout.id, body, options)
+                .then(({ body }) => {
+                    observer.next(createAction(CheckoutActionType.UpdateCheckoutSucceeded, body));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(CheckoutActionType.UpdateCheckoutFailed, response));
+                });
+        });
+    }
+
+    loadCurrentCheckout(options?: RequestOptions): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
         return store => defer(() => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
