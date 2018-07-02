@@ -20,6 +20,7 @@ import {
     ShippingStrategyActionCreator,
 } from '../shipping';
 
+import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
@@ -181,6 +182,25 @@ export default class CheckoutService {
         const action = this._configActionCreator.loadConfig(options);
 
         return this._dispatch(action, { queueId: 'config' });
+    }
+
+    /**
+     * Updates specific properties of the current checkout.
+     *
+     * ```js
+     * const state = await service.updateCheckout(checkout);
+     *
+     * console.log(state.checkout.getCheckout());
+     * ```
+     *
+     * @param payload - The checkout properties to be updated.
+     * @param options - Options for loading the current checkout.
+     * @returns A promise that resolves to the current state.
+     */
+    updateCheckout(payload: CheckoutRequestBody, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._checkoutActionCreator.updateCheckout(payload, options);
+
+        return this._dispatch(action);
     }
 
     /**

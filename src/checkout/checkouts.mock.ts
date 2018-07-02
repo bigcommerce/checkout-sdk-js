@@ -27,7 +27,7 @@ export function getCheckout(): Checkout {
         id: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
         cart: getCart(),
         customer: getCustomer(),
-        customerMessage: '',
+        customerMessage: 'comment',
         billingAddress: getBillingAddress(),
         consignments: [
             getConsignment(),

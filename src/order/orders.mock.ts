@@ -19,6 +19,7 @@ export function getOrder(): Order {
             getShippingCoupon(),
         ],
         currency: getCurrency(),
+        customerMessage: '',
         customerCanBeCreated: true,
         customerId: 0,
         discountAmount: 10,

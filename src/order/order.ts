@@ -12,6 +12,7 @@ export default interface Order {
     currency: Currency;
     customerCanBeCreated: boolean;
     customerId: number;
+    customerMessage: string;
     discountAmount: number;
     hasDigitalItems: boolean;
     isComplete: boolean;

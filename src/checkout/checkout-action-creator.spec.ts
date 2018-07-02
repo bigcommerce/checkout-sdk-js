@@ -24,6 +24,9 @@ describe('CheckoutActionCreator', () => {
         jest.spyOn(checkoutRequestSender, 'loadCheckout')
             .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
 
+        jest.spyOn(checkoutRequestSender, 'updateCheckout')
+            .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
+
         actionCreator = new CheckoutActionCreator(checkoutRequestSender);
     });
 
@@ -56,6 +59,53 @@ describe('CheckoutActionCreator', () => {
             expect(actions).toEqual([
                 { type: CheckoutActionType.LoadCheckoutRequested },
                 { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
+            ]);
+        });
+    });
+
+    describe('#updateCheckout', () => {
+        it('calls checkout request sender', async () => {
+            const { id } = getCheckout();
+            const actions = await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
+                .toArray()
+                .toPromise();
+
+            expect(checkoutRequestSender.updateCheckout)
+                .toHaveBeenCalledWith(
+                    'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    { customerMessage: 'foo' },
+                    undefined
+                );
+        });
+
+        it('emits action to notify updating progress', async () => {
+            const { id } = getCheckout();
+            const actions = await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CheckoutActionType.UpdateCheckoutRequested },
+                { type: CheckoutActionType.UpdateCheckoutSucceeded, payload: getCheckout() },
+            ]);
+        });
+
+        it('emits error action if unable to update checkout', async () => {
+            jest.spyOn(checkoutRequestSender, 'updateCheckout')
+                .mockReturnValue(Promise.reject(getErrorResponse()));
+
+            const { id } = getCheckout();
+            const errorHandler = jest.fn(action => Observable.of(action));
+
+            const actions = await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
+                .catch(errorHandler)
+                .toArray()
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CheckoutActionType.UpdateCheckoutRequested },
+                { type: CheckoutActionType.UpdateCheckoutFailed, error: true, payload: getErrorResponse() },
             ]);
         });
     });

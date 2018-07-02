@@ -67,13 +67,12 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
         }
 
         const useStoreCredit = !!payload.useStoreCredit;
-        const customerMessage = payload.customerMessage ? payload.customerMessage : '';
         const state = this._store.getState();
         const config = state.config.getStoreConfig();
         const storeCountryName = config ? config.storeProfile.storeCountry : '';
 
         return this._store.dispatch(
-            this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit, customerMessage })
+            this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit })
         )
             .then(state => this._checkoutValidator.validate(state.checkout.getCheckout(), options))
             .then(() => this._store.dispatch(
@@ -105,7 +104,6 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
 
                 const orderPayload = {
                     useStoreCredit: afterpay.settings.useStoreCredit,
-                    customerMessage: afterpay.settings.customerMessage,
                 };
 
                 const paymentPayload = {

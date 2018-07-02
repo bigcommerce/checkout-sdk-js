@@ -6,14 +6,23 @@ export enum CheckoutActionType {
     LoadCheckoutRequested = 'LOAD_CHECKOUT_REQUESTED',
     LoadCheckoutSucceeded = 'LOAD_CHECKOUT_SUCCEEDED',
     LoadCheckoutFailed = 'LOAD_CHECKOUT_FAILED',
+
+    UpdateCheckoutRequested = 'UPDATE_CHECKOUT_REQUESTED',
+    UpdateCheckoutSucceeded = 'UPDATE_CHECKOUT_SUCCEEDED',
+    UpdateCheckoutFailed = 'UPDATE_CHECKOUT_FAILED',
 }
 
-export type CheckoutAction = LoadCheckoutAction;
+export type CheckoutAction = LoadCheckoutAction | UpdateCheckoutAction;
 
 export type LoadCheckoutAction =
     LoadCheckoutRequestedAction |
     LoadCheckoutSucceededAction |
     LoadCheckoutFailedAction;
+
+export type UpdateCheckoutAction =
+    UpdateCheckoutRequestedAction |
+    UpdateCheckoutSucceededAction |
+    UpdateCheckoutFailedAction;
 
 export interface LoadCheckoutRequestedAction extends Action {
     type: CheckoutActionType.LoadCheckoutRequested;
@@ -25,4 +34,16 @@ export interface LoadCheckoutSucceededAction extends Action<Checkout> {
 
 export interface LoadCheckoutFailedAction extends Action<Error> {
     type: CheckoutActionType.LoadCheckoutFailed;
+}
+
+export interface UpdateCheckoutRequestedAction extends Action {
+    type: CheckoutActionType.UpdateCheckoutRequested;
+}
+
+export interface UpdateCheckoutSucceededAction extends Action<Checkout> {
+    type: CheckoutActionType.UpdateCheckoutSucceeded;
+}
+
+export interface UpdateCheckoutFailedAction extends Action<Error> {
+    type: CheckoutActionType.UpdateCheckoutFailed;
 }

@@ -12,8 +12,10 @@ export type CheckoutDataState = Omit<Checkout, 'billingAddress' | 'cart' | 'cons
 
 export interface CheckoutErrorsState {
     loadError?: Error;
+    updateError?: Error;
 }
 
 export interface CheckoutStatusesState {
     isLoading?: boolean;
+    isUpdating?: boolean;
 }
