@@ -5,45 +5,38 @@ export function getInstrumentsMeta() {
     };
 }
 
-export function getInstrument() {
-    return {
-        bigpay_token: '123',
-        provider: 'braintree',
-        iin: '11111111',
-        last_4: '4321',
-        expiry_month: '02',
-        expiry_year: '2020',
-        brand: 'test',
-        default_instrument: true,
-        trusted_shipping_address: true,
-    };
-}
-
 export function getInstruments() {
     return [
         {
-            bigpay_token: '123',
+            bigpayToken: '123',
             provider: 'braintree',
             iin: '11111111',
-            last_4: '4321',
-            expiry_month: '02',
-            expiry_year: '2020',
+            last4: '4321',
+            expiryMonth: '02',
+            expiryYear: '2020',
             brand: 'test',
-            default_instrument: true,
-            trusted_shipping_address: true,
+            trustedShippingAddress: true,
         },
         {
-            bigpay_token: '111',
+            bigpayToken: '111',
             provider: 'authorizenet',
             iin: '11222333',
-            last_4: '4444',
-            expiry_month: '10',
-            expiry_year: '2024',
+            last4: '4444',
+            expiryMonth: '10',
+            expiryYear: '2024',
             brand: 'test',
-            default_instrument: true,
-            trusted_shipping_address: false,
+            trustedShippingAddress: false,
         },
     ];
+}
+
+export function getInstrumentsState() {
+    return {
+        data: getInstruments(),
+        meta: getInstrumentsMeta(),
+        errors: {},
+        statuses: {},
+    };
 }
 
 export function instrumentRequestContext() {
@@ -63,15 +56,6 @@ export function getErrorInstrumentResponseBody() {
     };
 }
 
-export function getInstrumentsState() {
-    return {
-        data: getInstruments(),
-        meta: getInstrumentsMeta(),
-        errors: {},
-        statuses: {},
-    };
-}
-
 export function getVaultAccessTokenResponseBody() {
     return {
         data: {
@@ -84,11 +68,39 @@ export function getVaultAccessTokenResponseBody() {
 
 export function getLoadInstrumentsResponseBody() {
     return {
-        vaulted_instruments: getInstruments(),
+        vaultedInstruments: getInstruments(),
+    };
+}
+
+export function getRawInstrumentsResponseBody() {
+    return {
+        vaulted_instruments: [
+            {
+                bigpay_token: '123',
+                provider: 'braintree',
+                iin: '11111111',
+                last_4: '4321',
+                expiry_month: '02',
+                expiry_year: '2020',
+                brand: 'test',
+                trusted_shipping_address: true,
+            },
+            {
+                bigpay_token: '111',
+                provider: 'authorizenet',
+                iin: '11222333',
+                last_4: '4444',
+                expiry_month: '10',
+                expiry_year: '2024',
+                brand: 'test',
+                trusted_shipping_address: false,
+            },
+        ],
     };
 }
 
 export function deleteInstrumentResponseBody() {
     return {
+        vaultedInstruments: [],
     };
 }

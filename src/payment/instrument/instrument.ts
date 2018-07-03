@@ -1,13 +1,12 @@
 export default interface Instrument {
-    bigpay_token: string;
+    bigpayToken: string;
     provider: string;
     iin: string;
-    last_4: string;
-    expiry_month: string;
-    expiry_year: string;
+    last4: string;
+    expiryMonth: string;
+    expiryYear: string;
     brand: string;
-    default_instrument: boolean;
-    trusted_shipping_address: boolean;
+    trustedShippingAddress: boolean;
 }
 
 export interface VaultAccessToken {

@@ -25,11 +25,11 @@ export default function instrumentReducer(state: InstrumentState = DEFAULT_STATE
 function dataReducer(data: Instrument[] = DEFAULT_STATE.data, action: Action): Instrument[] {
     switch (action.type) {
     case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
-        return action.payload.vaulted_instruments || [];
+        return action.payload.vaultedInstruments || [];
 
     case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
         return data.filter(instrument =>
-            instrument.bigpay_token !== action.meta.instrumentId
+            instrument.bigpayToken !== action.meta.instrumentId
         );
 
     default:
