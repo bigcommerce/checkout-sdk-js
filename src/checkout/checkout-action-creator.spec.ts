@@ -65,8 +65,7 @@ describe('CheckoutActionCreator', () => {
 
     describe('#updateCheckout', () => {
         it('calls checkout request sender', async () => {
-            const { id } = getCheckout();
-            const actions = await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
+            await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
                 .toArray()
                 .toPromise();
 
@@ -79,7 +78,6 @@ describe('CheckoutActionCreator', () => {
         });
 
         it('emits action to notify updating progress', async () => {
-            const { id } = getCheckout();
             const actions = await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
                 .toArray()
                 .toPromise();
@@ -94,7 +92,6 @@ describe('CheckoutActionCreator', () => {
             jest.spyOn(checkoutRequestSender, 'updateCheckout')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
-            const { id } = getCheckout();
             const errorHandler = jest.fn(action => Observable.of(action));
 
             const actions = await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
