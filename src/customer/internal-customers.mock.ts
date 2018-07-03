@@ -11,9 +11,10 @@ export function getGuestCustomer(): InternalCustomer {
         addresses: [],
         customerId: 0,
         email: 'test@bigcommerce.com',
-        firstName: '',
+        firstName: 'Test',
+        lastName: 'Tester',
         isGuest: true,
-        name: '',
+        name: 'Test Tester',
         storeCredit: 0,
     };
 }
@@ -28,6 +29,7 @@ export function getCustomer(): InternalCustomer {
         isGuest: false,
         email: 'test@bigcommerce.com',
         firstName: 'Foo',
+        lastName: 'Bar',
         name: 'Foo Bar',
     };
 }

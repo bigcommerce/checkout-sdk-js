@@ -7,6 +7,7 @@ export default interface InternalCustomer {
     storeCredit: number;
     email: string;
     firstName: string;
+    lastName: string;
     name: string;
     remote?: {
         provider: string;
