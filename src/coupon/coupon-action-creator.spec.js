@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import { createCheckoutStore } from '../checkout';
-import { getCheckoutStoreState } from '../checkout/checkouts.mock';
-import { getCouponResponseBody } from './internal-coupons.mock';
+import { getCheckoutStoreState, getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import CouponActionCreator from './coupon-action-creator';
 import { CouponActionType } from './coupon-actions';
@@ -15,7 +14,7 @@ describe('CouponActionCreator', () => {
     let store;
 
     beforeEach(() => {
-        response = getResponse(getCouponResponseBody());
+        response = getResponse(getCheckoutWithCoupons());
         errorResponse = getErrorResponse();
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);

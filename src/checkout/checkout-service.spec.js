@@ -4,18 +4,18 @@ import { map, merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
-import { getBillingAddress, getBillingAddressState } from '../billing/billing-addresses.mock';
-import { getCartResponseBody, getCartState } from '../cart/internal-carts.mock';
+import { getBillingAddress } from '../billing/billing-addresses.mock';
+import { getCartResponseBody } from '../cart/internal-carts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator } from '../config';
-import { getConfig, getConfigState } from '../config/configs.mock';
+import { getConfig } from '../config/configs.mock';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { getFormFields } from '../form/form.mocks';
 import { CountryActionCreator } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator } from '../order';
-import { getCompleteOrderResponseBody, getCompleteOrderState, getOrderRequestBody } from '../order/internal-orders.mock';
+import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
 import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
@@ -27,13 +27,11 @@ import { getShippingOptions } from '../shipping/shipping-options.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutService from './checkout-service';
-import { getCheckout, getCheckoutState, getCheckoutWithCoupons } from './checkouts.mock';
+import { getCheckout, getCheckoutStoreState, getCheckoutWithCoupons } from './checkouts.mock';
 import createCheckoutStore from './create-checkout-store';
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
-import { getConsignmentsState } from '../shipping/consignments.mock';
-import { getCustomerState } from '../customer/customers.mock';
 
 describe('CheckoutService', () => {
     let billingAddressActionCreator;
@@ -127,15 +125,7 @@ describe('CheckoutService', () => {
             ),
         };
 
-        store = createCheckoutStore({
-            cart: getCartState(),
-            customer: getCustomerState(),
-            billingAddress: getBillingAddressState(),
-            checkout: getCheckoutState(),
-            config: getConfigState(),
-            consignments: getConsignmentsState(),
-            order: getCompleteOrderState(),
-        });
+        store = createCheckoutStore(getCheckoutStoreState());
 
         paymentStrategy = {
             execute: jest.fn(() => Promise.resolve(store.getState())),
@@ -160,6 +150,10 @@ describe('CheckoutService', () => {
 
         checkoutRequestSender = {
             loadCheckout: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout())),
+            ),
+
+            updateCheckout: jest.fn(() =>
                 Promise.resolve(getResponse(getCheckout())),
             ),
         };
@@ -299,12 +293,19 @@ describe('CheckoutService', () => {
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
             expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
         });
+    });
 
-        it('loads config data', async () => {
-            const state = await checkoutService.loadCheckout(id);
+    describe('#updateCheckout()', () => {
+        const { id } = getCheckout();
 
-            expect(configActionCreator.loadConfig).toHaveBeenCalled();
-            expect(state.data.getConfig()).toEqual(getConfig().storeConfig);
+        it('updates checkout data', async () => {
+            const state = await checkoutService.updateCheckout({ customerMessage: 'foo' });
+
+            expect(checkoutRequestSender.updateCheckout)
+                .toHaveBeenCalledWith(id, { customerMessage: 'foo' }, undefined);
+
+            expect(state.data.getCheckout())
+                .toEqual(store.getState().checkout.getCheckout());
         });
     });
 

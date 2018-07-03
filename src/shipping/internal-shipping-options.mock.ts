@@ -1,6 +1,3 @@
-import { getCart } from '../cart/internal-carts.mock';
-import { getQuote } from '../quote/internal-quotes.mock';
-
 import InternalShippingOption, { InternalShippingOptionList } from './internal-shipping-option';
 
 export function getShippingOptions(): InternalShippingOptionList {
@@ -21,25 +18,5 @@ export function getFlatRateOption(): InternalShippingOption {
         selected: true,
         imageUrl: '',
         transitTime: '',
-    };
-}
-
-export function getShippingOptionsState() {
-    return {
-        data: getShippingOptions(),
-        errors: {},
-        meta: {},
-        statuses: {},
-    };
-}
-
-export function getShippingOptionResponseBody() {
-    return {
-        data: {
-            quote: getQuote(),
-            cart: getCart(),
-            shippingOptions: getShippingOptions(),
-        },
-        meta: {},
     };
 }

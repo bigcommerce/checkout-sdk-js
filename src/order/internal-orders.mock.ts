@@ -8,7 +8,6 @@ import OrderRequestBody, { OrderPaymentRequestBody } from './order-request-body'
 
 export function getOrderRequestBody(): OrderRequestBody {
     return {
-        customerMessage: '',
         useStoreCredit: false,
         payment: getPayment() as OrderPaymentRequestBody,
     };
@@ -18,7 +17,7 @@ export function getInternalOrderRequestBody(): InternalOrderRequestBody {
     const payment = getPayment();
 
     return {
-        customerMessage: '',
+        customerMessage: 'comment',
         useStoreCredit: false,
         payment: {
             name: payment.methodId,
@@ -45,6 +44,14 @@ export function getIncompleteOrderState() {
         errors: {},
         meta: {},
         statuses: {},
+    };
+}
+
+export function getAwaitingOrder(): InternalOrder {
+    return {
+        ...getCompleteOrder(),
+        token: '77d92d6e1b1b7d1017aa84ad0a9fe6ae',
+        callbackUrl: 'https://internalapi-999425555.mybigcommerce.com/internalapi/v1/checkout/order/505/payment',
     };
 }
 
@@ -218,26 +225,19 @@ export function getCompleteOrderResponseBody(): InternalOrderResponseBody {
     };
 }
 
-export function getCompleteOrderState() {
-    return {
-        meta: {},
-        data: getCompleteOrder(),
-        errors: {},
-        statuses: {},
-    };
-}
-
-export function getSubmitOrderResponseHeaders() {
+export function getSubmitOrderResponseHeaders(): { token: string } {
     return {
         token: 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDcxODcxMzMsIm5iZiI6MTUwNzE4MzUzMywiaXNzIjoicGF5bWVudHMuYmlnY29tbWVyY2UuY29tIiwic3ViIjoiMTUwNDA5ODgyMSIsImp0aSI6IjNkOTA4ZDE5LTY4OTMtNGQzYi1iMWEwLWJjNWYzMjRhM2ZiZCIsImlhdCI6MTUwNzE4MzUzMywiZGF0YSI6eyJzdG9yZV9pZCI6IjE1MDQwOTg4MjEiLCJvcmRlcl9pZCI6IjExOSIsImFtb3VudCI6MjAwMDAsImN1cnJlbmN5IjoiVVNEIn19.FSfZpI98l3_p5rbQdlHNeCfKR5Dwwk8_fvPZvtb64-Q',
     };
 }
 
-export function getSubmitOrderResponseBody() {
+export function getSubmitOrderResponseBody(): InternalOrderResponseBody {
     return {
         data: {
             customer: getGuestCustomer(),
-            order: getSubmittedOrder(),
+            order: {
+                ...getSubmittedOrder(),
+            },
         },
         meta: {
             deviceFingerprint: 'a084205e-1b1f-487d-9087-e072d20747e5',
@@ -245,7 +245,7 @@ export function getSubmitOrderResponseBody() {
     };
 }
 
-export function getSubmittedOrder() {
+export function getSubmittedOrder(): InternalOrder {
     const order = getCompleteOrder();
 
     return {
@@ -254,17 +254,5 @@ export function getSubmittedOrder() {
             ...order.payment,
             status: '',
         },
-    };
-}
-
-export function getSubmittedOrderState() {
-    return {
-        meta: {
-            ...getSubmitOrderResponseBody().meta,
-            ...getSubmitOrderResponseHeaders(),
-        },
-        data: getSubmittedOrder(),
-        errors: {},
-        statuses: {},
     };
 }

@@ -89,7 +89,7 @@ describe('AfterpayPaymentStrategy', () => {
         ));
         loadRemoteSettingsAction = Observable.of(createAction(
             LOAD_REMOTE_SETTINGS_SUCCEEDED,
-            { useStoreCredit: false, customerMessage: 'foo' },
+            { useStoreCredit: false },
             { methodId: paymentMethod.gateway }
         ));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
@@ -154,7 +154,7 @@ describe('AfterpayPaymentStrategy', () => {
         });
 
         it('notifies store credit usage to remote checkout service', () => {
-            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false, customerMessage: '' });
+            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false });
             expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
         });
 
@@ -237,7 +237,7 @@ describe('AfterpayPaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
-                { useStoreCredit: false, customerMessage: 'foo' },
+                { useStoreCredit: false },
                 { methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }
             );
 

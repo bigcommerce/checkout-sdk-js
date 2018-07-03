@@ -7,6 +7,7 @@ import CheckoutRequestSender from './checkout-request-sender';
 describe('CheckoutRequestSender', () => {
     let requestSender;
     let response;
+    let checkoutRequestSender;
 
     const defaultIncludes = [
         'cart.lineItems.physicalItems.options',
@@ -21,47 +22,77 @@ describe('CheckoutRequestSender', () => {
         response = getResponse(getCheckout());
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
+        jest.spyOn(requestSender, 'put').mockReturnValue(response);
+        checkoutRequestSender = new CheckoutRequestSender(requestSender);
     });
 
-    it('sends request to load checkout', async () => {
-        const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-
-        expect(await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4')).toEqual(response);
-    });
-
-    it('sends expected params to load checkout', async () => {
-        const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-
-        await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4');
-
-        expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
-            headers: {
-                Accept: ContentType.JsonV1,
-            },
-            params: {
-                include: defaultIncludes,
-            },
-            timeout: undefined,
-        });
-    });
-
-    it('appends passed params when loading checkout', async () => {
-        const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-
-        await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
-            params: {
-                include: ['foo'],
-            },
+    describe('loadCheckout', () => {
+        it('returns the response of the requestSender', async () => {
+            expect(await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4')).toEqual(response);
         });
 
-        expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
-            headers: {
-                Accept: ContentType.JsonV1,
-            },
-            params: {
-                include: defaultIncludes.concat(',foo'),
+        it('sends expected params to requestSender', async () => {
+            await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4');
+
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: {
+                    include: defaultIncludes,
+                },
                 timeout: undefined,
-            },
+            });
+        });
+
+        it('appends passed params when loading checkout', async () => {
+            await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+                params: {
+                    include: ['foo'],
+                },
+            });
+
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: {
+                    include: defaultIncludes.concat(',foo'),
+                    timeout: undefined,
+                },
+            });
+        });
+    });
+
+    describe('updateCheckout', () => {
+        it('returns the response of the requestSender', async () => {
+            expect(await checkoutRequestSender.updateCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4', { customerMessage: 'foo' }))
+                .toEqual(response);
+        });
+
+        it('sends expected params to requestSender', async () => {
+            await checkoutRequestSender.updateCheckout(
+                '6cb62bfc-c92d-45f5-869b-d3d9681a58d4',
+                { customerMessage: 'foo' },
+                {
+                    params: {
+                        include: ['foo'],
+                    },
+                }
+            );
+
+            expect(requestSender.put).toHaveBeenCalledWith('/api/storefront/checkout/6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                body: {
+                    customerMessage: 'foo',
+                },
+                params: {
+                    include: defaultIncludes.concat(',foo'),
+                },
+                timeout: undefined,
+            });
         });
     });
 });

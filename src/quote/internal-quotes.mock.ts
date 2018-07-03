@@ -2,7 +2,7 @@ import InternalQuote from './internal-quote';
 
 export function getQuote(): InternalQuote {
     return {
-        orderComment: '',
+        orderComment: 'comment',
         shippingOption: '0:61d4bb52f746477e1d4fb411221318c3',
         shippingAddress: {
             id: '55c96cda6f04c',

@@ -1,5 +1,5 @@
 import InternalLineItem from './internal-line-item';
-import { LineItem } from './line-item';
+import { DigitalItem, LineItem } from './line-item';
 
 import { AmountTransformer } from '.';
 
@@ -20,6 +20,7 @@ export default function mapToInternalLineItem(
         integerAmount: amountTransformer.toInteger(item.extendedListPrice),
         integerAmountAfterDiscount: amountTransformer.toInteger(item.extendedSalePrice),
         integerDiscount: amountTransformer.toInteger(item.discountAmount),
+        downloadsPageUrl: (item as DigitalItem).downloadPageUrl,
         name: item.name,
         quantity: item.quantity,
         variantId: item.variantId,

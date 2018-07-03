@@ -18,11 +18,6 @@ export default interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
-
-    /**
-     * If provided, the string will be added to the order as a comment.
-     */
-    customerMessage?: string;
 }
 
 /**

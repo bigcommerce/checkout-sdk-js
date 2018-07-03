@@ -32,6 +32,10 @@ export default interface Checkout {
     payments?: CheckoutPayment[];
 }
 
+export interface CheckoutRequestBody {
+    customerMessage: string;
+}
+
 export interface CheckoutPayment {
     detail: {
         step: string;

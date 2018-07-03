@@ -56,8 +56,12 @@ export default class OrderActionCreator {
                 const state = store.getState();
                 const checkout = state.checkout.getCheckout();
 
+                if (!checkout) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                }
+
                 this._checkoutValidator.validate(checkout, options)
-                    .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload), options))
+                    .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload, checkout.customerMessage), options))
                     .then(response => {
                         observer.next(createAction(OrderActionType.SubmitOrderSucceeded, response.body.data, { ...response.body.meta, token: response.headers.token }));
                         observer.complete();
@@ -90,7 +94,7 @@ export default class OrderActionCreator {
         );
     }
 
-    private _mapToOrderRequestBody(payload: OrderRequestBody): InternalOrderRequestBody {
+    private _mapToOrderRequestBody(payload: OrderRequestBody, customerMessage: string): InternalOrderRequestBody {
         const { payment, ...order } = payload;
 
         if (!payment) {
@@ -99,6 +103,7 @@ export default class OrderActionCreator {
 
         return {
             ...payload,
+            customerMessage,
             payment: {
                 paymentData: payment.paymentData,
                 name: payment.methodId,

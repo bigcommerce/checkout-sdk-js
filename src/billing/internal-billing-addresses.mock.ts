@@ -1,6 +1,4 @@
 import { InternalAddress } from '../address';
-import { getCart } from '../cart/internal-carts.mock';
-import { getQuote } from '../quote/internal-quotes.mock';
 
 export function getBillingAddress(): InternalAddress {
     return {
@@ -18,22 +16,5 @@ export function getBillingAddress(): InternalAddress {
         countryCode: 'US',
         phone: '555-555-5555',
         customFields: [],
-    };
-}
-
-export function getBillingAddressResponseBody() {
-    return {
-        data: {
-            quote: getQuote(),
-            cart: getCart(),
-            billingAddress: getBillingAddress(),
-        },
-    };
-}
-
-export function getBillingAddressState() {
-    return {
-        data: getBillingAddress(),
-        meta: {},
     };
 }
