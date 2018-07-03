@@ -16,7 +16,6 @@ The SDK has a convenient application interface for starting and completing a che
     - [CORS](#cors)
 - [Usage](#usage)
     - [Initialize instance](#initialize-instance)
-        - [Load configuration](#load-configuration)
         - [Load checkout](#load-checkout)
     - [Sign in customer](#sign-in-customer)
     - [Set shipping details](#set-shipping-details)
@@ -96,33 +95,29 @@ import { createCheckoutService } from '@bigcommerce/checkout-sdk';
 const service = createCheckoutService();
 ```
 
-#### Load configuration
-
-Once you have the instance, you need to load the store's checkout configuration. The configuration object contains information about various settings related to checkout, such as the default currency of the store etc...
-
-```js
-const state = await service.loadConfig();
-
-console.log(state.checkout.getConfig());
-```
-
 #### Load checkout
 
-Afterwards, you should load the current checkout and present the information to the customer.
+Once you have the instance, you should load the current checkout and present the information to the customer.
 
 ```js
 const checkoutId = '0cfd6c06-57c3-4e29-8d7a-de55cc8a9052';
 const state = await service.loadCheckout(checkoutId);
 
-console.log(state.checkout.getCheckout());
+console.log(state.data.getCheckout());
 ```
 
 The checkout object contains various information about the checkout process, such as the cart, the grand total etc... Once the data is loaded, you can retrieve it by calling the getters provided by the state object.
 
 ```js
-console.log(state.checkout.getCart());
-console.log(state.checkout.getBillingAddress());
-console.log(state.checkout.getShippingAddress());
+console.log(state.data.getCart());
+console.log(state.data.getBillingAddress());
+console.log(state.data.getShippingAddress());
+```
+
+In addition, you can also access the store's checkout configuration. The configuration object contains information about various settings related to checkout, such as the default currency of the store etc...
+
+```js
+console.log(state.data.getConfig());
 ```
 
 ### Sign in customer
@@ -132,7 +127,7 @@ Before you can collect other checkout information from the customer, you should 
 ```js
 const state = await service.signInCustomer('foo@bar.com', 'password123');
 
-console.log(state.checkout.getCustomer());
+console.log(state.data.getCustomer());
 ```
 
 Alternatively, you can ask the customer to continue as a guest.
@@ -140,7 +135,7 @@ Alternatively, you can ask the customer to continue as a guest.
 ```js
 const state = await service.signInCustomer('foo@bar.com');
 
-console.log(state.checkout.getCustomer());
+console.log(state.data.getCustomer());
 ```
 
 ### Set shipping details
@@ -150,7 +145,7 @@ console.log(state.checkout.getCustomer());
 To set a shipping destination for the checkout, you should ask the customer to provide an address. To do that, you need to render a set of form fields for collecting their details. The set of fields also includes all the custom fields configured by the merchant.
 
 ```js
-const fields = state.checkout.getShippingAddressFields();
+const fields = state.data.getShippingAddressFields();
 
 fields.forEach(field => {
     console.log(field);
@@ -173,8 +168,8 @@ const address = {
 
 const state = await service.updateShippingAddress(address);
 
-console.log(state.checkout.getShippingAddress());
-console.log(state.checkout.getShippingOptions());
+console.log(state.data.getShippingAddress());
+console.log(state.data.getShippingOptions());
 ```
 
 #### Set shipping option
@@ -184,8 +179,8 @@ Once the address is provided, you can get a list of shipping options available f
 Then, you can ask the customer to select a shipping option from the list.
 
 ```js
-const address = state.checkout.getShippingAddress();
-const options = state.checkout.getShippingOptions();
+const address = state.data.getShippingAddress();
+const options = state.data.getShippingOptions();
 const newState = await service.selectShippingOption(address.id, options[address.id].id);
 
 console.log(newState.checkout.getSelectedShippingOption());
@@ -198,7 +193,7 @@ In order to complete the checkout process, you also need to collect a billing ad
 ```js
 const state = await service.updateBillingAddress(address);
 
-console.log(state.checkout.getBillingAddress());
+console.log(state.data.getBillingAddress());
 ```
 
 ### Apply coupon or gift certificate
@@ -208,13 +203,13 @@ You may also want to accept any coupon code or gift certificate provided by the 
 ```js
 const state = await service.applyCoupon('COUPON');
 
-console.log(state.checkout.getOrder().coupon);
+console.log(state.data.getOrder().coupon);
 ```
 
 ```js
 const state = await service.applyGiftCertificate('GIFT');
 
-console.log(state.checkout.getOrder().giftCertificate);
+console.log(state.data.getOrder().giftCertificate);
 ```
 
 You can also allow the customer to remove any coupon code or gift certificate previously applied.
@@ -233,7 +228,7 @@ Before you can place the order, you need to collect payment details from the cus
 ```js
 const state = await service.loadPaymentMethods();
 
-console.log(state.checkout.getPaymentMethods());
+console.log(state.data.getPaymentMethods());
 ```
 
 #### Initialize payment method
@@ -310,7 +305,7 @@ Once the order is created, you can make a call to retrieve it. This should be do
 const orderId = 123;
 const state = await service.loadOrder(orderId);
 
-console.log(state.checkout.getOrder());
+console.log(state.data.getOrder());
 ```
 
 ### Subscribe to changes
@@ -322,7 +317,7 @@ The subscriber gets triggered every time there is a change in the state. If the 
 ```js
 service.subscribe(state => {
     // Return the current checkout
-    console.log(state.checkout.getCheckout());
+    console.log(state.data.getCheckout());
 
     // Return an error object if unable to load checkout
     console.log(state.errors.getLoadCheckoutError());
@@ -335,10 +330,10 @@ service.subscribe(state => {
 If you are only interested in certain parts of the state, you can filter out irrelevant changes by providing a filter function to the subscriber.
 
 ```js
-const filter = state => state.checkout.getCart();
+const filter = state => state.data.getCart();
 
 service.subscribe(state => {
-    console.log(state.checkout.getCart())
+    console.log(state.data.getCart())
 }, filter);
 ```
 

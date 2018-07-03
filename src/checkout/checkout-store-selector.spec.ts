@@ -1,15 +1,10 @@
 import { find, reject } from 'lodash';
 
-import { mapToInternalAddress } from '../address';
-import { mapToInternalCart } from '../cart';
-import { getCustomer } from '../customer/internal-customers.mock';
 import { FormField } from '../form';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
-import { mapToInternalOrder } from '../order';
-import { getQuote } from '../quote/internal-quotes.mock';
-import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
+import { getShippingOptions } from '../shipping/shipping-options.mock';
 
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreState from './checkout-store-state';
@@ -33,12 +28,7 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns order', () => {
-        // tslint:disable-next-line:no-non-null-assertion
-        expect(selector.getOrder()).toEqual(mapToInternalOrder(internalSelectors.order.getOrder()!));
-    });
-
-    it('returns quote', () => {
-        expect(selector.getQuote()).toEqual(getQuote());
+        expect(selector.getOrder()).toEqual(internalSelectors.order.getOrder());
     });
 
     it('returns config', () => {
@@ -47,6 +37,10 @@ describe('CheckoutStoreSelector', () => {
 
     it('returns shipping options', () => {
         expect(selector.getShippingOptions()).toEqual(getShippingOptions());
+    });
+
+    it('returns consignments', () => {
+        expect(selector.getConsignments()).toEqual(internalSelectors.consignments.getConsignments());
     });
 
     it('returns shipping countries', () => {
@@ -66,22 +60,19 @@ describe('CheckoutStoreSelector', () => {
     });
 
     it('returns cart', () => {
-        // tslint:disable-next-line:no-non-null-assertion
-        expect(selector.getCart()).toEqual(mapToInternalCart(internalSelectors.checkout.getCheckout()!));
+        expect(selector.getCart()).toEqual(internalSelectors.cart.getCart());
     });
 
     it('returns customer', () => {
-        expect(selector.getCustomer()).toEqual(getCustomer()) ;
+        expect(selector.getCustomer()).toEqual(internalSelectors.customer.getCustomer());
     });
 
     it('returns billing address', () => {
-        // tslint:disable-next-line:no-non-null-assertion
-        expect(selector.getBillingAddress()).toEqual(mapToInternalAddress(internalSelectors.billingAddress.getBillingAddress()!));
+        expect(selector.getBillingAddress()).toEqual(internalSelectors.billingAddress.getBillingAddress());
     });
 
     it('returns shipping address', () => {
-        // tslint:disable-next-line:no-non-null-assertion
-        expect(selector.getShippingAddress()).toEqual(mapToInternalAddress(internalSelectors.shippingAddress.getShippingAddress()!));
+        expect(selector.getShippingAddress()).toEqual(internalSelectors.shippingAddress.getShippingAddress());
     });
 
     it('returns instruments', () => {
