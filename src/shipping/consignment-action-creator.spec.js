@@ -2,7 +2,7 @@ import { createTimeout } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 import { omit } from 'lodash';
 
-import { createCheckoutStore, CheckoutActionType } from '../checkout';
+import { createCheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
@@ -72,8 +72,8 @@ describe('consignmentActionCreator', () => {
             });
 
             expect(actions).toEqual([
-                { type: CheckoutActionType.LoadCheckoutRequested },
-                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+                { type: ConsignmentActionType.LoadShippingOptionsRequested },
+                { type: ConsignmentActionType.LoadShippingOptionsSucceeded, payload: getCheckout() },
             ]);
         });
 
@@ -90,8 +90,8 @@ describe('consignmentActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: CheckoutActionType.LoadCheckoutRequested },
-                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
+                { type: ConsignmentActionType.LoadShippingOptionsRequested },
+                { type: ConsignmentActionType.LoadShippingOptionsFailed, error: true, payload: getErrorResponse() },
             ]);
         });
     });
