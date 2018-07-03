@@ -8,7 +8,6 @@ import OrderRequestBody, { OrderPaymentRequestBody } from './order-request-body'
 
 export function getOrderRequestBody(): OrderRequestBody {
     return {
-        customerMessage: '',
         useStoreCredit: false,
         payment: getPayment() as OrderPaymentRequestBody,
     };
