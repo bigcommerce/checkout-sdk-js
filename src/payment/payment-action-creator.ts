@@ -79,6 +79,7 @@ export default class PaymentActionCreator {
         const config = state.config.getStoreConfig();
         const instrumentMeta = state.instruments.getInstrumentsMeta();
         const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
+        const orderMeta = state.order.getOrderMeta();
         const internalCustomer = customer && billingAddress && checkout && checkout.cart &&
             mapToInternalCustomer(customer, checkout.cart, billingAddress);
 
@@ -98,8 +99,8 @@ export default class PaymentActionCreator {
             shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress),
             shippingOption: shippingOption && mapToInternalShippingOption(shippingOption, true),
             cart: checkout && mapToInternalCart(checkout),
-            order: order && mapToInternalOrder(order),
-            orderMeta: state.order.getOrderMeta(),
+            order: order && mapToInternalOrder(order, orderMeta),
+            orderMeta,
             payment: payment.paymentData,
             quoteMeta: {
                 request: paymentMeta && paymentMeta.request,

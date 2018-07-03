@@ -4,10 +4,10 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
 import { getCurrency } from '../currency/currencies.mock';
 
-import { getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
+import { getAwaitingOrder, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getPhysicalItem } from './line-items.mock';
 import Order, { GatewayOrderPayment, GiftCertificateOrderPayment } from './order';
-import OrderState from './order-state';
+import OrderState, { OrderMetaState } from './order-state';
 
 export function getOrder(): Order {
     return {
@@ -53,6 +53,22 @@ export function getOrder(): Order {
             getGatewayOrderPayment(),
             getGiftCertificateOrderPayment(),
         ],
+    };
+}
+
+export function getOrderMeta(): OrderMetaState {
+    const { token } = getSubmitOrderResponseHeaders();
+    const {
+        token: orderToken,
+        callbackUrl,
+        payment,
+    } = getAwaitingOrder();
+
+    return {
+        token,
+        orderToken,
+        callbackUrl,
+        payment,
     };
 }
 

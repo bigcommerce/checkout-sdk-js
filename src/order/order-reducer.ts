@@ -49,6 +49,8 @@ function metaReducer(
         return action.payload ? {
             ...meta,
             ...action.meta,
+            callbackUrl: action.payload.order.callbackUrl,
+            orderToken: action.payload.order.token,
             payment: action.payload.order && action.payload.order.payment,
         } : meta;
 

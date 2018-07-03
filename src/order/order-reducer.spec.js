@@ -62,9 +62,11 @@ describe('orderReducer()', () => {
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
             meta: {
+                callbackUrl: response.data.order.callbackUrl,
                 deviceFingerprint: response.meta.deviceFingerprint,
-                token: headers.token,
+                orderToken: response.data.order.token,
                 payment: action.payload.order.payment,
+                token: headers.token,
             },
         }));
     });
