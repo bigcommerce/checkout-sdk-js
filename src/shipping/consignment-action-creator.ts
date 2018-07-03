@@ -3,13 +3,18 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { Address } from '../address';
-import { CheckoutAction, CheckoutActionType, CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import { CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import CheckoutRequestSender from '../checkout/checkout-request-sender';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { ConsignmentRequestBody } from './consignment';
-import { ConsignmentActionType, CreateConsignmentsAction, UpdateConsignmentAction } from './consignment-actions';
+import {
+    ConsignmentActionType,
+    CreateConsignmentsAction,
+    LoadShippingOptionsAction,
+    UpdateConsignmentAction,
+} from './consignment-actions';
 
 export default class ConsignmentActionCreator {
     constructor(
@@ -49,15 +54,15 @@ export default class ConsignmentActionCreator {
         });
     }
 
-    loadShippingOptions(options?: RequestOptions): ThunkAction<CheckoutAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<CheckoutAction>) => {
+    loadShippingOptions(options?: RequestOptions): ThunkAction<LoadShippingOptionsAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<LoadShippingOptionsAction>) => {
             const checkout = store.getState().checkout.getCheckout();
 
             if (!checkout) {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
-            observer.next(createAction(CheckoutActionType.LoadCheckoutRequested));
+            observer.next(createAction(ConsignmentActionType.LoadShippingOptionsRequested));
 
             this._checkoutRequestSender.loadCheckout(checkout.id, {
                 ...options,
@@ -66,11 +71,11 @@ export default class ConsignmentActionCreator {
                 },
             })
             .then(({ body }) => {
-                observer.next(createAction(CheckoutActionType.LoadCheckoutSucceeded, body));
+                observer.next(createAction(ConsignmentActionType.LoadShippingOptionsSucceeded, body));
                 observer.complete();
             })
             .catch(response => {
-                observer.error(createErrorAction(CheckoutActionType.LoadCheckoutFailed, response));
+                observer.error(createErrorAction(ConsignmentActionType.LoadShippingOptionsFailed, response));
             });
         });
     }
