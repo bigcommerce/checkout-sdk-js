@@ -6,6 +6,7 @@ import {
     deleteInstrumentResponseBody,
     getErrorInstrumentResponseBody,
     getLoadInstrumentsResponseBody,
+    getRawInstrumentsResponseBody,
     getVaultAccessTokenResponseBody,
     instrumentRequestContext,
 } from './instrument.mock';
@@ -64,7 +65,7 @@ describe('InstrumentMethodRequestSender', () => {
     describe('#loadInstruments()', () => {
         it('returns instruments if request is successful', async () => {
             client.loadInstruments = jest.fn((payload, callback) => callback(null, {
-                data: getLoadInstrumentsResponseBody(),
+                data: getRawInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
             }));
@@ -106,7 +107,7 @@ describe('InstrumentMethodRequestSender', () => {
 
         it('returns loads trusted instruments if shipping address is available', async () => {
             client.loadInstrumentsWithAddress = jest.fn((payload, callback) => callback(null, {
-                data: getLoadInstrumentsResponseBody(),
+                data: getRawInstrumentsResponseBody(),
                 status: 200,
                 statusText: 'OK',
             }));

@@ -1,27 +1,24 @@
-import { mapToInternalAddress, InternalAddress } from '../address';
+import { Address } from '../address';
 import { BillingAddressSelector } from '../billing';
-import { mapToInternalCart, InternalCart } from '../cart';
+import { Cart, CartSelector } from '../cart';
 import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
-import { mapToInternalCoupon, mapToInternalGiftCertificate, CouponSelector, GiftCertificateSelector, InternalCoupon, InternalGiftCertificate } from '../coupon';
-import { mapToInternalCustomer, CustomerSelector, InternalCustomer } from '../customer';
+import { Coupon, CouponSelector, GiftCertificate, GiftCertificateSelector } from '../coupon';
+import { Customer, CustomerSelector } from '../customer';
 import { FormField, FormSelector } from '../form';
 import { Country, CountrySelector } from '../geography';
-import { mapToInternalOrder, InternalOrder, OrderSelector } from '../order';
+import { Order, OrderSelector } from '../order';
 import { PaymentMethod, PaymentMethodSelector, PaymentSelector } from '../payment';
 import { Instrument, InstrumentSelector } from '../payment/instrument';
-import { mapToInternalQuote, InternalQuote } from '../quote';
 import {
-    mapToInternalShippingOption,
-    mapToInternalShippingOptions,
-    InternalShippingOption,
-    InternalShippingOptionList,
+    Consignment,
+    ConsignmentSelector,
     ShippingAddressSelector,
     ShippingCountrySelector,
+    ShippingOption,
     ShippingOptionSelector,
 } from '../shipping';
-import ConsignmentSelector from '../shipping/consignment-selector';
 
 import Checkout from './checkout';
 import CheckoutSelector from './checkout-selector';
@@ -36,6 +33,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 @selector
 export default class CheckoutStoreSelector {
     private _billingAddress: BillingAddressSelector;
+    private _cart: CartSelector;
     private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
     private _consignments: ConsignmentSelector;
@@ -57,6 +55,7 @@ export default class CheckoutStoreSelector {
      */
     constructor(selectors: InternalCheckoutSelectors) {
         this._billingAddress = selectors.billingAddress;
+        this._cart = selectors.cart;
         this._checkout = selectors.checkout;
         this._config = selectors.config;
         this._consignments = selectors.consignments;
@@ -84,27 +83,12 @@ export default class CheckoutStoreSelector {
     }
 
     /**
-     * Gets the current quote.
-     *
-     * @deprecated This method will be replaced in the future.
-     * @returns The current quote if it is loaded, otherwise undefined.
-     */
-    getQuote(): InternalQuote | undefined {
-        const checkout = this._checkout.getCheckout();
-        const shippingAddress = this._shippingAddress.getShippingAddress();
-
-        return checkout && mapToInternalQuote(checkout, shippingAddress);
-    }
-
-    /**
      * Gets the current order.
      *
      * @returns The current order if it is loaded, otherwise undefined.
      */
-    getOrder(): InternalOrder | undefined {
-        const order = this._order.getOrder();
-
-        return order ? mapToInternalOrder(order) : undefined;
+    getOrder(): Order | undefined {
+        return this._order.getOrder();
     }
 
     /**
@@ -125,26 +109,38 @@ export default class CheckoutStoreSelector {
      * @returns The shipping address object if it is loaded, otherwise
      * undefined.
      */
-    getShippingAddress(): InternalAddress | undefined {
-        const shippingAddress = this._shippingAddress.getShippingAddress();
-
-        return shippingAddress && mapToInternalAddress(shippingAddress);
+    getShippingAddress(): Address | undefined {
+        return this._shippingAddress.getShippingAddress();
     }
 
     /**
-     * Gets a list of shipping options available for each shipping address.
+     * Gets a list of shipping options available for the shipping address.
      *
      * If there is no shipping address assigned to the current checkout, the
      * list of shipping options will be empty.
      *
-     * @returns The list of shipping options per address if loaded, otherwise
-     * undefined.
+     * @returns The list of shipping options if any, otherwise undefined.
      */
-    getShippingOptions(): InternalShippingOptionList | undefined {
-        // @todo: once we remove the mappers, this should use the shippingOption selector
+    getShippingOptions(): ShippingOption[] | undefined {
         const consignments = this._consignments.getConsignments();
 
-        return consignments && mapToInternalShippingOptions(consignments);
+        if (consignments && consignments.length) {
+            return consignments[0].availableShippingOptions;
+        }
+
+        return;
+    }
+
+    /**
+     * Gets a list of consignments.
+     *
+     * If there are no consignments created for to the current checkout, the
+     * list will be empty.
+     *
+     * @returns The list of consignments if any, otherwise undefined.
+     */
+    getConsignments(): Consignment[] | undefined {
+        return this._consignments.getConsignments();
     }
 
     /**
@@ -153,10 +149,8 @@ export default class CheckoutStoreSelector {
      * @returns The shipping option object if there is a selected option,
      * otherwise undefined.
      */
-    getSelectedShippingOption(): InternalShippingOption | undefined {
-        const shippingOption = this._shippingOptions.getSelectedShippingOption();
-
-        return shippingOption  && mapToInternalShippingOption(shippingOption, true);
+    getSelectedShippingOption(): ShippingOption | undefined {
+        return this._shippingOptions.getSelectedShippingOption();
     }
 
     /**
@@ -173,10 +167,8 @@ export default class CheckoutStoreSelector {
      *
      * @returns The billing address object if it is loaded, otherwise undefined.
      */
-    getBillingAddress(): InternalAddress | undefined {
-        const billingAddress = this._billingAddress.getBillingAddress();
-
-        return billingAddress && mapToInternalAddress(billingAddress);
+    getBillingAddress(): Address | undefined {
+        return this._billingAddress.getBillingAddress();
     }
 
     /**
@@ -231,10 +223,8 @@ export default class CheckoutStoreSelector {
      *
      * @returns The current cart object if it is loaded, otherwise undefined.
      */
-    getCart(): InternalCart | undefined {
-        const checkout = this._checkout.getCheckout();
-
-        return checkout ? mapToInternalCart(checkout) : undefined;
+    getCart(): Cart | undefined {
+        return this._cart.getCart();
     }
 
     /**
@@ -242,10 +232,8 @@ export default class CheckoutStoreSelector {
      *
      * @returns The list of applied coupons if there is any, otherwise undefined.
      */
-    getCoupons(): InternalCoupon[] | undefined {
-        const coupons = this._coupons.getCoupons();
-
-        return coupons ? coupons.map(mapToInternalCoupon) : undefined;
+    getCoupons(): Coupon[] | undefined {
+        return this._coupons.getCoupons();
     }
 
     /**
@@ -253,10 +241,8 @@ export default class CheckoutStoreSelector {
      *
      * @returns The list of applied gift certificates if there is any, otherwise undefined.
      */
-    getGiftCertificates(): InternalGiftCertificate[] | undefined {
-        const giftCertificates = this._giftCertificates.getGiftCertificates();
-
-        return giftCertificates ? giftCertificates.map(mapToInternalGiftCertificate) : undefined;
+    getGiftCertificates(): GiftCertificate[] | undefined {
+        return this._giftCertificates.getGiftCertificates();
     }
 
     /**
@@ -265,17 +251,8 @@ export default class CheckoutStoreSelector {
      * @returns The current customer object if it is loaded, otherwise
      * undefined.
      */
-    getCustomer(): InternalCustomer | undefined {
-        const customer = this._customer.getCustomer();
-        const checkout = this._checkout.getCheckout();
-        const cart = checkout && checkout.cart;
-        const billingAddress = checkout && checkout.billingAddress;
-
-        if (!customer || !billingAddress || !cart) {
-            return;
-        }
-
-        return mapToInternalCustomer(customer, cart, billingAddress);
+    getCustomer(): Customer | undefined {
+        return this._customer.getCustomer();
     }
 
     /**
