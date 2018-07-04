@@ -177,6 +177,63 @@ describe('consignmentActionCreator', () => {
         });
     });
 
+    describe('#updateConsignment()', () => {
+        describe('when store has no checkout data / id', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({});
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    actions = await Observable.from(consignmentActionCreator.updateConsignment(consignment)(store))
+                        .toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(MissingDataError);
+                    expect(actions).toEqual(undefined);
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        it('emits actions if able to update consignment', async () => {
+            actions = await Observable.from(consignmentActionCreator.updateConsignment(consignment)(store))
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: ConsignmentActionType.UpdateConsignmentRequested },
+                { type: ConsignmentActionType.UpdateConsignmentSucceeded, payload: response.body },
+            ]);
+        });
+
+        it('emits error actions if unable to update consignment', async () => {
+            consignmentRequestSender.updateConsignment.mockImplementation(() => Promise.reject(errorResponse));
+
+            const errorHandler = jest.fn((action) => Observable.of(action));
+
+            await Observable.from(consignmentActionCreator.updateConsignment(consignment)(store))
+                .catch(errorHandler)
+                .toArray()
+                .subscribe((actions) => {
+                    expect(actions).toEqual([
+                        { type: ConsignmentActionType.UpdateConsignmentRequested },
+                        { type: ConsignmentActionType.UpdateConsignmentFailed, payload: errorResponse, error: true },
+                    ]);
+                });
+        });
+
+        it('sends request to update consignment', async () => {
+            await Observable.from(consignmentActionCreator.updateConsignment(consignment, options)(store))
+                .toPromise();
+
+            expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                consignment,
+                options
+            );
+        });
+    });
+
     describe('#updateAddress()', () => {
         describe('when store has no checkout data / id', () => {
             beforeEach(() => {
