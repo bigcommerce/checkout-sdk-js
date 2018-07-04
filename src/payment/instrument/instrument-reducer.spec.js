@@ -45,7 +45,7 @@ describe('instrumentReducer()', () => {
 
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
-            data: action.payload.vaulted_instruments,
+            data: action.payload.vaultedInstruments,
             meta: action.meta,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
@@ -89,7 +89,7 @@ describe('instrumentReducer()', () => {
             type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED,
             meta: {
                 ...getInstrumentsMeta(),
-                instrumentId: initialInstruments[0].bigpay_token,
+                instrumentId: initialInstruments[0].bigpayToken,
             },
             payload: deleteInstrumentResponseBody(),
         };

@@ -1,4 +1,4 @@
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -12,8 +12,15 @@ export default class ConfigActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    loadConfig(options?: RequestOptions): Observable<LoadConfigAction> {
-        return Observable.create((observer: Observer<LoadConfigAction>) => {
+    loadConfig(options?: RequestOptions): ThunkAction<LoadConfigAction> {
+        return store => Observable.create((observer: Observer<LoadConfigAction>) => {
+            const state = store.getState();
+            const config = state.config.getConfig();
+
+            if (config) {
+                return observer.complete();
+            }
+
             observer.next(createAction(ConfigActionType.LoadConfigRequested));
 
             this._checkoutClient.loadConfig(options)

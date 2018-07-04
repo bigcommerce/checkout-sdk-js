@@ -5,13 +5,30 @@ export type InstrumentError = Array<{
     message: string;
 }>;
 
-export interface InstrumentResponseBody {
-    vaulted_instrument: Instrument;
-    errors?: [InstrumentError];
+export interface RawInstrumentResponseBody {
+    bigpay_token: string;
+    provider: string;
+    iin: string;
+    last_4: string;
+    expiry_month: string;
+    expiry_year: string;
+    brand: string;
+    trusted_shipping_address: boolean;
 }
 
 export interface InstrumentsResponseBody {
-    vaulted_instruments: Instrument[];
+    vaultedInstruments: Instrument[];
+}
+
+export interface InstrumentErrorResponseBody {
+    errors?: [InstrumentError];
+}
+
+export interface RawInstrumentsResponseBody {
+    vaulted_instruments: RawInstrumentResponseBody[];
+}
+
+export interface RawInstrumentErrorResponseBody {
     errors?: [InstrumentError];
 }
 
