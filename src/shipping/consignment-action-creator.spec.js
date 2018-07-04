@@ -13,7 +13,7 @@ import { getShippingAddress } from './internal-shipping-addresses.mock';
 
 describe('consignmentActionCreator', () => {
     let address;
-    let checkoutClient;
+    let consignmentRequestSender;
     let checkoutRequestSender;
     let errorResponse;
     let response;
@@ -27,7 +27,7 @@ describe('consignmentActionCreator', () => {
         errorResponse = getErrorResponse();
         store = createCheckoutStore(getCheckoutStoreState());
 
-        checkoutClient = {
+        consignmentRequestSender = {
             createConsignments: jest.fn(() => Promise.resolve(response)),
             updateConsignment: jest.fn(() => Promise.resolve(response)),
         };
@@ -36,7 +36,7 @@ describe('consignmentActionCreator', () => {
             loadCheckout: jest.fn(() => Promise.resolve(response)),
         };
 
-        consignmentActionCreator = new ConsignmentActionCreator(checkoutClient, checkoutRequestSender);
+        consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
         address = getShippingAddress();
         actions = undefined;
     });
@@ -54,12 +54,12 @@ describe('consignmentActionCreator', () => {
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(actions).toEqual(undefined);
-                    expect(checkoutClient.updateConsignment).not.toHaveBeenCalled();
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
                 }
             });
         });
 
-        it('emits actions and passes right arguments to checkoutClient', async () => {
+        it('emits actions and passes right arguments to consignmentRequestSender', async () => {
             const { id } = getCheckout();
             actions = await Observable.from(consignmentActionCreator.loadShippingOptions()(store))
                 .toArray()
@@ -77,7 +77,7 @@ describe('consignmentActionCreator', () => {
             ]);
         });
 
-        it('emits errors and passes right arguments to checkoutClient', async () => {
+        it('emits errors and passes right arguments to consignmentRequestSender', async () => {
             jest.spyOn(checkoutRequestSender, 'loadCheckout')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
@@ -109,7 +109,7 @@ describe('consignmentActionCreator', () => {
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(actions).toEqual(undefined);
-                    expect(checkoutClient.updateConsignment).not.toHaveBeenCalled();
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
                 }
             });
         });
@@ -128,7 +128,7 @@ describe('consignmentActionCreator', () => {
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(actions).toEqual(undefined);
-                    expect(checkoutClient.createConsignments).not.toHaveBeenCalled();
+                    expect(consignmentRequestSender.createConsignments).not.toHaveBeenCalled();
                 }
             });
         });
@@ -145,7 +145,7 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits error actions if unable to update shipping address', async () => {
-            checkoutClient.createConsignments.mockImplementation(() => Promise.reject(errorResponse));
+            consignmentRequestSender.createConsignments.mockImplementation(() => Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
 
@@ -164,7 +164,7 @@ describe('consignmentActionCreator', () => {
             await Observable.from(consignmentActionCreator.updateAddress(address, options)(store))
                 .toPromise();
 
-            expect(checkoutClient.updateConsignment).toHaveBeenCalledWith(
+            expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 {
                     id: '55c96cda6f04c',
@@ -186,7 +186,7 @@ describe('consignmentActionCreator', () => {
             await Observable.from(consignmentActionCreator.updateAddress(address, options)(store))
                 .toPromise();
 
-            expect(checkoutClient.createConsignments).toHaveBeenCalledWith(
+            expect(consignmentRequestSender.createConsignments).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 [{
                     shippingAddress: address,
@@ -217,7 +217,7 @@ describe('consignmentActionCreator', () => {
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(actions).toEqual(undefined);
-                    expect(checkoutClient.updateConsignment).not.toHaveBeenCalled();
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
                 }
             });
         });
@@ -236,7 +236,7 @@ describe('consignmentActionCreator', () => {
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(actions).toEqual(undefined);
-                    expect(checkoutClient.updateConsignment).not.toHaveBeenCalled();
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
                 }
             });
         });
@@ -253,7 +253,7 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits error actions if unable to update shipping option', async () => {
-            checkoutClient.createConsignments.mockImplementation(() => Promise.reject(errorResponse));
+            consignmentRequestSender.createConsignments.mockImplementation(() => Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
 
@@ -272,7 +272,7 @@ describe('consignmentActionCreator', () => {
             await Observable.from(consignmentActionCreator.selectShippingOption(shippingOptionId, options)(store))
                 .toPromise();
 
-            expect(checkoutClient.updateConsignment).toHaveBeenCalledWith(
+            expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 {
                     id: '55c96cda6f04c',

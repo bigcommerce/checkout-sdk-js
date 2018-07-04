@@ -1,8 +1,9 @@
 import { createAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 
+import { ConsignmentRequestSender } from '..';
 import { createRequestSender } from '../../../node_modules/@bigcommerce/request-sender';
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore } from '../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore } from '../../checkout';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ConsignmentActionType } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
@@ -11,15 +12,13 @@ import { getShippingAddress } from '../shipping-addresses.mock';
 import DefaultShippingStrategy from './default-shipping-strategy';
 
 describe('DefaultShippingStrategy', () => {
-    let client: CheckoutClient;
     let store: CheckoutStore;
     let consignmentActionCreator: ConsignmentActionCreator;
 
     beforeEach(() => {
-        client = createCheckoutClient();
         store = createCheckoutStore();
         consignmentActionCreator = new ConsignmentActionCreator(
-            client,
+            new ConsignmentRequestSender(createRequestSender()),
             new CheckoutRequestSender(createRequestSender())
         );
     });

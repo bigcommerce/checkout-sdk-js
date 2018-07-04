@@ -1,14 +1,17 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { Address } from '../address';
-import { CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import CheckoutRequestSender from '../checkout/checkout-request-sender';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import { ConsignmentRequestBody } from './consignment';
+import ConsignmentRequestSender from './consignment-request-sender';
+
 import {
     ConsignmentActionType,
     CreateConsignmentsAction,
@@ -18,7 +21,7 @@ import {
 
 export default class ConsignmentActionCreator {
     constructor(
-        private _checkoutClient: CheckoutClient,
+        private _consignmentRequestSender: ConsignmentRequestSender,
         private _checkoutRequestSender: CheckoutRequestSender
     ) {}
 
@@ -43,8 +46,8 @@ export default class ConsignmentActionCreator {
                 shippingOptionId: id,
             };
 
-            this._checkoutClient.updateConsignment(checkout.id, consignmentUpdateBody, options)
-                .then(({ body = {} }) => {
+            this._consignmentRequestSender.updateConsignment(checkout.id, consignmentUpdateBody, options)
+                .then(({ body }) => {
                     observer.next(createAction(ConsignmentActionType.UpdateConsignmentSucceeded, body));
                     observer.complete();
                 })
@@ -97,7 +100,7 @@ export default class ConsignmentActionCreator {
             observer.next(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
             this._createOrUpdateConsignment(checkout.id, consignment, options)
-                .then(({ body = {} }) => {
+                .then(({ body }) => {
                     observer.next(createAction(ConsignmentActionType.CreateConsignmentsSucceeded, body));
                     observer.complete();
                 })
@@ -107,12 +110,16 @@ export default class ConsignmentActionCreator {
         });
     }
 
-    private _createOrUpdateConsignment(checkoutId: string, consignment: ConsignmentRequestBody, options?: RequestOptions) {
+    private _createOrUpdateConsignment(
+        checkoutId: string,
+        consignment: ConsignmentRequestBody,
+        options?: RequestOptions
+    ) {
         if (consignment.id) {
-            return this._checkoutClient.updateConsignment(checkoutId, consignment, options);
+            return this._consignmentRequestSender.updateConsignment(checkoutId, consignment, options);
         }
 
-        return this._checkoutClient.createConsignments(checkoutId, [consignment], options);
+        return this._consignmentRequestSender.createConsignments(checkoutId, [consignment], options);
     }
 
     private _getConsignmentRequestBody(

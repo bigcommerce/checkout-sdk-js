@@ -3,6 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
+import { ConsignmentRequestSender } from '..';
 import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
@@ -70,7 +71,7 @@ describe('AmazonPayShippingStrategy', () => {
 
     beforeEach(() => {
         consignmentActionCreator = new ConsignmentActionCreator(
-            createCheckoutClient(),
+            new ConsignmentRequestSender(createRequestSender()),
             new CheckoutRequestSender(createRequestSender())
         );
         addressBookSpy = jest.fn();

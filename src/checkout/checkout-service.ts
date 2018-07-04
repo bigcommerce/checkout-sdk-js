@@ -7,10 +7,21 @@ import { ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
+import {
+    CustomerCredentials,
+    CustomerInitializeOptions,
+    CustomerRequestOptions,
+    CustomerStrategyActionCreator,
+    GuestCredentials
+} from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
-import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
+import {
+    PaymentInitializeOptions,
+    PaymentMethodActionCreator,
+    PaymentRequestOptions,
+    PaymentStrategyActionCreator
+} from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import {
     ConsignmentActionCreator,

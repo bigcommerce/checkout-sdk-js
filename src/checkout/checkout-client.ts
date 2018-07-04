@@ -7,7 +7,7 @@ import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
 import { InternalOrderRequestBody, InternalOrderResponseBody, Order, OrderRequestSender } from '../order';
 import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
-import { ConsignmentsRequestBody, ConsignmentRequestBody, ConsignmentRequestSender, ShippingCountryRequestSender } from '../shipping';
+import { ShippingCountryRequestSender } from '../shipping';
 
 import Checkout from './checkout';
 
@@ -20,7 +20,6 @@ export default class CheckoutClient {
      */
     constructor(
         private _billingAddressRequestSender: BillingAddressRequestSender,
-        private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
         private _customerRequestSender: CustomerRequestSender,
         private _orderRequestSender: OrderRequestSender,
@@ -62,14 +61,6 @@ export default class CheckoutClient {
 
     updateBillingAddress(checkoutId: string, address: Partial<AddressRequestBody>, options?: RequestOptions): Promise<Response> {
         return this._billingAddressRequestSender.updateAddress(checkoutId, address, options);
-    }
-
-    createConsignments(checkoutId: string, consignments: ConsignmentsRequestBody, options?: RequestOptions): Promise<Response> {
-        return this._consignmentRequestSender.createConsignments(checkoutId, consignments, options);
-    }
-
-    updateConsignment(checkoutId: string, consignment: ConsignmentRequestBody, options?: RequestOptions): Promise<Response> {
-        return this._consignmentRequestSender.updateConsignment(checkoutId, consignment, options);
     }
 
     signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Promise<Response> {

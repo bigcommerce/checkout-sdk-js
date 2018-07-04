@@ -4,13 +4,29 @@ import { BillingAddressActionCreator } from '../billing';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
-import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
+import {
+    CouponActionCreator,
+    CouponRequestSender,
+    GiftCertificateActionCreator,
+    GiftCertificateRequestSender,
+} from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
-import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
+import {
+    createPaymentClient,
+    createPaymentStrategyRegistry,
+    PaymentMethodActionCreator,
+    PaymentStrategyActionCreator,
+} from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
-import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import {
+    createShippingStrategyRegistry,
+    ConsignmentActionCreator,
+    ConsignmentRequestSender,
+    ShippingCountryActionCreator,
+    ShippingStrategyActionCreator,
+} from '../shipping';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
@@ -52,6 +68,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const configRequestSender = new ConfigRequestSender(requestSender);
     const configActionCreator = new ConfigActionCreator(configRequestSender);
+    const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const orderActionCreator = new OrderActionCreator(client, new CheckoutValidator(checkoutRequestSender));
 
     return new CheckoutService(
@@ -59,7 +76,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new BillingAddressActionCreator(client),
         new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
         configActionCreator,
-        new ConsignmentActionCreator(client, checkoutRequestSender),
+        new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender),
         new CountryActionCreator(client),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),

@@ -37,6 +37,7 @@ describe('CheckoutService', () => {
     let billingAddressActionCreator;
     let checkoutActionCreator;
     let checkoutClient;
+    let consignmentRequestSender;
     let checkoutRequestSender;
     let checkoutService;
     let checkoutValidator;
@@ -86,10 +87,6 @@ describe('CheckoutService', () => {
                 Promise.resolve(getResponse(getCountriesResponseBody()))
             ),
 
-            loadShippingOptions: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout())),
-            ),
-
             updateBillingAddress: jest.fn(() =>
                 Promise.resolve(getResponse(merge({}, getCheckout(), {
                     customer: {
@@ -99,14 +96,6 @@ describe('CheckoutService', () => {
                         email: 'foo@bar.com',
                     },
                 })))
-            ),
-
-            updateShippingAddress: jest.fn(() =>
-                Promise.resolve(getResponse(getShippingAddressResponseBody())),
-            ),
-
-            selectShippingOption: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout())),
             ),
 
             getVaultAccessToken: jest.fn(() =>
@@ -133,6 +122,16 @@ describe('CheckoutService', () => {
 
         paymentStrategyRegistry = {
             getByMethod: jest.fn(() => paymentStrategy),
+        };
+
+        consignmentRequestSender = {
+            createConsignments: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout())),
+            ),
+
+            updateConsignment: jest.fn(() =>
+                Promise.resolve(getResponse(getCheckout())),
+            ),
         };
 
         giftCertificateRequestSender = {
@@ -201,7 +200,7 @@ describe('CheckoutService', () => {
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,
-            new ConsignmentActionCreator(checkoutClient, checkoutRequestSender),
+            new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender),
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(couponRequestSender),
             customerStrategyActionCreator,
