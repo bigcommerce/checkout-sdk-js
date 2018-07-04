@@ -12,14 +12,22 @@ export default interface Consignment {
     lineItemIds?: string[];
 }
 
-export interface ConsignmentRequestBody {
+export type ConsignmentRequestBody =
+    ConsignmentDataRequestBody |
+    ConsignmentShippingOptionRequestBody;
+
+export interface ConsignmentDataRequestBody {
     id?: string;
-    shippingOptionId?: string;
     shippingAddress?: Address;
     lineItems?: ConsignmentLineItem[];
 }
 
-export type ConsignmentsRequestBody = ConsignmentRequestBody[];
+export interface ConsignmentShippingOptionRequestBody {
+    id?: string;
+    shippingOptionId?: string;
+}
+
+export type ConsignmentsRequestBody = ConsignmentDataRequestBody[];
 
 export interface ConsignmentLineItem {
     itemId: string | number;

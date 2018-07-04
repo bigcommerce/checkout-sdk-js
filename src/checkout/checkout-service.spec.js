@@ -22,7 +22,7 @@ import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethodRespon
 import { InstrumentActionCreator } from '../payment/instrument';
 import { deleteInstrumentResponseBody, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
-import { getShippingAddress, getShippingAddressResponseBody } from '../shipping/internal-shipping-addresses.mock';
+import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
@@ -32,12 +32,14 @@ import createCheckoutStore from './create-checkout-store';
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
+import { getConsignment } from '../shipping/consignments.mock';
 
 describe('CheckoutService', () => {
     let billingAddressActionCreator;
     let checkoutActionCreator;
     let checkoutClient;
     let consignmentRequestSender;
+    let consignmentActionCreator;
     let checkoutRequestSender;
     let checkoutService;
     let checkoutValidator;
@@ -183,6 +185,8 @@ describe('CheckoutService', () => {
             configActionCreator
         );
 
+        consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
+
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
             createCustomerStrategyRegistry(store, checkoutClient)
         );
@@ -200,7 +204,7 @@ describe('CheckoutService', () => {
             billingAddressActionCreator,
             checkoutActionCreator,
             configActionCreator,
-            new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender),
+            consignmentActionCreator,
             new CountryActionCreator(checkoutClient),
             new CouponActionCreator(couponRequestSender),
             customerStrategyActionCreator,
@@ -678,6 +682,72 @@ describe('CheckoutService', () => {
             await checkoutService.deinitializeShipping(options);
 
             expect(shippingStrategyActionCreator.deinitialize).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
+        });
+    });
+
+    describe('#selectConsignmentShippingOption()', () => {
+        it('dispatches action to update shipping option for a consignment', async () => {
+            const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('UPDATE_CONSIGNMENT'));
+
+            jest.spyOn(consignmentActionCreator, 'updateConsignment')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            await checkoutService.selectConsignmentShippingOption('foo', 'bar', options);
+
+            expect(consignmentActionCreator.updateConsignment).toHaveBeenCalledWith({
+                id: 'foo',
+                shippingOptionId: 'bar',
+            }, options);
+
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
+        });
+    });
+
+    describe('#updateConsignment()', () => {
+        it('dispatches action to update address for a consignment', async () => {
+            const address = getShippingAddress();
+            const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('UPDATE_CONSIGNMENT'));
+
+            jest.spyOn(consignmentActionCreator, 'updateConsignment')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const payload = {
+                id: 'foo',
+                shippingAddress: address,
+            };
+
+            await checkoutService.updateConsignment(payload, options);
+
+            expect(consignmentActionCreator.updateConsignment)
+                .toHaveBeenCalledWith(payload, options);
+
+            expect(store.dispatch)
+                .toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
+        });
+    });
+
+    describe('#createConsignments()', () => {
+        it('dispatches action to create consignments', async () => {
+            const consignments = [getConsignment()];
+            const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('CREATE_CONSIGNMENTS'));
+
+            jest.spyOn(consignmentActionCreator, 'createConsignments')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            await checkoutService.createConsignments(consignments, options);
+
+            expect(consignmentActionCreator.createConsignments).toHaveBeenCalledWith(consignments, options);
+
             expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
         });
     });
