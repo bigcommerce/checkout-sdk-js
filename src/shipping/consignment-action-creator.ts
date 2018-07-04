@@ -9,7 +9,7 @@ import CheckoutRequestSender from '../checkout/checkout-request-sender';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import { ConsignmentRequestBody } from './consignment';
+import { ConsignmentRequestBody, ConsignmentsRequestBody } from './consignment';
 import ConsignmentRequestSender from './consignment-request-sender';
 
 import {
@@ -100,6 +100,27 @@ export default class ConsignmentActionCreator {
             observer.next(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
             this._createOrUpdateConsignment(checkout.id, consignment, options)
+                .then(({ body }) => {
+                    observer.next(createAction(ConsignmentActionType.CreateConsignmentsSucceeded, body));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(ConsignmentActionType.CreateConsignmentsFailed, response));
+                });
+        });
+    }
+
+    createConsignments(consigments: ConsignmentsRequestBody, options?: RequestOptions): ThunkAction<CreateConsignmentsAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<CreateConsignmentsAction>) => {
+            const checkout = store.getState().checkout.getCheckout();
+
+            if (!checkout || !checkout.id) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
+
+            observer.next(createAction(ConsignmentActionType.CreateConsignmentsRequested));
+
+            this._consignmentRequestSender.createConsignments(checkout.id, consigments, options)
                 .then(({ body }) => {
                     observer.next(createAction(ConsignmentActionType.CreateConsignmentsSucceeded, body));
                     observer.complete();

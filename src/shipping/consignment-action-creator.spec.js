@@ -10,9 +10,11 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import ConsignmentActionCreator from './consignment-action-creator';
 import { ConsignmentActionType } from './consignment-actions';
 import { getShippingAddress } from './internal-shipping-addresses.mock';
+import { getConsignment } from './consignments.mock';
 
 describe('consignmentActionCreator', () => {
     let address;
+    let consignment;
     let consignmentRequestSender;
     let checkoutRequestSender;
     let errorResponse;
@@ -38,6 +40,7 @@ describe('consignmentActionCreator', () => {
 
         consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
         address = getShippingAddress();
+        consignment = getConsignment();
         actions = undefined;
     });
 
@@ -93,6 +96,84 @@ describe('consignmentActionCreator', () => {
                 { type: ConsignmentActionType.LoadShippingOptionsRequested },
                 { type: ConsignmentActionType.LoadShippingOptionsFailed, error: true, payload: getErrorResponse() },
             ]);
+        });
+    });
+
+    describe('#createConsignments()', () => {
+        describe('when store has no checkout data / id', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({});
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    actions = await Observable.from(consignmentActionCreator.createConsignments([consignment])(store))
+                        .toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(MissingDataError);
+                    expect(actions).toEqual(undefined);
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        describe('when store has no cart / line items', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({
+                    checkout: getCheckoutState(),
+                });
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    actions = await Observable.from(consignmentActionCreator.createConsignments([consignment])(store))
+                        .toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(MissingDataError);
+                    expect(actions).toEqual(undefined);
+                    expect(consignmentRequestSender.createConsignments).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        it('emits actions if able to create consignment', async () => {
+            actions = await Observable.from(consignmentActionCreator.createConsignments([consignment])(store))
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: ConsignmentActionType.CreateConsignmentsRequested },
+                { type: ConsignmentActionType.CreateConsignmentsSucceeded, payload: response.body },
+            ]);
+        });
+
+        it('emits error actions if unable to create consignments', async () => {
+            consignmentRequestSender.createConsignments.mockImplementation(() => Promise.reject(errorResponse));
+
+            const errorHandler = jest.fn((action) => Observable.of(action));
+
+            await Observable.from(consignmentActionCreator.createConsignments([consignment])(store))
+                .catch(errorHandler)
+                .toArray()
+                .subscribe((actions) => {
+                    expect(actions).toEqual([
+                        { type: ConsignmentActionType.CreateConsignmentsRequested },
+                        { type: ConsignmentActionType.CreateConsignmentsFailed, payload: errorResponse, error: true },
+                    ]);
+                });
+        });
+
+        it('sends request to create consigments', async () => {
+            store = createCheckoutStore(omit(getCheckoutStoreState(), 'consignments'));
+
+            await Observable.from(consignmentActionCreator.createConsignments([consignment], options)(store))
+                .toPromise();
+
+            expect(consignmentRequestSender.createConsignments).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                [consignment],
+                options
+            );
         });
     });
 
