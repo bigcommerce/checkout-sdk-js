@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 260);
+/******/ 	return __webpack_require__(__webpack_require__.s = 259);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -89,7 +89,7 @@ exports.NotInitializedError = not_initialized_error_1.default;
 exports.NotInitializedErrorType = not_initialized_error_1.NotInitializedErrorType;
 var request_error_1 = __webpack_require__(32);
 exports.RequestError = request_error_1.default;
-var standard_error_1 = __webpack_require__(18);
+var standard_error_1 = __webpack_require__(15);
 exports.StandardError = standard_error_1.default;
 var timeout_error_1 = __webpack_require__(106);
 exports.TimeoutError = timeout_error_1.default;
@@ -112,10 +112,12 @@ module.exports = require("@bigcommerce/data-store");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var selector_decorator_1 = __webpack_require__(51);
+var selector_decorator_1 = __webpack_require__(53);
 exports.selectorDecorator = selector_decorator_1.default;
-var selector_decorator_2 = __webpack_require__(51);
+var selector_decorator_2 = __webpack_require__(53);
 exports.selector = selector_decorator_2.default;
+var cache_key_resolver_1 = __webpack_require__(54);
+exports.CacheKeyResolver = cache_key_resolver_1.default;
 
 
 /***/ }),
@@ -137,7 +139,7 @@ module.exports = require("rxjs/Observable");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var errors_1 = __webpack_require__(59);
+var errors_1 = __webpack_require__(62);
 var PaymentStrategy = /** @class */ (function () {
     function PaymentStrategy(_store) {
         this._store = _store;
@@ -168,33 +170,33 @@ exports.default = PaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 tslib_1.__exportStar(__webpack_require__(31), exports);
-var checkout_default_includes_1 = __webpack_require__(44);
+var checkout_default_includes_1 = __webpack_require__(46);
 exports.CheckoutDefaultIncludes = checkout_default_includes_1.default;
-var checkout_action_creator_1 = __webpack_require__(45);
+var checkout_action_creator_1 = __webpack_require__(47);
 exports.CheckoutActionCreator = checkout_action_creator_1.default;
-var checkout_client_1 = __webpack_require__(49);
+var checkout_client_1 = __webpack_require__(51);
 exports.CheckoutClient = checkout_client_1.default;
 var checkout_request_sender_1 = __webpack_require__(33);
 exports.CheckoutRequestSender = checkout_request_sender_1.default;
-var checkout_selector_1 = __webpack_require__(50);
+var checkout_selector_1 = __webpack_require__(52);
 exports.CheckoutSelector = checkout_selector_1.default;
-var checkout_service_1 = __webpack_require__(52);
+var checkout_service_1 = __webpack_require__(55);
 exports.CheckoutService = checkout_service_1.default;
-var checkout_store_error_selector_1 = __webpack_require__(119);
+var checkout_store_error_selector_1 = __webpack_require__(118);
 exports.CheckoutStoreErrorSelector = checkout_store_error_selector_1.default;
-var checkout_store_selector_1 = __webpack_require__(120);
+var checkout_store_selector_1 = __webpack_require__(119);
 exports.CheckoutStoreSelector = checkout_store_selector_1.default;
-var checkout_store_status_selector_1 = __webpack_require__(232);
+var checkout_store_status_selector_1 = __webpack_require__(120);
 exports.CheckoutStoreStatusSelector = checkout_store_status_selector_1.default;
-var checkout_validator_1 = __webpack_require__(84);
+var checkout_validator_1 = __webpack_require__(58);
 exports.CheckoutValidator = checkout_validator_1.default;
-var create_checkout_client_1 = __webpack_require__(85);
+var create_checkout_client_1 = __webpack_require__(86);
 exports.createCheckoutClient = create_checkout_client_1.default;
-var create_checkout_service_1 = __webpack_require__(243);
+var create_checkout_service_1 = __webpack_require__(241);
 exports.createCheckoutService = create_checkout_service_1.default;
-var create_checkout_store_1 = __webpack_require__(89);
+var create_checkout_store_1 = __webpack_require__(90);
 exports.createCheckoutStore = create_checkout_store_1.default;
-var create_internal_checkout_selectors_1 = __webpack_require__(90);
+var create_internal_checkout_selectors_1 = __webpack_require__(91);
 exports.createInternalCheckoutSelectors = create_internal_checkout_selectors_1.default;
 
 
@@ -216,11 +218,11 @@ var get_environment_1 = __webpack_require__(97);
 exports.getEnvironment = get_environment_1.default;
 var is_equal_1 = __webpack_require__(98);
 exports.isEqual = is_equal_1.default;
-var is_private_1 = __webpack_require__(47);
+var is_private_1 = __webpack_require__(49);
 exports.isPrivate = is_private_1.default;
 var merge_or_push_1 = __webpack_require__(99);
 exports.mergeOrPush = merge_or_push_1.default;
-var omit_deep_1 = __webpack_require__(48);
+var omit_deep_1 = __webpack_require__(50);
 exports.omitDeep = omit_deep_1.default;
 var omit_private_1 = __webpack_require__(100);
 exports.omitPrivate = omit_private_1.default;
@@ -237,25 +239,25 @@ exports.toSingleLine = to_single_line_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var amount_transformer_1 = __webpack_require__(124);
+var amount_transformer_1 = __webpack_require__(121);
 exports.AmountTransformer = amount_transformer_1.default;
-var cart_comparator_1 = __webpack_require__(125);
+var cart_comparator_1 = __webpack_require__(122);
 exports.CartComparator = cart_comparator_1.default;
-var cart_reducer_1 = __webpack_require__(126);
+var cart_reducer_1 = __webpack_require__(123);
 exports.cartReducer = cart_reducer_1.default;
-var cart_request_sender_1 = __webpack_require__(127);
+var cart_request_sender_1 = __webpack_require__(124);
 exports.CartRequestSender = cart_request_sender_1.default;
-var cart_selector_1 = __webpack_require__(128);
+var cart_selector_1 = __webpack_require__(125);
 exports.CartSelector = cart_selector_1.default;
-var map_to_internal_cart_1 = __webpack_require__(55);
+var map_to_internal_cart_1 = __webpack_require__(59);
 exports.map = map_to_internal_cart_1.default;
-var map_gift_certificate_to_internal_line_item_1 = __webpack_require__(82);
+var map_gift_certificate_to_internal_line_item_1 = __webpack_require__(84);
 exports.mapGiftCertificateToInternalLineItem = map_gift_certificate_to_internal_line_item_1.default;
-var map_to_internal_cart_2 = __webpack_require__(55);
+var map_to_internal_cart_2 = __webpack_require__(59);
 exports.mapToInternalCart = map_to_internal_cart_2.default;
-var map_to_internal_line_item_1 = __webpack_require__(83);
+var map_to_internal_line_item_1 = __webpack_require__(85);
 exports.mapToInternalLineItem = map_to_internal_line_item_1.default;
-var map_to_internal_line_items_1 = __webpack_require__(81);
+var map_to_internal_line_items_1 = __webpack_require__(83);
 exports.mapToInternalLineItems = map_to_internal_line_items_1.default;
 
 
@@ -268,15 +270,15 @@ exports.mapToInternalLineItems = map_to_internal_line_items_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 tslib_1.__exportStar(__webpack_require__(34), exports);
-var order_action_creator_1 = __webpack_require__(133);
+var order_action_creator_1 = __webpack_require__(130);
 exports.OrderActionCreator = order_action_creator_1.default;
-var order_reducer_1 = __webpack_require__(134);
+var order_reducer_1 = __webpack_require__(131);
 exports.orderReducer = order_reducer_1.default;
-var order_request_sender_1 = __webpack_require__(135);
+var order_request_sender_1 = __webpack_require__(132);
 exports.OrderRequestSender = order_request_sender_1.default;
-var order_selector_1 = __webpack_require__(136);
+var order_selector_1 = __webpack_require__(133);
 exports.OrderSelector = order_selector_1.default;
-var map_to_internal_order_1 = __webpack_require__(137);
+var map_to_internal_order_1 = __webpack_require__(134);
 exports.mapToInternalOrder = map_to_internal_order_1.default;
 
 
@@ -300,11 +302,11 @@ exports.toFormUrlEncoded = to_form_url_encoded_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var payment_argument_invalid_error_1 = __webpack_require__(115);
+var payment_argument_invalid_error_1 = __webpack_require__(114);
 exports.PaymentArgumentInvalidError = payment_argument_invalid_error_1.default;
-var payment_method_invalid_error_1 = __webpack_require__(116);
+var payment_method_invalid_error_1 = __webpack_require__(115);
 exports.PaymentMethodInvalidError = payment_method_invalid_error_1.default;
-var payment_method_cancelled_error_1 = __webpack_require__(117);
+var payment_method_cancelled_error_1 = __webpack_require__(116);
 exports.PaymentMethodCancelledError = payment_method_cancelled_error_1.default;
 
 
@@ -317,14 +319,15 @@ exports.PaymentMethodCancelledError = payment_method_cancelled_error_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 tslib_1.__exportStar(__webpack_require__(35), exports);
-tslib_1.__exportStar(__webpack_require__(20), exports);
-var create_payment_client_1 = __webpack_require__(138);
+tslib_1.__exportStar(__webpack_require__(36), exports);
+tslib_1.__exportStar(__webpack_require__(19), exports);
+var create_payment_client_1 = __webpack_require__(135);
 exports.createPaymentClient = create_payment_client_1.default;
-var create_payment_strategy_registry_1 = __webpack_require__(140);
+var create_payment_strategy_registry_1 = __webpack_require__(137);
 exports.createPaymentStrategyRegistry = create_payment_strategy_registry_1.default;
-var payment_action_creator_1 = __webpack_require__(58);
+var payment_action_creator_1 = __webpack_require__(61);
 exports.PaymentActionCreator = payment_action_creator_1.default;
-var payment_method_action_creator_1 = __webpack_require__(72);
+var payment_method_action_creator_1 = __webpack_require__(75);
 exports.PaymentMethodActionCreator = payment_method_action_creator_1.default;
 var payment_method_reducer_1 = __webpack_require__(214);
 exports.paymentMethodReducer = payment_method_reducer_1.default;
@@ -334,7 +337,7 @@ var payment_method_selector_1 = __webpack_require__(216);
 exports.PaymentMethodSelector = payment_method_selector_1.default;
 var payment_reducer_1 = __webpack_require__(217);
 exports.paymentReducer = payment_reducer_1.default;
-var payment_request_sender_1 = __webpack_require__(74);
+var payment_request_sender_1 = __webpack_require__(76);
 exports.PaymentRequestSender = payment_request_sender_1.default;
 var payment_selector_1 = __webpack_require__(218);
 exports.PaymentSelector = payment_selector_1.default;
@@ -342,7 +345,7 @@ var payment_strategy_action_creator_1 = __webpack_require__(219);
 exports.PaymentStrategyActionCreator = payment_strategy_action_creator_1.default;
 var payment_strategy_reducer_1 = __webpack_require__(221);
 exports.paymentStrategyReducer = payment_strategy_reducer_1.default;
-var payment_strategy_registry_1 = __webpack_require__(75);
+var payment_strategy_registry_1 = __webpack_require__(77);
 exports.PaymentStrategyRegistry = payment_strategy_registry_1.default;
 var payment_strategy_selector_1 = __webpack_require__(222);
 exports.PaymentStrategySelector = payment_strategy_selector_1.default;
@@ -357,11 +360,11 @@ exports.PaymentStrategySelector = payment_strategy_selector_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var create_customer_strategy_registry_1 = __webpack_require__(156);
 exports.createCustomerStrategyRegistry = create_customer_strategy_registry_1.default;
-var customer_actions_1 = __webpack_require__(65);
+var customer_actions_1 = __webpack_require__(68);
 exports.CustomerActionType = customer_actions_1.CustomerActionType;
 var customer_reducer_1 = __webpack_require__(173);
 exports.customerReducer = customer_reducer_1.default;
-var customer_action_creator_1 = __webpack_require__(64);
+var customer_action_creator_1 = __webpack_require__(67);
 exports.CustomerActionCreator = customer_action_creator_1.default;
 var customer_request_sender_1 = __webpack_require__(174);
 exports.CustomerRequestSender = customer_request_sender_1.default;
@@ -379,96 +382,6 @@ exports.mapToInternalCustomer = map_to_internal_customer_1.default;
 
 /***/ }),
 /* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var is_address_equal_1 = __webpack_require__(121);
-exports.isAddressEqual = is_address_equal_1.default;
-var map_from_internal_address_1 = __webpack_require__(122);
-exports.mapFromInternalAddress = map_from_internal_address_1.default;
-var map_to_internal_address_1 = __webpack_require__(123);
-exports.mapToInternalAddress = map_to_internal_address_1.default;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-tslib_1.__exportStar(__webpack_require__(23), exports);
-tslib_1.__exportStar(__webpack_require__(27), exports);
-var coupon_action_creator_1 = __webpack_require__(129);
-exports.CouponActionCreator = coupon_action_creator_1.default;
-var coupon_request_sender_1 = __webpack_require__(130);
-exports.CouponRequestSender = coupon_request_sender_1.default;
-var coupon_selector_1 = __webpack_require__(131);
-exports.CouponSelector = coupon_selector_1.default;
-var coupon_reducer_1 = __webpack_require__(132);
-exports.couponReducer = coupon_reducer_1.default;
-var gift_certificate_action_creator_1 = __webpack_require__(223);
-exports.GiftCertificateActionCreator = gift_certificate_action_creator_1.default;
-var gift_certificate_request_sender_1 = __webpack_require__(224);
-exports.GiftCertificateRequestSender = gift_certificate_request_sender_1.default;
-var gift_certificate_selector_1 = __webpack_require__(225);
-exports.GiftCertificateSelector = gift_certificate_selector_1.default;
-var gift_certificate_reducer_1 = __webpack_require__(226);
-exports.giftCertificateReducer = gift_certificate_reducer_1.default;
-var map_to_internal_coupon_1 = __webpack_require__(227);
-exports.mapToInternalCoupon = map_to_internal_coupon_1.default;
-var map_to_internal_gift_certificate_1 = __webpack_require__(228);
-exports.mapToInternalGiftCertificate = map_to_internal_gift_certificate_1.default;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-tslib_1.__exportStar(__webpack_require__(24), exports);
-var create_shipping_strategy_registry_1 = __webpack_require__(181);
-exports.createShippingStrategyRegistry = create_shipping_strategy_registry_1.default;
-var consignment_selector_1 = __webpack_require__(186);
-exports.ConsignmentSelector = consignment_selector_1.default;
-var consignment_reducer_1 = __webpack_require__(187);
-exports.consignmentReducer = consignment_reducer_1.default;
-var consignment_action_creator_1 = __webpack_require__(67);
-exports.ConsignmentActionCreator = consignment_action_creator_1.default;
-var consignment_request_sender_1 = __webpack_require__(188);
-exports.ConsignmentRequestSender = consignment_request_sender_1.default;
-var shipping_address_selector_1 = __webpack_require__(189);
-exports.ShippingAddressSelector = shipping_address_selector_1.default;
-var shipping_country_action_creator_1 = __webpack_require__(190);
-exports.ShippingCountryActionCreator = shipping_country_action_creator_1.default;
-var shipping_country_request_sender_1 = __webpack_require__(191);
-exports.ShippingCountryRequestSender = shipping_country_request_sender_1.default;
-var shipping_country_selector_1 = __webpack_require__(192);
-exports.ShippingCountrySelector = shipping_country_selector_1.default;
-var shipping_country_reducer_1 = __webpack_require__(193);
-exports.shippingCountryReducer = shipping_country_reducer_1.default;
-var shipping_option_selector_1 = __webpack_require__(194);
-exports.ShippingOptionSelector = shipping_option_selector_1.default;
-var shipping_strategy_action_creator_1 = __webpack_require__(195);
-exports.ShippingStrategyActionCreator = shipping_strategy_action_creator_1.default;
-var shipping_strategy_selector_1 = __webpack_require__(196);
-exports.ShippingStrategySelector = shipping_strategy_selector_1.default;
-var shipping_strategy_reducer_1 = __webpack_require__(197);
-exports.shippingStrategyReducer = shipping_strategy_reducer_1.default;
-var map_to_internal_shipping_option_1 = __webpack_require__(70);
-exports.mapToInternalShippingOption = map_to_internal_shipping_option_1.default;
-var map_to_internal_shipping_options_1 = __webpack_require__(199);
-exports.mapToInternalShippingOptions = map_to_internal_shipping_options_1.default;
-
-
-/***/ }),
-/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -497,13 +410,88 @@ exports.default = StandardError;
 
 
 /***/ }),
-/* 19 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = require("@bigcommerce/request-sender");
 
 /***/ }),
-/* 20 */
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+tslib_1.__exportStar(__webpack_require__(23), exports);
+tslib_1.__exportStar(__webpack_require__(27), exports);
+var coupon_action_creator_1 = __webpack_require__(126);
+exports.CouponActionCreator = coupon_action_creator_1.default;
+var coupon_request_sender_1 = __webpack_require__(127);
+exports.CouponRequestSender = coupon_request_sender_1.default;
+var coupon_selector_1 = __webpack_require__(128);
+exports.CouponSelector = coupon_selector_1.default;
+var coupon_reducer_1 = __webpack_require__(129);
+exports.couponReducer = coupon_reducer_1.default;
+var gift_certificate_action_creator_1 = __webpack_require__(223);
+exports.GiftCertificateActionCreator = gift_certificate_action_creator_1.default;
+var gift_certificate_request_sender_1 = __webpack_require__(224);
+exports.GiftCertificateRequestSender = gift_certificate_request_sender_1.default;
+var gift_certificate_selector_1 = __webpack_require__(225);
+exports.GiftCertificateSelector = gift_certificate_selector_1.default;
+var gift_certificate_reducer_1 = __webpack_require__(226);
+exports.giftCertificateReducer = gift_certificate_reducer_1.default;
+var map_to_internal_coupon_1 = __webpack_require__(227);
+exports.mapToInternalCoupon = map_to_internal_coupon_1.default;
+var map_to_internal_gift_certificate_1 = __webpack_require__(228);
+exports.mapToInternalGiftCertificate = map_to_internal_gift_certificate_1.default;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+tslib_1.__exportStar(__webpack_require__(24), exports);
+var create_shipping_strategy_registry_1 = __webpack_require__(181);
+exports.createShippingStrategyRegistry = create_shipping_strategy_registry_1.default;
+var consignment_selector_1 = __webpack_require__(186);
+exports.ConsignmentSelector = consignment_selector_1.default;
+var consignment_reducer_1 = __webpack_require__(187);
+exports.consignmentReducer = consignment_reducer_1.default;
+var consignment_action_creator_1 = __webpack_require__(70);
+exports.ConsignmentActionCreator = consignment_action_creator_1.default;
+var consignment_request_sender_1 = __webpack_require__(188);
+exports.ConsignmentRequestSender = consignment_request_sender_1.default;
+var shipping_address_selector_1 = __webpack_require__(189);
+exports.ShippingAddressSelector = shipping_address_selector_1.default;
+var shipping_country_action_creator_1 = __webpack_require__(190);
+exports.ShippingCountryActionCreator = shipping_country_action_creator_1.default;
+var shipping_country_request_sender_1 = __webpack_require__(191);
+exports.ShippingCountryRequestSender = shipping_country_request_sender_1.default;
+var shipping_country_selector_1 = __webpack_require__(192);
+exports.ShippingCountrySelector = shipping_country_selector_1.default;
+var shipping_country_reducer_1 = __webpack_require__(193);
+exports.shippingCountryReducer = shipping_country_reducer_1.default;
+var shipping_option_selector_1 = __webpack_require__(194);
+exports.ShippingOptionSelector = shipping_option_selector_1.default;
+var shipping_strategy_action_creator_1 = __webpack_require__(195);
+exports.ShippingStrategyActionCreator = shipping_strategy_action_creator_1.default;
+var shipping_strategy_selector_1 = __webpack_require__(196);
+exports.ShippingStrategySelector = shipping_strategy_selector_1.default;
+var shipping_strategy_reducer_1 = __webpack_require__(197);
+exports.shippingStrategyReducer = shipping_strategy_reducer_1.default;
+var map_to_internal_shipping_option_1 = __webpack_require__(73);
+exports.mapToInternalShippingOption = map_to_internal_shipping_option_1.default;
+var map_to_internal_shipping_options_1 = __webpack_require__(199);
+exports.mapToInternalShippingOptions = map_to_internal_shipping_options_1.default;
+
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -515,7 +503,7 @@ exports.INITIALIZE = 'INITIALIZE';
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -523,14 +511,29 @@ exports.INITIALIZE = 'INITIALIZE';
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 tslib_1.__exportStar(__webpack_require__(22), exports);
-var billing_address_selector_1 = __webpack_require__(141);
+var billing_address_selector_1 = __webpack_require__(138);
 exports.BillingAddressSelector = billing_address_selector_1.default;
-var billing_address_action_creator_1 = __webpack_require__(142);
+var billing_address_action_creator_1 = __webpack_require__(139);
 exports.BillingAddressActionCreator = billing_address_action_creator_1.default;
-var billing_address_request_sender_1 = __webpack_require__(143);
+var billing_address_request_sender_1 = __webpack_require__(140);
 exports.BillingAddressRequestSender = billing_address_request_sender_1.default;
-var billing_address_reducer_1 = __webpack_require__(144);
+var billing_address_reducer_1 = __webpack_require__(141);
 exports.billingAddressReducer = billing_address_reducer_1.default;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var is_address_equal_1 = __webpack_require__(153);
+exports.isAddressEqual = is_address_equal_1.default;
+var map_from_internal_address_1 = __webpack_require__(154);
+exports.mapFromInternalAddress = map_from_internal_address_1.default;
+var map_to_internal_address_1 = __webpack_require__(155);
+exports.mapToInternalAddress = map_to_internal_address_1.default;
 
 
 /***/ }),
@@ -581,6 +584,9 @@ var ConsignmentActionType;
     ConsignmentActionType["UpdateConsignmentRequested"] = "UPDATE_CONSIGNMENT_REQUESTED";
     ConsignmentActionType["UpdateConsignmentSucceeded"] = "UPDATE_CONSIGNMENT_SUCCEEDED";
     ConsignmentActionType["UpdateConsignmentFailed"] = "UPDATE_CONSIGNMENT_FAILED";
+    ConsignmentActionType["LoadShippingOptionsRequested"] = "LOAD_SHIPPING_OPTIONS_REQUESTED";
+    ConsignmentActionType["LoadShippingOptionsSucceeded"] = "LOAD_SHIPPING_OPTIONS_SUCCEEDED";
+    ConsignmentActionType["LoadShippingOptionsFailed"] = "LOAD_SHIPPING_OPTIONS_FAILED";
 })(ConsignmentActionType = exports.ConsignmentActionType || (exports.ConsignmentActionType = {}));
 
 
@@ -591,13 +597,15 @@ var ConsignmentActionType;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var remote_checkout_action_creator_1 = __webpack_require__(145);
+var tslib_1 = __webpack_require__(0);
+tslib_1.__exportStar(__webpack_require__(38), exports);
+var remote_checkout_action_creator_1 = __webpack_require__(142);
 exports.RemoteCheckoutActionCreator = remote_checkout_action_creator_1.default;
-var remote_checkout_request_sender_1 = __webpack_require__(146);
+var remote_checkout_request_sender_1 = __webpack_require__(143);
 exports.RemoteCheckoutRequestSender = remote_checkout_request_sender_1.default;
-var remote_checkout_selector_1 = __webpack_require__(147);
+var remote_checkout_selector_1 = __webpack_require__(144);
 exports.RemoteCheckoutSelector = remote_checkout_selector_1.default;
-var remote_checkout_reducer_1 = __webpack_require__(148);
+var remote_checkout_reducer_1 = __webpack_require__(145);
 exports.remoteCheckoutReducer = remote_checkout_reducer_1.default;
 
 
@@ -657,13 +665,13 @@ module.exports = require("rxjs/observable/concat");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var config_action_creator_1 = __webpack_require__(235);
+var config_action_creator_1 = __webpack_require__(233);
 exports.ConfigActionCreator = config_action_creator_1.default;
-var config_selector_1 = __webpack_require__(236);
+var config_selector_1 = __webpack_require__(234);
 exports.ConfigSelector = config_selector_1.default;
-var config_reducer_1 = __webpack_require__(237);
+var config_reducer_1 = __webpack_require__(235);
 exports.configReducer = config_reducer_1.default;
-var config_request_sender_1 = __webpack_require__(238);
+var config_request_sender_1 = __webpack_require__(236);
 exports.ConfigRequestSender = config_request_sender_1.default;
 
 
@@ -674,13 +682,13 @@ exports.ConfigRequestSender = config_request_sender_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var country_action_creator_1 = __webpack_require__(239);
+var country_action_creator_1 = __webpack_require__(237);
 exports.CountryActionCreator = country_action_creator_1.default;
-var country_request_sender_1 = __webpack_require__(240);
+var country_request_sender_1 = __webpack_require__(238);
 exports.CountryRequestSender = country_request_sender_1.default;
-var country_selector_1 = __webpack_require__(241);
+var country_selector_1 = __webpack_require__(239);
 exports.CountrySelector = country_selector_1.default;
-var country_reducer_1 = __webpack_require__(242);
+var country_reducer_1 = __webpack_require__(240);
 exports.countryReducer = country_reducer_1.default;
 
 
@@ -696,6 +704,9 @@ var CheckoutActionType;
     CheckoutActionType["LoadCheckoutRequested"] = "LOAD_CHECKOUT_REQUESTED";
     CheckoutActionType["LoadCheckoutSucceeded"] = "LOAD_CHECKOUT_SUCCEEDED";
     CheckoutActionType["LoadCheckoutFailed"] = "LOAD_CHECKOUT_FAILED";
+    CheckoutActionType["UpdateCheckoutRequested"] = "UPDATE_CHECKOUT_REQUESTED";
+    CheckoutActionType["UpdateCheckoutSucceeded"] = "UPDATE_CHECKOUT_SUCCEEDED";
+    CheckoutActionType["UpdateCheckoutFailed"] = "UPDATE_CHECKOUT_FAILED";
 })(CheckoutActionType = exports.CheckoutActionType || (exports.CheckoutActionType = {}));
 
 
@@ -707,7 +718,7 @@ var CheckoutActionType;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(18);
+var standard_error_1 = __webpack_require__(15);
 var DEFAULT_RESPONSE = {
     body: {},
     headers: {},
@@ -753,7 +764,7 @@ function joinErrors(errors) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var http_request_1 = __webpack_require__(11);
-var checkout_default_includes_1 = __webpack_require__(44);
+var checkout_default_includes_1 = __webpack_require__(46);
 var CheckoutRequestSender = /** @class */ (function () {
     function CheckoutRequestSender(_requestSender) {
         this._requestSender = _requestSender;
@@ -766,6 +777,19 @@ var CheckoutRequestSender = /** @class */ (function () {
             params: {
                 include: checkout_default_includes_1.default.concat(params && params.include || []).join(','),
             },
+            headers: headers,
+            timeout: timeout,
+        });
+    };
+    CheckoutRequestSender.prototype.updateCheckout = function (id, body, _a) {
+        var _b = _a === void 0 ? {} : _a, params = _b.params, timeout = _b.timeout;
+        var url = "/api/storefront/checkout/" + id;
+        var headers = { Accept: http_request_1.ContentType.JsonV1 };
+        return this._requestSender.put(url, {
+            params: {
+                include: checkout_default_includes_1.default.concat(params && params.include || []).join(','),
+            },
+            body: body,
             headers: headers,
             timeout: timeout,
         });
@@ -803,29 +827,72 @@ var OrderActionType;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HOSTED = 'PAYMENT_TYPE_HOSTED';
-exports.OFFLINE = 'PAYMENT_TYPE_OFFLINE';
+exports.LOAD_PAYMENT_METHODS_REQUESTED = 'LOAD_PAYMENT_METHODS_REQUESTED';
+exports.LOAD_PAYMENT_METHODS_SUCCEEDED = 'LOAD_PAYMENT_METHODS_SUCCEEDED';
+exports.LOAD_PAYMENT_METHODS_FAILED = 'LOAD_PAYMENT_METHODS_FAILED';
+exports.LOAD_PAYMENT_METHOD_REQUESTED = 'LOAD_PAYMENT_METHOD_REQUESTED';
+exports.LOAD_PAYMENT_METHOD_SUCCEEDED = 'LOAD_PAYMENT_METHOD_SUCCEEDED';
+exports.LOAD_PAYMENT_METHOD_FAILED = 'LOAD_PAYMENT_METHOD_FAILED';
+exports.INITIALIZE_PAYMENT_METHOD_REQUESTED = 'INITIALIZE_PAYMENT_METHOD_REQUESTED';
+exports.INITIALIZE_PAYMENT_METHOD_SUCCEEDED = 'INITIALIZE_PAYMENT_METHOD_SUCCEEDED';
+exports.INITIALIZE_PAYMENT_METHOD_FAILED = 'INITIALIZE_PAYMENT_METHOD_FAILED';
 
 
 /***/ }),
 /* 36 */
-/***/ (function(module, exports) {
-
-module.exports = require("@bigcommerce/script-loader");
-
-/***/ }),
-/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var amazon_pay_script_loader_1 = __webpack_require__(151);
+exports.HOSTED = 'PAYMENT_TYPE_HOSTED';
+exports.OFFLINE = 'PAYMENT_TYPE_OFFLINE';
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports) {
+
+module.exports = require("@bigcommerce/script-loader");
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.INITIALIZE_REMOTE_BILLING_REQUESTED = 'INITIALIZE_REMOTE_BILLING_REQUESTED';
+exports.INITIALIZE_REMOTE_BILLING_SUCCEEDED = 'INITIALIZE_REMOTE_BILLING_SUCCEEDED';
+exports.INITIALIZE_REMOTE_BILLING_FAILED = 'INITIALIZE_REMOTE_BILLING_FAILED';
+exports.INITIALIZE_REMOTE_SHIPPING_REQUESTED = 'INITIALIZE_REMOTE_SHIPPING_REQUESTED';
+exports.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED = 'INITIALIZE_REMOTE_SHIPPING_SUCCEEDED';
+exports.INITIALIZE_REMOTE_SHIPPING_FAILED = 'INITIALIZE_REMOTE_SHIPPING_FAILED';
+exports.INITIALIZE_REMOTE_PAYMENT_REQUESTED = 'INITIALIZE_REMOTE_PAYMENT_REQUESTED';
+exports.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED = 'INITIALIZE_REMOTE_PAYMENT_SUCCEEDED';
+exports.INITIALIZE_REMOTE_PAYMENT_FAILED = 'INITIALIZE_REMOTE_PAYMENT_FAILED';
+exports.LOAD_REMOTE_SETTINGS_REQUESTED = 'LOAD_REMOTE_SETTINGS_REQUESTED';
+exports.LOAD_REMOTE_SETTINGS_SUCCEEDED = 'LOAD_REMOTE_SETTINGS_SUCCEEDED';
+exports.LOAD_REMOTE_SETTINGS_FAILED = 'LOAD_REMOTE_SETTINGS_FAILED';
+exports.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED = 'SIGN_OUT_REMOTE_CUSTOMER_REQUESTED';
+exports.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED = 'SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED';
+exports.SIGN_OUT_REMOTE_CUSTOMER_FAILED = 'SIGN_OUT_REMOTE_CUSTOMER_FAILED';
+exports.UPDATE_REMOTE_CHECKOUT = 'UPDATE_REMOTE_CHECKOUT';
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var amazon_pay_script_loader_1 = __webpack_require__(148);
 exports.AmazonPayScriptLoader = amazon_pay_script_loader_1.default;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -836,7 +903,7 @@ exports.Registry = registry_1.default;
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -844,11 +911,11 @@ exports.Registry = registry_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var braintree_credit_card_payment_strategy_1 = __webpack_require__(158);
 exports.BraintreeCreditCardPaymentStrategy = braintree_credit_card_payment_strategy_1.default;
-var braintree_payment_processor_1 = __webpack_require__(60);
+var braintree_payment_processor_1 = __webpack_require__(63);
 exports.BraintreePaymentProcessor = braintree_payment_processor_1.default;
 var braintree_paypal_payment_strategy_1 = __webpack_require__(161);
 exports.BraintreePaypalPaymentStrategy = braintree_paypal_payment_strategy_1.default;
-var braintree_visacheckout_payment_processor_1 = __webpack_require__(61);
+var braintree_visacheckout_payment_processor_1 = __webpack_require__(64);
 exports.BraintreeVisaCheckoutPaymentProcessor = braintree_visacheckout_payment_processor_1.default;
 var create_braintree_payment_processor_1 = __webpack_require__(162);
 exports.createBraintreePaymentProcessor = create_braintree_payment_processor_1.default;
@@ -861,7 +928,7 @@ exports.BraintreeVisaCheckoutPaymentStrategy = braintree_visacheckout_payment_st
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -874,7 +941,7 @@ exports.default = isVaultedInstrument;
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -898,7 +965,7 @@ var ShippingStrategyActionType;
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -923,24 +990,24 @@ exports.default = ShippingStrategy;
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var instrument_action_creator_1 = __webpack_require__(246);
+var instrument_action_creator_1 = __webpack_require__(244);
 exports.InstrumentActionCreator = instrument_action_creator_1.default;
-var instrument_request_sender_1 = __webpack_require__(250);
+var instrument_request_sender_1 = __webpack_require__(248);
 exports.InstrumentRequestSender = instrument_request_sender_1.default;
-var instrument_selector_1 = __webpack_require__(251);
+var instrument_selector_1 = __webpack_require__(250);
 exports.InstrumentSelector = instrument_selector_1.default;
-var instrument_reducer_1 = __webpack_require__(252);
+var instrument_reducer_1 = __webpack_require__(251);
 exports.instrumentReducer = instrument_reducer_1.default;
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -957,14 +1024,14 @@ exports.default = DEFAULT_INCLUDES;
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
-var defer_1 = __webpack_require__(46);
+var defer_1 = __webpack_require__(48);
 var Observable_1 = __webpack_require__(5);
 var errors_1 = __webpack_require__(1);
 var checkout_actions_1 = __webpack_require__(31);
@@ -987,6 +1054,26 @@ var CheckoutActionCreator = /** @class */ (function () {
             });
         });
     };
+    CheckoutActionCreator.prototype.updateCheckout = function (body, options) {
+        var _this = this;
+        return function (store) { return Observable_1.Observable.create(function (observer) {
+            var state = store.getState();
+            var checkout = state.checkout.getCheckout();
+            if (!checkout) {
+                throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingCheckout);
+            }
+            observer.next(data_store_1.createAction(checkout_actions_1.CheckoutActionType.UpdateCheckoutRequested));
+            _this._checkoutRequestSender.updateCheckout(checkout.id, body, options)
+                .then(function (_a) {
+                var body = _a.body;
+                observer.next(data_store_1.createAction(checkout_actions_1.CheckoutActionType.UpdateCheckoutSucceeded, body));
+                observer.complete();
+            })
+                .catch(function (response) {
+                observer.error(data_store_1.createErrorAction(checkout_actions_1.CheckoutActionType.UpdateCheckoutFailed, response));
+            });
+        }); };
+    };
     CheckoutActionCreator.prototype.loadCurrentCheckout = function (options) {
         var _this = this;
         return function (store) { return defer_1.defer(function () {
@@ -1004,13 +1091,13 @@ exports.default = CheckoutActionCreator;
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports) {
 
 module.exports = require("rxjs/observable/defer");
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1023,7 +1110,7 @@ exports.default = isPrivate;
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1045,7 +1132,7 @@ exports.default = omitDeep;
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1116,7 +1203,7 @@ exports.default = CheckoutClient;
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1167,7 +1254,7 @@ exports.default = CheckoutSelector;
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1176,7 +1263,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
 var utility_1 = __webpack_require__(8);
-var cache_key_resolver_1 = __webpack_require__(111);
+var cache_key_resolver_1 = __webpack_require__(54);
 /**
  * Decorates a class by patching all of its methods to cache their return values
  * and return them if they are called again with the same set of parameters. The
@@ -1253,14 +1340,96 @@ function selectorMethodDecorator(target, key, descriptor) {
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var create_checkout_selectors_1 = __webpack_require__(112);
-var create_checkout_service_error_transformer_1 = __webpack_require__(113);
+var CacheKeyResolver = /** @class */ (function () {
+    function CacheKeyResolver() {
+        this._lastId = 0;
+        this._maps = [];
+    }
+    CacheKeyResolver.prototype.getKey = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var _a = this._resolveMap.apply(this, args), index = _a.index, map = _a.map, parentMaps = _a.parentMaps;
+        if (map && map.cacheKey) {
+            map.usedCount++;
+            return map.cacheKey;
+        }
+        return this._generateKey(parentMaps, args.slice(index));
+    };
+    CacheKeyResolver.prototype.getUsedCount = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var map = this._resolveMap.apply(this, args).map;
+        return map ? map.usedCount : 0;
+    };
+    CacheKeyResolver.prototype._resolveMap = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var index = 0;
+        var parentMaps = this._maps;
+        while (parentMaps.length) {
+            var isMatched = false;
+            for (var _a = 0, parentMaps_1 = parentMaps; _a < parentMaps_1.length; _a++) {
+                var map = parentMaps_1[_a];
+                if (map.value !== args[index]) {
+                    continue;
+                }
+                if ((args.length === 0 || index === args.length - 1) && map.cacheKey) {
+                    return { index: index, map: map, parentMaps: parentMaps };
+                }
+                isMatched = true;
+                parentMaps = map.maps;
+                index++;
+                break;
+            }
+            if (!isMatched) {
+                break;
+            }
+        }
+        return { index: index, parentMaps: parentMaps };
+    };
+    CacheKeyResolver.prototype._generateKey = function (maps, args) {
+        var index = 0;
+        var parentMaps = maps;
+        var map;
+        do {
+            map = {
+                usedCount: 1,
+                value: args[index],
+                maps: [],
+            };
+            parentMaps.push(map);
+            parentMaps = map.maps;
+            index++;
+        } while (index < args.length);
+        map.cacheKey = "" + ++this._lastId;
+        return map.cacheKey;
+    };
+    return CacheKeyResolver;
+}());
+exports.default = CacheKeyResolver;
+
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var create_checkout_selectors_1 = __webpack_require__(111);
+var create_checkout_service_error_transformer_1 = __webpack_require__(112);
 /**
  * Responsible for completing the checkout process for the current customer.
  *
@@ -1360,8 +1529,8 @@ var CheckoutService = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             filters[_i - 1] = arguments[_i];
         }
-        var _a;
         return (_a = this._store).subscribe.apply(_a, [function () { return subscriber(_this.getState()); }].concat(filters.map(function (filter) { return function (state) { return filter(create_checkout_selectors_1.default(state)); }; })));
+        var _a;
     };
     /**
      * Loads the current checkout.
@@ -1382,28 +1551,31 @@ var CheckoutService = /** @class */ (function () {
      * @returns A promise that resolves to the current state.
      */
     CheckoutService.prototype.loadCheckout = function (id, options) {
-        var action = this._checkoutActionCreator.loadCheckout(id, options);
-        return this._dispatch(action);
+        var _this = this;
+        var loadCheckoutAction = this._checkoutActionCreator.loadCheckout(id, options);
+        var loadConfigAction = this._configActionCreator.loadConfig(options);
+        return Promise.all([
+            this._dispatch(loadCheckoutAction),
+            this._dispatch(loadConfigAction, { queueId: 'config' }),
+        ])
+            .then(function () { return _this.getState(); });
     };
     /**
-     * Loads the checkout configuration of a store.
-     *
-     * This method should be called before performing any other actions using
-     * this service. If it is successfully executed, the data can be retrieved
-     * by calling `CheckoutStoreSelector#getConfig`.
+     * Updates specific properties of the current checkout.
      *
      * ```js
-     * const state = await service.loadConfig();
+     * const state = await service.updateCheckout(checkout);
      *
-     * console.log(state.checkout.getConfig());
+     * console.log(state.checkout.getCheckout());
      * ```
      *
-     * @param options - Options for loading the checkout configuration.
+     * @param payload - The checkout properties to be updated.
+     * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    CheckoutService.prototype.loadConfig = function (options) {
-        var action = this._configActionCreator.loadConfig(options);
-        return this._dispatch(action, { queueId: 'config' });
+    CheckoutService.prototype.updateCheckout = function (payload, options) {
+        var action = this._checkoutActionCreator.updateCheckout(payload, options);
+        return this._dispatch(action);
     };
     /**
      * Loads an order by an id.
@@ -1423,8 +1595,14 @@ var CheckoutService = /** @class */ (function () {
      * @returns A promise that resolves to the current state.
      */
     CheckoutService.prototype.loadOrder = function (orderId, options) {
-        var action = this._orderActionCreator.loadOrder(orderId, options);
-        return this._dispatch(action);
+        var _this = this;
+        var loadCheckoutAction = this._orderActionCreator.loadOrder(orderId, options);
+        var loadConfigAction = this._configActionCreator.loadConfig(options);
+        return Promise.all([
+            this._dispatch(loadCheckoutAction),
+            this._dispatch(loadConfigAction, { queueId: 'config' }),
+        ])
+            .then(function () { return _this.getState(); });
     };
     /**
      * Submits an order, thereby completing a checkout process.
@@ -2057,22 +2235,22 @@ exports.default = CheckoutService;
 
 
 /***/ }),
-/* 53 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var create_request_error_factory_1 = __webpack_require__(114);
+var create_request_error_factory_1 = __webpack_require__(113);
 exports.createRequestErrorFactory = create_request_error_factory_1.default;
-var error_message_transformer_1 = __webpack_require__(118);
+var error_message_transformer_1 = __webpack_require__(117);
 exports.ErrorMessageTransformer = error_message_transformer_1.default;
-var request_error_factory_1 = __webpack_require__(54);
+var request_error_factory_1 = __webpack_require__(57);
 exports.RequestErrorFactory = request_error_factory_1.default;
 
 
 /***/ }),
-/* 54 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2109,17 +2287,60 @@ exports.default = RequestErrorFactory;
 
 
 /***/ }),
-/* 55 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = __webpack_require__(4);
-var coupon_1 = __webpack_require__(16);
+var cart_1 = __webpack_require__(9);
+var errors_1 = __webpack_require__(231);
+var errors_2 = __webpack_require__(1);
+var CheckoutValidator = /** @class */ (function () {
+    function CheckoutValidator(_checkoutRequestSender) {
+        this._checkoutRequestSender = _checkoutRequestSender;
+    }
+    CheckoutValidator.prototype.validate = function (checkout, options) {
+        var _this = this;
+        if (!checkout) {
+            throw new errors_2.MissingDataError(errors_2.MissingDataErrorType.MissingCheckout);
+        }
+        return this._checkoutRequestSender.loadCheckout(checkout.id, options)
+            .then(function (response) {
+            var comparator = new cart_1.CartComparator();
+            if (checkout.grandTotal === response.body.grandTotal
+                && _this._compareCoupons(checkout.coupons, response.body.coupons)
+                && _this._compareGiftCertificates(checkout.giftCertificates, response.body.giftCertificates)
+                && comparator.isEqual(checkout.cart, response.body.cart)) {
+                return;
+            }
+            throw new errors_1.CartChangedError();
+        });
+    };
+    CheckoutValidator.prototype._compareCoupons = function (couponsA, couponsB) {
+        return lodash_1.isEqual(lodash_1.map(couponsA, 'code'), lodash_1.map(couponsB, 'code'));
+    };
+    CheckoutValidator.prototype._compareGiftCertificates = function (giftCertificatesA, giftCertificatesB) {
+        return lodash_1.isEqual(lodash_1.map(giftCertificatesA, 'code'), lodash_1.map(giftCertificatesB, 'code'));
+    };
+    return CheckoutValidator;
+}());
+exports.default = CheckoutValidator;
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = __webpack_require__(4);
+var coupon_1 = __webpack_require__(17);
 var promotion_1 = __webpack_require__(229);
 var _1 = __webpack_require__(9);
-var map_to_internal_line_items_1 = __webpack_require__(81);
+var map_to_internal_line_items_1 = __webpack_require__(83);
 function mapToInternalCart(checkout) {
     var decimalPlaces = checkout.cart.currency.decimalPlaces;
     var amountTransformer = new _1.AmountTransformer(decimalPlaces);
@@ -2181,38 +2402,13 @@ exports.default = mapToInternalCart;
 
 
 /***/ }),
-/* 56 */
+/* 60 */
 /***/ (function(module, exports) {
 
 module.exports = require("@bigcommerce/form-poster");
 
 /***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.INITIALIZE_REMOTE_BILLING_REQUESTED = 'INITIALIZE_REMOTE_BILLING_REQUESTED';
-exports.INITIALIZE_REMOTE_BILLING_SUCCEEDED = 'INITIALIZE_REMOTE_BILLING_SUCCEEDED';
-exports.INITIALIZE_REMOTE_BILLING_FAILED = 'INITIALIZE_REMOTE_BILLING_FAILED';
-exports.INITIALIZE_REMOTE_SHIPPING_REQUESTED = 'INITIALIZE_REMOTE_SHIPPING_REQUESTED';
-exports.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED = 'INITIALIZE_REMOTE_SHIPPING_SUCCEEDED';
-exports.INITIALIZE_REMOTE_SHIPPING_FAILED = 'INITIALIZE_REMOTE_SHIPPING_FAILED';
-exports.INITIALIZE_REMOTE_PAYMENT_REQUESTED = 'INITIALIZE_REMOTE_PAYMENT_REQUESTED';
-exports.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED = 'INITIALIZE_REMOTE_PAYMENT_SUCCEEDED';
-exports.INITIALIZE_REMOTE_PAYMENT_FAILED = 'INITIALIZE_REMOTE_PAYMENT_FAILED';
-exports.LOAD_REMOTE_SETTINGS_REQUESTED = 'LOAD_REMOTE_SETTINGS_REQUESTED';
-exports.LOAD_REMOTE_SETTINGS_SUCCEEDED = 'LOAD_REMOTE_SETTINGS_SUCCEEDED';
-exports.LOAD_REMOTE_SETTINGS_FAILED = 'LOAD_REMOTE_SETTINGS_FAILED';
-exports.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED = 'SIGN_OUT_REMOTE_CUSTOMER_REQUESTED';
-exports.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED = 'SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED';
-exports.SIGN_OUT_REMOTE_CUSTOMER_FAILED = 'SIGN_OUT_REMOTE_CUSTOMER_FAILED';
-exports.UPDATE_REMOTE_CHECKOUT = 'UPDATE_REMOTE_CHECKOUT';
-
-
-/***/ }),
-/* 58 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2223,14 +2419,14 @@ var data_store_1 = __webpack_require__(2);
 var lodash_1 = __webpack_require__(4);
 var concat_1 = __webpack_require__(28);
 var Observable_1 = __webpack_require__(5);
-var address_1 = __webpack_require__(15);
+var address_1 = __webpack_require__(21);
 var cart_1 = __webpack_require__(9);
 var errors_1 = __webpack_require__(1);
 var customer_1 = __webpack_require__(14);
 var order_1 = __webpack_require__(10);
-var shipping_1 = __webpack_require__(17);
-var is_vaulted_instrument_1 = __webpack_require__(40);
-var payment_actions_1 = __webpack_require__(71);
+var shipping_1 = __webpack_require__(18);
+var is_vaulted_instrument_1 = __webpack_require__(42);
+var payment_actions_1 = __webpack_require__(74);
 var PaymentActionCreator = /** @class */ (function () {
     function PaymentActionCreator(_paymentRequestSender, _orderActionCreator) {
         this._paymentRequestSender = _paymentRequestSender;
@@ -2281,8 +2477,8 @@ var PaymentActionCreator = /** @class */ (function () {
         var config = state.config.getStoreConfig();
         var instrumentMeta = state.instruments.getInstrumentsMeta();
         var paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
-        var internalCustomer = customer && billingAddress && checkout && checkout.cart &&
-            customer_1.mapToInternalCustomer(customer, checkout.cart, billingAddress);
+        var orderMeta = state.order.getOrderMeta();
+        var internalCustomer = customer && billingAddress && customer_1.mapToInternalCustomer(customer, billingAddress);
         var authToken = instrumentMeta && is_vaulted_instrument_1.default(payment.paymentData) ?
             state.payment.getPaymentToken() + ", " + instrumentMeta.vaultAccessToken :
             state.payment.getPaymentToken();
@@ -2297,8 +2493,8 @@ var PaymentActionCreator = /** @class */ (function () {
             shippingAddress: shippingAddress && address_1.mapToInternalAddress(shippingAddress),
             shippingOption: shippingOption && shipping_1.mapToInternalShippingOption(shippingOption, true),
             cart: checkout && cart_1.mapToInternalCart(checkout),
-            order: order && order_1.mapToInternalOrder(order),
-            orderMeta: state.order.getOrderMeta(),
+            order: order && order_1.mapToInternalOrder(order, orderMeta),
+            orderMeta: orderMeta,
             payment: payment.paymentData,
             quoteMeta: {
                 request: paymentMeta && paymentMeta.request,
@@ -2323,7 +2519,7 @@ exports.default = PaymentActionCreator;
 
 
 /***/ }),
-/* 59 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2334,7 +2530,7 @@ exports.OrderFinalizationNotRequiredError = order_finalization_not_required_erro
 
 
 /***/ }),
-/* 60 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2450,7 +2646,7 @@ exports.default = BraintreePaymentProcessor;
 
 
 /***/ }),
-/* 61 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2560,7 +2756,7 @@ exports.default = BraintreeVisaCheckoutPaymentProcessor;
 
 
 /***/ }),
-/* 62 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2634,7 +2830,7 @@ exports.default = BraintreeScriptLoader;
 
 
 /***/ }),
-/* 63 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2740,7 +2936,7 @@ exports.default = BraintreeSDKCreator;
 
 
 /***/ }),
-/* 64 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2749,7 +2945,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
 var concat_1 = __webpack_require__(28);
 var Observable_1 = __webpack_require__(5);
-var customer_actions_1 = __webpack_require__(65);
+var customer_actions_1 = __webpack_require__(68);
 var CustomerActionCreator = /** @class */ (function () {
     function CustomerActionCreator(_customerRequestSender, _checkoutActionCreator) {
         this._customerRequestSender = _customerRequestSender;
@@ -2799,7 +2995,7 @@ exports.default = CustomerActionCreator;
 
 
 /***/ }),
-/* 65 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2817,7 +3013,7 @@ var CustomerActionType;
 
 
 /***/ }),
-/* 66 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2844,7 +3040,7 @@ var CustomerStrategyActionType;
 
 
 /***/ }),
-/* 67 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2853,7 +3049,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var checkout_1 = __webpack_require__(7);
 var errors_1 = __webpack_require__(1);
 var consignment_actions_1 = __webpack_require__(24);
 var ConsignmentActionCreator = /** @class */ (function () {
@@ -2896,17 +3091,17 @@ var ConsignmentActionCreator = /** @class */ (function () {
             if (!checkout) {
                 throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingCheckout);
             }
-            observer.next(data_store_1.createAction(checkout_1.CheckoutActionType.LoadCheckoutRequested));
+            observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.LoadShippingOptionsRequested));
             _this._checkoutRequestSender.loadCheckout(checkout.id, tslib_1.__assign({}, options, { params: {
                     include: ['consignments.availableShippingOptions'],
                 } }))
                 .then(function (_a) {
                 var body = _a.body;
-                observer.next(data_store_1.createAction(checkout_1.CheckoutActionType.LoadCheckoutSucceeded, body));
+                observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.LoadShippingOptionsSucceeded, body));
                 observer.complete();
             })
                 .catch(function (response) {
-                observer.error(data_store_1.createErrorAction(checkout_1.CheckoutActionType.LoadCheckoutFailed, response));
+                observer.error(data_store_1.createErrorAction(consignment_actions_1.ConsignmentActionType.LoadShippingOptionsFailed, response));
             });
         }); };
     };
@@ -2961,7 +3156,7 @@ exports.default = ConsignmentActionCreator;
 
 
 /***/ }),
-/* 68 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2972,7 +3167,7 @@ exports.RemoteCheckoutSynchronizationError = remote_checkout_synchronization_err
 
 
 /***/ }),
-/* 69 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2984,7 +3179,7 @@ exports.LOAD_SHIPPING_COUNTRIES_FAILED = 'LOAD_SHIPPING_COUNTRIES_FAILED';
 
 
 /***/ }),
-/* 70 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3006,7 +3201,7 @@ exports.default = mapToInternalShippingOption;
 
 
 /***/ }),
-/* 71 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3024,7 +3219,7 @@ var PaymentActionType;
 
 
 /***/ }),
-/* 72 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3032,7 +3227,7 @@ var PaymentActionType;
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var actionTypes = __webpack_require__(73);
+var actionTypes = __webpack_require__(35);
 /**
  * @todo Convert this file into TypeScript properly
  */
@@ -3074,25 +3269,7 @@ exports.default = PaymentMethodActionCreator;
 
 
 /***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LOAD_PAYMENT_METHODS_REQUESTED = 'LOAD_PAYMENT_METHODS_REQUESTED';
-exports.LOAD_PAYMENT_METHODS_SUCCEEDED = 'LOAD_PAYMENT_METHODS_SUCCEEDED';
-exports.LOAD_PAYMENT_METHODS_FAILED = 'LOAD_PAYMENT_METHODS_FAILED';
-exports.LOAD_PAYMENT_METHOD_REQUESTED = 'LOAD_PAYMENT_METHOD_REQUESTED';
-exports.LOAD_PAYMENT_METHOD_SUCCEEDED = 'LOAD_PAYMENT_METHOD_SUCCEEDED';
-exports.LOAD_PAYMENT_METHOD_FAILED = 'LOAD_PAYMENT_METHOD_FAILED';
-exports.INITIALIZE_PAYMENT_METHOD_REQUESTED = 'INITIALIZE_PAYMENT_METHOD_REQUESTED';
-exports.INITIALIZE_PAYMENT_METHOD_SUCCEEDED = 'INITIALIZE_PAYMENT_METHOD_SUCCEEDED';
-exports.INITIALIZE_PAYMENT_METHOD_FAILED = 'INITIALIZE_PAYMENT_METHOD_FAILED';
-
-
-/***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3142,7 +3319,7 @@ exports.default = PaymentRequestSender;
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3151,8 +3328,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
 var errors_1 = __webpack_require__(1);
-var registry_1 = __webpack_require__(38);
-var paymentMethodTypes = __webpack_require__(35);
+var registry_1 = __webpack_require__(40);
+var paymentMethodTypes = __webpack_require__(36);
 var PaymentStrategyRegistry = /** @class */ (function (_super) {
     tslib_1.__extends(PaymentStrategyRegistry, _super);
     function PaymentStrategyRegistry(_store, options) {
@@ -3203,7 +3380,7 @@ exports.default = PaymentStrategyRegistry;
 
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3238,7 +3415,7 @@ exports.default = CreditCardPaymentStrategy;
 
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3251,13 +3428,13 @@ exports.SquareScriptLoader = square_script_loader_1.default;
 
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports) {
 
 module.exports = require("rxjs/observable/from");
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3284,7 +3461,7 @@ var PaymentStrategyActionType;
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3297,14 +3474,14 @@ exports.DEFAULT_STATE = {
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var map_gift_certificate_to_internal_line_item_1 = __webpack_require__(82);
-var map_to_internal_line_item_1 = __webpack_require__(83);
+var map_gift_certificate_to_internal_line_item_1 = __webpack_require__(84);
+var map_to_internal_line_item_1 = __webpack_require__(85);
 function mapToInternalLineItems(itemMap, decimalPlaces, idKey) {
     if (idKey === void 0) { idKey = 'id'; }
     return Object.keys(itemMap)
@@ -3331,7 +3508,7 @@ function mapToInternalLineItemType(type) {
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3362,7 +3539,7 @@ exports.default = mapGiftCertificateToInternalLineItem;
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3381,6 +3558,7 @@ function mapToInternalLineItem(item, type, decimalPlaces, idKey) {
         integerAmount: amountTransformer.toInteger(item.extendedListPrice),
         integerAmountAfterDiscount: amountTransformer.toInteger(item.extendedSalePrice),
         integerDiscount: amountTransformer.toInteger(item.discountAmount),
+        downloadsPageUrl: item.downloadPageUrl,
         name: item.name,
         quantity: item.quantity,
         variantId: item.variantId,
@@ -3395,64 +3573,21 @@ exports.default = mapToInternalLineItem;
 
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __webpack_require__(4);
-var cart_1 = __webpack_require__(9);
-var errors_1 = __webpack_require__(233);
-var errors_2 = __webpack_require__(1);
-var CheckoutValidator = /** @class */ (function () {
-    function CheckoutValidator(_checkoutRequestSender) {
-        this._checkoutRequestSender = _checkoutRequestSender;
-    }
-    CheckoutValidator.prototype.validate = function (checkout, options) {
-        var _this = this;
-        if (!checkout) {
-            throw new errors_2.MissingDataError(errors_2.MissingDataErrorType.MissingCheckout);
-        }
-        return this._checkoutRequestSender.loadCheckout(checkout.id, options)
-            .then(function (response) {
-            var comparator = new cart_1.CartComparator();
-            if (checkout.grandTotal === response.body.grandTotal
-                && _this._compareCoupons(checkout.coupons, response.body.coupons)
-                && _this._compareGiftCertificates(checkout.giftCertificates, response.body.giftCertificates)
-                && comparator.isEqual(checkout.cart, response.body.cart)) {
-                return;
-            }
-            throw new errors_1.CartChangedError();
-        });
-    };
-    CheckoutValidator.prototype._compareCoupons = function (couponsA, couponsB) {
-        return lodash_1.isEqual(lodash_1.map(couponsA, 'code'), lodash_1.map(couponsB, 'code'));
-    };
-    CheckoutValidator.prototype._compareGiftCertificates = function (giftCertificatesA, giftCertificatesB) {
-        return lodash_1.isEqual(lodash_1.map(giftCertificatesA, 'code'), lodash_1.map(giftCertificatesB, 'code'));
-    };
-    return CheckoutValidator;
-}());
-exports.default = CheckoutValidator;
-
-
-/***/ }),
-/* 85 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(19);
-var billing_1 = __webpack_require__(21);
+var request_sender_1 = __webpack_require__(16);
+var billing_1 = __webpack_require__(20);
 var config_1 = __webpack_require__(29);
 var customer_1 = __webpack_require__(14);
 var geography_1 = __webpack_require__(30);
 var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
-var shipping_1 = __webpack_require__(17);
-var checkout_client_1 = __webpack_require__(49);
+var shipping_1 = __webpack_require__(18);
+var checkout_client_1 = __webpack_require__(51);
 function createCheckoutClient(config) {
     if (config === void 0) { config = {}; }
     var requestSender = request_sender_1.createRequestSender();
@@ -3470,7 +3605,7 @@ exports.default = createCheckoutClient;
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3485,7 +3620,7 @@ var ConfigActionType;
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3497,7 +3632,7 @@ exports.LOAD_COUNTRIES_FAILED = 'LOAD_COUNTRIES_FAILED';
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3512,7 +3647,7 @@ exports.DELETE_INSTRUMENT_FAILED = 'DELETE_INSTRUMENT_FAILED';
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3520,10 +3655,10 @@ exports.DELETE_INSTRUMENT_FAILED = 'DELETE_INSTRUMENT_FAILED';
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var error_1 = __webpack_require__(53);
-var create_action_transformer_1 = __webpack_require__(253);
-var create_checkout_store_reducer_1 = __webpack_require__(255);
-var create_internal_checkout_selectors_1 = __webpack_require__(90);
+var error_1 = __webpack_require__(56);
+var create_action_transformer_1 = __webpack_require__(252);
+var create_checkout_store_reducer_1 = __webpack_require__(254);
+var create_internal_checkout_selectors_1 = __webpack_require__(91);
 function createCheckoutStore(initialState, options) {
     if (initialState === void 0) { initialState = {}; }
     var actionTransformer = create_action_transformer_1.default(error_1.createRequestErrorFactory());
@@ -3534,27 +3669,27 @@ exports.default = createCheckoutStore;
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var billing_1 = __webpack_require__(21);
+var billing_1 = __webpack_require__(20);
 var cart_1 = __webpack_require__(9);
 var utility_1 = __webpack_require__(8);
 var config_1 = __webpack_require__(29);
-var coupon_1 = __webpack_require__(16);
+var coupon_1 = __webpack_require__(17);
 var customer_1 = __webpack_require__(14);
-var form_1 = __webpack_require__(257);
+var form_1 = __webpack_require__(256);
 var geography_1 = __webpack_require__(30);
 var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
 var payment_2 = __webpack_require__(13);
-var instrument_1 = __webpack_require__(43);
+var instrument_1 = __webpack_require__(45);
 var remote_checkout_1 = __webpack_require__(25);
-var shipping_1 = __webpack_require__(17);
-var checkout_selector_1 = __webpack_require__(50);
+var shipping_1 = __webpack_require__(18);
+var checkout_selector_1 = __webpack_require__(52);
 function createInternalCheckoutSelectors(state, options) {
     if (options === void 0) { options = {}; }
     var billingAddress = new billing_1.BillingAddressSelector(state.billingAddress);
@@ -3608,17 +3743,6 @@ exports.default = createInternalCheckoutSelectors;
 
 
 /***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var map_to_internal_quote_1 = __webpack_require__(231);
-exports.mapToInternalQuote = map_to_internal_quote_1.default;
-
-
-/***/ }),
 /* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3626,8 +3750,8 @@ exports.mapToInternalQuote = map_to_internal_quote_1.default;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var utility_1 = __webpack_require__(8);
-var console_logger_1 = __webpack_require__(244);
-var noop_logger_1 = __webpack_require__(245);
+var console_logger_1 = __webpack_require__(242);
+var noop_logger_1 = __webpack_require__(243);
 var logger = createLogger(utility_1.getEnvironment() !== 'test');
 function createLogger(isEnabled) {
     if (isEnabled === void 0) { isEnabled = true; }
@@ -3651,7 +3775,7 @@ exports.getDefaultLogger = getDefaultLogger;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(18);
+var standard_error_1 = __webpack_require__(15);
 var InvalidArgumentError = /** @class */ (function (_super) {
     tslib_1.__extends(InvalidArgumentError, _super);
     function InvalidArgumentError(message) {
@@ -3739,8 +3863,8 @@ function createFreezeProxy(target) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            var _a;
             return data_store_1.deepFreeze((_a = target[name]).call.apply(_a, [target].concat(args)));
+            var _a;
         };
     });
 }
@@ -3898,7 +4022,7 @@ var lodash_1 = __webpack_require__(4);
  * with the existing item in the array. This function always returns a new array.
  */
 function mergeOrPush(array, item, predicate) {
-    var index = lodash_1.findIndex(array, predicate);
+    var index = lodash_1.findIndex(array, typeof predicate === 'object' ? lodash_1.pickBy(predicate) : predicate);
     var newArray = array.slice();
     if (index === -1) {
         newArray.push(item);
@@ -3918,8 +4042,8 @@ exports.default = mergeOrPush;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var is_private_1 = __webpack_require__(47);
-var omit_deep_1 = __webpack_require__(48);
+var is_private_1 = __webpack_require__(49);
+var omit_deep_1 = __webpack_require__(50);
 function omitPrivate(object) {
     return omit_deep_1.default(object, function (value, key) { return is_private_1.default(key); });
 }
@@ -3969,7 +4093,7 @@ exports.default = toSingleLine;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(18);
+var standard_error_1 = __webpack_require__(15);
 var MissingDataErrorType;
 (function (MissingDataErrorType) {
     MissingDataErrorType[MissingDataErrorType["MissingBillingAddress"] = 0] = "MissingBillingAddress";
@@ -4026,7 +4150,7 @@ function getErrorMessage(type) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(18);
+var standard_error_1 = __webpack_require__(15);
 var NotImplementedError = /** @class */ (function (_super) {
     tslib_1.__extends(NotImplementedError, _super);
     function NotImplementedError(message) {
@@ -4047,7 +4171,7 @@ exports.default = NotImplementedError;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(18);
+var standard_error_1 = __webpack_require__(15);
 var NotInitializedErrorType;
 (function (NotInitializedErrorType) {
     NotInitializedErrorType[NotInitializedErrorType["CustomerNotInitialized"] = 0] = "CustomerNotInitialized";
@@ -4132,7 +4256,7 @@ exports.default = UnrecoverableError;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(18);
+var standard_error_1 = __webpack_require__(15);
 var UnsupportedBrowserError = /** @class */ (function (_super) {
     tslib_1.__extends(UnsupportedBrowserError, _super);
     function UnsupportedBrowserError(message) {
@@ -4189,88 +4313,6 @@ exports.default = toFormUrlEncoded;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var CacheKeyResolver = /** @class */ (function () {
-    function CacheKeyResolver() {
-        this._lastId = 0;
-        this._maps = [];
-    }
-    CacheKeyResolver.prototype.getKey = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        var _a = this._resolveMap.apply(this, args), index = _a.index, map = _a.map, parentMaps = _a.parentMaps;
-        if (map && map.cacheKey) {
-            map.usedCount++;
-            return map.cacheKey;
-        }
-        return this._generateKey(parentMaps, args.slice(index));
-    };
-    CacheKeyResolver.prototype.getUsedCount = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        var map = this._resolveMap.apply(this, args).map;
-        return map ? map.usedCount : 0;
-    };
-    CacheKeyResolver.prototype._resolveMap = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        var index = 0;
-        var parentMaps = this._maps;
-        while (parentMaps.length) {
-            var isMatched = false;
-            for (var _a = 0, parentMaps_1 = parentMaps; _a < parentMaps_1.length; _a++) {
-                var map = parentMaps_1[_a];
-                if (map.value !== args[index]) {
-                    continue;
-                }
-                if ((args.length === 0 || index === args.length - 1) && map.cacheKey) {
-                    return { index: index, map: map, parentMaps: parentMaps };
-                }
-                isMatched = true;
-                parentMaps = map.maps;
-                index++;
-                break;
-            }
-            if (!isMatched) {
-                break;
-            }
-        }
-        return { index: index, parentMaps: parentMaps };
-    };
-    CacheKeyResolver.prototype._generateKey = function (maps, args) {
-        var index = 0;
-        var parentMaps = maps;
-        var map;
-        do {
-            map = {
-                usedCount: 1,
-                value: args[index],
-                maps: [],
-            };
-            parentMaps.push(map);
-            parentMaps = map.maps;
-            index++;
-        } while (index < args.length);
-        map.cacheKey = "" + ++this._lastId;
-        return map.cacheKey;
-    };
-    return CacheKeyResolver;
-}());
-exports.default = CacheKeyResolver;
-
-
-/***/ }),
-/* 112 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var checkout_1 = __webpack_require__(7);
 function createCheckoutSelectors(selectors) {
     var data = new checkout_1.CheckoutStoreSelector(selectors);
@@ -4287,13 +4329,13 @@ exports.default = createCheckoutSelectors;
 
 
 /***/ }),
-/* 113 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var error_1 = __webpack_require__(53);
+var error_1 = __webpack_require__(56);
 var errors_1 = __webpack_require__(1);
 var utility_1 = __webpack_require__(8);
 function createCheckoutServiceErrorTransformer(isDevelopment) {
@@ -4335,7 +4377,7 @@ function isCheckoutServiceError(error) {
 
 
 /***/ }),
-/* 114 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4343,7 +4385,7 @@ function isCheckoutServiceError(error) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var errors_1 = __webpack_require__(12);
 var errors_2 = __webpack_require__(1);
-var request_error_factory_1 = __webpack_require__(54);
+var request_error_factory_1 = __webpack_require__(57);
 function createRequestErrorFactory() {
     var factory = new request_error_factory_1.default();
     var unrecoverableErrorTypes = [
@@ -4372,7 +4414,7 @@ exports.default = createRequestErrorFactory;
 
 
 /***/ }),
-/* 115 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4397,7 +4439,7 @@ exports.default = PaymentArgumentInvalidError;
 
 
 /***/ }),
-/* 116 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4418,7 +4460,7 @@ exports.default = PaymentMethodInvalidError;
 
 
 /***/ }),
-/* 117 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4439,7 +4481,7 @@ exports.default = PaymentMethodCancelledError;
 
 
 /***/ }),
-/* 118 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4460,7 +4502,7 @@ exports.default = ErrorMessageTransformer;
 
 
 /***/ }),
-/* 119 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4746,21 +4788,14 @@ exports.default = CheckoutStoreErrorSelector;
 
 
 /***/ }),
-/* 120 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var address_1 = __webpack_require__(15);
-var cart_1 = __webpack_require__(9);
 var selector_1 = __webpack_require__(3);
-var coupon_1 = __webpack_require__(16);
-var customer_1 = __webpack_require__(14);
-var order_1 = __webpack_require__(10);
-var quote_1 = __webpack_require__(91);
-var shipping_1 = __webpack_require__(17);
 /**
  * Responsible for getting the state of the current checkout.
  *
@@ -4773,6 +4808,7 @@ var CheckoutStoreSelector = /** @class */ (function () {
      */
     function CheckoutStoreSelector(selectors) {
         this._billingAddress = selectors.billingAddress;
+        this._cart = selectors.cart;
         this._checkout = selectors.checkout;
         this._config = selectors.config;
         this._consignments = selectors.consignments;
@@ -4798,24 +4834,12 @@ var CheckoutStoreSelector = /** @class */ (function () {
         return this._checkout.getCheckout();
     };
     /**
-     * Gets the current quote.
-     *
-     * @deprecated This method will be replaced in the future.
-     * @returns The current quote if it is loaded, otherwise undefined.
-     */
-    CheckoutStoreSelector.prototype.getQuote = function () {
-        var checkout = this._checkout.getCheckout();
-        var shippingAddress = this._shippingAddress.getShippingAddress();
-        return checkout && quote_1.mapToInternalQuote(checkout, shippingAddress);
-    };
-    /**
      * Gets the current order.
      *
      * @returns The current order if it is loaded, otherwise undefined.
      */
     CheckoutStoreSelector.prototype.getOrder = function () {
-        var order = this._order.getOrder();
-        return order ? order_1.mapToInternalOrder(order) : undefined;
+        return this._order.getOrder();
     };
     /**
      * Gets the checkout configuration of a store.
@@ -4835,22 +4859,33 @@ var CheckoutStoreSelector = /** @class */ (function () {
      * undefined.
      */
     CheckoutStoreSelector.prototype.getShippingAddress = function () {
-        var shippingAddress = this._shippingAddress.getShippingAddress();
-        return shippingAddress && address_1.mapToInternalAddress(shippingAddress);
+        return this._shippingAddress.getShippingAddress();
     };
     /**
-     * Gets a list of shipping options available for each shipping address.
+     * Gets a list of shipping options available for the shipping address.
      *
      * If there is no shipping address assigned to the current checkout, the
      * list of shipping options will be empty.
      *
-     * @returns The list of shipping options per address if loaded, otherwise
-     * undefined.
+     * @returns The list of shipping options if any, otherwise undefined.
      */
     CheckoutStoreSelector.prototype.getShippingOptions = function () {
-        // @todo: once we remove the mappers, this should use the shippingOption selector
         var consignments = this._consignments.getConsignments();
-        return consignments && shipping_1.mapToInternalShippingOptions(consignments);
+        if (consignments && consignments.length) {
+            return consignments[0].availableShippingOptions;
+        }
+        return;
+    };
+    /**
+     * Gets a list of consignments.
+     *
+     * If there are no consignments created for to the current checkout, the
+     * list will be empty.
+     *
+     * @returns The list of consignments if any, otherwise undefined.
+     */
+    CheckoutStoreSelector.prototype.getConsignments = function () {
+        return this._consignments.getConsignments();
     };
     /**
      * Gets the selected shipping option for the current checkout.
@@ -4859,8 +4894,7 @@ var CheckoutStoreSelector = /** @class */ (function () {
      * otherwise undefined.
      */
     CheckoutStoreSelector.prototype.getSelectedShippingOption = function () {
-        var shippingOption = this._shippingOptions.getSelectedShippingOption();
-        return shippingOption && shipping_1.mapToInternalShippingOption(shippingOption, true);
+        return this._shippingOptions.getSelectedShippingOption();
     };
     /**
      * Gets a list of countries available for shipping.
@@ -4876,8 +4910,7 @@ var CheckoutStoreSelector = /** @class */ (function () {
      * @returns The billing address object if it is loaded, otherwise undefined.
      */
     CheckoutStoreSelector.prototype.getBillingAddress = function () {
-        var billingAddress = this._billingAddress.getBillingAddress();
-        return billingAddress && address_1.mapToInternalAddress(billingAddress);
+        return this._billingAddress.getBillingAddress();
     };
     /**
      * Gets a list of countries available for billing.
@@ -4927,8 +4960,7 @@ var CheckoutStoreSelector = /** @class */ (function () {
      * @returns The current cart object if it is loaded, otherwise undefined.
      */
     CheckoutStoreSelector.prototype.getCart = function () {
-        var checkout = this._checkout.getCheckout();
-        return checkout ? cart_1.mapToInternalCart(checkout) : undefined;
+        return this._cart.getCart();
     };
     /**
      * Gets a list of coupons that are applied to the current checkout.
@@ -4936,8 +4968,7 @@ var CheckoutStoreSelector = /** @class */ (function () {
      * @returns The list of applied coupons if there is any, otherwise undefined.
      */
     CheckoutStoreSelector.prototype.getCoupons = function () {
-        var coupons = this._coupons.getCoupons();
-        return coupons ? coupons.map(coupon_1.mapToInternalCoupon) : undefined;
+        return this._coupons.getCoupons();
     };
     /**
      * Gets a list of gift certificates that are applied to the current checkout.
@@ -4945,8 +4976,7 @@ var CheckoutStoreSelector = /** @class */ (function () {
      * @returns The list of applied gift certificates if there is any, otherwise undefined.
      */
     CheckoutStoreSelector.prototype.getGiftCertificates = function () {
-        var giftCertificates = this._giftCertificates.getGiftCertificates();
-        return giftCertificates ? giftCertificates.map(coupon_1.mapToInternalGiftCertificate) : undefined;
+        return this._giftCertificates.getGiftCertificates();
     };
     /**
      * Gets the current customer.
@@ -4955,14 +4985,7 @@ var CheckoutStoreSelector = /** @class */ (function () {
      * undefined.
      */
     CheckoutStoreSelector.prototype.getCustomer = function () {
-        var customer = this._customer.getCustomer();
-        var checkout = this._checkout.getCheckout();
-        var cart = checkout && checkout.cart;
-        var billingAddress = checkout && checkout.billingAddress;
-        if (!customer || !billingAddress || !cart) {
-            return;
-        }
-        return customer_1.mapToInternalCustomer(customer, cart, billingAddress);
+        return this._customer.getCustomer();
     };
     /**
      * Checks if payment data is required or not.
@@ -5038,88 +5061,345 @@ exports.default = CheckoutStoreSelector;
 
 
 /***/ }),
-/* 121 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
-var utility_1 = __webpack_require__(8);
-function isAddressEqual(addressA, addressB) {
-    return lodash_1.isEqual(normalize(addressA), normalize(addressB));
-}
-exports.default = isAddressEqual;
-function normalize(address) {
-    var ignoredKeys = ['id', 'provinceCode'];
-    return Object.keys(utility_1.omitPrivate(address) || {})
-        .reduce(function (result, key) {
-        var _a;
-        return ignoredKeys.indexOf(key) === -1 && address[key] ? tslib_1.__assign({}, result, (_a = {}, _a[key] = address[key], _a)) :
-            result;
-    }, {});
-}
-
-
-/***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function mapFromInternalAddress(address) {
-    return {
-        id: address.id,
-        firstName: address.firstName,
-        lastName: address.lastName,
-        company: address.company,
-        address1: address.addressLine1,
-        address2: address.addressLine2,
-        city: address.city,
-        stateOrProvince: address.province,
-        stateOrProvinceCode: address.provinceCode,
-        postalCode: address.postCode,
-        country: address.country,
-        countryCode: address.countryCode,
-        phone: address.phone,
-        customFields: address.customFields,
+var selector_1 = __webpack_require__(3);
+/**
+ * Responsible for checking the statuses of various asynchronous actions related
+ * to checkout.
+ *
+ * This object has a set of getters that return true if an action is in
+ * progress. For example, you can check whether a customer is submitting an
+ * order and waiting for the request to complete.
+ */
+var CheckoutStoreStatusSelector = /** @class */ (function () {
+    /**
+     * @internal
+     */
+    function CheckoutStoreStatusSelector(selectors) {
+        this._billingAddress = selectors.billingAddress;
+        this._cart = selectors.cart;
+        this._checkout = selectors.checkout;
+        this._config = selectors.config;
+        this._countries = selectors.countries;
+        this._coupons = selectors.coupons;
+        this._customerStrategies = selectors.customerStrategies;
+        this._giftCertificates = selectors.giftCertificates;
+        this._instruments = selectors.instruments;
+        this._order = selectors.order;
+        this._paymentMethods = selectors.paymentMethods;
+        this._paymentStrategies = selectors.paymentStrategies;
+        this._shippingCountries = selectors.shippingCountries;
+        this._shippingOptions = selectors.shippingOptions;
+        this._shippingStrategies = selectors.shippingStrategies;
+    }
+    /**
+     * Checks whether any checkout action is pending.
+     *
+     * @returns True if there is a pending action, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isPending = function () {
+        return this.isLoadingCheckout() ||
+            this.isSubmittingOrder() ||
+            this.isFinalizingOrder() ||
+            this.isLoadingOrder() ||
+            this.isLoadingCart() ||
+            this.isLoadingBillingCountries() ||
+            this.isLoadingShippingCountries() ||
+            this.isLoadingPaymentMethods() ||
+            this.isLoadingPaymentMethod() ||
+            this.isInitializingPayment() ||
+            this.isLoadingShippingOptions() ||
+            this.isSelectingShippingOption() ||
+            this.isSigningIn() ||
+            this.isSigningOut() ||
+            this.isInitializingCustomer() ||
+            this.isUpdatingBillingAddress() ||
+            this.isUpdatingShippingAddress() ||
+            this.isInitializingShipping() ||
+            this.isApplyingCoupon() ||
+            this.isRemovingCoupon() ||
+            this.isApplyingGiftCertificate() ||
+            this.isRemovingGiftCertificate() ||
+            this.isLoadingInstruments() ||
+            this.isDeletingInstrument() ||
+            this.isLoadingConfig() ||
+            this.isCustomerStepPending() ||
+            this.isPaymentStepPending();
     };
-}
-exports.default = mapFromInternalAddress;
-
-
-/***/ }),
-/* 123 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function mapToInternalAddress(address, id) {
-    return {
-        id: id ? id : address.id,
-        firstName: address.firstName,
-        lastName: address.lastName,
-        company: address.company,
-        addressLine1: address.address1,
-        addressLine2: address.address2,
-        city: address.city,
-        province: address.stateOrProvince,
-        provinceCode: address.stateOrProvinceCode,
-        postCode: address.postalCode,
-        country: address.country,
-        countryCode: address.countryCode,
-        phone: address.phone,
-        customFields: address.customFields,
+    /**
+     * Checks whether the current checkout is loading.
+     *
+     * @returns True if the current checkout is loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingCheckout = function () {
+        return this._checkout.isLoading();
     };
-}
-exports.default = mapToInternalAddress;
+    /**
+     * Checks whether the current order is submitting.
+     *
+     * @returns True if the current order is submitting, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isSubmittingOrder = function () {
+        return this._paymentStrategies.isExecuting();
+    };
+    /**
+     * Checks whether the current order is finalizing.
+     *
+     * @returns True if the current order is finalizing, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isFinalizingOrder = function () {
+        return this._paymentStrategies.isFinalizing();
+    };
+    /**
+     * Checks whether the current order is loading.
+     *
+     * @returns True if the current order is loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingOrder = function () {
+        return this._order.isLoading();
+    };
+    /**
+     * Checks whether the current cart is loading.
+     *
+     * @returns True if the current cart is loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingCart = function () {
+        return this._cart.isLoading();
+    };
+    /**
+     * Checks whether billing countries are loading.
+     *
+     * @returns True if billing countries are loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingBillingCountries = function () {
+        return this._countries.isLoading();
+    };
+    /**
+     * Checks whether shipping countries are loading.
+     *
+     * @returns True if shipping countries are loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingShippingCountries = function () {
+        return this._shippingCountries.isLoading();
+    };
+    /**
+     * Checks whether payment methods are loading.
+     *
+     * @returns True if payment methods are loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingPaymentMethods = function () {
+        return this._paymentMethods.isLoading();
+    };
+    /**
+     * Checks whether a specific or any payment method is loading.
+     *
+     * The method returns true if no ID is provided and at least one payment
+     * method is loading.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the payment method is loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingPaymentMethod = function (methodId) {
+        return this._paymentMethods.isLoadingMethod(methodId);
+    };
+    /**
+     * Checks whether a specific or any payment method is initializing.
+     *
+     * The method returns true if no ID is provided and at least one payment
+     * method is initializing.
+     *
+     * @param methodId - The identifier of the payment method to check.
+     * @returns True if the payment method is initializing, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isInitializingPayment = function (methodId) {
+        return this._paymentStrategies.isInitializing(methodId);
+    };
+    /**
+     * Checks whether the current customer is signing in.
+     *
+     * If an ID is provided, the method also checks whether the customer is
+     * signing in using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for signing in the
+     * current customer.
+     * @returns True if the customer is signing in, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isSigningIn = function (methodId) {
+        return this._customerStrategies.isSigningIn(methodId);
+    };
+    /**
+     * Checks whether the current customer is signing out.
+     *
+     * If an ID is provided, the method also checks whether the customer is
+     * signing out using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for signing out the
+     * current customer.
+     * @returns True if the customer is signing out, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isSigningOut = function (methodId) {
+        return this._customerStrategies.isSigningOut(methodId);
+    };
+    /**
+     * Checks whether the customer step is initializing.
+     *
+     * If an ID is provided, the method also checks whether the customer step is
+     * initializing using a specific customer method with the same ID.
+     *
+     * @param methodId - The identifier of the method used for initializing the
+     * customer step of checkout.
+     * @returns True if the customer step is initializing, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isInitializingCustomer = function (methodId) {
+        return this._customerStrategies.isInitializing(methodId);
+    };
+    /**
+     * Checks whether shipping options are loading.
+     *
+     * @returns True if shipping options are loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingShippingOptions = function () {
+        return this._shippingOptions.isLoading();
+    };
+    /**
+     * Checks whether the current customer is selecting a shipping option.
+     *
+     * @returns True if selecting a shipping option, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isSelectingShippingOption = function () {
+        return this._shippingStrategies.isSelectingOption();
+    };
+    /**
+     * Checks whether the current customer is updating their billing address.
+     *
+     * @returns True if updating their billing address, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isUpdatingBillingAddress = function () {
+        return this._billingAddress.isUpdating();
+    };
+    /**
+     * Checks whether the current customer is updating their shipping address.
+     *
+     * @returns True if updating their shipping address, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isUpdatingShippingAddress = function () {
+        return this._shippingStrategies.isUpdatingAddress();
+    };
+    /**
+     * Checks whether the shipping step of a checkout process is initializing.
+     *
+     * If an identifier is provided, the method also checks whether the shipping
+     * step is initializing using a specific shipping method with the same
+     * identifier.
+     *
+     * @param methodId - The identifer of the initialization method to check.
+     * @returns True if the shipping step is initializing, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isInitializingShipping = function (methodId) {
+        return this._shippingStrategies.isInitializing(methodId);
+    };
+    /**
+     * Checks whether the current customer is applying a coupon code.
+     *
+     * @returns True if applying a coupon code, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isApplyingCoupon = function () {
+        return this._coupons.isApplying();
+    };
+    /**
+     * Checks whether the current customer is removing a coupon code.
+     *
+     * @returns True if removing a coupon code, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isRemovingCoupon = function () {
+        return this._coupons.isRemoving();
+    };
+    /**
+     * Checks whether the current customer is applying a gift certificate.
+     *
+     * @returns True if applying a gift certificate, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isApplyingGiftCertificate = function () {
+        return this._giftCertificates.isApplying();
+    };
+    /**
+     * Checks whether the current customer is removing a gift certificate.
+     *
+     * @returns True if removing a gift certificate, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isRemovingGiftCertificate = function () {
+        return this._giftCertificates.isRemoving();
+    };
+    /**
+     * Checks whether the current customer's payment instruments are loading.
+     *
+     * @returns True if payment instruments are loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingInstruments = function () {
+        return this._instruments.isLoading();
+    };
+    /**
+     * Checks whether the current customer is deleting a payment instrument.
+     *
+     * @returns True if deleting a payment instrument, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isDeletingInstrument = function (instrumentId) {
+        return this._instruments.isDeleting(instrumentId);
+    };
+    /**
+     * Checks whether the checkout configuration of a store is loading.
+     *
+     * @returns True if the configuration is loading, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isLoadingConfig = function () {
+        return this._config.isLoading();
+    };
+    /**
+     * Checks whether the customer step of a checkout is in a pending state.
+     *
+     * The customer step is considered to be pending if it is in the process of
+     * initializing, signing in, signing out, and/or interacting with a customer
+     * widget.
+     *
+     * @returns True if the customer step is pending, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isCustomerStepPending = function () {
+        return this._customerStrategies.isInitializing() ||
+            this._customerStrategies.isSigningIn() ||
+            this._customerStrategies.isSigningOut() ||
+            this._customerStrategies.isWidgetInteracting();
+    };
+    /**
+     * Checks whether the payment step of a checkout is in a pending state.
+     *
+     * The payment step is considered to be pending if it is in the process of
+     * initializing, submitting an order, finalizing an order, and/or
+     * interacting with a payment widget.
+     *
+     * @returns True if the payment step is pending, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isPaymentStepPending = function () {
+        return this._paymentStrategies.isInitializing() ||
+            this._paymentStrategies.isExecuting() ||
+            this._paymentStrategies.isFinalizing() ||
+            this._paymentStrategies.isWidgetInteracting();
+    };
+    CheckoutStoreStatusSelector = tslib_1.__decorate([
+        selector_1.selector
+    ], CheckoutStoreStatusSelector);
+    return CheckoutStoreStatusSelector;
+}());
+exports.default = CheckoutStoreStatusSelector;
 
 
 /***/ }),
-/* 124 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5138,7 +5418,7 @@ exports.default = AmountTransformer;
 
 
 /***/ }),
-/* 125 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5156,9 +5436,9 @@ var CartComparator = /** @class */ (function () {
     CartComparator.prototype._normalize = function (cart) {
         var lineItems = Object.keys(cart.lineItems)
             .reduce(function (result, key) {
-            var _a;
             return (tslib_1.__assign({}, result, (_a = {}, _a[key] = cart.lineItems[key]
                 .map(function (item) { return lodash_1.omit(item, ['id', 'imageUrl']); }), _a)));
+            var _a;
         }, {});
         return utility_1.omitPrivate(lodash_1.omit(tslib_1.__assign({}, cart, { lineItems: lineItems }), ['updatedTime']));
     };
@@ -5168,7 +5448,7 @@ exports.default = CartComparator;
 
 
 /***/ }),
-/* 126 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5237,7 +5517,7 @@ function errorsReducer(errors, action) {
 
 
 /***/ }),
-/* 127 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5261,7 +5541,7 @@ exports.default = CartRequestSender;
 
 
 /***/ }),
-/* 128 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5291,7 +5571,7 @@ exports.default = CartSelector;
 
 
 /***/ }),
-/* 129 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5351,7 +5631,7 @@ exports.default = CouponActionCreator;
 
 
 /***/ }),
-/* 130 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5394,7 +5674,7 @@ exports.default = CouponRequestSender;
 
 
 /***/ }),
-/* 131 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5430,7 +5710,7 @@ exports.default = CouponSelector;
 
 
 /***/ }),
-/* 132 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5503,7 +5783,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 133 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5512,7 +5792,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var concat_1 = __webpack_require__(28);
-var defer_1 = __webpack_require__(46);
+var defer_1 = __webpack_require__(48);
 var Observable_1 = __webpack_require__(5);
 var errors_1 = __webpack_require__(1);
 var order_actions_1 = __webpack_require__(34);
@@ -5554,8 +5834,11 @@ var OrderActionCreator = /** @class */ (function () {
             observer.next(data_store_1.createAction(order_actions_1.OrderActionType.SubmitOrderRequested));
             var state = store.getState();
             var checkout = state.checkout.getCheckout();
+            if (!checkout) {
+                throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingCheckout);
+            }
             _this._checkoutValidator.validate(checkout, options)
-                .then(function () { return _this._checkoutClient.submitOrder(_this._mapToOrderRequestBody(payload), options); })
+                .then(function () { return _this._checkoutClient.submitOrder(_this._mapToOrderRequestBody(payload, checkout.customerMessage), options); })
                 .then(function (response) {
                 observer.next(data_store_1.createAction(order_actions_1.OrderActionType.SubmitOrderSucceeded, response.body.data, tslib_1.__assign({}, response.body.meta, { token: response.headers.token })));
                 observer.complete();
@@ -5583,12 +5866,12 @@ var OrderActionCreator = /** @class */ (function () {
         // TODO: Remove once we can submit orders using storefront API
         this.loadOrder(orderId, options));
     };
-    OrderActionCreator.prototype._mapToOrderRequestBody = function (payload) {
+    OrderActionCreator.prototype._mapToOrderRequestBody = function (payload, customerMessage) {
         var payment = payload.payment, order = tslib_1.__rest(payload, ["payment"]);
         if (!payment) {
             return order;
         }
-        return tslib_1.__assign({}, payload, { payment: {
+        return tslib_1.__assign({}, payload, { customerMessage: customerMessage, payment: {
                 paymentData: payment.paymentData,
                 name: payment.methodId,
                 gateway: payment.gatewayId,
@@ -5600,7 +5883,7 @@ exports.default = OrderActionCreator;
 
 
 /***/ }),
-/* 134 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5640,7 +5923,7 @@ function metaReducer(meta, action) {
     switch (action.type) {
         case order_actions_1.OrderActionType.FinalizeOrderSucceeded:
         case order_actions_1.OrderActionType.SubmitOrderSucceeded:
-            return action.payload ? tslib_1.__assign({}, meta, action.meta, { payment: action.payload.order && action.payload.order.payment }) : meta;
+            return action.payload ? tslib_1.__assign({}, meta, action.meta, { callbackUrl: action.payload.order.callbackUrl, orderToken: action.payload.order.token, payment: action.payload.order && action.payload.order.payment }) : meta;
         default:
             return meta;
     }
@@ -5672,7 +5955,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 135 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5716,7 +5999,7 @@ exports.default = OrderRequestSender;
 
 
 /***/ }),
-/* 136 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5758,7 +6041,7 @@ exports.default = OrderSelector;
 
 
 /***/ }),
-/* 137 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5767,9 +6050,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = __webpack_require__(4);
 var cart_1 = __webpack_require__(9);
 var cart_2 = __webpack_require__(9);
-var coupon_1 = __webpack_require__(16);
+var coupon_1 = __webpack_require__(17);
 var payment_1 = __webpack_require__(13);
-function mapToInternalOrder(order) {
+function mapToInternalOrder(order, orderMeta) {
+    if (orderMeta === void 0) { orderMeta = {}; }
     var decimalPlaces = order.currency.decimalPlaces;
     var amountTransformer = new cart_1.AmountTransformer(decimalPlaces);
     return {
@@ -5778,7 +6062,7 @@ function mapToInternalOrder(order) {
         orderId: order.orderId,
         currency: order.currency.code,
         customerCanBeCreated: order.customerCanBeCreated,
-        payment: mapToInteralOrderPayment(order.payments),
+        payment: mapToInteralOrderPayment(order.payments, orderMeta.payment),
         subtotal: {
             amount: order.baseAmount,
             integerAmount: amountTransformer.toInteger(order.baseAmount),
@@ -5793,6 +6077,8 @@ function mapToInternalOrder(order) {
             amount: order.discountAmount,
             integerAmount: amountTransformer.toInteger(order.discountAmount),
         },
+        token: orderMeta.orderToken,
+        callbackUrl: orderMeta.callbackUrl,
         discountNotifications: [],
         giftCertificate: mapToGiftCertificates(order.payments),
         socialData: mapToInternalSocialDataList(order),
@@ -5857,7 +6143,8 @@ function mapToGiftCertificates(payments) {
         }); }), 'code'),
     };
 }
-function mapToInteralOrderPayment(payments) {
+function mapToInteralOrderPayment(payments, payment) {
+    if (payment === void 0) { payment = {}; }
     var item = lodash_1.find(payments, isDefaultOrderPayment);
     if (!item) {
         return {};
@@ -5866,6 +6153,7 @@ function mapToInteralOrderPayment(payments) {
         id: item.providerId,
         status: mapToInternalPaymentStatus(item.detail.step),
         helpText: item.detail.instructions,
+        returnUrl: payment.returnUrl,
     };
 }
 function isDefaultOrderPayment(payment) {
@@ -5902,14 +6190,14 @@ function mapToInternalSocialData(lineItem) {
 
 
 /***/ }),
-/* 138 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="../payment/bigpay-client.d.ts" />
-var bigpay_client_1 = __webpack_require__(139);
+var bigpay_client_1 = __webpack_require__(136);
 function createPaymentClient(store) {
     var paymentClient = bigpay_client_1.createClient();
     store.subscribe(function (state) {
@@ -5924,37 +6212,37 @@ exports.default = createPaymentClient;
 
 
 /***/ }),
-/* 139 */
+/* 136 */
 /***/ (function(module, exports) {
 
 module.exports = require("@bigcommerce/bigpay-client");
 
 /***/ }),
-/* 140 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var form_poster_1 = __webpack_require__(56);
-var request_sender_1 = __webpack_require__(19);
-var script_loader_1 = __webpack_require__(36);
-var billing_1 = __webpack_require__(21);
+var form_poster_1 = __webpack_require__(60);
+var request_sender_1 = __webpack_require__(16);
+var script_loader_1 = __webpack_require__(37);
+var billing_1 = __webpack_require__(20);
 var checkout_1 = __webpack_require__(7);
 var order_1 = __webpack_require__(10);
 var remote_checkout_1 = __webpack_require__(25);
-var afterpay_1 = __webpack_require__(149);
-var amazon_pay_1 = __webpack_require__(37);
-var klarna_1 = __webpack_require__(152);
-var wepay_1 = __webpack_require__(154);
+var afterpay_1 = __webpack_require__(146);
+var amazon_pay_1 = __webpack_require__(39);
+var klarna_1 = __webpack_require__(149);
+var wepay_1 = __webpack_require__(151);
 var _1 = __webpack_require__(13);
-var payment_action_creator_1 = __webpack_require__(58);
-var payment_method_action_creator_1 = __webpack_require__(72);
-var payment_request_sender_1 = __webpack_require__(74);
-var payment_strategy_registry_1 = __webpack_require__(75);
+var payment_action_creator_1 = __webpack_require__(61);
+var payment_method_action_creator_1 = __webpack_require__(75);
+var payment_request_sender_1 = __webpack_require__(76);
+var payment_strategy_registry_1 = __webpack_require__(77);
 var strategies_1 = __webpack_require__(200);
-var braintree_1 = __webpack_require__(39);
-var square_1 = __webpack_require__(77);
+var braintree_1 = __webpack_require__(41);
+var square_1 = __webpack_require__(79);
 function createPaymentStrategyRegistry(store, client, paymentClient) {
     var registry = new payment_strategy_registry_1.default(store, { defaultToken: 'creditcard' });
     var scriptLoader = script_loader_1.getScriptLoader();
@@ -6026,7 +6314,7 @@ exports.default = createPaymentStrategyRegistry;
 
 
 /***/ }),
-/* 141 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6062,7 +6350,7 @@ exports.default = BillingAddressSelector;
 
 
 /***/ }),
-/* 142 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6111,7 +6399,7 @@ exports.default = BillingAddressActionCreator;
 
 
 /***/ }),
-/* 143 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6150,7 +6438,7 @@ exports.default = BillingAddressRequestSender;
 
 
 /***/ }),
-/* 144 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6222,7 +6510,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 145 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6230,7 +6518,7 @@ function statusesReducer(statuses, action) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var actionTypes = __webpack_require__(57);
+var actionTypes = __webpack_require__(38);
 /**
  * @todo Convert this file into TypeScript properly
  * i.e.: Action<T>
@@ -6322,7 +6610,7 @@ exports.default = RemoteCheckoutActionCreator;
 
 
 /***/ }),
-/* 146 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6376,7 +6664,7 @@ exports.default = RemoteCheckoutRequestSender;
 
 
 /***/ }),
-/* 147 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6400,7 +6688,7 @@ exports.default = RemoteCheckoutSelector;
 
 
 /***/ }),
-/* 148 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6408,13 +6696,12 @@ exports.default = RemoteCheckoutSelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var actionTypes = __webpack_require__(57);
+var actionTypes = __webpack_require__(38);
 var DEFAULT_STATE = {
     data: {},
 };
 function remoteCheckoutReducer(state, action) {
     if (state === void 0) { state = DEFAULT_STATE; }
-    var _a;
     if (!action.meta || !action.meta.methodId) {
         return state;
     }
@@ -6424,6 +6711,7 @@ function remoteCheckoutReducer(state, action) {
             _a)),
     });
     return reducer(state, action);
+    var _a;
 }
 exports.default = remoteCheckoutReducer;
 function dataReducer(data, action) {
@@ -6444,18 +6732,18 @@ function dataReducer(data, action) {
 
 
 /***/ }),
-/* 149 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var afterpay_script_loader_1 = __webpack_require__(150);
+var afterpay_script_loader_1 = __webpack_require__(147);
 exports.AfterpayScriptLoader = afterpay_script_loader_1.default;
 
 
 /***/ }),
-/* 150 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6496,7 +6784,7 @@ exports.default = AfterpayScriptLoader;
 
 
 /***/ }),
-/* 151 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6547,18 +6835,18 @@ exports.default = AmazonPayScriptLoader;
 
 
 /***/ }),
-/* 152 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var klarna_script_loader_1 = __webpack_require__(153);
+var klarna_script_loader_1 = __webpack_require__(150);
 exports.KlarnaScriptLoader = klarna_script_loader_1.default;
 
 
 /***/ }),
-/* 153 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6579,18 +6867,18 @@ exports.default = KlarnaScriptLoader;
 
 
 /***/ }),
-/* 154 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var wepay_risk_client_1 = __webpack_require__(155);
+var wepay_risk_client_1 = __webpack_require__(152);
 exports.WepayRiskClient = wepay_risk_client_1.default;
 
 
 /***/ }),
-/* 155 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6622,24 +6910,105 @@ exports.default = WepayRiskClient;
 
 
 /***/ }),
+/* 153 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+var lodash_1 = __webpack_require__(4);
+var utility_1 = __webpack_require__(8);
+function isAddressEqual(addressA, addressB) {
+    return lodash_1.isEqual(normalize(addressA), normalize(addressB));
+}
+exports.default = isAddressEqual;
+function normalize(address) {
+    var ignoredKeys = ['id', 'provinceCode'];
+    return Object.keys(utility_1.omitPrivate(address) || {})
+        .reduce(function (result, key) {
+        return ignoredKeys.indexOf(key) === -1 && address[key] ? tslib_1.__assign({}, result, (_a = {}, _a[key] = address[key], _a)) :
+            result;
+        var _a;
+    }, {});
+}
+
+
+/***/ }),
+/* 154 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function mapFromInternalAddress(address) {
+    return {
+        id: address.id,
+        firstName: address.firstName,
+        lastName: address.lastName,
+        company: address.company,
+        address1: address.addressLine1,
+        address2: address.addressLine2,
+        city: address.city,
+        stateOrProvince: address.province,
+        stateOrProvinceCode: address.provinceCode,
+        postalCode: address.postCode,
+        country: address.country,
+        countryCode: address.countryCode,
+        phone: address.phone,
+        customFields: address.customFields,
+    };
+}
+exports.default = mapFromInternalAddress;
+
+
+/***/ }),
+/* 155 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function mapToInternalAddress(address, id) {
+    return {
+        id: id ? id : address.id,
+        firstName: address.firstName,
+        lastName: address.lastName,
+        company: address.company,
+        addressLine1: address.address1,
+        addressLine2: address.address2,
+        city: address.city,
+        province: address.stateOrProvince,
+        provinceCode: address.stateOrProvinceCode,
+        postCode: address.postalCode,
+        country: address.country,
+        countryCode: address.countryCode,
+        phone: address.phone,
+        customFields: address.customFields,
+    };
+}
+exports.default = mapToInternalAddress;
+
+
+/***/ }),
 /* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var form_poster_1 = __webpack_require__(56);
-var request_sender_1 = __webpack_require__(19);
-var script_loader_1 = __webpack_require__(36);
+var form_poster_1 = __webpack_require__(60);
+var request_sender_1 = __webpack_require__(16);
+var script_loader_1 = __webpack_require__(37);
 var checkout_1 = __webpack_require__(7);
-var registry_1 = __webpack_require__(38);
+var registry_1 = __webpack_require__(40);
 var payment_1 = __webpack_require__(13);
-var braintree_1 = __webpack_require__(39);
+var braintree_1 = __webpack_require__(41);
 var chasepay_1 = __webpack_require__(166);
 var remote_checkout_1 = __webpack_require__(25);
-var amazon_pay_1 = __webpack_require__(37);
+var amazon_pay_1 = __webpack_require__(39);
 var _1 = __webpack_require__(14);
-var customer_action_creator_1 = __webpack_require__(64);
+var customer_action_creator_1 = __webpack_require__(67);
 var strategies_1 = __webpack_require__(168);
 function createCustomerStrategyRegistry(store, client) {
     var registry = new registry_1.Registry();
@@ -6726,7 +7095,7 @@ var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(1);
 var errors_2 = __webpack_require__(12);
 var is_credit_card_like_1 = __webpack_require__(159);
-var is_vaulted_instrument_1 = __webpack_require__(40);
+var is_vaulted_instrument_1 = __webpack_require__(42);
 var payment_strategy_1 = __webpack_require__(6);
 var BraintreeCreditCardPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(BraintreeCreditCardPaymentStrategy, _super);
@@ -6818,7 +7187,7 @@ exports.default = BraintreeCreditCardPaymentStrategy;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var is_vaulted_instrument_1 = __webpack_require__(40);
+var is_vaulted_instrument_1 = __webpack_require__(42);
 function isCreditCardLike(instrument) {
     var card = instrument;
     return !is_vaulted_instrument_1.default(card) &&
@@ -6957,9 +7326,9 @@ exports.default = BraintreePaypalPaymentStrategy;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var braintree_payment_processor_1 = __webpack_require__(60);
-var braintree_script_loader_1 = __webpack_require__(62);
-var braintree_sdk_creator_1 = __webpack_require__(63);
+var braintree_payment_processor_1 = __webpack_require__(63);
+var braintree_script_loader_1 = __webpack_require__(65);
+var braintree_sdk_creator_1 = __webpack_require__(66);
 function createBraintreePaymentProcessor(scriptLoader) {
     var braintreeScriptLoader = new braintree_script_loader_1.default(scriptLoader);
     var braintreeSDKCreator = new braintree_sdk_creator_1.default(braintreeScriptLoader);
@@ -6975,10 +7344,10 @@ exports.default = createBraintreePaymentProcessor;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(19);
-var braintree_script_loader_1 = __webpack_require__(62);
-var braintree_sdk_creator_1 = __webpack_require__(63);
-var braintree_visacheckout_payment_processor_1 = __webpack_require__(61);
+var request_sender_1 = __webpack_require__(16);
+var braintree_script_loader_1 = __webpack_require__(65);
+var braintree_sdk_creator_1 = __webpack_require__(66);
+var braintree_visacheckout_payment_processor_1 = __webpack_require__(64);
 function createBraintreeVisaCheckoutPaymentProcessor(scriptLoader) {
     var braintreeScriptLoader = new braintree_script_loader_1.default(scriptLoader);
     var braintreeSDKCreator = new braintree_sdk_creator_1.default(braintreeScriptLoader);
@@ -7662,7 +8031,7 @@ exports.default = CustomerSelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var customer_strategy_actions_1 = __webpack_require__(66);
+var customer_strategy_actions_1 = __webpack_require__(69);
 var CustomerStrategyActionCreator = /** @class */ (function () {
     function CustomerStrategyActionCreator(_strategyRegistry) {
         this._strategyRegistry = _strategyRegistry;
@@ -7827,7 +8196,7 @@ exports.default = CustomerStrategySelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var customer_strategy_actions_1 = __webpack_require__(66);
+var customer_strategy_actions_1 = __webpack_require__(69);
 var customer_strategy_state_1 = __webpack_require__(179);
 function customerStrategyReducer(state, action) {
     if (state === void 0) { state = customer_strategy_state_1.DEFAULT_STATE; }
@@ -7924,16 +8293,19 @@ exports.DEFAULT_STATE = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var address_1 = __webpack_require__(15);
-function mapToInternalCustomer(customer, cart, billingAddress) {
+var address_1 = __webpack_require__(21);
+function mapToInternalCustomer(customer, billingAddress) {
+    var firstName = customer.firstName || billingAddress.firstName || '';
+    var lastName = customer.lastName || billingAddress.lastName || '';
     return {
         addresses: (customer.addresses || []).map(function (address) { return address_1.mapToInternalAddress(address); }),
-        customerId: cart.customerId,
+        customerId: customer.id,
         isGuest: customer.isGuest,
         storeCredit: customer.storeCredit,
         email: customer.email || billingAddress.email || '',
-        firstName: customer.firstName,
-        name: customer.fullName,
+        firstName: firstName,
+        lastName: lastName,
+        name: customer.fullName || [firstName, lastName].join(' '),
     };
 }
 exports.default = mapToInternalCustomer;
@@ -7946,14 +8318,14 @@ exports.default = mapToInternalCustomer;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(19);
-var script_loader_1 = __webpack_require__(36);
+var request_sender_1 = __webpack_require__(16);
+var script_loader_1 = __webpack_require__(37);
 var checkout_request_sender_1 = __webpack_require__(33);
-var registry_1 = __webpack_require__(38);
+var registry_1 = __webpack_require__(40);
 var payment_1 = __webpack_require__(13);
 var remote_checkout_1 = __webpack_require__(25);
-var amazon_pay_1 = __webpack_require__(37);
-var consignment_action_creator_1 = __webpack_require__(67);
+var amazon_pay_1 = __webpack_require__(39);
+var consignment_action_creator_1 = __webpack_require__(70);
 var strategies_1 = __webpack_require__(182);
 function createShippingStrategyRegistry(store, client) {
     var requestSender = request_sender_1.createRequestSender();
@@ -7981,7 +8353,7 @@ var amazon_pay_shipping_strategy_1 = __webpack_require__(183);
 exports.AmazonPayShippingStrategy = amazon_pay_shipping_strategy_1.default;
 var default_shipping_strategy_1 = __webpack_require__(185);
 exports.DefaultShippingStrategy = default_shipping_strategy_1.default;
-var shipping_strategy_1 = __webpack_require__(42);
+var shipping_strategy_1 = __webpack_require__(44);
 exports.ShippingStrategy = shipping_strategy_1.default;
 
 
@@ -7994,11 +8366,11 @@ exports.ShippingStrategy = shipping_strategy_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var address_1 = __webpack_require__(15);
+var address_1 = __webpack_require__(21);
 var errors_1 = __webpack_require__(1);
-var errors_2 = __webpack_require__(68);
-var shipping_strategy_actions_1 = __webpack_require__(41);
-var shipping_strategy_1 = __webpack_require__(42);
+var errors_2 = __webpack_require__(71);
+var shipping_strategy_actions_1 = __webpack_require__(43);
+var shipping_strategy_1 = __webpack_require__(44);
 var AmazonPayShippingStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(AmazonPayShippingStrategy, _super);
     function AmazonPayShippingStrategy(store, _consignmentActionCreator, _paymentMethodActionCreator, _remoteCheckoutActionCreator, _scriptLoader) {
@@ -8157,7 +8529,7 @@ exports.default = RemoteCheckoutSynchronizationError;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var shipping_strategy_1 = __webpack_require__(42);
+var shipping_strategy_1 = __webpack_require__(44);
 var DefaultShippingStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(DefaultShippingStrategy, _super);
     function DefaultShippingStrategy(store, _consignmentActionCreator) {
@@ -8247,6 +8619,7 @@ exports.default = consignmentReducer;
 function dataReducer(data, action) {
     switch (action.type) {
         case checkout_1.CheckoutActionType.LoadCheckoutSucceeded:
+        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsSucceeded:
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsSucceeded:
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded:
             return action.payload ? action.payload.consignments : data;
@@ -8261,8 +8634,11 @@ function errorsReducer(errors, action) {
     switch (action.type) {
         case checkout_1.CheckoutActionType.LoadCheckoutRequested:
         case checkout_1.CheckoutActionType.LoadCheckoutSucceeded:
+        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsSucceeded:
+        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsRequested:
             return tslib_1.__assign({}, errors, { loadError: undefined });
         case checkout_1.CheckoutActionType.LoadCheckoutFailed:
+        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsFailed:
             return tslib_1.__assign({}, errors, { loadError: action.payload });
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsRequested:
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsSucceeded:
@@ -8282,9 +8658,12 @@ function statusesReducer(statuses, action) {
     if (statuses === void 0) { statuses = DEFAULT_STATE.statuses; }
     switch (action.type) {
         case checkout_1.CheckoutActionType.LoadCheckoutRequested:
+        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsRequested:
             return tslib_1.__assign({}, statuses, { isLoading: true });
         case checkout_1.CheckoutActionType.LoadCheckoutSucceeded:
         case checkout_1.CheckoutActionType.LoadCheckoutFailed:
+        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsSucceeded:
+        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsFailed:
             return tslib_1.__assign({}, statuses, { isLoading: false });
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsRequested:
             return tslib_1.__assign({}, statuses, { isCreating: true });
@@ -8398,7 +8777,7 @@ exports.default = ShippingAddressSelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var actionTypes = __webpack_require__(69);
+var actionTypes = __webpack_require__(72);
 /**
  * @todo Convert this file into TypeScript properly
  * i.e.: Action<T>
@@ -8490,7 +8869,7 @@ exports.default = ShippingCountrySelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var actionTypes = __webpack_require__(69);
+var actionTypes = __webpack_require__(72);
 var DEFAULT_STATE = {
     errors: {},
     statuses: {},
@@ -8606,7 +8985,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var shipping_strategy_actions_1 = __webpack_require__(41);
+var shipping_strategy_actions_1 = __webpack_require__(43);
 var ShippingStrategyActionCreator = /** @class */ (function () {
     function ShippingStrategyActionCreator(_strategyRegistry) {
         this._strategyRegistry = _strategyRegistry;
@@ -8751,7 +9130,7 @@ exports.default = ShippingStrategySelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var shipping_strategy_actions_1 = __webpack_require__(41);
+var shipping_strategy_actions_1 = __webpack_require__(43);
 var shipping_strategy_state_1 = __webpack_require__(198);
 function shippingStrategyReducer(state, action) {
     if (state === void 0) { state = shipping_strategy_state_1.DEFAULT_STATE; }
@@ -8839,10 +9218,9 @@ exports.DEFAULT_STATE = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var map_to_internal_shipping_option_1 = __webpack_require__(70);
+var map_to_internal_shipping_option_1 = __webpack_require__(73);
 function mapToInternalShippingOptions(consignments) {
     return consignments.reduce(function (result, consignment) {
-        var _a;
         var shippingOptions;
         if (consignment.availableShippingOptions && consignment.availableShippingOptions.length) {
             shippingOptions = consignment.availableShippingOptions;
@@ -8854,6 +9232,7 @@ function mapToInternalShippingOptions(consignments) {
             var selectedOptionId = consignment.selectedShippingOption && consignment.selectedShippingOption.id;
             return map_to_internal_shipping_option_1.default(option, option.id === selectedOptionId);
         }), _a));
+        var _a;
     }, {});
 }
 exports.default = mapToInternalShippingOptions;
@@ -8870,7 +9249,7 @@ var afterpay_payment_strategy_1 = __webpack_require__(201);
 exports.AfterpayPaymentStrategy = afterpay_payment_strategy_1.default;
 var amazon_pay_payment_strategy_1 = __webpack_require__(202);
 exports.AmazonPayPaymentStrategy = amazon_pay_payment_strategy_1.default;
-var credit_card_payment_strategy_1 = __webpack_require__(76);
+var credit_card_payment_strategy_1 = __webpack_require__(78);
 exports.CreditCardPaymentStrategy = credit_card_payment_strategy_1.default;
 var klarna_payment_strategy_1 = __webpack_require__(203);
 exports.KlarnaPaymentStrategy = klarna_payment_strategy_1.default;
@@ -8892,11 +9271,11 @@ var sage_pay_payment_strategy_1 = __webpack_require__(210);
 exports.SagePayPaymentStrategy = sage_pay_payment_strategy_1.default;
 var wepay_payment_strategy_1 = __webpack_require__(211);
 exports.WepayPaymentStrategy = wepay_payment_strategy_1.default;
-var braintree_1 = __webpack_require__(39);
+var braintree_1 = __webpack_require__(41);
 exports.BraintreeCreditCardPaymentStrategy = braintree_1.BraintreeCreditCardPaymentStrategy;
 exports.BraintreePaypalPaymentStrategy = braintree_1.BraintreePaypalPaymentStrategy;
 exports.BraintreeVisaCheckoutPaymentStrategy = braintree_1.BraintreeVisaCheckoutPaymentStrategy;
-var square_1 = __webpack_require__(77);
+var square_1 = __webpack_require__(79);
 exports.SquarePaymentStrategy = square_1.SquarePaymentStrategy;
 
 
@@ -8957,11 +9336,10 @@ var AfterpayPaymentStrategy = /** @class */ (function (_super) {
             throw new errors_2.PaymentArgumentInvalidError(['payment.gatewayId']);
         }
         var useStoreCredit = !!payload.useStoreCredit;
-        var customerMessage = payload.customerMessage ? payload.customerMessage : '';
         var state = this._store.getState();
         var config = state.config.getStoreConfig();
         var storeCountryName = config ? config.storeProfile.storeCountry : '';
-        return this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit: useStoreCredit, customerMessage: customerMessage }))
+        return this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit: useStoreCredit }))
             .then(function (state) { return _this._checkoutValidator.validate(state.checkout.getCheckout(), options); })
             .then(function () { return _this._store.dispatch(_this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)); })
             .then(function (state) { return _this._displayModal(storeCountryName, state.paymentMethods.getPaymentMethod(paymentId)); })
@@ -8986,7 +9364,6 @@ var AfterpayPaymentStrategy = /** @class */ (function (_super) {
             }
             var orderPayload = {
                 useStoreCredit: afterpay.settings.useStoreCredit,
-                customerMessage: afterpay.settings.customerMessage,
             };
             var paymentPayload = {
                 methodId: payment.providerId,
@@ -9029,9 +9406,9 @@ exports.default = AfterpayPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var address_1 = __webpack_require__(15);
+var address_1 = __webpack_require__(21);
 var errors_1 = __webpack_require__(1);
-var errors_2 = __webpack_require__(68);
+var errors_2 = __webpack_require__(71);
 var payment_strategy_1 = __webpack_require__(6);
 var AmazonPayPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(AmazonPayPaymentStrategy, _super);
@@ -9372,7 +9749,7 @@ exports.default = OfflinePaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(12);
-var paymentStatusTypes = __webpack_require__(20);
+var paymentStatusTypes = __webpack_require__(19);
 var payment_strategy_1 = __webpack_require__(6);
 var OffsitePaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(OffsitePaymentStrategy, _super);
@@ -9418,7 +9795,7 @@ exports.default = OffsitePaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(1);
-var paymentStatusTypes = __webpack_require__(20);
+var paymentStatusTypes = __webpack_require__(19);
 var payment_strategy_1 = __webpack_require__(6);
 /**
  * @todo Convert this file into TypeScript properly
@@ -9522,7 +9899,7 @@ exports.default = PaypalExpressPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(12);
-var paymentStatusTypes = __webpack_require__(20);
+var paymentStatusTypes = __webpack_require__(19);
 var payment_strategy_1 = __webpack_require__(6);
 var PaypalProPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(PaypalProPaymentStrategy, _super);
@@ -9567,7 +9944,7 @@ var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
 var errors_1 = __webpack_require__(1);
 var errors_2 = __webpack_require__(12);
-var paymentStatusTypes = __webpack_require__(20);
+var paymentStatusTypes = __webpack_require__(19);
 var payment_strategy_1 = __webpack_require__(6);
 var SagePayPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(SagePayPaymentStrategy, _super);
@@ -9624,7 +10001,7 @@ exports.default = SagePayPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var credit_card_payment_strategy_1 = __webpack_require__(76);
+var credit_card_payment_strategy_1 = __webpack_require__(78);
 var WepayPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(WepayPaymentStrategy, _super);
     function WepayPaymentStrategy(store, orderActionCreator, paymentActionCreator, _wepayRiskClient) {
@@ -9789,7 +10166,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var utility_1 = __webpack_require__(8);
-var actionTypes = __webpack_require__(73);
+var actionTypes = __webpack_require__(35);
 var DEFAULT_STATE = {
     errors: {},
     statuses: {},
@@ -9951,7 +10328,7 @@ exports.default = PaymentMethodSelector;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
-var payment_actions_1 = __webpack_require__(71);
+var payment_actions_1 = __webpack_require__(74);
 function paymentReducer(state, action) {
     if (state === void 0) { state = {}; }
     var reducer = data_store_1.combineReducers({
@@ -9980,8 +10357,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
 var selector_1 = __webpack_require__(3);
-var payment_method_types_1 = __webpack_require__(35);
-var payment_status_types_1 = __webpack_require__(20);
+var payment_method_types_1 = __webpack_require__(36);
+var payment_status_types_1 = __webpack_require__(19);
 var PaymentSelector = /** @class */ (function () {
     function PaymentSelector(_checkout, _order) {
         this._checkout = _checkout;
@@ -10074,11 +10451,11 @@ var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var concat_1 = __webpack_require__(28);
 var empty_1 = __webpack_require__(220);
-var from_1 = __webpack_require__(78);
+var from_1 = __webpack_require__(80);
 var Observable_1 = __webpack_require__(5);
 var errors_1 = __webpack_require__(1);
-var errors_2 = __webpack_require__(59);
-var payment_strategy_actions_1 = __webpack_require__(79);
+var errors_2 = __webpack_require__(62);
+var payment_strategy_actions_1 = __webpack_require__(81);
 var PaymentStrategyActionCreator = /** @class */ (function () {
     function PaymentStrategyActionCreator(_strategyRegistry, _orderActionCreator) {
         this._strategyRegistry = _strategyRegistry;
@@ -10231,8 +10608,8 @@ module.exports = require("rxjs/observable/empty");
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var payment_strategy_actions_1 = __webpack_require__(79);
-var payment_strategy_state_1 = __webpack_require__(80);
+var payment_strategy_actions_1 = __webpack_require__(81);
+var payment_strategy_state_1 = __webpack_require__(82);
 function paymentStrategyReducer(state, action) {
     if (state === void 0) { state = payment_strategy_state_1.DEFAULT_STATE; }
     var reducer = data_store_1.combineReducers({
@@ -10317,7 +10694,7 @@ function statusesReducer(statuses, action) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var selector_1 = __webpack_require__(3);
-var payment_strategy_state_1 = __webpack_require__(80);
+var payment_strategy_state_1 = __webpack_require__(82);
 var PaymentStrategySelector = /** @class */ (function () {
     function PaymentStrategySelector(_paymentStrategies) {
         if (_paymentStrategies === void 0) { _paymentStrategies = payment_strategy_state_1.DEFAULT_STATE; }
@@ -10683,370 +11060,12 @@ exports.default = mapToDiscountNotifications;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var address_1 = __webpack_require__(15);
-function mapToInternalQuote(checkout, shippingAddress) {
-    var consignment = checkout.consignments && checkout.consignments[0];
-    return {
-        orderComment: checkout.customerMessage,
-        shippingOption: consignment && consignment.selectedShippingOption ? consignment.selectedShippingOption.id : undefined,
-        billingAddress: checkout.billingAddress ? address_1.mapToInternalAddress(checkout.billingAddress) : {},
-        shippingAddress: shippingAddress && address_1.mapToInternalAddress(shippingAddress),
-    };
-}
-exports.default = mapToInternalQuote;
-
-
-/***/ }),
-/* 232 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
-/**
- * Responsible for checking the statuses of various asynchronous actions related
- * to checkout.
- *
- * This object has a set of getters that return true if an action is in
- * progress. For example, you can check whether a customer is submitting an
- * order and waiting for the request to complete.
- */
-var CheckoutStoreStatusSelector = /** @class */ (function () {
-    /**
-     * @internal
-     */
-    function CheckoutStoreStatusSelector(selectors) {
-        this._billingAddress = selectors.billingAddress;
-        this._cart = selectors.cart;
-        this._checkout = selectors.checkout;
-        this._config = selectors.config;
-        this._countries = selectors.countries;
-        this._coupons = selectors.coupons;
-        this._customerStrategies = selectors.customerStrategies;
-        this._giftCertificates = selectors.giftCertificates;
-        this._instruments = selectors.instruments;
-        this._order = selectors.order;
-        this._paymentMethods = selectors.paymentMethods;
-        this._paymentStrategies = selectors.paymentStrategies;
-        this._shippingCountries = selectors.shippingCountries;
-        this._shippingOptions = selectors.shippingOptions;
-        this._shippingStrategies = selectors.shippingStrategies;
-    }
-    /**
-     * Checks whether any checkout action is pending.
-     *
-     * @returns True if there is a pending action, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isPending = function () {
-        return this.isLoadingCheckout() ||
-            this.isSubmittingOrder() ||
-            this.isFinalizingOrder() ||
-            this.isLoadingOrder() ||
-            this.isLoadingCart() ||
-            this.isLoadingBillingCountries() ||
-            this.isLoadingShippingCountries() ||
-            this.isLoadingPaymentMethods() ||
-            this.isLoadingPaymentMethod() ||
-            this.isInitializingPayment() ||
-            this.isLoadingShippingOptions() ||
-            this.isSelectingShippingOption() ||
-            this.isSigningIn() ||
-            this.isSigningOut() ||
-            this.isInitializingCustomer() ||
-            this.isUpdatingBillingAddress() ||
-            this.isUpdatingShippingAddress() ||
-            this.isInitializingShipping() ||
-            this.isApplyingCoupon() ||
-            this.isRemovingCoupon() ||
-            this.isApplyingGiftCertificate() ||
-            this.isRemovingGiftCertificate() ||
-            this.isLoadingInstruments() ||
-            this.isDeletingInstrument() ||
-            this.isLoadingConfig() ||
-            this.isCustomerStepPending() ||
-            this.isPaymentStepPending();
-    };
-    /**
-     * Checks whether the current checkout is loading.
-     *
-     * @returns True if the current checkout is loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingCheckout = function () {
-        return this._checkout.isLoading();
-    };
-    /**
-     * Checks whether the current order is submitting.
-     *
-     * @returns True if the current order is submitting, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isSubmittingOrder = function () {
-        return this._paymentStrategies.isExecuting();
-    };
-    /**
-     * Checks whether the current order is finalizing.
-     *
-     * @returns True if the current order is finalizing, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isFinalizingOrder = function () {
-        return this._paymentStrategies.isFinalizing();
-    };
-    /**
-     * Checks whether the current order is loading.
-     *
-     * @returns True if the current order is loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingOrder = function () {
-        return this._order.isLoading();
-    };
-    /**
-     * Checks whether the current cart is loading.
-     *
-     * @returns True if the current cart is loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingCart = function () {
-        return this._cart.isLoading();
-    };
-    /**
-     * Checks whether billing countries are loading.
-     *
-     * @returns True if billing countries are loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingBillingCountries = function () {
-        return this._countries.isLoading();
-    };
-    /**
-     * Checks whether shipping countries are loading.
-     *
-     * @returns True if shipping countries are loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingShippingCountries = function () {
-        return this._shippingCountries.isLoading();
-    };
-    /**
-     * Checks whether payment methods are loading.
-     *
-     * @returns True if payment methods are loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingPaymentMethods = function () {
-        return this._paymentMethods.isLoading();
-    };
-    /**
-     * Checks whether a specific or any payment method is loading.
-     *
-     * The method returns true if no ID is provided and at least one payment
-     * method is loading.
-     *
-     * @param methodId - The identifier of the payment method to check.
-     * @returns True if the payment method is loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingPaymentMethod = function (methodId) {
-        return this._paymentMethods.isLoadingMethod(methodId);
-    };
-    /**
-     * Checks whether a specific or any payment method is initializing.
-     *
-     * The method returns true if no ID is provided and at least one payment
-     * method is initializing.
-     *
-     * @param methodId - The identifier of the payment method to check.
-     * @returns True if the payment method is initializing, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isInitializingPayment = function (methodId) {
-        return this._paymentStrategies.isInitializing(methodId);
-    };
-    /**
-     * Checks whether the current customer is signing in.
-     *
-     * If an ID is provided, the method also checks whether the customer is
-     * signing in using a specific customer method with the same ID.
-     *
-     * @param methodId - The identifier of the method used for signing in the
-     * current customer.
-     * @returns True if the customer is signing in, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isSigningIn = function (methodId) {
-        return this._customerStrategies.isSigningIn(methodId);
-    };
-    /**
-     * Checks whether the current customer is signing out.
-     *
-     * If an ID is provided, the method also checks whether the customer is
-     * signing out using a specific customer method with the same ID.
-     *
-     * @param methodId - The identifier of the method used for signing out the
-     * current customer.
-     * @returns True if the customer is signing out, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isSigningOut = function (methodId) {
-        return this._customerStrategies.isSigningOut(methodId);
-    };
-    /**
-     * Checks whether the customer step is initializing.
-     *
-     * If an ID is provided, the method also checks whether the customer step is
-     * initializing using a specific customer method with the same ID.
-     *
-     * @param methodId - The identifier of the method used for initializing the
-     * customer step of checkout.
-     * @returns True if the customer step is initializing, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isInitializingCustomer = function (methodId) {
-        return this._customerStrategies.isInitializing(methodId);
-    };
-    /**
-     * Checks whether shipping options are loading.
-     *
-     * @returns True if shipping options are loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingShippingOptions = function () {
-        return this._shippingOptions.isLoading();
-    };
-    /**
-     * Checks whether the current customer is selecting a shipping option.
-     *
-     * @returns True if selecting a shipping option, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isSelectingShippingOption = function () {
-        return this._shippingStrategies.isSelectingOption();
-    };
-    /**
-     * Checks whether the current customer is updating their billing address.
-     *
-     * @returns True if updating their billing address, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isUpdatingBillingAddress = function () {
-        return this._billingAddress.isUpdating();
-    };
-    /**
-     * Checks whether the current customer is updating their shipping address.
-     *
-     * @returns True if updating their shipping address, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isUpdatingShippingAddress = function () {
-        return this._shippingStrategies.isUpdatingAddress();
-    };
-    /**
-     * Checks whether the shipping step of a checkout process is initializing.
-     *
-     * If an identifier is provided, the method also checks whether the shipping
-     * step is initializing using a specific shipping method with the same
-     * identifier.
-     *
-     * @param methodId - The identifer of the initialization method to check.
-     * @returns True if the shipping step is initializing, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isInitializingShipping = function (methodId) {
-        return this._shippingStrategies.isInitializing(methodId);
-    };
-    /**
-     * Checks whether the current customer is applying a coupon code.
-     *
-     * @returns True if applying a coupon code, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isApplyingCoupon = function () {
-        return this._coupons.isApplying();
-    };
-    /**
-     * Checks whether the current customer is removing a coupon code.
-     *
-     * @returns True if removing a coupon code, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isRemovingCoupon = function () {
-        return this._coupons.isRemoving();
-    };
-    /**
-     * Checks whether the current customer is applying a gift certificate.
-     *
-     * @returns True if applying a gift certificate, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isApplyingGiftCertificate = function () {
-        return this._giftCertificates.isApplying();
-    };
-    /**
-     * Checks whether the current customer is removing a gift certificate.
-     *
-     * @returns True if removing a gift certificate, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isRemovingGiftCertificate = function () {
-        return this._giftCertificates.isRemoving();
-    };
-    /**
-     * Checks whether the current customer's payment instruments are loading.
-     *
-     * @returns True if payment instruments are loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingInstruments = function () {
-        return this._instruments.isLoading();
-    };
-    /**
-     * Checks whether the current customer is deleting a payment instrument.
-     *
-     * @returns True if deleting a payment instrument, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isDeletingInstrument = function (instrumentId) {
-        return this._instruments.isDeleting(instrumentId);
-    };
-    /**
-     * Checks whether the checkout configuration of a store is loading.
-     *
-     * @returns True if the configuration is loading, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isLoadingConfig = function () {
-        return this._config.isLoading();
-    };
-    /**
-     * Checks whether the customer step of a checkout is in a pending state.
-     *
-     * The customer step is considered to be pending if it is in the process of
-     * initializing, signing in, signing out, and/or interacting with a customer
-     * widget.
-     *
-     * @returns True if the customer step is pending, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isCustomerStepPending = function () {
-        return this._customerStrategies.isInitializing() ||
-            this._customerStrategies.isSigningIn() ||
-            this._customerStrategies.isSigningOut() ||
-            this._customerStrategies.isWidgetInteracting();
-    };
-    /**
-     * Checks whether the payment step of a checkout is in a pending state.
-     *
-     * The payment step is considered to be pending if it is in the process of
-     * initializing, submitting an order, finalizing an order, and/or
-     * interacting with a payment widget.
-     *
-     * @returns True if the payment step is pending, otherwise false.
-     */
-    CheckoutStoreStatusSelector.prototype.isPaymentStepPending = function () {
-        return this._paymentStrategies.isInitializing() ||
-            this._paymentStrategies.isExecuting() ||
-            this._paymentStrategies.isFinalizing() ||
-            this._paymentStrategies.isWidgetInteracting();
-    };
-    CheckoutStoreStatusSelector = tslib_1.__decorate([
-        selector_1.selector
-    ], CheckoutStoreStatusSelector);
-    return CheckoutStoreStatusSelector;
-}());
-exports.default = CheckoutStoreStatusSelector;
-
-
-/***/ }),
-/* 233 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var cart_changed_error_1 = __webpack_require__(234);
+var cart_changed_error_1 = __webpack_require__(232);
 exports.CartChangedError = cart_changed_error_1.default;
 
 
 /***/ }),
-/* 234 */
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11067,7 +11086,7 @@ exports.default = CartChangedError;
 
 
 /***/ }),
-/* 235 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11075,14 +11094,19 @@ exports.default = CartChangedError;
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var config_actions_1 = __webpack_require__(86);
+var config_actions_1 = __webpack_require__(87);
 var ConfigActionCreator = /** @class */ (function () {
     function ConfigActionCreator(_checkoutClient) {
         this._checkoutClient = _checkoutClient;
     }
     ConfigActionCreator.prototype.loadConfig = function (options) {
         var _this = this;
-        return Observable_1.Observable.create(function (observer) {
+        return function (store) { return Observable_1.Observable.create(function (observer) {
+            var state = store.getState();
+            var config = state.config.getConfig();
+            if (config) {
+                return observer.complete();
+            }
             observer.next(data_store_1.createAction(config_actions_1.ConfigActionType.LoadConfigRequested));
             _this._checkoutClient.loadConfig(options)
                 .then(function (response) {
@@ -11092,7 +11116,7 @@ var ConfigActionCreator = /** @class */ (function () {
                 .catch(function (response) {
                 observer.error(data_store_1.createErrorAction(config_actions_1.ConfigActionType.LoadConfigFailed, response));
             });
-        });
+        }); };
     };
     return ConfigActionCreator;
 }());
@@ -11100,7 +11124,7 @@ exports.default = ConfigActionCreator;
 
 
 /***/ }),
-/* 236 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11136,7 +11160,7 @@ exports.default = ConfigSelector;
 
 
 /***/ }),
-/* 237 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11144,7 +11168,7 @@ exports.default = ConfigSelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var config_actions_1 = __webpack_require__(86);
+var config_actions_1 = __webpack_require__(87);
 var DEFAULT_STATE = {
     errors: {},
     statuses: {},
@@ -11193,7 +11217,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 238 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11221,7 +11245,7 @@ exports.default = ConfigRequestSender;
 
 
 /***/ }),
-/* 239 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11229,7 +11253,7 @@ exports.default = ConfigRequestSender;
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var actionTypes = __webpack_require__(87);
+var actionTypes = __webpack_require__(88);
 /**
  * @todo Convert this file into TypeScript properly
  */
@@ -11257,7 +11281,7 @@ exports.default = CountryActionCreator;
 
 
 /***/ }),
-/* 240 */
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11282,7 +11306,7 @@ exports.default = CountryRequestSender;
 
 
 /***/ }),
-/* 241 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11312,7 +11336,7 @@ exports.default = CountrySelector;
 
 
 /***/ }),
-/* 242 */
+/* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11320,7 +11344,7 @@ exports.default = CountrySelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var actionTypes = __webpack_require__(87);
+var actionTypes = __webpack_require__(88);
 var DEFAULT_STATE = {
     errors: {},
     statuses: {},
@@ -11374,30 +11398,30 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 243 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(19);
-var billing_1 = __webpack_require__(21);
+var request_sender_1 = __webpack_require__(16);
+var billing_1 = __webpack_require__(20);
 var log_1 = __webpack_require__(92);
 var utility_1 = __webpack_require__(8);
 var config_1 = __webpack_require__(29);
-var coupon_1 = __webpack_require__(16);
+var coupon_1 = __webpack_require__(17);
 var customer_1 = __webpack_require__(14);
 var geography_1 = __webpack_require__(30);
 var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
-var instrument_1 = __webpack_require__(43);
-var shipping_1 = __webpack_require__(17);
-var checkout_action_creator_1 = __webpack_require__(45);
+var instrument_1 = __webpack_require__(45);
+var shipping_1 = __webpack_require__(18);
+var checkout_action_creator_1 = __webpack_require__(47);
 var checkout_request_sender_1 = __webpack_require__(33);
-var checkout_service_1 = __webpack_require__(52);
-var checkout_validator_1 = __webpack_require__(84);
-var create_checkout_client_1 = __webpack_require__(85);
-var create_checkout_store_1 = __webpack_require__(89);
+var checkout_service_1 = __webpack_require__(55);
+var checkout_validator_1 = __webpack_require__(58);
+var create_checkout_client_1 = __webpack_require__(86);
+var create_checkout_store_1 = __webpack_require__(90);
 /**
  * Creates an instance of `CheckoutService`.
  *
@@ -11434,7 +11458,7 @@ exports.default = createCheckoutService;
 
 
 /***/ }),
-/* 244 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11484,11 +11508,11 @@ var ConsoleLogger = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             messages[_i - 1] = arguments[_i];
         }
-        var _a;
         if (!this._console || !this._console[type]) {
             return;
         }
         (_a = this._console[type]).call.apply(_a, [this._console].concat(messages));
+        var _a;
     };
     return ConsoleLogger;
 }());
@@ -11496,7 +11520,7 @@ exports.default = ConsoleLogger;
 
 
 /***/ }),
-/* 245 */
+/* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11516,7 +11540,7 @@ exports.default = NoopLogger;
 
 
 /***/ }),
-/* 246 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11525,9 +11549,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
-var date_time_1 = __webpack_require__(247);
+var date_time_1 = __webpack_require__(245);
 var errors_1 = __webpack_require__(1);
-var actionTypes = __webpack_require__(88);
+var actionTypes = __webpack_require__(89);
 var InstrumentActionCreator = /** @class */ (function () {
     function InstrumentActionCreator(_instrumentRequestSender) {
         this._instrumentRequestSender = _instrumentRequestSender;
@@ -11630,20 +11654,20 @@ exports.default = InstrumentActionCreator;
 
 
 /***/ }),
-/* 247 */
+/* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var add_minutes_1 = __webpack_require__(248);
+var add_minutes_1 = __webpack_require__(246);
 exports.addMinutes = add_minutes_1.default;
-var is_future_1 = __webpack_require__(249);
+var is_future_1 = __webpack_require__(247);
 exports.isFuture = is_future_1.default;
 
 
 /***/ }),
-/* 248 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11658,7 +11682,7 @@ exports.default = addMinutes;
 
 
 /***/ }),
-/* 249 */
+/* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11671,18 +11695,20 @@ exports.default = isFuture;
 
 
 /***/ }),
-/* 250 */
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var address_1 = __webpack_require__(15);
+var address_1 = __webpack_require__(21);
+var instrument_response_transformer_1 = __webpack_require__(249);
 var InstrumentRequestSender = /** @class */ (function () {
     function InstrumentRequestSender(_client, _requestSender) {
         this._client = _client;
         this._requestSender = _requestSender;
+        this._transformer = new instrument_response_transformer_1.default();
     }
     InstrumentRequestSender.prototype.getVaultAccessToken = function (_a) {
         var timeout = (_a === void 0 ? {} : _a).timeout;
@@ -11700,10 +11726,10 @@ var InstrumentRequestSender = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             _this._client.deleteShopperInstrument(payload, function (error, response) {
                 if (error) {
-                    reject(_this._transformResponse(error));
+                    reject(_this._transformer.transformErrorResponse(error));
                 }
                 else {
-                    resolve(_this._transformResponse(response));
+                    resolve(_this._transformer.transformResponse(response));
                 }
             });
         });
@@ -11713,10 +11739,10 @@ var InstrumentRequestSender = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             _this._client.loadInstruments(requestContext, function (error, response) {
                 if (error) {
-                    reject(_this._transformResponse(error));
+                    reject(_this._transformer.transformErrorResponse(error));
                 }
                 else {
-                    resolve(_this._transformResponse(response));
+                    resolve(_this._transformer.transformResponse(response));
                 }
             });
         });
@@ -11727,15 +11753,54 @@ var InstrumentRequestSender = /** @class */ (function () {
         return new Promise(function (resolve, reject) {
             _this._client.loadInstrumentsWithAddress(payload, function (error, response) {
                 if (error) {
-                    reject(_this._transformResponse(error));
+                    reject(_this._transformer.transformErrorResponse(error));
                 }
                 else {
-                    resolve(_this._transformResponse(response));
+                    resolve(_this._transformer.transformResponse(response));
                 }
             });
         });
     };
-    InstrumentRequestSender.prototype._transformResponse = function (_a) {
+    return InstrumentRequestSender;
+}());
+exports.default = InstrumentRequestSender;
+
+
+/***/ }),
+/* 249 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var InstrumentResponseTransformer = /** @class */ (function () {
+    function InstrumentResponseTransformer() {
+    }
+    InstrumentResponseTransformer.prototype.transformResponse = function (response) {
+        var payload = this._transformResponse(response);
+        var vaulted_instruments = payload.body.vaulted_instruments;
+        payload.body = {
+            vaultedInstruments: this._transformVaultedInstruments(vaulted_instruments),
+        };
+        return payload;
+    };
+    InstrumentResponseTransformer.prototype.transformErrorResponse = function (response) {
+        return this._transformResponse(response);
+    };
+    InstrumentResponseTransformer.prototype._transformVaultedInstruments = function (vaultedInstruments) {
+        if (vaultedInstruments === void 0) { vaultedInstruments = []; }
+        return vaultedInstruments.map(function (instrument) { return ({
+            bigpayToken: instrument.bigpay_token,
+            provider: instrument.provider,
+            iin: instrument.iin,
+            last4: instrument.last_4,
+            expiryMonth: instrument.expiry_month,
+            expiryYear: instrument.expiry_year,
+            brand: instrument.brand,
+            trustedShippingAddress: instrument.trusted_shipping_address,
+        }); });
+    };
+    InstrumentResponseTransformer.prototype._transformResponse = function (_a) {
         var body = _a.data, status = _a.status, statusText = _a.statusText;
         return {
             headers: {},
@@ -11744,13 +11809,13 @@ var InstrumentRequestSender = /** @class */ (function () {
             statusText: statusText,
         };
     };
-    return InstrumentRequestSender;
+    return InstrumentResponseTransformer;
 }());
-exports.default = InstrumentRequestSender;
+exports.default = InstrumentResponseTransformer;
 
 
 /***/ }),
-/* 251 */
+/* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11790,7 +11855,7 @@ exports.default = InstrumentSelector;
 
 
 /***/ }),
-/* 252 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11798,7 +11863,7 @@ exports.default = InstrumentSelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var actionTypes = __webpack_require__(88);
+var actionTypes = __webpack_require__(89);
 var DEFAULT_STATE = {
     data: [],
     errors: {},
@@ -11819,10 +11884,10 @@ function dataReducer(data, action) {
     if (data === void 0) { data = DEFAULT_STATE.data; }
     switch (action.type) {
         case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
-            return action.payload.vaulted_instruments || [];
+            return action.payload.vaultedInstruments || [];
         case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
             return data.filter(function (instrument) {
-                return instrument.bigpay_token !== action.meta.instrumentId;
+                return instrument.bigpayToken !== action.meta.instrumentId;
             });
         default:
             return data;
@@ -11874,15 +11939,15 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 253 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var from_1 = __webpack_require__(78);
-var operators_1 = __webpack_require__(254);
+var from_1 = __webpack_require__(80);
+var operators_1 = __webpack_require__(253);
 function createActionTransformer(requestErrorFactory) {
     return function (action$) { return from_1.from(action$).pipe(operators_1.catchError(function (action) {
         if (action instanceof Error || action.payload instanceof Error) {
@@ -11906,31 +11971,31 @@ function isResponse(object) {
 
 
 /***/ }),
-/* 254 */
+/* 253 */
 /***/ (function(module, exports) {
 
 module.exports = require("rxjs/operators");
 
 /***/ }),
-/* 255 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
-var billing_1 = __webpack_require__(21);
+var billing_1 = __webpack_require__(20);
 var cart_1 = __webpack_require__(9);
 var config_1 = __webpack_require__(29);
-var coupon_1 = __webpack_require__(16);
+var coupon_1 = __webpack_require__(17);
 var customer_1 = __webpack_require__(14);
 var geography_1 = __webpack_require__(30);
 var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
-var instrument_1 = __webpack_require__(43);
+var instrument_1 = __webpack_require__(45);
 var remote_checkout_1 = __webpack_require__(25);
-var shipping_1 = __webpack_require__(17);
-var checkout_reducer_1 = __webpack_require__(256);
+var shipping_1 = __webpack_require__(18);
+var checkout_reducer_1 = __webpack_require__(255);
 function createCheckoutStoreReducer() {
     return data_store_1.combineReducers({
         billingAddress: billing_1.billingAddressReducer,
@@ -11957,7 +12022,7 @@ exports.default = createCheckoutStoreReducer;
 
 
 /***/ }),
-/* 256 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11966,10 +12031,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var lodash_1 = __webpack_require__(4);
-var billing_1 = __webpack_require__(21);
-var coupon_1 = __webpack_require__(16);
+var billing_1 = __webpack_require__(20);
+var coupon_1 = __webpack_require__(17);
 var order_1 = __webpack_require__(10);
-var shipping_1 = __webpack_require__(17);
+var shipping_1 = __webpack_require__(18);
 var checkout_actions_1 = __webpack_require__(31);
 var DEFAULT_STATE = {
     errors: {},
@@ -11988,6 +12053,7 @@ exports.default = checkoutReducer;
 function dataReducer(data, action) {
     switch (action.type) {
         case checkout_actions_1.CheckoutActionType.LoadCheckoutSucceeded:
+        case checkout_actions_1.CheckoutActionType.UpdateCheckoutSucceeded:
         case billing_1.BillingAddressActionType.UpdateBillingAddressSucceeded:
         case coupon_1.CouponActionType.ApplyCouponSucceeded:
         case coupon_1.CouponActionType.RemoveCouponSucceeded:
@@ -12013,6 +12079,11 @@ function errorsReducer(errors, action) {
             return tslib_1.__assign({}, errors, { loadError: undefined });
         case checkout_actions_1.CheckoutActionType.LoadCheckoutFailed:
             return tslib_1.__assign({}, errors, { loadError: action.payload });
+        case checkout_actions_1.CheckoutActionType.UpdateCheckoutRequested:
+        case checkout_actions_1.CheckoutActionType.UpdateCheckoutSucceeded:
+            return tslib_1.__assign({}, errors, { updateError: undefined });
+        case checkout_actions_1.CheckoutActionType.UpdateCheckoutFailed:
+            return tslib_1.__assign({}, errors, { updateError: action.payload });
         default:
             return errors;
     }
@@ -12025,6 +12096,11 @@ function statusesReducer(statuses, action) {
         case checkout_actions_1.CheckoutActionType.LoadCheckoutFailed:
         case checkout_actions_1.CheckoutActionType.LoadCheckoutSucceeded:
             return tslib_1.__assign({}, statuses, { isLoading: false });
+        case checkout_actions_1.CheckoutActionType.UpdateCheckoutRequested:
+            return tslib_1.__assign({}, statuses, { isUpdating: true });
+        case checkout_actions_1.CheckoutActionType.UpdateCheckoutFailed:
+        case checkout_actions_1.CheckoutActionType.UpdateCheckoutSucceeded:
+            return tslib_1.__assign({}, statuses, { isUpdating: false });
         default:
             return statuses;
     }
@@ -12032,18 +12108,18 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 257 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var form_selector_1 = __webpack_require__(258);
+var form_selector_1 = __webpack_require__(257);
 exports.FormSelector = form_selector_1.default;
 
 
 /***/ }),
-/* 258 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12127,7 +12203,7 @@ exports.default = FormSelector;
 
 
 /***/ }),
-/* 259 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12135,7 +12211,7 @@ exports.default = FormSelector;
 Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="./messageformat.d.ts" />
 var lodash_1 = __webpack_require__(4);
-var MessageFormat = __webpack_require__(263);
+var MessageFormat = __webpack_require__(262);
 var DEFAULT_LOCALE = 'en';
 var KEY_PREFIX = 'optimized_checkout';
 /**
@@ -12280,18 +12356,31 @@ exports.default = LanguageService;
 
 
 /***/ }),
+/* 259 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var request_sender_1 = __webpack_require__(16);
+exports.createTimeout = request_sender_1.createTimeout;
+var checkout_1 = __webpack_require__(7);
+exports.createCheckoutService = checkout_1.createCheckoutService;
+var locale_1 = __webpack_require__(260);
+exports.createLanguageService = locale_1.createLanguageService;
+
+
+/***/ }),
 /* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(19);
-exports.createTimeout = request_sender_1.createTimeout;
-var checkout_1 = __webpack_require__(7);
-exports.createCheckoutService = checkout_1.createCheckoutService;
-var locale_1 = __webpack_require__(261);
-exports.createLanguageService = locale_1.createLanguageService;
+var create_language_service_1 = __webpack_require__(261);
+exports.createLanguageService = create_language_service_1.default;
+var language_service_1 = __webpack_require__(258);
+exports.LanguageService = language_service_1.default;
 
 
 /***/ }),
@@ -12301,21 +12390,8 @@ exports.createLanguageService = locale_1.createLanguageService;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var create_language_service_1 = __webpack_require__(262);
-exports.createLanguageService = create_language_service_1.default;
-var language_service_1 = __webpack_require__(259);
-exports.LanguageService = language_service_1.default;
-
-
-/***/ }),
-/* 262 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var log_1 = __webpack_require__(92);
-var language_service_1 = __webpack_require__(259);
+var language_service_1 = __webpack_require__(258);
 /**
  * Creates an instance of `LanguageService`.
  *
@@ -12337,7 +12413,7 @@ exports.default = createLanguageService;
 
 
 /***/ }),
-/* 263 */
+/* 262 */
 /***/ (function(module, exports) {
 
 module.exports = require("messageformat");

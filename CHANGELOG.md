@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.27.0"></a>
+# [0.27.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.26.1...v0.27.0) (2018-07-04)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-2960 Fix TS compilation issue ([ff3fc8a](https://github.com/bigcommerce/checkout-sdk-js/commit/ff3fc8a))
+* **order:** CHECKOUT-3314 Map fields for digital items ([a289dc8](https://github.com/bigcommerce/checkout-sdk-js/commit/a289dc8))
+* **payment:** CHECKOUT-3311 Send token and callbackUrl to bigpay ([a5f2df1](https://github.com/bigcommerce/checkout-sdk-js/commit/a5f2df1))
+* **payment:** CHECKOUT-3319 Append returnUrl for Adyen ([3158c9b](https://github.com/bigcommerce/checkout-sdk-js/commit/3158c9b))
+* **shipping:** CHECKOUT-3276 Create specific action for loading shipping options ([33cd64a](https://github.com/bigcommerce/checkout-sdk-js/commit/33cd64a))
+* **shopper:** CHECKOUT-3319 Use customer information from billing address ([11f5039](https://github.com/bigcommerce/checkout-sdk-js/commit/11f5039))
+
+
+### Code Refactoring
+
+* **cart:** CHECKOUT-3053 Return `Cart` object in different schema ([1b65671](https://github.com/bigcommerce/checkout-sdk-js/commit/1b65671))
+* **checkout:** CHECKOUT-3054 Return `Coupon` and `GiftCertificate` objects in different schema ([69a8431](https://github.com/bigcommerce/checkout-sdk-js/commit/69a8431))
+* **checkout:** CHECKOUT-3282 Remove `loadConfig` method ([2426e19](https://github.com/bigcommerce/checkout-sdk-js/commit/2426e19))
+* **order:** CHECKOUT-3056 Return `Order` object in different schema ([a316188](https://github.com/bigcommerce/checkout-sdk-js/commit/a316188))
+* **payment:** CHECKOUT-3205 Transform snakecase payloads to camel ([d7a3876](https://github.com/bigcommerce/checkout-sdk-js/commit/d7a3876))
+
+
+### Features
+
+* **checkout:** CHECKOUT-3312 Provide updateCheckout method ([c9dd542](https://github.com/bigcommerce/checkout-sdk-js/commit/c9dd542))
+* **common:** CHECKOUT-327 Export CacheKeyResolver ([18519d6](https://github.com/bigcommerce/checkout-sdk-js/commit/18519d6))
+* **common:** CHECKOUT-3274 Remove quote mapper ([82de622](https://github.com/bigcommerce/checkout-sdk-js/commit/82de622))
+* **common:** CHECKOUT-3275 Remove Address mapper ([93bfed6](https://github.com/bigcommerce/checkout-sdk-js/commit/93bfed6))
+* **shipping:** CHECKOUT-3276 Expose consignments via checkoutStoreSelector ([6950ce9](https://github.com/bigcommerce/checkout-sdk-js/commit/6950ce9))
+* **shopper:** CHECKOUT-3277 Remove cart dependency from customer mapper ([a5797d4](https://github.com/bigcommerce/checkout-sdk-js/commit/a5797d4))
+
+
+### BREAKING CHANGES
+
+* **payment:** Instrument interfaces now respond with camel case
+object properties
+* **checkout:** `loadConfig` method has been removed. Configuration
+data is now automatically loaded when you call `loadCheckout` or
+`loadOrder`.
+* **checkout:** `getCoupons` and `getGiftCertificate` method now returns `Coupons` and `GiftCertificate` objects with different properties respectively.
+* **cart:** `getCart` method now returns `Cart` object with different properties.
+* **order:** `getOrder` method now returns `Order` object with different properties.
+It also returns `undefined` until the order is created.
+
+
+
 <a name="0.26.1"></a>
 ## [0.26.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.26.0...v0.26.1) (2018-06-27)
 

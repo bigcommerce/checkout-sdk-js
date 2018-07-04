@@ -10,6 +10,16 @@
 
 ---
 
+## Type aliases
+
+<a id="orderpayments"></a>
+
+###  OrderPayments
+
+**ΤOrderPayments**: *`Array`< [GatewayOrderPayment](interfaces/gatewayorderpayment.md) &#124; [GiftCertificateOrderPayment](interfaces/giftcertificateorderpayment.md)>*
+
+___
+
 ## Functions
 
 <a id="createcheckoutservice"></a>

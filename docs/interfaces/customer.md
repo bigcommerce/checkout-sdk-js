@@ -14,6 +14,7 @@
 * [email](customer.md#email)
 * [firstName](customer.md#firstname)
 * [fullName](customer.md#fullname)
+* [id](customer.md#id)
 * [isGuest](customer.md#isguest)
 * [lastName](customer.md#lastname)
 * [storeCredit](customer.md#storecredit)
@@ -48,6 +49,13 @@ ___
 ###  fullName
 
 **● fullName**: *`string`*
+
+___
+<a id="id"></a>
+
+###  id
+
+**● id**: *`number`*
 
 ___
 <a id="isguest"></a>

@@ -63,7 +63,7 @@ ___
 
 ###  downloadFileUrls
 
-**● downloadFileUrls**: *[`string`]*
+**● downloadFileUrls**: *`string`[]*
 
 ___
 <a id="downloadpageurl"></a>

@@ -265,6 +265,10 @@ declare interface CheckoutPayment {
     gatewayId?: string;
 }
 
+declare interface CheckoutRequestBody {
+    customerMessage: string;
+}
+
 declare interface CheckoutSelectors {
     /**
      * @deprecated This property has been renamed to `data`.
@@ -376,22 +380,19 @@ declare class CheckoutService {
      */
     loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
-     * Loads the checkout configuration of a store.
-     *
-     * This method should be called before performing any other actions using
-     * this service. If it is successfully executed, the data can be retrieved
-     * by calling `CheckoutStoreSelector#getConfig`.
+     * Updates specific properties of the current checkout.
      *
      * ```js
-     * const state = await service.loadConfig();
+     * const state = await service.updateCheckout(checkout);
      *
-     * console.log(state.checkout.getConfig());
+     * console.log(state.checkout.getCheckout());
      * ```
      *
-     * @param options - Options for loading the checkout configuration.
+     * @param payload - The checkout properties to be updated.
+     * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    loadConfig(options?: RequestOptions): Promise<CheckoutSelectors>;
+    updateCheckout(payload: CheckoutRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Loads an order by an id.
      *
@@ -944,7 +945,7 @@ declare class CheckoutService {
      * @param action - The action to dispatch.
      * @returns A promise that resolves to the current state.
      */
-    private _dispatch;
+    private _dispatch(action, options?);
 }
 
 declare interface CheckoutServiceOptions {
@@ -1165,6 +1166,7 @@ declare class CheckoutStoreErrorSelector {
  */
 declare class CheckoutStoreSelector {
     private _billingAddress;
+    private _cart;
     private _checkout;
     private _config;
     private _consignments;
@@ -1187,18 +1189,11 @@ declare class CheckoutStoreSelector {
      */
     getCheckout(): Checkout | undefined;
     /**
-     * Gets the current quote.
-     *
-     * @deprecated This method will be replaced in the future.
-     * @returns The current quote if it is loaded, otherwise undefined.
-     */
-    getQuote(): InternalQuote | undefined;
-    /**
      * Gets the current order.
      *
      * @returns The current order if it is loaded, otherwise undefined.
      */
-    getOrder(): InternalOrder | undefined;
+    getOrder(): Order | undefined;
     /**
      * Gets the checkout configuration of a store.
      *
@@ -1214,24 +1209,32 @@ declare class CheckoutStoreSelector {
      * @returns The shipping address object if it is loaded, otherwise
      * undefined.
      */
-    getShippingAddress(): InternalAddress | undefined;
+    getShippingAddress(): Address | undefined;
     /**
-     * Gets a list of shipping options available for each shipping address.
+     * Gets a list of shipping options available for the shipping address.
      *
      * If there is no shipping address assigned to the current checkout, the
      * list of shipping options will be empty.
      *
-     * @returns The list of shipping options per address if loaded, otherwise
-     * undefined.
+     * @returns The list of shipping options if any, otherwise undefined.
      */
-    getShippingOptions(): InternalShippingOptionList | undefined;
+    getShippingOptions(): ShippingOption[] | undefined;
+    /**
+     * Gets a list of consignments.
+     *
+     * If there are no consignments created for to the current checkout, the
+     * list will be empty.
+     *
+     * @returns The list of consignments if any, otherwise undefined.
+     */
+    getConsignments(): Consignment[] | undefined;
     /**
      * Gets the selected shipping option for the current checkout.
      *
      * @returns The shipping option object if there is a selected option,
      * otherwise undefined.
      */
-    getSelectedShippingOption(): InternalShippingOption | undefined;
+    getSelectedShippingOption(): ShippingOption | undefined;
     /**
      * Gets a list of countries available for shipping.
      *
@@ -1243,7 +1246,7 @@ declare class CheckoutStoreSelector {
      *
      * @returns The billing address object if it is loaded, otherwise undefined.
      */
-    getBillingAddress(): InternalAddress | undefined;
+    getBillingAddress(): Address | undefined;
     /**
      * Gets a list of countries available for billing.
      *
@@ -1282,26 +1285,26 @@ declare class CheckoutStoreSelector {
      *
      * @returns The current cart object if it is loaded, otherwise undefined.
      */
-    getCart(): InternalCart | undefined;
+    getCart(): Cart | undefined;
     /**
      * Gets a list of coupons that are applied to the current checkout.
      *
      * @returns The list of applied coupons if there is any, otherwise undefined.
      */
-    getCoupons(): InternalCoupon[] | undefined;
+    getCoupons(): Coupon[] | undefined;
     /**
      * Gets a list of gift certificates that are applied to the current checkout.
      *
      * @returns The list of applied gift certificates if there is any, otherwise undefined.
      */
-    getGiftCertificates(): InternalGiftCertificate[] | undefined;
+    getGiftCertificates(): GiftCertificate[] | undefined;
     /**
      * Gets the current customer.
      *
      * @returns The current customer object if it is loaded, otherwise
      * undefined.
      */
-    getCustomer(): InternalCustomer | undefined;
+    getCustomer(): Customer | undefined;
     /**
      * Checks if payment data is required or not.
      *
@@ -1677,6 +1680,7 @@ declare interface Currency_2 {
 }
 
 declare interface Customer {
+    id: number;
     addresses: Address[];
     storeCredit: number;
     email: string;
@@ -1727,7 +1731,7 @@ declare interface CustomerRequestOptions extends RequestOptions {
 }
 
 declare interface DigitalItem extends LineItem {
-    downloadFileUrls: [string];
+    downloadFileUrls: string[];
     downloadPageUrl: string;
     downloadSize: string;
 }
@@ -1735,13 +1739,6 @@ declare interface DigitalItem extends LineItem {
 declare interface Discount {
     id: string;
     discountedAmount: number;
-}
-
-declare interface DiscountNotification {
-    message: string;
-    messageHtml: string;
-    discountType: string | null;
-    placeholders: string[];
 }
 
 declare interface FormField {
@@ -1772,6 +1769,13 @@ declare interface FormFields {
     billingAddressFields: FormField[];
 }
 
+declare interface GatewayOrderPayment extends OrderPayment {
+    detail: {
+        step: string;
+        instructions: string;
+    };
+}
+
 declare interface GiftCertificate {
     balance: number;
     remaining: number;
@@ -1797,265 +1801,27 @@ declare interface GiftCertificateItem {
     message: string;
 }
 
+declare interface GiftCertificateOrderPayment extends OrderPayment {
+    detail: {
+        code: string;
+        remaining: number;
+    };
+}
+
 declare interface GuestCredentials {
     id?: string;
     email: string;
 }
 
 declare interface Instrument {
-    bigpay_token: string;
+    bigpayToken: string;
     provider: string;
     iin: string;
-    last_4: string;
-    expiry_month: string;
-    expiry_year: string;
+    last4: string;
+    expiryMonth: string;
+    expiryYear: string;
     brand: string;
-    default_instrument: boolean;
-    trusted_shipping_address: boolean;
-}
-
-declare interface InternalAddress {
-    id?: string;
-    firstName: string;
-    lastName: string;
-    company: string;
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    province: string;
-    provinceCode: string;
-    postCode: string;
-    country: string;
-    countryCode: string;
-    phone: string;
-    customFields: Array<{
-        fieldId: string;
-        fieldValue: string;
-    }>;
-    type?: string;
-}
-
-declare interface InternalCart {
-    id: string;
-    items: InternalLineItem[];
-    currency: string;
-    subtotal: {
-        amount: number;
-        integerAmount: number;
-    };
-    coupon: {
-        discountedAmount: number;
-        coupons: InternalCoupon[];
-    };
-    discount: {
-        amount: number;
-        integerAmount: number;
-    };
-    discountNotifications: DiscountNotification[];
-    giftCertificate: {
-        totalDiscountedAmount: number;
-        appliedGiftCertificates: {
-            [code: string]: InternalGiftCertificate;
-        };
-    };
-    shipping: {
-        amount: number;
-        integerAmount: number;
-        amountBeforeDiscount: number;
-        integerAmountBeforeDiscount: number;
-        required: boolean;
-    };
-    storeCredit: {
-        amount: number;
-    };
-    taxSubtotal: {
-        amount: number;
-        integerAmount: number;
-    };
-    taxes: Array<{
-        name: string;
-        amount: number;
-    }>;
-    taxTotal: {
-        amount: number;
-        integerAmount: number;
-    };
-    handling: {
-        amount: number;
-        integerAmount: number;
-    };
-    grandTotal: {
-        amount: number;
-        integerAmount: number;
-    };
-}
-
-declare interface InternalCoupon {
-    code: string;
-    discount: string;
-    discountType: number;
-}
-
-declare interface InternalCustomer {
-    addresses: InternalAddress[];
-    customerId: number;
-    isGuest: boolean;
-    storeCredit: number;
-    email: string;
-    firstName: string;
-    name: string;
-    remote?: {
-        provider: string;
-        customerMessage?: string;
-        useStoreCredit?: boolean;
-    };
-    customerGroupId?: number;
-    customerGroupName?: string;
-    phoneNumber?: string;
-}
-
-declare interface InternalGiftCertificate {
-    code: string;
-    discountedAmount: number;
-    remainingBalance: number;
-    giftCertificate?: {
-        balance: number;
-        code: string;
-        purchaseDate: string;
-    };
-}
-
-declare interface InternalGiftCertificateList {
-    totalDiscountedAmount: number;
-    appliedGiftCertificates: {
-        [code: string]: InternalGiftCertificate;
-    };
-}
-
-declare interface InternalLineItem {
-    amount: number;
-    amountAfterDiscount: number;
-    attributes: Array<{
-        name: string;
-        value: string;
-    }>;
-    discount: number;
-    integerAmount: number;
-    integerAmountAfterDiscount: number;
-    integerDiscount: number;
-    id: string | number;
-    imageUrl: string;
-    name?: string;
-    quantity: number;
-    type: string;
-    variantId: number | null;
-    sender?: {
-        name: string;
-        email: string;
-    };
-    recipient?: {
-        name: string;
-        email: string;
-    };
-}
-
-declare interface InternalOrder {
-    id: number;
-    orderId: number;
-    items: InternalLineItem[];
-    currency: string;
-    customerCanBeCreated: boolean;
-    subtotal: {
-        amount: number;
-        integerAmount: number;
-    };
-    coupon: {
-        discountedAmount: number;
-        coupons: InternalCoupon[];
-    };
-    discount: {
-        amount: number;
-        integerAmount: number;
-    };
-    discountNotifications: DiscountNotification[];
-    giftCertificate: InternalGiftCertificateList;
-    shipping: {
-        amount: number;
-        integerAmount: number;
-        amountBeforeDiscount: number;
-        integerAmountBeforeDiscount: number;
-    };
-    storeCredit: {
-        amount: number;
-    };
-    taxes: Array<{
-        name: string;
-        amount: number;
-    }>;
-    handling: {
-        amount: number;
-        integerAmount: number;
-    };
-    grandTotal: {
-        amount: number;
-        integerAmount: number;
-    };
-    token?: string;
-    payment: InternalOrderPayment;
-    socialData?: {
-        [itemId: string]: InternalSocialDataList;
-    };
-    status: string;
-    hasDigitalItems: boolean;
-    isDownloadable: boolean;
-    isComplete: boolean;
-    callbackUrl?: string;
-}
-
-declare interface InternalOrderPayment {
-    id?: string;
-    gateway?: string;
-    redirectUrl?: string;
-    returnUrl?: string;
-    status?: string;
-    helpText?: string;
-}
-
-declare interface InternalQuote {
-    orderComment: string;
-    shippingOption?: string;
-    billingAddress: InternalAddress;
-    shippingAddress?: InternalAddress;
-}
-
-declare interface InternalShippingOption {
-    description: string;
-    module: string;
-    price: number;
-    id: string;
-    selected: boolean;
-    isRecommended: boolean;
-    imageUrl: string;
-    transitTime: string;
-}
-
-declare interface InternalShippingOptionList {
-    [key: string]: InternalShippingOption[];
-}
-
-declare interface InternalSocialDataItem {
-    name: string;
-    description: string;
-    image: string;
-    url: string;
-    shareText: string;
-    sharingLink: string;
-    channelName: string;
-    channelCode: string;
-}
-
-declare interface InternalSocialDataList {
-    [key: string]: InternalSocialDataItem;
+    trustedShippingAddress: boolean;
 }
 
 declare interface KlarnaLoadResponse {
@@ -2149,10 +1915,10 @@ declare class LanguageService {
      * @returns The translated language string.
      */
     translate(key: string, data?: TranslationData): string;
-    private _transformConfig;
-    private _flattenObject;
-    private _transformData;
-    private _hasTranslations;
+    private _transformConfig(config?);
+    private _flattenObject(object, result?, parentKey?);
+    private _transformData(data);
+    private _hasTranslations();
 }
 
 declare interface LineItem {
@@ -2203,6 +1969,39 @@ declare interface Locales {
     [key: string]: string;
 }
 
+declare interface Order {
+    baseAmount: number;
+    billingAddress: Address;
+    cartId: string;
+    coupons: Coupon[];
+    currency: Currency;
+    customerCanBeCreated: boolean;
+    customerId: number;
+    customerMessage: string;
+    discountAmount: number;
+    hasDigitalItems: boolean;
+    isComplete: boolean;
+    isDownloadable: boolean;
+    isTaxIncluded: boolean;
+    lineItems: LineItemMap;
+    orderAmount: number;
+    orderAmountAsInteger: number;
+    orderId: number;
+    shippingCostTotal: number;
+    shippingCostBeforeDiscount: number;
+    handlingCostTotal: number;
+    taxes: Tax[];
+    payments?: OrderPayments;
+    status: string;
+}
+
+declare interface OrderPayment {
+    providerId: string;
+    gatewayId?: string;
+    description: string;
+    amount: number;
+}
+
 /**
  * An object that contains the payment information required for submitting an
  * order.
@@ -2223,6 +2022,8 @@ declare interface OrderPaymentRequestBody {
     paymentData?: CreditCardInstrument | VaultedInstrument;
 }
 
+declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
+
 /**
  * An object that contains the information required for submitting an order.
  */
@@ -2240,10 +2041,6 @@ declare interface OrderRequestBody {
      * works if the customer has previously signed in.
      */
     useStoreCredit?: boolean;
-    /**
-     * If provided, the string will be added to the order as a comment.
-     */
-    customerMessage?: string;
 }
 
 declare interface PasswordRequirements {
@@ -2303,9 +2100,13 @@ declare interface PaymentMethod {
 declare interface PaymentMethodConfig {
     cardCode?: boolean;
     displayName?: string;
+    enablePaypal?: boolean;
+    helpText?: string;
     is3dsEnabled?: boolean;
+    isVisaCheckoutEnabled?: boolean;
     merchantId?: string;
     redirectUrl?: string;
+    returnUrl?: string;
     testMode?: boolean;
 }
 

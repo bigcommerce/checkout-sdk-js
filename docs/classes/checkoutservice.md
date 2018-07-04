@@ -29,7 +29,6 @@ This object can be used to collect all information that is required for checkout
 * [loadBillingAddressFields](checkoutservice.md#loadbillingaddressfields)
 * [loadBillingCountries](checkoutservice.md#loadbillingcountries)
 * [loadCheckout](checkoutservice.md#loadcheckout)
-* [loadConfig](checkoutservice.md#loadconfig)
 * [loadInstruments](checkoutservice.md#loadinstruments)
 * [loadOrder](checkoutservice.md#loadorder)
 * [loadPaymentMethod](checkoutservice.md#loadpaymentmethod)
@@ -47,6 +46,7 @@ This object can be used to collect all information that is required for checkout
 * [submitOrder](checkoutservice.md#submitorder)
 * [subscribe](checkoutservice.md#subscribe)
 * [updateBillingAddress](checkoutservice.md#updatebillingaddress)
+* [updateCheckout](checkoutservice.md#updatecheckout)
 * [updateShippingAddress](checkoutservice.md#updateshippingaddress)
 
 ---
@@ -446,32 +446,6 @@ console.log(state.checkout.getCheckout());
 | ------ | ------ | ------ |
 | id | `string` |  The identifier of the checkout to load. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for loading the current checkout. |
-
-**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-A promise that resolves to the current state.
-
-___
-<a id="loadconfig"></a>
-
-###  loadConfig
-
-▸ **loadConfig**(options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-
-Loads the checkout configuration of a store.
-
-This method should be called before performing any other actions using this service. If it is successfully executed, the data can be retrieved by calling `CheckoutStoreSelector#getConfig`.
-
-```js
-const state = await service.loadConfig();
-
-console.log(state.checkout.getConfig());
-```
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for loading the checkout configuration. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.
@@ -927,6 +901,31 @@ console.log(state.checkout.getBillingAddress());
 | ------ | ------ | ------ |
 | address | [Address](../interfaces/address.md) |  The address to be used for billing. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for updating the billing address. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="updatecheckout"></a>
+
+###  updateCheckout
+
+▸ **updateCheckout**(payload: *[CheckoutRequestBody](../interfaces/checkoutrequestbody.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Updates specific properties of the current checkout.
+
+```js
+const state = await service.updateCheckout(checkout);
+
+console.log(state.checkout.getCheckout());
+```
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| payload | [CheckoutRequestBody](../interfaces/checkoutrequestbody.md) |  The checkout properties to be updated. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for loading the current checkout. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.

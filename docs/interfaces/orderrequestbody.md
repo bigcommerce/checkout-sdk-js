@@ -12,7 +12,6 @@ An object that contains the information required for submitting an order.
 
 ### Properties
 
-* [customerMessage](orderrequestbody.md#customermessage)
 * [payment](orderrequestbody.md#payment)
 * [useStoreCredit](orderrequestbody.md#usestorecredit)
 
@@ -20,16 +19,6 @@ An object that contains the information required for submitting an order.
 
 ## Properties
 
-<a id="customermessage"></a>
-
-### `<Optional>` customerMessage
-
-**● customerMessage**: * `undefined` &#124; `string`
-*
-
-If provided, the string will be added to the order as a comment.
-
-___
 <a id="payment"></a>
 
 ### `<Optional>` payment

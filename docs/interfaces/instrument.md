@@ -10,25 +10,24 @@
 
 ### Properties
 
-* [bigpay_token](instrument.md#bigpay_token)
+* [bigpayToken](instrument.md#bigpaytoken)
 * [brand](instrument.md#brand)
-* [default_instrument](instrument.md#default_instrument)
-* [expiry_month](instrument.md#expiry_month)
-* [expiry_year](instrument.md#expiry_year)
+* [expiryMonth](instrument.md#expirymonth)
+* [expiryYear](instrument.md#expiryyear)
 * [iin](instrument.md#iin)
-* [last_4](instrument.md#last_4)
+* [last4](instrument.md#last4)
 * [provider](instrument.md#provider)
-* [trusted_shipping_address](instrument.md#trusted_shipping_address)
+* [trustedShippingAddress](instrument.md#trustedshippingaddress)
 
 ---
 
 ## Properties
 
-<a id="bigpay_token"></a>
+<a id="bigpaytoken"></a>
 
-###  bigpay_token
+###  bigpayToken
 
-**● bigpay_token**: *`string`*
+**● bigpayToken**: *`string`*
 
 ___
 <a id="brand"></a>
@@ -38,25 +37,18 @@ ___
 **● brand**: *`string`*
 
 ___
-<a id="default_instrument"></a>
+<a id="expirymonth"></a>
 
-###  default_instrument
+###  expiryMonth
 
-**● default_instrument**: *`boolean`*
-
-___
-<a id="expiry_month"></a>
-
-###  expiry_month
-
-**● expiry_month**: *`string`*
+**● expiryMonth**: *`string`*
 
 ___
-<a id="expiry_year"></a>
+<a id="expiryyear"></a>
 
-###  expiry_year
+###  expiryYear
 
-**● expiry_year**: *`string`*
+**● expiryYear**: *`string`*
 
 ___
 <a id="iin"></a>
@@ -66,11 +58,11 @@ ___
 **● iin**: *`string`*
 
 ___
-<a id="last_4"></a>
+<a id="last4"></a>
 
-###  last_4
+###  last4
 
-**● last_4**: *`string`*
+**● last4**: *`string`*
 
 ___
 <a id="provider"></a>
@@ -80,11 +72,11 @@ ___
 **● provider**: *`string`*
 
 ___
-<a id="trusted_shipping_address"></a>
+<a id="trustedshippingaddress"></a>
 
-###  trusted_shipping_address
+###  trustedShippingAddress
 
-**● trusted_shipping_address**: *`boolean`*
+**● trustedShippingAddress**: *`boolean`*
 
 ___
 

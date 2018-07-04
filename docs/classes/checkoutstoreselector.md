@@ -20,6 +20,7 @@ This object has a set of methods that allow you to get a specific piece of check
 * [getCart](checkoutstoreselector.md#getcart)
 * [getCheckout](checkoutstoreselector.md#getcheckout)
 * [getConfig](checkoutstoreselector.md#getconfig)
+* [getConsignments](checkoutstoreselector.md#getconsignments)
 * [getCoupons](checkoutstoreselector.md#getcoupons)
 * [getCustomer](checkoutstoreselector.md#getcustomer)
 * [getGiftCertificates](checkoutstoreselector.md#getgiftcertificates)
@@ -27,7 +28,6 @@ This object has a set of methods that allow you to get a specific piece of check
 * [getOrder](checkoutstoreselector.md#getorder)
 * [getPaymentMethod](checkoutstoreselector.md#getpaymentmethod)
 * [getPaymentMethods](checkoutstoreselector.md#getpaymentmethods)
-* [getQuote](checkoutstoreselector.md#getquote)
 * [getSelectedPaymentMethod](checkoutstoreselector.md#getselectedpaymentmethod)
 * [getSelectedShippingOption](checkoutstoreselector.md#getselectedshippingoption)
 * [getShippingAddress](checkoutstoreselector.md#getshippingaddress)
@@ -45,11 +45,11 @@ This object has a set of methods that allow you to get a specific piece of check
 
 ###  getBillingAddress
 
-▸ **getBillingAddress**():  [InternalAddress](../interfaces/internaladdress.md) &#124; `undefined`
+▸ **getBillingAddress**():  [Address](../interfaces/address.md) &#124; `undefined`
 
 Gets the billing address of an order.
 
-**Returns:**  [InternalAddress](../interfaces/internaladdress.md) &#124; `undefined`
+**Returns:**  [Address](../interfaces/address.md) &#124; `undefined`
 
 The billing address object if it is loaded, otherwise undefined.
 
@@ -90,11 +90,11 @@ ___
 
 ###  getCart
 
-▸ **getCart**():  [InternalCart](../interfaces/internalcart.md) &#124; `undefined`
+▸ **getCart**():  [Cart](../interfaces/cart.md) &#124; `undefined`
 
 Gets the current cart.
 
-**Returns:**  [InternalCart](../interfaces/internalcart.md) &#124; `undefined`
+**Returns:**  [Cart](../interfaces/cart.md) &#124; `undefined`
 
 The current cart object if it is loaded, otherwise undefined.
 
@@ -125,15 +125,30 @@ Gets the checkout configuration of a store.
 The configuration object if it is loaded, otherwise undefined.
 
 ___
+<a id="getconsignments"></a>
+
+###  getConsignments
+
+▸ **getConsignments**():  [Consignment](../interfaces/consignment.md)[] &#124; `undefined`
+
+Gets a list of consignments.
+
+If there are no consignments created for to the current checkout, the list will be empty.
+
+**Returns:**  [Consignment](../interfaces/consignment.md)[] &#124; `undefined`
+
+The list of consignments if any, otherwise undefined.
+
+___
 <a id="getcoupons"></a>
 
 ###  getCoupons
 
-▸ **getCoupons**():  [InternalCoupon](../interfaces/internalcoupon.md)[] &#124; `undefined`
+▸ **getCoupons**():  [Coupon](../interfaces/coupon.md)[] &#124; `undefined`
 
 Gets a list of coupons that are applied to the current checkout.
 
-**Returns:**  [InternalCoupon](../interfaces/internalcoupon.md)[] &#124; `undefined`
+**Returns:**  [Coupon](../interfaces/coupon.md)[] &#124; `undefined`
 
 The list of applied coupons if there is any, otherwise undefined.
 
@@ -142,11 +157,11 @@ ___
 
 ###  getCustomer
 
-▸ **getCustomer**():  [InternalCustomer](../interfaces/internalcustomer.md) &#124; `undefined`
+▸ **getCustomer**():  [Customer](../interfaces/customer.md) &#124; `undefined`
 
 Gets the current customer.
 
-**Returns:**  [InternalCustomer](../interfaces/internalcustomer.md) &#124; `undefined`
+**Returns:**  [Customer](../interfaces/customer.md) &#124; `undefined`
 
 The current customer object if it is loaded, otherwise
 undefined.
@@ -156,11 +171,11 @@ ___
 
 ###  getGiftCertificates
 
-▸ **getGiftCertificates**():  [InternalGiftCertificate](../interfaces/internalgiftcertificate.md)[] &#124; `undefined`
+▸ **getGiftCertificates**():  [GiftCertificate](../interfaces/giftcertificate.md)[] &#124; `undefined`
 
 Gets a list of gift certificates that are applied to the current checkout.
 
-**Returns:**  [InternalGiftCertificate](../interfaces/internalgiftcertificate.md)[] &#124; `undefined`
+**Returns:**  [GiftCertificate](../interfaces/giftcertificate.md)[] &#124; `undefined`
 
 The list of applied gift certificates if there is any, otherwise undefined.
 
@@ -182,11 +197,11 @@ ___
 
 ###  getOrder
 
-▸ **getOrder**():  [InternalOrder](../interfaces/internalorder.md) &#124; `undefined`
+▸ **getOrder**():  [Order](../interfaces/order.md) &#124; `undefined`
 
 Gets the current order.
 
-**Returns:**  [InternalOrder](../interfaces/internalorder.md) &#124; `undefined`
+**Returns:**  [Order](../interfaces/order.md) &#124; `undefined`
 
 The current order if it is loaded, otherwise undefined.
 
@@ -227,20 +242,6 @@ Gets a list of payment methods available for checkout.
 The list of payment methods if it is loaded, otherwise undefined.
 
 ___
-<a id="getquote"></a>
-
-###  getQuote
-
-▸ **getQuote**():  [InternalQuote](../interfaces/internalquote.md) &#124; `undefined`
-
-Gets the current quote.
-*__deprecated__*: This method will be replaced in the future.
-
-**Returns:**  [InternalQuote](../interfaces/internalquote.md) &#124; `undefined`
-
-The current quote if it is loaded, otherwise undefined.
-
-___
 <a id="getselectedpaymentmethod"></a>
 
 ###  getSelectedPaymentMethod
@@ -259,11 +260,11 @@ ___
 
 ###  getSelectedShippingOption
 
-▸ **getSelectedShippingOption**():  [InternalShippingOption](../interfaces/internalshippingoption.md) &#124; `undefined`
+▸ **getSelectedShippingOption**():  [ShippingOption](../interfaces/shippingoption.md) &#124; `undefined`
 
 Gets the selected shipping option for the current checkout.
 
-**Returns:**  [InternalShippingOption](../interfaces/internalshippingoption.md) &#124; `undefined`
+**Returns:**  [ShippingOption](../interfaces/shippingoption.md) &#124; `undefined`
 
 The shipping option object if there is a selected option,
 otherwise undefined.
@@ -273,13 +274,13 @@ ___
 
 ###  getShippingAddress
 
-▸ **getShippingAddress**():  [InternalAddress](../interfaces/internaladdress.md) &#124; `undefined`
+▸ **getShippingAddress**():  [Address](../interfaces/address.md) &#124; `undefined`
 
 Gets the shipping address of the current checkout.
 
 If the address is partially complete, it may not have shipping options associated with it.
 
-**Returns:**  [InternalAddress](../interfaces/internaladdress.md) &#124; `undefined`
+**Returns:**  [Address](../interfaces/address.md) &#124; `undefined`
 
 The shipping address object if it is loaded, otherwise
 undefined.
@@ -321,16 +322,15 @@ ___
 
 ###  getShippingOptions
 
-▸ **getShippingOptions**():  [InternalShippingOptionList](../interfaces/internalshippingoptionlist.md) &#124; `undefined`
+▸ **getShippingOptions**():  [ShippingOption](../interfaces/shippingoption.md)[] &#124; `undefined`
 
-Gets a list of shipping options available for each shipping address.
+Gets a list of shipping options available for the shipping address.
 
 If there is no shipping address assigned to the current checkout, the list of shipping options will be empty.
 
-**Returns:**  [InternalShippingOptionList](../interfaces/internalshippingoptionlist.md) &#124; `undefined`
+**Returns:**  [ShippingOption](../interfaces/shippingoption.md)[] &#124; `undefined`
 
-The list of shipping options per address if loaded, otherwise
-undefined.
+The list of shipping options if any, otherwise undefined.
 
 ___
 <a id="ispaymentdatarequired"></a>
