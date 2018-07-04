@@ -29,6 +29,8 @@ function dataReducer(
     action: OrderAction
 ): OrderDataState | undefined {
     switch (action.type) {
+    case OrderActionType.SubmitOrderSucceeded:
+        return undefined;
     case OrderActionType.LoadOrderSucceeded:
         return action.payload
             ? omit({ ...data, ...action.payload }, ['billingAddress', 'coupons'])
