@@ -48,10 +48,16 @@ export function getIncompleteOrderState() {
 }
 
 export function getAwaitingOrder(): InternalOrder {
+    const order = getCompleteOrder();
+
     return {
-        ...getCompleteOrder(),
-        token: '77d92d6e1b1b7d1017aa84ad0a9fe6ae',
+        ...order,
         callbackUrl: 'https://internalapi-999425555.mybigcommerce.com/internalapi/v1/checkout/order/505/payment',
+        payment: {
+            ...order.payment,
+            returnUrl: 'http://returnurl.bigcommerce.com/',
+        },
+        token: '77d92d6e1b1b7d1017aa84ad0a9fe6ae',
     };
 }
 

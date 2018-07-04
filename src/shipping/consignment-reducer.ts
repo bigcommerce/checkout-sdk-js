@@ -31,6 +31,7 @@ function dataReducer(
 ): Consignment[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case ConsignmentActionType.CreateConsignmentsSucceeded:
     case ConsignmentActionType.UpdateConsignmentSucceeded:
         return action.payload ? action.payload.consignments : data;
@@ -50,9 +51,12 @@ function errorsReducer(
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
+    case ConsignmentActionType.LoadShippingOptionsSucceeded:
+    case ConsignmentActionType.LoadShippingOptionsRequested:
         return { ...errors, loadError: undefined };
 
     case CheckoutActionType.LoadCheckoutFailed:
+    case ConsignmentActionType.LoadShippingOptionsFailed:
         return { ...errors, loadError: action.payload };
 
     case ConsignmentActionType.CreateConsignmentsRequested:
@@ -80,10 +84,13 @@ function statusesReducer(
 ): ConsignmentStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
+    case ConsignmentActionType.LoadShippingOptionsRequested:
         return { ...statuses, isLoading: true };
 
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CheckoutActionType.LoadCheckoutFailed:
+    case ConsignmentActionType.LoadShippingOptionsSucceeded:
+    case ConsignmentActionType.LoadShippingOptionsFailed:
         return { ...statuses, isLoading: false };
 
     case ConsignmentActionType.CreateConsignmentsRequested:

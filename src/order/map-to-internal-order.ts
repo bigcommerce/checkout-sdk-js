@@ -20,7 +20,7 @@ export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaSta
         orderId: order.orderId,
         currency: order.currency.code,
         customerCanBeCreated: order.customerCanBeCreated,
-        payment: mapToInteralOrderPayment(order.payments),
+        payment: mapToInteralOrderPayment(order.payments, orderMeta.payment),
         subtotal: {
             amount: order.baseAmount,
             integerAmount: amountTransformer.toInteger(order.baseAmount),
@@ -107,7 +107,7 @@ function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificat
     };
 }
 
-function mapToInteralOrderPayment(payments?: OrderPayments): InternalOrderPayment {
+function mapToInteralOrderPayment(payments?: OrderPayments, payment: InternalOrderPayment = {}): InternalOrderPayment {
     const item = find(payments, isDefaultOrderPayment) as GatewayOrderPayment;
 
     if (!item) {
@@ -118,6 +118,7 @@ function mapToInteralOrderPayment(payments?: OrderPayments): InternalOrderPaymen
         id: item.providerId,
         status: mapToInternalPaymentStatus(item.detail.step),
         helpText: item.detail.instructions,
+        returnUrl: payment.returnUrl,
     };
 }
 

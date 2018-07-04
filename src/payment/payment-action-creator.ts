@@ -80,7 +80,7 @@ export default class PaymentActionCreator {
         const instrumentMeta = state.instruments.getInstrumentsMeta();
         const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
         const orderMeta = state.order.getOrderMeta();
-        const internalCustomer = customer && mapToInternalCustomer(customer, billingAddress);
+        const internalCustomer = customer && billingAddress && mapToInternalCustomer(customer, billingAddress);
 
         const authToken = instrumentMeta && isVaultedInstrument(payment.paymentData) ?
             `${state.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}` :
