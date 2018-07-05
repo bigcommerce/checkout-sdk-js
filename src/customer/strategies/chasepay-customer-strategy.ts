@@ -1,4 +1,4 @@
-import FormPoster from '@bigcommerce/form-poster/lib/form-poster';
+import { FormPoster } from '@bigcommerce/form-poster';
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
