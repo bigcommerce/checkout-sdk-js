@@ -35,5 +35,10 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Chasepay payment method.
+     * They can be omitted unless you need to support Chasepay.
+     */
     chasepay?: ChasePayCustomerInitializeOptions;
 }

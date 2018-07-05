@@ -43,4 +43,5 @@ export interface CryptogramInstrument {
     };
     ccNumber: string;
     accountMask: string;
+    extraData?: any;
 }
