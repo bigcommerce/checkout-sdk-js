@@ -23,7 +23,7 @@ export function getClientMock(): BraintreeClient {
 
 export function getDataCollectorMock(): BraintreeDataCollector {
     return {
-        deviceData: 'my_device_session_id',
+        deviceData: '{"device_session_id": "my_device_session_id", "fraud_merchant_id": "we_dont_use_this_field"}',
         teardown: jest.fn(() => Promise.resolve()),
     };
 }
