@@ -46,8 +46,8 @@
   "dependencies": {
     "@bigcommerce/bigpay-client": "^3.2.0",
     "@bigcommerce/data-store": "^0.1.8",
-    "@bigcommerce/form-poster": "^1.2.2",
-    "@bigcommerce/request-sender": "^0.1.4",
+    "@bigcommerce/form-poster": "^1.2.3",
+    "@bigcommerce/request-sender": "^0.1.7",
     "@bigcommerce/script-loader": "^0.1.5",
     "@types/lodash": "^4.14.92",
     "lodash": "^4.17.4",

@@ -1,10 +1,10 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { RequestOptions } from '@bigcommerce/request-sender';
 import { concat } from 'rxjs/observable/concat';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { CheckoutActionCreator, InternalCheckoutSelectors, LoadCheckoutAction } from '../checkout';
+import { RequestOptions } from '../common/http-request';
 
 import { CustomerActionType, SignInCustomerAction, SignOutCustomerAction } from './customer-actions';
 import CustomerCredentials from './customer-credentials';
