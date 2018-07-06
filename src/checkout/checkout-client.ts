@@ -3,7 +3,6 @@ import { Response } from '@bigcommerce/request-sender';
 import { AddressRequestBody } from '../address';
 import { BillingAddressRequestSender } from '../billing';
 import { RequestOptions } from '../common/http-request';
-import { Config, ConfigRequestSender } from '../config';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
 import { InternalOrderRequestBody, InternalOrderResponseBody, Order, OrderRequestSender } from '../order';
@@ -21,7 +20,6 @@ export default class CheckoutClient {
      */
     constructor(
         private _billingAddressRequestSender: BillingAddressRequestSender,
-        private _configRequestSender: ConfigRequestSender,
         private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
         private _customerRequestSender: CustomerRequestSender,
@@ -80,9 +78,5 @@ export default class CheckoutClient {
 
     signOutCustomer(options?: RequestOptions): Promise<Response> {
         return this._customerRequestSender.signOutCustomer(options);
-    }
-
-    loadConfig(options?: RequestOptions): Promise<Response<Config>> {
-        return this._configRequestSender.loadConfig(options);
     }
 }

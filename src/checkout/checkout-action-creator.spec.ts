@@ -2,8 +2,10 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 import { from } from 'rxjs/observable/from';
 
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { getConfig } from '../config/configs.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import { CheckoutActionType } from './checkout-actions';
@@ -15,11 +17,18 @@ import createCheckoutStore from './create-checkout-store';
 describe('CheckoutActionCreator', () => {
     let actionCreator: CheckoutActionCreator;
     let checkoutRequestSender: CheckoutRequestSender;
+    let configRequestSender: ConfigRequestSender;
+    let configActionCreator: ConfigActionCreator;
     let store: CheckoutStore;
 
     beforeEach(() => {
-        checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        const requestSender = createRequestSender();
+        checkoutRequestSender = new CheckoutRequestSender(requestSender);
+        configRequestSender = new ConfigRequestSender(requestSender);
         store = createCheckoutStore(getCheckoutStoreState());
+
+        jest.spyOn(configRequestSender, 'loadConfig')
+            .mockReturnValue(Promise.resolve(getResponse(getConfig())));
 
         jest.spyOn(checkoutRequestSender, 'loadCheckout')
             .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
@@ -27,19 +36,28 @@ describe('CheckoutActionCreator', () => {
         jest.spyOn(checkoutRequestSender, 'updateCheckout')
             .mockReturnValue(Promise.resolve(getResponse(getCheckout())));
 
-        actionCreator = new CheckoutActionCreator(checkoutRequestSender);
+        configActionCreator = new ConfigActionCreator(configRequestSender);
+
+        jest.spyOn(configActionCreator, 'loadConfig');
+
+        actionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
     });
 
     describe('#loadCheckout', () => {
         it('emits action to notify loading progress', async () => {
             const { id } = getCheckout();
-            const actions = await actionCreator.loadCheckout(id)
+
+            const actions = await Observable.from(actionCreator.loadCheckout(id)(store))
                 .toArray()
                 .toPromise();
 
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(id, undefined);
+
             expect(actions).toEqual([
                 { type: CheckoutActionType.LoadCheckoutRequested },
-                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+                { type: CheckoutActionType.LoadCheckoutSucceeded,
+                    payload: getCheckout(),
+                },
             ]);
         });
 
@@ -50,7 +68,7 @@ describe('CheckoutActionCreator', () => {
             const { id } = getCheckout();
             const errorHandler = jest.fn(action => Observable.of(action));
 
-            const actions = await actionCreator.loadCheckout(id)
+            const actions =  await Observable.from(actionCreator.loadCheckout(id)(store))
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -60,6 +78,74 @@ describe('CheckoutActionCreator', () => {
                 { type: CheckoutActionType.LoadCheckoutRequested },
                 { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
             ]);
+        });
+
+        it('calls loadConfig in parallel', () => {
+            const { id } = getCheckout();
+
+            jest.spyOn(configActionCreator, 'loadConfig')
+                .mockReturnValue(() => new Promise(() => {}));
+
+            Observable.from(actionCreator.loadCheckout(id)(store))
+                .toPromise();
+
+            expect(configActionCreator.loadConfig).toHaveBeenCalled();
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
+        });
+    });
+
+    describe('#loadDefaultCheckout', () => {
+        it('emits action to notify loading progress', async () => {
+            const actions = await Observable.from(actionCreator.loadDefaultCheckout()(store))
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutSucceeded,
+                    payload: getCheckout(),
+                },
+            ]);
+
+            expect(configActionCreator.loadConfig).toHaveBeenCalled();
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
+        });
+
+        it('emits error action if unable to load checkout', async () => {
+            jest.spyOn(checkoutRequestSender, 'loadCheckout')
+                .mockReturnValue(Promise.reject(getErrorResponse()));
+
+            const errorHandler = jest.fn(action => Observable.of(action));
+
+            const actions =  await Observable.from(actionCreator.loadDefaultCheckout()(store))
+                .catch(errorHandler)
+                .toArray()
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
+            ]);
+        });
+
+        it('does not call loadCheckout until loadConfig resolves', () => {
+            jest.spyOn(configActionCreator, 'loadConfig')
+                .mockReturnValue(() => new Promise(() => {}));
+
+            Observable.from(actionCreator.loadDefaultCheckout()(store)).toPromise();
+
+            expect(configActionCreator.loadConfig).toHaveBeenCalled();
+            expect(checkoutRequestSender.loadCheckout).not.toHaveBeenCalled();
+        });
+
+        it('calls loadCheckout after loadConfig with the default checkout ID', () => {
+            Observable.from(actionCreator.loadDefaultCheckout()(store)).toPromise();
+
+            expect(configActionCreator.loadConfig).toHaveBeenCalled();
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(
+                '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f', undefined
+            );
         });
     });
 
@@ -129,6 +215,37 @@ describe('CheckoutActionCreator', () => {
 
         it('loads checkout only when action is dispatched', async () => {
             const action = actionCreator.loadCurrentCheckout()(store);
+
+            expect(checkoutRequestSender.loadCheckout).not.toHaveBeenCalled();
+
+            await store.dispatch(action);
+
+            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
+        });
+    });
+
+    describe('#loadDefaultCheckout()', () => {
+        it('loads checkout by using existing id', async () => {
+            await from(actionCreator.loadDefaultCheckout()(store))
+                .toPromise();
+
+            expect(checkoutRequestSender.loadCheckout)
+                .toHaveBeenCalledWith('6a6071cc-82ba-45aa-adb0-ebec42d6ff6f', undefined);
+        });
+
+        it('throws error if there is no existing checkout id', async () => {
+            store = createCheckoutStore();
+
+            try {
+                await from(actionCreator.loadDefaultCheckout()(store))
+                    .toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(StandardError);
+            }
+        });
+
+        it('loads checkout only when action is dispatched', async () => {
+            const action = actionCreator.loadDefaultCheckout()(store);
 
             expect(checkoutRequestSender.loadCheckout).not.toHaveBeenCalled();
 

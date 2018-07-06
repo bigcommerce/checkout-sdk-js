@@ -152,19 +152,15 @@ export default class CheckoutService {
      * console.log(state.checkout.getCheckout());
      * ```
      *
-     * @param id - The identifier of the checkout to load.
+     * @param id - The identifier of the checkout to load, or the default checkout if not provided.
      * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const loadCheckoutAction = this._checkoutActionCreator.loadCheckout(id, options);
-        const loadConfigAction = this._configActionCreator.loadConfig(options);
-
-        return Promise.all([
-            this._dispatch(loadCheckoutAction),
-            this._dispatch(loadConfigAction, { queueId: 'config' }),
-        ])
-            .then(() => this.getState());
+    loadCheckout(id?: string, options?: RequestOptions): Promise<CheckoutSelectors> {
+        return this._dispatch(id ?
+            this._checkoutActionCreator.loadCheckout(id, options) :
+            this._checkoutActionCreator.loadDefaultCheckout(options)
+        );
     }
 
     /**

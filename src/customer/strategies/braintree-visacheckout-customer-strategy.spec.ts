@@ -8,10 +8,11 @@ import { createCustomerStrategyRegistry, CustomerInitializeOptions, CustomerStra
 import { getBillingAddress } from '../../billing/billing-addresses.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../config';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { getBraintreeVisaCheckout } from '../../payment/payment-methods.mock';
-import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPaymentProcessor } from '../../payment/strategies/braintree';
 import { VisaCheckoutScriptLoader, VisaCheckoutSDK } from '../../payment/strategies/braintree';
+import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPaymentProcessor } from '../../payment/strategies/braintree';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 import { CustomerStrategyActionType } from '../customer-strategy-actions';
@@ -58,8 +59,10 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         const client = createCheckoutClient();
         const registry = createCustomerStrategyRegistry(store, client);
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        const configRequestSender = new ConfigRequestSender(createRequestSender());
+        const configActionCreator = new ConfigActionCreator(configRequestSender);
 
-        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender);
+        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
         customerStrategyActionCreator = new CustomerStrategyActionCreator(registry);
 

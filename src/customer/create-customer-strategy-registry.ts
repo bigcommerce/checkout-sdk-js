@@ -4,6 +4,8 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
+import { ConfigRequestSender } from '../config';
+import ConfigActionCreator from '../config/config-action-creator';
 import { PaymentMethodActionCreator } from '../payment';
 import { createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
@@ -27,7 +29,12 @@ export default function createCustomerStrategyRegistry(
     const registry = new Registry<CustomerStrategy>();
     const requestSender = createRequestSender();
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
-    const checkoutActionCreator = new CheckoutActionCreator(new CheckoutRequestSender(requestSender));
+    const configRequestSender = new ConfigRequestSender(requestSender);
+    const configActionCreator = new ConfigActionCreator(configRequestSender);
+    const checkoutActionCreator = new CheckoutActionCreator(
+        new CheckoutRequestSender(requestSender),
+        configActionCreator
+    );
 
     registry.register('amazon', () =>
         new AmazonPayCustomerStrategy(
