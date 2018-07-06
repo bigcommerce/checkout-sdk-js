@@ -46,6 +46,12 @@ data is now automatically loaded when you call `loadCheckout` or
 * **cart:** `getCart` method now returns `Cart` object with different properties.
 * **order:** `getOrder` method now returns `Order` object with different properties.
 It also returns `undefined` until the order is created.
+* **quote:** `getQuote` method has been removed.
+* **shipping:** `getShippingAddress` method now returns `Address` object with different properties.
+* **shipping:** `getShippingOptions` method now returns `ShippingOption[]` array with different properties.
+* **shipping:** `getSelectedShippingOption` method now returns `ShippingOption` object with different properties.
+* **billing:** `getBillingAddress` method now returns `Address` object with different properties.
+* **customer:** `getCustomer` method now returns `Customer` object with different properties.
 
 
 
