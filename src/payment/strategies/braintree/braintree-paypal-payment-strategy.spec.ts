@@ -186,6 +186,17 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await expect(braintreePaypalPaymentStrategy.execute(orderRequestBody, options)).rejects.toEqual(expect.any(StandardError));
         });
 
+        it('if paypal fails we do not submit an order', async () => {
+            braintreePaymentProcessorMock.paypal = () => Promise.reject({ name: 'BraintreeError', message: 'my_message'});
+            await braintreePaypalPaymentStrategy.initialize(options);
+
+            try {
+                await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+            } catch (error) {
+                await expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+            }
+        });
+
         describe('if paypal credit', () => {
             beforeEach(() => {
                 braintreePaypalPaymentStrategy = new BraintreePaypalPaymentStrategy(

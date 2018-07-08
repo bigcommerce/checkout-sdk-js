@@ -57,13 +57,9 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        return Promise.all([
-                payment ? this._preparePaymentData(payment) : Promise.resolve(payment),
-                this._store.dispatch(this._orderActionCreator.submitOrder(order, options)),
-            ])
-            .then(([payment]) =>
-                this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
-            )
+        return (payment ? this._preparePaymentData(payment) : Promise.resolve(payment))
+            .then(payment => Promise.all([payment, this._store.dispatch(this._orderActionCreator.submitOrder(order, options))]))
+            .then(([payment]) => this._store.dispatch(this._paymentActionCreator.submitPayment(payment)))
             .catch((error: Error) => this._handleError(error));
     }
 
