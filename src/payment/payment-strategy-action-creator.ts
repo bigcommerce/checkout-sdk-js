@@ -8,7 +8,7 @@ import { Observer } from 'rxjs/Observer';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { LoadOrderAction, OrderActionCreator, OrderRequestBody } from '../order';
+import { LoadOrderPaymentsAction, OrderActionCreator, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import Payment from './payment';
@@ -30,7 +30,7 @@ export default class PaymentStrategyActionCreator {
         private _orderActionCreator: OrderActionCreator
     ) {}
 
-    execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction | LoadOrderAction, InternalCheckoutSelectors> {
+    execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction | LoadOrderPaymentsAction, InternalCheckoutSelectors> {
         return store => {
             const executeAction = new Observable((observer: Observer<PaymentStrategyExecuteAction>) => {
                 const state = store.getState();
@@ -65,13 +65,13 @@ export default class PaymentStrategyActionCreator {
             });
 
             return concat(
-                this._loadOrderIfNeeded(store, options),
+                this._loadOrderPaymentsIfNeeded(store, options),
                 executeAction
             );
         };
     }
 
-    finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction | LoadOrderAction, InternalCheckoutSelectors> {
+    finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction | LoadOrderPaymentsAction, InternalCheckoutSelectors> {
         return store => {
             const finalizeAction = new Observable((observer: Observer<PaymentStrategyFinalizeAction>) => {
                 const state = store.getState();
@@ -107,7 +107,7 @@ export default class PaymentStrategyActionCreator {
             });
 
             return concat(
-                this._loadOrderIfNeeded(store, options),
+                this._loadOrderPaymentsIfNeeded(store, options),
                 finalizeAction
             );
         };
@@ -178,11 +178,11 @@ export default class PaymentStrategyActionCreator {
         });
     }
 
-    private _loadOrderIfNeeded(store: ReadableCheckoutStore, options?: RequestOptions): Observable<LoadOrderAction> {
+    private _loadOrderPaymentsIfNeeded(store: ReadableCheckoutStore, options?: RequestOptions): Observable<LoadOrderPaymentsAction> {
         const checkout = store.getState().checkout.getCheckout();
 
         if (checkout && checkout.orderId) {
-            return from(this._orderActionCreator.loadCurrentOrder(options)(store));
+            return from(this._orderActionCreator.loadCurrentOrderPayments(options)(store));
         }
 
         return empty();

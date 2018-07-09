@@ -17,7 +17,7 @@ export default interface Checkout {
     taxes: Tax[];
     discounts: Discount[];
     coupons: Coupon[];
-    orderId: number;
+    orderId?: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
     handlingCostTotal: number;
