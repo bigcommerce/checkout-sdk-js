@@ -9,7 +9,7 @@ import { BraintreeVisaCheckout } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import BraintreeVisaCheckoutPaymentProcessor from './braintree-visacheckout-payment-processor';
-import { getDataCollectorMock, getVisaCheckoutMock } from './braintree.mock';
+import { getVisaCheckoutMock } from './braintree.mock';
 import { VisaCheckoutPaymentSuccessPayload } from './visacheckout';
 import { getPaymentSuccessPayload, getTokenizedPayload, getVisaCheckoutRequestBody } from './visacheckout.mock';
 
@@ -81,7 +81,9 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
         beforeEach(() => {
             visaCheckoutMock = getVisaCheckoutMock();
             braintreeSDKCreator.getVisaCheckout = jest.fn(() => Promise.resolve(visaCheckoutMock));
-            braintreeSDKCreator.getDataCollector = jest.fn(() => Promise.resolve(getDataCollectorMock()));
+            braintreeSDKCreator.getDataCollector = jest.fn(() => Promise.resolve({
+                deviceData: 'my_device_session_id',
+            }));
             billing = getBillingAddress();
             shipping = getShippingAddress();
             paymentInformation = getPaymentSuccessPayload();
