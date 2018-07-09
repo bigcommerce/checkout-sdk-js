@@ -1,6 +1,5 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
-import { BillingAddressAction, BillingAddressActionType } from '../billing/billing-address-actions';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 
 import Customer from './customer';
@@ -10,9 +9,9 @@ const DEFAULT_STATE: CustomerState = {};
 
 export default function customerReducer(
     state: CustomerState = DEFAULT_STATE,
-    action: CheckoutAction | BillingAddressAction
+    action: CheckoutAction
 ): CustomerState {
-    const reducer = combineReducers<CustomerState, CheckoutAction | BillingAddressAction >({
+    const reducer = combineReducers<CustomerState, CheckoutAction>({
         data: dataReducer,
     });
 
@@ -21,14 +20,11 @@ export default function customerReducer(
 
 function dataReducer(
     data: Customer | undefined,
-    action: CheckoutAction | BillingAddressAction
+    action: CheckoutAction
 ): Customer | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
         return action.payload ? { ...data, ...action.payload.customer } : data;
-
-    case BillingAddressActionType.UpdateBillingAddressSucceeded:
-        return action.payload && action.payload.billingAddress ? { ...data, email: action.payload.billingAddress.email } as Customer : data;
 
     default:
         return data;
