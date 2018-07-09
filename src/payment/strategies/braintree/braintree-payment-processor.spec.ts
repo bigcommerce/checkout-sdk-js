@@ -9,7 +9,6 @@ import {
     getBraintreePaymentData,
     getBraintreeRequestData,
     getClientMock,
-    getDataCollectorMock,
     getThreeDSecureMock,
     getThreeDSecureOptionsMock,
     getTokenizeResponseBody,
@@ -164,7 +163,10 @@ describe('BraintreePaymentProcessor', () => {
         let processedPayment: NonceInstrument;
 
         beforeEach(() => {
-            const dataCollector = getDataCollectorMock();
+            const dataCollector = {
+                deviceData: 'my_device_session_id',
+            };
+
             braintreeSDKCreator.getDataCollector = jest.fn().mockReturnValue(Promise.resolve(dataCollector));
             processedPayment = { nonce: 'my_nonce' };
         });
