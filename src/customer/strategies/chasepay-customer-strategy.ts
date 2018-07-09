@@ -97,7 +97,7 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
-            'In order to sign in via Chase Pay, the shopper must click on "Visa Checkout" button.'
+            'In order to sign in via Chase Pay®, the shopper must click on "Chase Pay®" button.'
         );
     }
 
