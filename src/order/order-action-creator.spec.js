@@ -3,10 +3,10 @@ import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { getCart, getCartState } from '../cart/internal-carts.mock';
+import { CheckoutRequestSender, CheckoutValidator, createCheckoutStore } from '../checkout';
+import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutValidator } from '../checkout';
-import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { getConfigState } from '../config/configs.mock';
 
 import {
@@ -123,6 +123,82 @@ describe('OrderActionCreator', () => {
 
         it('loads order only when action is dispatched', async () => {
             const action = orderActionCreator.loadCurrentOrder()(store);
+
+            expect(checkoutClient.loadOrder).not.toHaveBeenCalled();
+
+            await store.dispatch(action);
+
+            expect(checkoutClient.loadOrder).toHaveBeenCalled();
+        });
+    });
+
+    describe('#loadCurrentOrderPayments()', () => {
+        beforeEach(() => {
+            jest.spyOn(checkoutClient, 'loadOrder')
+                .mockReturnValue(Promise.resolve(getResponse(getOrder())));
+        });
+
+        it('emits actions if able to load order', async () => {
+            const actions = await Observable.from(orderActionCreator.loadCurrentOrderPayments()(store))
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: OrderActionType.LoadOrderPaymentsRequested },
+                { type: OrderActionType.LoadOrderPaymentsSucceeded, payload: getOrder() },
+            ]);
+        });
+
+        it('emits actions if unable to load order', async () => {
+            jest.spyOn(checkoutClient, 'loadOrder')
+                .mockReturnValue(Promise.reject(getErrorResponse()));
+
+            const errorHandler = jest.fn((action) => Observable.of(action));
+            const actions = await Observable.from(orderActionCreator.loadCurrentOrderPayments()(store))
+                .catch(errorHandler)
+                .toArray()
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: OrderActionType.LoadOrderPaymentsRequested },
+                { type: OrderActionType.LoadOrderPaymentsFailed, payload: getErrorResponse(), error: true },
+            ]);
+        });
+
+        it('loads order by using order id from order object', async () => {
+            await orderActionCreator.loadCurrentOrderPayments()(store)
+                .toPromise();
+
+            expect(checkoutClient.loadOrder).toHaveBeenCalledWith(295, undefined);
+        });
+
+        it('loads order by using order id from checkout object if order object is unavailable', async () => {
+            store = createCheckoutStore({
+                ...state,
+                checkout: undefined,
+                order: getOrderState(),
+            });
+
+            await orderActionCreator.loadCurrentOrderPayments()(store)
+                .toPromise();
+
+            expect(checkoutClient.loadOrder).toHaveBeenCalledWith(295, undefined);
+        });
+
+        it('throws error if there is no existing order id', async () => {
+            store = createCheckoutStore();
+
+            try {
+                await orderActionCreator.loadCurrentOrderPayments()(store)
+                    .toPromise();
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('loads order only when action is dispatched', async () => {
+            const action = orderActionCreator.loadCurrentOrderPayments()(store);
 
             expect(checkoutClient.loadOrder).not.toHaveBeenCalled();
 

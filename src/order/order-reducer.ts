@@ -32,6 +32,7 @@ function dataReducer(
     case OrderActionType.SubmitOrderSucceeded:
         return undefined;
     case OrderActionType.LoadOrderSucceeded:
+    case OrderActionType.LoadOrderPaymentsSucceeded:
         return action.payload
             ? omit({ ...data, ...action.payload }, ['billingAddress', 'coupons'])
             : data;
@@ -68,9 +69,12 @@ function errorsReducer(
     switch (action.type) {
     case OrderActionType.LoadOrderRequested:
     case OrderActionType.LoadOrderSucceeded:
+    case OrderActionType.LoadOrderPaymentsSucceeded:
+    case OrderActionType.LoadOrderPaymentsRequested:
         return { ...errors, loadError: undefined };
 
     case OrderActionType.LoadOrderFailed:
+    case OrderActionType.LoadOrderPaymentsFailed:
         return { ...errors, loadError: action.payload };
 
     default:
@@ -84,11 +88,15 @@ function statusesReducer(
 ): OrderStatusesState {
     switch (action.type) {
     case OrderActionType.LoadOrderRequested:
+    case OrderActionType.LoadOrderPaymentsRequested:
         return { ...statuses, isLoading: true };
 
     case OrderActionType.LoadOrderSucceeded:
     case OrderActionType.LoadOrderFailed:
+    case OrderActionType.LoadOrderPaymentsSucceeded:
+    case OrderActionType.LoadOrderPaymentsFailed:
         return { ...statuses, isLoading: false };
+
     default:
         return statuses;
     }

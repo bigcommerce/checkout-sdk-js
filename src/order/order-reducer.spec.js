@@ -13,7 +13,7 @@ describe('orderReducer()', () => {
         initialState = {};
     });
 
-    it('returns new data while fetching order', () => {
+    it('returns new status while fetching order', () => {
         const action = {
             type: OrderActionType.LoadOrderRequested,
         };
@@ -35,7 +35,7 @@ describe('orderReducer()', () => {
         }));
     });
 
-    it('returns new data if it is not fetched successfully', () => {
+    it('returns error if it is not fetched successfully', () => {
         const response = getErrorResponse();
         const action = {
             type: OrderActionType.LoadOrderFailed,
@@ -97,5 +97,42 @@ describe('orderReducer()', () => {
         expect(orderReducer(getOrderState(), action)).toEqual(expect.objectContaining({
             data: undefined,
         }));
+    });
+
+    describe('loadOrderPayments', () => {
+        it('returns new status while fetching order', () => {
+            const action = {
+                type: OrderActionType.LoadOrderPaymentsRequested,
+            };
+
+            expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
+                statuses: { isLoading: true },
+            }));
+        });
+
+        it('returns new data if it is fetched successfully', () => {
+            const action = {
+                type: OrderActionType.LoadOrderPaymentsSucceeded,
+                payload: getOrder(),
+            };
+
+            expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
+                data: omit(action.payload, ['billingAddress', 'coupons']),
+                statuses: { isLoading: false },
+            }));
+        });
+
+        it('returns error if it is not fetched successfully', () => {
+            const response = getErrorResponse();
+            const action = {
+                type: OrderActionType.LoadOrderPaymentsFailed,
+                payload: response.data,
+            };
+
+            expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
+                errors: { loadError: action.payload },
+                statuses: { isLoading: false },
+            }));
+        });
     });
 });

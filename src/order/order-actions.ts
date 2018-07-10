@@ -8,6 +8,10 @@ export enum OrderActionType {
     LoadOrderSucceeded = 'LOAD_ORDER_SUCCEEDED',
     LoadOrderFailed = 'LOAD_ORDER_FAILED',
 
+    LoadOrderPaymentsRequested = 'LOAD_ORDER_PAYMENTS_REQUESTED',
+    LoadOrderPaymentsSucceeded = 'LOAD_ORDER_PAYMENTS_SUCCEEDED',
+    LoadOrderPaymentsFailed = 'LOAD_ORDER_PAYMENTS_FAILED',
+
     SubmitOrderRequested = 'SUBMIT_ORDER_REQUESTED',
     SubmitOrderSucceeded = 'SUBMIT_ORDER_SUCCEEDED',
     SubmitOrderFailed = 'SUBMIT_ORDER_FAILED',
@@ -18,8 +22,13 @@ export enum OrderActionType {
 }
 
 export type OrderAction = LoadOrderAction |
+    LoadOrderPaymentsAction |
     SubmitOrderAction |
     FinalizeOrderAction;
+
+export type LoadOrderPaymentsAction = LoadOrderPaymentsRequestedAction |
+    LoadOrderPaymentsSucceededAction |
+    LoadOrderPaymentsFailedAction;
 
 export type LoadOrderAction =
     LoadOrderRequestedAction |
@@ -46,6 +55,18 @@ export interface LoadOrderSucceededAction extends Action<Order> {
 
 export interface LoadOrderFailedAction extends Action<Error> {
     type: OrderActionType.LoadOrderFailed;
+}
+
+export interface LoadOrderPaymentsRequestedAction extends Action {
+    type: OrderActionType.LoadOrderPaymentsRequested;
+}
+
+export interface LoadOrderPaymentsSucceededAction extends Action<Order> {
+    type: OrderActionType.LoadOrderPaymentsSucceeded;
+}
+
+export interface LoadOrderPaymentsFailedAction extends Action<Error> {
+    type: OrderActionType.LoadOrderPaymentsFailed;
 }
 
 export interface SubmitOrderRequestedAction extends Action {
