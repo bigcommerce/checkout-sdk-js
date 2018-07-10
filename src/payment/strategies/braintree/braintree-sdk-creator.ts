@@ -70,14 +70,6 @@ export default class BraintreeSDKCreator {
                 this._braintreeScriptLoader.loadDataCollector(),
             ])
             .then(([client, dataCollector]) => dataCollector.create({ client, kount: true }))
-            .then(dataCollector => {
-                const { deviceData } = dataCollector;
-
-                return {
-                    ...dataCollector,
-                    deviceData: deviceData ? JSON.parse(deviceData).device_session_id : undefined,
-                };
-            })
             .catch(error => {
                 if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
                     return { deviceData: undefined, teardown: () => Promise.resolve() };

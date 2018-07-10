@@ -115,8 +115,8 @@ describe('Braintree SDK Creator', () => {
             jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(Promise.resolve(clientMock));
         });
 
-        it('uses the right parameters to instantiate a data collector', async () => {
-            await braintreeSDKCreator.getDataCollector();
+        it('uses the right parameters to instanciate a data collector', async () => {
+            const dataCollector = await braintreeSDKCreator.getDataCollector();
             expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({ client: clientMock, kount: true });
         });
 
