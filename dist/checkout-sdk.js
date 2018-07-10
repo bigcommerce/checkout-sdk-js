@@ -2899,6 +2899,7 @@ exports.default = BraintreeScriptLoader;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
 var BraintreeSDKCreator = /** @class */ (function () {
     function BraintreeSDKCreator(_braintreeScriptLoader) {
@@ -2953,6 +2954,10 @@ var BraintreeSDKCreator = /** @class */ (function () {
                 .then(function (_a) {
                 var client = _a[0], dataCollector = _a[1];
                 return dataCollector.create({ client: client, kount: true });
+            })
+                .then(function (dataCollector) {
+                var deviceData = dataCollector.deviceData;
+                return tslib_1.__assign({}, dataCollector, { deviceData: deviceData ? JSON.parse(deviceData).device_session_id : undefined });
             })
                 .catch(function (error) {
                 if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {

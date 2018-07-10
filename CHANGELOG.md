@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.3"></a>
+## [0.24.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.2...v0.24.3) (2018-07-10)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-3064 Braintree's DataCollector actually returns device_session_id and fraud_merchant_id as JSON but we just want the device_session_id ([515fc98](https://github.com/bigcommerce/checkout-sdk-js/commit/515fc98))
+
+
+
 <a name="0.24.2"></a>
 ## [0.24.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.1...v0.24.2) (2018-06-28)
 
