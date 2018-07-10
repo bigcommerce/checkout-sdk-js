@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.27.1"></a>
+## [0.27.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.27.0...v0.27.1) (2018-07-10)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3334 Prevent order data from overwriting checkout data when retrieving payment information ([0bf5be2](https://github.com/bigcommerce/checkout-sdk-js/commit/0bf5be2))
+* **payment:** CHECKOUT-3320 Clean order store after a new order is created ([ea2e632](https://github.com/bigcommerce/checkout-sdk-js/commit/ea2e632))
+* **payment:** CHECKOUT-3329 Do not submit the order until PayPal tokenization finishes ([ebfc837](https://github.com/bigcommerce/checkout-sdk-js/commit/ebfc837))
+* **payment:** PAYMENTS-3064 Braintree's DataCollector actually returns device_session_id and fraud_merchant_id as JSON but we just want the device_session_id ([b8f2c30](https://github.com/bigcommerce/checkout-sdk-js/commit/b8f2c30))
+* **shopper:** CHECKOUT-3329 BillingAddressReducer shouldn't overwrite customer's email address ([1ddb485](https://github.com/bigcommerce/checkout-sdk-js/commit/1ddb485))
+
+
+
 <a name="0.27.0"></a>
 # [0.27.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.26.1...v0.27.0) (2018-07-04)
 

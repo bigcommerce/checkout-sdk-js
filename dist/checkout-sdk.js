@@ -423,7 +423,7 @@ module.exports = require("@bigcommerce/request-sender");
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-tslib_1.__exportStar(__webpack_require__(23), exports);
+tslib_1.__exportStar(__webpack_require__(22), exports);
 tslib_1.__exportStar(__webpack_require__(27), exports);
 var coupon_action_creator_1 = __webpack_require__(126);
 exports.CouponActionCreator = coupon_action_creator_1.default;
@@ -455,7 +455,7 @@ exports.mapToInternalGiftCertificate = map_to_internal_gift_certificate_1.defaul
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-tslib_1.__exportStar(__webpack_require__(24), exports);
+tslib_1.__exportStar(__webpack_require__(23), exports);
 var create_shipping_strategy_registry_1 = __webpack_require__(181);
 exports.createShippingStrategyRegistry = create_shipping_strategy_registry_1.default;
 var consignment_selector_1 = __webpack_require__(186);
@@ -510,7 +510,7 @@ exports.INITIALIZE = 'INITIALIZE';
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-tslib_1.__exportStar(__webpack_require__(22), exports);
+tslib_1.__exportStar(__webpack_require__(26), exports);
 var billing_address_selector_1 = __webpack_require__(138);
 exports.BillingAddressSelector = billing_address_selector_1.default;
 var billing_address_action_creator_1 = __webpack_require__(139);
@@ -543,21 +543,6 @@ exports.mapToInternalAddress = map_to_internal_address_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var BillingAddressActionType;
-(function (BillingAddressActionType) {
-    BillingAddressActionType["UpdateBillingAddressRequested"] = "UPDATE_BILLING_ADDRESS_REQUESTED";
-    BillingAddressActionType["UpdateBillingAddressSucceeded"] = "UPDATE_BILLING_ADDRESS_SUCCEEDED";
-    BillingAddressActionType["UpdateBillingAddressFailed"] = "UPDATE_BILLING_ADDRESS_FAILED";
-})(BillingAddressActionType = exports.BillingAddressActionType || (exports.BillingAddressActionType = {}));
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var CouponActionType;
 (function (CouponActionType) {
     CouponActionType["ApplyCouponRequested"] = "APPLY_COUPON_REQUESTED";
@@ -570,7 +555,7 @@ var CouponActionType;
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -591,7 +576,7 @@ var ConsignmentActionType;
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -610,7 +595,7 @@ exports.remoteCheckoutReducer = remote_checkout_reducer_1.default;
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -632,6 +617,21 @@ var CustomerStrategy = /** @class */ (function () {
     return CustomerStrategy;
 }());
 exports.default = CustomerStrategy;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var BillingAddressActionType;
+(function (BillingAddressActionType) {
+    BillingAddressActionType["UpdateBillingAddressRequested"] = "UPDATE_BILLING_ADDRESS_REQUESTED";
+    BillingAddressActionType["UpdateBillingAddressSucceeded"] = "UPDATE_BILLING_ADDRESS_SUCCEEDED";
+    BillingAddressActionType["UpdateBillingAddressFailed"] = "UPDATE_BILLING_ADDRESS_FAILED";
+})(BillingAddressActionType = exports.BillingAddressActionType || (exports.BillingAddressActionType = {}));
 
 
 /***/ }),
@@ -811,6 +811,9 @@ var OrderActionType;
     OrderActionType["LoadOrderRequested"] = "LOAD_ORDER_REQUESTED";
     OrderActionType["LoadOrderSucceeded"] = "LOAD_ORDER_SUCCEEDED";
     OrderActionType["LoadOrderFailed"] = "LOAD_ORDER_FAILED";
+    OrderActionType["LoadOrderPaymentsRequested"] = "LOAD_ORDER_PAYMENTS_REQUESTED";
+    OrderActionType["LoadOrderPaymentsSucceeded"] = "LOAD_ORDER_PAYMENTS_SUCCEEDED";
+    OrderActionType["LoadOrderPaymentsFailed"] = "LOAD_ORDER_PAYMENTS_FAILED";
     OrderActionType["SubmitOrderRequested"] = "SUBMIT_ORDER_REQUESTED";
     OrderActionType["SubmitOrderSucceeded"] = "SUBMIT_ORDER_SUCCEEDED";
     OrderActionType["SubmitOrderFailed"] = "SUBMIT_ORDER_FAILED";
@@ -1529,8 +1532,8 @@ var CheckoutService = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             filters[_i - 1] = arguments[_i];
         }
-        return (_a = this._store).subscribe.apply(_a, [function () { return subscriber(_this.getState()); }].concat(filters.map(function (filter) { return function (state) { return filter(create_checkout_selectors_1.default(state)); }; })));
         var _a;
+        return (_a = this._store).subscribe.apply(_a, [function () { return subscriber(_this.getState()); }].concat(filters.map(function (filter) { return function (state) { return filter(create_checkout_selectors_1.default(state)); }; })));
     };
     /**
      * Loads the current checkout.
@@ -2836,6 +2839,7 @@ exports.default = BraintreeScriptLoader;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(1);
 var BraintreeSDKCreator = /** @class */ (function () {
     function BraintreeSDKCreator(_braintreeScriptLoader) {
@@ -2890,6 +2894,10 @@ var BraintreeSDKCreator = /** @class */ (function () {
                 .then(function (_a) {
                 var client = _a[0], dataCollector = _a[1];
                 return dataCollector.create({ client: client, kount: true });
+            })
+                .then(function (dataCollector) {
+                var deviceData = dataCollector.deviceData;
+                return tslib_1.__assign({}, dataCollector, { deviceData: deviceData ? JSON.parse(deviceData).device_session_id : undefined });
             })
                 .catch(function (error) {
                 if (error && error.code === 'DATA_COLLECTOR_KOUNT_NOT_ENABLED') {
@@ -3050,7 +3058,7 @@ var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
 var errors_1 = __webpack_require__(1);
-var consignment_actions_1 = __webpack_require__(24);
+var consignment_actions_1 = __webpack_require__(23);
 var ConsignmentActionCreator = /** @class */ (function () {
     function ConsignmentActionCreator(_checkoutClient, _checkoutRequestSender) {
         this._checkoutClient = _checkoutClient;
@@ -3687,7 +3695,7 @@ var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
 var payment_2 = __webpack_require__(13);
 var instrument_1 = __webpack_require__(45);
-var remote_checkout_1 = __webpack_require__(25);
+var remote_checkout_1 = __webpack_require__(24);
 var shipping_1 = __webpack_require__(18);
 var checkout_selector_1 = __webpack_require__(52);
 function createInternalCheckoutSelectors(state, options) {
@@ -3863,8 +3871,8 @@ function createFreezeProxy(target) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            return data_store_1.deepFreeze((_a = target[name]).call.apply(_a, [target].concat(args)));
             var _a;
+            return data_store_1.deepFreeze((_a = target[name]).call.apply(_a, [target].concat(args)));
         };
     });
 }
@@ -5436,9 +5444,9 @@ var CartComparator = /** @class */ (function () {
     CartComparator.prototype._normalize = function (cart) {
         var lineItems = Object.keys(cart.lineItems)
             .reduce(function (result, key) {
+            var _a;
             return (tslib_1.__assign({}, result, (_a = {}, _a[key] = cart.lineItems[key]
                 .map(function (item) { return lodash_1.omit(item, ['id', 'imageUrl']); }), _a)));
-            var _a;
         }, {});
         return utility_1.omitPrivate(lodash_1.omit(tslib_1.__assign({}, cart, { lineItems: lineItems }), ['updatedTime']));
     };
@@ -5456,11 +5464,11 @@ exports.default = CartComparator;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var billing_address_actions_1 = __webpack_require__(22);
+var billing_address_actions_1 = __webpack_require__(26);
 var checkout_1 = __webpack_require__(7);
-var coupon_actions_1 = __webpack_require__(23);
+var coupon_actions_1 = __webpack_require__(22);
 var gift_certificate_actions_1 = __webpack_require__(27);
-var consignment_actions_1 = __webpack_require__(24);
+var consignment_actions_1 = __webpack_require__(23);
 var DEFAULT_STATE = {
     errors: {},
     statuses: {},
@@ -5580,7 +5588,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
 var errors_1 = __webpack_require__(1);
-var coupon_actions_1 = __webpack_require__(23);
+var coupon_actions_1 = __webpack_require__(22);
 var CouponActionCreator = /** @class */ (function () {
     function CouponActionCreator(_couponRequestSender) {
         this._couponRequestSender = _couponRequestSender;
@@ -5720,7 +5728,7 @@ var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var checkout_1 = __webpack_require__(7);
 var order_1 = __webpack_require__(10);
-var coupon_actions_1 = __webpack_require__(23);
+var coupon_actions_1 = __webpack_require__(22);
 var DEFAULT_STATE = {
     errors: {},
     statuses: {},
@@ -5815,13 +5823,21 @@ var OrderActionCreator = /** @class */ (function () {
             });
         });
     };
+    // TODO: Remove when checkout does not contain unrelated order data.
+    OrderActionCreator.prototype.loadCurrentOrderPayments = function (options) {
+        var _this = this;
+        return function (store) { return defer_1.defer(function () {
+            var orderId = _this._getCurrentOrderId(store.getState());
+            if (!orderId) {
+                throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingOrderId);
+            }
+            return _this._loadOrderPayments(orderId, options);
+        }); };
+    };
     OrderActionCreator.prototype.loadCurrentOrder = function (options) {
         var _this = this;
         return function (store) { return defer_1.defer(function () {
-            var state = store.getState();
-            var order = state.order.getOrder();
-            var checkout = state.checkout.getCheckout();
-            var orderId = (order && order.orderId) || (checkout && checkout.orderId);
+            var orderId = _this._getCurrentOrderId(store.getState());
             if (!orderId) {
                 throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingOrderId);
             }
@@ -5865,6 +5881,26 @@ var OrderActionCreator = /** @class */ (function () {
         }), 
         // TODO: Remove once we can submit orders using storefront API
         this.loadOrder(orderId, options));
+    };
+    // TODO: Remove when checkout does not contain unrelated order data.
+    OrderActionCreator.prototype._loadOrderPayments = function (orderId, options) {
+        var _this = this;
+        return new Observable_1.Observable(function (observer) {
+            observer.next(data_store_1.createAction(order_actions_1.OrderActionType.LoadOrderPaymentsRequested));
+            _this._checkoutClient.loadOrder(orderId, options)
+                .then(function (response) {
+                observer.next(data_store_1.createAction(order_actions_1.OrderActionType.LoadOrderPaymentsSucceeded, response.body));
+                observer.complete();
+            })
+                .catch(function (response) {
+                observer.error(data_store_1.createErrorAction(order_actions_1.OrderActionType.LoadOrderPaymentsFailed, response));
+            });
+        });
+    };
+    OrderActionCreator.prototype._getCurrentOrderId = function (state) {
+        var order = state.order.getOrder();
+        var checkout = state.checkout.getCheckout();
+        return (order && order.orderId) || (checkout && checkout.orderId);
     };
     OrderActionCreator.prototype._mapToOrderRequestBody = function (payload, customerMessage) {
         var payment = payload.payment, order = tslib_1.__rest(payload, ["payment"]);
@@ -5911,7 +5947,10 @@ function orderReducer(state, action) {
 exports.default = orderReducer;
 function dataReducer(data, action) {
     switch (action.type) {
+        case order_actions_1.OrderActionType.SubmitOrderSucceeded:
+            return undefined;
         case order_actions_1.OrderActionType.LoadOrderSucceeded:
+        case order_actions_1.OrderActionType.LoadOrderPaymentsSucceeded:
             return action.payload
                 ? lodash_1.omit(tslib_1.__assign({}, data, action.payload), ['billingAddress', 'coupons'])
                 : data;
@@ -5933,8 +5972,11 @@ function errorsReducer(errors, action) {
     switch (action.type) {
         case order_actions_1.OrderActionType.LoadOrderRequested:
         case order_actions_1.OrderActionType.LoadOrderSucceeded:
+        case order_actions_1.OrderActionType.LoadOrderPaymentsSucceeded:
+        case order_actions_1.OrderActionType.LoadOrderPaymentsRequested:
             return tslib_1.__assign({}, errors, { loadError: undefined });
         case order_actions_1.OrderActionType.LoadOrderFailed:
+        case order_actions_1.OrderActionType.LoadOrderPaymentsFailed:
             return tslib_1.__assign({}, errors, { loadError: action.payload });
         default:
             return errors;
@@ -5944,9 +5986,12 @@ function statusesReducer(statuses, action) {
     if (statuses === void 0) { statuses = DEFAULT_STATE.statuses; }
     switch (action.type) {
         case order_actions_1.OrderActionType.LoadOrderRequested:
+        case order_actions_1.OrderActionType.LoadOrderPaymentsRequested:
             return tslib_1.__assign({}, statuses, { isLoading: true });
         case order_actions_1.OrderActionType.LoadOrderSucceeded:
         case order_actions_1.OrderActionType.LoadOrderFailed:
+        case order_actions_1.OrderActionType.LoadOrderPaymentsSucceeded:
+        case order_actions_1.OrderActionType.LoadOrderPaymentsFailed:
             return tslib_1.__assign({}, statuses, { isLoading: false });
         default:
             return statuses;
@@ -6230,7 +6275,7 @@ var script_loader_1 = __webpack_require__(37);
 var billing_1 = __webpack_require__(20);
 var checkout_1 = __webpack_require__(7);
 var order_1 = __webpack_require__(10);
-var remote_checkout_1 = __webpack_require__(25);
+var remote_checkout_1 = __webpack_require__(24);
 var afterpay_1 = __webpack_require__(146);
 var amazon_pay_1 = __webpack_require__(39);
 var klarna_1 = __webpack_require__(149);
@@ -6360,7 +6405,7 @@ var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var Observable_1 = __webpack_require__(5);
 var errors_1 = __webpack_require__(1);
-var billing_address_actions_1 = __webpack_require__(22);
+var billing_address_actions_1 = __webpack_require__(26);
 var BillingAddressActionCreator = /** @class */ (function () {
     function BillingAddressActionCreator(_checkoutClient) {
         this._checkoutClient = _checkoutClient;
@@ -6448,7 +6493,7 @@ var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var checkout_1 = __webpack_require__(7);
 var order_1 = __webpack_require__(10);
-var billing_address_actions_1 = __webpack_require__(22);
+var billing_address_actions_1 = __webpack_require__(26);
 var DEFAULT_STATE = {
     errors: {},
     statuses: {},
@@ -6702,6 +6747,7 @@ var DEFAULT_STATE = {
 };
 function remoteCheckoutReducer(state, action) {
     if (state === void 0) { state = DEFAULT_STATE; }
+    var _a;
     if (!action.meta || !action.meta.methodId) {
         return state;
     }
@@ -6711,7 +6757,6 @@ function remoteCheckoutReducer(state, action) {
             _a)),
     });
     return reducer(state, action);
-    var _a;
 }
 exports.default = remoteCheckoutReducer;
 function dataReducer(data, action) {
@@ -6927,9 +6972,9 @@ function normalize(address) {
     var ignoredKeys = ['id', 'provinceCode'];
     return Object.keys(utility_1.omitPrivate(address) || {})
         .reduce(function (result, key) {
+        var _a;
         return ignoredKeys.indexOf(key) === -1 && address[key] ? tslib_1.__assign({}, result, (_a = {}, _a[key] = address[key], _a)) :
             result;
-        var _a;
     }, {});
 }
 
@@ -7005,7 +7050,7 @@ var registry_1 = __webpack_require__(40);
 var payment_1 = __webpack_require__(13);
 var braintree_1 = __webpack_require__(41);
 var chasepay_1 = __webpack_require__(166);
-var remote_checkout_1 = __webpack_require__(25);
+var remote_checkout_1 = __webpack_require__(24);
 var amazon_pay_1 = __webpack_require__(39);
 var _1 = __webpack_require__(14);
 var customer_action_creator_1 = __webpack_require__(67);
@@ -7270,10 +7315,8 @@ var BraintreePaypalPaymentStrategy = /** @class */ (function (_super) {
         if (!payment) {
             throw new errors_2.PaymentArgumentInvalidError(['payment']);
         }
-        return Promise.all([
-            payment ? this._preparePaymentData(payment) : Promise.resolve(payment),
-            this._store.dispatch(this._orderActionCreator.submitOrder(order, options)),
-        ])
+        return (payment ? this._preparePaymentData(payment) : Promise.resolve(payment))
+            .then(function (payment) { return Promise.all([payment, _this._store.dispatch(_this._orderActionCreator.submitOrder(order, options))]); })
             .then(function (_a) {
             var payment = _a[0];
             return _this._store.dispatch(_this._paymentActionCreator.submitPayment(payment));
@@ -7551,7 +7594,7 @@ exports.default = ChasePayScriptLoader;
 Object.defineProperty(exports, "__esModule", { value: true });
 var amazon_pay_customer_strategy_1 = __webpack_require__(169);
 exports.AmazonPayCustomerStrategy = amazon_pay_customer_strategy_1.default;
-var customer_strategy_1 = __webpack_require__(26);
+var customer_strategy_1 = __webpack_require__(25);
 exports.CustomerStrategy = customer_strategy_1.default;
 var default_customer_strategy_1 = __webpack_require__(170);
 exports.DefaultCustomerStrategy = default_customer_strategy_1.default;
@@ -7570,7 +7613,7 @@ exports.ChasePayCustomerStrategy = chasepay_customer_strategy_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(1);
-var customer_strategy_1 = __webpack_require__(26);
+var customer_strategy_1 = __webpack_require__(25);
 var AmazonPayCustomerStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(AmazonPayCustomerStrategy, _super);
     function AmazonPayCustomerStrategy(store, _paymentMethodActionCreator, _remoteCheckoutActionCreator, _remoteCheckoutRequestSender, _scriptLoader) {
@@ -7677,7 +7720,7 @@ exports.default = AmazonPayCustomerStrategy;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var customer_strategy_1 = __webpack_require__(26);
+var customer_strategy_1 = __webpack_require__(25);
 var DefaultCustomerStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(DefaultCustomerStrategy, _super);
     function DefaultCustomerStrategy(store, _customerActionCreator) {
@@ -7705,7 +7748,7 @@ exports.default = DefaultCustomerStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(1);
-var customer_strategy_1 = __webpack_require__(26);
+var customer_strategy_1 = __webpack_require__(25);
 var BraintreeVisaCheckoutCustomerStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(BraintreeVisaCheckoutCustomerStrategy, _super);
     function BraintreeVisaCheckoutCustomerStrategy(store, _checkoutActionCreator, _paymentMethodActionCreator, _customerStrategyActionCreator, _remoteCheckoutActionCreator, _braintreeVisaCheckoutPaymentProcessor, _visaCheckoutScriptLoader) {
@@ -7825,7 +7868,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(1);
 var http_request_1 = __webpack_require__(11);
-var customer_strategy_1 = __webpack_require__(26);
+var customer_strategy_1 = __webpack_require__(25);
 var ChasePayCustomerStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(ChasePayCustomerStrategy, _super);
     function ChasePayCustomerStrategy(store, _paymentMethodActionCreator, _remoteCheckoutActionCreator, _chasePayScriptLoader, _requestSender, _formPoster) {
@@ -7943,7 +7986,6 @@ exports.default = ChasePayCustomerStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var billing_address_actions_1 = __webpack_require__(22);
 var checkout_1 = __webpack_require__(7);
 var DEFAULT_STATE = {};
 function customerReducer(state, action) {
@@ -7958,8 +8000,6 @@ function dataReducer(data, action) {
     switch (action.type) {
         case checkout_1.CheckoutActionType.LoadCheckoutSucceeded:
             return action.payload ? tslib_1.__assign({}, data, action.payload.customer) : data;
-        case billing_address_actions_1.BillingAddressActionType.UpdateBillingAddressSucceeded:
-            return action.payload && action.payload.billingAddress ? tslib_1.__assign({}, data, { email: action.payload.billingAddress.email }) : data;
         default:
             return data;
     }
@@ -8323,7 +8363,7 @@ var script_loader_1 = __webpack_require__(37);
 var checkout_request_sender_1 = __webpack_require__(33);
 var registry_1 = __webpack_require__(40);
 var payment_1 = __webpack_require__(13);
-var remote_checkout_1 = __webpack_require__(25);
+var remote_checkout_1 = __webpack_require__(24);
 var amazon_pay_1 = __webpack_require__(39);
 var consignment_action_creator_1 = __webpack_require__(70);
 var strategies_1 = __webpack_require__(182);
@@ -8601,7 +8641,7 @@ var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var checkout_1 = __webpack_require__(7);
 var customer_1 = __webpack_require__(14);
-var consignment_actions_1 = __webpack_require__(24);
+var consignment_actions_1 = __webpack_require__(23);
 var DEFAULT_STATE = {
     errors: {},
     statuses: {},
@@ -9221,6 +9261,7 @@ var tslib_1 = __webpack_require__(0);
 var map_to_internal_shipping_option_1 = __webpack_require__(73);
 function mapToInternalShippingOptions(consignments) {
     return consignments.reduce(function (result, consignment) {
+        var _a;
         var shippingOptions;
         if (consignment.availableShippingOptions && consignment.availableShippingOptions.length) {
             shippingOptions = consignment.availableShippingOptions;
@@ -9232,7 +9273,6 @@ function mapToInternalShippingOptions(consignments) {
             var selectedOptionId = consignment.selectedShippingOption && consignment.selectedShippingOption.id;
             return map_to_internal_shipping_option_1.default(option, option.id === selectedOptionId);
         }), _a));
-        var _a;
     }, {});
 }
 exports.default = mapToInternalShippingOptions;
@@ -10490,7 +10530,7 @@ var PaymentStrategyActionCreator = /** @class */ (function () {
                     observer.error(data_store_1.createErrorAction(payment_strategy_actions_1.PaymentStrategyActionType.ExecuteFailed, error, meta));
                 });
             });
-            return concat_1.concat(_this._loadOrderIfNeeded(store, options), executeAction);
+            return concat_1.concat(_this._loadOrderPaymentsIfNeeded(store, options), executeAction);
         };
     };
     PaymentStrategyActionCreator.prototype.finalize = function (options) {
@@ -10522,7 +10562,7 @@ var PaymentStrategyActionCreator = /** @class */ (function () {
                     observer.error(data_store_1.createErrorAction(payment_strategy_actions_1.PaymentStrategyActionType.FinalizeFailed, error, meta));
                 });
             });
-            return concat_1.concat(_this._loadOrderIfNeeded(store, options), finalizeAction);
+            return concat_1.concat(_this._loadOrderPaymentsIfNeeded(store, options), finalizeAction);
         };
     };
     PaymentStrategyActionCreator.prototype.initialize = function (options) {
@@ -10581,10 +10621,10 @@ var PaymentStrategyActionCreator = /** @class */ (function () {
             });
         }); };
     };
-    PaymentStrategyActionCreator.prototype._loadOrderIfNeeded = function (store, options) {
+    PaymentStrategyActionCreator.prototype._loadOrderPaymentsIfNeeded = function (store, options) {
         var checkout = store.getState().checkout.getCheckout();
         if (checkout && checkout.orderId) {
-            return from_1.from(this._orderActionCreator.loadCurrentOrder(options)(store));
+            return from_1.from(this._orderActionCreator.loadCurrentOrderPayments(options)(store));
         }
         return empty_1.empty();
     };
@@ -10905,8 +10945,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var checkout_1 = __webpack_require__(7);
-var consignment_actions_1 = __webpack_require__(24);
-var coupon_actions_1 = __webpack_require__(23);
+var consignment_actions_1 = __webpack_require__(23);
+var coupon_actions_1 = __webpack_require__(22);
 var gift_certificate_actions_1 = __webpack_require__(27);
 var DEFAULT_STATE = {
     errors: {},
@@ -11508,11 +11548,11 @@ var ConsoleLogger = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             messages[_i - 1] = arguments[_i];
         }
+        var _a;
         if (!this._console || !this._console[type]) {
             return;
         }
         (_a = this._console[type]).call.apply(_a, [this._console].concat(messages));
-        var _a;
     };
     return ConsoleLogger;
 }());
@@ -11993,7 +12033,7 @@ var geography_1 = __webpack_require__(30);
 var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
 var instrument_1 = __webpack_require__(45);
-var remote_checkout_1 = __webpack_require__(25);
+var remote_checkout_1 = __webpack_require__(24);
 var shipping_1 = __webpack_require__(18);
 var checkout_reducer_1 = __webpack_require__(255);
 function createCheckoutStoreReducer() {

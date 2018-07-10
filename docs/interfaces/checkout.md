@@ -130,9 +130,10 @@ ___
 ___
 <a id="orderid"></a>
 
-###  orderId
+### `<Optional>` orderId
 
-**● orderId**: *`number`*
+**● orderId**: * `undefined` &#124; `number`
+*
 
 ___
 <a id="payments"></a>
