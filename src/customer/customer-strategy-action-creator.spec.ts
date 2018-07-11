@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
+import { ConfigActionCreator, ConfigRequestSender } from '../config';
 
 import createCustomerStrategyRegistry from './create-customer-strategy-registry';
 import CustomerActionCreator from './customer-action-creator';
@@ -18,16 +19,22 @@ describe('CustomerStrategyActionCreator', () => {
     let strategy: DefaultCustomerStrategy;
 
     beforeEach(() => {
+        const requestSender = createRequestSender();
+        const checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(requestSender),
+            new ConfigActionCreator(
+                new ConfigRequestSender(requestSender)
+            )
+        );
+
         store = createCheckoutStore();
         client = createCheckoutClient();
         registry = createCustomerStrategyRegistry(store, client);
         strategy = new DefaultCustomerStrategy(
             store,
             new CustomerActionCreator(
-                new CustomerRequestSender(createRequestSender()),
-                new CheckoutActionCreator(
-                    new CheckoutRequestSender(createRequestSender())
-                )
+                new CustomerRequestSender(requestSender),
+                checkoutActionCreator
             )
         );
 

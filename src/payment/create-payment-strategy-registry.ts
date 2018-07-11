@@ -4,6 +4,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator } from '../billing';
 import { CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
+import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { AfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
@@ -62,6 +63,8 @@ export default function createPaymentStrategyRegistry(
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
         new RemoteCheckoutRequestSender(createRequestSender())
     );
+    const configRequestSender = new ConfigRequestSender(requestSender);
+    const configActionCreator = new ConfigActionCreator(configRequestSender);
 
     registry.register('afterpay', () =>
         new AfterpayPaymentStrategy(
@@ -208,7 +211,7 @@ export default function createPaymentStrategyRegistry(
     registry.register('braintreevisacheckout', () =>
         new BraintreeVisaCheckoutPaymentStrategy(
             store,
-            new CheckoutActionCreator(checkoutRequestSender),
+            new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
             paymentMethodActionCreator,
             new PaymentStrategyActionCreator(registry, orderActionCreator),
             paymentActionCreator,

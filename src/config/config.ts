@@ -99,6 +99,7 @@ export interface CustomizationConfig {
 }
 
 export interface ContextConfig {
+    checkoutId?: string;
     geoCountryCode: string;
     flashMessages: any[];
     payment: {

@@ -3,6 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../checkout';
+import { ConfigActionCreator, ConfigRequestSender } from '../../config';
 import { getQuote } from '../../quote/internal-quotes.mock';
 import CustomerActionCreator from '../customer-action-creator';
 import { CustomerActionType } from '../customer-actions';
@@ -16,10 +17,16 @@ describe('DefaultCustomerStrategy', () => {
 
     beforeEach(() => {
         store = createCheckoutStore();
+        const requestSender = createRequestSender();
+        const configActionCreator = new ConfigActionCreator(
+            new ConfigRequestSender(requestSender)
+        );
+
         customerActionCreator = new CustomerActionCreator(
-            new CustomerRequestSender(createRequestSender()),
+            new CustomerRequestSender(requestSender),
             new CheckoutActionCreator(
-                new CheckoutRequestSender(createRequestSender())
+                new CheckoutRequestSender(requestSender),
+                configActionCreator
             )
         );
     });

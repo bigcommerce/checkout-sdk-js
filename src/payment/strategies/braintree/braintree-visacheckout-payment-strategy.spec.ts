@@ -17,6 +17,7 @@ import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
@@ -70,9 +71,11 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         const paymentClient = createPaymentClient(store);
         const registry = createPaymentStrategyRegistry(store, client, paymentClient);
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        const configRequestSender = new ConfigRequestSender(createRequestSender());
+        const configActionCreator = new ConfigActionCreator(configRequestSender);
         const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
-        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender);
+        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         orderActionCreator = new OrderActionCreator(client, checkoutValidator);
         paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);

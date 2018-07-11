@@ -6,6 +6,7 @@ import ConfigState from './config-state';
 export function getConfig(): Config {
     return {
         context: {
+            checkoutId: '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f',
             flashMessages: [],
             geoCountryCode: 'AU',
             payment: {},

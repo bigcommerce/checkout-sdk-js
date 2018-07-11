@@ -41,6 +41,7 @@ describe('CheckoutService', () => {
     let checkoutService;
     let checkoutValidator;
     let configActionCreator;
+    let configRequestSender;
     let couponRequestSender;
     let customerStrategyActionCreator;
     let giftCertificateRequestSender;
@@ -55,10 +56,6 @@ describe('CheckoutService', () => {
         checkoutClient = {
             loadCart: jest.fn(() =>
                 Promise.resolve(getResponse(getCartResponseBody()))
-            ),
-
-            loadConfig: jest.fn(() =>
-                Promise.resolve(getResponse(getConfig()))
             ),
 
             loadCountries: jest.fn(() =>
@@ -168,15 +165,24 @@ describe('CheckoutService', () => {
             ),
         };
 
+        configRequestSender = {
+            loadConfig: jest.fn(() =>
+                Promise.resolve(getResponse(getConfig()))
+            ),
+        };
+
         checkoutValidator = {
             validate: jest.fn(() => Promise.resolve()),
         };
 
         billingAddressActionCreator = new BillingAddressActionCreator(checkoutClient);
 
-        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender);
+        configActionCreator = new ConfigActionCreator(configRequestSender);
 
-        configActionCreator = new ConfigActionCreator(checkoutClient);
+        checkoutActionCreator = new CheckoutActionCreator(
+            checkoutRequestSender,
+            configActionCreator
+        );
 
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
             createCustomerStrategyRegistry(store, checkoutClient)
@@ -284,13 +290,25 @@ describe('CheckoutService', () => {
 
         beforeEach(() => {
             jest.spyOn(checkoutActionCreator, 'loadCheckout');
+            jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout');
             jest.spyOn(configActionCreator, 'loadConfig');
         });
 
-        it('loads checkout data', async () => {
-            const state = await checkoutService.loadCheckout(id);
+        it('calls loadCheckout with the provided id', () => {
+            checkoutService.loadCheckout(id);
 
-            expect(checkoutRequestSender.loadCheckout).toHaveBeenCalled();
+            expect(checkoutActionCreator.loadCheckout).toHaveBeenCalledWith(id, undefined);
+        });
+
+        it('calls loadDefaultCheckout when no id is provided', async () => {
+            await checkoutService.loadCheckout();
+
+            expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalledWith(undefined);
+        });
+
+        it('returns a state with a hydrated checkout', async () => {
+            const state = await checkoutService.loadCheckout();
+
             expect(state.data.getCheckout()).toEqual(store.getState().checkout.getCheckout());
         });
     });

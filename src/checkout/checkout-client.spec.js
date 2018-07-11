@@ -1,5 +1,4 @@
 import { createTimeout } from '@bigcommerce/request-sender';
-import { getConfig } from '../config/configs.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { getCompleteOrder } from '../order/internal-orders.mock';
@@ -13,7 +12,6 @@ import { getConsignmentRequestBody } from '../shipping/consignments.mock';
 describe('CheckoutClient', () => {
     let client;
     let billingAddressRequestSender;
-    let configRequestSender;
     let countryRequestSender;
     let customerRequestSender;
     let orderRequestSender;
@@ -25,10 +23,6 @@ describe('CheckoutClient', () => {
         billingAddressRequestSender = {
             updateAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
             createAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
-        };
-
-        configRequestSender = {
-            loadConfig: jest.fn(() => Promise.resolve(getResponse(getConfig()))),
         };
 
         countryRequestSender = {
@@ -67,7 +61,6 @@ describe('CheckoutClient', () => {
 
         client = new CheckoutClient(
             billingAddressRequestSender,
-            configRequestSender,
             consignmentRequestSender,
             countryRequestSender,
             customerRequestSender,
@@ -307,15 +300,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getCustomerResponseBody());
             expect(customerRequestSender.signOutCustomer).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#loadConfig()', () => {
-        it('loads app config', async () => {
-            const output = await client.loadConfig();
-
-            expect(output).toEqual(getResponse(getConfig()));
-            expect(configRequestSender.loadConfig).toHaveBeenCalled();
         });
     });
 });

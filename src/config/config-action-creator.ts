@@ -2,14 +2,14 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutClient } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 
+import { ConfigRequestSender } from '.';
 import { ConfigActionType, LoadConfigAction } from './config-actions';
 
 export default class ConfigActionCreator {
     constructor(
-        private _checkoutClient: CheckoutClient
+        private _configRequestSender: ConfigRequestSender
     ) {}
 
     loadConfig(options?: RequestOptions): ThunkAction<LoadConfigAction> {
@@ -23,7 +23,7 @@ export default class ConfigActionCreator {
 
             observer.next(createAction(ConfigActionType.LoadConfigRequested));
 
-            this._checkoutClient.loadConfig(options)
+            this._configRequestSender.loadConfig(options)
                 .then(response => {
                     observer.next(createAction(ConfigActionType.LoadConfigSucceeded, response.body));
                     observer.complete();
