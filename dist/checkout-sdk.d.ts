@@ -374,11 +374,11 @@ declare class CheckoutService {
      * console.log(state.checkout.getCheckout());
      * ```
      *
-     * @param id - The identifier of the checkout to load.
+     * @param id - The identifier of the checkout to load, or the default checkout if not provided.
      * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    loadCheckout(id: string, options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadCheckout(id?: string, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Updates specific properties of the current checkout.
      *

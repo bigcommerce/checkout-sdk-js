@@ -428,7 +428,7 @@ ___
 
 ###  loadCheckout
 
-▸ **loadCheckout**(id: *`string`*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **loadCheckout**(id?: * `undefined` &#124; `string`*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Loads the current checkout.
 
@@ -444,7 +444,7 @@ console.log(state.checkout.getCheckout());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| id | `string` |  The identifier of the checkout to load. |
+| `Optional` id |  `undefined` &#124; `string`|  The identifier of the checkout to load, or the default checkout if not provided. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for loading the current checkout. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
