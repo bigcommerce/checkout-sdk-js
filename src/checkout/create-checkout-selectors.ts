@@ -12,7 +12,6 @@ export default function createCheckoutSelectors(selectors: InternalCheckoutSelec
     const statuses = new CheckoutStoreStatusSelector(selectors);
 
     return {
-        checkout: data, // Deprecated
         data,
         errors,
         statuses,
