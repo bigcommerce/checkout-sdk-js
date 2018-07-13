@@ -522,18 +522,6 @@ export default class CheckoutService {
     }
 
     /**
-     * @deprecated This method has been renamed to `continueAsGuest`.
-     * @param credentials - The guest credentials to use.
-     * @param options - Options for continuing as a guest.
-     * @returns A promise that resolves to the current state.
-     */
-    signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._billingAddressActionCreator.updateAddress(credentials, options);
-
-        return this._dispatch(action);
-    }
-
-    /**
      * Continues to check out as a guest.
      *
      * The customer is required to provide their email address in order to
