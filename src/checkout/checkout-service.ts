@@ -329,6 +329,7 @@ export default class CheckoutService {
      * limitation, it is deprecated and will be removed in the future.
      *
      * @deprecated
+     * @internal
      * @param methodId - The identifier for the payment method to load.
      * @param options - Options for loading the payment method.
      * @returns A promise that resolves to the current state.

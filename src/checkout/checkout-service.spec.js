@@ -489,36 +489,6 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#loadPaymentMethod()', () => {
-        it('loads payment method', async () => {
-            await checkoutService.loadPaymentMethod('authorizenet');
-
-            expect(checkoutClient.loadPaymentMethod).toHaveBeenCalledWith('authorizenet', undefined);
-        });
-
-        it('loads payment method with timeout', async () => {
-            const options = { timeout: createTimeout() };
-
-            await checkoutService.loadPaymentMethod('authorizenet', options);
-
-            expect(checkoutClient.loadPaymentMethod).toHaveBeenCalledWith('authorizenet', options);
-        });
-
-        it('returns payment method', async () => {
-            const state = await checkoutService.loadPaymentMethod('authorizenet');
-
-            expect(state.data.getPaymentMethod('authorizenet')).toEqual(getPaymentMethodResponseBody().data.paymentMethod);
-        });
-
-        it('dispatches action with queue id', async () => {
-            jest.spyOn(store, 'dispatch');
-
-            await checkoutService.loadPaymentMethod('authorizenet');
-
-            expect(store.dispatch).toHaveBeenCalledWith(expect.any(Observable), { queueId: 'paymentMethods' });
-        });
-    });
-
     describe('#initializePayment()', () => {
         it('finds payment strategy', async () => {
             await checkoutService.loadPaymentMethods();
