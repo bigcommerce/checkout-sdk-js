@@ -329,6 +329,7 @@ export default class CheckoutService {
      * limitation, it is deprecated and will be removed in the future.
      *
      * @deprecated
+     * @internal
      * @param methodId - The identifier for the payment method to load.
      * @param options - Options for loading the payment method.
      * @returns A promise that resolves to the current state.
@@ -519,18 +520,6 @@ export default class CheckoutService {
         const action = this._customerStrategyActionCreator.deinitialize(options);
 
         return this._dispatch(action, { queueId: 'customerStrategy' });
-    }
-
-    /**
-     * @deprecated This method has been renamed to `continueAsGuest`.
-     * @param credentials - The guest credentials to use.
-     * @param options - Options for continuing as a guest.
-     * @returns A promise that resolves to the current state.
-     */
-    signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._billingAddressActionCreator.updateAddress(credentials, options);
-
-        return this._dispatch(action);
     }
 
     /**
