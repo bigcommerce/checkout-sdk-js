@@ -33,9 +33,6 @@ describe('CustomerRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
                 body: credentials,
-                params: {
-                    includes: 'quote,shippingOptions',
-                },
             });
         });
 
@@ -47,9 +44,6 @@ describe('CustomerRequestSender', () => {
             expect(requestSender.post).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
                 ...options,
                 body: credentials,
-                params: {
-                    includes: 'quote,shippingOptions',
-                },
             });
         });
     });
@@ -67,11 +61,7 @@ describe('CustomerRequestSender', () => {
             const output = await customerRequestSender.signOutCustomer();
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
-                params: {
-                    includes: 'quote,shippingOptions',
-                },
-            });
+            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', { timeout: undefined });
         });
 
         it('signs out customer with timeout', async () => {
@@ -79,12 +69,7 @@ describe('CustomerRequestSender', () => {
             const output = await customerRequestSender.signOutCustomer(options);
 
             expect(output).toEqual(response);
-            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', {
-                ...options,
-                params: {
-                    includes: 'quote,shippingOptions',
-                },
-            });
+            expect(requestSender.delete).toHaveBeenCalledWith('/internalapi/v1/checkout/customer', options);
         });
     });
 });

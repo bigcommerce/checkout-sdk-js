@@ -1,6 +1,4 @@
-import { getQuote } from '../quote/internal-quotes.mock';
 import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
-import { getShippingOptions } from '../shipping/internal-shipping-options.mock';
 
 import CustomerStrategyState from './customer-strategy-state';
 import InternalCustomer from './internal-customer';
@@ -51,9 +49,7 @@ export function getRemoteCustomer(): InternalCustomer {
 export function getCustomerResponseBody(): InternalCustomerResponseBody {
     return {
         data: {
-            quote: getQuote(),
             customer: getGuestCustomer(),
-            shippingOptions: getShippingOptions(),
         },
         meta: {},
     };
