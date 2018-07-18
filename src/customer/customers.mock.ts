@@ -24,7 +24,10 @@ export function getCustomer(): Customer {
         lastName: 'Bar',
         storeCredit: 0,
         addresses: [
-            getShippingAddress(),
+            {
+                ...getShippingAddress(),
+                id: '55c96cda6f04c',
+            },
         ],
         isGuest: false,
     };

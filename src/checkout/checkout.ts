@@ -1,4 +1,4 @@
-import { Address } from '../address';
+import { BillingAddress } from '../address/address';
 import { Cart } from '../cart';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
@@ -9,7 +9,7 @@ import { Tax } from '../tax';
 
 export default interface Checkout {
     id: string;
-    billingAddress?: Address;
+    billingAddress?: BillingAddress;
     cart: Cart;
     customer: Customer;
     customerMessage: string;

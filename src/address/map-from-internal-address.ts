@@ -1,7 +1,7 @@
-import Address from './address';
+import Address, { BillingAddress } from './address';
 import InternalAddress from './internal-address';
 
-export default function mapFromInternalAddress(address: InternalAddress): Address {
+export default function mapFromInternalAddress(address: InternalAddress): Address | BillingAddress {
     return {
         id: address.id,
         firstName: address.firstName,

@@ -1,4 +1,4 @@
-import { Address } from '../address';
+import { BillingAddress } from '../address/address';
 import { LineItemMap } from '../cart';
 import { Coupon } from '../coupon';
 import { Currency } from '../currency';
@@ -6,7 +6,7 @@ import { Tax } from '../tax';
 
 export default interface Order {
     baseAmount: number;
-    billingAddress: Address;
+    billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
     currency: Currency;

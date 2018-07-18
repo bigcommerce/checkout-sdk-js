@@ -8,12 +8,16 @@ export default interface ConsignmentState {
 
 export interface ConsignmentErrorsState {
     loadError?: Error;
+    loadShippingOptionsError?: Error;
     createError?: Error;
-    updateError?: Error;
+    updateError: { [key: string]: Error | undefined };
+    updateShippingOptionError: { [key: string]: Error | undefined };
 }
 
 export interface ConsignmentStatusesState {
     isLoading?: boolean;
+    isLoadingShippingOptions?: boolean;
     isCreating?: boolean;
-    isUpdating?: boolean;
+    isUpdating: { [key: string]: boolean };
+    isUpdatingShippingOption: { [key: string]: boolean };
 }

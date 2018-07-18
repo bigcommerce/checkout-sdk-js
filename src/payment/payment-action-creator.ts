@@ -75,7 +75,8 @@ export default class PaymentActionCreator {
         const order = state.order.getOrder();
         const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
         const shippingAddress = state.shippingAddress.getShippingAddress();
-        const shippingOption = state.shippingOptions.getSelectedShippingOption();
+        const consignments = state.consignments.getConsignments();
+        const shippingOption = state.consignments.getShippingOption();
         const config = state.config.getStoreConfig();
         const instrumentMeta = state.instruments.getInstrumentsMeta();
         const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
@@ -95,7 +96,7 @@ export default class PaymentActionCreator {
             paymentMethod,
             customer: internalCustomer,
             billingAddress: billingAddress && mapToInternalAddress(billingAddress),
-            shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress),
+            shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress, consignments),
             shippingOption: shippingOption && mapToInternalShippingOption(shippingOption, true),
             cart: checkout && mapToInternalCart(checkout),
             order: order && mapToInternalOrder(order, orderMeta),

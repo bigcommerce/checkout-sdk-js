@@ -1,4 +1,4 @@
-import { Address } from '../address';
+import { BillingAddress } from '../address/address';
 import { selector } from '../common/selector';
 
 import BillingAddressState from './billing-address-state';
@@ -9,7 +9,7 @@ export default class BillingAddressSelector {
         private _billingAddress: BillingAddressState
     ) {}
 
-    getBillingAddress(): Address | undefined {
+    getBillingAddress(): BillingAddress | undefined {
         return this._billingAddress.data;
     }
 

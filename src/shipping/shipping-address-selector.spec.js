@@ -17,10 +17,8 @@ describe('ShippingAddressSelector', () => {
         it('returns the current shipping address', () => {
             shippingAddressSelector = new ShippingAddressSelector(state.consignments, state.config);
 
-            expect(shippingAddressSelector.getShippingAddress()).toEqual({
-                ...state.consignments.data[0].shippingAddress,
-                id: state.consignments.data[0].id,
-            });
+            expect(shippingAddressSelector.getShippingAddress())
+                .toEqual(state.consignments.data[0].shippingAddress);
         });
 
         describe('when there is no shipping information', () => {

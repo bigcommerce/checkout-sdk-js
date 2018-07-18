@@ -19,9 +19,7 @@ export { default as ShippingCountryState } from './shipping-country-state';
 export { default as shippingCountryReducer } from './shipping-country-reducer';
 
 export { default as ShippingOption } from './shipping-option';
-export { default as ShippingOptionState } from './shipping-option-state';
 export { default as InternalShippingOption, InternalShippingOptionList } from './internal-shipping-option';
-export { default as ShippingOptionSelector } from './shipping-option-selector';
 
 export { default as ShippingStrategyActionCreator } from './shipping-strategy-action-creator';
 export { default as ShippingStrategySelector } from './shipping-strategy-selector';

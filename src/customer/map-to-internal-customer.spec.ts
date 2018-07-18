@@ -1,4 +1,4 @@
-import { Address } from '../address';
+import { BillingAddress } from '../address/address';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { getCustomer as getInternalCustomer, getGuestCustomer as getInternalGuestCustomer } from '../customer/internal-customers.mock';
@@ -15,7 +15,7 @@ describe('mapToInternalCustomer', () => {
     it('maps to internal customer', () => {
         const checkout = getCheckout();
 
-        expect(mapToInternalCustomer(checkout.customer, checkout.billingAddress as Address))
+        expect(mapToInternalCustomer(checkout.customer, checkout.billingAddress as BillingAddress))
             .toEqual(getInternalCustomer());
     });
 });

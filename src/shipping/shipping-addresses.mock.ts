@@ -2,7 +2,6 @@ import { Address } from '../address';
 
 export function getShippingAddress(): Address {
     return {
-        id: '55c96cda6f04c',
         firstName: 'Test',
         lastName: 'Tester',
         company: 'Bigcommerce',

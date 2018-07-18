@@ -1,15 +1,15 @@
 import StandardError from './standard-error';
 
 export enum MissingDataErrorType {
-    MissingBillingAddress,
     MissingCart,
     MissingCheckout,
+    MissingConsignments,
     MissingCheckoutConfig,
     MissingOrder,
     MissingOrderConfig,
     MissingOrderId,
     MissingPaymentMethod,
-    MissingShippingAddress,
+
 }
 
 export default class MissingDataError extends StandardError {
@@ -24,11 +24,11 @@ export default class MissingDataError extends StandardError {
 
 function getErrorMessage(type: MissingDataErrorType): string {
     switch (type) {
-    case MissingDataErrorType.MissingBillingAddress:
-        return 'Unable to proceed because billing address data is unavailable or not provided.';
-
     case MissingDataErrorType.MissingCart:
         return 'Unable to proceed because cart data is unavailable.';
+
+    case MissingDataErrorType.MissingConsignments:
+        return 'Unable to proceed because consignments data is unavailable.';
 
     case MissingDataErrorType.MissingCheckout:
         return 'Unable to proceed because checkout data is unavailable.';
@@ -45,9 +45,6 @@ function getErrorMessage(type: MissingDataErrorType): string {
 
     case MissingDataErrorType.MissingPaymentMethod:
         return 'Unable to proceed because payment method data is unavailable or not properly configured.';
-
-    case MissingDataErrorType.MissingShippingAddress:
-        return 'Unable to proceed because shipping address data is unavailable or not provided.';
 
     default:
         return 'Unable to proceed because the required data is unavailable.';

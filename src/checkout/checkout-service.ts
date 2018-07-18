@@ -31,7 +31,7 @@ import {
     ShippingRequestOptions,
     ShippingStrategyActionCreator,
 } from '../shipping';
-import { ConsignmentDataRequestBody } from '../shipping/consignment';
+import { ConsignmentUpdateRequestBody } from '../shipping/consignment';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
@@ -736,7 +736,11 @@ export default class CheckoutService {
      * become available for each consignment, unless no options are available.
      * If the update is successful, you can call
      * `CheckoutStoreSelector#getConsignments` to retrieve updated list of
-     * consignments.
+     * consignments.'
+     *
+     * Beware that if a consignment includes all line items from another
+     * consignment, that consignment will be deleted as a valid consignment must
+     * include at least one valid line item.
      *
      * You can submit an address that is partially complete. The address does
      * not get validated until you submit the order.
@@ -772,6 +776,10 @@ export default class CheckoutService {
      * `CheckoutStoreSelector#getConsignments` to retrieve updated list of
      * consignments.
      *
+     * Beware that if the updated consignment includes all line items from another
+     * consignment, that consignment will be deleted as a valid consignment must
+     * include at least one valid line item.
+     *
      * If the shipping address changes and the selected shipping option becomes
      * unavailable for the updated address, the shipping option will be
      * deselected.
@@ -790,7 +798,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     updateConsignment(
-        consignment: ConsignmentDataRequestBody,
+        consignment: ConsignmentUpdateRequestBody,
         options?: RequestOptions
     ): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.updateConsignment(consignment, options);

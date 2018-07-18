@@ -13,21 +13,31 @@ export default interface Consignment {
 }
 
 export type ConsignmentRequestBody =
-    ConsignmentDataRequestBody |
+    ConsignmentCreateRequestBody |
+    ConsignmentUpdateRequestBody |
     ConsignmentShippingOptionRequestBody;
 
-export interface ConsignmentDataRequestBody {
-    id?: string;
+export interface ConsignmentCreateRequestBody {
+    shippingAddress: Address;
+    lineItems: ConsignmentLineItem[];
+}
+
+export interface ConsignmentUpdateRequestBody {
+    id: string;
     shippingAddress?: Address;
     lineItems?: ConsignmentLineItem[];
 }
 
-export interface ConsignmentShippingOptionRequestBody {
-    id?: string;
-    shippingOptionId?: string;
+export interface ConsignmentMeta {
+    id: string;
 }
 
-export type ConsignmentsRequestBody = ConsignmentDataRequestBody[];
+export interface ConsignmentShippingOptionRequestBody {
+    id: string;
+    shippingOptionId: string;
+}
+
+export type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
 
 export interface ConsignmentLineItem {
     itemId: string | number;

@@ -1,9 +1,19 @@
-import Address from './address';
+import { Consignment } from '../shipping';
+
+import Address, { BillingAddress } from './address';
 import InternalAddress from './internal-address';
 
-export default function mapToInternalAddress(address: Address, id?: string): InternalAddress {
+export default function mapToInternalAddress(address: Address | BillingAddress, consignments?: Consignment[]): InternalAddress {
+    let addressId;
+
+    if ((address as BillingAddress).id) {
+        addressId = (address as BillingAddress).id;
+    } else if (consignments && consignments.length) {
+        addressId = consignments[0].id;
+    }
+
     return {
-        id: id ? id : address.id,
+        id: addressId,
         firstName: address.firstName,
         lastName: address.lastName,
         company: address.company,

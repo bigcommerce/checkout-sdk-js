@@ -1,6 +1,6 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
-import { Address } from '../address';
+import { BillingAddress } from '../address/address';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { OrderAction, OrderActionType } from '../order';
 
@@ -26,9 +26,9 @@ export default function billingAddressReducer(
 }
 
 function dataReducer(
-    data: Address | undefined,
+    data: BillingAddress | undefined,
     action: CheckoutAction | BillingAddressAction | OrderAction
-): Address | undefined {
+): BillingAddress | undefined {
     switch (action.type) {
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:

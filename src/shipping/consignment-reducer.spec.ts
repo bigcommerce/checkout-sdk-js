@@ -8,39 +8,36 @@ import { ConsignmentActionType } from './consignment-actions';
 import consignmentReducer from './consignment-reducer';
 
 describe('consignmentReducer', () => {
+    const id = 'foo';
     let initialState: ConsignmentState;
 
     beforeEach(() => {
         initialState = {
-            statuses: {},
-            errors: {},
+            errors: {
+                updateError: {},
+                updateShippingOptionError: {},
+            },
+            statuses: {
+                isUpdating: {},
+                isUpdatingShippingOption: {},
+            },
         };
     });
 
     it('returns new data when checkout is loaded', () => {
         const action = createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout());
 
-        expect(consignmentReducer(initialState, action)).toEqual({
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             data: action.payload && action.payload.consignments,
-            errors: {
-                loadError: undefined,
-            },
-            statuses: {
-                isLoading: false,
-            },
         });
     });
 
     it('returns error when checkout fails to load', () => {
         const action = createAction(CheckoutActionType.LoadCheckoutFailed, new Error());
 
-        expect(consignmentReducer(initialState, action)).toEqual({
-            data: undefined,
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             errors: {
                 loadError: action.payload,
-            },
-            statuses: {
-                isLoading: false,
             },
         });
     });
@@ -48,11 +45,7 @@ describe('consignmentReducer', () => {
     it('returns loading state when checkout is loading', () => {
         const action = createAction(CheckoutActionType.LoadCheckoutRequested);
 
-        expect(consignmentReducer(initialState, action)).toEqual({
-            data: undefined,
-            errors: {
-                loadError: undefined,
-            },
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             statuses: {
                 isLoading: true,
             },
@@ -60,9 +53,9 @@ describe('consignmentReducer', () => {
     });
 
     it('returns new data when consignment is created', () => {
-        const action = createAction(ConsignmentActionType.CreateConsignmentsSucceeded, getCheckout());
+        const action = createAction(ConsignmentActionType.CreateConsignmentsSucceeded, getCheckout(), { id });
 
-        expect(consignmentReducer(initialState, action)).toEqual({
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             data: action.payload && action.payload.consignments,
             errors: {
                 createError: undefined,
@@ -74,10 +67,9 @@ describe('consignmentReducer', () => {
     });
 
     it('returns loading state when creating consignment', () => {
-        const action = createAction(ConsignmentActionType.CreateConsignmentsRequested);
+        const action = createAction(ConsignmentActionType.CreateConsignmentsRequested, null, { id });
 
-        expect(consignmentReducer(initialState, action)).toEqual({
-            data: undefined,
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             errors: {
                 createError: undefined,
             },
@@ -90,8 +82,7 @@ describe('consignmentReducer', () => {
     it('returns error when consignment creation fails', () => {
         const action = createAction(ConsignmentActionType.CreateConsignmentsFailed, new Error());
 
-        expect(consignmentReducer(initialState, action)).toEqual({
-            data: undefined,
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             errors: {
                 createError: action.payload,
             },
@@ -102,43 +93,95 @@ describe('consignmentReducer', () => {
     });
 
     it('returns loading state when updating consignment', () => {
-        const action = createAction(ConsignmentActionType.UpdateConsignmentRequested);
+        const action = createAction(ConsignmentActionType.UpdateConsignmentRequested, null, { id });
 
-        expect(consignmentReducer(initialState, action)).toEqual({
-            data: undefined,
-            errors: {
-                updateError: undefined,
-            },
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             statuses: {
-                isUpdating: true,
+                isUpdating: {
+                    foo: true,
+                },
             },
         });
     });
 
     it('returns new data when consignment is updated', () => {
-        const action = createAction(ConsignmentActionType.UpdateConsignmentSucceeded, getCheckout());
+        const action = createAction(ConsignmentActionType.UpdateConsignmentSucceeded, getCheckout(), { id });
 
-        expect(consignmentReducer(initialState, action)).toEqual({
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             data: action.payload && action.payload.consignments,
             errors: {
-                updateError: undefined,
+                updateError: {
+                    foo: undefined,
+                },
             },
             statuses: {
-                isUpdating: false,
+                isUpdating: {
+                    foo: false,
+                },
             },
         });
     });
 
     it('returns error when consignment update fails', () => {
-        const action = createAction(ConsignmentActionType.UpdateConsignmentFailed, new Error());
+        const action = createAction(ConsignmentActionType.UpdateConsignmentFailed, new Error(), { id });
 
-        expect(consignmentReducer(initialState, action)).toEqual({
-            data: undefined,
+        expect(consignmentReducer(initialState, action)).toMatchObject({
             errors: {
-                updateError: action.payload,
+                updateError: {
+                    foo: action.payload,
+                },
             },
             statuses: {
-                isUpdating: false,
+                isUpdating: {
+                    foo: false,
+                },
+            },
+        });
+    });
+
+    it('returns loading state when updating shipping option', () => {
+        const action = createAction(ConsignmentActionType.UpdateShippingOptionRequested, null, { id });
+
+        expect(consignmentReducer(initialState, action)).toMatchObject({
+            statuses: {
+                isUpdatingShippingOption: {
+                    foo: true,
+                },
+            },
+        });
+    });
+
+    it('returns new data when shipping option is updated', () => {
+        const action = createAction(ConsignmentActionType.UpdateShippingOptionSucceeded, getCheckout(), { id });
+
+        expect(consignmentReducer(initialState, action)).toMatchObject({
+            data: action.payload && action.payload.consignments,
+            errors: {
+                updateShippingOptionError: {
+                    foo: undefined,
+                },
+            },
+            statuses: {
+                isUpdatingShippingOption: {
+                    foo: false,
+                },
+            },
+        });
+    });
+
+    it('returns error when shipping option update fails', () => {
+        const action = createAction(ConsignmentActionType.UpdateShippingOptionFailed, new Error(), { id });
+
+        expect(consignmentReducer(initialState, action)).toMatchObject({
+            errors: {
+                updateShippingOptionError: {
+                    foo: action.payload,
+                },
+            },
+            statuses: {
+                isUpdatingShippingOption: {
+                    foo: false,
+                },
             },
         });
     });

@@ -10,6 +10,6 @@ export default function mapToInternalQuote(checkout: Checkout, shippingAddress?:
         orderComment: checkout.customerMessage,
         shippingOption: consignment && consignment.selectedShippingOption ? consignment.selectedShippingOption.id : undefined,
         billingAddress: checkout.billingAddress ? mapToInternalAddress(checkout.billingAddress) : {} as InternalAddress,
-        shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress),
+        shippingAddress: shippingAddress && mapToInternalAddress(shippingAddress, checkout.consignments),
     };
 }

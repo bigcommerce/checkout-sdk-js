@@ -8,7 +8,7 @@ import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
-import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ConsignmentSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
@@ -27,6 +27,7 @@ export default class CheckoutStoreErrorSelector {
     private _cart: CartSelector;
     private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
+    private _consignments: ConsignmentSelector;
     private _countries: CountrySelector;
     private _coupons: CouponSelector;
     private _customerStrategies: CustomerStrategySelector;
@@ -36,7 +37,6 @@ export default class CheckoutStoreErrorSelector {
     private _paymentMethods: PaymentMethodSelector;
     private _paymentStrategies: PaymentStrategySelector;
     private _shippingCountries: ShippingCountrySelector;
-    private _shippingOptions: ShippingOptionSelector;
     private _shippingStrategies: ShippingStrategySelector;
 
     /**
@@ -47,6 +47,7 @@ export default class CheckoutStoreErrorSelector {
         this._cart = selectors.cart;
         this._checkout = selectors.checkout;
         this._config = selectors.config;
+        this._consignments = selectors.consignments;
         this._countries = selectors.countries;
         this._coupons = selectors.coupons;
         this._customerStrategies = selectors.customerStrategies;
@@ -56,7 +57,6 @@ export default class CheckoutStoreErrorSelector {
         this._paymentMethods = selectors.paymentMethods;
         this._paymentStrategies = selectors.paymentStrategies;
         this._shippingCountries = selectors.shippingCountries;
-        this._shippingOptions = selectors.shippingOptions;
         this._shippingStrategies = selectors.shippingStrategies;
     }
 
@@ -82,8 +82,10 @@ export default class CheckoutStoreErrorSelector {
             this.getSignInError() ||
             this.getSignOutError() ||
             this.getInitializeCustomerError() ||
-            this.getUpdateBillingAddressError() ||
             this.getUpdateShippingAddressError() ||
+            this.getUpdateBillingAddressError() ||
+            this.getUpdateConsignmentError() ||
+            this.getCreateConsignmentsError() ||
             this.getInitializeShippingError() ||
             this.getApplyCouponError() ||
             this.getRemoveCouponError() ||
@@ -221,20 +223,25 @@ export default class CheckoutStoreErrorSelector {
      * @returns The error object if unable to load, otherwise undefined.
      */
     getLoadShippingOptionsError(): Error | undefined {
-        return this._shippingOptions.getLoadError();
+        return this._consignments.getLoadShippingOptionsError();
     }
 
     /**
      * Returns an error if unable to select a shipping option.
      *
+     * A consignment ID should be provided when checking for an error for a
+     * specific consignment, otherwise it will check for all available consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
      * @returns The error object if unable to select, otherwise undefined.
      */
-    getSelectShippingOptionError(): Error | undefined {
-        return this._shippingStrategies.getSelectOptionError();
+    getSelectShippingOptionError(consignmentId?: string): Error | undefined {
+        return this._shippingStrategies.getSelectOptionError() ||
+            this._consignments.getupdateShippingOptionError(consignmentId);
     }
 
     /**
-     * Returns an error if unable to update a billing address.
+     * Returns an error if unable to update billing address.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
@@ -243,12 +250,34 @@ export default class CheckoutStoreErrorSelector {
     }
 
     /**
-     * Returns an error if unable to update a shipping address.
+     * Returns an error if unable to update shipping address.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
     getUpdateShippingAddressError(): Error | undefined {
         return this._shippingStrategies.getUpdateAddressError();
+    }
+
+    /**
+     * Returns an error if unable to update a consignment.
+     *
+     * A consignment ID should be provided when checking for an error for a
+     * specific consignment, otherwise it will check for all available consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns The error object if unable to update, otherwise undefined.
+     */
+    getUpdateConsignmentError(consignmentId?: string): Error | undefined {
+        return this._consignments.getUpdateConsignmentError(consignmentId);
+    }
+
+    /**
+     * Returns an error if unable to create consignments.
+     *
+     * @returns The error object if unable to create, otherwise undefined.
+     */
+    getCreateConsignmentsError(): Error | undefined {
+        return this._consignments.getCreateError();
     }
 
     /**

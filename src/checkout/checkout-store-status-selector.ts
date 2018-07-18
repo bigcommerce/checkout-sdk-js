@@ -8,7 +8,7 @@ import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
-import { ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ConsignmentSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
@@ -27,6 +27,7 @@ export default class CheckoutStoreStatusSelector {
     private _cart: CartSelector;
     private _checkout: CheckoutSelector;
     private _config: ConfigSelector;
+    private _consignments: ConsignmentSelector;
     private _countries: CountrySelector;
     private _coupons: CouponSelector;
     private _customerStrategies: CustomerStrategySelector;
@@ -36,7 +37,6 @@ export default class CheckoutStoreStatusSelector {
     private _paymentMethods: PaymentMethodSelector;
     private _paymentStrategies: PaymentStrategySelector;
     private _shippingCountries: ShippingCountrySelector;
-    private _shippingOptions: ShippingOptionSelector;
     private _shippingStrategies: ShippingStrategySelector;
 
     /**
@@ -47,6 +47,7 @@ export default class CheckoutStoreStatusSelector {
         this._cart = selectors.cart;
         this._checkout = selectors.checkout;
         this._config = selectors.config;
+        this._consignments = selectors.consignments;
         this._countries = selectors.countries;
         this._coupons = selectors.coupons;
         this._customerStrategies = selectors.customerStrategies;
@@ -56,7 +57,6 @@ export default class CheckoutStoreStatusSelector {
         this._paymentMethods = selectors.paymentMethods;
         this._paymentStrategies = selectors.paymentStrategies;
         this._shippingCountries = selectors.shippingCountries;
-        this._shippingOptions = selectors.shippingOptions;
         this._shippingStrategies = selectors.shippingStrategies;
     }
 
@@ -83,6 +83,8 @@ export default class CheckoutStoreStatusSelector {
             this.isInitializingCustomer() ||
             this.isUpdatingBillingAddress() ||
             this.isUpdatingShippingAddress() ||
+            this.isUpdatingConsignment() ||
+            this.isCreatingConsignments() ||
             this.isInitializingShipping() ||
             this.isApplyingCoupon() ||
             this.isRemovingCoupon() ||
@@ -241,16 +243,22 @@ export default class CheckoutStoreStatusSelector {
      * @returns True if shipping options are loading, otherwise false.
      */
     isLoadingShippingOptions(): boolean {
-        return this._shippingOptions.isLoading();
+        return this._consignments.isLoadingShippingOptions();
     }
 
     /**
-     * Checks whether the current customer is selecting a shipping option.
+     * Checks whether a shipping option is being selected.
      *
+     * A consignment ID should be provided when checking if a shipping option
+     * is being selected for a specific consignment, otherwise it will check
+     * for all consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
      * @returns True if selecting a shipping option, otherwise false.
      */
-    isSelectingShippingOption(): boolean {
-        return this._shippingStrategies.isSelectingOption();
+    isSelectingShippingOption(consignmentId?: string): boolean {
+        return this._shippingStrategies.isSelectingOption() ||
+            this._consignments.isUpdatingShippingOption(consignmentId);
     }
 
     /**
@@ -269,6 +277,31 @@ export default class CheckoutStoreStatusSelector {
      */
     isUpdatingShippingAddress(): boolean {
         return this._shippingStrategies.isUpdatingAddress();
+    }
+
+    /**
+     * Checks whether a given/any consignment is being updated.
+     *
+     * A consignment ID should be provided when checking for a specific consignment,
+     * otherwise it will check for any consignment.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns True if updating consignment(s), otherwise false.
+     */
+    isUpdatingConsignment(consignmentId?: string): boolean {
+        return this._consignments.isUpdating(consignmentId);
+    }
+
+    /**
+     * Checks whether a given/any consignment is being updated.
+     *
+     * A consignment ID should be provided when checking for a specific consignment,
+     * otherwise it will check for any consignment.
+     *
+     * @returns True if creating consignments, otherwise false.
+     */
+    isCreatingConsignments(): boolean {
+        return this._consignments.isCreating();
     }
 
     /**

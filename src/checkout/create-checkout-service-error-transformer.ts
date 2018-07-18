@@ -14,13 +14,12 @@ export default function createCheckoutServiceErrorTransformer(
         }
 
         switch (error.subtype || error.type) {
-        case MissingDataErrorType.MissingBillingAddress:
-        case MissingDataErrorType.MissingShippingAddress:
+        case MissingDataErrorType.MissingConsignments:
             return `
                 ${error.message}
-                The data could be unavailable because it has not loaded from the server, or
-                provided by the customer yet. To fix the former issue, you can try calling
-                \`CheckoutService#loadCheckout\` before performing the same action again.
+                The data could be unavailable because no shipping address has been provided.
+                To fix this, create a consignment or update the shipping address before performing
+                the same action again.
             `;
 
         case MissingDataErrorType.MissingCart:
