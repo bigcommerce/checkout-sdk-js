@@ -193,5 +193,46 @@ describe('BillingAddressActionCreator', () => {
                 );
             });
         });
+
+        describe('when store has checkout and billing address data from an incomplete order', () => {
+            beforeEach(() => {
+                // The billing address contained in the Order response does not have an ID.
+                store = createCheckoutStore(
+                    omit(state, 'billingAddress.data.id')
+                );
+            });
+
+            it('sends request to create a billing address, using provided email', async () => {
+                const email = 'foo@bar.com';
+
+                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email,
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+
+            it('sends request to create a billing address, using previous email', async () => {
+                await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email: 'test@bigcommerce.com',
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+        });
     });
 });

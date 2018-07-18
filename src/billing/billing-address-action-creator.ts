@@ -40,16 +40,23 @@ export default class BillingAddressActionCreator {
 
         const billingAddress = state.billingAddress.getBillingAddress();
 
-        if (!billingAddress || !billingAddress.id) {
-            return this._checkoutClient.createBillingAddress(checkout.id, address, options);
-        }
-
+        // If email is not present in the address provided by the client, then
+        // fall back to the stored email as it could have been set separately
+        // using a convenience method. We can't rely on billingAddress having
+        // an ID to consider that there's a preexisting email, as billingAddress
+        // object from Order doesn't have an ID.
         const updatedBillingAddress = {
             ...address,
-            email: typeof address.email === 'undefined' ? billingAddress.email : address.email,
-            id: billingAddress.id,
+            email: typeof address.email === 'undefined' && billingAddress ? billingAddress.email : address.email,
         };
 
-        return this._checkoutClient.updateBillingAddress(checkout.id, updatedBillingAddress, options);
+        if (!billingAddress || !billingAddress.id) {
+            return this._checkoutClient.createBillingAddress(checkout.id, updatedBillingAddress, options);
+        }
+
+        return this._checkoutClient.updateBillingAddress(checkout.id, {
+            ...updatedBillingAddress,
+            id: billingAddress.id,
+        }, options);
     }
 }
