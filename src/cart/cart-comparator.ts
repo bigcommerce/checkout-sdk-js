@@ -1,10 +1,8 @@
-import { isEqual, omit } from 'lodash';
+import { isEqual } from 'lodash';
 
-import { omitPrivate } from '../common/utility';
+import { PartialDeep } from '../common/types';
 
 import Cart from './cart';
-import { LineItem } from './line-item';
-import LineItemMap from './line-item-map';
 
 export default class CartComparator {
     isEqual(cartA: Cart, cartB: Cart): boolean {
@@ -14,14 +12,30 @@ export default class CartComparator {
         );
     }
 
-    private _normalize(cart: Cart): Cart {
-        const lineItems = Object.keys(cart.lineItems)
-            .reduce((result, key) => ({
-                ...result,
-                [key]: (cart.lineItems[key as keyof LineItemMap] as LineItem[])
-                    .map(item => omit(item, ['id', 'imageUrl'])),
-            }), {} as LineItemMap);
-
-        return omitPrivate(omit({ ...cart, lineItems }, ['updatedTime']));
+    private _normalize(cart: Cart): PartialDeep<Cart> {
+        return {
+            cartAmount: cart.cartAmount,
+            currency: cart.currency,
+            id: cart.id,
+            lineItems: {
+                digitalItems: cart.lineItems.digitalItems.map(item => ({
+                    extendedSalePrice: item.extendedSalePrice,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    variantId: item.variantId,
+                })),
+                giftCertificates: cart.lineItems.giftCertificates.map(item => ({
+                    amount: item.amount,
+                    recipient: item.recipient,
+                })),
+                physicalItems: cart.lineItems.physicalItems.map(item => ({
+                    extendedSalePrice: item.extendedSalePrice,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    variantId: item.variantId,
+                    giftWrapping: item.giftWrapping,
+                })),
+            },
+        };
     }
 }
