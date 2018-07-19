@@ -162,7 +162,9 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
-            new SquareScriptLoader(scriptLoader)
+            new SquareScriptLoader(scriptLoader),
+            requestSender,
+            createFormPoster()
         )
     );
 

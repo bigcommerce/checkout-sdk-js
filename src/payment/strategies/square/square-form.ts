@@ -19,6 +19,39 @@ export interface SquareFormOptions {
     cvv: SquareFormElement;
     expirationDate: SquareFormElement;
     postalCode: SquareFormElement;
+    masterpass: SquareFormElement;
+}
+
+export interface Error {
+    type: string;
+    message: string;
+    field: string;
+}
+
+export interface CardData {
+    cardBrand: CardBrand;
+    last4: number;
+    expMonth: number;
+    expYear: number;
+    billingPostalCode: string;
+    digitalWalletType: DigitalWalletType;
+}
+
+export enum CardBrand {
+    americanExpress,
+    discover,
+    discoverDiners,
+    JCB,
+    masterCard,
+    unionPay,
+    unknown,
+    visa
+}
+
+export enum DigitalWalletType {
+    applePay,
+    masterpass,
+    none,
 }
 
 /**
