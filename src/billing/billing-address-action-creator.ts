@@ -3,11 +3,11 @@ import { Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { BillingAddressUpdateRequestBody } from '../address/address';
 import { Checkout, CheckoutClient, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
+import { BillingAddressUpdateRequestBody } from './billing-address';
 import { BillingAddressActionType, UpdateBillingAddressAction } from './billing-address-actions';
 
 export default class BillingAddressActionCreator {
@@ -15,7 +15,10 @@ export default class BillingAddressActionCreator {
         private _checkoutClient: CheckoutClient
     ) {}
 
-    updateAddress(address: Partial<BillingAddressUpdateRequestBody>, options?: RequestOptions): ThunkAction<UpdateBillingAddressAction, InternalCheckoutSelectors> {
+    updateAddress(
+        address: Partial<BillingAddressUpdateRequestBody>,
+        options?: RequestOptions
+    ): ThunkAction<UpdateBillingAddressAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<UpdateBillingAddressAction>) => {
             observer.next(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
 
@@ -30,7 +33,11 @@ export default class BillingAddressActionCreator {
         });
     }
 
-    private _requestBillingAddressUpdate(store: ReadableCheckoutStore, address: Partial<BillingAddressUpdateRequestBody>, options?: RequestOptions): Promise<Response<Checkout>> {
+    private _requestBillingAddressUpdate(
+        store: ReadableCheckoutStore,
+        address: Partial<BillingAddressUpdateRequestBody>,
+        options?: RequestOptions
+    ): Promise<Response<Checkout>> {
         const state = store.getState();
         const checkout = state.checkout.getCheckout();
 
@@ -45,17 +52,17 @@ export default class BillingAddressActionCreator {
         // using a convenience method. We can't rely on billingAddress having
         // an ID to consider that there's a preexisting email, as billingAddress
         // object from Order doesn't have an ID.
-        const updatedBillingAddress = {
+        const billingAddressRequestBody = {
             ...address,
             email: typeof address.email === 'undefined' && billingAddress ? billingAddress.email : address.email,
         };
 
         if (!billingAddress || !billingAddress.id) {
-            return this._checkoutClient.createBillingAddress(checkout.id, updatedBillingAddress, options);
+            return this._checkoutClient.createBillingAddress(checkout.id, billingAddressRequestBody, options);
         }
 
         return this._checkoutClient.updateBillingAddress(checkout.id, {
-            ...updatedBillingAddress,
+            ...billingAddressRequestBody,
             id: billingAddress.id,
         }, options);
     }

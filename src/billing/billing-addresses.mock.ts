@@ -1,6 +1,5 @@
-import { BillingAddress } from '../address/address';
-
-import { BillingAddressState } from '.';
+import BillingAddress from './billing-address';
+import BillingAddressState from './billing-address-state';
 
 export function getBillingAddress(): BillingAddress {
     return {

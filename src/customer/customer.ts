@@ -1,4 +1,4 @@
-import { CustomerAddress } from '../address/address';
+import { Address } from '../address';
 
 export default interface Customer {
     id: number;
@@ -9,4 +9,8 @@ export default interface Customer {
     fullName: string;
     isGuest: boolean;
     lastName: string;
+}
+
+export interface CustomerAddress extends Address {
+    id: string;
 }

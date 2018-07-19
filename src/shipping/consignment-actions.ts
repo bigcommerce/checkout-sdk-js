@@ -60,7 +60,7 @@ export interface CreateConsignmentsFailedAction extends Action<Error> {
     type: ConsignmentActionType.CreateConsignmentsFailed;
 }
 
-export interface UpdateConsignmentRequestedAction extends Action<any, ConsignmentMeta> {
+export interface UpdateConsignmentRequestedAction extends Action<null, ConsignmentMeta> {
     type: ConsignmentActionType.UpdateConsignmentRequested;
 }
 
@@ -72,7 +72,7 @@ export interface UpdateConsignmentFailedAction extends Action<Error, Consignment
     type: ConsignmentActionType.UpdateConsignmentFailed;
 }
 
-export interface UpdateShippingOptionRequestedAction extends Action<any, ConsignmentMeta> {
+export interface UpdateShippingOptionRequestedAction extends Action<null, ConsignmentMeta> {
     type: ConsignmentActionType.UpdateShippingOptionRequested;
 }
 

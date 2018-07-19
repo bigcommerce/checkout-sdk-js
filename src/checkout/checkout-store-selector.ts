@@ -149,11 +149,11 @@ export default class CheckoutStoreSelector {
     getSelectedShippingOption(): ShippingOption | undefined {
         const consignments = this._consignments.getConsignments();
 
-        if (consignments && consignments.length) {
-            return consignments[0].selectedShippingOption;
+        if (!consignments || !consignments.length) {
+            return;
         }
 
-        return;
+        return consignments[0].selectedShippingOption;
     }
 
     /**

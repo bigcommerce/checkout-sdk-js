@@ -44,20 +44,12 @@ export default class ConsignmentSelector {
         return find(this._consignments.errors.updateError);
     }
 
-    getupdateShippingOptionError(consignmentId?: string): Error | undefined {
+    getUpdateShippingOptionError(consignmentId?: string): Error | undefined {
         if (consignmentId) {
             return this._consignments.errors.updateShippingOptionError[consignmentId];
         }
 
         return find(this._consignments.errors.updateShippingOptionError);
-    }
-
-    getUpdateConsignmentError(consignmentId?: string): Error | undefined {
-        if (consignmentId) {
-            return this._consignments.errors.updateError[consignmentId];
-        }
-
-        return find(this._consignments.errors.updateError);
     }
 
     isLoading(): boolean {

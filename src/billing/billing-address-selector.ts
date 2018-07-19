@@ -1,6 +1,6 @@
-import { BillingAddress } from '../address/address';
 import { selector } from '../common/selector';
 
+import BillingAddress from './billing-address';
 import BillingAddressState from './billing-address-state';
 
 @selector

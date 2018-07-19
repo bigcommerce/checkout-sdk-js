@@ -4,7 +4,7 @@ import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { CustomerAction, CustomerActionType } from '../customer';
 
 import Consignment from './consignment';
-import { ConsignmentAction, ConsignmentActionType, UpdateConsignmentAction, UpdateShippingOptionAction } from './consignment-actions';
+import { ConsignmentAction, ConsignmentActionType } from './consignment-actions';
 import ConsignmentState, { ConsignmentErrorsState, ConsignmentStatusesState } from './consignment-state';
 
 const DEFAULT_STATE: ConsignmentState = {
@@ -55,8 +55,6 @@ function errorsReducer(
     errors: ConsignmentErrorsState = DEFAULT_STATE.errors,
     action: ConsignmentAction | CheckoutAction
 ): ConsignmentErrorsState {
-    let meta;
-
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
@@ -77,38 +75,30 @@ function errorsReducer(
 
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentRequested:
-        meta = (action as UpdateConsignmentAction).meta;
-
-        if (meta) {
-            errors.updateError[meta.id] = undefined;
+        if (action.meta) {
+            errors.updateError[action.meta.id] = undefined;
         }
 
         return errors;
 
     case ConsignmentActionType.UpdateConsignmentFailed:
-        meta = (action as UpdateConsignmentAction).meta;
-
-        if (meta) {
-            errors.updateError[meta.id] = action.payload;
+        if (action.meta) {
+            errors.updateError[action.meta.id] = action.payload;
         }
 
         return errors;
 
     case ConsignmentActionType.UpdateShippingOptionRequested:
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
-        meta = (action as UpdateShippingOptionAction).meta;
-
-        if (meta) {
-            errors.updateShippingOptionError[meta.id] = undefined;
+        if (action.meta) {
+            errors.updateShippingOptionError[action.meta.id] = undefined;
         }
 
         return errors;
 
     case ConsignmentActionType.UpdateShippingOptionFailed:
-        meta = (action as UpdateShippingOptionAction).meta;
-
-        if (meta) {
-            errors.updateShippingOptionError[meta.id] = action.payload;
+        if (action.meta) {
+            errors.updateShippingOptionError[action.meta.id] = action.payload;
         }
 
         return errors;
@@ -122,8 +112,6 @@ function statusesReducer(
     statuses: ConsignmentStatusesState = DEFAULT_STATE.statuses,
     action: ConsignmentAction | CheckoutAction
 ): ConsignmentStatusesState {
-    let meta;
-
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
         return { ...statuses, isLoading: true };
@@ -147,39 +135,31 @@ function statusesReducer(
         return { ...statuses, isCreating: false };
 
     case ConsignmentActionType.UpdateConsignmentRequested:
-        meta = (action as UpdateConsignmentAction).meta;
-
-        if (meta) {
-            statuses.isUpdating[meta.id] = true;
+        if (action.meta) {
+            statuses.isUpdating[action.meta.id] = true;
         }
 
         return statuses;
 
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentFailed:
-        meta = (action as UpdateConsignmentAction).meta;
-
-        if (meta) {
-            statuses.isUpdating[meta.id] = false;
+        if (action.meta) {
+            statuses.isUpdating[action.meta.id] = false;
         }
 
         return statuses;
 
     case ConsignmentActionType.UpdateShippingOptionRequested:
-        meta = (action as UpdateShippingOptionAction).meta;
-
-        if (meta) {
-            statuses.isUpdatingShippingOption[meta.id] = true;
+        if (action.meta) {
+            statuses.isUpdatingShippingOption[action.meta.id] = true;
         }
 
         return statuses;
 
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
     case ConsignmentActionType.UpdateShippingOptionFailed:
-        meta = (action as UpdateShippingOptionAction).meta;
-
-        if (meta) {
-            statuses.isUpdatingShippingOption[meta.id] = false;
+        if (action.meta) {
+            statuses.isUpdatingShippingOption[action.meta.id] = false;
         }
 
         return statuses;

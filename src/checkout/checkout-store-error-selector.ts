@@ -237,7 +237,7 @@ export default class CheckoutStoreErrorSelector {
      */
     getSelectShippingOptionError(consignmentId?: string): Error | undefined {
         return this._shippingStrategies.getSelectOptionError() ||
-            this._consignments.getupdateShippingOptionError(consignmentId);
+            this._consignments.getUpdateShippingOptionError(consignmentId);
     }
 
     /**
@@ -268,7 +268,7 @@ export default class CheckoutStoreErrorSelector {
      * @returns The error object if unable to update, otherwise undefined.
      */
     getUpdateConsignmentError(consignmentId?: string): Error | undefined {
-        return this._consignments.getUpdateConsignmentError(consignmentId);
+        return this._consignments.getUpdateError(consignmentId);
     }
 
     /**

@@ -1,7 +1,6 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { BillingAddressUpdateRequestBody } from '../address/address';
-import { BillingAddressRequestSender } from '../billing';
+import { BillingAddressRequestSender, BillingAddressUpdateRequestBody } from '../billing';
 import { RequestOptions } from '../common/http-request';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';

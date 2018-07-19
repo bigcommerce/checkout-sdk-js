@@ -1,7 +1,7 @@
 import { Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 
-import { Address } from '../address';
+import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator } from '../billing';
 import { ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
@@ -720,7 +720,7 @@ export default class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateShippingAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
         return this._dispatch(action, { queueId: 'shippingStrategy' });
@@ -730,12 +730,12 @@ export default class CheckoutService {
      * Creates consignments given a list.
      *
      * Note: this is used when items need to be shipped to multiple addresses,
-     * for single shipping address, use `CheckoutService#updateShippingAddres`.
+     * for single shipping address, use `CheckoutService#updateShippingAddress`.
      *
      * When consignments are created, an updated list of shipping options will
      * become available for each consignment, unless no options are available.
      * If the update is successful, you can call
-     * `CheckoutStoreSelector#getConsignments` to retrieve updated list of
+     * `CheckoutStoreSelector#getConsignments` to retrieve the updated list of
      * consignments.'
      *
      * Beware that if a consignment includes all line items from another
@@ -859,7 +859,7 @@ export default class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: Address, options: RequestOptions = {}): Promise<CheckoutSelectors> {
+    updateBillingAddress(address: AddressRequestBody, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
         return this._dispatch(action);

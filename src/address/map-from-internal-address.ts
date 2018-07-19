@@ -1,4 +1,6 @@
-import Address, { BillingAddress } from './address';
+import { BillingAddress } from '../billing';
+
+import Address from './address';
 import InternalAddress from './internal-address';
 
 export default function mapFromInternalAddress(address: InternalAddress): Address | BillingAddress {

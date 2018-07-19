@@ -1,9 +1,10 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { AddressRequestBody } from '../address';
-import { BillingAddressUpdateRequestBody } from '../address/address';
 import { Checkout } from '../checkout';
 import { ContentType, RequestOptions } from '../common/http-request';
+
+import { BillingAddressUpdateRequestBody } from './billing-address';
 
 const DEFAULT_PARAMS = {
     include: [

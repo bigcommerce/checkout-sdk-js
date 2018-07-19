@@ -1,4 +1,4 @@
-import { BillingAddress } from '../address/address';
+import { BillingAddress } from '../billing';
 import { Cart } from '../cart';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';

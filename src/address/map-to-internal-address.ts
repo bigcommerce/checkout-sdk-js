@@ -1,13 +1,15 @@
+import { isBillingAddressLike } from '../billing';
+import BillingAddress from '../billing/billing-address';
 import { Consignment } from '../shipping';
 
-import Address, { BillingAddress } from './address';
+import Address from './address';
 import InternalAddress from './internal-address';
 
 export default function mapToInternalAddress(address: Address | BillingAddress, consignments?: Consignment[]): InternalAddress {
     let addressId;
 
-    if ((address as BillingAddress).id) {
-        addressId = (address as BillingAddress).id;
+    if (isBillingAddressLike(address)) {
+        addressId = address.id;
     } else if (consignments && consignments.length) {
         addressId = consignments[0].id;
     }

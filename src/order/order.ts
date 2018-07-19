@@ -1,4 +1,4 @@
-import { BillingAddress } from '../address/address';
+import { BillingAddress } from '../billing';
 import { LineItemMap } from '../cart';
 import { Coupon } from '../coupon';
 import { Currency } from '../currency';

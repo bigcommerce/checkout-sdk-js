@@ -1,4 +1,4 @@
-import { BillingAddress } from '../address/address';
+import BillingAddress from './billing-address';
 
 export default interface BillingAddressState {
     data?: BillingAddress;

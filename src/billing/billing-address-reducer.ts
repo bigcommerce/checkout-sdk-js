@@ -1,9 +1,9 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
-import { BillingAddress } from '../address/address';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { OrderAction, OrderActionType } from '../order';
 
+import BillingAddress from './billing-address';
 import { BillingAddressAction, BillingAddressActionType } from './billing-address-actions';
 import BillingAddressState, { BillingAddressErrorsState, BillingAddressStatusesState } from './billing-address-state';
 

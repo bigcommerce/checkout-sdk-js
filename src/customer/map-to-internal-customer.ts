@@ -1,5 +1,5 @@
 import { mapToInternalAddress } from '../address';
-import { BillingAddress } from '../address/address';
+import { BillingAddress } from '../billing';
 
 import { Customer } from '.';
 import InternalCustomer from './internal-customer';

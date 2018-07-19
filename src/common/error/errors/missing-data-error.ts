@@ -9,7 +9,6 @@ export enum MissingDataErrorType {
     MissingOrderConfig,
     MissingOrderId,
     MissingPaymentMethod,
-
 }
 
 export default class MissingDataError extends StandardError {
