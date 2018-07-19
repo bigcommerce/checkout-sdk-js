@@ -31,7 +31,6 @@ This object can be used to collect all information that is required for checkout
 * [loadCheckout](checkoutservice.md#loadcheckout)
 * [loadInstruments](checkoutservice.md#loadinstruments)
 * [loadOrder](checkoutservice.md#loadorder)
-* [loadPaymentMethod](checkoutservice.md#loadpaymentmethod)
 * [loadPaymentMethods](checkoutservice.md#loadpaymentmethods)
 * [loadShippingAddressFields](checkoutservice.md#loadshippingaddressfields)
 * [loadShippingCountries](checkoutservice.md#loadshippingcountries)
@@ -41,7 +40,6 @@ This object can be used to collect all information that is required for checkout
 * [removeGiftCertificate](checkoutservice.md#removegiftcertificate)
 * [selectShippingOption](checkoutservice.md#selectshippingoption)
 * [signInCustomer](checkoutservice.md#signincustomer)
-* [signInGuest](checkoutservice.md#signinguest)
 * [signOutCustomer](checkoutservice.md#signoutcustomer)
 * [submitOrder](checkoutservice.md#submitorder)
 * [subscribe](checkoutservice.md#subscribe)
@@ -498,28 +496,6 @@ console.log(state.checkout.getOrder());
 A promise that resolves to the current state.
 
 ___
-<a id="loadpaymentmethod"></a>
-
-###  loadPaymentMethod
-
-▸ **loadPaymentMethod**(methodId: *`string`*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-
-Loads a payment method by an id.
-
-This method does not work with multi-option payment providers. Due to its limitation, it is deprecated and will be removed in the future.
-*__deprecated__*: 
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| methodId | `string` |  The identifier for the payment method to load. |
-| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for loading the payment method. |
-
-**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-A promise that resolves to the current state.
-
-___
 <a id="loadpaymentmethods"></a>
 
 ###  loadPaymentMethods
@@ -741,25 +717,6 @@ console.log(state.checkout.getCustomer());
 | ------ | ------ | ------ |
 | credentials | [CustomerCredentials](../interfaces/customercredentials.md) |  The credentials to be used for signing in the customer. |
 | `Optional` options | [CustomerRequestOptions](../interfaces/customerrequestoptions.md) |  Options for signing in the customer. |
-
-**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-A promise that resolves to the current state.
-
-___
-<a id="signinguest"></a>
-
-###  signInGuest
-
-▸ **signInGuest**(credentials: *[GuestCredentials](../interfaces/guestcredentials.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
-
-*__deprecated__*: This method has been renamed to `continueAsGuest`.
-
-**Parameters:**
-
-| Param | Type | Description |
-| ------ | ------ | ------ |
-| credentials | [GuestCredentials](../interfaces/guestcredentials.md) |  The guest credentials to use. |
-| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for continuing as a guest. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.

@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.28.0"></a>
+# [0.28.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.27.2...v0.28.0) (2018-07-19)
+
+
+### Bug Fixes
+
+* **billing:** CHECKOUT-3359 Keep the email when creating a billingAddress if it was set ([672586f](https://github.com/bigcommerce/checkout-sdk-js/commit/672586f))
+* **cart:** CHECKOUT-3356 Only compare important cart attributes ([07fe7be](https://github.com/bigcommerce/checkout-sdk-js/commit/07fe7be))
+
+
+### Code Refactoring
+
+* **checkout:** CHECKOUT-3331 Remove `checkout` property from `CheckoutSelectors` ([00c188f](https://github.com/bigcommerce/checkout-sdk-js/commit/00c188f))
+* **payment:** CHECKOUT-3331 Mark `CheckoutService#loadPaymentMethod` as internal ([9a6ecfa](https://github.com/bigcommerce/checkout-sdk-js/commit/9a6ecfa))
+* **shopper:** CHECKOUT-3331 Remove `signInGuest` from `CheckoutService` ([64f1969](https://github.com/bigcommerce/checkout-sdk-js/commit/64f1969))
+
+
+### Features
+
+* **payment:** INT-690 Remove all VCO references from Chase Pay code ([9cf3cda](https://github.com/bigcommerce/checkout-sdk-js/commit/9cf3cda))
+
+
+### BREAKING CHANGES
+
+* **payment:** `loadPaymentMethod` has been deprecated for some time.
+However, due to legacy reasons, this method is still in use by Optimized
+Checkout. To further discourage people from using it, we now mark it as
+`internal` and remove it from the documentation. We will completely
+remove it once it is no longer used by Optimized Checkout.
+* **shopper:** `signInGuest` has been from `CheckoutService`. Call
+`continueAsGuest` instead.
+* **checkout:** `checkout` property has been removed from
+`CheckoutSelector`. Use `data` property instead.
+
+
+
 <a name="0.27.2"></a>
 ## [0.27.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.27.1...v0.27.2) (2018-07-11)
 

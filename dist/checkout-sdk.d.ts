@@ -270,10 +270,6 @@ declare interface CheckoutRequestBody {
 }
 
 declare interface CheckoutSelectors {
-    /**
-     * @deprecated This property has been renamed to `data`.
-     */
-    checkout: CheckoutStoreSelector;
     data: CheckoutStoreSelector;
     errors: CheckoutStoreErrorSelector;
     statuses: CheckoutStoreStatusSelector;
@@ -509,18 +505,6 @@ declare class CheckoutService {
      */
     loadPaymentMethods(options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
-     * Loads a payment method by an id.
-     *
-     * This method does not work with multi-option payment providers. Due to its
-     * limitation, it is deprecated and will be removed in the future.
-     *
-     * @deprecated
-     * @param methodId - The identifier for the payment method to load.
-     * @param options - Options for loading the payment method.
-     * @returns A promise that resolves to the current state.
-     */
-    loadPaymentMethod(methodId: string, options?: RequestOptions): Promise<CheckoutSelectors>;
-    /**
      * Initializes the payment step of a checkout process.
      *
      * Before a payment method can accept payment details, it must first be
@@ -666,13 +650,6 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     deinitializeCustomer(options?: CustomerRequestOptions): Promise<CheckoutSelectors>;
-    /**
-     * @deprecated This method has been renamed to `continueAsGuest`.
-     * @param credentials - The guest credentials to use.
-     * @param options - Options for continuing as a guest.
-     * @returns A promise that resolves to the current state.
-     */
-    signInGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Continues to check out as a guest.
      *

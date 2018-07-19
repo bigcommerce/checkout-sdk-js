@@ -1729,6 +1729,7 @@ var CheckoutService = /** @class */ (function () {
      * limitation, it is deprecated and will be removed in the future.
      *
      * @deprecated
+     * @internal
      * @param methodId - The identifier for the payment method to load.
      * @param options - Options for loading the payment method.
      * @returns A promise that resolves to the current state.
@@ -1904,16 +1905,6 @@ var CheckoutService = /** @class */ (function () {
     CheckoutService.prototype.deinitializeCustomer = function (options) {
         var action = this._customerStrategyActionCreator.deinitialize(options);
         return this._dispatch(action, { queueId: 'customerStrategy' });
-    };
-    /**
-     * @deprecated This method has been renamed to `continueAsGuest`.
-     * @param credentials - The guest credentials to use.
-     * @param options - Options for continuing as a guest.
-     * @returns A promise that resolves to the current state.
-     */
-    CheckoutService.prototype.signInGuest = function (credentials, options) {
-        var action = this._billingAddressActionCreator.updateAddress(credentials, options);
-        return this._dispatch(action);
     };
     /**
      * Continues to check out as a guest.
@@ -4378,7 +4369,6 @@ function createCheckoutSelectors(selectors) {
     var errors = new checkout_1.CheckoutStoreErrorSelector(selectors);
     var statuses = new checkout_1.CheckoutStoreStatusSelector(selectors);
     return {
-        checkout: data,
         data: data,
         errors: errors,
         statuses: statuses,
@@ -5483,9 +5473,7 @@ exports.default = AmountTransformer;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var utility_1 = __webpack_require__(8);
 var CartComparator = /** @class */ (function () {
     function CartComparator() {
     }
@@ -5493,13 +5481,30 @@ var CartComparator = /** @class */ (function () {
         return lodash_1.isEqual(this._normalize(cartA), this._normalize(cartB));
     };
     CartComparator.prototype._normalize = function (cart) {
-        var lineItems = Object.keys(cart.lineItems)
-            .reduce(function (result, key) {
-            var _a;
-            return (tslib_1.__assign({}, result, (_a = {}, _a[key] = cart.lineItems[key]
-                .map(function (item) { return lodash_1.omit(item, ['id', 'imageUrl']); }), _a)));
-        }, {});
-        return utility_1.omitPrivate(lodash_1.omit(tslib_1.__assign({}, cart, { lineItems: lineItems }), ['updatedTime']));
+        return {
+            cartAmount: cart.cartAmount,
+            currency: cart.currency,
+            id: cart.id,
+            lineItems: {
+                digitalItems: cart.lineItems.digitalItems.map(function (item) { return ({
+                    extendedSalePrice: item.extendedSalePrice,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    variantId: item.variantId,
+                }); }),
+                giftCertificates: cart.lineItems.giftCertificates.map(function (item) { return ({
+                    amount: item.amount,
+                    recipient: item.recipient,
+                }); }),
+                physicalItems: cart.lineItems.physicalItems.map(function (item) { return ({
+                    extendedSalePrice: item.extendedSalePrice,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    variantId: item.variantId,
+                    giftWrapping: item.giftWrapping,
+                }); }),
+            },
+        };
     };
     return CartComparator;
 }());
@@ -6486,11 +6491,16 @@ var BillingAddressActionCreator = /** @class */ (function () {
             throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingCheckout);
         }
         var billingAddress = state.billingAddress.getBillingAddress();
+        // If email is not present in the address provided by the client, then
+        // fall back to the stored email as it could have been set separately
+        // using a convenience method. We can't rely on billingAddress having
+        // an ID to consider that there's a preexisting email, as billingAddress
+        // object from Order doesn't have an ID.
+        var updatedBillingAddress = tslib_1.__assign({}, address, { email: typeof address.email === 'undefined' && billingAddress ? billingAddress.email : address.email });
         if (!billingAddress || !billingAddress.id) {
-            return this._checkoutClient.createBillingAddress(checkout.id, address, options);
+            return this._checkoutClient.createBillingAddress(checkout.id, updatedBillingAddress, options);
         }
-        var updatedBillingAddress = tslib_1.__assign({}, address, { email: typeof address.email === 'undefined' ? billingAddress.email : address.email, id: billingAddress.id });
-        return this._checkoutClient.updateBillingAddress(checkout.id, updatedBillingAddress, options);
+        return this._checkoutClient.updateBillingAddress(checkout.id, tslib_1.__assign({}, updatedBillingAddress, { id: billingAddress.id }), options);
     };
     return BillingAddressActionCreator;
 }());
@@ -8115,7 +8125,7 @@ var ChasePayCustomerStrategy = /** @class */ (function (_super) {
             .then(function () { return _super.prototype.initialize.call(_this, options); });
     };
     ChasePayCustomerStrategy.prototype.signIn = function (credentials, options) {
-        throw new errors_1.NotImplementedError('In order to sign in via Chase Pay, the shopper must click on "Visa Checkout" button.');
+        throw new errors_1.NotImplementedError('In order to sign in via Chase Pay®, the shopper must click on "Chase Pay®" button.');
     };
     ChasePayCustomerStrategy.prototype.signOut = function (options) {
         var state = this._store.getState();
@@ -8199,18 +8209,12 @@ var CustomerRequestSender = /** @class */ (function () {
     CustomerRequestSender.prototype.signInCustomer = function (credentials, _a) {
         var timeout = (_a === void 0 ? {} : _a).timeout;
         var url = '/internalapi/v1/checkout/customer';
-        var params = {
-            includes: ['quote', 'shippingOptions'].join(','),
-        };
-        return this._requestSender.post(url, { params: params, timeout: timeout, body: credentials });
+        return this._requestSender.post(url, { timeout: timeout, body: credentials });
     };
     CustomerRequestSender.prototype.signOutCustomer = function (_a) {
         var timeout = (_a === void 0 ? {} : _a).timeout;
         var url = '/internalapi/v1/checkout/customer';
-        var params = {
-            includes: ['quote', 'shippingOptions'].join(','),
-        };
-        return this._requestSender.delete(url, { params: params, timeout: timeout });
+        return this._requestSender.delete(url, { timeout: timeout });
     };
     return CustomerRequestSender;
 }());
