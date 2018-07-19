@@ -1,32 +1,35 @@
+import { Response } from '@bigcommerce/request-sender';
+import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutStore } from '../checkout';
+import { AddressRequestBody } from '../address';
+import { createCheckoutClient, createCheckoutStore, Checkout, CheckoutClient, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+
 import BillingAddressActionCreator from './billing-address-action-creator';
-import { BillingAddressActionType } from './billing-address-actions';
-import { getBillingAddress } from './internal-billing-addresses.mock';
+import { BillingAddressActionType, UpdateBillingAddressAction } from './billing-address-actions';
+import { getBillingAddress } from './billing-addresses.mock';
 
 describe('BillingAddressActionCreator', () => {
-    let address;
-    let billingAddressActionCreator;
-    let checkoutClient;
-    let errorResponse;
-    let response;
-    let state;
-    let store;
-    let actions;
+    let address: AddressRequestBody;
+    let billingAddressActionCreator: BillingAddressActionCreator;
+    let checkoutClient: CheckoutClient;
+    let errorResponse: Response<Error>;
+    let response: Response<Checkout>;
+    let state: CheckoutStoreState;
+    let store: CheckoutStore;
+    let actions: UpdateBillingAddressAction[] | UpdateBillingAddressAction;
 
     beforeEach(() => {
         response = getResponse(getCheckout());
         errorResponse = getErrorResponse();
         state = getCheckoutStoreState();
+        checkoutClient = createCheckoutClient();
 
-        checkoutClient = {
-            updateBillingAddress: jest.fn(() => Promise.resolve(response)),
-            createBillingAddress: jest.fn(() => Promise.resolve(response)),
-        };
+        jest.spyOn(checkoutClient, 'updateBillingAddress').mockImplementation(() => Promise.resolve(response));
+        jest.spyOn(checkoutClient, 'createBillingAddress').mockImplementation(() => Promise.resolve(response));
 
         billingAddressActionCreator = new BillingAddressActionCreator(checkoutClient);
         address = getBillingAddress();
@@ -73,10 +76,13 @@ describe('BillingAddressActionCreator', () => {
                 jest.spyOn(checkoutClient, 'createBillingAddress')
                     .mockReturnValue(Promise.reject(getErrorResponse()));
 
-                const errorHandler = jest.fn((action) => Observable.of(action));
+                const errorHandler = jest.fn();
 
                 actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
-                    .catch(errorHandler)
+                    .catch((action: UpdateBillingAddressAction) => {
+                        errorHandler();
+                        return Observable.of(action);
+                    })
                     .toArray()
                     .toPromise();
 
@@ -123,10 +129,13 @@ describe('BillingAddressActionCreator', () => {
                 jest.spyOn(checkoutClient, 'updateBillingAddress')
                     .mockReturnValue(Promise.reject(getErrorResponse()));
 
-                const errorHandler = jest.fn((action) => Observable.of(action));
+                const errorHandler = jest.fn();
 
                 actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
-                    .catch(errorHandler)
+                    .catch((action: UpdateBillingAddressAction) => {
+                        errorHandler();
+                        return Observable.of(action);
+                    })
                     .toArray()
                     .toPromise();
 
@@ -157,7 +166,6 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
                     .toPromise();
 
-
                 expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
@@ -179,6 +187,47 @@ describe('BillingAddressActionCreator', () => {
                     {
                         ...address,
                         email,
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+        });
+
+        describe('when store has checkout and billing address data from an incomplete order', () => {
+            beforeEach(() => {
+                // The billing address contained in the Order response does not have an ID.
+                store = createCheckoutStore(
+                    omit(state, 'billingAddress.data.id')
+                );
+            });
+
+            it('sends request to create a billing address, using provided email', async () => {
+                const email = 'foo@bar.com';
+
+                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email,
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+
+            it('sends request to create a billing address, using previous email', async () => {
+                await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...address,
+                        email: 'test@bigcommerce.com',
                         id: '55c96cda6f04c',
                     },
                     {}
