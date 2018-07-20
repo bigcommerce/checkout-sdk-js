@@ -1,29 +1,29 @@
+import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutStore } from '../checkout';
+import { createCheckoutStore, CheckoutStore } from '../checkout';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
+import { ConfigRequestSender } from '.';
+import Config from './config';
 import ConfigActionCreator from './config-action-creator';
 import { ConfigActionType } from './config-actions';
 import { getConfig, getConfigState } from './configs.mock';
 
 describe('ConfigActionCreator', () => {
-    let checkoutClient;
-    let configActionCreator;
-    let errorResponse;
-    let response;
-    let store;
+    const requestSender = createRequestSender();
+    const configRequestSender = new ConfigRequestSender(requestSender);
+    const configActionCreator = new ConfigActionCreator(configRequestSender);
+    let errorResponse: Response<any>;
+    let response: Response<Config>;
+    let store: CheckoutStore;
 
     beforeEach(() => {
         response = getResponse(getConfig());
         errorResponse = getErrorResponse();
         store = createCheckoutStore();
 
-        checkoutClient = {
-            loadConfig: jest.fn(() => Promise.resolve(response)),
-        };
-
-        configActionCreator = new ConfigActionCreator(checkoutClient);
+        jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(Promise.resolve(response));
     });
 
     describe('#loadConfig()', () => {
@@ -39,9 +39,9 @@ describe('ConfigActionCreator', () => {
         });
 
         it('emits error actions if unable to load config', async () => {
-            checkoutClient.loadConfig.mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
             const actions = await Observable.from(configActionCreator.loadConfig()(store))
                 .catch(errorHandler)
                 .toArray()

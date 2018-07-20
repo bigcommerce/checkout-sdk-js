@@ -9,7 +9,10 @@ const DEFAULT_STATE: ConfigState = {
     statuses: {},
 };
 
-export default function configReducer(state: ConfigState = DEFAULT_STATE, action: LoadConfigAction): ConfigState {
+export default function configReducer(
+    state: ConfigState = DEFAULT_STATE,
+    action: LoadConfigAction
+): ConfigState {
     const reducer = combineReducers<ConfigState, LoadConfigAction>({
         data: dataReducer,
         errors: errorsReducer,
@@ -19,7 +22,10 @@ export default function configReducer(state: ConfigState = DEFAULT_STATE, action
     return reducer(state, action);
 }
 
-function dataReducer(data: Config | undefined, action: LoadConfigAction): Config | undefined {
+function dataReducer(
+    data: Config | undefined,
+    action: LoadConfigAction
+): Config | undefined {
     switch (action.type) {
     case ConfigActionType.LoadConfigSucceeded:
         return action.payload ? action.payload : data;
@@ -29,7 +35,10 @@ function dataReducer(data: Config | undefined, action: LoadConfigAction): Config
     }
 }
 
-function errorsReducer(errors: ConfigErrorsState = DEFAULT_STATE.errors, action: LoadConfigAction): ConfigErrorsState {
+function errorsReducer(
+    errors: ConfigErrorsState = DEFAULT_STATE.errors,
+    action: LoadConfigAction
+): ConfigErrorsState {
     switch (action.type) {
     case ConfigActionType.LoadConfigSucceeded:
         return { ...errors, loadError: undefined };
@@ -42,7 +51,10 @@ function errorsReducer(errors: ConfigErrorsState = DEFAULT_STATE.errors, action:
     }
 }
 
-function statusesReducer(statuses: ConfigStatusesState = DEFAULT_STATE.statuses, action: LoadConfigAction): ConfigStatusesState {
+function statusesReducer(
+    statuses: ConfigStatusesState = DEFAULT_STATE.statuses,
+    action: LoadConfigAction
+): ConfigStatusesState {
     switch (action.type) {
     case ConfigActionType.LoadConfigRequested:
         return { ...statuses, isLoading: true };

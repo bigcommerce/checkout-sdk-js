@@ -1,15 +1,14 @@
-import { getConfigState } from './configs.mock';
-import { getErrorResponse } from '../common/http-request/responses.mock';
+import { CheckoutStoreState } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+
 import ConfigSelector from './config-selector';
 
 describe('ConfigSelector', () => {
-    let configSelector;
-    let state;
+    let configSelector: ConfigSelector;
+    let state: CheckoutStoreState;
 
     beforeEach(() => {
-        state = {
-            config: getConfigState(),
-        };
+        state = getCheckoutStoreState();
     });
 
     describe('#getConfig()', () => {
@@ -22,19 +21,21 @@ describe('ConfigSelector', () => {
         it('returns the store config', () => {
             configSelector = new ConfigSelector(state.config);
 
-            expect(configSelector.getStoreConfig()).toEqual(state.config.data.storeConfig);
+            // tslint:disable-next-line:no-non-null-assertion
+            expect(configSelector.getStoreConfig()).toEqual(state.config.data!.storeConfig);
         });
 
         it('returns the context config', () => {
             configSelector = new ConfigSelector(state.config);
 
-            expect(configSelector.getContextConfig()).toEqual(state.config.data.context);
+            // tslint:disable-next-line:no-non-null-assertion
+            expect(configSelector.getContextConfig()).toEqual(state.config.data!.context);
         });
     });
 
     describe('#getLoadingError()', () => {
         it('returns error if unable to load config', () => {
-            const loadError = getErrorResponse();
+            const loadError = new Error();
 
             configSelector = new ConfigSelector({
                 ...state.config,
