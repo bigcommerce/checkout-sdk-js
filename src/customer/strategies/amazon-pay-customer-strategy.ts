@@ -1,8 +1,8 @@
 import { CheckoutStore, InternalCheckoutSelectors} from '../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
+import { AmazonPayLoginButton, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { AmazonPayLoginButton, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../remote-checkout/methods/amazon-pay';
 import CustomerCredentials from '../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
 

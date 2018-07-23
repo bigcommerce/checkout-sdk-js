@@ -1,4 +1,3 @@
-export { default as AmazonPayPaymentStrategy, AmazonPayPaymentInitializeOptions } from './amazon-pay-payment-strategy';
 export { default as CreditCardPaymentStrategy } from './credit-card-payment-strategy';
 export { default as KlarnaPaymentStrategy, KlarnaPaymentInitializeOptions } from './klarna-payment-strategy';
 export { default as LegacyPaymentStrategy } from './legacy-payment-strategy';
@@ -12,5 +11,6 @@ export { default as SagePayPaymentStrategy } from './sage-pay-payment-strategy';
 export { default as WepayPaymentStrategy } from './wepay-payment-strategy';
 
 export { AfterpayPaymentStrategy } from './afterpay';
+export { AmazonPayPaymentStrategy, AmazonPayPaymentInitializeOptions } from './amazon-pay';
 export { BraintreeCreditCardPaymentStrategy, BraintreePaymentInitializeOptions, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy, BraintreeVisaCheckoutPaymentInitializeOptions } from './braintree';
 export { SquarePaymentStrategy, SquarePaymentInitializeOptions } from './square';

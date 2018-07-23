@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethod } from '../../../payment';
+import PaymentMethod from '../../payment-method';
 
 import AmazonPayWindow from './amazon-pay-window';
 

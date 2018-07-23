@@ -7,7 +7,6 @@ import { CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutS
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
 import { WepayRiskClient } from '../remote-checkout/methods/wepay';
 
@@ -34,6 +33,7 @@ import {
     WepayPaymentStrategy,
 } from './strategies';
 import { AfterpayScriptLoader } from './strategies/afterpay';
+import { AmazonPayScriptLoader } from './strategies/amazon-pay';
 import {
     createBraintreePaymentProcessor,
     createBraintreeVisaCheckoutPaymentProcessor,

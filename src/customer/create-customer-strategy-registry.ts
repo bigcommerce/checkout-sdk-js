@@ -7,10 +7,10 @@ import { Registry } from '../common/registry';
 import { ConfigRequestSender } from '../config';
 import ConfigActionCreator from '../config/config-action-creator';
 import { PaymentMethodActionCreator } from '../payment';
+import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 
 import { CustomerRequestSender, CustomerStrategyActionCreator } from '.';
 import CustomerActionCreator from './customer-action-creator';

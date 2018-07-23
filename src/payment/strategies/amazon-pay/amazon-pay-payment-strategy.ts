@@ -1,24 +1,21 @@
 import { noop } from 'lodash';
 
-import { isAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../address';
-import { BillingAddressActionCreator } from '../../billing';
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError, StandardError } from '../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
-import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
-import {
-    AmazonPayOrderReference,
-    AmazonPayScriptLoader,
-    AmazonPayWallet,
-    AmazonPayWalletOptions,
-    AmazonPayWidgetError,
-    AmazonPayWindow,
-} from '../../remote-checkout/methods/amazon-pay';
-import PaymentMethod from '../payment-method';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
+import { isAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../../address';
+import { BillingAddressActionCreator } from '../../../billing';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError, StandardError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
+import PaymentMethod from '../../payment-method';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategy from '../payment-strategy';
 
-import PaymentStrategy from './payment-strategy';
+import AmazonPayOrderReference from './amazon-pay-order-reference';
+import AmazonPayScriptLoader from './amazon-pay-script-loader';
+import AmazonPayWallet, { AmazonPayWalletOptions } from './amazon-pay-wallet';
+import AmazonPayWidgetError from './amazon-pay-widget-error';
+import AmazonPayWindow from './amazon-pay-window';
 
 export default class AmazonPayPaymentStrategy extends PaymentStrategy {
     private _paymentMethod?: PaymentMethod;

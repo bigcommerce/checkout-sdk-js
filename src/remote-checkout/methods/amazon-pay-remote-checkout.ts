@@ -1,4 +1,4 @@
-import { InternalAddress } from '../../../address';
+import { InternalAddress } from '../../address';
 
 export default interface AmazonPayRemoteCheckout {
     referenceId?: string;

@@ -4,9 +4,9 @@ import { isAddressEqual, mapFromInternalAddress, AddressRequestBody } from '../.
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
+import { AmazonPayAddressBook, AmazonPayOrderReference, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
-import { AmazonPayAddressBook, AmazonPayOrderReference, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../remote-checkout/methods/amazon-pay';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ShippingInitializeOptions, ShippingRequestOptions } from '../shipping-request-options';
 import { ShippingStrategyActionType } from '../shipping-strategy-actions';

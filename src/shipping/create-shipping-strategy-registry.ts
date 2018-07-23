@@ -5,8 +5,8 @@ import { CheckoutClient, CheckoutStore } from '../checkout';
 import CheckoutRequestSender from '../checkout/checkout-request-sender';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator } from '../payment';
+import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
 
 import { ConsignmentRequestSender } from '.';
 import ConsignmentActionCreator from './consignment-action-creator';
