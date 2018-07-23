@@ -1,28 +1,28 @@
-import { createTimeout } from '@bigcommerce/request-sender';
-import { getConfig } from './configs.mock';
+import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
+
 import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
+
+import Config from './config';
 import ConfigRequestSender from './config-request-sender';
+import { getConfig } from './configs.mock';
 
 describe('ConfigRequestSender', () => {
-    let configRequestSender;
-    let requestSender;
+    const requestSender = createRequestSender();
+    let configRequestSender: ConfigRequestSender;
 
     beforeEach(() => {
-        requestSender = {
-            get: jest.fn(() => Promise.resolve()),
-        };
-
         configRequestSender = new ConfigRequestSender(requestSender);
     });
 
     describe('#loadConfig()', () => {
-        let response;
+        let response: Response<Config>;
 
         beforeEach(() => {
             response = getResponse(getConfig());
 
-            requestSender.get.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get')
+                .mockReturnValue(Promise.resolve(response));
         });
 
         it('loads config', async () => {
@@ -31,7 +31,7 @@ describe('ConfigRequestSender', () => {
             expect(output).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout-settings', {
                 headers: {
-                    'Accept': ContentType.JsonV1,
+                    Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': 'This API endpoint is for internal use only and may change in the future',
                 },
             });
@@ -45,7 +45,7 @@ describe('ConfigRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout-settings', {
                 ...options,
                 headers: {
-                    'Accept': ContentType.JsonV1,
+                    Accept: ContentType.JsonV1,
                     'X-API-INTERNAL': 'This API endpoint is for internal use only and may change in the future',
                 },
             });
