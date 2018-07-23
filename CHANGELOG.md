@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.28.1"></a>
+## [0.28.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.0...v0.28.1) (2018-07-23)
+
+
+### Features
+
+* **shipping:** CHECKOUT-3243 Add createConsignments to ConsignmentActionCreator ([f9c1258](https://github.com/bigcommerce/checkout-sdk-js/commit/f9c1258))
+* **shipping:** CHECKOUT-3243 Add multi-shipping methods in CheckoutService ([62c0dc3](https://github.com/bigcommerce/checkout-sdk-js/commit/62c0dc3))
+* **shipping:** CHECKOUT-3243 Add updateConsignment to ConsignmentActionCreator ([a9da7c0](https://github.com/bigcommerce/checkout-sdk-js/commit/a9da7c0))
+* **shipping:** CHECKOUT-3243 Support tracking loading and error states per consignment ([12c55da](https://github.com/bigcommerce/checkout-sdk-js/commit/12c55da))
+
+
+
 <a name="0.28.0"></a>
 # [0.28.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.27.2...v0.28.0) (2018-07-19)
 

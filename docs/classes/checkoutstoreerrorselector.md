@@ -16,6 +16,7 @@ This object has a set of getters that would return an error if an action is not 
 
 * [getApplyCouponError](checkoutstoreerrorselector.md#getapplycouponerror)
 * [getApplyGiftCertificateError](checkoutstoreerrorselector.md#getapplygiftcertificateerror)
+* [getCreateConsignmentsError](checkoutstoreerrorselector.md#getcreateconsignmentserror)
 * [getDeleteInstrumentError](checkoutstoreerrorselector.md#getdeleteinstrumenterror)
 * [getError](checkoutstoreerrorselector.md#geterror)
 * [getFinalizeOrderError](checkoutstoreerrorselector.md#getfinalizeordererror)
@@ -39,6 +40,7 @@ This object has a set of getters that would return an error if an action is not 
 * [getSignOutError](checkoutstoreerrorselector.md#getsignouterror)
 * [getSubmitOrderError](checkoutstoreerrorselector.md#getsubmitordererror)
 * [getUpdateBillingAddressError](checkoutstoreerrorselector.md#getupdatebillingaddresserror)
+* [getUpdateConsignmentError](checkoutstoreerrorselector.md#getupdateconsignmenterror)
 * [getUpdateShippingAddressError](checkoutstoreerrorselector.md#getupdateshippingaddresserror)
 
 ---
@@ -69,6 +71,19 @@ Returns an error if unable to apply a gift certificate.
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to apply, otherwise undefined.
+
+___
+<a id="getcreateconsignmentserror"></a>
+
+###  getCreateConsignmentsError
+
+▸ **getCreateConsignmentsError**():  `Error` &#124; `undefined`
+
+Returns an error if unable to create consignments.
+
+**Returns:**  `Error` &#124; `undefined`
+
+The error object if unable to create, otherwise undefined.
 
 ___
 <a id="getdeleteinstrumenterror"></a>
@@ -340,9 +355,17 @@ ___
 
 ###  getSelectShippingOptionError
 
-▸ **getSelectShippingOptionError**():  `Error` &#124; `undefined`
+▸ **getSelectShippingOptionError**(consignmentId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
 
 Returns an error if unable to select a shipping option.
+
+A consignment ID should be provided when checking for an error for a specific consignment, otherwise it will check for all available consignments.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| `Optional` consignmentId |  `undefined` &#124; `string`|  The identifier of the consignment to be checked. |
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -394,7 +417,28 @@ ___
 
 ▸ **getUpdateBillingAddressError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to update a billing address.
+Returns an error if unable to update billing address.
+
+**Returns:**  `Error` &#124; `undefined`
+
+The error object if unable to update, otherwise undefined.
+
+___
+<a id="getupdateconsignmenterror"></a>
+
+###  getUpdateConsignmentError
+
+▸ **getUpdateConsignmentError**(consignmentId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
+
+Returns an error if unable to update a consignment.
+
+A consignment ID should be provided when checking for an error for a specific consignment, otherwise it will check for all available consignments.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| `Optional` consignmentId |  `undefined` &#124; `string`|  The identifier of the consignment to be checked. |
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -407,7 +451,7 @@ ___
 
 ▸ **getUpdateShippingAddressError**():  `Error` &#124; `undefined`
 
-Returns an error if unable to update a shipping address.
+Returns an error if unable to update shipping address.
 
 **Returns:**  `Error` &#124; `undefined`
 

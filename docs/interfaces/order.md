@@ -49,7 +49,7 @@ ___
 
 ###  billingAddress
 
-**● billingAddress**: *[Address](address.md)*
+**● billingAddress**: *[BillingAddress](billingaddress.md)*
 
 ___
 <a id="cartid"></a>

@@ -16,6 +16,7 @@ This object has a set of getters that return true if an action is in progress. F
 
 * [isApplyingCoupon](checkoutstorestatusselector.md#isapplyingcoupon)
 * [isApplyingGiftCertificate](checkoutstorestatusselector.md#isapplyinggiftcertificate)
+* [isCreatingConsignments](checkoutstorestatusselector.md#iscreatingconsignments)
 * [isCustomerStepPending](checkoutstorestatusselector.md#iscustomersteppending)
 * [isDeletingInstrument](checkoutstorestatusselector.md#isdeletinginstrument)
 * [isFinalizingOrder](checkoutstorestatusselector.md#isfinalizingorder)
@@ -41,6 +42,7 @@ This object has a set of getters that return true if an action is in progress. F
 * [isSigningOut](checkoutstorestatusselector.md#issigningout)
 * [isSubmittingOrder](checkoutstorestatusselector.md#issubmittingorder)
 * [isUpdatingBillingAddress](checkoutstorestatusselector.md#isupdatingbillingaddress)
+* [isUpdatingConsignment](checkoutstorestatusselector.md#isupdatingconsignment)
 * [isUpdatingShippingAddress](checkoutstorestatusselector.md#isupdatingshippingaddress)
 
 ---
@@ -69,6 +71,20 @@ Checks whether the current customer is applying a gift certificate.
 
 **Returns:** `boolean`
 True if applying a gift certificate, otherwise false.
+
+___
+<a id="iscreatingconsignments"></a>
+
+###  isCreatingConsignments
+
+▸ **isCreatingConsignments**(): `boolean`
+
+Checks whether a given/any consignment is being updated.
+
+A consignment ID should be provided when checking for a specific consignment, otherwise it will check for any consignment.
+
+**Returns:** `boolean`
+True if creating consignments, otherwise false.
 
 ___
 <a id="iscustomersteppending"></a>
@@ -357,9 +373,17 @@ ___
 
 ###  isSelectingShippingOption
 
-▸ **isSelectingShippingOption**(): `boolean`
+▸ **isSelectingShippingOption**(consignmentId?: * `undefined` &#124; `string`*): `boolean`
 
-Checks whether the current customer is selecting a shipping option.
+Checks whether a shipping option is being selected.
+
+A consignment ID should be provided when checking if a shipping option is being selected for a specific consignment, otherwise it will check for all consignments.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| `Optional` consignmentId |  `undefined` &#124; `string`|  The identifier of the consignment to be checked. |
 
 **Returns:** `boolean`
 True if selecting a shipping option, otherwise false.
@@ -427,6 +451,26 @@ Checks whether the current customer is updating their billing address.
 
 **Returns:** `boolean`
 True if updating their billing address, otherwise false.
+
+___
+<a id="isupdatingconsignment"></a>
+
+###  isUpdatingConsignment
+
+▸ **isUpdatingConsignment**(consignmentId?: * `undefined` &#124; `string`*): `boolean`
+
+Checks whether a given/any consignment is being updated.
+
+A consignment ID should be provided when checking for a specific consignment, otherwise it will check for any consignment.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| `Optional` consignmentId |  `undefined` &#124; `string`|  The identifier of the consignment to be checked. |
+
+**Returns:** `boolean`
+True if updating consignment(s), otherwise false.
 
 ___
 <a id="isupdatingshippingaddress"></a>

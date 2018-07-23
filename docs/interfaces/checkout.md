@@ -48,7 +48,7 @@ ___
 
 ### `<Optional>` billingAddress
 
-**● billingAddress**: *[Address](address.md)*
+**● billingAddress**: *[BillingAddress](billingaddress.md)*
 
 ___
 <a id="cart"></a>

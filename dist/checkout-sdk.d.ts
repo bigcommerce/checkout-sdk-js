@@ -6,8 +6,6 @@ declare interface Address extends AddressRequestBody {
 }
 
 declare interface AddressRequestBody {
-    id?: string;
-    email?: string;
     firstName: string;
     lastName: string;
     company: string;
@@ -136,6 +134,11 @@ declare interface Banner {
     text: string;
 }
 
+declare interface BillingAddress extends Address {
+    id: string;
+    email?: string;
+}
+
 /**
  * A set of options that are required to initialize the Braintree payment
  * method. You need to provide the options if you want to support 3D Secure
@@ -233,7 +236,7 @@ declare interface ChasePayCustomerInitializeOptions {
 
 declare interface Checkout {
     id: string;
-    billingAddress?: Address;
+    billingAddress?: BillingAddress;
     cart: Cart;
     customer: Customer;
     customerMessage: string;
@@ -758,7 +761,7 @@ declare class CheckoutService {
      */
     deinitializeShipping(options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
     /**
-     * Selects a shipping option for a given address.
+     * Selects a shipping option for the current address.
      *
      * If a shipping option has an additional cost, the quote for the current
      * order will be adjusted once the option is selected.
@@ -800,7 +803,93 @@ declare class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    updateShippingAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Creates consignments given a list.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#updateShippingAddress`.
+     *
+     * When consignments are created, an updated list of shipping options will
+     * become available for each consignment, unless no options are available.
+     * If the update is successful, you can call
+     * `CheckoutStoreSelector#getConsignments` to retrieve the updated list of
+     * consignments.'
+     *
+     * Beware that if a consignment includes all line items from another
+     * consignment, that consignment will be deleted as a valid consignment must
+     * include at least one valid line item.
+     *
+     * You can submit an address that is partially complete. The address does
+     * not get validated until you submit the order.
+     *
+     * ```js
+     * const state = await service.createConsignments(consignments, address);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignments - The list of consignments to be created.
+     * @param options - Options for updating the shipping address.
+     * @returns A promise that resolves to the current state.
+     */
+    createConsignments(consignments: ConsignmentsRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Updates a specific consignment.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#selectShippingOption`.
+     *
+     * When a shipping address for a consignment is updated, an updated list of
+     * shipping options will become available for the consignment, unless no
+     * options are available. If the update is successful, you can call
+     * `CheckoutStoreSelector#getConsignments` to retrieve updated list of
+     * consignments.
+     *
+     * Beware that if the updated consignment includes all line items from another
+     * consignment, that consignment will be deleted as a valid consignment must
+     * include at least one valid line item.
+     *
+     * If the shipping address changes and the selected shipping option becomes
+     * unavailable for the updated address, the shipping option will be
+     * deselected.
+     *
+     * You can submit an address that is partially complete. The address does
+     * not get validated until you submit the order.
+     *
+     * ```js
+     * const state = await service.updateConsignment(consignmentId, address);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignment - The consignment data that will be used.
+     * @param options - Options for updating the shipping address.
+     * @returns A promise that resolves to the current state.
+     */
+    updateConsignment(consignment: ConsignmentUpdateRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Selects a shipping option for a given consignment.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#updateShippingAddres`.
+     *
+     * If a shipping option has an additional cost, the quote for the current
+     * order will be adjusted once the option is selected.
+     *
+     * ```js
+     * const state = await service.selectConsignmentShippingOption(consignmentId, optionId);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignmentId - The identified of the consignment to be updated.
+     * @param shippingOptionId - The identifier of the shipping option to
+     * select.
+     * @param options - Options for selecting the shipping option.
+     * @returns A promise that resolves to the current state.
+     */
+    selectConsignmentShippingOption(consignmentId: string, shippingOptionId: string, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
     /**
      * Updates the billing address for the current checkout.
      *
@@ -820,7 +909,7 @@ declare class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: Address, options?: RequestOptions): Promise<CheckoutSelectors>;
+    updateBillingAddress(address: AddressRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Applies a coupon code to the current checkout.
      *
@@ -958,6 +1047,7 @@ declare class CheckoutStoreErrorSelector {
     private _cart;
     private _checkout;
     private _config;
+    private _consignments;
     private _countries;
     private _coupons;
     private _customerStrategies;
@@ -967,7 +1057,6 @@ declare class CheckoutStoreErrorSelector {
     private _paymentMethods;
     private _paymentStrategies;
     private _shippingCountries;
-    private _shippingOptions;
     private _shippingStrategies;
     /**
      * Gets the error of any checkout action that has failed.
@@ -1067,21 +1156,41 @@ declare class CheckoutStoreErrorSelector {
     /**
      * Returns an error if unable to select a shipping option.
      *
+     * A consignment ID should be provided when checking for an error for a
+     * specific consignment, otherwise it will check for all available consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
      * @returns The error object if unable to select, otherwise undefined.
      */
-    getSelectShippingOptionError(): Error | undefined;
+    getSelectShippingOptionError(consignmentId?: string): Error | undefined;
     /**
-     * Returns an error if unable to update a billing address.
+     * Returns an error if unable to update billing address.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
     getUpdateBillingAddressError(): Error | undefined;
     /**
-     * Returns an error if unable to update a shipping address.
+     * Returns an error if unable to update shipping address.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
     getUpdateShippingAddressError(): Error | undefined;
+    /**
+     * Returns an error if unable to update a consignment.
+     *
+     * A consignment ID should be provided when checking for an error for a
+     * specific consignment, otherwise it will check for all available consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns The error object if unable to update, otherwise undefined.
+     */
+    getUpdateConsignmentError(consignmentId?: string): Error | undefined;
+    /**
+     * Returns an error if unable to create consignments.
+     *
+     * @returns The error object if unable to create, otherwise undefined.
+     */
+    getCreateConsignmentsError(): Error | undefined;
     /**
      * Returns an error if unable to initialize the shipping step of a checkout
      * process.
@@ -1158,7 +1267,6 @@ declare class CheckoutStoreSelector {
     private _paymentMethods;
     private _shippingAddress;
     private _shippingCountries;
-    private _shippingOptions;
     /**
      * Gets the current checkout.
      *
@@ -1352,6 +1460,7 @@ declare class CheckoutStoreStatusSelector {
     private _cart;
     private _checkout;
     private _config;
+    private _consignments;
     private _countries;
     private _coupons;
     private _customerStrategies;
@@ -1361,7 +1470,6 @@ declare class CheckoutStoreStatusSelector {
     private _paymentMethods;
     private _paymentStrategies;
     private _shippingCountries;
-    private _shippingOptions;
     private _shippingStrategies;
     /**
      * Checks whether any checkout action is pending.
@@ -1477,11 +1585,16 @@ declare class CheckoutStoreStatusSelector {
      */
     isLoadingShippingOptions(): boolean;
     /**
-     * Checks whether the current customer is selecting a shipping option.
+     * Checks whether a shipping option is being selected.
      *
+     * A consignment ID should be provided when checking if a shipping option
+     * is being selected for a specific consignment, otherwise it will check
+     * for all consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
      * @returns True if selecting a shipping option, otherwise false.
      */
-    isSelectingShippingOption(): boolean;
+    isSelectingShippingOption(consignmentId?: string): boolean;
     /**
      * Checks whether the current customer is updating their billing address.
      *
@@ -1494,6 +1607,25 @@ declare class CheckoutStoreStatusSelector {
      * @returns True if updating their shipping address, otherwise false.
      */
     isUpdatingShippingAddress(): boolean;
+    /**
+     * Checks whether a given/any consignment is being updated.
+     *
+     * A consignment ID should be provided when checking for a specific consignment,
+     * otherwise it will check for any consignment.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns True if updating consignment(s), otherwise false.
+     */
+    isUpdatingConsignment(consignmentId?: string): boolean;
+    /**
+     * Checks whether a given/any consignment is being updated.
+     *
+     * A consignment ID should be provided when checking for a specific consignment,
+     * otherwise it will check for any consignment.
+     *
+     * @returns True if creating consignments, otherwise false.
+     */
+    isCreatingConsignments(): boolean;
     /**
      * Checks whether the shipping step of a checkout process is initializing.
      *
@@ -1579,6 +1711,24 @@ declare interface Consignment {
     lineItemIds?: string[];
 }
 
+declare interface ConsignmentCreateRequestBody {
+    shippingAddress: AddressRequestBody;
+    lineItems: ConsignmentLineItem[];
+}
+
+declare interface ConsignmentLineItem {
+    itemId: string | number;
+    quantity: number;
+}
+
+declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
+
+declare interface ConsignmentUpdateRequestBody {
+    id: string;
+    shippingAddress?: AddressRequestBody;
+    lineItems?: ConsignmentLineItem[];
+}
+
 declare interface Country {
     code: string;
     name: string;
@@ -1658,13 +1808,17 @@ declare interface Currency_2 {
 
 declare interface Customer {
     id: number;
-    addresses: Address[];
+    addresses: CustomerAddress[];
     storeCredit: number;
     email: string;
     firstName: string;
     fullName: string;
     isGuest: boolean;
     lastName: string;
+}
+
+declare interface CustomerAddress extends Address {
+    id: string;
 }
 
 declare interface CustomerCredentials {
@@ -1948,7 +2102,7 @@ declare interface Locales {
 
 declare interface Order {
     baseAmount: number;
-    billingAddress: Address;
+    billingAddress: BillingAddress;
     cartId: string;
     coupons: Coupon[];
     currency: Currency;

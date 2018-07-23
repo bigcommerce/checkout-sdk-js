@@ -17,6 +17,7 @@ This object can be used to collect all information that is required for checkout
 * [applyCoupon](checkoutservice.md#applycoupon)
 * [applyGiftCertificate](checkoutservice.md#applygiftcertificate)
 * [continueAsGuest](checkoutservice.md#continueasguest)
+* [createConsignments](checkoutservice.md#createconsignments)
 * [deinitializeCustomer](checkoutservice.md#deinitializecustomer)
 * [deinitializePayment](checkoutservice.md#deinitializepayment)
 * [deinitializeShipping](checkoutservice.md#deinitializeshipping)
@@ -38,6 +39,7 @@ This object can be used to collect all information that is required for checkout
 * [notifyState](checkoutservice.md#notifystate)
 * [removeCoupon](checkoutservice.md#removecoupon)
 * [removeGiftCertificate](checkoutservice.md#removegiftcertificate)
+* [selectConsignmentShippingOption](checkoutservice.md#selectconsignmentshippingoption)
 * [selectShippingOption](checkoutservice.md#selectshippingoption)
 * [signInCustomer](checkoutservice.md#signincustomer)
 * [signOutCustomer](checkoutservice.md#signoutcustomer)
@@ -45,6 +47,7 @@ This object can be used to collect all information that is required for checkout
 * [subscribe](checkoutservice.md#subscribe)
 * [updateBillingAddress](checkoutservice.md#updatebillingaddress)
 * [updateCheckout](checkoutservice.md#updatecheckout)
+* [updateConsignment](checkoutservice.md#updateconsignment)
 * [updateShippingAddress](checkoutservice.md#updateshippingaddress)
 
 ---
@@ -117,6 +120,39 @@ The customer is required to provide their email address in order to continue. On
 | ------ | ------ | ------ |
 | credentials | [GuestCredentials](../interfaces/guestcredentials.md) |  The guest credentials to use. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for continuing as a guest. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="createconsignments"></a>
+
+###  createConsignments
+
+▸ **createConsignments**(consignments: *[ConsignmentsRequestBody](../#consignmentsrequestbody)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Creates consignments given a list.
+
+Note: this is used when items need to be shipped to multiple addresses, for single shipping address, use `CheckoutService#updateShippingAddress`.
+
+When consignments are created, an updated list of shipping options will become available for each consignment, unless no options are available. If the update is successful, you can call `CheckoutStoreSelector#getConsignments` to retrieve the updated list of consignments.'
+
+Beware that if a consignment includes all line items from another consignment, that consignment will be deleted as a valid consignment must include at least one valid line item.
+
+You can submit an address that is partially complete. The address does not get validated until you submit the order.
+
+```js
+const state = await service.createConsignments(consignments, address);
+
+console.log(state.checkout.getConsignments());
+```
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| consignments | [ConsignmentsRequestBody](../#consignmentsrequestbody) |  The list of consignments to be created. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for updating the shipping address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.
@@ -665,13 +701,43 @@ await service.removeGiftCertificate('GIFT_CERTIFICATE');
 A promise that resolves to the current state.
 
 ___
+<a id="selectconsignmentshippingoption"></a>
+
+###  selectConsignmentShippingOption
+
+▸ **selectConsignmentShippingOption**(consignmentId: *`string`*, shippingOptionId: *`string`*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Selects a shipping option for a given consignment.
+
+Note: this is used when items need to be shipped to multiple addresses, for single shipping address, use `CheckoutService#updateShippingAddres`.
+
+If a shipping option has an additional cost, the quote for the current order will be adjusted once the option is selected.
+
+```js
+const state = await service.selectConsignmentShippingOption(consignmentId, optionId);
+
+console.log(state.checkout.getConsignments());
+```
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| consignmentId | `string` |  The identified of the consignment to be updated. |
+| shippingOptionId | `string` |  The identifier of the shipping option to select. |
+| `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md) |  Options for selecting the shipping option. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
 <a id="selectshippingoption"></a>
 
 ###  selectShippingOption
 
 ▸ **selectShippingOption**(shippingOptionId: *`string`*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
-Selects a shipping option for a given address.
+Selects a shipping option for the current address.
 
 If a shipping option has an additional cost, the quote for the current order will be adjusted once the option is selected.
 
@@ -838,7 +904,7 @@ ___
 
 ###  updateBillingAddress
 
-▸ **updateBillingAddress**(address: *[Address](../interfaces/address.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **updateBillingAddress**(address: *[AddressRequestBody](../interfaces/addressrequestbody.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Updates the billing address for the current checkout.
 
@@ -856,7 +922,7 @@ console.log(state.checkout.getBillingAddress());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| address | [Address](../interfaces/address.md) |  The address to be used for billing. |
+| address | [AddressRequestBody](../interfaces/addressrequestbody.md) |  The address to be used for billing. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for updating the billing address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
@@ -888,11 +954,46 @@ console.log(state.checkout.getCheckout());
 A promise that resolves to the current state.
 
 ___
+<a id="updateconsignment"></a>
+
+###  updateConsignment
+
+▸ **updateConsignment**(consignment: *[ConsignmentUpdateRequestBody](../interfaces/consignmentupdaterequestbody.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Updates a specific consignment.
+
+Note: this is used when items need to be shipped to multiple addresses, for single shipping address, use `CheckoutService#selectShippingOption`.
+
+When a shipping address for a consignment is updated, an updated list of shipping options will become available for the consignment, unless no options are available. If the update is successful, you can call `CheckoutStoreSelector#getConsignments` to retrieve updated list of consignments.
+
+Beware that if the updated consignment includes all line items from another consignment, that consignment will be deleted as a valid consignment must include at least one valid line item.
+
+If the shipping address changes and the selected shipping option becomes unavailable for the updated address, the shipping option will be deselected.
+
+You can submit an address that is partially complete. The address does not get validated until you submit the order.
+
+```js
+const state = await service.updateConsignment(consignmentId, address);
+
+console.log(state.checkout.getConsignments());
+```
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| consignment | [ConsignmentUpdateRequestBody](../interfaces/consignmentupdaterequestbody.md) |  The consignment data that will be used. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for updating the shipping address. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
 <a id="updateshippingaddress"></a>
 
 ###  updateShippingAddress
 
-▸ **updateShippingAddress**(address: *[Address](../interfaces/address.md)*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **updateShippingAddress**(address: *[AddressRequestBody](../interfaces/addressrequestbody.md)*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Updates the shipping address for the current checkout.
 
@@ -912,7 +1013,7 @@ console.log(state.checkout.getShippingAddress());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| address | [Address](../interfaces/address.md) |  The address to be used for shipping. |
+| address | [AddressRequestBody](../interfaces/addressrequestbody.md) |  The address to be used for shipping. |
 | `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md) |  Options for updating the shipping address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>

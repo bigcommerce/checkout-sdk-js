@@ -89,7 +89,7 @@ exports.NotInitializedError = not_initialized_error_1.default;
 exports.NotInitializedErrorType = not_initialized_error_1.NotInitializedErrorType;
 var request_error_1 = __webpack_require__(32);
 exports.RequestError = request_error_1.default;
-var standard_error_1 = __webpack_require__(15);
+var standard_error_1 = __webpack_require__(16);
 exports.StandardError = standard_error_1.default;
 var timeout_error_1 = __webpack_require__(108);
 exports.TimeoutError = timeout_error_1.default;
@@ -107,6 +107,12 @@ module.exports = require("@bigcommerce/data-store");
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("lodash");
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -119,12 +125,6 @@ exports.selector = selector_decorator_2.default;
 var cache_key_resolver_1 = __webpack_require__(54);
 exports.CacheKeyResolver = cache_key_resolver_1.default;
 
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = require("lodash");
 
 /***/ }),
 /* 5 */
@@ -320,7 +320,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 tslib_1.__exportStar(__webpack_require__(35), exports);
 tslib_1.__exportStar(__webpack_require__(36), exports);
-tslib_1.__exportStar(__webpack_require__(19), exports);
+tslib_1.__exportStar(__webpack_require__(20), exports);
 var create_payment_client_1 = __webpack_require__(137);
 exports.createPaymentClient = create_payment_client_1.default;
 var create_payment_strategy_registry_1 = __webpack_require__(139);
@@ -358,30 +358,71 @@ exports.PaymentStrategySelector = payment_strategy_selector_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var create_customer_strategy_registry_1 = __webpack_require__(161);
+var create_customer_strategy_registry_1 = __webpack_require__(162);
 exports.createCustomerStrategyRegistry = create_customer_strategy_registry_1.default;
 var customer_actions_1 = __webpack_require__(70);
 exports.CustomerActionType = customer_actions_1.CustomerActionType;
-var customer_reducer_1 = __webpack_require__(178);
+var customer_reducer_1 = __webpack_require__(179);
 exports.customerReducer = customer_reducer_1.default;
 var customer_action_creator_1 = __webpack_require__(69);
 exports.CustomerActionCreator = customer_action_creator_1.default;
-var customer_request_sender_1 = __webpack_require__(179);
+var customer_request_sender_1 = __webpack_require__(180);
 exports.CustomerRequestSender = customer_request_sender_1.default;
-var customer_selector_1 = __webpack_require__(180);
+var customer_selector_1 = __webpack_require__(181);
 exports.CustomerSelector = customer_selector_1.default;
-var customer_strategy_action_creator_1 = __webpack_require__(181);
+var customer_strategy_action_creator_1 = __webpack_require__(182);
 exports.CustomerStrategyActionCreator = customer_strategy_action_creator_1.default;
-var customer_strategy_selector_1 = __webpack_require__(182);
+var customer_strategy_selector_1 = __webpack_require__(183);
 exports.CustomerStrategySelector = customer_strategy_selector_1.default;
-var customer_strategy_reducer_1 = __webpack_require__(183);
+var customer_strategy_reducer_1 = __webpack_require__(184);
 exports.customerStrategyReducer = customer_strategy_reducer_1.default;
-var map_to_internal_customer_1 = __webpack_require__(185);
+var map_to_internal_customer_1 = __webpack_require__(186);
 exports.mapToInternalCustomer = map_to_internal_customer_1.default;
 
 
 /***/ }),
 /* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+tslib_1.__exportStar(__webpack_require__(24), exports);
+var create_shipping_strategy_registry_1 = __webpack_require__(187);
+exports.createShippingStrategyRegistry = create_shipping_strategy_registry_1.default;
+var consignment_selector_1 = __webpack_require__(192);
+exports.ConsignmentSelector = consignment_selector_1.default;
+var consignment_reducer_1 = __webpack_require__(193);
+exports.consignmentReducer = consignment_reducer_1.default;
+var consignment_action_creator_1 = __webpack_require__(72);
+exports.ConsignmentActionCreator = consignment_action_creator_1.default;
+var consignment_request_sender_1 = __webpack_require__(194);
+exports.ConsignmentRequestSender = consignment_request_sender_1.default;
+var shipping_address_selector_1 = __webpack_require__(195);
+exports.ShippingAddressSelector = shipping_address_selector_1.default;
+var shipping_country_action_creator_1 = __webpack_require__(196);
+exports.ShippingCountryActionCreator = shipping_country_action_creator_1.default;
+var shipping_country_request_sender_1 = __webpack_require__(197);
+exports.ShippingCountryRequestSender = shipping_country_request_sender_1.default;
+var shipping_country_selector_1 = __webpack_require__(198);
+exports.ShippingCountrySelector = shipping_country_selector_1.default;
+var shipping_country_reducer_1 = __webpack_require__(199);
+exports.shippingCountryReducer = shipping_country_reducer_1.default;
+var shipping_strategy_action_creator_1 = __webpack_require__(200);
+exports.ShippingStrategyActionCreator = shipping_strategy_action_creator_1.default;
+var shipping_strategy_selector_1 = __webpack_require__(201);
+exports.ShippingStrategySelector = shipping_strategy_selector_1.default;
+var shipping_strategy_reducer_1 = __webpack_require__(202);
+exports.shippingStrategyReducer = shipping_strategy_reducer_1.default;
+var map_to_internal_shipping_option_1 = __webpack_require__(75);
+exports.mapToInternalShippingOption = map_to_internal_shipping_option_1.default;
+var map_to_internal_shipping_options_1 = __webpack_require__(204);
+exports.mapToInternalShippingOptions = map_to_internal_shipping_options_1.default;
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -410,13 +451,34 @@ exports.default = StandardError;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var tslib_1 = __webpack_require__(0);
+tslib_1.__exportStar(__webpack_require__(28), exports);
+var billing_address_selector_1 = __webpack_require__(140);
+exports.BillingAddressSelector = billing_address_selector_1.default;
+var billing_address_action_creator_1 = __webpack_require__(141);
+exports.BillingAddressActionCreator = billing_address_action_creator_1.default;
+var billing_address_request_sender_1 = __webpack_require__(142);
+exports.BillingAddressRequestSender = billing_address_request_sender_1.default;
+var billing_address_reducer_1 = __webpack_require__(143);
+exports.billingAddressReducer = billing_address_reducer_1.default;
+var is_billing_address_like_1 = __webpack_require__(144);
+exports.isBillingAddressLike = is_billing_address_like_1.default;
+
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("@bigcommerce/request-sender");
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -448,50 +510,7 @@ exports.mapToInternalGiftCertificate = map_to_internal_gift_certificate_1.defaul
 
 
 /***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-tslib_1.__exportStar(__webpack_require__(24), exports);
-var create_shipping_strategy_registry_1 = __webpack_require__(186);
-exports.createShippingStrategyRegistry = create_shipping_strategy_registry_1.default;
-var consignment_selector_1 = __webpack_require__(191);
-exports.ConsignmentSelector = consignment_selector_1.default;
-var consignment_reducer_1 = __webpack_require__(192);
-exports.consignmentReducer = consignment_reducer_1.default;
-var consignment_action_creator_1 = __webpack_require__(72);
-exports.ConsignmentActionCreator = consignment_action_creator_1.default;
-var consignment_request_sender_1 = __webpack_require__(193);
-exports.ConsignmentRequestSender = consignment_request_sender_1.default;
-var shipping_address_selector_1 = __webpack_require__(194);
-exports.ShippingAddressSelector = shipping_address_selector_1.default;
-var shipping_country_action_creator_1 = __webpack_require__(195);
-exports.ShippingCountryActionCreator = shipping_country_action_creator_1.default;
-var shipping_country_request_sender_1 = __webpack_require__(196);
-exports.ShippingCountryRequestSender = shipping_country_request_sender_1.default;
-var shipping_country_selector_1 = __webpack_require__(197);
-exports.ShippingCountrySelector = shipping_country_selector_1.default;
-var shipping_country_reducer_1 = __webpack_require__(198);
-exports.shippingCountryReducer = shipping_country_reducer_1.default;
-var shipping_option_selector_1 = __webpack_require__(199);
-exports.ShippingOptionSelector = shipping_option_selector_1.default;
-var shipping_strategy_action_creator_1 = __webpack_require__(200);
-exports.ShippingStrategyActionCreator = shipping_strategy_action_creator_1.default;
-var shipping_strategy_selector_1 = __webpack_require__(201);
-exports.ShippingStrategySelector = shipping_strategy_selector_1.default;
-var shipping_strategy_reducer_1 = __webpack_require__(202);
-exports.shippingStrategyReducer = shipping_strategy_reducer_1.default;
-var map_to_internal_shipping_option_1 = __webpack_require__(75);
-exports.mapToInternalShippingOption = map_to_internal_shipping_option_1.default;
-var map_to_internal_shipping_options_1 = __webpack_require__(204);
-exports.mapToInternalShippingOptions = map_to_internal_shipping_options_1.default;
-
-
-/***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -503,36 +522,17 @@ exports.INITIALIZE = 'INITIALIZE';
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-tslib_1.__exportStar(__webpack_require__(28), exports);
-var billing_address_selector_1 = __webpack_require__(140);
-exports.BillingAddressSelector = billing_address_selector_1.default;
-var billing_address_action_creator_1 = __webpack_require__(141);
-exports.BillingAddressActionCreator = billing_address_action_creator_1.default;
-var billing_address_request_sender_1 = __webpack_require__(142);
-exports.BillingAddressRequestSender = billing_address_request_sender_1.default;
-var billing_address_reducer_1 = __webpack_require__(143);
-exports.billingAddressReducer = billing_address_reducer_1.default;
-
-
-/***/ }),
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var is_address_equal_1 = __webpack_require__(158);
+var is_address_equal_1 = __webpack_require__(159);
 exports.isAddressEqual = is_address_equal_1.default;
-var map_from_internal_address_1 = __webpack_require__(159);
+var map_from_internal_address_1 = __webpack_require__(160);
 exports.mapFromInternalAddress = map_from_internal_address_1.default;
-var map_to_internal_address_1 = __webpack_require__(160);
+var map_to_internal_address_1 = __webpack_require__(161);
 exports.mapToInternalAddress = map_to_internal_address_1.default;
 
 
@@ -575,6 +575,9 @@ var ConsignmentActionType;
     ConsignmentActionType["UpdateConsignmentRequested"] = "UPDATE_CONSIGNMENT_REQUESTED";
     ConsignmentActionType["UpdateConsignmentSucceeded"] = "UPDATE_CONSIGNMENT_SUCCEEDED";
     ConsignmentActionType["UpdateConsignmentFailed"] = "UPDATE_CONSIGNMENT_FAILED";
+    ConsignmentActionType["UpdateShippingOptionRequested"] = "UPDATE_SHIPPING_OPTION_REQUESTED";
+    ConsignmentActionType["UpdateShippingOptionSucceeded"] = "UPDATE_SHIPPING_OPTION_SUCCEEDED";
+    ConsignmentActionType["UpdateShippingOptionFailed"] = "UPDATE_SHIPPING_OPTION_FAILED";
     ConsignmentActionType["LoadShippingOptionsRequested"] = "LOAD_SHIPPING_OPTIONS_REQUESTED";
     ConsignmentActionType["LoadShippingOptionsSucceeded"] = "LOAD_SHIPPING_OPTIONS_SUCCEEDED";
     ConsignmentActionType["LoadShippingOptionsFailed"] = "LOAD_SHIPPING_OPTIONS_FAILED";
@@ -590,11 +593,11 @@ var ConsignmentActionType;
 Object.defineProperty(exports, "__esModule", { value: true });
 var config_action_creator_1 = __webpack_require__(61);
 exports.ConfigActionCreator = config_action_creator_1.default;
-var config_selector_1 = __webpack_require__(144);
+var config_selector_1 = __webpack_require__(145);
 exports.ConfigSelector = config_selector_1.default;
-var config_reducer_1 = __webpack_require__(145);
+var config_reducer_1 = __webpack_require__(146);
 exports.configReducer = config_reducer_1.default;
-var config_request_sender_1 = __webpack_require__(146);
+var config_request_sender_1 = __webpack_require__(147);
 exports.ConfigRequestSender = config_request_sender_1.default;
 
 
@@ -607,13 +610,13 @@ exports.ConfigRequestSender = config_request_sender_1.default;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 tslib_1.__exportStar(__webpack_require__(38), exports);
-var remote_checkout_action_creator_1 = __webpack_require__(147);
+var remote_checkout_action_creator_1 = __webpack_require__(148);
 exports.RemoteCheckoutActionCreator = remote_checkout_action_creator_1.default;
-var remote_checkout_request_sender_1 = __webpack_require__(148);
+var remote_checkout_request_sender_1 = __webpack_require__(149);
 exports.RemoteCheckoutRequestSender = remote_checkout_request_sender_1.default;
-var remote_checkout_selector_1 = __webpack_require__(149);
+var remote_checkout_selector_1 = __webpack_require__(150);
 exports.RemoteCheckoutSelector = remote_checkout_selector_1.default;
-var remote_checkout_reducer_1 = __webpack_require__(150);
+var remote_checkout_reducer_1 = __webpack_require__(151);
 exports.remoteCheckoutReducer = remote_checkout_reducer_1.default;
 
 
@@ -718,7 +721,7 @@ var CheckoutActionType;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(15);
+var standard_error_1 = __webpack_require__(16);
 var DEFAULT_RESPONSE = {
     body: {},
     headers: {},
@@ -890,7 +893,7 @@ exports.UPDATE_REMOTE_CHECKOUT = 'UPDATE_REMOTE_CHECKOUT';
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var amazon_pay_script_loader_1 = __webpack_require__(153);
+var amazon_pay_script_loader_1 = __webpack_require__(154);
 exports.AmazonPayScriptLoader = amazon_pay_script_loader_1.default;
 
 
@@ -901,7 +904,7 @@ exports.AmazonPayScriptLoader = amazon_pay_script_loader_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var registry_1 = __webpack_require__(162);
+var registry_1 = __webpack_require__(163);
 exports.Registry = registry_1.default;
 
 
@@ -912,21 +915,21 @@ exports.Registry = registry_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var braintree_credit_card_payment_strategy_1 = __webpack_require__(163);
+var braintree_credit_card_payment_strategy_1 = __webpack_require__(164);
 exports.BraintreeCreditCardPaymentStrategy = braintree_credit_card_payment_strategy_1.default;
 var braintree_payment_processor_1 = __webpack_require__(65);
 exports.BraintreePaymentProcessor = braintree_payment_processor_1.default;
-var braintree_paypal_payment_strategy_1 = __webpack_require__(166);
+var braintree_paypal_payment_strategy_1 = __webpack_require__(167);
 exports.BraintreePaypalPaymentStrategy = braintree_paypal_payment_strategy_1.default;
 var braintree_visacheckout_payment_processor_1 = __webpack_require__(66);
 exports.BraintreeVisaCheckoutPaymentProcessor = braintree_visacheckout_payment_processor_1.default;
-var create_braintree_payment_processor_1 = __webpack_require__(167);
+var create_braintree_payment_processor_1 = __webpack_require__(168);
 exports.createBraintreePaymentProcessor = create_braintree_payment_processor_1.default;
-var create_braintree_visacheckout_payment_processor_1 = __webpack_require__(168);
+var create_braintree_visacheckout_payment_processor_1 = __webpack_require__(169);
 exports.createBraintreeVisaCheckoutPaymentProcessor = create_braintree_visacheckout_payment_processor_1.default;
-var visacheckout_script_loader_1 = __webpack_require__(169);
+var visacheckout_script_loader_1 = __webpack_require__(170);
 exports.VisaCheckoutScriptLoader = visacheckout_script_loader_1.default;
-var braintree_visacheckout_payment_strategy_1 = __webpack_require__(170);
+var braintree_visacheckout_payment_strategy_1 = __webpack_require__(171);
 exports.BraintreeVisaCheckoutPaymentStrategy = braintree_visacheckout_payment_strategy_1.default;
 
 
@@ -1137,7 +1140,7 @@ exports.default = isPrivate;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 function omitDeep(object, predicate) {
     if (Array.isArray(object)) {
         return object.map(function (value) { return omitDeep(value, predicate); });
@@ -1166,9 +1169,8 @@ var CheckoutClient = /** @class */ (function () {
     /**
      * @internal
      */
-    function CheckoutClient(_billingAddressRequestSender, _consignmentRequestSender, _countryRequestSender, _customerRequestSender, _orderRequestSender, _paymentMethodRequestSender, _shippingCountryRequestSender) {
+    function CheckoutClient(_billingAddressRequestSender, _countryRequestSender, _customerRequestSender, _orderRequestSender, _paymentMethodRequestSender, _shippingCountryRequestSender) {
         this._billingAddressRequestSender = _billingAddressRequestSender;
-        this._consignmentRequestSender = _consignmentRequestSender;
         this._countryRequestSender = _countryRequestSender;
         this._customerRequestSender = _customerRequestSender;
         this._orderRequestSender = _orderRequestSender;
@@ -1202,12 +1204,6 @@ var CheckoutClient = /** @class */ (function () {
     CheckoutClient.prototype.updateBillingAddress = function (checkoutId, address, options) {
         return this._billingAddressRequestSender.updateAddress(checkoutId, address, options);
     };
-    CheckoutClient.prototype.createConsignments = function (checkoutId, consignments, options) {
-        return this._consignmentRequestSender.createConsignments(checkoutId, consignments, options);
-    };
-    CheckoutClient.prototype.updateConsignment = function (checkoutId, consignment, options) {
-        return this._consignmentRequestSender.updateConsignment(checkoutId, consignment, options);
-    };
     CheckoutClient.prototype.signInCustomer = function (credentials, options) {
         return this._customerRequestSender.signInCustomer(credentials, options);
     };
@@ -1227,7 +1223,7 @@ exports.default = CheckoutClient;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var CheckoutSelector = /** @class */ (function () {
     function CheckoutSelector(_checkout, _billingAddress, _cart, _consignments, _coupons, _customer, _giftCertificates) {
         this._checkout = _checkout;
@@ -1278,7 +1274,7 @@ exports.default = CheckoutSelector;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var utility_1 = __webpack_require__(8);
 var cache_key_resolver_1 = __webpack_require__(54);
 /**
@@ -2032,7 +2028,7 @@ var CheckoutService = /** @class */ (function () {
         return this._dispatch(action, { queueId: 'shippingStrategy' });
     };
     /**
-     * Selects a shipping option for a given address.
+     * Selects a shipping option for the current address.
      *
      * If a shipping option has an additional cost, the quote for the current
      * order will be adjusted once the option is selected.
@@ -2079,6 +2075,104 @@ var CheckoutService = /** @class */ (function () {
      */
     CheckoutService.prototype.updateShippingAddress = function (address, options) {
         var action = this._shippingStrategyActionCreator.updateAddress(address, options);
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    };
+    /**
+     * Creates consignments given a list.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#updateShippingAddress`.
+     *
+     * When consignments are created, an updated list of shipping options will
+     * become available for each consignment, unless no options are available.
+     * If the update is successful, you can call
+     * `CheckoutStoreSelector#getConsignments` to retrieve the updated list of
+     * consignments.'
+     *
+     * Beware that if a consignment includes all line items from another
+     * consignment, that consignment will be deleted as a valid consignment must
+     * include at least one valid line item.
+     *
+     * You can submit an address that is partially complete. The address does
+     * not get validated until you submit the order.
+     *
+     * ```js
+     * const state = await service.createConsignments(consignments, address);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignments - The list of consignments to be created.
+     * @param options - Options for updating the shipping address.
+     * @returns A promise that resolves to the current state.
+     */
+    CheckoutService.prototype.createConsignments = function (consignments, options) {
+        var action = this._consignmentActionCreator.createConsignments(consignments, options);
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    };
+    /**
+     * Updates a specific consignment.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#selectShippingOption`.
+     *
+     * When a shipping address for a consignment is updated, an updated list of
+     * shipping options will become available for the consignment, unless no
+     * options are available. If the update is successful, you can call
+     * `CheckoutStoreSelector#getConsignments` to retrieve updated list of
+     * consignments.
+     *
+     * Beware that if the updated consignment includes all line items from another
+     * consignment, that consignment will be deleted as a valid consignment must
+     * include at least one valid line item.
+     *
+     * If the shipping address changes and the selected shipping option becomes
+     * unavailable for the updated address, the shipping option will be
+     * deselected.
+     *
+     * You can submit an address that is partially complete. The address does
+     * not get validated until you submit the order.
+     *
+     * ```js
+     * const state = await service.updateConsignment(consignmentId, address);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignment - The consignment data that will be used.
+     * @param options - Options for updating the shipping address.
+     * @returns A promise that resolves to the current state.
+     */
+    CheckoutService.prototype.updateConsignment = function (consignment, options) {
+        var action = this._consignmentActionCreator.updateConsignment(consignment, options);
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    };
+    /**
+     * Selects a shipping option for a given consignment.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#updateShippingAddres`.
+     *
+     * If a shipping option has an additional cost, the quote for the current
+     * order will be adjusted once the option is selected.
+     *
+     * ```js
+     * const state = await service.selectConsignmentShippingOption(consignmentId, optionId);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignmentId - The identified of the consignment to be updated.
+     * @param shippingOptionId - The identifier of the shipping option to
+     * select.
+     * @param options - Options for selecting the shipping option.
+     * @returns A promise that resolves to the current state.
+     */
+    CheckoutService.prototype.selectConsignmentShippingOption = function (consignmentId, shippingOptionId, options) {
+        var action = this._consignmentActionCreator.updateConsignment({
+            id: consignmentId,
+            shippingOptionId: shippingOptionId,
+        }, options);
         return this._dispatch(action, { queueId: 'shippingStrategy' });
     };
     /**
@@ -2259,7 +2353,7 @@ exports.RequestErrorFactory = request_error_factory_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var errors_1 = __webpack_require__(1);
 var RequestErrorFactory = /** @class */ (function () {
     function RequestErrorFactory() {
@@ -2296,7 +2390,7 @@ exports.default = RequestErrorFactory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var cart_1 = __webpack_require__(9);
 var errors_1 = __webpack_require__(236);
 var errors_2 = __webpack_require__(1);
@@ -2339,8 +2433,8 @@ exports.default = CheckoutValidator;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __webpack_require__(4);
-var coupon_1 = __webpack_require__(17);
+var lodash_1 = __webpack_require__(3);
+var coupon_1 = __webpack_require__(19);
 var promotion_1 = __webpack_require__(234);
 var _1 = __webpack_require__(9);
 var map_to_internal_line_items_1 = __webpack_require__(85);
@@ -2472,7 +2566,7 @@ var ConfigActionType;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var concat_1 = __webpack_require__(22);
 var Observable_1 = __webpack_require__(5);
 var address_1 = __webpack_require__(21);
@@ -2480,7 +2574,7 @@ var cart_1 = __webpack_require__(9);
 var errors_1 = __webpack_require__(1);
 var customer_1 = __webpack_require__(14);
 var order_1 = __webpack_require__(10);
-var shipping_1 = __webpack_require__(18);
+var shipping_1 = __webpack_require__(15);
 var is_vaulted_instrument_1 = __webpack_require__(42);
 var payment_actions_1 = __webpack_require__(76);
 var PaymentActionCreator = /** @class */ (function () {
@@ -2529,7 +2623,8 @@ var PaymentActionCreator = /** @class */ (function () {
         var order = state.order.getOrder();
         var paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
         var shippingAddress = state.shippingAddress.getShippingAddress();
-        var shippingOption = state.shippingOptions.getSelectedShippingOption();
+        var consignments = state.consignments.getConsignments();
+        var shippingOption = state.consignments.getShippingOption();
         var config = state.config.getStoreConfig();
         var instrumentMeta = state.instruments.getInstrumentsMeta();
         var paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
@@ -2546,7 +2641,7 @@ var PaymentActionCreator = /** @class */ (function () {
             paymentMethod: paymentMethod,
             customer: internalCustomer,
             billingAddress: billingAddress && address_1.mapToInternalAddress(billingAddress),
-            shippingAddress: shippingAddress && address_1.mapToInternalAddress(shippingAddress),
+            shippingAddress: shippingAddress && address_1.mapToInternalAddress(shippingAddress, consignments),
             shippingOption: shippingOption && shipping_1.mapToInternalShippingOption(shippingOption, true),
             cart: checkout && cart_1.mapToInternalCart(checkout),
             order: order && order_1.mapToInternalOrder(order, orderMeta),
@@ -2581,7 +2676,7 @@ exports.default = PaymentActionCreator;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var order_finalization_not_required_error_1 = __webpack_require__(165);
+var order_finalization_not_required_error_1 = __webpack_require__(166);
 exports.OrderFinalizationNotRequiredError = order_finalization_not_required_error_1.default;
 
 
@@ -3113,8 +3208,8 @@ var Observable_1 = __webpack_require__(5);
 var errors_1 = __webpack_require__(1);
 var consignment_actions_1 = __webpack_require__(24);
 var ConsignmentActionCreator = /** @class */ (function () {
-    function ConsignmentActionCreator(_checkoutClient, _checkoutRequestSender) {
-        this._checkoutClient = _checkoutClient;
+    function ConsignmentActionCreator(_consignmentRequestSender, _checkoutRequestSender) {
+        this._consignmentRequestSender = _consignmentRequestSender;
         this._checkoutRequestSender = _checkoutRequestSender;
     }
     ConsignmentActionCreator.prototype.selectShippingOption = function (id, options) {
@@ -3122,26 +3217,29 @@ var ConsignmentActionCreator = /** @class */ (function () {
         return function (store) { return Observable_1.Observable.create(function (observer) {
             var state = store.getState();
             var checkout = state.checkout.getCheckout();
-            var address = state.shippingAddress.getShippingAddress();
+            var consignments = state.consignments.getConsignments();
             if (!checkout) {
                 throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingCheckout);
             }
-            if (!address) {
-                throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingShippingAddress);
+            if (!consignments || !consignments.length) {
+                throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingConsignments);
             }
-            observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentRequested));
             var consignmentUpdateBody = {
-                id: address.id,
+                id: consignments[0].id,
                 shippingOptionId: id,
             };
-            _this._checkoutClient.updateConsignment(checkout.id, consignmentUpdateBody, options)
+            var consignmentMeta = {
+                id: consignments[0].id,
+            };
+            observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateShippingOptionRequested, undefined, consignmentMeta));
+            _this._consignmentRequestSender.updateConsignment(checkout.id, consignmentUpdateBody, options)
                 .then(function (_a) {
-                var _b = _a.body, body = _b === void 0 ? {} : _b;
-                observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded, body));
+                var body = _a.body;
+                observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateShippingOptionSucceeded, body, consignmentMeta));
                 observer.complete();
             })
                 .catch(function (response) {
-                observer.error(data_store_1.createErrorAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentFailed, response));
+                observer.error(data_store_1.createErrorAction(consignment_actions_1.ConsignmentActionType.UpdateShippingOptionFailed, response, consignmentMeta));
             });
         }); };
     };
@@ -3178,10 +3276,20 @@ var ConsignmentActionCreator = /** @class */ (function () {
             if (consignments && consignments.length) {
                 consignment.id = consignments[0].id;
             }
+            _this._createOrUpdateConsignment(checkout.id, consignment, observer, options);
+        }); };
+    };
+    ConsignmentActionCreator.prototype.createConsignments = function (consignments, options) {
+        var _this = this;
+        return function (store) { return Observable_1.Observable.create(function (observer) {
+            var checkout = store.getState().checkout.getCheckout();
+            if (!checkout || !checkout.id) {
+                throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingCheckout);
+            }
             observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.CreateConsignmentsRequested));
-            _this._createOrUpdateConsignment(checkout.id, consignment, options)
+            _this._consignmentRequestSender.createConsignments(checkout.id, consignments, options)
                 .then(function (_a) {
-                var _b = _a.body, body = _b === void 0 ? {} : _b;
+                var body = _a.body;
                 observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.CreateConsignmentsSucceeded, body));
                 observer.complete();
             })
@@ -3190,11 +3298,73 @@ var ConsignmentActionCreator = /** @class */ (function () {
             });
         }); };
     };
-    ConsignmentActionCreator.prototype._createOrUpdateConsignment = function (checkoutId, consignment, options) {
-        if (consignment.id) {
-            return this._checkoutClient.updateConsignment(checkoutId, consignment, options);
+    ConsignmentActionCreator.prototype.updateConsignment = function (consignment, options) {
+        var _this = this;
+        if (this._isUpdateShippingOptionRequest(consignment)) {
+            return this._updateShippingOption(consignment, options);
         }
-        return this._checkoutClient.createConsignments(checkoutId, [consignment], options);
+        return function (store) { return Observable_1.Observable.create(function (observer) {
+            var checkout = store.getState().checkout.getCheckout();
+            if (!checkout || !checkout.id) {
+                throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingCheckout);
+            }
+            var consignmentMeta = { id: consignment.id };
+            observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentRequested, undefined, consignmentMeta));
+            _this._consignmentRequestSender.updateConsignment(checkout.id, consignment, options)
+                .then(function (_a) {
+                var body = _a.body;
+                observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded, body, consignmentMeta));
+                observer.complete();
+            })
+                .catch(function (response) {
+                observer.error(data_store_1.createErrorAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentFailed, response, consignmentMeta));
+            });
+        }); };
+    };
+    ConsignmentActionCreator.prototype._updateShippingOption = function (consignment, options) {
+        var _this = this;
+        return function (store) { return Observable_1.Observable.create(function (observer) {
+            var checkout = store.getState().checkout.getCheckout();
+            if (!checkout || !checkout.id) {
+                throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingCheckout);
+            }
+            var consignmentMeta = { id: consignment.id };
+            observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateShippingOptionRequested, undefined, consignmentMeta));
+            _this._consignmentRequestSender.updateConsignment(checkout.id, consignment, options)
+                .then(function (_a) {
+                var body = _a.body;
+                observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateShippingOptionSucceeded, body, consignmentMeta));
+                observer.complete();
+            })
+                .catch(function (response) {
+                observer.error(data_store_1.createErrorAction(consignment_actions_1.ConsignmentActionType.UpdateShippingOptionFailed, response, consignmentMeta));
+            });
+        }); };
+    };
+    ConsignmentActionCreator.prototype._createOrUpdateConsignment = function (checkoutId, consignment, observer, options) {
+        if (consignment.id) {
+            var consignmentMeta_1 = { id: consignment.id };
+            observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentRequested, undefined, consignmentMeta_1));
+            return this._consignmentRequestSender.updateConsignment(checkoutId, consignment, options)
+                .then(function (_a) {
+                var body = _a.body;
+                observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded, body, consignmentMeta_1));
+                observer.complete();
+            })
+                .catch(function (response) {
+                observer.error(data_store_1.createErrorAction(consignment_actions_1.ConsignmentActionType.UpdateConsignmentFailed, response, consignmentMeta_1));
+            });
+        }
+        observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.CreateConsignmentsRequested, consignment));
+        return this._consignmentRequestSender.createConsignments(checkoutId, [consignment], options)
+            .then(function (_a) {
+            var body = _a.body;
+            observer.next(data_store_1.createAction(consignment_actions_1.ConsignmentActionType.CreateConsignmentsSucceeded, body, consignment));
+            observer.complete();
+        })
+            .catch(function (response) {
+            observer.error(data_store_1.createErrorAction(consignment_actions_1.ConsignmentActionType.CreateConsignmentsFailed, response, consignment));
+        });
     };
     ConsignmentActionCreator.prototype._getConsignmentRequestBody = function (shippingAddress, store) {
         var state = store.getState();
@@ -3211,6 +3381,10 @@ var ConsignmentActionCreator = /** @class */ (function () {
             }); }),
         };
     };
+    ConsignmentActionCreator.prototype._isUpdateShippingOptionRequest = function (request) {
+        var shippingOptionRequest = request;
+        return typeof shippingOptionRequest.shippingOptionId !== 'undefined';
+    };
     return ConsignmentActionCreator;
 }());
 exports.default = ConsignmentActionCreator;
@@ -3223,7 +3397,7 @@ exports.default = ConsignmentActionCreator;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var remote_checkout_synchronization_error_1 = __webpack_require__(189);
+var remote_checkout_synchronization_error_1 = __webpack_require__(190);
 exports.RemoteCheckoutSynchronizationError = remote_checkout_synchronization_error_1.default;
 
 
@@ -3387,7 +3561,7 @@ exports.default = PaymentRequestSender;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var errors_1 = __webpack_require__(1);
 var registry_1 = __webpack_require__(40);
 var paymentMethodTypes = __webpack_require__(36);
@@ -3640,25 +3814,24 @@ exports.default = mapToInternalLineItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(16);
-var billing_1 = __webpack_require__(20);
+var request_sender_1 = __webpack_require__(18);
+var billing_1 = __webpack_require__(17);
 var customer_1 = __webpack_require__(14);
 var geography_1 = __webpack_require__(30);
 var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
-var shipping_1 = __webpack_require__(18);
+var shipping_1 = __webpack_require__(15);
 var checkout_client_1 = __webpack_require__(51);
 function createCheckoutClient(config) {
     if (config === void 0) { config = {}; }
     var requestSender = request_sender_1.createRequestSender();
     var billingAddressRequestSender = new billing_1.BillingAddressRequestSender(requestSender);
-    var consignmentRequestSender = new shipping_1.ConsignmentRequestSender(requestSender);
     var countryRequestSender = new geography_1.CountryRequestSender(requestSender, config);
     var customerRequestSender = new customer_1.CustomerRequestSender(requestSender);
     var orderRequestSender = new order_1.OrderRequestSender(requestSender);
     var paymentMethodRequestSender = new payment_1.PaymentMethodRequestSender(requestSender);
     var shippingCountryRequestSender = new shipping_1.ShippingCountryRequestSender(requestSender, config);
-    return new checkout_client_1.default(billingAddressRequestSender, consignmentRequestSender, countryRequestSender, customerRequestSender, orderRequestSender, paymentMethodRequestSender, shippingCountryRequestSender);
+    return new checkout_client_1.default(billingAddressRequestSender, countryRequestSender, customerRequestSender, orderRequestSender, paymentMethodRequestSender, shippingCountryRequestSender);
 }
 exports.default = createCheckoutClient;
 
@@ -3719,11 +3892,11 @@ exports.default = createCheckoutStore;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var billing_1 = __webpack_require__(20);
+var billing_1 = __webpack_require__(17);
 var cart_1 = __webpack_require__(9);
 var utility_1 = __webpack_require__(8);
 var config_1 = __webpack_require__(25);
-var coupon_1 = __webpack_require__(17);
+var coupon_1 = __webpack_require__(19);
 var customer_1 = __webpack_require__(14);
 var form_1 = __webpack_require__(257);
 var geography_1 = __webpack_require__(30);
@@ -3732,7 +3905,7 @@ var payment_1 = __webpack_require__(13);
 var payment_2 = __webpack_require__(13);
 var instrument_1 = __webpack_require__(45);
 var remote_checkout_1 = __webpack_require__(26);
-var shipping_1 = __webpack_require__(18);
+var shipping_1 = __webpack_require__(15);
 var checkout_selector_1 = __webpack_require__(52);
 function createInternalCheckoutSelectors(state, options) {
     if (options === void 0) { options = {}; }
@@ -3752,7 +3925,6 @@ function createInternalCheckoutSelectors(state, options) {
     var shippingAddress = new shipping_1.ShippingAddressSelector(state.consignments, state.config);
     var remoteCheckout = new remote_checkout_1.RemoteCheckoutSelector(state.remoteCheckout);
     var shippingCountries = new shipping_1.ShippingCountrySelector(state.shippingCountries);
-    var shippingOptions = new shipping_1.ShippingOptionSelector(state.consignments);
     var shippingStrategies = new shipping_1.ShippingStrategySelector(state.shippingStrategies);
     // Compose selectors
     var checkout = new checkout_selector_1.default(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
@@ -3778,7 +3950,6 @@ function createInternalCheckoutSelectors(state, options) {
         remoteCheckout: remoteCheckout,
         shippingAddress: shippingAddress,
         shippingCountries: shippingCountries,
-        shippingOptions: shippingOptions,
         shippingStrategies: shippingStrategies,
     };
     return options.shouldWarnMutation ? utility_1.createFreezeProxies(selectors) : selectors;
@@ -3825,7 +3996,7 @@ module.exports = require("rxjs/observable/merge");
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(15);
+var standard_error_1 = __webpack_require__(16);
 var InvalidArgumentError = /** @class */ (function (_super) {
     tslib_1.__extends(InvalidArgumentError, _super);
     function InvalidArgumentError(message) {
@@ -4066,7 +4237,7 @@ function isObjectEqual(objectA, objectB, options) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 /**
  * Push an item to an array if it doesn't exist in the array. Otherwise, merge
  * with the existing item in the array. This function always returns a new array.
@@ -4143,18 +4314,17 @@ exports.default = toSingleLine;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(15);
+var standard_error_1 = __webpack_require__(16);
 var MissingDataErrorType;
 (function (MissingDataErrorType) {
-    MissingDataErrorType[MissingDataErrorType["MissingBillingAddress"] = 0] = "MissingBillingAddress";
-    MissingDataErrorType[MissingDataErrorType["MissingCart"] = 1] = "MissingCart";
-    MissingDataErrorType[MissingDataErrorType["MissingCheckout"] = 2] = "MissingCheckout";
+    MissingDataErrorType[MissingDataErrorType["MissingCart"] = 0] = "MissingCart";
+    MissingDataErrorType[MissingDataErrorType["MissingCheckout"] = 1] = "MissingCheckout";
+    MissingDataErrorType[MissingDataErrorType["MissingConsignments"] = 2] = "MissingConsignments";
     MissingDataErrorType[MissingDataErrorType["MissingCheckoutConfig"] = 3] = "MissingCheckoutConfig";
     MissingDataErrorType[MissingDataErrorType["MissingOrder"] = 4] = "MissingOrder";
     MissingDataErrorType[MissingDataErrorType["MissingOrderConfig"] = 5] = "MissingOrderConfig";
     MissingDataErrorType[MissingDataErrorType["MissingOrderId"] = 6] = "MissingOrderId";
     MissingDataErrorType[MissingDataErrorType["MissingPaymentMethod"] = 7] = "MissingPaymentMethod";
-    MissingDataErrorType[MissingDataErrorType["MissingShippingAddress"] = 8] = "MissingShippingAddress";
 })(MissingDataErrorType = exports.MissingDataErrorType || (exports.MissingDataErrorType = {}));
 var MissingDataError = /** @class */ (function (_super) {
     tslib_1.__extends(MissingDataError, _super);
@@ -4169,10 +4339,10 @@ var MissingDataError = /** @class */ (function (_super) {
 exports.default = MissingDataError;
 function getErrorMessage(type) {
     switch (type) {
-        case MissingDataErrorType.MissingBillingAddress:
-            return 'Unable to proceed because billing address data is unavailable or not provided.';
         case MissingDataErrorType.MissingCart:
             return 'Unable to proceed because cart data is unavailable.';
+        case MissingDataErrorType.MissingConsignments:
+            return 'Unable to proceed because consignments data is unavailable.';
         case MissingDataErrorType.MissingCheckout:
             return 'Unable to proceed because checkout data is unavailable.';
         case MissingDataErrorType.MissingCheckoutConfig:
@@ -4184,8 +4354,6 @@ function getErrorMessage(type) {
             return 'Unable to proceed because order ID is unavailable or not generated yet.';
         case MissingDataErrorType.MissingPaymentMethod:
             return 'Unable to proceed because payment method data is unavailable or not properly configured.';
-        case MissingDataErrorType.MissingShippingAddress:
-            return 'Unable to proceed because shipping address data is unavailable or not provided.';
         default:
             return 'Unable to proceed because the required data is unavailable.';
     }
@@ -4200,7 +4368,7 @@ function getErrorMessage(type) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(15);
+var standard_error_1 = __webpack_require__(16);
 var NotImplementedError = /** @class */ (function (_super) {
     tslib_1.__extends(NotImplementedError, _super);
     function NotImplementedError(message) {
@@ -4221,7 +4389,7 @@ exports.default = NotImplementedError;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(15);
+var standard_error_1 = __webpack_require__(16);
 var NotInitializedErrorType;
 (function (NotInitializedErrorType) {
     NotInitializedErrorType[NotInitializedErrorType["CustomerNotInitialized"] = 0] = "CustomerNotInitialized";
@@ -4306,7 +4474,7 @@ exports.default = UnrecoverableError;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var standard_error_1 = __webpack_require__(15);
+var standard_error_1 = __webpack_require__(16);
 var UnsupportedBrowserError = /** @class */ (function (_super) {
     tslib_1.__extends(UnsupportedBrowserError, _super);
     function UnsupportedBrowserError(message) {
@@ -4394,9 +4562,8 @@ function createCheckoutServiceErrorTransformer(isDevelopment) {
             return error.message;
         }
         switch (error.subtype || error.type) {
-            case errors_1.MissingDataErrorType.MissingBillingAddress:
-            case errors_1.MissingDataErrorType.MissingShippingAddress:
-                return "\n                " + error.message + "\n                The data could be unavailable because it has not loaded from the server, or\n                provided by the customer yet. To fix the former issue, you can try calling\n                `CheckoutService#loadCheckout` before performing the same action again.\n            ";
+            case errors_1.MissingDataErrorType.MissingConsignments:
+                return "\n                " + error.message + "\n                The data could be unavailable because no shipping address has been provided.\n                To fix this, create a consignment or update the shipping address before performing\n                the same action again.\n            ";
             case errors_1.MissingDataErrorType.MissingCart:
             case errors_1.MissingDataErrorType.MissingCheckout:
                 return "\n                " + error.message + "\n                The data could be unavailable because it has not loaded from the server yet.\n                To fix this issue, you can try calling `CheckoutService#loadCheckout`\n                before performing the same action again.\n            ";
@@ -4558,7 +4725,7 @@ exports.default = ErrorMessageTransformer;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 /**
  * Responsible for getting the error of any asynchronous checkout action, if
  * there is any.
@@ -4576,6 +4743,7 @@ var CheckoutStoreErrorSelector = /** @class */ (function () {
         this._cart = selectors.cart;
         this._checkout = selectors.checkout;
         this._config = selectors.config;
+        this._consignments = selectors.consignments;
         this._countries = selectors.countries;
         this._coupons = selectors.coupons;
         this._customerStrategies = selectors.customerStrategies;
@@ -4585,7 +4753,6 @@ var CheckoutStoreErrorSelector = /** @class */ (function () {
         this._paymentMethods = selectors.paymentMethods;
         this._paymentStrategies = selectors.paymentStrategies;
         this._shippingCountries = selectors.shippingCountries;
-        this._shippingOptions = selectors.shippingOptions;
         this._shippingStrategies = selectors.shippingStrategies;
     }
     /**
@@ -4610,8 +4777,10 @@ var CheckoutStoreErrorSelector = /** @class */ (function () {
             this.getSignInError() ||
             this.getSignOutError() ||
             this.getInitializeCustomerError() ||
-            this.getUpdateBillingAddressError() ||
             this.getUpdateShippingAddressError() ||
+            this.getUpdateBillingAddressError() ||
+            this.getUpdateConsignmentError() ||
+            this.getCreateConsignmentsError() ||
             this.getInitializeShippingError() ||
             this.getApplyCouponError() ||
             this.getRemoveCouponError() ||
@@ -4735,18 +4904,23 @@ var CheckoutStoreErrorSelector = /** @class */ (function () {
      * @returns The error object if unable to load, otherwise undefined.
      */
     CheckoutStoreErrorSelector.prototype.getLoadShippingOptionsError = function () {
-        return this._shippingOptions.getLoadError();
+        return this._consignments.getLoadShippingOptionsError();
     };
     /**
      * Returns an error if unable to select a shipping option.
      *
+     * A consignment ID should be provided when checking for an error for a
+     * specific consignment, otherwise it will check for all available consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
      * @returns The error object if unable to select, otherwise undefined.
      */
-    CheckoutStoreErrorSelector.prototype.getSelectShippingOptionError = function () {
-        return this._shippingStrategies.getSelectOptionError();
+    CheckoutStoreErrorSelector.prototype.getSelectShippingOptionError = function (consignmentId) {
+        return this._shippingStrategies.getSelectOptionError() ||
+            this._consignments.getUpdateShippingOptionError(consignmentId);
     };
     /**
-     * Returns an error if unable to update a billing address.
+     * Returns an error if unable to update billing address.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
@@ -4754,12 +4928,32 @@ var CheckoutStoreErrorSelector = /** @class */ (function () {
         return this._billingAddress.getUpdateError();
     };
     /**
-     * Returns an error if unable to update a shipping address.
+     * Returns an error if unable to update shipping address.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
     CheckoutStoreErrorSelector.prototype.getUpdateShippingAddressError = function () {
         return this._shippingStrategies.getUpdateAddressError();
+    };
+    /**
+     * Returns an error if unable to update a consignment.
+     *
+     * A consignment ID should be provided when checking for an error for a
+     * specific consignment, otherwise it will check for all available consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns The error object if unable to update, otherwise undefined.
+     */
+    CheckoutStoreErrorSelector.prototype.getUpdateConsignmentError = function (consignmentId) {
+        return this._consignments.getUpdateError(consignmentId);
+    };
+    /**
+     * Returns an error if unable to create consignments.
+     *
+     * @returns The error object if unable to create, otherwise undefined.
+     */
+    CheckoutStoreErrorSelector.prototype.getCreateConsignmentsError = function () {
+        return this._consignments.getCreateError();
     };
     /**
      * Returns an error if unable to initialize the shipping step of a checkout
@@ -4844,7 +5038,7 @@ exports.default = CheckoutStoreErrorSelector;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 /**
  * Responsible for getting the state of the current checkout.
  *
@@ -4872,7 +5066,6 @@ var CheckoutStoreSelector = /** @class */ (function () {
         this._paymentMethods = selectors.paymentMethods;
         this._shippingAddress = selectors.shippingAddress;
         this._shippingCountries = selectors.shippingCountries;
-        this._shippingOptions = selectors.shippingOptions;
     }
     /**
      * Gets the current checkout.
@@ -4943,7 +5136,11 @@ var CheckoutStoreSelector = /** @class */ (function () {
      * otherwise undefined.
      */
     CheckoutStoreSelector.prototype.getSelectedShippingOption = function () {
-        return this._shippingOptions.getSelectedShippingOption();
+        var consignments = this._consignments.getConsignments();
+        if (!consignments || !consignments.length) {
+            return;
+        }
+        return consignments[0].selectedShippingOption;
     };
     /**
      * Gets a list of countries available for shipping.
@@ -5117,7 +5314,7 @@ exports.default = CheckoutStoreSelector;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 /**
  * Responsible for checking the statuses of various asynchronous actions related
  * to checkout.
@@ -5135,6 +5332,7 @@ var CheckoutStoreStatusSelector = /** @class */ (function () {
         this._cart = selectors.cart;
         this._checkout = selectors.checkout;
         this._config = selectors.config;
+        this._consignments = selectors.consignments;
         this._countries = selectors.countries;
         this._coupons = selectors.coupons;
         this._customerStrategies = selectors.customerStrategies;
@@ -5144,7 +5342,6 @@ var CheckoutStoreStatusSelector = /** @class */ (function () {
         this._paymentMethods = selectors.paymentMethods;
         this._paymentStrategies = selectors.paymentStrategies;
         this._shippingCountries = selectors.shippingCountries;
-        this._shippingOptions = selectors.shippingOptions;
         this._shippingStrategies = selectors.shippingStrategies;
     }
     /**
@@ -5170,6 +5367,8 @@ var CheckoutStoreStatusSelector = /** @class */ (function () {
             this.isInitializingCustomer() ||
             this.isUpdatingBillingAddress() ||
             this.isUpdatingShippingAddress() ||
+            this.isUpdatingConsignment() ||
+            this.isCreatingConsignments() ||
             this.isInitializingShipping() ||
             this.isApplyingCoupon() ||
             this.isRemovingCoupon() ||
@@ -5314,15 +5513,21 @@ var CheckoutStoreStatusSelector = /** @class */ (function () {
      * @returns True if shipping options are loading, otherwise false.
      */
     CheckoutStoreStatusSelector.prototype.isLoadingShippingOptions = function () {
-        return this._shippingOptions.isLoading();
+        return this._consignments.isLoadingShippingOptions();
     };
     /**
-     * Checks whether the current customer is selecting a shipping option.
+     * Checks whether a shipping option is being selected.
      *
+     * A consignment ID should be provided when checking if a shipping option
+     * is being selected for a specific consignment, otherwise it will check
+     * for all consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
      * @returns True if selecting a shipping option, otherwise false.
      */
-    CheckoutStoreStatusSelector.prototype.isSelectingShippingOption = function () {
-        return this._shippingStrategies.isSelectingOption();
+    CheckoutStoreStatusSelector.prototype.isSelectingShippingOption = function (consignmentId) {
+        return this._shippingStrategies.isSelectingOption() ||
+            this._consignments.isUpdatingShippingOption(consignmentId);
     };
     /**
      * Checks whether the current customer is updating their billing address.
@@ -5339,6 +5544,29 @@ var CheckoutStoreStatusSelector = /** @class */ (function () {
      */
     CheckoutStoreStatusSelector.prototype.isUpdatingShippingAddress = function () {
         return this._shippingStrategies.isUpdatingAddress();
+    };
+    /**
+     * Checks whether a given/any consignment is being updated.
+     *
+     * A consignment ID should be provided when checking for a specific consignment,
+     * otherwise it will check for any consignment.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns True if updating consignment(s), otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isUpdatingConsignment = function (consignmentId) {
+        return this._consignments.isUpdating(consignmentId);
+    };
+    /**
+     * Checks whether a given/any consignment is being updated.
+     *
+     * A consignment ID should be provided when checking for a specific consignment,
+     * otherwise it will check for any consignment.
+     *
+     * @returns True if creating consignments, otherwise false.
+     */
+    CheckoutStoreStatusSelector.prototype.isCreatingConsignments = function () {
+        return this._consignments.isCreating();
     };
     /**
      * Checks whether the shipping step of a checkout process is initializing.
@@ -5473,7 +5701,7 @@ exports.default = AmountTransformer;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var CartComparator = /** @class */ (function () {
     function CartComparator() {
     }
@@ -5612,7 +5840,7 @@ exports.default = CartRequestSender;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var CartSelector = /** @class */ (function () {
     function CartSelector(_cart) {
         this._cart = _cart;
@@ -5745,7 +5973,7 @@ exports.default = CouponRequestSender;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var CouponSelector = /** @class */ (function () {
     function CouponSelector(_coupon) {
         this._coupon = _coupon;
@@ -5983,7 +6211,7 @@ exports.default = OrderActionCreator;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var order_actions_1 = __webpack_require__(34);
 var DEFAULT_STATE = {
     errors: {},
@@ -6107,7 +6335,7 @@ exports.default = OrderRequestSender;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var OrderSelector = /** @class */ (function () {
     function OrderSelector(_order, _billingAddress, _coupons) {
         this._order = _order;
@@ -6148,10 +6376,10 @@ exports.default = OrderSelector;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var cart_1 = __webpack_require__(9);
 var cart_2 = __webpack_require__(9);
-var coupon_1 = __webpack_require__(17);
+var coupon_1 = __webpack_require__(19);
 var payment_1 = __webpack_require__(13);
 function mapToInternalOrder(order, orderMeta) {
     if (orderMeta === void 0) { orderMeta = {}; }
@@ -6326,17 +6554,17 @@ module.exports = require("@bigcommerce/bigpay-client");
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var form_poster_1 = __webpack_require__(60);
-var request_sender_1 = __webpack_require__(16);
+var request_sender_1 = __webpack_require__(18);
 var script_loader_1 = __webpack_require__(37);
-var billing_1 = __webpack_require__(20);
+var billing_1 = __webpack_require__(17);
 var checkout_1 = __webpack_require__(7);
 var config_1 = __webpack_require__(25);
 var order_1 = __webpack_require__(10);
 var remote_checkout_1 = __webpack_require__(26);
-var afterpay_1 = __webpack_require__(151);
+var afterpay_1 = __webpack_require__(152);
 var amazon_pay_1 = __webpack_require__(39);
-var klarna_1 = __webpack_require__(154);
-var wepay_1 = __webpack_require__(156);
+var klarna_1 = __webpack_require__(155);
+var wepay_1 = __webpack_require__(157);
 var _1 = __webpack_require__(13);
 var payment_action_creator_1 = __webpack_require__(63);
 var payment_method_action_creator_1 = __webpack_require__(77);
@@ -6425,7 +6653,7 @@ exports.default = createPaymentStrategyRegistry;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var BillingAddressSelector = /** @class */ (function () {
     function BillingAddressSelector(_billingAddress) {
         this._billingAddress = _billingAddress;
@@ -6496,11 +6724,11 @@ var BillingAddressActionCreator = /** @class */ (function () {
         // using a convenience method. We can't rely on billingAddress having
         // an ID to consider that there's a preexisting email, as billingAddress
         // object from Order doesn't have an ID.
-        var updatedBillingAddress = tslib_1.__assign({}, address, { email: typeof address.email === 'undefined' && billingAddress ? billingAddress.email : address.email });
+        var billingAddressRequestBody = tslib_1.__assign({}, address, { email: typeof address.email === 'undefined' && billingAddress ? billingAddress.email : address.email });
         if (!billingAddress || !billingAddress.id) {
-            return this._checkoutClient.createBillingAddress(checkout.id, updatedBillingAddress, options);
+            return this._checkoutClient.createBillingAddress(checkout.id, billingAddressRequestBody, options);
         }
-        return this._checkoutClient.updateBillingAddress(checkout.id, tslib_1.__assign({}, updatedBillingAddress, { id: billingAddress.id }), options);
+        return this._checkoutClient.updateBillingAddress(checkout.id, tslib_1.__assign({}, billingAddressRequestBody, { id: billingAddress.id }), options);
     };
     return BillingAddressActionCreator;
 }());
@@ -6625,8 +6853,22 @@ function statusesReducer(statuses, action) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+function isBillingAddressLike(address) {
+    var billingAddress = address;
+    return typeof billingAddress.id !== 'undefined';
+}
+exports.default = isBillingAddressLike;
+
+
+/***/ }),
+/* 145 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var ConfigSelector = /** @class */ (function () {
     function ConfigSelector(_config) {
         this._config = _config;
@@ -6655,7 +6897,7 @@ exports.default = ConfigSelector;
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6712,7 +6954,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6740,7 +6982,7 @@ exports.default = ConfigRequestSender;
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6840,7 +7082,7 @@ exports.default = RemoteCheckoutActionCreator;
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6894,14 +7136,14 @@ exports.default = RemoteCheckoutRequestSender;
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var RemoteCheckoutSelector = /** @class */ (function () {
     function RemoteCheckoutSelector(_remoteCheckout) {
         this._remoteCheckout = _remoteCheckout;
@@ -6918,7 +7160,7 @@ exports.default = RemoteCheckoutSelector;
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6962,18 +7204,18 @@ function dataReducer(data, action) {
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var afterpay_script_loader_1 = __webpack_require__(152);
+var afterpay_script_loader_1 = __webpack_require__(153);
 exports.AfterpayScriptLoader = afterpay_script_loader_1.default;
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7014,7 +7256,7 @@ exports.default = AfterpayScriptLoader;
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7065,18 +7307,18 @@ exports.default = AmazonPayScriptLoader;
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var klarna_script_loader_1 = __webpack_require__(155);
+var klarna_script_loader_1 = __webpack_require__(156);
 exports.KlarnaScriptLoader = klarna_script_loader_1.default;
 
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7097,18 +7339,18 @@ exports.default = KlarnaScriptLoader;
 
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var wepay_risk_client_1 = __webpack_require__(157);
+var wepay_risk_client_1 = __webpack_require__(158);
 exports.WepayRiskClient = wepay_risk_client_1.default;
 
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7140,14 +7382,14 @@ exports.default = WepayRiskClient;
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var utility_1 = __webpack_require__(8);
 function isAddressEqual(addressA, addressB) {
     return lodash_1.isEqual(normalize(addressA), normalize(addressB));
@@ -7165,7 +7407,7 @@ function normalize(address) {
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7193,15 +7435,23 @@ exports.default = mapFromInternalAddress;
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function mapToInternalAddress(address, id) {
+var billing_1 = __webpack_require__(17);
+function mapToInternalAddress(address, consignments) {
+    var addressId;
+    if (billing_1.isBillingAddressLike(address)) {
+        addressId = address.id;
+    }
+    else if (consignments && consignments.length) {
+        addressId = consignments[0].id;
+    }
     return {
-        id: id ? id : address.id,
+        id: addressId,
         firstName: address.firstName,
         lastName: address.lastName,
         company: address.company,
@@ -7221,14 +7471,14 @@ exports.default = mapToInternalAddress;
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var form_poster_1 = __webpack_require__(60);
-var request_sender_1 = __webpack_require__(16);
+var request_sender_1 = __webpack_require__(18);
 var script_loader_1 = __webpack_require__(37);
 var checkout_1 = __webpack_require__(7);
 var registry_1 = __webpack_require__(40);
@@ -7236,12 +7486,12 @@ var config_1 = __webpack_require__(25);
 var config_action_creator_1 = __webpack_require__(61);
 var payment_1 = __webpack_require__(13);
 var braintree_1 = __webpack_require__(41);
-var chasepay_1 = __webpack_require__(171);
+var chasepay_1 = __webpack_require__(172);
 var remote_checkout_1 = __webpack_require__(26);
 var amazon_pay_1 = __webpack_require__(39);
 var _1 = __webpack_require__(14);
 var customer_action_creator_1 = __webpack_require__(69);
-var strategies_1 = __webpack_require__(173);
+var strategies_1 = __webpack_require__(174);
 function createCustomerStrategyRegistry(store, client) {
     var registry = new registry_1.Registry();
     var requestSender = request_sender_1.createRequestSender();
@@ -7267,7 +7517,7 @@ exports.default = createCustomerStrategyRegistry;
 
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7319,7 +7569,7 @@ exports.default = Registry;
 
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7328,7 +7578,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(1);
 var errors_2 = __webpack_require__(12);
-var is_credit_card_like_1 = __webpack_require__(164);
+var is_credit_card_like_1 = __webpack_require__(165);
 var is_vaulted_instrument_1 = __webpack_require__(42);
 var payment_strategy_1 = __webpack_require__(6);
 var BraintreeCreditCardPaymentStrategy = /** @class */ (function (_super) {
@@ -7415,7 +7665,7 @@ exports.default = BraintreeCreditCardPaymentStrategy;
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7436,7 +7686,7 @@ exports.default = isCreditCardLike;
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7457,7 +7707,7 @@ exports.default = OrderFinalizationNotRequiredError;
 
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7552,7 +7802,7 @@ exports.default = BraintreePaypalPaymentStrategy;
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7570,13 +7820,13 @@ exports.default = createBraintreePaymentProcessor;
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(16);
+var request_sender_1 = __webpack_require__(18);
 var braintree_script_loader_1 = __webpack_require__(67);
 var braintree_sdk_creator_1 = __webpack_require__(68);
 var braintree_visacheckout_payment_processor_1 = __webpack_require__(66);
@@ -7590,7 +7840,7 @@ exports.default = createBraintreeVisaCheckoutPaymentProcessor;
 
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7620,7 +7870,7 @@ exports.default = VisaCheckoutScriptLoader;
 
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7734,18 +7984,18 @@ exports.default = BraintreeVisaCheckoutPaymentStrategy;
 
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var chasepay_script_loader_1 = __webpack_require__(172);
+var chasepay_script_loader_1 = __webpack_require__(173);
 exports.ChasePayScriptLoader = chasepay_script_loader_1.default;
 
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7775,26 +8025,26 @@ exports.default = ChasePayScriptLoader;
 
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var amazon_pay_customer_strategy_1 = __webpack_require__(174);
+var amazon_pay_customer_strategy_1 = __webpack_require__(175);
 exports.AmazonPayCustomerStrategy = amazon_pay_customer_strategy_1.default;
 var customer_strategy_1 = __webpack_require__(27);
 exports.CustomerStrategy = customer_strategy_1.default;
-var default_customer_strategy_1 = __webpack_require__(175);
+var default_customer_strategy_1 = __webpack_require__(176);
 exports.DefaultCustomerStrategy = default_customer_strategy_1.default;
-var braintree_visacheckout_customer_strategy_1 = __webpack_require__(176);
+var braintree_visacheckout_customer_strategy_1 = __webpack_require__(177);
 exports.BraintreeVisaCheckoutCustomerStrategy = braintree_visacheckout_customer_strategy_1.default;
-var chasepay_customer_strategy_1 = __webpack_require__(177);
+var chasepay_customer_strategy_1 = __webpack_require__(178);
 exports.ChasePayCustomerStrategy = chasepay_customer_strategy_1.default;
 
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7902,7 +8152,7 @@ exports.default = AmazonPayCustomerStrategy;
 
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7929,7 +8179,7 @@ exports.default = DefaultCustomerStrategy;
 
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8048,7 +8298,7 @@ exports.default = BraintreeVisaCheckoutCustomerStrategy;
 
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8167,7 +8417,7 @@ exports.default = ChasePayCustomerStrategy;
 
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8196,7 +8446,7 @@ function dataReducer(data, action) {
 
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8222,14 +8472,14 @@ exports.default = CustomerRequestSender;
 
 
 /***/ }),
-/* 180 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var CustomerSelector = /** @class */ (function () {
     function CustomerSelector(_customer) {
         this._customer = _customer;
@@ -8246,7 +8496,7 @@ exports.default = CustomerSelector;
 
 
 /***/ }),
-/* 181 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8347,7 +8597,7 @@ exports.default = CustomerStrategyActionCreator;
 
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8411,7 +8661,7 @@ exports.default = CustomerStrategySelector;
 
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8420,7 +8670,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
 var customer_strategy_actions_1 = __webpack_require__(71);
-var customer_strategy_state_1 = __webpack_require__(184);
+var customer_strategy_state_1 = __webpack_require__(185);
 function customerStrategyReducer(state, action) {
     if (state === void 0) { state = customer_strategy_state_1.DEFAULT_STATE; }
     var reducer = data_store_1.combineReducers({
@@ -8497,7 +8747,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8510,7 +8760,7 @@ exports.DEFAULT_STATE = {
 
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8535,30 +8785,32 @@ exports.default = mapToInternalCustomer;
 
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(16);
+var request_sender_1 = __webpack_require__(18);
 var script_loader_1 = __webpack_require__(37);
 var checkout_request_sender_1 = __webpack_require__(33);
 var registry_1 = __webpack_require__(40);
 var payment_1 = __webpack_require__(13);
 var remote_checkout_1 = __webpack_require__(26);
 var amazon_pay_1 = __webpack_require__(39);
+var _1 = __webpack_require__(15);
 var consignment_action_creator_1 = __webpack_require__(72);
-var strategies_1 = __webpack_require__(187);
+var strategies_1 = __webpack_require__(188);
 function createShippingStrategyRegistry(store, client) {
     var requestSender = request_sender_1.createRequestSender();
     var registry = new registry_1.Registry();
     var checkoutRequestSender = new checkout_request_sender_1.default(requestSender);
+    var consignmentRequestSender = new _1.ConsignmentRequestSender(requestSender);
     registry.register('amazon', function () {
-        return new strategies_1.AmazonPayShippingStrategy(store, new consignment_action_creator_1.default(client, checkoutRequestSender), new payment_1.PaymentMethodActionCreator(client), new remote_checkout_1.RemoteCheckoutActionCreator(new remote_checkout_1.RemoteCheckoutRequestSender(requestSender)), new amazon_pay_1.AmazonPayScriptLoader(script_loader_1.getScriptLoader()));
+        return new strategies_1.AmazonPayShippingStrategy(store, new consignment_action_creator_1.default(consignmentRequestSender, checkoutRequestSender), new payment_1.PaymentMethodActionCreator(client), new remote_checkout_1.RemoteCheckoutActionCreator(new remote_checkout_1.RemoteCheckoutRequestSender(requestSender)), new amazon_pay_1.AmazonPayScriptLoader(script_loader_1.getScriptLoader()));
     });
     registry.register('default', function () {
-        return new strategies_1.DefaultShippingStrategy(store, new consignment_action_creator_1.default(client, checkoutRequestSender));
+        return new strategies_1.DefaultShippingStrategy(store, new consignment_action_creator_1.default(consignmentRequestSender, checkoutRequestSender));
     });
     return registry;
 }
@@ -8566,22 +8818,22 @@ exports.default = createShippingStrategyRegistry;
 
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var amazon_pay_shipping_strategy_1 = __webpack_require__(188);
+var amazon_pay_shipping_strategy_1 = __webpack_require__(189);
 exports.AmazonPayShippingStrategy = amazon_pay_shipping_strategy_1.default;
-var default_shipping_strategy_1 = __webpack_require__(190);
+var default_shipping_strategy_1 = __webpack_require__(191);
 exports.DefaultShippingStrategy = default_shipping_strategy_1.default;
 var shipping_strategy_1 = __webpack_require__(44);
 exports.ShippingStrategy = shipping_strategy_1.default;
 
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8723,7 +8975,7 @@ exports.default = AmazonPayShippingStrategy;
 
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8745,7 +8997,7 @@ exports.default = RemoteCheckoutSynchronizationError;
 
 
 /***/ }),
-/* 190 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8772,14 +9024,15 @@ exports.default = DefaultShippingStrategy;
 
 
 /***/ }),
-/* 191 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var lodash_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var ConsignmentSelector = /** @class */ (function () {
     function ConsignmentSelector(_consignments) {
         this._consignments = _consignments;
@@ -8787,23 +9040,53 @@ var ConsignmentSelector = /** @class */ (function () {
     ConsignmentSelector.prototype.getConsignments = function () {
         return this._consignments.data;
     };
+    ConsignmentSelector.prototype.getShippingOption = function () {
+        var consignments = this._consignments.data;
+        if (consignments && consignments.length) {
+            return consignments[0].selectedShippingOption;
+        }
+    };
     ConsignmentSelector.prototype.getLoadError = function () {
         return this._consignments.errors.loadError;
     };
     ConsignmentSelector.prototype.getCreateError = function () {
         return this._consignments.errors.createError;
     };
-    ConsignmentSelector.prototype.getUpdateError = function () {
-        return this._consignments.errors.updateError;
+    ConsignmentSelector.prototype.getLoadShippingOptionsError = function () {
+        return this._consignments.errors.loadShippingOptionsError;
+    };
+    ConsignmentSelector.prototype.getUpdateError = function (consignmentId) {
+        if (consignmentId) {
+            return this._consignments.errors.updateError[consignmentId];
+        }
+        return lodash_1.find(this._consignments.errors.updateError);
+    };
+    ConsignmentSelector.prototype.getUpdateShippingOptionError = function (consignmentId) {
+        if (consignmentId) {
+            return this._consignments.errors.updateShippingOptionError[consignmentId];
+        }
+        return lodash_1.find(this._consignments.errors.updateShippingOptionError);
     };
     ConsignmentSelector.prototype.isLoading = function () {
         return this._consignments.statuses.isLoading === true;
     };
+    ConsignmentSelector.prototype.isLoadingShippingOptions = function () {
+        return this._consignments.statuses.isLoadingShippingOptions === true;
+    };
     ConsignmentSelector.prototype.isCreating = function () {
         return this._consignments.statuses.isCreating === true;
     };
-    ConsignmentSelector.prototype.isUpdating = function () {
-        return this._consignments.statuses.isUpdating === true;
+    ConsignmentSelector.prototype.isUpdating = function (consignmentId) {
+        if (consignmentId) {
+            return this._consignments.statuses.isUpdating[consignmentId] === true;
+        }
+        return lodash_1.find(this._consignments.statuses.isUpdating) === true;
+    };
+    ConsignmentSelector.prototype.isUpdatingShippingOption = function (consignmentId) {
+        if (consignmentId) {
+            return this._consignments.statuses.isUpdatingShippingOption[consignmentId] === true;
+        }
+        return lodash_1.find(this._consignments.statuses.isUpdatingShippingOption) === true;
     };
     ConsignmentSelector = tslib_1.__decorate([
         selector_1.selector
@@ -8814,7 +9097,7 @@ exports.default = ConsignmentSelector;
 
 
 /***/ }),
-/* 192 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8826,8 +9109,14 @@ var checkout_1 = __webpack_require__(7);
 var customer_1 = __webpack_require__(14);
 var consignment_actions_1 = __webpack_require__(24);
 var DEFAULT_STATE = {
-    errors: {},
-    statuses: {},
+    errors: {
+        updateShippingOptionError: {},
+        updateError: {},
+    },
+    statuses: {
+        isUpdating: {},
+        isUpdatingShippingOption: {},
+    },
 };
 function consignmentReducer(state, action) {
     if (state === void 0) { state = DEFAULT_STATE; }
@@ -8845,6 +9134,7 @@ function dataReducer(data, action) {
         case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsSucceeded:
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsSucceeded:
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded:
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionSucceeded:
             return action.payload ? action.payload.consignments : data;
         case customer_1.CustomerActionType.SignOutCustomerSucceeded:
             return [];
@@ -8870,9 +9160,26 @@ function errorsReducer(errors, action) {
             return tslib_1.__assign({}, errors, { createError: action.payload });
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded:
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentRequested:
-            return tslib_1.__assign({}, errors, { updateError: undefined });
+            if (action.meta) {
+                errors.updateError[action.meta.id] = undefined;
+            }
+            return errors;
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentFailed:
-            return tslib_1.__assign({}, errors, { updateError: action.payload });
+            if (action.meta) {
+                errors.updateError[action.meta.id] = action.payload;
+            }
+            return errors;
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionRequested:
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionSucceeded:
+            if (action.meta) {
+                errors.updateShippingOptionError[action.meta.id] = undefined;
+            }
+            return errors;
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionFailed:
+            if (action.meta) {
+                errors.updateShippingOptionError[action.meta.id] = action.payload;
+            }
+            return errors;
         default:
             return errors;
     }
@@ -8881,23 +9188,42 @@ function statusesReducer(statuses, action) {
     if (statuses === void 0) { statuses = DEFAULT_STATE.statuses; }
     switch (action.type) {
         case checkout_1.CheckoutActionType.LoadCheckoutRequested:
-        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsRequested:
             return tslib_1.__assign({}, statuses, { isLoading: true });
+        case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsRequested:
+            return tslib_1.__assign({}, statuses, { isLoadingShippingOptions: true });
         case checkout_1.CheckoutActionType.LoadCheckoutSucceeded:
         case checkout_1.CheckoutActionType.LoadCheckoutFailed:
+            return tslib_1.__assign({}, statuses, { isLoading: false });
         case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsSucceeded:
         case consignment_actions_1.ConsignmentActionType.LoadShippingOptionsFailed:
-            return tslib_1.__assign({}, statuses, { isLoading: false });
+            return tslib_1.__assign({}, statuses, { isLoadingShippingOptions: false });
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsRequested:
             return tslib_1.__assign({}, statuses, { isCreating: true });
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsSucceeded:
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsFailed:
             return tslib_1.__assign({}, statuses, { isCreating: false });
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentRequested:
-            return tslib_1.__assign({}, statuses, { isUpdating: true });
+            if (action.meta) {
+                statuses.isUpdating[action.meta.id] = true;
+            }
+            return statuses;
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded:
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentFailed:
-            return tslib_1.__assign({}, statuses, { isUpdating: false });
+            if (action.meta) {
+                statuses.isUpdating[action.meta.id] = false;
+            }
+            return statuses;
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionRequested:
+            if (action.meta) {
+                statuses.isUpdatingShippingOption[action.meta.id] = true;
+            }
+            return statuses;
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionSucceeded:
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionFailed:
+            if (action.meta) {
+                statuses.isUpdatingShippingOption[action.meta.id] = false;
+            }
+            return statuses;
         default:
             return statuses;
     }
@@ -8905,7 +9231,7 @@ function statusesReducer(statuses, action) {
 
 
 /***/ }),
-/* 193 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8945,14 +9271,14 @@ exports.default = ConsignmentRequestSender;
 
 
 /***/ }),
-/* 194 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var ShippingAddressSelector = /** @class */ (function () {
     function ShippingAddressSelector(_consignments, _config) {
         this._consignments = _consignments;
@@ -8981,7 +9307,7 @@ var ShippingAddressSelector = /** @class */ (function () {
                 countryCode: context.geoCountryCode,
             };
         }
-        return tslib_1.__assign({}, consignments[0].shippingAddress, { id: consignments[0].id });
+        return consignments[0].shippingAddress;
     };
     ShippingAddressSelector = tslib_1.__decorate([
         selector_1.selector
@@ -8992,7 +9318,7 @@ exports.default = ShippingAddressSelector;
 
 
 /***/ }),
-/* 195 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9029,7 +9355,7 @@ exports.default = ShippingCountryActionCreator;
 
 
 /***/ }),
-/* 196 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9054,14 +9380,14 @@ exports.default = ShippingCountryRequestSender;
 
 
 /***/ }),
-/* 197 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var ShippingCountrySelector = /** @class */ (function () {
     function ShippingCountrySelector(_shippingCountries) {
         this._shippingCountries = _shippingCountries;
@@ -9084,7 +9410,7 @@ exports.default = ShippingCountrySelector;
 
 
 /***/ }),
-/* 198 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9143,59 +9469,6 @@ function statusesReducer(statuses, action) {
             return statuses;
     }
 }
-
-
-/***/ }),
-/* 199 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
-var ShippingOptionSelector = /** @class */ (function () {
-    function ShippingOptionSelector(_consignments) {
-        this._consignments = _consignments;
-    }
-    ShippingOptionSelector.prototype.getShippingOptions = function () {
-        var consignment = this._getConsignment();
-        return consignment && consignment.availableShippingOptions;
-    };
-    ShippingOptionSelector.prototype.getSelectedShippingOption = function () {
-        var consignment = this._getConsignment();
-        return consignment && consignment.selectedShippingOption;
-    };
-    ShippingOptionSelector.prototype.getLoadError = function () {
-        return this._consignments.errors.loadError;
-    };
-    ShippingOptionSelector.prototype.isLoading = function () {
-        return !!this._consignments.statuses.isLoading;
-    };
-    ShippingOptionSelector.prototype.getUpdateError = function () {
-        return this._consignments.errors.updateError;
-    };
-    ShippingOptionSelector.prototype.isUpdating = function () {
-        return !!this._consignments.statuses.isUpdating;
-    };
-    ShippingOptionSelector.prototype.getCreateError = function () {
-        return this._consignments.errors.createError;
-    };
-    ShippingOptionSelector.prototype.isCreating = function () {
-        return !!this._consignments.statuses.isCreating;
-    };
-    ShippingOptionSelector.prototype._getConsignment = function () {
-        if (!this._consignments.data) {
-            return;
-        }
-        return this._consignments.data[0];
-    };
-    ShippingOptionSelector = tslib_1.__decorate([
-        selector_1.selector
-    ], ShippingOptionSelector);
-    return ShippingOptionSelector;
-}());
-exports.default = ShippingOptionSelector;
 
 
 /***/ }),
@@ -9295,7 +9568,7 @@ exports.default = ShippingStrategyActionCreator;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var ShippingStrategySelector = /** @class */ (function () {
     function ShippingStrategySelector(_shippingStrategies) {
         this._shippingStrategies = _shippingStrategies;
@@ -9628,7 +9901,7 @@ exports.default = AfterpayPaymentStrategy;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var address_1 = __webpack_require__(21);
 var errors_1 = __webpack_require__(1);
 var errors_2 = __webpack_require__(73);
@@ -9921,7 +10194,7 @@ exports.default = LegacyPaymentStrategy;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var payment_strategy_1 = __webpack_require__(6);
 var NoPaymentDataRequiredPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(NoPaymentDataRequiredPaymentStrategy, _super);
@@ -9972,7 +10245,7 @@ exports.default = OfflinePaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(12);
-var paymentStatusTypes = __webpack_require__(19);
+var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var OffsitePaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(OffsitePaymentStrategy, _super);
@@ -10018,7 +10291,7 @@ exports.default = OffsitePaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(1);
-var paymentStatusTypes = __webpack_require__(19);
+var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 /**
  * @todo Convert this file into TypeScript properly
@@ -10122,7 +10395,7 @@ exports.default = PaypalExpressPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(12);
-var paymentStatusTypes = __webpack_require__(19);
+var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var PaypalProPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(PaypalProPaymentStrategy, _super);
@@ -10164,10 +10437,10 @@ exports.default = PaypalProPaymentStrategy;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var errors_1 = __webpack_require__(1);
 var errors_2 = __webpack_require__(12);
-var paymentStatusTypes = __webpack_require__(19);
+var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var SagePayPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(SagePayPaymentStrategy, _super);
@@ -10223,7 +10496,7 @@ exports.default = SagePayPaymentStrategy;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
+var lodash_1 = __webpack_require__(3);
 var credit_card_payment_strategy_1 = __webpack_require__(80);
 var WepayPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(WepayPaymentStrategy, _super);
@@ -10500,8 +10773,8 @@ exports.default = PaymentMethodRequestSender;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
-var selector_1 = __webpack_require__(3);
+var lodash_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var PaymentMethodSelector = /** @class */ (function () {
     function PaymentMethodSelector(_paymentMethods) {
         this._paymentMethods = _paymentMethods;
@@ -10578,10 +10851,10 @@ function dataReducer(data, action) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
-var selector_1 = __webpack_require__(3);
+var lodash_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var payment_method_types_1 = __webpack_require__(36);
-var payment_status_types_1 = __webpack_require__(19);
+var payment_status_types_1 = __webpack_require__(20);
 var PaymentSelector = /** @class */ (function () {
     function PaymentSelector(_checkout, _order) {
         this._checkout = _checkout;
@@ -10916,7 +11189,7 @@ function statusesReducer(statuses, action) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var payment_strategy_state_1 = __webpack_require__(84);
 var PaymentStrategySelector = /** @class */ (function () {
     function PaymentStrategySelector(_paymentStrategies) {
@@ -11090,7 +11363,7 @@ exports.default = GiftCertificateRequestSender;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var GiftCertificateSelector = /** @class */ (function () {
     function GiftCertificateSelector(_giftCertificate) {
         this._giftCertificate = _giftCertificate;
@@ -11377,7 +11650,7 @@ exports.default = CountryRequestSender;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var CountrySelector = /** @class */ (function () {
     function CountrySelector(_countries) {
         this._countries = _countries;
@@ -11468,18 +11741,18 @@ function statusesReducer(statuses, action) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var request_sender_1 = __webpack_require__(16);
-var billing_1 = __webpack_require__(20);
+var request_sender_1 = __webpack_require__(18);
+var billing_1 = __webpack_require__(17);
 var log_1 = __webpack_require__(93);
 var utility_1 = __webpack_require__(8);
 var config_1 = __webpack_require__(25);
-var coupon_1 = __webpack_require__(17);
+var coupon_1 = __webpack_require__(19);
 var customer_1 = __webpack_require__(14);
 var geography_1 = __webpack_require__(30);
 var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
 var instrument_1 = __webpack_require__(45);
-var shipping_1 = __webpack_require__(18);
+var shipping_1 = __webpack_require__(15);
 var checkout_action_creator_1 = __webpack_require__(47);
 var checkout_request_sender_1 = __webpack_require__(33);
 var checkout_service_1 = __webpack_require__(55);
@@ -11517,8 +11790,9 @@ function createCheckoutService(options) {
     var checkoutRequestSender = new checkout_request_sender_1.default(requestSender);
     var configRequestSender = new config_1.ConfigRequestSender(requestSender);
     var configActionCreator = new config_1.ConfigActionCreator(configRequestSender);
+    var consignmentRequestSender = new shipping_1.ConsignmentRequestSender(requestSender);
     var orderActionCreator = new order_1.OrderActionCreator(client, new checkout_validator_1.default(checkoutRequestSender));
-    return new checkout_service_1.default(store, new billing_1.BillingAddressActionCreator(client), new checkout_action_creator_1.default(checkoutRequestSender, configActionCreator), configActionCreator, new shipping_1.ConsignmentActionCreator(client, checkoutRequestSender), new geography_1.CountryActionCreator(client), new coupon_1.CouponActionCreator(new coupon_1.CouponRequestSender(requestSender)), new customer_1.CustomerStrategyActionCreator(customer_1.createCustomerStrategyRegistry(store, client)), new coupon_1.GiftCertificateActionCreator(new coupon_1.GiftCertificateRequestSender(requestSender)), new instrument_1.InstrumentActionCreator(new instrument_1.InstrumentRequestSender(paymentClient, requestSender)), orderActionCreator, new payment_1.PaymentMethodActionCreator(client), new payment_1.PaymentStrategyActionCreator(payment_1.createPaymentStrategyRegistry(store, client, paymentClient), orderActionCreator), new shipping_1.ShippingCountryActionCreator(client), new shipping_1.ShippingStrategyActionCreator(shipping_1.createShippingStrategyRegistry(store, client)));
+    return new checkout_service_1.default(store, new billing_1.BillingAddressActionCreator(client), new checkout_action_creator_1.default(checkoutRequestSender, configActionCreator), configActionCreator, new shipping_1.ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender), new geography_1.CountryActionCreator(client), new coupon_1.CouponActionCreator(new coupon_1.CouponRequestSender(requestSender)), new customer_1.CustomerStrategyActionCreator(customer_1.createCustomerStrategyRegistry(store, client)), new coupon_1.GiftCertificateActionCreator(new coupon_1.GiftCertificateRequestSender(requestSender)), new instrument_1.InstrumentActionCreator(new instrument_1.InstrumentRequestSender(paymentClient, requestSender)), orderActionCreator, new payment_1.PaymentMethodActionCreator(client), new payment_1.PaymentStrategyActionCreator(payment_1.createPaymentStrategyRegistry(store, client, paymentClient), orderActionCreator), new shipping_1.ShippingCountryActionCreator(client), new shipping_1.ShippingStrategyActionCreator(shipping_1.createShippingStrategyRegistry(store, client)));
 }
 exports.default = createCheckoutService;
 
@@ -12050,17 +12324,17 @@ module.exports = require("rxjs/operators");
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_store_1 = __webpack_require__(2);
-var billing_1 = __webpack_require__(20);
+var billing_1 = __webpack_require__(17);
 var cart_1 = __webpack_require__(9);
 var config_1 = __webpack_require__(25);
-var coupon_1 = __webpack_require__(17);
+var coupon_1 = __webpack_require__(19);
 var customer_1 = __webpack_require__(14);
 var geography_1 = __webpack_require__(30);
 var order_1 = __webpack_require__(10);
 var payment_1 = __webpack_require__(13);
 var instrument_1 = __webpack_require__(45);
 var remote_checkout_1 = __webpack_require__(26);
-var shipping_1 = __webpack_require__(18);
+var shipping_1 = __webpack_require__(15);
 var checkout_reducer_1 = __webpack_require__(256);
 function createCheckoutStoreReducer() {
     return data_store_1.combineReducers({
@@ -12096,11 +12370,11 @@ exports.default = createCheckoutStoreReducer;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(2);
-var lodash_1 = __webpack_require__(4);
-var billing_1 = __webpack_require__(20);
-var coupon_1 = __webpack_require__(17);
+var lodash_1 = __webpack_require__(3);
+var billing_1 = __webpack_require__(17);
+var coupon_1 = __webpack_require__(19);
 var order_1 = __webpack_require__(10);
-var shipping_1 = __webpack_require__(18);
+var shipping_1 = __webpack_require__(15);
 var checkout_actions_1 = __webpack_require__(31);
 var DEFAULT_STATE = {
     errors: {},
@@ -12192,8 +12466,8 @@ exports.FormSelector = form_selector_1.default;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var lodash_1 = __webpack_require__(4);
-var selector_1 = __webpack_require__(3);
+var lodash_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 var FormSelector = /** @class */ (function () {
     function FormSelector(_config) {
         this._config = _config;
@@ -12288,7 +12562,7 @@ var address_1 = __webpack_require__(21);
 exports.mapToInternalAddress = address_1.mapToInternalAddress;
 var cart_1 = __webpack_require__(9);
 exports.mapToInternalCart = cart_1.mapToInternalCart;
-var coupon_1 = __webpack_require__(17);
+var coupon_1 = __webpack_require__(19);
 exports.mapToInternalCoupon = coupon_1.mapToInternalCoupon;
 exports.mapToInternalGiftCertificate = coupon_1.mapToInternalGiftCertificate;
 var customer_1 = __webpack_require__(14);
@@ -12300,10 +12574,10 @@ var order_1 = __webpack_require__(10);
 exports.mapToInternalOrder = order_1.mapToInternalOrder;
 var quote_1 = __webpack_require__(265);
 exports.mapToInternalQuote = quote_1.mapToInternalQuote;
-var shipping_1 = __webpack_require__(18);
+var shipping_1 = __webpack_require__(15);
 exports.mapToInternalShippingOption = shipping_1.mapToInternalShippingOption;
 exports.mapToInternalShippingOptions = shipping_1.mapToInternalShippingOptions;
-var selector_1 = __webpack_require__(3);
+var selector_1 = __webpack_require__(4);
 exports.CacheKeyResolver = selector_1.CacheKeyResolver;
 
 
@@ -12332,7 +12606,7 @@ function mapToInternalQuote(checkout, shippingAddress) {
         orderComment: checkout.customerMessage,
         shippingOption: consignment && consignment.selectedShippingOption ? consignment.selectedShippingOption.id : undefined,
         billingAddress: checkout.billingAddress ? address_1.mapToInternalAddress(checkout.billingAddress) : {},
-        shippingAddress: shippingAddress && address_1.mapToInternalAddress(shippingAddress),
+        shippingAddress: shippingAddress && address_1.mapToInternalAddress(shippingAddress, checkout.consignments),
     };
 }
 exports.default = mapToInternalQuote;

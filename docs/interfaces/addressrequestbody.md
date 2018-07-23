@@ -18,9 +18,7 @@
 * [company](addressrequestbody.md#company)
 * [countryCode](addressrequestbody.md#countrycode)
 * [customFields](addressrequestbody.md#customfields)
-* [email](addressrequestbody.md#email)
 * [firstName](addressrequestbody.md#firstname)
-* [id](addressrequestbody.md#id)
 * [lastName](addressrequestbody.md#lastname)
 * [phone](addressrequestbody.md#phone)
 * [postalCode](addressrequestbody.md#postalcode)
@@ -73,27 +71,11 @@ ___
 **● customFields**: *`Array`<`object`>*
 
 ___
-<a id="email"></a>
-
-### `<Optional>` email
-
-**● email**: * `undefined` &#124; `string`
-*
-
-___
 <a id="firstname"></a>
 
 ###  firstName
 
 **● firstName**: *`string`*
-
-___
-<a id="id"></a>
-
-### `<Optional>` id
-
-**● id**: * `undefined` &#124; `string`
-*
 
 ___
 <a id="lastname"></a>

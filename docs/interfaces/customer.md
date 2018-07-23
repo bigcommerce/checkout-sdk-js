@@ -27,7 +27,7 @@
 
 ###  addresses
 
-**● addresses**: *[Address](address.md)[]*
+**● addresses**: *[CustomerAddress](customeraddress.md)[]*
 
 ___
 <a id="email"></a>

@@ -12,6 +12,13 @@
 
 ## Type aliases
 
+<a id="consignmentsrequestbody"></a>
+
+###  ConsignmentsRequestBody
+
+**ΤConsignmentsRequestBody**: *[ConsignmentCreateRequestBody](interfaces/consignmentcreaterequestbody.md)[]*
+
+___
 <a id="orderpayments"></a>
 
 ###  OrderPayments

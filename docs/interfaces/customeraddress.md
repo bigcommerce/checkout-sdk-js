@@ -1,34 +1,31 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Address](../interfaces/address.md)
+[@bigcommerce/checkout-sdk](../README.md) > [CustomerAddress](../interfaces/customeraddress.md)
 
-# Address
+# CustomerAddress
 
 ## Hierarchy
 
- [AddressRequestBody](addressrequestbody.md)
+↳  [Address](address.md)
 
-**↳ Address**
-
-↳  [BillingAddress](billingaddress.md)
-
-↳  [CustomerAddress](customeraddress.md)
+**↳ CustomerAddress**
 
 ## Index
 
 ### Properties
 
-* [address1](address.md#address1)
-* [address2](address.md#address2)
-* [city](address.md#city)
-* [company](address.md#company)
-* [country](address.md#country)
-* [countryCode](address.md#countrycode)
-* [customFields](address.md#customfields)
-* [firstName](address.md#firstname)
-* [lastName](address.md#lastname)
-* [phone](address.md#phone)
-* [postalCode](address.md#postalcode)
-* [stateOrProvince](address.md#stateorprovince)
-* [stateOrProvinceCode](address.md#stateorprovincecode)
+* [address1](customeraddress.md#address1)
+* [address2](customeraddress.md#address2)
+* [city](customeraddress.md#city)
+* [company](customeraddress.md#company)
+* [country](customeraddress.md#country)
+* [countryCode](customeraddress.md#countrycode)
+* [customFields](customeraddress.md#customfields)
+* [firstName](customeraddress.md#firstname)
+* [id](customeraddress.md#id)
+* [lastName](customeraddress.md#lastname)
+* [phone](customeraddress.md#phone)
+* [postalCode](customeraddress.md#postalcode)
+* [stateOrProvince](customeraddress.md#stateorprovince)
+* [stateOrProvinceCode](customeraddress.md#stateorprovincecode)
 
 ---
 
@@ -88,6 +85,13 @@ ___
 ###  firstName
 
 **● firstName**: *`string`*
+
+___
+<a id="id"></a>
+
+###  id
+
+**● id**: *`string`*
 
 ___
 <a id="lastname"></a>
