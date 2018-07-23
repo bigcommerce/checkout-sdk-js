@@ -1,4 +1,4 @@
-import { AfterpayRemoteCheckout } from './methods/afterpay';
+import { AfterpayRemoteCheckout } from './methods';
 import { AmazonPayRemoteCheckout } from './methods/amazon-pay';
 
 export default interface RemoteCheckoutState {

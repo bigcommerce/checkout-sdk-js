@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethod } from '../../../payment';
+import PaymentMethod from '../../payment-method';
 
 import AfterpaySdk from './afterpay-sdk';
 import AfterpayWindow from './afterpay-window';

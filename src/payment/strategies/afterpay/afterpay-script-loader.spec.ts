@@ -1,7 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 
-import { getAfterpay } from '../../../payment/payment-methods.mock';
+import { getAfterpay } from '../../payment-methods.mock';
 
 import AfterpayScriptLoader from './afterpay-script-loader';
 
