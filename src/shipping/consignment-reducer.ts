@@ -8,8 +8,14 @@ import { ConsignmentAction, ConsignmentActionType } from './consignment-actions'
 import ConsignmentState, { ConsignmentErrorsState, ConsignmentStatusesState } from './consignment-state';
 
 const DEFAULT_STATE: ConsignmentState = {
-    errors: {},
-    statuses: {},
+    errors: {
+        updateShippingOptionError: {},
+        updateError: {},
+    },
+    statuses: {
+        isUpdating: {},
+        isUpdatingShippingOption: {},
+    },
 };
 
 export default function consignmentReducer(
@@ -34,6 +40,7 @@ function dataReducer(
     case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case ConsignmentActionType.CreateConsignmentsSucceeded:
     case ConsignmentActionType.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.UpdateShippingOptionSucceeded:
         return action.payload ? action.payload.consignments : data;
 
     case CustomerActionType.SignOutCustomerSucceeded:
@@ -68,10 +75,33 @@ function errorsReducer(
 
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentRequested:
-        return { ...errors, updateError: undefined };
+        if (action.meta) {
+            errors.updateError[action.meta.id] = undefined;
+        }
+
+        return errors;
 
     case ConsignmentActionType.UpdateConsignmentFailed:
-        return { ...errors, updateError: action.payload };
+        if (action.meta) {
+            errors.updateError[action.meta.id] = action.payload;
+        }
+
+        return errors;
+
+    case ConsignmentActionType.UpdateShippingOptionRequested:
+    case ConsignmentActionType.UpdateShippingOptionSucceeded:
+        if (action.meta) {
+            errors.updateShippingOptionError[action.meta.id] = undefined;
+        }
+
+        return errors;
+
+    case ConsignmentActionType.UpdateShippingOptionFailed:
+        if (action.meta) {
+            errors.updateShippingOptionError[action.meta.id] = action.payload;
+        }
+
+        return errors;
 
     default:
         return errors;
@@ -84,14 +114,18 @@ function statusesReducer(
 ): ConsignmentStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
-    case ConsignmentActionType.LoadShippingOptionsRequested:
         return { ...statuses, isLoading: true };
+
+    case ConsignmentActionType.LoadShippingOptionsRequested:
+        return { ...statuses, isLoadingShippingOptions: true };
 
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CheckoutActionType.LoadCheckoutFailed:
+        return { ...statuses, isLoading: false };
+
     case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case ConsignmentActionType.LoadShippingOptionsFailed:
-        return { ...statuses, isLoading: false };
+        return { ...statuses, isLoadingShippingOptions: false };
 
     case ConsignmentActionType.CreateConsignmentsRequested:
         return { ...statuses, isCreating: true };
@@ -101,11 +135,34 @@ function statusesReducer(
         return { ...statuses, isCreating: false };
 
     case ConsignmentActionType.UpdateConsignmentRequested:
-        return { ...statuses, isUpdating: true };
+        if (action.meta) {
+            statuses.isUpdating[action.meta.id] = true;
+        }
+
+        return statuses;
 
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentFailed:
-        return { ...statuses, isUpdating: false };
+        if (action.meta) {
+            statuses.isUpdating[action.meta.id] = false;
+        }
+
+        return statuses;
+
+    case ConsignmentActionType.UpdateShippingOptionRequested:
+        if (action.meta) {
+            statuses.isUpdatingShippingOption[action.meta.id] = true;
+        }
+
+        return statuses;
+
+    case ConsignmentActionType.UpdateShippingOptionSucceeded:
+    case ConsignmentActionType.UpdateShippingOptionFailed:
+        if (action.meta) {
+            statuses.isUpdatingShippingOption[action.meta.id] = false;
+        }
+
+        return statuses;
 
     default:
         return statuses;

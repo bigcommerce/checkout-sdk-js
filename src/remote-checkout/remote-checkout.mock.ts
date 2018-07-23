@@ -1,3 +1,6 @@
+import { omit } from 'lodash';
+
+import { InternalAddress } from '../address';
 import { getBillingAddress } from '../billing/internal-billing-addresses.mock';
 import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
 
@@ -22,7 +25,7 @@ export function getRemoteCheckoutStateData(): RemoteCheckoutStateData {
                 address: getBillingAddress(),
             },
             shipping: {
-                address: getShippingAddress(),
+                address: omit(getShippingAddress(), 'id') as InternalAddress,
             },
             referenceId: '511ed7ed-221c-418c-8286-f5102e49220b',
         },

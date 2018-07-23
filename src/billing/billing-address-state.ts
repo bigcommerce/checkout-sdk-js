@@ -1,7 +1,7 @@
-import { Address } from '../address';
+import BillingAddress from './billing-address';
 
 export default interface BillingAddressState {
-    data?: Address;
+    data?: BillingAddress;
     errors: BillingAddressErrorsState;
     statuses: BillingAddressStatusesState;
 }

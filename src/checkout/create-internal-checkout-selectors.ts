@@ -11,7 +11,7 @@ import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { PaymentSelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ConsignmentSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingOptionSelector, ShippingStrategySelector } from '../shipping';
+import { ConsignmentSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
 import { CheckoutStoreOptions } from './checkout-store';
@@ -35,7 +35,6 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const shippingAddress = new ShippingAddressSelector(state.consignments, state.config);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
-    const shippingOptions = new ShippingOptionSelector(state.consignments);
     const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
 
     // Compose selectors
@@ -63,7 +62,6 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
         remoteCheckout,
         shippingAddress,
         shippingCountries,
-        shippingOptions,
         shippingStrategies,
     };
 

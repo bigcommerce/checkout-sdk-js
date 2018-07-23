@@ -1,24 +1,37 @@
 import { Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 
-import { Address } from '../address';
+import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator } from '../billing';
 import { ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
+import {
+    CustomerCredentials,
+    CustomerInitializeOptions,
+    CustomerRequestOptions,
+    CustomerStrategyActionCreator,
+    GuestCredentials
+} from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
-import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
+import {
+    PaymentInitializeOptions,
+    PaymentMethodActionCreator,
+    PaymentRequestOptions,
+    PaymentStrategyActionCreator
+} from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import {
+    ConsignmentsRequestBody,
     ConsignmentActionCreator,
     ShippingCountryActionCreator,
     ShippingInitializeOptions,
     ShippingRequestOptions,
     ShippingStrategyActionCreator,
 } from '../shipping';
+import { ConsignmentUpdateRequestBody } from '../shipping/consignment';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
@@ -660,7 +673,7 @@ export default class CheckoutService {
     }
 
     /**
-     * Selects a shipping option for a given address.
+     * Selects a shipping option for the current address.
      *
      * If a shipping option has an additional cost, the quote for the current
      * order will be adjusted once the option is selected.
@@ -707,8 +720,122 @@ export default class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: Address, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateShippingAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
+
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    }
+
+    /**
+     * Creates consignments given a list.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#updateShippingAddress`.
+     *
+     * When consignments are created, an updated list of shipping options will
+     * become available for each consignment, unless no options are available.
+     * If the update is successful, you can call
+     * `CheckoutStoreSelector#getConsignments` to retrieve the updated list of
+     * consignments.'
+     *
+     * Beware that if a consignment includes all line items from another
+     * consignment, that consignment will be deleted as a valid consignment must
+     * include at least one valid line item.
+     *
+     * You can submit an address that is partially complete. The address does
+     * not get validated until you submit the order.
+     *
+     * ```js
+     * const state = await service.createConsignments(consignments, address);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignments - The list of consignments to be created.
+     * @param options - Options for updating the shipping address.
+     * @returns A promise that resolves to the current state.
+     */
+    createConsignments(
+        consignments: ConsignmentsRequestBody,
+        options?: RequestOptions
+    ): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.createConsignments(consignments, options);
+
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    }
+
+    /**
+     * Updates a specific consignment.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#selectShippingOption`.
+     *
+     * When a shipping address for a consignment is updated, an updated list of
+     * shipping options will become available for the consignment, unless no
+     * options are available. If the update is successful, you can call
+     * `CheckoutStoreSelector#getConsignments` to retrieve updated list of
+     * consignments.
+     *
+     * Beware that if the updated consignment includes all line items from another
+     * consignment, that consignment will be deleted as a valid consignment must
+     * include at least one valid line item.
+     *
+     * If the shipping address changes and the selected shipping option becomes
+     * unavailable for the updated address, the shipping option will be
+     * deselected.
+     *
+     * You can submit an address that is partially complete. The address does
+     * not get validated until you submit the order.
+     *
+     * ```js
+     * const state = await service.updateConsignment(consignmentId, address);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignment - The consignment data that will be used.
+     * @param options - Options for updating the shipping address.
+     * @returns A promise that resolves to the current state.
+     */
+    updateConsignment(
+        consignment: ConsignmentUpdateRequestBody,
+        options?: RequestOptions
+    ): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.updateConsignment(consignment, options);
+
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    }
+
+    /**
+     * Selects a shipping option for a given consignment.
+     *
+     * Note: this is used when items need to be shipped to multiple addresses,
+     * for single shipping address, use `CheckoutService#updateShippingAddres`.
+     *
+     * If a shipping option has an additional cost, the quote for the current
+     * order will be adjusted once the option is selected.
+     *
+     * ```js
+     * const state = await service.selectConsignmentShippingOption(consignmentId, optionId);
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignmentId - The identified of the consignment to be updated.
+     * @param shippingOptionId - The identifier of the shipping option to
+     * select.
+     * @param options - Options for selecting the shipping option.
+     * @returns A promise that resolves to the current state.
+     */
+    selectConsignmentShippingOption(
+        consignmentId: string,
+        shippingOptionId: string,
+        options?: ShippingRequestOptions
+    ): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.updateConsignment({
+            id: consignmentId,
+            shippingOptionId,
+        }, options);
 
         return this._dispatch(action, { queueId: 'shippingStrategy' });
     }
@@ -732,7 +859,7 @@ export default class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: Address, options: RequestOptions = {}): Promise<CheckoutSelectors> {
+    updateBillingAddress(address: AddressRequestBody, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
         return this._dispatch(action);

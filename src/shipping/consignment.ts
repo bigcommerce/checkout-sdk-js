@@ -1,4 +1,4 @@
-import { Address } from '../address';
+import { Address, AddressRequestBody } from '../address';
 
 import ShippingOption from './shipping-option';
 
@@ -12,14 +12,32 @@ export default interface Consignment {
     lineItemIds?: string[];
 }
 
-export interface ConsignmentRequestBody {
-    id?: string;
-    shippingOptionId?: string;
-    shippingAddress?: Address;
+export type ConsignmentRequestBody =
+    ConsignmentCreateRequestBody |
+    ConsignmentUpdateRequestBody |
+    ConsignmentShippingOptionRequestBody;
+
+export interface ConsignmentCreateRequestBody {
+    shippingAddress: AddressRequestBody;
+    lineItems: ConsignmentLineItem[];
+}
+
+export interface ConsignmentUpdateRequestBody {
+    id: string;
+    shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
 }
 
-export type ConsignmentsRequestBody = ConsignmentRequestBody[];
+export interface ConsignmentMeta {
+    id: string;
+}
+
+export interface ConsignmentShippingOptionRequestBody {
+    id: string;
+    shippingOptionId: string;
+}
+
+export type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
 
 export interface ConsignmentLineItem {
     itemId: string | number;

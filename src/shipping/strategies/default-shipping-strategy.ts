@@ -1,4 +1,4 @@
-import { Address } from '../../address';
+import { AddressRequestBody } from '../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ShippingRequestOptions } from '../shipping-request-options';
@@ -13,7 +13,7 @@ export default class DefaultShippingStrategy extends ShippingStrategy {
         super(store);
     }
 
-    updateAddress(address: Address, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+    updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._consignmentActionCreator.updateAddress(address, options)
         );

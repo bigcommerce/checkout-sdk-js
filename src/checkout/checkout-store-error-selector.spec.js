@@ -225,17 +225,17 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getLoadShippingOptionsError()', () => {
         it('returns error if there is an error when loading the shipping options', () => {
-            jest.spyOn(selectors.shippingOptions, 'getLoadError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue(errorResponse);
 
             expect(errors.getLoadShippingOptionsError()).toEqual(errorResponse);
-            expect(selectors.shippingOptions.getLoadError).toHaveBeenCalled();
+            expect(selectors.consignments.getLoadShippingOptionsError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is NO error when loading the shipping options', () => {
-            jest.spyOn(selectors.shippingOptions, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue();
 
             expect(errors.getLoadShippingOptionsError()).toEqual(undefined);
-            expect(selectors.shippingOptions.getLoadError).toHaveBeenCalled();
+            expect(selectors.consignments.getLoadShippingOptionsError).toHaveBeenCalled();
         });
     });
 
@@ -268,6 +268,38 @@ describe('CheckoutStoreErrorSelector', () => {
 
             expect(errors.getUpdateBillingAddressError()).toEqual(undefined);
             expect(selectors.billingAddress.getUpdateError).toHaveBeenCalled();
+        });
+    });
+
+    describe('#getUpdateConsignmentError()', () => {
+        it('returns error if there is an error when updating consignments', () => {
+            jest.spyOn(selectors.consignments, 'getUpdateError').mockReturnValue(errorResponse);
+
+            expect(errors.getUpdateConsignmentError('foo')).toEqual(errorResponse);
+            expect(selectors.consignments.getUpdateError).toHaveBeenCalledWith('foo');
+        });
+
+        it('returns undefined if there is NO error when updating consignments', () => {
+            jest.spyOn(selectors.consignments, 'getUpdateError');
+
+            expect(errors.getUpdateConsignmentError('foo')).toEqual(undefined);
+            expect(selectors.consignments.getUpdateError).toHaveBeenCalledWith('foo');
+        });
+    });
+
+    describe('#getCreateConsignmentsError()', () => {
+        it('returns error if there is an error when creating consignments', () => {
+            jest.spyOn(selectors.consignments, 'getCreateError').mockReturnValue(errorResponse);
+
+            expect(errors.getCreateConsignmentsError()).toEqual(errorResponse);
+            expect(selectors.consignments.getCreateError).toHaveBeenCalledWith();
+        });
+
+        it('returns undefined if there is NO error when creating consignments', () => {
+            jest.spyOn(selectors.consignments, 'getCreateError');
+
+            expect(errors.getCreateConsignmentsError()).toEqual(undefined);
+            expect(selectors.consignments.getCreateError).toHaveBeenCalledWith();
         });
     });
 

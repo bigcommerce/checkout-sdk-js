@@ -3,8 +3,6 @@ export default interface Address extends AddressRequestBody {
 }
 
 export interface AddressRequestBody {
-    id?: string;
-    email?: string;
     firstName: string;
     lastName: string;
     company: string;

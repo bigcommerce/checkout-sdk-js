@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import { createTimeout } from '@bigcommerce/request-sender';
 import { getResponse } from '../../common/http-request/responses.mock';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
@@ -125,7 +126,7 @@ describe('InstrumentMethodRequestSender', () => {
             expect(client.loadInstrumentsWithAddress).toHaveBeenCalledWith(
                 {
                     ...requestContext,
-                    shippingAddress: getInternalShippingAddress(),
+                    shippingAddress: omit(getInternalShippingAddress(), 'id'),
                 },
                 expect.any(Function)
             );

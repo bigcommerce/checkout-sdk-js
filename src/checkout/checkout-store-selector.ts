@@ -17,7 +17,6 @@ import {
     ShippingAddressSelector,
     ShippingCountrySelector,
     ShippingOption,
-    ShippingOptionSelector,
 } from '../shipping';
 
 import Checkout from './checkout';
@@ -48,7 +47,6 @@ export default class CheckoutStoreSelector {
     private _paymentMethods: PaymentMethodSelector;
     private _shippingAddress: ShippingAddressSelector;
     private _shippingCountries: ShippingCountrySelector;
-    private _shippingOptions: ShippingOptionSelector;
 
     /**
      * @internal
@@ -70,7 +68,6 @@ export default class CheckoutStoreSelector {
         this._paymentMethods = selectors.paymentMethods;
         this._shippingAddress = selectors.shippingAddress;
         this._shippingCountries = selectors.shippingCountries;
-        this._shippingOptions = selectors.shippingOptions;
     }
 
     /**
@@ -150,7 +147,13 @@ export default class CheckoutStoreSelector {
      * otherwise undefined.
      */
     getSelectedShippingOption(): ShippingOption | undefined {
-        return this._shippingOptions.getSelectedShippingOption();
+        const consignments = this._consignments.getConsignments();
+
+        if (!consignments || !consignments.length) {
+            return;
+        }
+
+        return consignments[0].selectedShippingOption;
     }
 
     /**

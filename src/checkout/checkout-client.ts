@@ -1,13 +1,12 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import { AddressRequestBody } from '../address';
-import { BillingAddressRequestSender } from '../billing';
+import { BillingAddressRequestSender, BillingAddressUpdateRequestBody } from '../billing';
 import { RequestOptions } from '../common/http-request';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
 import { InternalOrderRequestBody, InternalOrderResponseBody, Order, OrderRequestSender } from '../order';
 import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
-import { ConsignmentsRequestBody, ConsignmentRequestBody, ConsignmentRequestSender, ShippingCountryRequestSender } from '../shipping';
+import { ShippingCountryRequestSender } from '../shipping';
 
 import Checkout from './checkout';
 
@@ -20,7 +19,6 @@ export default class CheckoutClient {
      */
     constructor(
         private _billingAddressRequestSender: BillingAddressRequestSender,
-        private _consignmentRequestSender: ConsignmentRequestSender,
         private _countryRequestSender: CountryRequestSender,
         private _customerRequestSender: CustomerRequestSender,
         private _orderRequestSender: OrderRequestSender,
@@ -56,20 +54,12 @@ export default class CheckoutClient {
         return this._shippingCountryRequestSender.loadCountries(options);
     }
 
-    createBillingAddress(checkoutId: string, address: Partial<AddressRequestBody>, options?: RequestOptions): Promise<Response<Checkout>> {
+    createBillingAddress(checkoutId: string, address: Partial<BillingAddressUpdateRequestBody>, options?: RequestOptions): Promise<Response<Checkout>> {
         return this._billingAddressRequestSender.createAddress(checkoutId, address, options);
     }
 
-    updateBillingAddress(checkoutId: string, address: Partial<AddressRequestBody>, options?: RequestOptions): Promise<Response> {
+    updateBillingAddress(checkoutId: string, address: Partial<BillingAddressUpdateRequestBody>, options?: RequestOptions): Promise<Response> {
         return this._billingAddressRequestSender.updateAddress(checkoutId, address, options);
-    }
-
-    createConsignments(checkoutId: string, consignments: ConsignmentsRequestBody, options?: RequestOptions): Promise<Response> {
-        return this._consignmentRequestSender.createConsignments(checkoutId, consignments, options);
-    }
-
-    updateConsignment(checkoutId: string, consignment: ConsignmentRequestBody, options?: RequestOptions): Promise<Response> {
-        return this._consignmentRequestSender.updateConsignment(checkoutId, consignment, options);
     }
 
     signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Promise<Response> {

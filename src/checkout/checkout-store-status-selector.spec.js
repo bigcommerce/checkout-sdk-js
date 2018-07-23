@@ -225,17 +225,17 @@ describe('CheckoutStoreStatusSelector', () => {
 
     describe('#isLoadingShippingOptions()', () => {
         it('returns true if loading shipping options', () => {
-            jest.spyOn(selectors.shippingOptions, 'isLoading').mockReturnValue(true);
+            jest.spyOn(selectors.consignments, 'isLoadingShippingOptions').mockReturnValue(true);
 
             expect(statuses.isLoadingShippingOptions()).toEqual(true);
-            expect(selectors.shippingOptions.isLoading).toHaveBeenCalled();
+            expect(selectors.consignments.isLoadingShippingOptions).toHaveBeenCalled();
         });
 
         it('returns false if not loading shipping options', () => {
-            jest.spyOn(selectors.shippingOptions, 'isLoading').mockReturnValue(false);
+            jest.spyOn(selectors.consignments, 'isLoadingShippingOptions').mockReturnValue(false);
 
             expect(statuses.isLoadingShippingOptions()).toEqual(false);
-            expect(selectors.shippingOptions.isLoading).toHaveBeenCalled();
+            expect(selectors.consignments.isLoadingShippingOptions).toHaveBeenCalled();
         });
     });
 
@@ -284,6 +284,38 @@ describe('CheckoutStoreStatusSelector', () => {
 
             expect(statuses.isUpdatingShippingAddress()).toEqual(false);
             expect(selectors.shippingStrategies.isUpdatingAddress).toHaveBeenCalled();
+        });
+    });
+
+    describe('#isUpdatingConsignment()', () => {
+        it('returns true if updating shipping address', () => {
+            jest.spyOn(selectors.consignments, 'isUpdating').mockReturnValue(true);
+
+            expect(statuses.isUpdatingConsignment()).toEqual(true);
+            expect(selectors.consignments.isUpdating).toHaveBeenCalled();
+        });
+
+        it('returns false if not updating shipping address', () => {
+            jest.spyOn(selectors.consignments, 'isUpdating').mockReturnValue(false);
+
+            expect(statuses.isUpdatingConsignment()).toEqual(false);
+            expect(selectors.consignments.isUpdating).toHaveBeenCalled();
+        });
+    });
+
+    describe('#isCreatingConsignments()', () => {
+        it('returns true if updating shipping address', () => {
+            jest.spyOn(selectors.consignments, 'isCreating').mockReturnValue(true);
+
+            expect(statuses.isCreatingConsignments()).toEqual(true);
+            expect(selectors.consignments.isCreating).toHaveBeenCalled();
+        });
+
+        it('returns false if not updating shipping address', () => {
+            jest.spyOn(selectors.consignments, 'isCreating').mockReturnValue(false);
+
+            expect(statuses.isCreatingConsignments()).toEqual(false);
+            expect(selectors.consignments.isCreating).toHaveBeenCalled();
         });
     });
 

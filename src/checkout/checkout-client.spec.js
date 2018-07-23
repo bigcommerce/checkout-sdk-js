@@ -7,7 +7,6 @@ import { getCountries } from '../geography/countries.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
 import { getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
 import CheckoutClient from './checkout-client';
-import { getConsignmentRequestBody } from '../shipping/consignments.mock';
 
 describe('CheckoutClient', () => {
     let client;
@@ -16,7 +15,6 @@ describe('CheckoutClient', () => {
     let customerRequestSender;
     let orderRequestSender;
     let paymentMethodRequestSender;
-    let consignmentRequestSender;
     let shippingCountryRequestSender;
 
     beforeEach(() => {
@@ -55,13 +53,8 @@ describe('CheckoutClient', () => {
             loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
         };
 
-        consignmentRequestSender = {
-            createConsignments: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
-        };
-
         client = new CheckoutClient(
             billingAddressRequestSender,
-            consignmentRequestSender,
             countryRequestSender,
             customerRequestSender,
             orderRequestSender,
@@ -188,32 +181,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getResponse(getCountries()));
             expect(shippingCountryRequestSender.loadCountries).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#createConsignments()', () => {
-        const checkoutId = 'foo';
-        let consignments;
-        let options;
-
-        beforeEach(() => {
-            consignments = [getConsignmentRequestBody()];
-            options = {
-                timeout: createTimeout(),
-            };
-        });
-
-        it('calls consignment request sender', async () => {
-            await client.createConsignments(checkoutId, consignments, options);
-
-            expect(consignmentRequestSender.createConsignments)
-                .toHaveBeenCalledWith(checkoutId, consignments, options);
-        });
-
-        it('returns the shipping address', async () => {
-            const output = await client.createConsignments(checkoutId, consignments, options);
-
-            expect(output).toEqual(getResponse(getCheckout()));
         });
     });
 

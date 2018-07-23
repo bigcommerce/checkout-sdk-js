@@ -5,7 +5,7 @@ import { CustomerRequestSender } from '../customer';
 import { CountryRequestSender } from '../geography';
 import { OrderRequestSender } from '../order';
 import { PaymentMethodRequestSender } from '../payment';
-import { ConsignmentRequestSender, ShippingCountryRequestSender } from '../shipping';
+import { ShippingCountryRequestSender } from '../shipping';
 
 import CheckoutClient from './checkout-client';
 
@@ -13,7 +13,6 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
     const requestSender = createRequestSender();
 
     const billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
-    const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const countryRequestSender = new CountryRequestSender(requestSender, config);
     const customerRequestSender = new CustomerRequestSender(requestSender);
     const orderRequestSender = new OrderRequestSender(requestSender);
@@ -22,7 +21,6 @@ export default function createCheckoutClient(config: { locale?: string } = {}): 
 
     return new CheckoutClient(
         billingAddressRequestSender,
-        consignmentRequestSender,
         countryRequestSender,
         customerRequestSender,
         orderRequestSender,

@@ -1,7 +1,7 @@
 export * from './customer-request-options';
 
 export { default as InternalCustomer } from './internal-customer';
-export { default as Customer } from './customer';
+export { default as Customer, CustomerAddress } from './customer';
 
 export { default as createCustomerStrategyRegistry } from './create-customer-strategy-registry';
 export { CustomerAction, CustomerActionType } from './customer-actions';

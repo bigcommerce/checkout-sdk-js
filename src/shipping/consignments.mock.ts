@@ -29,8 +29,14 @@ export function getConsignmentsState(): ConsignmentState {
             getConsignment(),
             getConsignment(),
         ],
-        errors: {},
-        statuses: {},
+        errors: {
+            updateError: {},
+            updateShippingOptionError: {},
+        },
+        statuses: {
+            isUpdating: {},
+            isUpdatingShippingOption: {},
+        },
     };
 }
 

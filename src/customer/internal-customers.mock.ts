@@ -21,7 +21,10 @@ export function getCustomer(): InternalCustomer {
     return {
         ...getGuestCustomer(),
         addresses: [
-            getShippingAddress(),
+            {
+                ...getShippingAddress(),
+                id: '55c96cda6f04c',
+            },
         ],
         customerId: 4,
         isGuest: false,

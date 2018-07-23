@@ -4,6 +4,8 @@ import { AddressRequestBody } from '../address';
 import { Checkout } from '../checkout';
 import { ContentType, RequestOptions } from '../common/http-request';
 
+import { BillingAddressUpdateRequestBody } from './billing-address';
+
 const DEFAULT_PARAMS = {
     include: [
         'cart.lineItems.physicalItems.options',
@@ -25,7 +27,7 @@ export default class BillingAddressRequestSender {
         return this._requestSender.post(url, { body: address, params: DEFAULT_PARAMS, headers, timeout });
     }
 
-    updateAddress(checkoutId: string, address: Partial<AddressRequestBody>, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+    updateAddress(checkoutId: string, address: Partial<BillingAddressUpdateRequestBody>, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
         const { id, ...body } = address;
         const url = `/api/storefront/checkouts/${checkoutId}/billing-address/${id}`;
         const headers = { Accept: ContentType.JsonV1 };

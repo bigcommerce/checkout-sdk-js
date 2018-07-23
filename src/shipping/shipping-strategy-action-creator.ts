@@ -2,7 +2,7 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { Address } from '../address';
+import { AddressRequestBody } from '../address';
 import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
 
@@ -21,7 +21,7 @@ export default class ShippingStrategyActionCreator {
         private _strategyRegistry: Registry<ShippingStrategy>
     ) {}
 
-    updateAddress(address: Address, options?: ShippingRequestOptions): ThunkAction<ShippingStrategyUpdateAddressAction, InternalCheckoutSelectors> {
+    updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): ThunkAction<ShippingStrategyUpdateAddressAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<ShippingStrategyUpdateAddressAction>) => {
             const payment = store.getState().payment.getPaymentId();
             const methodId = options && options.methodId || payment && payment.providerId;
