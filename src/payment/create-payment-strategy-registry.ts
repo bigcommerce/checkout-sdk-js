@@ -7,7 +7,6 @@ import { CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutS
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
 import { WepayRiskClient } from '../remote-checkout/methods/wepay';
 
 import PaymentActionCreator from './payment-action-creator';
@@ -20,6 +19,7 @@ import {
     AmazonPayPaymentStrategy,
     BraintreeCreditCardPaymentStrategy,
     BraintreePaypalPaymentStrategy,
+    BraintreeVisaCheckoutPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
@@ -34,12 +34,8 @@ import {
 } from './strategies';
 import { AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayScriptLoader } from './strategies/amazon-pay';
-import {
-    createBraintreePaymentProcessor,
-    createBraintreeVisaCheckoutPaymentProcessor,
-    BraintreeVisaCheckoutPaymentStrategy,
-    VisaCheckoutScriptLoader,
-} from './strategies/braintree';
+import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from './strategies/braintree';
+import { KlarnaScriptLoader } from './strategies/klarna';
 import { SquareScriptLoader } from './strategies/square';
 
 export default function createPaymentStrategyRegistry(

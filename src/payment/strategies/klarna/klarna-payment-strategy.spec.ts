@@ -4,18 +4,19 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { getKlarna, getPaymentMethodsState } from '../../payment/payment-methods.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { KlarnaCredit, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
-import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
-import PaymentMethod from '../payment-method';
-import PaymentMethodActionCreator from '../payment-method-action-creator';
-import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../payment-method-action-types';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../../remote-checkout/remote-checkout-action-types';
+import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment-method-action-types';
+import { getKlarna, getPaymentMethodsState } from '../../payment-methods.mock';
 
+import KlarnaCredit from './klarna-credit';
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
+import KlarnaScriptLoader from './klarna-script-loader';
 
 describe('KlarnaPaymentStrategy', () => {
     let client: CheckoutClient;
