@@ -5773,6 +5773,7 @@ function dataReducer(data, action) {
         case checkout_1.CheckoutActionType.LoadCheckoutSucceeded:
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsSucceeded:
         case consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded:
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionSucceeded:
         case coupon_actions_1.CouponActionType.ApplyCouponSucceeded:
         case coupon_actions_1.CouponActionType.RemoveCouponSucceeded:
         case gift_certificate_actions_1.GiftCertificateActionType.ApplyGiftCertificateSucceeded:
@@ -11417,8 +11418,9 @@ exports.default = giftCertificateReducer;
 function dataReducer(data, action) {
     switch (action.type) {
         case checkout_1.CheckoutActionType.LoadCheckoutSucceeded:
-        case consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded:
         case consignment_actions_1.ConsignmentActionType.CreateConsignmentsSucceeded:
+        case consignment_actions_1.ConsignmentActionType.UpdateConsignmentSucceeded:
+        case consignment_actions_1.ConsignmentActionType.UpdateShippingOptionSucceeded:
         case coupon_actions_1.CouponActionType.ApplyCouponSucceeded:
         case coupon_actions_1.CouponActionType.RemoveCouponSucceeded:
         case gift_certificate_actions_1.GiftCertificateActionType.ApplyGiftCertificateSucceeded:
@@ -12395,6 +12397,7 @@ function dataReducer(data, action) {
         case coupon_1.CouponActionType.RemoveCouponSucceeded:
         case shipping_1.ConsignmentActionType.CreateConsignmentsSucceeded:
         case shipping_1.ConsignmentActionType.UpdateConsignmentSucceeded:
+        case shipping_1.ConsignmentActionType.UpdateShippingOptionSucceeded:
         case coupon_1.GiftCertificateActionType.ApplyGiftCertificateSucceeded:
         case coupon_1.GiftCertificateActionType.RemoveGiftCertificateSucceeded:
             return action.payload

@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.28.3"></a>
+## [0.28.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.2...v0.28.3) (2018-07-24)
+
+
+### Bug Fixes
+
+* **shipping:** CHECKOUT-3243 Fix checkout data not getting retained after updating shipping option ([850b108](https://github.com/bigcommerce/checkout-sdk-js/commit/850b108))
+
+
+
 <a name="0.28.2"></a>
 ## [0.28.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.1...v0.28.2) (2018-07-24)
 
