@@ -10994,11 +10994,7 @@ var PaymentStrategyActionCreator = /** @class */ (function () {
         return function (store) {
             var finalizeAction = new Observable_1.Observable(function (observer) {
                 var state = store.getState();
-                var order = state.order.getOrder();
                 var payment = state.payment.getPaymentId();
-                if (!order) {
-                    throw new errors_1.MissingDataError(errors_1.MissingDataErrorType.MissingOrder);
-                }
                 if (!payment) {
                     throw new errors_2.OrderFinalizationNotRequiredError();
                 }
