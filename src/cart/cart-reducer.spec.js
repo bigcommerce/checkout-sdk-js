@@ -61,6 +61,17 @@ describe('cartReducer()', () => {
         }));
     });
 
+    it('returns new data when a shipping option is updated', () => {
+        const action = {
+            type: ConsignmentActionType.UpdateShippingOptionSucceeded,
+            payload: getCheckout(),
+        };
+
+        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getCart(),
+        }));
+    });
+
     it('returns new data when coupon gets applied', () => {
         const action = {
             type: CouponActionType.ApplyCouponSucceeded,

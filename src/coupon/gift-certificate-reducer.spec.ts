@@ -4,6 +4,7 @@ import { CheckoutActionType } from '../checkout';
 import { getCheckout, getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+import { ConsignmentActionType } from '../shipping';
 
 import { GiftCertificateActionType } from './gift-certificate-actions';
 import giftCertificateReducer from './gift-certificate-reducer';
@@ -25,6 +26,14 @@ describe('giftCertificateReducer()', () => {
 
         expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
             data: [],
+        }));
+    });
+
+    it('returns new state when shipping option gets updated', () => {
+        const action = createAction(ConsignmentActionType.UpdateShippingOptionSucceeded, getCheckoutWithGiftCertificates(), { id: '123' });
+
+        expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: action.payload && action.payload.giftCertificates,
         }));
     });
 

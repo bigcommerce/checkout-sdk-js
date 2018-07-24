@@ -15,7 +15,7 @@ const DEFAULT_STATE: GiftCertificateState = {
 
 export default function giftCertificateReducer(
     state: GiftCertificateState = DEFAULT_STATE,
-    action: CheckoutAction | GiftCertificateAction
+    action: CheckoutAction | GiftCertificateAction | ConsignmentAction | CouponAction
 ): GiftCertificateState {
     const reducer = combineReducers<GiftCertificateState>({
         data: dataReducer,
@@ -32,8 +32,9 @@ function dataReducer(
 ): GiftCertificate[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-    case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.CreateConsignmentsSucceeded:
+    case ConsignmentActionType.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.UpdateShippingOptionSucceeded:
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
