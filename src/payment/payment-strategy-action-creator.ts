@@ -75,12 +75,7 @@ export default class PaymentStrategyActionCreator {
         return store => {
             const finalizeAction = new Observable((observer: Observer<PaymentStrategyFinalizeAction>) => {
                 const state = store.getState();
-                const order = state.order.getOrder();
                 const payment = state.payment.getPaymentId();
-
-                if (!order) {
-                    throw new MissingDataError(MissingDataErrorType.MissingOrder);
-                }
 
                 if (!payment) {
                     throw new OrderFinalizationNotRequiredError();

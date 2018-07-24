@@ -411,19 +411,6 @@ describe('PaymentStrategyActionCreator', () => {
             ]);
         });
 
-        it('throws error if payment data is not available', async () => {
-            store = createCheckoutStore();
-            registry = createPaymentStrategyRegistry(store, client, paymentClient);
-
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-
-            try {
-                await Observable.from(actionCreator.finalize()(store)).toPromise();
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
         it('returns rejected promise if order does not require finalization', async () => {
             store = createCheckoutStore({
                 ...state,
