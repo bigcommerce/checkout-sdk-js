@@ -5,6 +5,7 @@ import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+import { ConsignmentActionType } from '../shipping';
 
 import checkoutReducer from './checkout-reducer';
 import CheckoutState from './checkout-state';
@@ -56,6 +57,15 @@ describe('checkoutReducer', () => {
             errors: { updateError: undefined },
             statuses: { isUpdating: false },
         });
+    });
+
+    it('returns new state when shipping option gets updated', () => {
+        const action = createAction(ConsignmentActionType.UpdateShippingOptionSucceeded, getCheckout(), { id: '123' });
+        const output = checkoutReducer(initialState, action);
+
+        expect(output).toEqual(expect.objectContaining({
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+        }));
     });
 
     it('returns loading state', () => {
