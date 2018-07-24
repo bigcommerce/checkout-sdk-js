@@ -10,14 +10,14 @@ import { InvalidArgumentError, MissingDataError } from '../../common/error/error
 import { PaymentMethodActionCreator } from '../../payment';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import {
     AmazonPayAddressBook,
     AmazonPayAddressBookOptions,
     AmazonPayOrderReference,
     AmazonPayScriptLoader,
     AmazonPayWindow,
-} from '../../remote-checkout/methods/amazon-pay';
+} from '../../payment/strategies/amazon-pay';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ConsignmentActionType } from '../consignment-actions';

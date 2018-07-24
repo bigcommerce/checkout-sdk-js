@@ -1,12 +1,13 @@
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
-import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import { KlarnaCredit, KlarnaLoadResponse, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
-import PaymentMethodActionCreator from '../payment-method-action-creator';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategy from '../payment-strategy';
 
-import PaymentStrategy from './payment-strategy';
+import KlarnaCredit, { KlarnaLoadResponse } from './klarna-credit';
+import KlarnaScriptLoader from './klarna-script-loader';
 
 export default class KlarnaPaymentStrategy extends PaymentStrategy {
     private _klarnaCredit?: KlarnaCredit;

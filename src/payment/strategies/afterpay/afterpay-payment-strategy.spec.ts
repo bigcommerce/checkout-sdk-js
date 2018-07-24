@@ -5,23 +5,23 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { MissingDataError, NotInitializedError } from '../../common/error/errors';
-import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { AfterpayScriptLoader } from '../../remote-checkout/methods/afterpay';
-import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED, LOAD_REMOTE_SETTINGS_SUCCEEDED } from '../../remote-checkout/remote-checkout-action-types';
-import PaymentActionCreator from '../payment-action-creator';
-import { PaymentActionType } from '../payment-actions';
-import PaymentMethod from '../payment-method';
-import PaymentMethodActionCreator from '../payment-method-action-creator';
-import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../payment-method-action-types';
-import { getAfterpay } from '../payment-methods.mock';
-import PaymentRequestSender from '../payment-request-sender';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED, LOAD_REMOTE_SETTINGS_SUCCEEDED } from '../../../remote-checkout/remote-checkout-action-types';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType } from '../../payment-actions';
+import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment-method-action-types';
+import { getAfterpay } from '../../payment-methods.mock';
+import PaymentRequestSender from '../../payment-request-sender';
 
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
+import AfterpayScriptLoader from './afterpay-script-loader';
 
 describe('AfterpayPaymentStrategy', () => {
     let checkoutValidator: CheckoutValidator;

@@ -4,35 +4,32 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { BillingAddressActionCreator } from '../../billing';
-import { BillingAddressActionType } from '../../billing/billing-address-actions';
-import { getBillingAddress, getBillingAddressState } from '../../billing/billing-addresses.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../checkout';
-import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, RequestError } from '../../common/error/errors';
-import { getErrorResponse } from '../../common/http-request/responses.mock';
-import { getCustomerState } from '../../customer/customers.mock';
-import { OrderActionCreator, OrderActionType } from '../../order';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { getAmazonPay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import {
-    AmazonPayOrderReference,
-    AmazonPayScriptLoader,
-    AmazonPayWallet,
-    AmazonPayWalletOptions,
-    AmazonPayWindow,
-} from '../../remote-checkout/methods/amazon-pay';
+import { BillingAddressActionCreator } from '../../../billing';
+import { BillingAddressActionType } from '../../../billing/billing-address-actions';
+import { getBillingAddress, getBillingAddressState } from '../../../billing/billing-addresses.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { InvalidArgumentError, MissingDataError, RequestError } from '../../../common/error/errors';
+import { getErrorResponse } from '../../../common/http-request/responses.mock';
+import { getCustomerState } from '../../../customer/customers.mock';
+import { OrderActionCreator, OrderActionType } from '../../../order';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import {
     INITIALIZE_REMOTE_BILLING_FAILED,
     INITIALIZE_REMOTE_BILLING_REQUESTED,
     INITIALIZE_REMOTE_PAYMENT_REQUESTED,
-} from '../../remote-checkout/remote-checkout-action-types';
-import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../remote-checkout/remote-checkout.mock';
-import { getConsignmentsState } from '../../shipping/consignments.mock';
-import PaymentMethod from '../payment-method';
+} from '../../../remote-checkout/remote-checkout-action-types';
+import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
+import { getConsignmentsState } from '../../../shipping/consignments.mock';
+import PaymentMethod from '../../payment-method';
+import { getAmazonPay, getPaymentMethodsState } from '../../payment-methods.mock';
 
+import AmazonPayOrderReference from './amazon-pay-order-reference';
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
+import AmazonPayScriptLoader from './amazon-pay-script-loader';
+import AmazonPayWallet, { AmazonPayWalletOptions } from './amazon-pay-wallet';
+import AmazonPayWindow from './amazon-pay-window';
 
 describe('AmazonPayPaymentStrategy', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;

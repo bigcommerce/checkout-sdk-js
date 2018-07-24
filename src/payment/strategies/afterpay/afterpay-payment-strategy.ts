@@ -1,15 +1,16 @@
-import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
-import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import { AfterpayScriptLoader, AfterpaySdk } from '../../remote-checkout/methods/afterpay';
-import { PaymentArgumentInvalidError } from '../errors';
-import PaymentActionCreator from '../payment-action-creator';
-import PaymentMethod from '../payment-method';
-import PaymentMethodActionCreator from '../payment-method-action-creator';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
+import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { PaymentArgumentInvalidError } from '../../errors';
+import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategy from '../payment-strategy';
 
-import PaymentStrategy from './payment-strategy';
+import AfterpayScriptLoader from './afterpay-script-loader';
+import AfterpaySdk from './afterpay-sdk';
 
 export default class AfterpayPaymentStrategy extends PaymentStrategy {
     private _afterpaySdk?: AfterpaySdk;

@@ -7,21 +7,18 @@ import { CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutS
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { AfterpayScriptLoader } from '../remote-checkout/methods/afterpay';
-import { AmazonPayScriptLoader } from '../remote-checkout/methods/amazon-pay';
-import { KlarnaScriptLoader } from '../remote-checkout/methods/klarna';
-import { WepayRiskClient } from '../remote-checkout/methods/wepay';
 
-import { PaymentStrategyActionCreator } from '.';
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import PaymentRequestSender from './payment-request-sender';
+import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
     BraintreeCreditCardPaymentStrategy,
     BraintreePaypalPaymentStrategy,
+    BraintreeVisaCheckoutPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
@@ -34,13 +31,12 @@ import {
     SquarePaymentStrategy,
     WepayPaymentStrategy,
 } from './strategies';
-import {
-    createBraintreePaymentProcessor,
-    createBraintreeVisaCheckoutPaymentProcessor,
-    BraintreeVisaCheckoutPaymentStrategy,
-    VisaCheckoutScriptLoader,
-} from './strategies/braintree';
+import { AfterpayScriptLoader } from './strategies/afterpay';
+import { AmazonPayScriptLoader } from './strategies/amazon-pay';
+import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from './strategies/braintree';
+import { KlarnaScriptLoader } from './strategies/klarna';
 import { SquareScriptLoader } from './strategies/square';
+import { WepayRiskClient } from './strategies/wepay';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,

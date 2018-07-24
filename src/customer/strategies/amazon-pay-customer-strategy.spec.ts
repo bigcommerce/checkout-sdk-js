@@ -9,7 +9,6 @@ import { MissingDataError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
 import { HOSTED, INITIALIZE, LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_SUCCEEDED, PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender, SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout';
 import {
     AmazonPayLogin,
     AmazonPayLoginButton,
@@ -17,7 +16,8 @@ import {
     AmazonPayLoginOptions,
     AmazonPayScriptLoader,
     AmazonPayWindow,
-} from '../../remote-checkout/methods/amazon-pay';
+} from '../../payment/strategies/amazon-pay';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender, SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
 
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';

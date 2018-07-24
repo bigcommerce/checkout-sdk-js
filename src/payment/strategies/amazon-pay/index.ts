@@ -1,6 +1,5 @@
-export { default as AmazonPayRemoteCheckout } from './amazon-pay-remote-checkout';
+export { default as AmazonPayPaymentStrategy, AmazonPayPaymentInitializeOptions } from './amazon-pay-payment-strategy';
 export { default as AmazonPayScriptLoader } from './amazon-pay-script-loader';
-
 export { default as AmazonPayAddressBook, AmazonPayAddressBookOptions } from './amazon-pay-address-book';
 export { default as AmazonPayLoginButton, AmazonPayLoginButtonOptions } from './amazon-pay-login-button';
 export { default as AmazonPayWallet, AmazonPayWalletOptions } from './amazon-pay-wallet';

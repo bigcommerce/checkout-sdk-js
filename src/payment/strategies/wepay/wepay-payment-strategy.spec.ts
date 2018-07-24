@@ -5,17 +5,17 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../order';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { getWepay } from '../../payment/payment-methods.mock';
-import { WepayRiskClient } from '../../remote-checkout/methods/wepay';
-import PaymentActionCreator from '../payment-action-creator';
-import { PaymentActionType } from '../payment-actions';
-import PaymentMethod from '../payment-method';
-import PaymentRequestSender from '../payment-request-sender';
+import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType } from '../../payment-actions';
+import PaymentMethod from '../../payment-method';
+import { getWepay } from '../../payment-methods.mock';
+import PaymentRequestSender from '../../payment-request-sender';
 
 import WepayPaymentStrategy from './wepay-payment-strategy';
+import WepayRiskClient from './wepay-risk-client';
 
 describe('WepayPaymentStrategy', () => {
     const testRiskToken = 'test-risk-token';

@@ -1,7 +1,7 @@
 import { combineReducers, Action } from '@bigcommerce/data-store';
 
-import { AfterpayRemoteCheckout } from './methods/afterpay';
-import { AmazonPayRemoteCheckout } from './methods/amazon-pay';
+import { AfterpayRemoteCheckout, AmazonPayRemoteCheckout } from './methods';
+
 import * as actionTypes from './remote-checkout-action-types';
 import RemoteCheckoutState, { RemoteCheckoutStateData } from './remote-checkout-state';
 
