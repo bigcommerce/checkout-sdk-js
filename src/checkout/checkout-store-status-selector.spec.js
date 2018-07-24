@@ -27,6 +27,22 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
+    describe('#isUpdatingCheckout()', () => {
+        it('returns true if loading checkout', () => {
+            jest.spyOn(selectors.checkout, 'isUpdating').mockReturnValue(true);
+
+            expect(statuses.isUpdatingCheckout()).toEqual(true);
+            expect(selectors.checkout.isUpdating).toHaveBeenCalled();
+        });
+
+        it('returns false if loading checkout', () => {
+            jest.spyOn(selectors.checkout, 'isUpdating').mockReturnValue(false);
+
+            expect(statuses.isUpdatingCheckout()).toEqual(false);
+            expect(selectors.checkout.isUpdating).toHaveBeenCalled();
+        });
+    });
+
     describe('#isSubmittingOrder()', () => {
         it('returns true if submitting order', () => {
             jest.spyOn(selectors.paymentStrategies, 'isExecuting').mockReturnValue(true);

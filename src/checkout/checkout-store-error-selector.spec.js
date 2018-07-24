@@ -31,6 +31,22 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
+    describe('#getUpdateCheckoutError()', () => {
+        it('returns error if there is an error when loading checkout', () => {
+            jest.spyOn(selectors.checkout, 'getUpdateError').mockReturnValue(errorResponse);
+
+            expect(errors.getUpdateCheckoutError()).toEqual(errorResponse);
+            expect(selectors.checkout.getUpdateError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is no error when loading checkout', () => {
+            jest.spyOn(selectors.checkout, 'getUpdateError').mockReturnValue();
+
+            expect(errors.getUpdateCheckoutError()).toEqual(undefined);
+            expect(selectors.checkout.getUpdateError).toHaveBeenCalled();
+        });
+    });
+
     describe('#getSubmitOrderError()', () => {
         it('returns error if there is an error when submitting order', () => {
             jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(errorResponse);

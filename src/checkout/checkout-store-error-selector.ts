@@ -106,6 +106,15 @@ export default class CheckoutStoreErrorSelector {
     }
 
     /**
+     * Returns an error if unable to update the current checkout.
+     *
+     * @returns The error object if unable to update, otherwise undefined.
+     */
+    getUpdateCheckoutError(): Error | undefined {
+        return this._checkout.getUpdateError();
+    }
+
+    /**
      * Returns an error if unable to submit the current order.
      *
      * @returns The error object if unable to submit, otherwise undefined.
