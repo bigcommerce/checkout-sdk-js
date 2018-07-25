@@ -107,6 +107,15 @@ export default class CheckoutStoreStatusSelector {
     }
 
     /**
+     * Checks whether the current checkout is being updated.
+     *
+     * @returns True if the current checkout is being updated, otherwise false.
+     */
+    isUpdatingCheckout(): boolean {
+        return this._checkout.isUpdating();
+    }
+
+    /**
      * Checks whether the current order is submitting.
      *
      * @returns True if the current order is submitting, otherwise false.

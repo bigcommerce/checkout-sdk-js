@@ -51,4 +51,12 @@ export default class CheckoutSelector {
     isLoading(): boolean {
         return this._checkout.statuses.isLoading === true;
     }
+
+    getUpdateError(): Error | undefined {
+        return this._checkout.errors.updateError;
+    }
+
+    isUpdating(): boolean {
+        return this._checkout.statuses.isUpdating === true;
+    }
 }

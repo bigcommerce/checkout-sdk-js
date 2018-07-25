@@ -43,4 +43,23 @@ describe('CheckoutSelector', () => {
 
         expect(selector.isLoading()).toEqual(true);
     });
+
+    it('returns update error', () => {
+        const updateError = new Error();
+        const selector = new CheckoutSelector({
+            ...getCheckoutState(),
+            errors: { updateError },
+        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+
+        expect(selector.getUpdateError()).toEqual(updateError);
+    });
+
+    it('returns updating status', () => {
+        const selector = new CheckoutSelector({
+            ...getCheckoutState(),
+            statuses: { isUpdating: true },
+        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+
+        expect(selector.isUpdating()).toEqual(true);
+    });
 });
