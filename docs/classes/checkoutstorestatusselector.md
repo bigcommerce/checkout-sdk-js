@@ -42,6 +42,7 @@ This object has a set of getters that return true if an action is in progress. F
 * [isSigningOut](checkoutstorestatusselector.md#issigningout)
 * [isSubmittingOrder](checkoutstorestatusselector.md#issubmittingorder)
 * [isUpdatingBillingAddress](checkoutstorestatusselector.md#isupdatingbillingaddress)
+* [isUpdatingCheckout](checkoutstorestatusselector.md#isupdatingcheckout)
 * [isUpdatingConsignment](checkoutstorestatusselector.md#isupdatingconsignment)
 * [isUpdatingShippingAddress](checkoutstorestatusselector.md#isupdatingshippingaddress)
 
@@ -451,6 +452,18 @@ Checks whether the current customer is updating their billing address.
 
 **Returns:** `boolean`
 True if updating their billing address, otherwise false.
+
+___
+<a id="isupdatingcheckout"></a>
+
+###  isUpdatingCheckout
+
+▸ **isUpdatingCheckout**(): `boolean`
+
+Checks whether the current checkout is being updated.
+
+**Returns:** `boolean`
+True if the current checkout is being updated, otherwise false.
 
 ___
 <a id="isupdatingconsignment"></a>

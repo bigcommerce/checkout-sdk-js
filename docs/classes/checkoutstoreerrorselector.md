@@ -40,6 +40,7 @@ This object has a set of getters that would return an error if an action is not 
 * [getSignOutError](checkoutstoreerrorselector.md#getsignouterror)
 * [getSubmitOrderError](checkoutstoreerrorselector.md#getsubmitordererror)
 * [getUpdateBillingAddressError](checkoutstoreerrorselector.md#getupdatebillingaddresserror)
+* [getUpdateCheckoutError](checkoutstoreerrorselector.md#getupdatecheckouterror)
 * [getUpdateConsignmentError](checkoutstoreerrorselector.md#getupdateconsignmenterror)
 * [getUpdateShippingAddressError](checkoutstoreerrorselector.md#getupdateshippingaddresserror)
 
@@ -418,6 +419,19 @@ ___
 ▸ **getUpdateBillingAddressError**():  `Error` &#124; `undefined`
 
 Returns an error if unable to update billing address.
+
+**Returns:**  `Error` &#124; `undefined`
+
+The error object if unable to update, otherwise undefined.
+
+___
+<a id="getupdatecheckouterror"></a>
+
+###  getUpdateCheckoutError
+
+▸ **getUpdateCheckoutError**():  `Error` &#124; `undefined`
+
+Returns an error if unable to update the current checkout.
 
 **Returns:**  `Error` &#124; `undefined`
 

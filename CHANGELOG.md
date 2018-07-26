@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.28.4"></a>
+## [0.28.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.3...v0.28.4) (2018-07-26)
+
+
+### Bug Fixes
+
+* **common:** PAYMENTS-3251 Check that argument is a valid string in toSingleLine utility ([c87484e](https://github.com/bigcommerce/checkout-sdk-js/commit/c87484e))
+* **payment:** PAYMENTS-3251 Throw proper errors when Klarna authorization fails ([bf16895](https://github.com/bigcommerce/checkout-sdk-js/commit/bf16895))
+
+
+### Features
+
+* **checkout:** CHECKOUT-3371 Provide status/error checks for CheckoutService#updateCheckout ([fe2e07f](https://github.com/bigcommerce/checkout-sdk-js/commit/fe2e07f))
+
+
+### Performance Improvements
+
+* **common:** CHECKOUT-3009 Improve file bundle size ([9e0f458](https://github.com/bigcommerce/checkout-sdk-js/commit/9e0f458))
+
+
+
 <a name="0.28.3"></a>
 ## [0.28.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.2...v0.28.3) (2018-07-24)
 

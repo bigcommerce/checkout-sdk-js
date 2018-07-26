@@ -1072,6 +1072,12 @@ declare class CheckoutStoreErrorSelector {
      */
     getLoadCheckoutError(): Error | undefined;
     /**
+     * Returns an error if unable to update the current checkout.
+     *
+     * @returns The error object if unable to update, otherwise undefined.
+     */
+    getUpdateCheckoutError(): Error | undefined;
+    /**
      * Returns an error if unable to submit the current order.
      *
      * @returns The error object if unable to submit, otherwise undefined.
@@ -1483,6 +1489,12 @@ declare class CheckoutStoreStatusSelector {
      * @returns True if the current checkout is loading, otherwise false.
      */
     isLoadingCheckout(): boolean;
+    /**
+     * Checks whether the current checkout is being updated.
+     *
+     * @returns True if the current checkout is being updated, otherwise false.
+     */
+    isUpdatingCheckout(): boolean;
     /**
      * Checks whether the current order is submitting.
      *
