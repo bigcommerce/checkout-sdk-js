@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.4"></a>
+## [0.24.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.3...v0.24.4) (2018-07-26)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-3251 Throw proper errors when Klarna authorization fails ([9456b9d](https://github.com/bigcommerce/checkout-sdk-js/commit/9456b9d))
+
+
+
 <a name="0.24.3"></a>
 ## [0.24.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.24.2...v0.24.3) (2018-07-10)
 

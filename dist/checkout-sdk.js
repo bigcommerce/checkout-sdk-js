@@ -191,6 +191,21 @@ exports.createCheckoutStore = create_checkout_store_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var payment_argument_invalid_error_1 = __webpack_require__(168);
+exports.PaymentArgumentInvalidError = payment_argument_invalid_error_1.default;
+var payment_method_invalid_error_1 = __webpack_require__(169);
+exports.PaymentMethodInvalidError = payment_method_invalid_error_1.default;
+var payment_method_cancelled_error_1 = __webpack_require__(170);
+exports.PaymentMethodCancelledError = payment_method_cancelled_error_1.default;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var bind_decorator_1 = __webpack_require__(94);
 exports.bindDecorator = bind_decorator_1.default;
 var create_freeze_proxy_1 = __webpack_require__(95);
@@ -208,21 +223,6 @@ var omit_private_1 = __webpack_require__(99);
 exports.omitPrivate = omit_private_1.default;
 var set_prototype_of_1 = __webpack_require__(100);
 exports.setPrototypeOf = set_prototype_of_1.default;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var payment_argument_invalid_error_1 = __webpack_require__(168);
-exports.PaymentArgumentInvalidError = payment_argument_invalid_error_1.default;
-var payment_method_invalid_error_1 = __webpack_require__(169);
-exports.PaymentMethodInvalidError = payment_method_invalid_error_1.default;
-var payment_method_cancelled_error_1 = __webpack_require__(170);
-exports.PaymentMethodCancelledError = payment_method_cancelled_error_1.default;
 
 
 /***/ }),
@@ -264,7 +264,7 @@ exports.mapToInternalLineItems = map_to_internal_line_items_1.default;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var utility_1 = __webpack_require__(8);
+var utility_1 = __webpack_require__(9);
 var StandardError = /** @class */ (function (_super) {
     tslib_1.__extends(StandardError, _super);
     function StandardError(message) {
@@ -1844,7 +1844,7 @@ exports.default = CheckoutService;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var utility_1 = __webpack_require__(8);
+var utility_1 = __webpack_require__(9);
 var cache_key_resolver_1 = __webpack_require__(101);
 /**
  * Decorates a class by patching all of its methods to cache their return values
@@ -2007,7 +2007,7 @@ exports.VERIFY_CART_FAILED = 'VERIFY_CART_FAILED';
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var utility_1 = __webpack_require__(8);
+var utility_1 = __webpack_require__(9);
 /**
  * @todo Convert this file into TypeScript properly
  */
@@ -2550,7 +2550,7 @@ exports.RemoteCheckoutSynchronizationError = remote_checkout_synchronization_err
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
-var errors_1 = __webpack_require__(9);
+var errors_1 = __webpack_require__(8);
 var payment_strategy_1 = __webpack_require__(6);
 var CreditCardPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(CreditCardPaymentStrategy, _super);
@@ -2586,8 +2586,8 @@ exports.default = CreditCardPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var utility_1 = __webpack_require__(8);
-var errors_2 = __webpack_require__(9);
+var utility_1 = __webpack_require__(9);
+var errors_2 = __webpack_require__(8);
 var BraintreePaymentProcessor = /** @class */ (function () {
     function BraintreePaymentProcessor(_braintreeSDKCreator) {
         this._braintreeSDKCreator = _braintreeSDKCreator;
@@ -3327,7 +3327,7 @@ exports.default = mapToInternalShippingOption;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utility_1 = __webpack_require__(8);
+var utility_1 = __webpack_require__(9);
 var console_logger_1 = __webpack_require__(237);
 var noop_logger_1 = __webpack_require__(238);
 var logger = createLogger(utility_1.getEnvironment() !== 'test');
@@ -6630,7 +6630,7 @@ function statusesReducer(statuses, action) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
-var utility_1 = __webpack_require__(8);
+var utility_1 = __webpack_require__(9);
 function isAddressEqual(addressA, addressB) {
     return lodash_1.isEqual(normalize(addressA), normalize(addressB));
 }
@@ -7196,7 +7196,7 @@ exports.SquarePaymentStrategy = square_1.SquarePaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(9);
+var errors_2 = __webpack_require__(8);
 var payment_strategy_1 = __webpack_require__(6);
 var AfterpayPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(AfterpayPaymentStrategy, _super);
@@ -7575,6 +7575,7 @@ exports.default = RemoteCheckoutSynchronizationError;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
+var errors_2 = __webpack_require__(8);
 var payment_strategy_1 = __webpack_require__(6);
 var KlarnaPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(KlarnaPaymentStrategy, _super);
@@ -7642,7 +7643,7 @@ var KlarnaPaymentStrategy = /** @class */ (function (_super) {
                     onLoad(response);
                 }
                 if (!response.show_form) {
-                    reject(response);
+                    reject(new errors_2.PaymentMethodInvalidError());
                 }
                 else {
                     resolve(response);
@@ -7657,12 +7658,13 @@ var KlarnaPaymentStrategy = /** @class */ (function (_super) {
                 throw new errors_1.NotInitializedError();
             }
             _this._klarnaCredit.authorize({}, function (res) {
-                if (!res.approved) {
-                    reject(res);
+                if (res.approved) {
+                    return resolve(res);
                 }
-                else {
-                    resolve(res);
+                if (res.show_form) {
+                    return reject(new errors_2.PaymentMethodCancelledError());
                 }
+                reject(new errors_2.PaymentMethodInvalidError());
             });
         });
     };
@@ -7754,7 +7756,7 @@ exports.default = OfflinePaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(9);
+var errors_2 = __webpack_require__(8);
 var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var OffsitePaymentStrategy = /** @class */ (function (_super) {
@@ -7919,7 +7921,7 @@ exports.default = PaypalExpressPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(9);
+var errors_2 = __webpack_require__(8);
 var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var PaypalProPaymentStrategy = /** @class */ (function (_super) {
@@ -7968,7 +7970,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var lodash_1 = __webpack_require__(4);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(9);
+var errors_2 = __webpack_require__(8);
 var paymentStatusTypes = __webpack_require__(20);
 var payment_strategy_1 = __webpack_require__(6);
 var SagePayPaymentStrategy = /** @class */ (function (_super) {
@@ -8069,7 +8071,7 @@ exports.default = WepayPaymentStrategy;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(9);
+var errors_2 = __webpack_require__(8);
 var is_credit_card_like_1 = __webpack_require__(184);
 var is_vaulted_instrument_1 = __webpack_require__(39);
 var payment_strategy_1 = __webpack_require__(6);
@@ -8183,7 +8185,7 @@ exports.default = isCreditCardLike;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var errors_1 = __webpack_require__(2);
-var errors_2 = __webpack_require__(9);
+var errors_2 = __webpack_require__(8);
 var payment_strategy_1 = __webpack_require__(6);
 var BraintreePaypalPaymentStrategy = /** @class */ (function (_super) {
     tslib_1.__extends(BraintreePaypalPaymentStrategy, _super);
@@ -8598,7 +8600,7 @@ exports.default = SquareScriptLoader;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var data_store_1 = __webpack_require__(1);
-var utility_1 = __webpack_require__(8);
+var utility_1 = __webpack_require__(9);
 var actionTypes = __webpack_require__(61);
 var DEFAULT_STATE = {
     errors: {},
@@ -10853,7 +10855,7 @@ var request_sender_1 = __webpack_require__(10);
 var billing_1 = __webpack_require__(23);
 var cart_1 = __webpack_require__(11);
 var log_1 = __webpack_require__(84);
-var utility_1 = __webpack_require__(8);
+var utility_1 = __webpack_require__(9);
 var config_1 = __webpack_require__(26);
 var coupon_1 = __webpack_require__(15);
 var customer_1 = __webpack_require__(19);
@@ -11352,7 +11354,7 @@ exports.RequestErrorFactory = request_error_factory_1.default;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var errors_1 = __webpack_require__(9);
+var errors_1 = __webpack_require__(8);
 var errors_2 = __webpack_require__(2);
 var request_error_factory_1 = __webpack_require__(88);
 function createRequestErrorFactory() {
@@ -11478,7 +11480,7 @@ exports.default = createCheckoutStoreReducer;
 Object.defineProperty(exports, "__esModule", { value: true });
 var billing_1 = __webpack_require__(23);
 var cart_1 = __webpack_require__(11);
-var utility_1 = __webpack_require__(8);
+var utility_1 = __webpack_require__(9);
 var config_1 = __webpack_require__(26);
 var coupon_1 = __webpack_require__(15);
 var customer_1 = __webpack_require__(19);
