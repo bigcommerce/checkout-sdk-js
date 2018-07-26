@@ -23,4 +23,7 @@ export interface KlarnaAuthorizationResponse {
     authorization_token: string;
     approved: boolean;
     show_form: boolean;
+    error?: {
+        invalid_fields: string[];
+    };
 }
