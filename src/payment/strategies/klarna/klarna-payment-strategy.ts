@@ -1,7 +1,15 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { PaymentMethodCancelledError } from '../../errors';
+import PaymentMethodInvalidError from '../../errors/payment-method-invalid-error';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -98,7 +106,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                     }
 
                     if (!response.show_form) {
-                        reject(response);
+                        reject(new PaymentMethodInvalidError());
                     } else {
                         resolve(response);
                     }
@@ -113,11 +121,15 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             }
 
             this._klarnaCredit.authorize({}, res => {
-                if (!res.approved) {
-                    reject(res);
-                } else {
-                    resolve(res);
+                if (res.approved) {
+                    return resolve(res);
                 }
+
+                if (res.show_form) {
+                    return reject(new PaymentMethodCancelledError());
+                }
+
+                reject(new PaymentMethodInvalidError());
             });
         });
     }
