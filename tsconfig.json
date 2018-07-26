@@ -9,6 +9,7 @@
             "es6",
             "scripthost"
         ],
+        "module": "es6",
         "moduleResolution": "node",
         "skipLibCheck": true,
         "sourceMap": true,
