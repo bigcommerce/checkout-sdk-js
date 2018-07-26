@@ -9,4 +9,8 @@ describe('toSingleLine()', () => {
 
         expect(toSingleLine(message)).toEqual('Hello world. Foo bar.');
     });
+
+    it('returns empty string when no arguments are supplied', () => {
+        expect(toSingleLine()).toEqual('');
+    });
 });
