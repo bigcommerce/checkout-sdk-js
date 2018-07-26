@@ -30,7 +30,7 @@
     "prebundle": "rm -rf dist",
     "bundle": "webpack --config webpack.config.js",
     "bundle:analyze": "npm run --silent bundle -- --config-name umd --profile --json > webpack-stats.json && webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip",
-    "bundle:watch": "npm run bundle -- --config-name cjs --watch",
+    "bundle:watch": "npm run bundle -- --config-name cjs --watch -d --progress",
     "bundle-dts": "tsc --outDir temp --declaration && api-extractor run && rm -rf temp",
     "docs": "typedoc --theme markdown --plugin @bigcommerce/typedoc-plugin-markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected --mdEngine github --mdHideSources dist/checkout-sdk.d.ts",
     "lint": "npm run lint:js && npm run lint:ts",
