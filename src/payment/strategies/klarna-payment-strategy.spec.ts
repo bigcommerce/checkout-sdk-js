@@ -12,6 +12,7 @@ import { getKlarna, getPaymentMethodsState } from '../../payment/payment-methods
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { KlarnaCredit, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
 import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../errors';
 import PaymentMethod from '../payment-method';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
 import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../payment-method-action-types';
@@ -136,6 +137,46 @@ describe('KlarnaPaymentStrategy', () => {
 
             expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+        });
+
+        describe('when klarna authorizaron is not approved', () => {
+            beforeEach(async () => {
+                klarnaCredit.authorize = jest.fn(
+                    (params, callback) => callback({ approved: false, show_form: true })
+                );
+            });
+
+            it('rejects the payment execution with cancelled payment error', async () => {
+                const rejectedSpy = jest.fn();
+                await strategy.execute(payload).catch(rejectedSpy);
+
+                expect(rejectedSpy)
+                    .toHaveBeenCalledWith(new PaymentMethodCancelledError());
+
+                expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+                expect(remoteCheckoutActionCreator.initializePayment)
+                    .not.toHaveBeenCalled();
+            });
+        });
+
+        describe('when klarna authorizaron fails', () => {
+            beforeEach(async () => {
+                klarnaCredit.authorize = jest.fn(
+                    (params, callback) => callback({ approved: false })
+                );
+            });
+
+            it('rejects the payment execution with invalid payment error', async () => {
+                const rejectedSpy = jest.fn();
+                await strategy.execute(payload).catch(rejectedSpy);
+
+                expect(rejectedSpy)
+                    .toHaveBeenCalledWith(new PaymentMethodInvalidError());
+
+                expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+                expect(remoteCheckoutActionCreator.initializePayment)
+                    .not.toHaveBeenCalled();
+            });
         });
     });
 });
