@@ -3,6 +3,7 @@ import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import { KlarnaCredit, KlarnaLoadResponse, KlarnaScriptLoader } from '../../remote-checkout/methods/klarna';
+import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../errors';
 import PaymentMethodActionCreator from '../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
@@ -97,7 +98,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                     }
 
                     if (!response.show_form) {
-                        reject(response);
+                        reject(new PaymentMethodInvalidError());
                     } else {
                         resolve(response);
                     }
@@ -112,11 +113,15 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             }
 
             this._klarnaCredit.authorize({}, res => {
-                if (!res.approved) {
-                    reject(res);
-                } else {
-                    resolve(res);
+                if (res.approved) {
+                    return resolve(res);
                 }
+
+                if (res.show_form) {
+                    return reject(new PaymentMethodCancelledError());
+                }
+
+                reject(new PaymentMethodInvalidError());
             });
         });
     }
