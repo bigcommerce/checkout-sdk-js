@@ -1,10 +1,11 @@
 const { DefinePlugin } = require('webpack');
 const path = require('path');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
 const assetConfig = {
     devtool: 'source-map',
+    mode: 'production',
+    target: 'web',
 
     entry: {
         'checkout-sdk': './src/index.ts',
@@ -40,22 +41,17 @@ module.exports = [
             libraryTarget: 'umd',
             filename: '[name].umd.js',
         }),
-        plugins: [
-            new DefinePlugin({
-                'process.env.NODE_ENV': JSON.stringify('production'),
-            }),
-            new UglifyJSPlugin({
-                sourceMap: true,
-            }),
-        ]
     }),
+
     Object.assign({}, assetConfig, {
         name: 'cjs',
         externals: [
             nodeExternals()
         ],
-        node: {
-            process: false,
-        },
-    })
+        plugins: [
+            new DefinePlugin({
+                'process.env.NODE_ENV': 'process.env.NODE_ENV',
+            }),
+        ],
+    }),
 ];
