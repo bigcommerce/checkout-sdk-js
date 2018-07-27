@@ -96,8 +96,7 @@ describe('KlarnaPaymentStrategy', () => {
         jest.spyOn(scriptLoader, 'load')
             .mockImplementation(() => Promise.resolve(klarnaCredit));
 
-        jest.spyOn(store, 'subscribe')
-            .mockImplementation(() => Promise.resolve());
+        jest.spyOn(store, 'subscribe');
     });
 
     describe('#initialize()', () => {
@@ -116,6 +115,10 @@ describe('KlarnaPaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(loadPaymentMethodAction);
         });
 
+        it('loads store subscribe once', () => {
+            expect(store.subscribe).toHaveBeenCalledTimes(1);
+        });
+
         it('loads widget', () => {
             expect(klarnaCredit.init).toHaveBeenCalledWith({ client_token: 'foo' });
             expect(klarnaCredit.load).toHaveBeenCalledTimes(1);
@@ -123,6 +126,20 @@ describe('KlarnaPaymentStrategy', () => {
 
         it('triggers callback with response', () => {
             expect(onLoad).toHaveBeenCalledWith({ show_form: true });
+        });
+
+        describe('on subsequent calls', () => {
+            beforeEach(async () => {
+                await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container', onLoad } });
+                await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container', onLoad } });
+            });
+
+            it('does not call anything again', async () => {
+                expect(store.subscribe).toHaveBeenCalledTimes(1);
+                expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledTimes(1);
+                expect(klarnaCredit.init).toHaveBeenCalledTimes(1);
+                expect(klarnaCredit.load).toHaveBeenCalledTimes(1);
+            });
         });
     });
 
