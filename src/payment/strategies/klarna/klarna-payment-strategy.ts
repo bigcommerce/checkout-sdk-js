@@ -32,11 +32,15 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
     }
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        if (this._isInitialized) {
+            return super.initialize(options);
+        }
+
         return this._klarnaScriptLoader.load()
             .then(klarnaCredit => { this._klarnaCredit = klarnaCredit; })
             .then(() => {
                 this._unsubscribe = this._store.subscribe(
-                    () => this._loadWidget(options),
+                    () => this._isInitialized && this._loadWidget(options),
                     state => {
                         const checkout = state.checkout.getCheckout();
 
