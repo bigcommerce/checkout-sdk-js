@@ -36,7 +36,7 @@ function dataReducer(data: PaymentMethod[] | undefined, action: Action): Payment
         });
 
     case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
-        return action.payload.paymentMethods || [];
+        return action.payload && action.payload.paymentMethods ? action.payload.paymentMethods : [];
 
     default:
         return data;
