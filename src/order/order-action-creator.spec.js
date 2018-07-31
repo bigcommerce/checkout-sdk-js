@@ -1,5 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { merge } from 'lodash';
+import { omit, merge } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { getCart, getCartState } from '../cart/internal-carts.mock';
@@ -271,11 +271,18 @@ describe('OrderActionCreator', () => {
             expect(checkoutValidator.validate).toHaveBeenCalled();
         });
 
-        it('submits order payload', async () => {
+        it('submits order payload with payment data', async () => {
             await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
                 .toPromise();
 
             expect(checkoutClient.submitOrder).toHaveBeenCalledWith(getInternalOrderRequestBody(), undefined);
+        });
+
+        it('submits order payload without payment data', async () => {
+            await Observable.from(orderActionCreator.submitOrder(omit(getOrderRequestBody(), 'payment'))(store))
+                .toPromise();
+
+            expect(checkoutClient.submitOrder).toHaveBeenCalledWith(omit(getInternalOrderRequestBody(), 'payment'), undefined);
         });
 
         it('does not submit order if cart verification fails', async () => {

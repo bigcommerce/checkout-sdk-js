@@ -130,11 +130,14 @@ export default class OrderActionCreator {
         const { payment, ...order } = payload;
 
         if (!payment) {
-            return order;
+            return {
+                ...order,
+                customerMessage,
+            };
         }
 
         return {
-            ...payload,
+            ...order,
             customerMessage,
             payment: {
                 paymentData: payment.paymentData,
