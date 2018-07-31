@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.28.6"></a>
+## [0.28.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.5...v0.28.6) (2018-07-31)
+
+
+### Bug Fixes
+
+* **order:** CHECKOUT-3390 Fix customer message getting overridden when submitting order ([60f10b5](https://github.com/bigcommerce/checkout-sdk-js/commit/60f10b5))
+* **payment:** CHECKOUT-3380 Check payload is an object when loading payment methods ([f4ad1cd](https://github.com/bigcommerce/checkout-sdk-js/commit/f4ad1cd))
+
+
+
 <a name="0.28.5"></a>
 ## [0.28.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.4...v0.28.5) (2018-07-30)
 
