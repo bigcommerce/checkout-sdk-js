@@ -1,21 +1,23 @@
 import { isEqual } from 'lodash';
 
-import { omitPrivate } from '../common/utility';
+import Address from './address';
 
-import InternalAddress from './internal-address';
-
-export default function isAddressEqual(addressA: Partial<InternalAddress>, addressB: Partial<InternalAddress>): boolean {
+export default function isAddressEqual(addressA: Partial<Address>, addressB: Partial<Address>): boolean {
     return isEqual(normalize(addressA), normalize(addressB));
 }
 
-function normalize(address: Partial<InternalAddress>): Partial<InternalAddress> {
-    const ignoredKeys = ['id', 'provinceCode'];
-
-    return (Object.keys(omitPrivate(address) || {}) as Array<keyof InternalAddress>)
-        .reduce(
-            (result, key) => ignoredKeys.indexOf(key) === -1 && address[key] ?
-                { ...result, [key]: address[key] } :
-                result,
-            {}
-        );
+function normalize(address: Partial<Address>): Partial<Address> {
+    return {
+        firstName: address.firstName,
+        lastName: address.lastName,
+        company: address.company,
+        address1: address.address1,
+        address2: address.address2,
+        city: address.city,
+        stateOrProvince: address.stateOrProvince,
+        countryCode: address.countryCode,
+        postalCode: address.postalCode,
+        phone: address.phone,
+        customFields: address.customFields,
+    };
 }
