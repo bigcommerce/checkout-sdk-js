@@ -31,7 +31,11 @@ import {
     ShippingRequestOptions,
     ShippingStrategyActionCreator,
 } from '../shipping';
-import { ConsignmentUpdateRequestBody } from '../shipping/consignment';
+import {
+    ConsignmentAddressAssignmentRequestBody,
+    ConsignmentIdAssignmentRequestBody,
+    ConsignmentUpdateRequestBody
+} from '../shipping/consignment';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
@@ -251,7 +255,7 @@ export default class CheckoutService {
      * payment methods, such as PayPal. Or the customer has applied a gift
      * certificate that exceeds the grand total amount.
      *
-     * If the order is submitted successfully, you can retrieve the newly
+     * If the order is submitted successfullpy, you can retrieve the newly
      * created order by calling `CheckoutStoreSelector#getOrder`.
      *
      * ```js
@@ -746,7 +750,7 @@ export default class CheckoutService {
      * not get validated until you submit the order.
      *
      * ```js
-     * const state = await service.createConsignments(consignments, address);
+     * const state = await service.createConsignments(consignments);
      *
      * console.log(state.checkout.getConsignments());
      * ```
@@ -788,7 +792,7 @@ export default class CheckoutService {
      * not get validated until you submit the order.
      *
      * ```js
-     * const state = await service.updateConsignment(consignmentId, address);
+     * const state = await service.updateConsignment(consignment);
      *
      * console.log(state.checkout.getConsignments());
      * ```
@@ -802,6 +806,44 @@ export default class CheckoutService {
         options?: RequestOptions
     ): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.updateConsignment(consignment, options);
+
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    }
+
+    /**
+     * Convenience method that assigns items to be shipped to a specific consignment.
+     *
+     * Note: this is a wrapper method for CheckoutService#updateConsignment
+     *
+     * @param consignment - The consignment data that will be used.
+     * @param options - Options for the request
+     * @returns A promise that resolves to the current state.
+     */
+    assignItemsToConsignment(
+        consignment: ConsignmentIdAssignmentRequestBody,
+        options?: RequestOptions
+    ): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.assignItemsByConsignmentId(consignment, options);
+
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    }
+
+    /**
+     * Convenience method that assigns items to be shipped to a specific address.
+     *
+     * Note: this method finds an existing consignment that matches the provided address
+     * and assigns the provided items. If no consignment matches the address, a new one
+     * will be created.
+     *
+     * @param consignment - The consignment data that will be used.
+     * @param options - Options for the request
+     * @returns A promise that resolves to the current state.
+     */
+    assignItemsToAddress(
+        consignment: ConsignmentAddressAssignmentRequestBody,
+        options?: RequestOptions
+    ): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.assignItemsByAddress(consignment, options);
 
         return this._dispatch(action, { queueId: 'shippingStrategy' });
     }
@@ -832,7 +874,7 @@ export default class CheckoutService {
         shippingOptionId: string,
         options?: ShippingRequestOptions
     ): Promise<CheckoutSelectors> {
-        const action = this._consignmentActionCreator.updateConsignment({
+        const action = this._consignmentActionCreator.updateShippingOption({
             id: consignmentId,
             shippingOptionId,
         }, options);

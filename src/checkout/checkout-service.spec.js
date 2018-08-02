@@ -691,14 +691,14 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             const action = Observable.of(createAction('UPDATE_CONSIGNMENT'));
 
-            jest.spyOn(consignmentActionCreator, 'updateConsignment')
+            jest.spyOn(consignmentActionCreator, 'updateShippingOption')
                 .mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
 
             await checkoutService.selectConsignmentShippingOption('foo', 'bar', options);
 
-            expect(consignmentActionCreator.updateConsignment).toHaveBeenCalledWith({
+            expect(consignmentActionCreator.updateShippingOption).toHaveBeenCalledWith({
                 id: 'foo',
                 shippingOptionId: 'bar',
             }, options);
@@ -726,6 +726,63 @@ describe('CheckoutService', () => {
             await checkoutService.updateConsignment(payload, options);
 
             expect(consignmentActionCreator.updateConsignment)
+                .toHaveBeenCalledWith(payload, options);
+
+            expect(store.dispatch)
+                .toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
+        });
+    });
+
+    describe('#assignItemsToConsignment()', () => {
+        it('dispatches action to update consignment', async () => {
+            const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('bar'));
+
+            jest.spyOn(consignmentActionCreator, 'assignItemsByConsignmentId')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const payload = {
+                id: 'foo',
+                lineItems: [{
+                    itemId: 'item-foo',
+                    quantity: 2,
+                }],
+            };
+
+            await checkoutService.assignItemsToConsignment(payload, options);
+
+            expect(consignmentActionCreator.assignItemsByConsignmentId)
+                .toHaveBeenCalledWith(payload, options);
+
+            expect(store.dispatch)
+                .toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
+        });
+    });
+
+    describe('#assignItemsToAddress()', () => {
+        it('dispatches action to update consignment', async () => {
+            const address = getShippingAddress();
+            const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('bar'));
+
+            jest.spyOn(consignmentActionCreator, 'assignItemsByAddress')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const payload = {
+                shippingAddress: address,
+                lineItems: [{
+                    itemId: 'item-foo',
+                    quantity: 2,
+                }],
+            };
+
+            await checkoutService.assignItemsToAddress(payload, options);
+
+            expect(consignmentActionCreator.assignItemsByAddress)
                 .toHaveBeenCalledWith(payload, options);
 
             expect(store.dispatch)

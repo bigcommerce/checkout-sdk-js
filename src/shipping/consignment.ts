@@ -9,7 +9,7 @@ export default interface Consignment {
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
-    lineItemIds?: string[];
+    lineItemIds: string[];
 }
 
 export type ConsignmentRequestBody =
@@ -18,6 +18,20 @@ export type ConsignmentRequestBody =
     ConsignmentShippingOptionRequestBody;
 
 export interface ConsignmentCreateRequestBody {
+    shippingAddress: AddressRequestBody;
+    lineItems: ConsignmentLineItem[];
+}
+
+export type ConsignmentAssignmentRequestBody =
+    ConsignmentIdAssignmentRequestBody |
+    ConsignmentAddressAssignmentRequestBody;
+
+export interface ConsignmentIdAssignmentRequestBody {
+    id: string;
+    lineItems: ConsignmentLineItem[];
+}
+
+export interface ConsignmentAddressAssignmentRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
 }

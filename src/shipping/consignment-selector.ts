@@ -1,5 +1,7 @@
 import { find } from 'lodash';
 
+import { AddressRequestBody } from '../address';
+import isAddressEqual from '../address/is-address-equal';
 import { selector } from '../common/selector';
 
 import Consignment from './consignment';
@@ -14,6 +16,18 @@ export default class ConsignmentSelector {
 
     getConsignments(): Consignment[] | undefined {
         return this._consignments.data;
+    }
+
+    getConsignmentByAddress(address: AddressRequestBody): Consignment | undefined {
+        const consignments = this._consignments.data;
+
+        if (!consignments || !consignments.length) {
+            return undefined;
+        }
+
+        return find(consignments, consignment =>
+            isAddressEqual(consignment.shippingAddress, address)
+        );
     }
 
     getShippingOption(): ShippingOption | undefined {
@@ -44,12 +58,24 @@ export default class ConsignmentSelector {
         return find(this._consignments.errors.updateError);
     }
 
+    getUpdateErrorByAddress(address: AddressRequestBody): Error | undefined {
+        const consignment = this.getConsignmentByAddress(address);
+
+        return consignment && this.getUpdateError(consignment.id);
+    }
+
     getUpdateShippingOptionError(consignmentId?: string): Error | undefined {
         if (consignmentId) {
             return this._consignments.errors.updateShippingOptionError[consignmentId];
         }
 
         return find(this._consignments.errors.updateShippingOptionError);
+    }
+
+    getUpdateShippingOptionErrorByAddress(address: AddressRequestBody): Error | undefined {
+        const consignment = this.getConsignmentByAddress(address);
+
+        return consignment && this.getUpdateShippingOptionError(consignment.id);
     }
 
     isLoading(): boolean {
@@ -72,11 +98,23 @@ export default class ConsignmentSelector {
         return find(this._consignments.statuses.isUpdating) === true;
     }
 
+    isUpdatingAddress(address: AddressRequestBody): boolean {
+        const consignment = this.getConsignmentByAddress(address);
+
+        return !!consignment && this.isUpdating(consignment.id);
+    }
+
     isUpdatingShippingOption(consignmentId?: string): boolean {
         if (consignmentId) {
             return this._consignments.statuses.isUpdatingShippingOption[consignmentId] === true;
         }
 
         return find(this._consignments.statuses.isUpdatingShippingOption) === true;
+    }
+
+    isUpdatingAddressShippingOption(address: AddressRequestBody): boolean {
+        const consignment = this.getConsignmentByAddress(address);
+
+        return !!consignment && this.isUpdatingShippingOption(consignment.id);
     }
 }

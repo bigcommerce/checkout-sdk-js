@@ -216,21 +216,6 @@ describe('consignmentActionCreator', () => {
             ]);
         });
 
-        it('emits actions if able to update shipping option', async () => {
-            actions = await Observable.from(consignmentActionCreator.updateConsignment(updateShippingOptionPayload)(store))
-                .toArray()
-                .toPromise();
-
-            expect(actions).toEqual([
-                { type: ConsignmentActionType.UpdateShippingOptionRequested, payload: undefined, meta: { id: consignment.id } },
-                {
-                    type: ConsignmentActionType.UpdateShippingOptionSucceeded,
-                    payload: response.body,
-                    meta: { id: consignment.id },
-                },
-            ]);
-        });
-
         it('emits error actions if unable to update consignment', async () => {
             consignmentRequestSender.updateConsignment.mockImplementation(() => Promise.reject(errorResponse));
 
@@ -252,12 +237,57 @@ describe('consignmentActionCreator', () => {
                 });
         });
 
+        it('sends request to update consignment', async () => {
+            await Observable.from(consignmentActionCreator.updateConsignment(consignment, options)(store))
+                .toPromise();
+
+            expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                consignment,
+                options
+            );
+        });
+    });
+
+    describe('#updateShippingOption()', () => {
+        describe('when store has no checkout data / id', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({});
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    actions = await Observable.from(consignmentActionCreator.updateShippingOption(consignment)(store))
+                        .toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(MissingDataError);
+                    expect(actions).toEqual(undefined);
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        it('emits actions if able to update shipping option', async () => {
+            actions = await Observable.from(consignmentActionCreator.updateShippingOption(updateShippingOptionPayload)(store))
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: ConsignmentActionType.UpdateShippingOptionRequested, payload: undefined, meta: { id: consignment.id } },
+                {
+                    type: ConsignmentActionType.UpdateShippingOptionSucceeded,
+                    payload: response.body,
+                    meta: { id: consignment.id },
+                },
+            ]);
+        });
+
         it('emits error actions if unable to update shipping option', async () => {
             consignmentRequestSender.updateConsignment.mockImplementation(() => Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
 
-            await Observable.from(consignmentActionCreator.updateConsignment(updateShippingOptionPayload)(store))
+            await Observable.from(consignmentActionCreator.updateShippingOption(updateShippingOptionPayload)(store))
                 .catch(errorHandler)
                 .toArray()
                 .subscribe((actions) => {
@@ -273,13 +303,13 @@ describe('consignmentActionCreator', () => {
                 });
         });
 
-        it('sends request to update consignment', async () => {
-            await Observable.from(consignmentActionCreator.updateConsignment(consignment, options)(store))
+        it('sends request to update shipping option', async () => {
+            await Observable.from(consignmentActionCreator.updateShippingOption(updateShippingOptionPayload, options)(store))
                 .toPromise();
 
             expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
-                consignment,
+                updateShippingOptionPayload,
                 options
             );
         });
