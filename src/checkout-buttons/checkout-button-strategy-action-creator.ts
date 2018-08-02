@@ -58,7 +58,7 @@ export default class CheckoutButtonStrategyActionCreator {
     }
 
     private _loadCheckout(store: ReadableCheckoutStore, options?: RequestOptions): SubscribableOrPromise<LoadCheckoutAction> {
-        if (store.getState().checkout.isLoading() || store.getState().config.isLoading()) {
+        if (store.getState().checkout.isLoading()) {
             return new Observable<InternalCheckoutSelectors>(observer => store.subscribe(state => observer.next(state)))
                 .pipe(
                     takeWhile(state => !state.checkout.getCheckout()),
