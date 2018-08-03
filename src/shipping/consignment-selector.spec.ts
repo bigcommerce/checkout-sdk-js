@@ -189,47 +189,27 @@ describe('ConsignmentSelector', () => {
         });
     });
 
-    describe('#getUpdateErrorByAddress()', () => {
-        const error = new Error();
+    describe('#getItemAssignmentError()', () => {
+        const updateError = new Error();
+        const createError = new Error();
 
         beforeEach(() => {
             selector = new ConsignmentSelector(merge(state.consignments, {
                 errors: {
                     updateError: {
-                        '55c96cda6f04c': error,
+                        '55c96cda6f04c': updateError,
                     },
+                    createError,
                 },
             }));
         });
 
         it('returns first encountered error for consignment with matching address', () => {
-            expect(selector.getUpdateErrorByAddress(existingAddress)).toEqual(error);
+            expect(selector.getItemAssignmentError(existingAddress)).toEqual(updateError);
         });
 
-        it('returns undefined if address doesnt match existing consignments', () => {
-            expect(selector.getUpdateErrorByAddress(unexistingAddress)).toEqual(undefined);
-        });
-    });
-
-    describe('#getUpdateShippingOptionErrorByAddress()', () => {
-        const error = new Error();
-
-        beforeEach(() => {
-            selector = new ConsignmentSelector(merge(state.consignments, {
-                errors: {
-                    updateShippingOptionError: {
-                        '55c96cda6f04c': error,
-                    },
-                },
-            }));
-        });
-
-        it('returns first encountered error for consignment with matching address', () => {
-            expect(selector.getUpdateShippingOptionErrorByAddress(existingAddress)).toEqual(error);
-        });
-
-        it('returns undefined if address doesnt match existing consignments', () => {
-            expect(selector.getUpdateShippingOptionErrorByAddress(unexistingAddress)).toEqual(undefined);
+        it('returns create error when address does not match any consignment', () => {
+            expect(selector.getItemAssignmentError(unexistingAddress)).toEqual(createError);
         });
     });
 
@@ -313,25 +293,24 @@ describe('ConsignmentSelector', () => {
         });
     });
 
-    describe('#isUpdatingAddress()', () => {
-        const error = new Error();
-
+    describe('#isAssigningItems()', () => {
         beforeEach(() => {
             selector = new ConsignmentSelector(merge(state.consignments, {
                 statuses: {
                     isUpdating: {
                         '55c96cda6f04c': true,
                     },
+                    isCreating: false,
                 },
             }));
         });
 
-        it('returns true if updating consignment with given address', () => {
-            expect(selector.isUpdatingAddress(existingAddress)).toEqual(true);
+        it('returns isUpdating state for consignment that matches given address', () => {
+            expect(selector.isAssigningItems(existingAddress)).toEqual(true);
         });
 
-        it('returns false if no consignment is found matching given address', () => {
-            expect(selector.isUpdatingAddress(unexistingAddress)).toEqual(false);
+        it('returns isCreating state when no consignment matches address', () => {
+            expect(selector.isAssigningItems(unexistingAddress)).toEqual(false);
         });
     });
 
@@ -364,28 +343,6 @@ describe('ConsignmentSelector', () => {
             it('returns false if requested id is not being updated', () => {
                 expect(selector.isUpdatingShippingOption('bar')).toEqual(false);
             });
-        });
-    });
-
-    describe('#isUpdatingAddressShippingOption()', () => {
-        const error = new Error();
-
-        beforeEach(() => {
-            selector = new ConsignmentSelector(merge(state.consignments, {
-                statuses: {
-                    isUpdatingShippingOption: {
-                        '55c96cda6f04c': true,
-                    },
-                },
-            }));
-        });
-
-        it('returns true if updating shipping option for consignment with given address', () => {
-            expect(selector.isUpdatingAddressShippingOption(existingAddress)).toEqual(true);
-        });
-
-        it('returns false if no consignment is found matching given address', () => {
-            expect(selector.isUpdatingAddressShippingOption(unexistingAddress)).toEqual(false);
         });
     });
 });

@@ -58,10 +58,10 @@ export default class ConsignmentSelector {
         return find(this._consignments.errors.updateError);
     }
 
-    getUpdateErrorByAddress(address: AddressRequestBody): Error | undefined {
+    getItemAssignmentError(address: AddressRequestBody): Error | undefined {
         const consignment = this.getConsignmentByAddress(address);
 
-        return consignment && this.getUpdateError(consignment.id);
+        return consignment ? this.getUpdateError(consignment.id) : this.getCreateError();
     }
 
     getUpdateShippingOptionError(consignmentId?: string): Error | undefined {
@@ -70,12 +70,6 @@ export default class ConsignmentSelector {
         }
 
         return find(this._consignments.errors.updateShippingOptionError);
-    }
-
-    getUpdateShippingOptionErrorByAddress(address: AddressRequestBody): Error | undefined {
-        const consignment = this.getConsignmentByAddress(address);
-
-        return consignment && this.getUpdateShippingOptionError(consignment.id);
     }
 
     isLoading(): boolean {
@@ -98,10 +92,10 @@ export default class ConsignmentSelector {
         return find(this._consignments.statuses.isUpdating) === true;
     }
 
-    isUpdatingAddress(address: AddressRequestBody): boolean {
+    isAssigningItems(address: AddressRequestBody): boolean {
         const consignment = this.getConsignmentByAddress(address);
 
-        return !!consignment && this.isUpdating(consignment.id);
+        return consignment ? this.isUpdating(consignment.id) : this.isCreating();
     }
 
     isUpdatingShippingOption(consignmentId?: string): boolean {
@@ -110,11 +104,5 @@ export default class ConsignmentSelector {
         }
 
         return find(this._consignments.statuses.isUpdatingShippingOption) === true;
-    }
-
-    isUpdatingAddressShippingOption(address: AddressRequestBody): boolean {
-        const consignment = this.getConsignmentByAddress(address);
-
-        return !!consignment && this.isUpdatingShippingOption(consignment.id);
     }
 }

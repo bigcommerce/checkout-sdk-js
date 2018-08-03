@@ -43,12 +43,15 @@ export default class ConsignmentActionCreator {
         return store => {
             const state = store.getState();
             const existingConsignment = state.consignments.getConsignmentByAddress(consignment.shippingAddress);
-            const cart = state.cart.getCart();
 
             return this._createOrUpdateConsignment({
                 id: existingConsignment && existingConsignment.id,
                 shippingAddress: consignment.shippingAddress,
-                lineItems: this._combineLineItems(consignment, existingConsignment, cart),
+                lineItems: this._combineLineItems(
+                    consignment,
+                    existingConsignment,
+                    state.cart.getCart()
+                ),
             }, options)(store);
         };
     }
@@ -56,19 +59,29 @@ export default class ConsignmentActionCreator {
     assignItemsByConsignmentId(
         consignment: ConsignmentIdAssignmentRequestBody,
         options?: RequestOptions
-    ): ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
+    ): ThunkAction<UpdateConsignmentAction, InternalCheckoutSelectors> {
         return store => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
+
             const existingConsignment = this._getConsignmentById(store, consignment.id);
-            const cart = store.getState().cart.getCart();
 
             if (!existingConsignment) {
                 throw new InvalidArgumentError('Invalid consignment was provided');
             }
 
-            return this._createOrUpdateConsignment({
+            return this.updateConsignment({
                 id: existingConsignment.id,
                 shippingAddress: existingConsignment.shippingAddress,
-                lineItems: this._combineLineItems(consignment, existingConsignment, cart),
+                lineItems: this._combineLineItems(
+                    consignment,
+                    existingConsignment,
+                    state.cart.getCart()
+                ),
             }, options)(store);
         };
     }
