@@ -1,4 +1,5 @@
 import { createAction, Action } from '@bigcommerce/data-store';
+import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
@@ -67,7 +68,8 @@ describe('ChasePayPaymentStrategy', () => {
             chasePayScriptLoader,
             paymentActionCreator,
             orderActionCreator,
-            requestSender
+            requestSender,
+            createFormPoster()
         );
 
         container = document.createElement('div');
@@ -111,7 +113,6 @@ describe('ChasePayPaymentStrategy', () => {
 
             await strategy.initialize(chasePayOptions);
 
-            expect(JPMC.ChasePay.on).toHaveBeenCalledWith('START_CHECKOUT', expect.any(Function));
             expect(JPMC.ChasePay.on).toHaveBeenCalledWith('COMPLETE_CHECKOUT', expect.any(Function));
         });
     });

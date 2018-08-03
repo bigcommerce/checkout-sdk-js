@@ -14,7 +14,6 @@ import {
     BraintreeCreditCardPaymentStrategy,
     BraintreePaypalPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
-    ChasepayPaymentStrategy,
     CreditCardPaymentStrategy,
     KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
@@ -33,13 +32,13 @@ import { AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from './strategies/braintree';
 import { KlarnaScriptLoader } from './strategies/klarna';
 
-import { PaymentStrategyActionCreator } from '.';
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import PaymentRequestSender from './payment-request-sender';
+import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 
-import { ChasePayScriptLoader } from './strategies/chasepay';
+import { ChasepayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { SquareScriptLoader } from './strategies/square';
 import { WepayRiskClient } from './strategies/wepay';
 
@@ -229,7 +228,8 @@ export default function createPaymentStrategyRegistry(
             new ChasePayScriptLoader(getScriptLoader()),
             paymentActionCreator,
             orderActionCreator,
-            requestSender
+            requestSender,
+            createFormPoster()
         )
     );
 

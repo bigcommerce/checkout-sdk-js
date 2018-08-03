@@ -6,6 +6,8 @@ export function getChasePayScriptMock(): JPMC {
             insertButtons: jest.fn(),
             isChasePayUp: jest.fn(),
             startCheckout: jest.fn(),
+            configure: jest.fn(),
+            showLoadingAnimation: jest.fn(),
             on: jest.fn(),
             EventType: {
                 START_CHECKOUT: 'START_CHECKOUT',

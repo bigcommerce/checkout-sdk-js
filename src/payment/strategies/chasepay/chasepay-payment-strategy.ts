@@ -1,3 +1,4 @@
+import { FormPoster } from '@bigcommerce/form-poster';
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import {
@@ -24,13 +25,23 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
         private _chasePayScriptLoader: ChasePayScriptLoader,
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
-        private _requestSender: RequestSender
+        private _requestSender: RequestSender,
+        private _formPoster: FormPoster
     ) {
         super(store);
     }
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { methodId } = options;
+        const { methodId, chasepay: chasepayCheckoutOptions } = options;
+
+        if (!chasepayCheckoutOptions ) {
+            throw new InvalidArgumentError('Unable to initialize payment because "options.chasepayCheckoutOptions" argument is not provided.');
+        }
+
+        const {
+            onError = () => {},
+            onPaymentSelect = () => {},
+        } = chasepayCheckoutOptions;
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(state => {
@@ -45,13 +56,26 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
 
                 return this._chasePayScriptLoader.load(this._paymentMethod.config.testMode)
                     .then(({ ChasePay }) => {
-                        ChasePay.on(ChasePay.EventType.START_CHECKOUT, () => {
-                            this._refreshDigitalSessionId(methodId)
-                                .then(digitalSessionId => {
-                                    ChasePay.startCheckout(digitalSessionId);
-                                });
+                        const { COMPLETE_CHECKOUT } = ChasePay.EventType;
+
+                        ChasePay.on(COMPLETE_CHECKOUT, (payload: ChasePaySuccessPayload) => {
+                            this._setExternalCheckoutData(payload).then(() => {
+                                onPaymentSelect();
+                                this._reloadPage();
+                            });
                         });
-                        ChasePay.on(ChasePay.EventType.COMPLETE_CHECKOUT, (payload: ChasePaySuccessPayload) => this._setExternalCheckoutData(payload));
+
+                        this._refreshDigitalSessionId(methodId)
+                            .then(digitalSessionId => {
+                                ChasePay.configure({
+                                    language: storeConfig.storeProfile.storeLanguage,
+                                    zIndex: 100001,
+                                    sessionWarningTime: 300000,
+                                    sessionTimeoutTime: 360000,
+                                });
+                                ChasePay.showLoadingAnimation();
+                                ChasePay.startCheckout(digitalSessionId);
+                            }).catch(error => onError(error));
                     });
           })
           .then(() => super.initialize(options));
@@ -99,6 +123,18 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
             });
     }
 
+    private _reloadPage() {
+        this._formPoster.postForm('/checkout.php', {
+            headers: {
+                Accept: 'text/html',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            params: {
+                fromChasePay: true,
+            },
+        });
+    }
+
     private _setExternalCheckoutData(payload: ChasePaySuccessPayload): Promise<Response> {
         const url = `checkout.php?provider=chasepay&action=set_external_checkout`;
         const options = {
@@ -117,4 +153,17 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
 
 export interface ChasePayInitializeOptions {
     container: string;
+
+    /**
+     * A callback that gets called when ChasePay fails to initialize or
+     * selects a payment option.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: Error): void;
+
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
+    onPaymentSelect?(): void;
 }
