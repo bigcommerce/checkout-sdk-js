@@ -19,7 +19,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { SquareFormElement, SquareFormOptions, Error, CardData, DigitalWalletType } from './square-form';
+import SquarePaymentForm, { CardData, DigitalWalletType, Error, SquareFormElement, SquareFormOptions } from './square-form';
 import SquareScriptLoader from './square-script-loader';
 
 export default class SquarePaymentStrategy extends PaymentStrategy {
@@ -38,7 +38,6 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     }
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        console.log(options);
         return this._scriptLoader.load()
             .then(createSquareForm =>
                 new Promise((resolve, reject) => {
@@ -136,14 +135,14 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                  * Triggered when: a digital wallet payment button is clicked.
                 */
                 createPaymentRequest: () => {
-                    const state = this._store.getState(); 
+                    const state = this._store.getState();
                     const checkout = state.checkout.getCheckout();
                     const storeConfig = state.config.getStoreConfig();
-    
+
                     if (!checkout) {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                     }
-    
+
                     if (!storeConfig) {
                         throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                     }
@@ -181,7 +180,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
           },
           body: toFormUrlEncoded({
-              nonce: nonce,
+              nonce: { nonce },
               cardData: JSON.stringify(cardData),
           }),
         };

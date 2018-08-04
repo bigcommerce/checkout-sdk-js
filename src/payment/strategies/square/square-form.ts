@@ -45,7 +45,7 @@ export enum CardBrand {
     masterCard,
     unionPay,
     unknown,
-    visa
+    visa,
 }
 
 export enum DigitalWalletType {
