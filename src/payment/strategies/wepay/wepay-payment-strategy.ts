@@ -29,9 +29,7 @@ export default class WepayPaymentStrategy extends CreditCardPaymentStrategy {
         const payloadWithToken = merge({}, payload, {
             payment: {
                 paymentData: {
-                    extraData: {
-                        riskToken: token,
-                    },
+                    deviceSessionId: token,
                 },
             },
         });
