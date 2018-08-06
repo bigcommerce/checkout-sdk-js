@@ -34,4 +34,11 @@ export default class ConsignmentRequestSender {
 
         return this._requestSender.put(url, { params: DEFAULT_PARAMS, body, headers, timeout });
     }
+
+    deleteConsignment(checkoutId: string, consignmentId: string, { timeout }: RequestOptions = {}): Promise<Response<Checkout>> {
+        const url = `/api/storefront/checkouts/${checkoutId}/consignments/${consignmentId}`;
+        const headers = { Accept: ContentType.JsonV1 };
+
+        return this._requestSender.delete(url, { params: DEFAULT_PARAMS, headers, timeout });
+    }
 }

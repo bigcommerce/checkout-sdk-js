@@ -13,6 +13,10 @@ export enum ConsignmentActionType {
     UpdateConsignmentSucceeded = 'UPDATE_CONSIGNMENT_SUCCEEDED',
     UpdateConsignmentFailed = 'UPDATE_CONSIGNMENT_FAILED',
 
+    DeleteConsignmentRequested = 'DELETE_CONSIGNMENT_REQUESTED',
+    DeleteConsignmentSucceeded = 'DELETE_CONSIGNMENT_SUCCEEDED',
+    DeleteConsignmentFailed = 'DELETE_CONSIGNMENT_FAILED',
+
     UpdateShippingOptionRequested = 'UPDATE_SHIPPING_OPTION_REQUESTED',
     UpdateShippingOptionSucceeded = 'UPDATE_SHIPPING_OPTION_SUCCEEDED',
     UpdateShippingOptionFailed = 'UPDATE_SHIPPING_OPTION_FAILED',
@@ -25,6 +29,7 @@ export enum ConsignmentActionType {
 export type ConsignmentAction =
     CreateConsignmentsAction |
     UpdateConsignmentAction |
+    DeleteConsignmentAction |
     UpdateShippingOptionAction |
     LoadShippingOptionsAction;
 
@@ -37,6 +42,11 @@ export type UpdateConsignmentAction =
     UpdateConsignmentRequestedAction |
     UpdateConsignmentSucceededAction |
     UpdateConsignmentFailedAction;
+
+export type DeleteConsignmentAction =
+    DeleteConsignmentRequestedAction |
+    DeleteConsignmentSucceededAction |
+    DeleteConsignmentFailedAction;
 
 export type UpdateShippingOptionAction =
     UpdateShippingOptionRequestedAction |
@@ -70,6 +80,18 @@ export interface UpdateConsignmentSucceededAction extends Action<Checkout, Consi
 
 export interface UpdateConsignmentFailedAction extends Action<Error, ConsignmentMeta> {
     type: ConsignmentActionType.UpdateConsignmentFailed;
+}
+
+export interface DeleteConsignmentRequestedAction extends Action<null, ConsignmentMeta> {
+    type: ConsignmentActionType.DeleteConsignmentRequested;
+}
+
+export interface DeleteConsignmentSucceededAction extends Action<Checkout, ConsignmentMeta> {
+    type: ConsignmentActionType.DeleteConsignmentSucceeded;
+}
+
+export interface DeleteConsignmentFailedAction extends Action<Error, ConsignmentMeta> {
+    type: ConsignmentActionType.DeleteConsignmentFailed;
 }
 
 export interface UpdateShippingOptionRequestedAction extends Action<null, ConsignmentMeta> {

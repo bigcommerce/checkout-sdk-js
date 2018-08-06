@@ -59,6 +59,33 @@ describe('checkoutReducer', () => {
         });
     });
 
+    it('returns new state when consignment gets created', () => {
+        const action = createAction(ConsignmentActionType.CreateConsignmentsSucceeded, getCheckout(), { id: '123' });
+        const output = checkoutReducer(initialState, action);
+
+        expect(output).toEqual(expect.objectContaining({
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+        }));
+    });
+
+    it('returns new state when consignment gets updated', () => {
+        const action = createAction(ConsignmentActionType.UpdateConsignmentSucceeded, getCheckout(), { id: '123' });
+        const output = checkoutReducer(initialState, action);
+
+        expect(output).toEqual(expect.objectContaining({
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+        }));
+    });
+
+    it('returns new state when consignment gets deleted', () => {
+        const action = createAction(ConsignmentActionType.DeleteConsignmentSucceeded, getCheckout(), { id: '123' });
+        const output = checkoutReducer(initialState, action);
+
+        expect(output).toEqual(expect.objectContaining({
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+        }));
+    });
+
     it('returns new state when shipping option gets updated', () => {
         const action = createAction(ConsignmentActionType.UpdateShippingOptionSucceeded, getCheckout(), { id: '123' });
         const output = checkoutReducer(initialState, action);
