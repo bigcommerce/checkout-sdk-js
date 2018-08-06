@@ -12,10 +12,8 @@ import { RequestOptions } from '../common/http-request';
 
 import Consignment, {
     ConsignmentsRequestBody,
-    ConsignmentAddressAssignmentRequestBody,
     ConsignmentAssignmentRequestBody,
     ConsignmentCreateRequestBody,
-    ConsignmentIdAssignmentRequestBody,
     ConsignmentLineItem,
     ConsignmentRequestBody,
     ConsignmentShippingOptionRequestBody,
@@ -37,7 +35,7 @@ export default class ConsignmentActionCreator {
     ) {}
 
     assignItemsByAddress(
-        consignment: ConsignmentAddressAssignmentRequestBody,
+        consignment: ConsignmentAssignmentRequestBody,
         options?: RequestOptions
     ): ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
         return store => {
@@ -47,36 +45,6 @@ export default class ConsignmentActionCreator {
             return this._createOrUpdateConsignment({
                 id: existingConsignment && existingConsignment.id,
                 shippingAddress: consignment.shippingAddress,
-                lineItems: this._combineLineItems(
-                    consignment,
-                    existingConsignment,
-                    state.cart.getCart()
-                ),
-            }, options)(store);
-        };
-    }
-
-    assignItemsByConsignmentId(
-        consignment: ConsignmentIdAssignmentRequestBody,
-        options?: RequestOptions
-    ): ThunkAction<UpdateConsignmentAction, InternalCheckoutSelectors> {
-        return store => {
-            const state = store.getState();
-            const checkout = state.checkout.getCheckout();
-
-            if (!checkout) {
-                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-            }
-
-            const existingConsignment = state.consignments.getConsignmentById(consignment.id);
-
-            if (!existingConsignment) {
-                throw new InvalidArgumentError('Invalid consignment was provided');
-            }
-
-            return this.updateConsignment({
-                id: existingConsignment.id,
-                shippingAddress: existingConsignment.shippingAddress,
                 lineItems: this._combineLineItems(
                     consignment,
                     existingConsignment,

@@ -22,16 +22,7 @@ export interface ConsignmentCreateRequestBody {
     lineItems: ConsignmentLineItem[];
 }
 
-export type ConsignmentAssignmentRequestBody =
-    ConsignmentIdAssignmentRequestBody |
-    ConsignmentAddressAssignmentRequestBody;
-
-export interface ConsignmentIdAssignmentRequestBody {
-    id: string;
-    lineItems: ConsignmentLineItem[];
-}
-
-export interface ConsignmentAddressAssignmentRequestBody {
+export interface ConsignmentAssignmentRequestBody {
     shippingAddress: AddressRequestBody;
     lineItems: ConsignmentLineItem[];
 }
