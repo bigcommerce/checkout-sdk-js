@@ -32,8 +32,7 @@ import {
     ShippingStrategyActionCreator,
 } from '../shipping';
 import {
-    ConsignmentAddressAssignmentRequestBody,
-    ConsignmentIdAssignmentRequestBody,
+    ConsignmentAssignmentRequestBody,
     ConsignmentUpdateRequestBody
 } from '../shipping/consignment';
 
@@ -255,7 +254,7 @@ export default class CheckoutService {
      * payment methods, such as PayPal. Or the customer has applied a gift
      * certificate that exceeds the grand total amount.
      *
-     * If the order is submitted successfullpy, you can retrieve the newly
+     * If the order is submitted successfully, you can retrieve the newly
      * created order by calling `CheckoutStoreSelector#getOrder`.
      *
      * ```js
@@ -811,24 +810,6 @@ export default class CheckoutService {
     }
 
     /**
-     * Convenience method that assigns items to be shipped to a specific consignment.
-     *
-     * Note: this is a wrapper method for CheckoutService#updateConsignment
-     *
-     * @param consignment - The consignment data that will be used.
-     * @param options - Options for the request
-     * @returns A promise that resolves to the current state.
-     */
-    assignItemsToConsignment(
-        consignment: ConsignmentIdAssignmentRequestBody,
-        options?: RequestOptions
-    ): Promise<CheckoutSelectors> {
-        const action = this._consignmentActionCreator.assignItemsByConsignmentId(consignment, options);
-
-        return this._dispatch(action, { queueId: 'shippingStrategy' });
-    }
-
-    /**
      * Convenience method that assigns items to be shipped to a specific address.
      *
      * Note: this method finds an existing consignment that matches the provided address
@@ -840,7 +821,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     assignItemsToAddress(
-        consignment: ConsignmentAddressAssignmentRequestBody,
+        consignment: ConsignmentAssignmentRequestBody,
         options?: RequestOptions
     ): Promise<CheckoutSelectors> {
         const action = this._consignmentActionCreator.assignItemsByAddress(consignment, options);

@@ -733,34 +733,6 @@ describe('CheckoutService', () => {
         });
     });
 
-    describe('#assignItemsToConsignment()', () => {
-        it('dispatches action to update consignment', async () => {
-            const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('bar'));
-
-            jest.spyOn(consignmentActionCreator, 'assignItemsByConsignmentId')
-                .mockReturnValue(action);
-
-            jest.spyOn(store, 'dispatch');
-
-            const payload = {
-                id: 'foo',
-                lineItems: [{
-                    itemId: 'item-foo',
-                    quantity: 2,
-                }],
-            };
-
-            await checkoutService.assignItemsToConsignment(payload, options);
-
-            expect(consignmentActionCreator.assignItemsByConsignmentId)
-                .toHaveBeenCalledWith(payload, options);
-
-            expect(store.dispatch)
-                .toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
-        });
-    });
-
     describe('#assignItemsToAddress()', () => {
         it('dispatches action to update consignment', async () => {
             const address = getShippingAddress();

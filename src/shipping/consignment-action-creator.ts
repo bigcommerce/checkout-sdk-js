@@ -7,15 +7,13 @@ import { AddressRequestBody } from '../address';
 import { Cart } from '../cart';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import CheckoutRequestSender from '../checkout/checkout-request-sender';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import Consignment, {
     ConsignmentsRequestBody,
-    ConsignmentAddressAssignmentRequestBody,
     ConsignmentAssignmentRequestBody,
     ConsignmentCreateRequestBody,
-    ConsignmentIdAssignmentRequestBody,
     ConsignmentLineItem,
     ConsignmentRequestBody,
     ConsignmentShippingOptionRequestBody,
@@ -37,7 +35,7 @@ export default class ConsignmentActionCreator {
     ) {}
 
     assignItemsByAddress(
-        consignment: ConsignmentAddressAssignmentRequestBody,
+        consignment: ConsignmentAssignmentRequestBody,
         options?: RequestOptions
     ): ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
         return store => {
@@ -47,36 +45,6 @@ export default class ConsignmentActionCreator {
             return this._createOrUpdateConsignment({
                 id: existingConsignment && existingConsignment.id,
                 shippingAddress: consignment.shippingAddress,
-                lineItems: this._combineLineItems(
-                    consignment,
-                    existingConsignment,
-                    state.cart.getCart()
-                ),
-            }, options)(store);
-        };
-    }
-
-    assignItemsByConsignmentId(
-        consignment: ConsignmentIdAssignmentRequestBody,
-        options?: RequestOptions
-    ): ThunkAction<UpdateConsignmentAction, InternalCheckoutSelectors> {
-        return store => {
-            const state = store.getState();
-            const checkout = state.checkout.getCheckout();
-
-            if (!checkout) {
-                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-            }
-
-            const existingConsignment = this._getConsignmentById(store, consignment.id);
-
-            if (!existingConsignment) {
-                throw new InvalidArgumentError('Invalid consignment was provided');
-            }
-
-            return this.updateConsignment({
-                id: existingConsignment.id,
-                shippingAddress: existingConsignment.shippingAddress,
                 lineItems: this._combineLineItems(
                     consignment,
                     existingConsignment,
@@ -293,16 +261,6 @@ export default class ConsignmentActionCreator {
         };
     }
 
-    private _getConsignmentById(store: ReadableCheckoutStore, id: string): Consignment | undefined {
-        const consignments = store.getState().consignments.getConsignments();
-
-        if (!consignments || !consignments.length) {
-            return undefined;
-        }
-
-        return find(consignments, { id });
-    }
-
     private _combineLineItems(
         consignment: ConsignmentAssignmentRequestBody,
         existingConsignment?: Consignment,
@@ -323,9 +281,9 @@ export default class ConsignmentActionCreator {
                 itemId,
                 quantity: item ? item.quantity : 0,
             };
-        });
+        }) as ConsignmentLineItem[];
 
-        return consignment.lineItems.concat(existingLineItems);
+        return existingLineItems.concat(consignment.lineItems);
     }
 
     private _isUpdateConsignmentRequest(
@@ -333,6 +291,6 @@ export default class ConsignmentActionCreator {
     ): request is ConsignmentUpdateRequestBody {
         const updateRequest = request as ConsignmentUpdateRequestBody;
 
-        return typeof updateRequest.id !== 'undefined' && !!updateRequest.id;
+        return !!updateRequest.id;
     }
 }

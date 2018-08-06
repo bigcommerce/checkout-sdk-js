@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import { identity, isEqual, pickBy } from 'lodash';
 
 import Address from './address';
 
@@ -7,7 +7,7 @@ export default function isAddressEqual(addressA: Partial<Address>, addressB: Par
 }
 
 function normalize(address: Partial<Address>): Partial<Address> {
-    return {
+    return pickBy({
         firstName: address.firstName,
         lastName: address.lastName,
         company: address.company,
@@ -19,5 +19,5 @@ function normalize(address: Partial<Address>): Partial<Address> {
         postalCode: address.postalCode,
         phone: address.phone,
         customFields: address.customFields,
-    };
+    }, identity);
 }
