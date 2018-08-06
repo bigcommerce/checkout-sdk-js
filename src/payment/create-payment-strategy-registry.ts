@@ -229,7 +229,8 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             orderActionCreator,
             requestSender,
-            createFormPoster()
+            createFormPoster(),
+            new WepayRiskClient(scriptLoader)
         )
     );
 

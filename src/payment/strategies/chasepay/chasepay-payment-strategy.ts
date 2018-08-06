@@ -15,6 +15,7 @@ import { toFormUrlEncoded } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { ChasePayScriptLoader, ChasePaySuccessPayload } from '../../../payment/strategies/chasepay';
 import PaymentStrategy from '../payment-strategy';
+import WepayRiskClient from '../wepay/wepay-risk-client';
 
 export default class ChasepayPaymentStrategy extends PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
@@ -26,7 +27,8 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _requestSender: RequestSender,
-        private _formPoster: FormPoster
+        private _formPoster: FormPoster,
+        private _wepayRiskClient: WepayRiskClient
     ) {
         super(store);
     }
@@ -40,7 +42,8 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
 
         const {
             onError = () => {},
-            onPaymentSelect = () => {},
+            onSuccess = () => {},
+            signInButton,
         } = chasepayCheckoutOptions;
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
@@ -49,6 +52,7 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
 
                 const cart = state.cart.getCart();
                 const storeConfig = state.config.getStoreConfig();
+                this._wepayRiskClient.initialize();
 
                 if (!cart || !storeConfig || !this._paymentMethod) {
                     throw new MissingDataError(MissingDataErrorType.MissingCart);
@@ -60,22 +64,23 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
 
                         ChasePay.on(COMPLETE_CHECKOUT, (payload: ChasePaySuccessPayload) => {
                             this._setExternalCheckoutData(payload).then(() => {
-                                onPaymentSelect();
+                                onSuccess();
                                 this._reloadPage();
                             });
                         });
-
-                        this._refreshDigitalSessionId(methodId)
-                            .then(digitalSessionId => {
-                                ChasePay.configure({
-                                    language: storeConfig.storeProfile.storeLanguage,
-                                    zIndex: 100001,
-                                    sessionWarningTime: 300000,
-                                    sessionTimeoutTime: 360000,
-                                });
-                                ChasePay.showLoadingAnimation();
-                                ChasePay.startCheckout(digitalSessionId);
-                            }).catch(error => onError(error));
+                        if (signInButton) {
+                            this._refreshDigitalSessionId(methodId)
+                                .then(digitalSessionId => {
+                                    ChasePay.configure({
+                                        language: storeConfig.storeProfile.storeLanguage,
+                                        zIndex: 100001,
+                                        sessionWarningTime: 300000,
+                                        sessionTimeoutTime: 360000,
+                                    });
+                                    ChasePay.showLoadingAnimation();
+                                    ChasePay.startCheckout(digitalSessionId);
+                                }).catch(error => onError(error));
+                        }
                     });
           })
           .then(() => super.initialize(options));
@@ -107,6 +112,7 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
                         },
                         ccNumber: paymentInitData.accountNum,
                         accountMask: paymentInitData.accountMask,
+                        extraData: { riskToken: this._wepayRiskClient.getRiskToken() },
                     },
                 }))
             );
@@ -155,6 +161,12 @@ export interface ChasePayInitializeOptions {
     container: string;
 
     /**
+     * This is used to indentify if the initialize is called from the
+     * sign in button.
+     */
+    signInButton?: boolean;
+
+    /**
      * A callback that gets called when ChasePay fails to initialize or
      * selects a payment option.
      *
@@ -165,5 +177,5 @@ export interface ChasePayInitializeOptions {
     /**
      * A callback that gets called when the customer selects a payment option.
      */
-    onPaymentSelect?(): void;
+    onSuccess?(): void;
 }

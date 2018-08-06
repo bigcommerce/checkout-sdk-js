@@ -19,6 +19,7 @@ import { PaymentActionType } from '../../payment-actions';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentStrategy from '../payment-strategy';
+import WepayRiskClient from '../wepay/wepay-risk-client';
 
 import ChasePayPaymentStrategy from './chasepay-payment-strategy';
 
@@ -33,9 +34,12 @@ describe('ChasePayPaymentStrategy', () => {
     let chasePayScriptLoader: ChasePayScriptLoader;
     let JPMC: JPMC;
     let requestSender: RequestSender;
+    let wepayRiskClient: WepayRiskClient;
+    const scriptLoader = createScriptLoader();
 
     beforeEach(() => {
         paymentMethodMock = { ...getChasePay(), initializationData: { digitalSessionId: 'digitalSessionId', merchantRequestId: '1234567890' } };
+        wepayRiskClient = new WepayRiskClient(scriptLoader);
 
         store = createCheckoutStore({
             checkout: getCheckoutState(),
@@ -50,6 +54,9 @@ describe('ChasePayPaymentStrategy', () => {
 
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue(paymentMethodMock);
+
+        jest.spyOn(wepayRiskClient, 'initialize')
+            .mockReturnValue(Promise.resolve(wepayRiskClient));
 
         JPMC = getChasePayScriptMock();
 
@@ -69,7 +76,8 @@ describe('ChasePayPaymentStrategy', () => {
             paymentActionCreator,
             orderActionCreator,
             requestSender,
-            createFormPoster()
+            createFormPoster(),
+            wepayRiskClient
         );
 
         container = document.createElement('div');
@@ -115,6 +123,14 @@ describe('ChasePayPaymentStrategy', () => {
 
             expect(JPMC.ChasePay.on).toHaveBeenCalledWith('COMPLETE_CHECKOUT', expect.any(Function));
         });
+
+        it('should initialize the WePay risk client', () => {
+            jest.spyOn(wepayRiskClient, 'initialize');
+
+            strategy.initialize(chasePayOptions);
+
+            expect(wepayRiskClient.initialize).toHaveBeenCalled();
+        });
     });
 
     describe('#execute()', () => {
@@ -123,7 +139,7 @@ describe('ChasePayPaymentStrategy', () => {
         let submitOrderAction: Observable<Action>;
         let submitPaymentAction: Observable<Action>;
 
-        beforeEach(() => {
+        beforeEach(async () => {
             orderRequestBody = getOrderRequestBody();
             submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
             submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
@@ -140,10 +156,10 @@ describe('ChasePayPaymentStrategy', () => {
 
             paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
+            await strategy.initialize(chasePayOptions);
         });
 
         it('calls submit order with the order request information', async () => {
-            await strategy.initialize(chasePayOptions);
             await strategy.execute(orderRequestBody, chasePayOptions);
             const { payment, ...order } = orderRequestBody;
 
@@ -152,7 +168,6 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('calls submit order with the order request information', async () => {
-            await strategy.initialize(chasePayOptions);
             await strategy.execute(orderRequestBody, chasePayOptions);
             const { payment, ...order } = orderRequestBody;
 
@@ -161,7 +176,6 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('pass the options to submitOrder', async () => {
-            await strategy.initialize(chasePayOptions);
             await strategy.execute(orderRequestBody, chasePayOptions);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), chasePayOptions);
