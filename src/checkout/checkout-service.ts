@@ -255,7 +255,7 @@ export default class CheckoutService {
      * payment methods, such as PayPal. Or the customer has applied a gift
      * certificate that exceeds the grand total amount.
      *
-     * If the order is submitted successfullpy, you can retrieve the newly
+     * If the order is submitted successfully, you can retrieve the newly
      * created order by calling `CheckoutStoreSelector#getOrder`.
      *
      * ```js

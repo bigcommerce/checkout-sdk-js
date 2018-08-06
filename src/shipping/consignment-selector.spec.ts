@@ -15,7 +15,7 @@ describe('ConsignmentSelector', () => {
     };
 
     const existingAddress = getShippingAddress();
-    const unexistingAddress = { ...getShippingAddress(), address1: 'foo' };
+    const nonexistentAddress = { ...getShippingAddress(), address1: 'foo' };
 
     let selector: ConsignmentSelector;
     let state: CheckoutStoreState;
@@ -36,7 +36,7 @@ describe('ConsignmentSelector', () => {
         it('returns undefined if no address matches a consignment', () => {
             selector = new ConsignmentSelector(emptyState);
 
-            expect(selector.getConsignmentByAddress(unexistingAddress))
+            expect(selector.getConsignmentByAddress(nonexistentAddress))
                 .toEqual(undefined);
         });
     });
@@ -226,7 +226,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns create error when address does not match any consignment', () => {
-            expect(selector.getItemAssignmentError(unexistingAddress)).toEqual(createError);
+            expect(selector.getItemAssignmentError(nonexistentAddress)).toEqual(createError);
         });
     });
 
@@ -327,7 +327,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns isCreating state when no consignment matches address', () => {
-            expect(selector.isAssigningItems(unexistingAddress)).toEqual(false);
+            expect(selector.isAssigningItems(nonexistentAddress)).toEqual(false);
         });
     });
 

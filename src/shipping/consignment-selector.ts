@@ -1,7 +1,6 @@
 import { find } from 'lodash';
 
-import { AddressRequestBody } from '../address';
-import isAddressEqual from '../address/is-address-equal';
+import { isAddressEqual, AddressRequestBody } from '../address';
 import { selector } from '../common/selector';
 
 import Consignment from './consignment';
@@ -22,7 +21,7 @@ export default class ConsignmentSelector {
         const consignments = this._consignments.data;
 
         if (!consignments || !consignments.length) {
-            return undefined;
+            return;
         }
 
         return find(consignments, { id });
@@ -32,7 +31,7 @@ export default class ConsignmentSelector {
         const consignments = this._consignments.data;
 
         if (!consignments || !consignments.length) {
-            return undefined;
+            return;
         }
 
         return find(consignments, consignment =>
