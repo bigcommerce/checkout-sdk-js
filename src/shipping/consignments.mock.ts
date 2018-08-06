@@ -4,7 +4,7 @@ import { Address } from '../address';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
-import Consignment, { ConsignmentRequestBody, ConsignmentUpdateRequestBody } from './consignment';
+import Consignment, { ConsignmentUpdateRequestBody } from './consignment';
 import ConsignmentState from './consignment-state';
 
 export function getConsignment(): Consignment {

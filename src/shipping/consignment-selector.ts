@@ -67,6 +67,14 @@ export default class ConsignmentSelector {
         return find(this._consignments.errors.updateError);
     }
 
+    getDeleteError(consignmentId?: string): Error | undefined {
+        if (consignmentId) {
+            return this._consignments.errors.deleteError[consignmentId];
+        }
+
+        return find(this._consignments.errors.deleteError);
+    }
+
     getItemAssignmentError(address: AddressRequestBody): Error | undefined {
         const consignment = this.getConsignmentByAddress(address);
 
@@ -99,6 +107,14 @@ export default class ConsignmentSelector {
         }
 
         return find(this._consignments.statuses.isUpdating) === true;
+    }
+
+    isDeleting(consignmentId?: string): boolean {
+        if (consignmentId) {
+            return this._consignments.statuses.isDeleting[consignmentId] === true;
+        }
+
+        return find(this._consignments.statuses.isDeleting) === true;
     }
 
     isAssigningItems(address: AddressRequestBody): boolean {

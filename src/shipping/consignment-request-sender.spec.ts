@@ -1,10 +1,8 @@
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
-import { omit } from 'lodash';
 
 import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType } from '../common/http-request';
 
-import { ConsignmentCreateRequestBody, ConsignmentUpdateRequestBody } from './consignment';
 import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
 

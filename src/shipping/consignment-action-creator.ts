@@ -22,10 +22,10 @@ import Consignment, {
 import {
     ConsignmentActionType,
     CreateConsignmentsAction,
+    DeleteConsignmentAction,
     LoadShippingOptionsAction,
     UpdateConsignmentAction,
     UpdateShippingOptionAction,
-    DeleteConsignmentAction,
 } from './consignment-actions';
 import ConsignmentRequestSender from './consignment-request-sender';
 
