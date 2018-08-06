@@ -35,10 +35,10 @@ describe('PaypalExpressPaymentStrategy', () => {
         };
 
         scriptLoader = {
-            loadScript: jest.fn(() => {
+            loadPaypal: jest.fn(() => {
                 window.paypal = paypalSdk;
 
-                return Promise.resolve();
+                return Promise.resolve(paypalSdk);
             }),
         };
 
@@ -78,7 +78,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('loads Paypal SDK', async () => {
                 await strategy.initialize({ methodId: paymentMethod.id });
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//www.paypalobjects.com/api/checkout.min.js');
+                expect(scriptLoader.loadPaypal).toHaveBeenCalled();
             });
 
             it('initializes Paypal SDK', async () => {
@@ -114,7 +114,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not load Paypal SDK', async () => {
                 await strategy.initialize({ methodId: paymentMethod.id });
 
-                expect(scriptLoader.loadScript).not.toHaveBeenCalled();
+                expect(scriptLoader.loadPaypal).not.toHaveBeenCalled();
             });
 
             it('does not initialize Paypal SDK', async () => {
