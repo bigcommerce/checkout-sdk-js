@@ -37,6 +37,21 @@ export function getBraintreePaypal(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
+    };
+}
+
+export function getBraintreePaypalCredit(): PaymentMethod {
+    return {
+        id: 'braintreepaypalcredit',
+        logoUrl: '',
+        method: 'paypal',
+        supportedCards: [],
+        config: {
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
     };
 }
 
@@ -258,6 +273,7 @@ export function getPaymentMethods(): PaymentMethod[] {
     return [
         getBraintree(),
         getBraintreePaypal(),
+        getBraintreePaypalCredit(),
         getBraintreeVisaCheckout(),
         getAdyenAmex(),
         getAuthorizenet(),

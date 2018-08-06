@@ -3,6 +3,7 @@
         "billing",
         "cart",
         "checkout",
+        "checkout-button",
         "common",
         "forms",
         "order",

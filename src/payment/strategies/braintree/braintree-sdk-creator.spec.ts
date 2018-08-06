@@ -121,6 +121,9 @@ describe('Braintree SDK Creator', () => {
         it('uses the right parameters to instantiate a data collector', async () => {
             await braintreeSDKCreator.getDataCollector();
             expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({ client: clientMock, kount: true });
+
+            await braintreeSDKCreator.getDataCollector({ paypal: true });
+            expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({ client: clientMock, kount: true, paypal: true });
         });
 
         it('always returns the same instance of the 3ds client', async () => {
@@ -129,6 +132,15 @@ describe('Braintree SDK Creator', () => {
             expect(dataCollector1).toBe(dataCollector2);
             expect(braintreeScriptLoader.loadDataCollector).toHaveBeenCalledTimes(1);
             expect(dataCollectorCreatorMock.create).toHaveBeenCalledTimes(1);
+        });
+
+        it('returns different data collector instance if it is used for PayPal', async () => {
+            const dataCollector = await braintreeSDKCreator.getDataCollector();
+            const paypalDataCollector = await braintreeSDKCreator.getDataCollector({ paypal: true });
+
+            expect(dataCollector).not.toBe(paypalDataCollector);
+            expect(braintreeSDKCreator.getDataCollector()).resolves.toBe(dataCollector);
+            expect(braintreeSDKCreator.getDataCollector({ paypal: true })).resolves.toBe(paypalDataCollector);
         });
 
         it('returns the data collector information', async () => {

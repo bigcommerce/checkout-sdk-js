@@ -1,0 +1,366 @@
+import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
+import { getScriptLoader } from '@bigcommerce/script-loader';
+import { EventEmitter } from 'events';
+import { merge } from 'lodash';
+
+import { createCheckoutStore, CheckoutStore } from '../../checkout';
+import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
+import { MissingDataError } from '../../common/error/errors';
+import { getBraintreePaypal } from '../../payment/payment-methods.mock';
+import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator } from '../../payment/strategies/braintree';
+import { getDataCollectorMock, getPaypalCheckoutMock } from '../../payment/strategies/braintree/braintree.mock';
+import { PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../payment/strategies/paypal';
+import { getPaypalMock } from '../../payment/strategies/paypal/paypal.mock';
+import { CheckoutButtonInitializeOptions } from '../checkout-button-options';
+
+import { BraintreePaypalButtonInitializeOptions } from './braintree-paypal-button-options';
+import BraintreePaypalButtonStrategy from './braintree-paypal-button-strategy';
+
+describe('BraintreePaypalButtonStrategy', () => {
+    let braintreeSDKCreator: BraintreeSDKCreator;
+    let dataCollector: BraintreeDataCollector;
+    let eventEmitter: EventEmitter;
+    let formPoster: FormPoster;
+    let options: CheckoutButtonInitializeOptions;
+    let paypalOptions: BraintreePaypalButtonInitializeOptions;
+    let paypal: PaypalSDK;
+    let paypalCheckout: BraintreePaypalCheckout;
+    let paypalScriptLoader: PaypalScriptLoader;
+    let store: CheckoutStore;
+    let strategy: BraintreePaypalButtonStrategy;
+
+    beforeEach(() => {
+        store = createCheckoutStore(getCheckoutStoreState());
+        braintreeSDKCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(getScriptLoader()));
+        formPoster = createFormPoster();
+        paypalScriptLoader = new PaypalScriptLoader(getScriptLoader());
+
+        paypalOptions = {
+            container: 'checkout-button',
+            onAuthorizeError: jest.fn(),
+            onPaymentError: jest.fn(),
+        };
+
+        options = {
+            methodId: 'braintreepaypal',
+            braintreepaypal: paypalOptions,
+        };
+
+        eventEmitter = new EventEmitter();
+        dataCollector = getDataCollectorMock();
+        paypal = getPaypalMock();
+        paypalCheckout = getPaypalCheckoutMock();
+
+        jest.spyOn(paypal.Button, 'render')
+            .mockImplementation((options: PaypalButtonOptions) => {
+                eventEmitter.on('payment', () => {
+                    options.payment().catch(() => {});
+                });
+
+                eventEmitter.on('authorize', () => {
+                    options.onAuthorize({ payerId: 'PAYER_ID' }).catch(() => {});
+                });
+            });
+
+        jest.spyOn(braintreeSDKCreator, 'getPaypalCheckout')
+            .mockReturnValue(Promise.resolve(paypalCheckout));
+
+        jest.spyOn(braintreeSDKCreator, 'getDataCollector')
+            .mockReturnValue(Promise.resolve(dataCollector));
+
+        jest.spyOn(paypalScriptLoader, 'loadPaypal')
+            .mockReturnValue(Promise.resolve(paypal));
+
+        strategy = new BraintreePaypalButtonStrategy(
+            store,
+            braintreeSDKCreator,
+            paypalScriptLoader,
+            formPoster
+        );
+    });
+
+    it('throws error if required data is not loaded', async () => {
+        try {
+            store = createCheckoutStore();
+            strategy = new BraintreePaypalButtonStrategy(
+                store,
+                braintreeSDKCreator,
+                paypalScriptLoader,
+                formPoster
+            );
+
+            await strategy.initialize(options);
+        } catch (error) {
+            expect(error).toBeInstanceOf(MissingDataError);
+        }
+    });
+
+    it('initializes Braintree and PayPal JS clients', async () => {
+        await strategy.initialize(options);
+
+        expect(braintreeSDKCreator.getPaypalCheckout).toHaveBeenCalled();
+        expect(paypalScriptLoader.loadPaypal).toHaveBeenCalled();
+    });
+
+    it('throws error if unable to initialize Braintree or PayPal JS client', async () => {
+        const expectedError = new Error('Unable to load JS client');
+
+        jest.spyOn(paypalScriptLoader, 'loadPaypal')
+            .mockReturnValue(Promise.reject(expectedError));
+
+        try {
+            await strategy.initialize(options);
+        } catch (error) {
+            expect(error).toEqual(expectedError);
+        }
+    });
+
+    it('renders PayPal checkout button', async () => {
+        await strategy.initialize(options);
+
+        expect(paypal.Button.render).toHaveBeenCalledWith({
+            commit: false,
+            env: 'production',
+            onAuthorize: expect.any(Function),
+            payment: expect.any(Function),
+            style: {
+                label: undefined,
+                shape: 'rect',
+            },
+        }, 'checkout-button');
+    });
+
+    it('customizes style of PayPal checkout button', async () => {
+        options = {
+            ...options,
+            braintreepaypal: {
+                ...paypalOptions,
+                style: {
+                    color: 'blue',
+                    shape: 'pill',
+                    size: 'responsive',
+                },
+            },
+        };
+
+        await strategy.initialize(options);
+
+        expect(paypal.Button.render).toHaveBeenCalledWith(expect.objectContaining({
+            style: {
+                color: 'blue',
+                shape: 'pill',
+                size: 'responsive',
+            },
+        }), 'checkout-button');
+    });
+
+    it('throws error if unable to render PayPal button', async () => {
+        const expectedError = new Error('Unable to render PayPal button');
+
+        jest.spyOn(paypal.Button, 'render')
+            .mockImplementation(() => {
+                throw expectedError;
+            });
+
+        try {
+            await strategy.initialize(options);
+        } catch (error) {
+            expect(error).toEqual(expectedError);
+        }
+    });
+
+    it('renders PayPal checkout button in sandbox environment if payment method is in test mode', async () => {
+        store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
+            paymentMethods: {
+                data: [
+                    merge({}, getBraintreePaypal(), { config: { testMode: true } }),
+                ],
+            },
+        }));
+
+        strategy = new BraintreePaypalButtonStrategy(
+            store,
+            braintreeSDKCreator,
+            paypalScriptLoader,
+            formPoster
+        );
+
+        await strategy.initialize(options);
+
+        expect(paypal.Button.render)
+            .toHaveBeenCalledWith(expect.objectContaining({ env: 'sandbox' }), 'checkout-button');
+    });
+
+    it('sets up PayPal payment flow with current checkout details when customer is ready to pay', async () => {
+        await strategy.initialize(options);
+
+        eventEmitter.emit('payment');
+
+        expect(paypalCheckout.createPayment).toHaveBeenCalledWith({
+            amount: 190,
+            currency: 'USD',
+            enableShippingAddress: true,
+            flow: 'checkout',
+            offerCredit: false,
+            shippingAddressEditable: false,
+            shippingAddressOverride: {
+                city: 'Some City',
+                countryCode: 'US',
+                line1: '12345 Testing Way',
+                line2: '',
+                phone: '555-555-5555',
+                postalCode: '95555',
+                recipientName: 'Test Tester',
+                state: 'CA',
+            },
+        });
+    });
+
+    it('tokenizes PayPal payment details when authorization event is triggered', async () => {
+        await strategy.initialize(options);
+
+        eventEmitter.emit('authorize');
+
+        expect(paypalCheckout.tokenizePayment).toHaveBeenCalledWith({ payerId: 'PAYER_ID' });
+    });
+
+    it('posts payment details to server when PayPal payment details are tokenized', async () => {
+        jest.spyOn(formPoster, 'postForm');
+
+        await strategy.initialize(options);
+
+        eventEmitter.emit('authorize');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
+            payment_type: 'paypal',
+            provider: 'braintreepaypal',
+            action: 'set_external_checkout',
+            device_data: dataCollector.deviceData,
+            nonce: 'NONCE',
+            billing_address: JSON.stringify({
+                email: 'foo@bar.com',
+                first_name: 'Foo',
+                last_name: 'Bar',
+                phone_number: '123456789',
+                address_line_1: '56789 Testing Way',
+                address_line_2: 'Level 2',
+                city: 'Some Other City',
+                state: 'Arizona',
+                country_code: 'US',
+                postal_code: '96666',
+            }),
+            shipping_address: JSON.stringify({
+                email: 'foo@bar.com',
+                first_name: 'Hello',
+                last_name: 'World',
+                phone_number: '987654321',
+                address_line_1: '12345 Testing Way',
+                address_line_2: 'Level 1',
+                city: 'Some City',
+                state: 'California',
+                country_code: 'US',
+                postal_code: '95555',
+            }),
+        }));
+    });
+
+    it('triggers error callback if unable to set up payment flow', async () => {
+        const expectedError = new Error('Unable to set up payment flow');
+
+        jest.spyOn(paypalCheckout, 'createPayment')
+            .mockReturnValue(Promise.reject(expectedError));
+
+        await strategy.initialize(options);
+
+        eventEmitter.emit('payment');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(paypalOptions.onPaymentError).toHaveBeenCalledWith(expectedError);
+    });
+
+    it('triggers error callback if unable to tokenize payment', async () => {
+        const expectedError = new Error('Unable to tokenize');
+
+        jest.spyOn(paypalCheckout, 'tokenizePayment')
+            .mockReturnValue(Promise.reject(expectedError));
+
+        await strategy.initialize(options);
+
+        eventEmitter.emit('authorize');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(paypalOptions.onAuthorizeError).toHaveBeenCalledWith(expectedError);
+    });
+
+    it('tears down Braintree setup when button is deinitialized', async () => {
+        jest.spyOn(braintreeSDKCreator, 'teardown');
+
+        await strategy.initialize(options);
+        await strategy.deinitialize({ methodId: 'braintreepaypal' });
+
+        expect(braintreeSDKCreator.teardown).toHaveBeenCalled();
+    });
+
+    describe('if PayPal Credit is offered', () => {
+        beforeEach(() => {
+            options = {
+                methodId: 'braintreepaypalcredit',
+                braintreepaypalcredit: {
+                    container: 'checkout-button',
+                },
+            };
+
+            strategy = new BraintreePaypalButtonStrategy(
+                store,
+                braintreeSDKCreator,
+                paypalScriptLoader,
+                formPoster,
+                true
+            );
+        });
+
+        it('renders PayPal Credit checkout button', async () => {
+            await strategy.initialize(options);
+
+            expect(paypal.Button.render).toHaveBeenCalledWith({
+                commit: false,
+                env: 'production',
+                onAuthorize: expect.any(Function),
+                payment: expect.any(Function),
+                style: {
+                    label: 'credit',
+                    shape: 'rect',
+                },
+            }, 'checkout-button');
+        });
+
+        it('sets up PayPal Credit payment flow with current checkout details when customer is ready to pay', async () => {
+            await strategy.initialize(options);
+
+            eventEmitter.emit('payment');
+
+            expect(paypalCheckout.createPayment).toHaveBeenCalledWith({
+                amount: 190,
+                currency: 'USD',
+                enableShippingAddress: true,
+                flow: 'checkout',
+                offerCredit: true,
+                shippingAddressEditable: false,
+                shippingAddressOverride: {
+                    city: 'Some City',
+                    countryCode: 'US',
+                    line1: '12345 Testing Way',
+                    line2: '',
+                    phone: '555-555-5555',
+                    postalCode: '95555',
+                    recipientName: 'Test Tester',
+                    state: 'CA',
+                },
+            });
+        });
+    });
+});
