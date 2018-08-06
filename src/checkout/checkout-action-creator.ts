@@ -8,7 +8,6 @@ import { Observer } from 'rxjs/Observer';
 import { MissingDataError, MissingDataErrorType, StandardError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
-import { LoadConfigAction } from '../config/config-actions';
 
 import { CheckoutRequestBody } from './checkout';
 import { CheckoutActionType, LoadCheckoutAction, UpdateCheckoutAction } from './checkout-actions';
@@ -24,7 +23,7 @@ export default class CheckoutActionCreator {
     loadCheckout(
         id: string,
         options?: RequestOptions
-    ): ThunkAction<LoadCheckoutAction | LoadConfigAction, InternalCheckoutSelectors> {
+    ): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
         return store => merge(
             this._configActionCreator.loadConfig()(store),
             this._loadCheckout(id)
