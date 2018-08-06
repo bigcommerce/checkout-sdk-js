@@ -277,11 +277,11 @@ describe('consignmentActionCreator', () => {
                         id: consignment.id,
                         shippingAddress: consignment.shippingAddress,
                         lineItems: [
-                            ...payload.lineItems,
                             {
                                 itemId: '12e11c8f-7dce-4da3-9413-b649533f8bad',
                                 quantity: 0,
                             },
+                            ...payload.lineItems,
                         ],
                     },
                     options
@@ -363,6 +363,9 @@ describe('consignmentActionCreator', () => {
                 }],
             };
 
+            jest.spyOn(store.getState().consignments, 'getConsignmentById')
+                    .mockReturnValue(consignment);
+
             thunkAction = consignmentActionCreator.assignItemsByConsignmentId(payload, options);
         });
 
@@ -382,13 +385,13 @@ describe('consignmentActionCreator', () => {
         });
 
         describe('when consignment doesnt exist', () => {
+            beforeEach(() => {
+                jest.spyOn(store.getState().consignments, 'getConsignmentById')
+                    .mockReturnValue(undefined);
+            });
+
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    thunkAction = consignmentActionCreator.assignItemsByConsignmentId({
-                        ...payload,
-                        id: 'foo',
-                    }, options);
-
                     await Observable.from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(InvalidArgumentError);
@@ -451,11 +454,11 @@ describe('consignmentActionCreator', () => {
                     ...payload,
                     shippingAddress: consignment.shippingAddress,
                     lineItems: [
-                        ...payload.lineItems,
                         {
                             itemId: '12e11c8f-7dce-4da3-9413-b649533f8bad',
                             quantity: 0,
                         },
+                        ...payload.lineItems,
                     ],
                 },
                 options

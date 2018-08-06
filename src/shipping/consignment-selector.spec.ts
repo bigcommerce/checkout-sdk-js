@@ -41,6 +41,23 @@ describe('ConsignmentSelector', () => {
         });
     });
 
+    describe('#getConsignmentById()', () => {
+        it('returns consignment that matches id', () => {
+            selector = new ConsignmentSelector(state.consignments);
+
+            expect(selector.getConsignmentById('55c96cda6f04c'))
+                // tslint:disable-next-line:no-non-null-assertion
+                .toEqual(getConsignmentsState().data![0]);
+        });
+
+        it('returns undefined if no id matches a consignment', () => {
+            selector = new ConsignmentSelector(emptyState);
+
+            expect(selector.getConsignmentById('none'))
+                .toEqual(undefined);
+        });
+    });
+
     describe('#getConsignments()', () => {
         it('returns consignments', () => {
             selector = new ConsignmentSelector(state.consignments);

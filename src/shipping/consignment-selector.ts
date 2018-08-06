@@ -18,6 +18,16 @@ export default class ConsignmentSelector {
         return this._consignments.data;
     }
 
+    getConsignmentById(id: string): Consignment | undefined {
+        const consignments = this._consignments.data;
+
+        if (!consignments || !consignments.length) {
+            return undefined;
+        }
+
+        return find(consignments, { id });
+    }
+
     getConsignmentByAddress(address: AddressRequestBody): Consignment | undefined {
         const consignments = this._consignments.data;
 

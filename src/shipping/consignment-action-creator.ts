@@ -68,7 +68,7 @@ export default class ConsignmentActionCreator {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
-            const existingConsignment = this._getConsignmentById(store, consignment.id);
+            const existingConsignment = state.consignments.getConsignmentById(consignment.id);
 
             if (!existingConsignment) {
                 throw new InvalidArgumentError('Invalid consignment was provided');
@@ -293,16 +293,6 @@ export default class ConsignmentActionCreator {
         };
     }
 
-    private _getConsignmentById(store: ReadableCheckoutStore, id: string): Consignment | undefined {
-        const consignments = store.getState().consignments.getConsignments();
-
-        if (!consignments || !consignments.length) {
-            return undefined;
-        }
-
-        return find(consignments, { id });
-    }
-
     private _combineLineItems(
         consignment: ConsignmentAssignmentRequestBody,
         existingConsignment?: Consignment,
@@ -323,9 +313,9 @@ export default class ConsignmentActionCreator {
                 itemId,
                 quantity: item ? item.quantity : 0,
             };
-        });
+        }) as ConsignmentLineItem[];
 
-        return consignment.lineItems.concat(existingLineItems);
+        return existingLineItems.concat(consignment.lineItems);
     }
 
     private _isUpdateConsignmentRequest(
@@ -333,6 +323,6 @@ export default class ConsignmentActionCreator {
     ): request is ConsignmentUpdateRequestBody {
         const updateRequest = request as ConsignmentUpdateRequestBody;
 
-        return typeof updateRequest.id !== 'undefined' && !!updateRequest.id;
+        return !!updateRequest.id;
     }
 }
