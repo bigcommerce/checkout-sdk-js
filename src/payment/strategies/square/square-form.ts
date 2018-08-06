@@ -29,12 +29,12 @@ export interface Error {
 }
 
 export interface CardData {
-    cardBrand: CardBrand;
-    last4: number;
-    expMonth: number;
-    expYear: number;
-    billingPostalCode: string;
-    digitalWalletType: DigitalWalletType;
+    card_brand: CardBrand;
+    last_4: number;
+    exp_month: number;
+    exp_year: number;
+    billing_postal_code: string;
+    digital_wallet_type: string;
 }
 
 export enum CardBrand {
@@ -46,12 +46,6 @@ export enum CardBrand {
     unionPay,
     unknown,
     visa,
-}
-
-export enum DigitalWalletType {
-    applePay,
-    masterpass,
-    none,
 }
 
 /**

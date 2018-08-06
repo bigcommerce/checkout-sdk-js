@@ -19,7 +19,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { CardData, DigitalWalletType, Error, SquareFormElement, SquareFormOptions } from './square-form';
+import SquarePaymentForm, { CardData, Error, SquareFormElement, SquareFormOptions } from './square-form';
 import SquareScriptLoader from './square-script-loader';
 
 export default class SquarePaymentStrategy extends PaymentStrategy {
@@ -117,7 +117,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                     if (!cardData) {
                         return;
                     }
-                    if (cardData.digitalWalletType !== DigitalWalletType.none) {
+                    if (cardData.digital_wallet_type !== 'NONE') {
                         this._setExternalCheckoutData(cardData, nonce)
                         .then(() => {
                             if (squareOptions.onPaymentSelect) {
