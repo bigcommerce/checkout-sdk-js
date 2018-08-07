@@ -14,27 +14,34 @@ import {
     CheckoutValidator,
     InternalCheckoutSelectors
 } from '../../../checkout';
+import CheckoutActionCreator from '../../../checkout/checkout-action-creator';
 import { InvalidArgumentError, TimeoutError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { OrderActionCreator, OrderActionType } from '../../../order';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
+import createPaymentStrategyRegistry from '../../create-payment-strategy-registry';
 import { PaymentActionType} from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 
 import SquarePaymentForm, {SquareFormCallbacks, SquareFormOptions } from './square-form';
 import SquarePaymentStrategy from './square-payment-strategy';
 import SquareScriptLoader from './square-script-loader';
 
 describe('SquarePaymentStrategy', () => {
-    let scriptLoader: SquareScriptLoader;
-    let store: CheckoutStore;
-    let strategy: SquarePaymentStrategy;
+    let callbacks: SquareFormCallbacks;
+    let checkoutActionCreator: CheckoutActionCreator;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
-    let callbacks: SquareFormCallbacks;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paymentStrategyActionCreator: PaymentStrategyActionCreator;
+    let scriptLoader: SquareScriptLoader;
+    let store: CheckoutStore;
+    let strategy: SquarePaymentStrategy;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
-    const senderRequest = createRequestSender();
 
     const formFactory = (options: SquareFormOptions) => {
         if (options.callbacks) {
@@ -61,6 +68,15 @@ describe('SquarePaymentStrategy', () => {
     };
 
     beforeEach(() => {
+        const client = createCheckoutClient();
+        const requestSender = createRequestSender();
+        const paymentClient = createPaymentClient(store);
+        const registry = createPaymentStrategyRegistry(store, client, paymentClient);
+        const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        const configRequestSender = new ConfigRequestSender(createRequestSender());
+        const configActionCreator = new ConfigActionCreator(configRequestSender);
+        const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
+
         store = createCheckoutStore({
             paymentMethods: getPaymentMethodsState(),
         });
@@ -69,7 +85,7 @@ describe('SquarePaymentStrategy', () => {
             createCheckoutClient(),
             new CheckoutValidator(
                 new CheckoutRequestSender(
-                    senderRequest
+                    requestSender
             )
         )
         );
@@ -79,16 +95,24 @@ describe('SquarePaymentStrategy', () => {
         );
 
         scriptLoader = new SquareScriptLoader(createScriptLoader());
+
         strategy = new SquarePaymentStrategy(
             store,
+            checkoutActionCreator,
+            createFormPoster(),
             orderActionCreator,
             paymentActionCreator,
-            scriptLoader,
-            senderRequest,
-            createFormPoster()
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            requestSender,
+            scriptLoader
         );
+
+        checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(client);
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
+        paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
