@@ -107,7 +107,32 @@ export default class CheckoutStoreSelector {
      * undefined.
      */
     getShippingAddress(): Address | undefined {
-        return this._shippingAddress.getShippingAddress();
+        const shippingAddress = this._shippingAddress.getShippingAddress();
+        const context = this._config.getContextConfig();
+
+        if (!shippingAddress) {
+            if (!context || !context.geoCountryCode) {
+                return;
+            }
+
+            return {
+                firstName: '',
+                lastName: '',
+                company: '',
+                address1: '',
+                address2: '',
+                city: '',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+                postalCode: '',
+                country: '',
+                phone: '',
+                customFields: [],
+                countryCode: context.geoCountryCode,
+            };
+        }
+
+        return shippingAddress;
     }
 
     /**

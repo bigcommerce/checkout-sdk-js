@@ -71,8 +71,37 @@ describe('CheckoutStoreSelector', () => {
         expect(selector.getBillingAddress()).toEqual(internalSelectors.billingAddress.getBillingAddress());
     });
 
-    it('returns shipping address', () => {
-        expect(selector.getShippingAddress()).toEqual(internalSelectors.shippingAddress.getShippingAddress());
+    describe('#getShippingAddress()', () => {
+        it('returns shipping address', () => {
+            expect(selector.getShippingAddress()).toEqual(internalSelectors.shippingAddress.getShippingAddress());
+        });
+
+        it('returns geo-ip dummy shipping address', () => {
+            jest.spyOn(internalSelectors.shippingAddress, 'getShippingAddress').mockReturnValue(undefined);
+
+            expect(selector.getShippingAddress()).toEqual({
+                address1: '',
+                address2: '',
+                city: '',
+                company: '',
+                country: '',
+                customFields: [],
+                firstName: '',
+                lastName: '',
+                phone: '',
+                postalCode: '',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+                countryCode: 'AU',
+            });
+        });
+
+        it('returns undefined if shippingAddress & geoIp are not present', () => {
+            jest.spyOn(internalSelectors.shippingAddress, 'getShippingAddress').mockReturnValue(undefined);
+            jest.spyOn(internalSelectors.config, 'getContextConfig').mockReturnValue(undefined);
+
+            expect(selector.getShippingAddress()).toBeUndefined();
+        });
     });
 
     it('returns instruments', () => {
