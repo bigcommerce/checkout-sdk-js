@@ -1,25 +1,21 @@
-import { ScriptLoader } from '@bigcommerce/script-loader';
-
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { MissingDataError, MissingDataErrorType } from '../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
 import PaymentMethod from '../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
+import { PaypalScriptLoader, PaypalSDK } from './paypal';
 
-/**
- * @todo Convert this file into TypeScript properly
- */
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
-    private _paypalSdk: any;
+    private _paypalSdk?: PaypalSDK;
     private _paymentMethod?: PaymentMethod;
 
     constructor(
         store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _scriptLoader: ScriptLoader
+        private _scriptLoader: PaypalScriptLoader
     ) {
         super(store);
     }
@@ -33,9 +29,9 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             return super.initialize(options);
         }
 
-        return this._scriptLoader.loadScript('//www.paypalobjects.com/api/checkout.min.js')
-            .then(() => {
-                this._paypalSdk = (window as any).paypal;
+        return this._scriptLoader.loadPaypal()
+            .then(paypal => {
+                this._paypalSdk = paypal;
 
                 if (!this._paymentMethod || !this._paymentMethod.config.merchantId) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -56,13 +52,15 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
 
         if (this._isInContextEnabled() && this._paypalSdk) {
             this._paypalSdk.checkout.closeFlow();
-            this._paypalSdk = null;
+            this._paypalSdk = undefined;
         }
 
         return super.deinitialize();
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const paypal = this._paypalSdk;
+
         if (this._isAcknowledgedOrFinalized()) {
             return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
         }
@@ -81,21 +79,25 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
                 });
         }
 
-        this._paypalSdk.checkout.initXO();
+        if (!paypal) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        paypal.checkout.initXO();
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
             .then(state => {
                 const redirectUrl = state.payment.getPaymentRedirectUrl();
 
                 if (redirectUrl) {
-                    this._paypalSdk.checkout.startFlow(redirectUrl);
+                    paypal.checkout.startFlow(redirectUrl);
                 }
 
                 // We need to hold execution so the consumer does not redirect us somewhere else
                 return new Promise<never>(() => {});
             })
             .catch(error => {
-                this._paypalSdk.checkout.closeFlow();
+                paypal.checkout.closeFlow();
 
                 return Promise.reject(error);
             });
