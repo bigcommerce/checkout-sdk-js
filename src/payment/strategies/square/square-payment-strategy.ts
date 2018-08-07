@@ -116,7 +116,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                     deferred.reject(new UnsupportedBrowserError());
                 },
                 cardNonceResponseReceived: (errors: Error[], nonce: string, cardData: CardData,
-                                            billingContact: Contact, shippingContact: Contact) => {
+                                            billingContact: Contact | undefined, shippingContact: Contact | undefined) => {
                     if (cardData.digital_wallet_type !== 'NONE') {
                         this._setExternalCheckoutData(cardData, nonce)
                         .then(() => {

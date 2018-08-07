@@ -78,7 +78,8 @@ export interface SquareFormElement {
 export interface SquareFormCallbacks {
     paymentFormLoaded?(form: SquarePaymentForm): void;
     unsupportedBrowserDetected?(): void;
-    cardNonceResponseReceived?(errors: any, nonce: string): void;
+    cardNonceResponseReceived?(errors: Error[], nonce: string, cardData: CardData,
+                               billingContact: Contact | undefined | undefined, shippingContact: Contact): void;
 }
 
 export type SquareFormFactory = (options: SquareFormOptions) => SquarePaymentForm;
