@@ -1,6 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
-import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
@@ -83,11 +82,7 @@ describe('SquarePaymentStrategy', () => {
         paymentMethod = getSquare();
         orderActionCreator = new OrderActionCreator(
             createCheckoutClient(),
-            new CheckoutValidator(
-                new CheckoutRequestSender(
-                    requestSender
-            )
-        )
+            checkoutValidator
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
@@ -99,7 +94,6 @@ describe('SquarePaymentStrategy', () => {
         strategy = new SquarePaymentStrategy(
             store,
             checkoutActionCreator,
-            createFormPoster(),
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,

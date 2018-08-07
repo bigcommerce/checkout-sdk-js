@@ -161,7 +161,6 @@ export default function createPaymentStrategyRegistry(
         new SquarePaymentStrategy(
             store,
             new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
-            createFormPoster(),
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,

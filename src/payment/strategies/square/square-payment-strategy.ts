@@ -1,4 +1,3 @@
-import { FormPoster } from '@bigcommerce/form-poster';
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
@@ -14,7 +13,7 @@ import {
 } from '../../../common/error/errors';
 import { toFormUrlEncoded } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../../index';
+import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../../index';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -30,7 +29,6 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     constructor(
         store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
-        private _formPoster: FormPoster,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
@@ -169,7 +167,6 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
     }
 
     private _paymentInstrumentSelected(nonce: string, cardData: CardData) {
-        const state = this._store.getState();
         return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
                 return Promise.all([
                     this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
