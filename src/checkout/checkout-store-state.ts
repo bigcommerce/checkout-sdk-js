@@ -1,5 +1,6 @@
 import { BillingAddressState } from '../billing';
 import { CartState } from '../cart';
+import { CheckoutButtonState } from '../checkout-buttons';
 import { ConfigState } from '../config';
 import { CouponState, GiftCertificateState } from '../coupon';
 import { CustomerState, CustomerStrategyState } from '../customer';
@@ -16,6 +17,7 @@ export default interface CheckoutStoreState {
     billingAddress: BillingAddressState;
     cart: CartState;
     checkout: CheckoutState;
+    checkoutButton: CheckoutButtonState;
     config: ConfigState;
     countries: CountryState;
     coupons: CouponState;

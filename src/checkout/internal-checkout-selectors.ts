@@ -1,5 +1,6 @@
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
+import { CheckoutButtonSelector } from '../checkout-buttons';
 import { ConfigSelector } from '../config';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector, CustomerStrategySelector } from '../customer';
@@ -18,6 +19,7 @@ export default interface InternalCheckoutSelectors {
     billingAddress: BillingAddressSelector;
     cart: CartSelector;
     checkout: CheckoutSelector;
+    checkoutButton: CheckoutButtonSelector;
     config: ConfigSelector;
     consignments: ConsignmentSelector;
     countries: CountrySelector;

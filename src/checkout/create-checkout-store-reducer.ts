@@ -2,6 +2,7 @@ import { combineReducers, Action, Reducer } from '@bigcommerce/data-store';
 
 import { billingAddressReducer } from '../billing';
 import { cartReducer } from '../cart';
+import { checkoutButtonReducer } from '../checkout-buttons';
 import { configReducer } from '../config';
 import { couponReducer, giftCertificateReducer } from '../coupon';
 import { customerReducer, customerStrategyReducer } from '../customer';
@@ -20,6 +21,7 @@ export default function createCheckoutStoreReducer(): Reducer<CheckoutStoreState
         billingAddress: billingAddressReducer,
         cart: cartReducer,
         checkout: checkoutReducer,
+        checkoutButton: checkoutButtonReducer,
         config: configReducer,
         consignments: consignmentReducer,
         countries: countryReducer,

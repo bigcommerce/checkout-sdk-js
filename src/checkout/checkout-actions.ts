@@ -1,5 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { LoadConfigAction } from '../config/config-actions';
+
 import Checkout from './checkout';
 
 export enum CheckoutActionType {
@@ -17,7 +19,8 @@ export type CheckoutAction = LoadCheckoutAction | UpdateCheckoutAction;
 export type LoadCheckoutAction =
     LoadCheckoutRequestedAction |
     LoadCheckoutSucceededAction |
-    LoadCheckoutFailedAction;
+    LoadCheckoutFailedAction |
+    LoadConfigAction;
 
 export type UpdateCheckoutAction =
     UpdateCheckoutRequestedAction |
