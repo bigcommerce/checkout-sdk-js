@@ -19,7 +19,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { CardData, Error, SquareFormElement, SquareFormOptions } from './square-form';
+import SquarePaymentForm, { CardData, Contact, Error, SquareFormElement, SquareFormOptions } from './square-form';
 import SquareScriptLoader from './square-script-loader';
 
 export default class SquarePaymentStrategy extends PaymentStrategy {
@@ -113,7 +113,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 unsupportedBrowserDetected: () => {
                     deferred.reject(new UnsupportedBrowserError());
                 },
-                cardNonceResponseReceived: (errors: Error[], nonce: string, cardData: CardData) => {
+                cardNonceResponseReceived: (errors: Error[], nonce: string, cardData: CardData, billingContact: Contact, shippingContact: Contact) => {
                     if (!cardData) {
                         return;
                     }
@@ -148,11 +148,14 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                     }
 
                     return {
+                        requestShippingAddress: true,
+                        requestBillingInfo: true,
                         currencyCode: storeConfig.currency.code,
                         countryCode: 'US',
                         total: {
                             label: storeConfig.storeProfile.storeName,
                             amount: checkout.subtotal.toString(),
+                            pending: false,
                         },
                     };
                 },

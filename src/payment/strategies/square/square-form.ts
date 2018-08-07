@@ -37,6 +37,18 @@ export interface CardData {
     digital_wallet_type: string;
 }
 
+export interface Contact {
+    familyName: string;
+    givenName: string;
+    email: string;
+    country: string;
+    countryName: string;
+    region: string;
+    city: string;
+    addressLines: string[];
+    postalCode: string;
+}
+
 export enum CardBrand {
     americanExpress,
     discover,
