@@ -58,7 +58,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         const { payment, ...order } = payload;
 
         if (!payment || !payment.methodId) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const paymentName = payment.methodId;
