@@ -1,9 +1,11 @@
+
 import { RequestOptions } from '../common/http-request';
 
 import {
     AmazonPayPaymentInitializeOptions,
     BraintreePaymentInitializeOptions,
     BraintreeVisaCheckoutPaymentInitializeOptions,
+    ChasePayInitializeOptions,
     KlarnaPaymentInitializeOptions,
     SquarePaymentInitializeOptions,
 } from './strategies';
@@ -61,4 +63,10 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Square.
      */
     square?: SquarePaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Chasepay payment method.
+     * They can be omitted unless you need to support Chasepay.
+     */
+    chasepay?: ChasePayInitializeOptions;
 }

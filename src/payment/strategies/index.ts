@@ -12,5 +12,6 @@ export { AfterpayPaymentStrategy } from './afterpay';
 export { AmazonPayPaymentStrategy, AmazonPayPaymentInitializeOptions } from './amazon-pay';
 export { BraintreeCreditCardPaymentStrategy, BraintreePaymentInitializeOptions, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy, BraintreeVisaCheckoutPaymentInitializeOptions } from './braintree';
 export { KlarnaPaymentStrategy, KlarnaPaymentInitializeOptions } from './klarna';
+export { ChasepayPaymentStrategy, ChasePayInitializeOptions } from './chasepay';
 export { SquarePaymentStrategy, SquarePaymentInitializeOptions } from './square';
 export { WepayPaymentStrategy } from './wepay';
