@@ -26,7 +26,7 @@ export function getCustomer(): Customer {
         addresses: [
             {
                 ...getShippingAddress(),
-                id: '55c96cda6f04c',
+                id: 5,
             },
         ],
         isGuest: false,
