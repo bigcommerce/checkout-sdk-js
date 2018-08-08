@@ -19,7 +19,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { CardData, Contact, Error, SquareFormElement, SquareFormOptions } from './square-form';
+import SquarePaymentForm, { CardData, Contact, NonceGenerationError, SquareFormElement, SquareFormOptions, SquareValidationErrors } from './square-form';
 import SquareScriptLoader from './square-script-loader';
 
 export default class SquarePaymentStrategy extends PaymentStrategy {
@@ -115,12 +115,16 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 unsupportedBrowserDetected: () => {
                     deferred.reject(new UnsupportedBrowserError());
                 },
-                cardNonceResponseReceived: (errors: Error[], nonce: string, cardData: CardData,
+                cardNonceResponseReceived: (errors: NonceGenerationError[] | undefined, nonce: string, cardData: CardData | undefined,
                                             billingContact: Contact | undefined, shippingContact: Contact | undefined) => {
-                    if (cardData.digital_wallet_type !== 'NONE') {
+                    if (!cardData) {
+                        if (errors) {
+                            this._handleNonceGenerationErrors(errors);
+                        }
+                    } else if (cardData.digital_wallet_type !== 'NONE') {
                         this._setExternalCheckoutData(cardData, nonce)
                         .then(() => {
-                            this._paymentInstrumentSelected(nonce, cardData)
+                            this._paymentInstrumentSelected(methodId)
                             .then(() => {
                                 if (squareOptions.onPaymentSelect) {
                                     squareOptions.onPaymentSelect();
@@ -128,7 +132,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                             });
                         });
                     } else {
-                        this._cardNonceResponseReceived(errors, nonce);
+                        this._cardNonceResponseReceived(nonce, errors);
                     }
                 },
                 methodsSupported: () => {},
@@ -162,26 +166,59 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                         },
                     };
                 },
+
+                validateShippingContact: (errors: SquareValidationErrors) => {
+                    if (errors) {
+                        this._handlSquareValidationErrors(errors);
+                    }
+                },
             },
         };
     }
 
-    private _paymentInstrumentSelected(nonce: string, cardData: CardData) {
+    private _paymentInstrumentSelected(methodId: string) {
         return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
                 return Promise.all([
                     this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
-                    this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod('squarev2')),
+                    this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
                 ]);
-        }, { methodId: 'squarev2' }), { queueId: 'widgetInteraction' });
+        }, { methodId }), { queueId: 'widgetInteraction' });
     }
 
-    private _cardNonceResponseReceived(errors: Error[], nonce: string): void {
+    private _handleNonceGenerationErrors(errors: NonceGenerationError[]) {
+        const error = errors[0];
+
+        throw new StandardError(error.message);
+    }
+
+    private _handlSquareValidationErrors(error: SquareValidationErrors) {
+        if (!error.country && !error.region && !error.city && !error.addressLines && !error.postalCode) {
+            throw new StandardError('Unknown error');
+        }
+
+        if (error.country) {
+            throw new StandardError(error.country.join(','));
+        }
+        if (error.region) {
+            throw new StandardError(error.region.join(','));
+        }
+        if (error.city) {
+            throw new StandardError(error.city.join(','));
+        }
+        if (error.addressLines) {
+            throw new StandardError(error.addressLines.join(','));
+        }
+
+        throw new StandardError(error.postalCode.join(','));
+    }
+
+    private _cardNonceResponseReceived(nonce: string, nonceGenerationErrors: NonceGenerationError[] | undefined): void {
         if (!this._deferredRequestNonce) {
             throw new StandardError();
         }
 
-        if (errors) {
-            this._deferredRequestNonce.reject(errors);
+        if (nonceGenerationErrors) {
+            this._deferredRequestNonce.reject(nonceGenerationErrors);
         } else {
             this._deferredRequestNonce.resolve({ nonce });
         }

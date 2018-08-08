@@ -22,10 +22,18 @@ export interface SquareFormOptions {
     masterpass: SquareFormElement;
 }
 
-export interface Error {
+export interface NonceGenerationError {
     type: string;
     message: string;
     field: string;
+}
+
+export interface SquareValidationErrors {
+    country: string[];
+    region: string[];
+    city: string[];
+    addressLines: string[];
+    postalCode: string[];
 }
 
 export interface CardData {
@@ -78,8 +86,8 @@ export interface SquareFormElement {
 export interface SquareFormCallbacks {
     paymentFormLoaded?(form: SquarePaymentForm): void;
     unsupportedBrowserDetected?(): void;
-    cardNonceResponseReceived?(errors: Error[], nonce: string, cardData: CardData,
-                               billingContact: Contact | undefined | undefined, shippingContact: Contact): void;
+    cardNonceResponseReceived?(errors: NonceGenerationError[] | null, nonce: string, cardData: CardData, billingContact: Contact | undefined,
+                               shippingContact: Contact | undefined): void;
 }
 
 export type SquareFormFactory = (options: SquareFormOptions) => SquarePaymentForm;
