@@ -1,12 +1,13 @@
-import { createAction, Action } from '@bigcommerce/data-store';
+import { createAction, Action, DataStore } from '@bigcommerce/data-store';
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
@@ -18,6 +19,8 @@ import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chas
 import { PaymentActionType } from '../../payment-actions';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
+import PaymentStrategyRegistry from '../../payment-strategy-registry';
 import PaymentStrategy from '../payment-strategy';
 import WepayRiskClient from '../wepay/wepay-risk-client';
 
@@ -25,7 +28,9 @@ import ChasePayPaymentStrategy from './chasepay-payment-strategy';
 
 describe('ChasePayPaymentStrategy', () => {
     let container: HTMLDivElement;
+    let checkoutActionCreator: CheckoutActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paymentStrategyActionCreator: PaymentStrategyActionCreator
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodMock: PaymentMethod;
     let orderActionCreator: OrderActionCreator;
@@ -68,6 +73,7 @@ describe('ChasePayPaymentStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
         orderActionCreator = new OrderActionCreator(createCheckoutClient(), new CheckoutValidator(new CheckoutRequestSender(createRequestSender())));
         paymentActionCreator = new PaymentActionCreator(new PaymentRequestSender(createCheckoutClient()), orderActionCreator);
+        checkoutActionCreator = new CheckoutActionCreator(new CheckoutRequestSender(createRequestSender()), new ConfigActionCreator(new ConfigRequestSender(requestSender)));
         requestSender = createRequestSender();
         strategy = new ChasePayPaymentStrategy(
             store,
@@ -77,7 +83,9 @@ describe('ChasePayPaymentStrategy', () => {
             orderActionCreator,
             requestSender,
             createFormPoster(),
-            wepayRiskClient
+            wepayRiskClient,
+            paymentStrategyActionCreator, 
+            checkoutActionCreator,
         );
 
         container = document.createElement('div');

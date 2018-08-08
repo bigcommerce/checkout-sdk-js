@@ -24,6 +24,7 @@ export interface ChasePay {
     };
     isChasePayUp(): boolean;
     insertButtons(options: any): void;
+    insertBrandings(options: any): void;
     startCheckout(digitalSessionId?: string): void;
     showLoadingAnimation(): void;
     configure(options: any): void;

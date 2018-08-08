@@ -4,6 +4,7 @@ export function getChasePayScriptMock(): JPMC {
     return {
         ChasePay: {
             insertButtons: jest.fn(),
+            insertBrandings: jest.fn(),
             isChasePayUp: jest.fn(),
             startCheckout: jest.fn(),
             configure: jest.fn(),

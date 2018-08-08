@@ -7,9 +7,11 @@ import {
     PaymentMethod,
     PaymentMethodActionCreator,
     PaymentRequestOptions,
+    PaymentStrategyActionCreator,
 } from '../..';
 
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors, CheckoutActionCreator } from '../../../checkout';
+import { createCheckoutService, CheckoutService } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { toFormUrlEncoded } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
@@ -19,6 +21,8 @@ import WepayRiskClient from '../wepay/wepay-risk-client';
 
 export default class ChasepayPaymentStrategy extends PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
+    private _checkoutService?: CheckoutService;
+    private riskToken?: string;
 
     constructor(
         store: CheckoutStore,
@@ -28,7 +32,10 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _requestSender: RequestSender,
         private _formPoster: FormPoster,
-        private _wepayRiskClient: WepayRiskClient
+        private _wepayRiskClient: WepayRiskClient,
+        private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
+        private _checkoutActionCreator: CheckoutActionCreator,
+
     ) {
         super(store);
     }
@@ -42,16 +49,23 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
 
         const {
             onError = () => {},
-            onSuccess = () => {},
+            onSuccess = (payload: any) => {},
+            onCancel = () => {},
             signInButton,
+            container,
         } = chasepayCheckoutOptions;
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(state => {
                 this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
+                if (!this._paymentMethod || !this._paymentMethod.initializationData) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                }
+
                 const cart = state.cart.getCart();
                 const storeConfig = state.config.getStoreConfig();
+
                 this._wepayRiskClient.initialize();
 
                 if (!cart || !storeConfig || !this._paymentMethod) {
@@ -60,14 +74,40 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
 
                 return this._chasePayScriptLoader.load(this._paymentMethod.config.testMode)
                     .then(({ ChasePay }) => {
-                        const { COMPLETE_CHECKOUT } = ChasePay.EventType;
+                        const { COMPLETE_CHECKOUT, CANCEL_CHECKOUT } = ChasePay.EventType;
+
+                        if (ChasePay.isChasePayUp && document.getElementById(container)) {
+                            ChasePay.insertBrandings({
+                                containers: [container],
+                                color: 'white',
+                            });
+                        }
+
+                        ChasePay.on(CANCEL_CHECKOUT, () => onCancel());
 
                         ChasePay.on(COMPLETE_CHECKOUT, (payload: ChasePaySuccessPayload) => {
-                            this._setExternalCheckoutData(payload).then(() => {
-                                onSuccess();
-                                this._reloadPage();
+                            const state = this._store.getState();
+                            const method = state.paymentMethods.getPaymentMethod(methodId);
+                            const requestId = method && method.initializationData && method.initializationData.merchantRequestId;
+
+                            this._setExternalCheckoutData(payload, requestId).then(() => {
+                                this._paymentInstrumentSelected().then(() => onSuccess(payload));
                             });
                         });
+
+                        ChasePay.on(ChasePay.EventType.START_CHECKOUT, () => {
+                            this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+                                .then(() => {
+                                    const state = this._store.getState();
+                                    const method = state.paymentMethods.getPaymentMethod(methodId);
+                                    const sessionId = method && method.initializationData && method.initializationData.digitalSessionId;
+
+                                    if (sessionId) {
+                                        ChasePay.startCheckout(sessionId);
+                                    }
+                                });
+                        });
+
                         if (signInButton) {
                             this._refreshDigitalSessionId(methodId)
                                 .then(digitalSessionId => {
@@ -88,6 +128,7 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
 
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = orderRequest;
+        this.riskToken = this._wepayRiskClient.getRiskToken();
 
         if (!payment) {
             throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
@@ -112,10 +153,19 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
                         },
                         ccNumber: paymentInitData.accountNum,
                         accountMask: paymentInitData.accountMask,
-                        extraData: { riskToken: this._wepayRiskClient.getRiskToken() },
+                        extraData: { riskToken: this.riskToken },
                     },
                 }))
             );
+    }
+
+    private _paymentInstrumentSelected() {
+        return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
+            return Promise.all([
+                this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
+                this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod('chasepay')),
+            ]);
+        }, { methodId: 'chasepay' }), { queueId: 'widgetInteraction' });
     }
 
     private _refreshDigitalSessionId(methodId: string): Promise<string | undefined> {
@@ -141,7 +191,7 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
         });
     }
 
-    private _setExternalCheckoutData(payload: ChasePaySuccessPayload): Promise<Response> {
+    private _setExternalCheckoutData(payload: ChasePaySuccessPayload, requestId: string): Promise<Response> {
         const url = `checkout.php?provider=chasepay&action=set_external_checkout`;
         const options = {
             headers: {
@@ -150,6 +200,7 @@ export default class ChasepayPaymentStrategy extends PaymentStrategy {
             },
             body: toFormUrlEncoded({
                 sessionToken: payload.sessionToken,
+                merchantRequestId: requestId,
             }),
         };
 
@@ -178,4 +229,9 @@ export interface ChasePayInitializeOptions {
      * A callback that gets called when the customer selects a payment option.
      */
     onSuccess?(): void;
+
+    /**
+     * A callback that gets called when the customer cancels the payment option.
+     */
+    onCancel?(): void;
 }
