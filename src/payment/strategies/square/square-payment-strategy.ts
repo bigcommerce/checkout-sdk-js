@@ -1,19 +1,25 @@
-import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { RequestSender, Response } from '@bigcommerce/request-sender';
+
+import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
     StandardError,
     TimeoutError,
     UnsupportedBrowserError,
 } from '../../../common/error/errors';
+import { toFormUrlEncoded } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../../index';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, { SquareFormElement, SquareFormOptions } from './square-form';
+import SquarePaymentForm, { CardData, Contact, NonceGenerationError, SquareFormElement, SquareFormOptions, SquareValidationErrors } from './square-form';
 import SquareScriptLoader from './square-script-loader';
 
 export default class SquarePaymentStrategy extends PaymentStrategy {
@@ -22,8 +28,12 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
 
     constructor(
         store: CheckoutStore,
+        private _checkoutActionCreator: CheckoutActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
+        private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
+        private _requestSender: RequestSender,
         private _scriptLoader: SquareScriptLoader
     ) {
         super(store);
@@ -46,7 +56,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         const { payment, ...order } = payload;
 
         if (!payment || !payment.methodId) {
-            throw new InvalidArgumentError('Unable to submit payment because "payload.payment.methodId" argument is not provided.');
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         const paymentName = payment.methodId;
@@ -91,7 +101,6 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
             callbacks: {
                 paymentFormLoaded: () => {
                     deferred.resolve();
-
                     const state = this._store.getState();
                     const billingAddress = state.billingAddress.getBillingAddress();
 
@@ -106,24 +115,130 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 unsupportedBrowserDetected: () => {
                     deferred.reject(new UnsupportedBrowserError());
                 },
-                cardNonceResponseReceived: (errors, nonce) => {
-                    this._cardNonceResponseReceived(errors, nonce);
+                cardNonceResponseReceived: (errors: NonceGenerationError[] | undefined, nonce: string, cardData: CardData | undefined,
+                                            billingContact: Contact | undefined, shippingContact: Contact | undefined) => {
+                    if (!cardData) {
+                        if (errors) {
+                            this._handleNonceGenerationErrors(errors);
+                        }
+                    } else if (cardData.digital_wallet_type !== 'NONE') {
+                        this._setExternalCheckoutData(cardData, nonce)
+                        .then(() => {
+                            this._paymentInstrumentSelected(methodId)
+                            .then(() => {
+                                if (squareOptions.onPaymentSelect) {
+                                    squareOptions.onPaymentSelect();
+                                }
+                            });
+                        });
+                    } else {
+                        this._cardNonceResponseReceived(nonce, errors);
+                    }
+                },
+                methodsSupported: () => {},
+
+                /*
+                 * callback function: createPaymentRequest
+                 * Triggered when: a digital wallet payment button is clicked.
+                */
+                createPaymentRequest: () => {
+                    const state = this._store.getState();
+                    const checkout = state.checkout.getCheckout();
+                    const storeConfig = state.config.getStoreConfig();
+
+                    if (!checkout) {
+                        throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                    }
+
+                    if (!storeConfig) {
+                        throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                    }
+
+                    return {
+                        requestShippingAddress: true,
+                        requestBillingInfo: true,
+                        currencyCode: storeConfig.currency.code,
+                        countryCode: 'US',
+                        total: {
+                            label: storeConfig.storeProfile.storeName,
+                            amount: checkout.subtotal.toString(),
+                            pending: false,
+                        },
+                    };
+                },
+
+                validateShippingContact: (errors: SquareValidationErrors) => {
+                    if (errors) {
+                        this._handlSquareValidationErrors(errors);
+                    }
                 },
             },
         };
     }
 
-    private _cardNonceResponseReceived(errors: any, nonce: string): void {
+    private _paymentInstrumentSelected(methodId: string) {
+        return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
+                return Promise.all([
+                    this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
+                    this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
+                ]);
+        }, { methodId }), { queueId: 'widgetInteraction' });
+    }
+
+    private _handleNonceGenerationErrors(errors: NonceGenerationError[]) {
+        const error = errors[0];
+
+        throw new StandardError(error.message);
+    }
+
+    private _handlSquareValidationErrors(error: SquareValidationErrors) {
+        if (!error.country && !error.region && !error.city && !error.addressLines && !error.postalCode) {
+            throw new StandardError('Unknown error');
+        }
+
+        if (error.country) {
+            throw new StandardError(error.country.join(','));
+        }
+        if (error.region) {
+            throw new StandardError(error.region.join(','));
+        }
+        if (error.city) {
+            throw new StandardError(error.city.join(','));
+        }
+        if (error.addressLines) {
+            throw new StandardError(error.addressLines.join(','));
+        }
+
+        throw new StandardError(error.postalCode.join(','));
+    }
+
+    private _cardNonceResponseReceived(nonce: string, nonceGenerationErrors: NonceGenerationError[] | undefined): void {
         if (!this._deferredRequestNonce) {
             throw new StandardError();
         }
 
-        if (errors) {
-            this._deferredRequestNonce.reject(errors);
+        if (nonceGenerationErrors) {
+            this._deferredRequestNonce.reject(nonceGenerationErrors);
         } else {
             this._deferredRequestNonce.resolve({ nonce });
         }
     }
+
+    private _setExternalCheckoutData(cardData: CardData, nonce: string): Promise<Response> {
+        const url = `checkout.php?provider=squarev2&action=set_external_checkout`;
+        const options = {
+          headers: {
+            Accept: 'text/html',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          },
+          body: toFormUrlEncoded({
+              nonce: { nonce },
+              cardData: JSON.stringify(cardData),
+          }),
+        };
+
+        return this._requestSender.post(url, options);
+      }
 }
 
 export interface DeferredPromise {
@@ -168,4 +283,12 @@ export interface SquarePaymentInitializeOptions {
      * The set of CSS styles to apply to all form fields.
      */
     inputStyles?: Array<{ [key: string]: string }>;
+
+    // Initialize Masterpass placeholder ID
+    masterpass?: SquareFormElement;
+
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
+    onPaymentSelect?(): void;
 }
