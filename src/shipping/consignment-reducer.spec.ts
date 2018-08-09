@@ -16,10 +16,12 @@ describe('consignmentReducer', () => {
             errors: {
                 updateError: {},
                 updateShippingOptionError: {},
+                deleteError: {},
             },
             statuses: {
                 isUpdating: {},
                 isUpdatingShippingOption: {},
+                isDeleting: {},
             },
         };
     });
@@ -133,6 +135,53 @@ describe('consignmentReducer', () => {
             },
             statuses: {
                 isUpdating: {
+                    foo: false,
+                },
+            },
+        });
+    });
+
+    it('returns loading state when deleting consignment', () => {
+        const action = createAction(ConsignmentActionType.DeleteConsignmentRequested, null, { id });
+
+        expect(consignmentReducer(initialState, action)).toMatchObject({
+            statuses: {
+                isDeleting: {
+                    foo: true,
+                },
+            },
+        });
+    });
+
+    it('returns new data when consignment is deleted', () => {
+        const action = createAction(ConsignmentActionType.DeleteConsignmentSucceeded, getCheckout(), { id });
+
+        expect(consignmentReducer(initialState, action)).toMatchObject({
+            data: action.payload && action.payload.consignments,
+            errors: {
+                deleteError: {
+                    foo: undefined,
+                },
+            },
+            statuses: {
+                isDeleting: {
+                    foo: false,
+                },
+            },
+        });
+    });
+
+    it('returns error when consignment delete fails', () => {
+        const action = createAction(ConsignmentActionType.DeleteConsignmentFailed, new Error(), { id });
+
+        expect(consignmentReducer(initialState, action)).toMatchObject({
+            errors: {
+                deleteError: {
+                    foo: action.payload,
+                },
+            },
+            statuses: {
+                isDeleting: {
                     foo: false,
                 },
             },

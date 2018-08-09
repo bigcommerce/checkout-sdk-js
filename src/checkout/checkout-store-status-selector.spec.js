@@ -319,6 +319,22 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
+    describe('#isDeletingConsignment()', () => {
+        it('returns true if deleting consignment', () => {
+            jest.spyOn(selectors.consignments, 'isDeleting').mockReturnValue(true);
+
+            expect(statuses.isDeletingConsignment()).toEqual(true);
+            expect(selectors.consignments.isDeleting).toHaveBeenCalled();
+        });
+
+        it('returns false if not deleting consignment', () => {
+            jest.spyOn(selectors.consignments, 'isDeleting').mockReturnValue(false);
+
+            expect(statuses.isDeletingConsignment()).toEqual(false);
+            expect(selectors.consignments.isDeleting).toHaveBeenCalled();
+        });
+    });
+
     describe('#isCreatingConsignments()', () => {
         it('returns true if updating shipping address', () => {
             jest.spyOn(selectors.consignments, 'isCreating').mockReturnValue(true);

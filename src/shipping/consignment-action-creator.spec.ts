@@ -12,7 +12,7 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import { Consignment, ConsignmentRequestSender } from '.';
 import { ConsignmentsRequestBody, ConsignmentAssignmentRequestBody, ConsignmentShippingOptionRequestBody, ConsignmentUpdateRequestBody } from './consignment';
 import ConsignmentActionCreator from './consignment-action-creator';
-import { ConsignmentActionType, CreateConsignmentsAction, UpdateConsignmentAction, UpdateShippingOptionAction } from './consignment-actions';
+import { ConsignmentActionType, CreateConsignmentsAction, DeleteConsignmentAction, UpdateConsignmentAction, UpdateShippingOptionAction } from './consignment-actions';
 import { getConsignment } from './consignments.mock';
 import { getShippingAddress } from './shipping-addresses.mock';
 
@@ -36,6 +36,7 @@ describe('consignmentActionCreator', () => {
 
         jest.spyOn(consignmentRequestSender, 'createConsignments').mockReturnValue(Promise.resolve(response));
         jest.spyOn(consignmentRequestSender, 'updateConsignment').mockReturnValue(Promise.resolve(response));
+        jest.spyOn(consignmentRequestSender, 'deleteConsignment').mockReturnValue(Promise.resolve(response));
 
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
 
@@ -399,7 +400,7 @@ describe('consignmentActionCreator', () => {
 
             const errorHandler = jest.fn(action => Observable.of(action));
 
-            await Observable.from(consignmentActionCreator.updateConsignment(consignment)(store))
+            await Observable.from(thunkAction(store))
                 .catch(errorHandler)
                 .toArray()
                 .subscribe(actions => {
@@ -425,6 +426,84 @@ describe('consignmentActionCreator', () => {
             expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                 payload,
+                options
+            );
+        });
+    });
+
+    describe('#deleteConsignment()', () => {
+        let thunkAction: ThunkAction<DeleteConsignmentAction>;
+
+        beforeEach(() => {
+            thunkAction = consignmentActionCreator.deleteConsignment(consignment.id, options);
+        });
+
+        describe('when store has no checkout data / id', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({});
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    await Observable.from(thunkAction(store)).toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(MissingDataError);
+                    expect(consignmentRequestSender.deleteConsignment).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        it('emits actions if able to delete consignment', async () => {
+            const actions = await Observable.from(thunkAction(store))
+                .toArray()
+                .toPromise();
+
+            expect(actions).toEqual([
+                {
+                    type: ConsignmentActionType.DeleteConsignmentRequested,
+                    payload: undefined,
+                    meta: { id: consignment.id },
+                },
+                {
+                    type: ConsignmentActionType.DeleteConsignmentSucceeded,
+                    payload: response.body,
+                    meta: { id: consignment.id },
+                },
+            ]);
+        });
+
+        it('emits error actions if unable to delete consignment', async () => {
+            jest.spyOn(consignmentRequestSender, 'deleteConsignment')
+                .mockImplementation(() => Promise.reject(errorResponse));
+
+            const errorHandler = jest.fn(action => Observable.of(action));
+
+            await Observable.from(thunkAction(store))
+                .catch(errorHandler)
+                .toArray()
+                .subscribe(actions => {
+                    expect(actions).toEqual([
+                        {
+                            type: ConsignmentActionType.DeleteConsignmentRequested,
+                            payload: undefined,
+                            meta: { id: consignment.id },
+                        },
+                        {
+                            type: ConsignmentActionType.DeleteConsignmentFailed,
+                            payload: errorResponse,
+                            error: true,
+                            meta: { id: consignment.id },
+                        },
+                    ]);
+                });
+        });
+
+        it('sends request to delete consignment', async () => {
+            await Observable.from(thunkAction(store)).toPromise();
+
+            expect(consignmentRequestSender.deleteConsignment).toHaveBeenCalledWith(
+                'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                consignment.id,
                 options
             );
         });

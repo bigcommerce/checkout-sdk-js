@@ -11,10 +11,12 @@ const DEFAULT_STATE: ConsignmentState = {
     errors: {
         updateShippingOptionError: {},
         updateError: {},
+        deleteError: {},
     },
     statuses: {
         isUpdating: {},
         isUpdatingShippingOption: {},
+        isDeleting: {},
     },
 };
 
@@ -40,6 +42,7 @@ function dataReducer(
     case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case ConsignmentActionType.CreateConsignmentsSucceeded:
     case ConsignmentActionType.UpdateConsignmentSucceeded:
+    case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
         return action.payload ? action.payload.consignments : data;
 
@@ -84,6 +87,21 @@ function errorsReducer(
     case ConsignmentActionType.UpdateConsignmentFailed:
         if (action.meta) {
             errors.updateError[action.meta.id] = action.payload;
+        }
+
+        return errors;
+
+    case ConsignmentActionType.DeleteConsignmentSucceeded:
+    case ConsignmentActionType.DeleteConsignmentRequested:
+        if (action.meta) {
+            errors.deleteError[action.meta.id] = undefined;
+        }
+
+        return errors;
+
+    case ConsignmentActionType.DeleteConsignmentFailed:
+        if (action.meta) {
+            errors.deleteError[action.meta.id] = action.payload;
         }
 
         return errors;
@@ -145,6 +163,21 @@ function statusesReducer(
     case ConsignmentActionType.UpdateConsignmentFailed:
         if (action.meta) {
             statuses.isUpdating[action.meta.id] = false;
+        }
+
+        return statuses;
+
+    case ConsignmentActionType.DeleteConsignmentRequested:
+        if (action.meta) {
+            statuses.isDeleting[action.meta.id] = true;
+        }
+
+        return statuses;
+
+    case ConsignmentActionType.DeleteConsignmentSucceeded:
+    case ConsignmentActionType.DeleteConsignmentFailed:
+        if (action.meta) {
+            statuses.isDeleting[action.meta.id] = false;
         }
 
         return statuses;

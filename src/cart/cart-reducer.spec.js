@@ -61,6 +61,39 @@ describe('cartReducer()', () => {
         }));
     });
 
+    it('returns new data when a consignment is updated', () => {
+        const action = {
+            type: ConsignmentActionType.UpdateConsignmentSucceeded,
+            payload: getCheckout(),
+        };
+
+        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getCart(),
+        }));
+    });
+
+    it('returns new data when a consignment is created', () => {
+        const action = {
+            type: ConsignmentActionType.CreateConsignmentsSucceeded,
+            payload: getCheckout(),
+        };
+
+        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getCart(),
+        }));
+    });
+
+    it('returns new data when a consignment is deleted', () => {
+        const action = {
+            type: ConsignmentActionType.DeleteConsignmentSucceeded,
+            payload: getCheckout(),
+        };
+
+        expect(cartReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: getCart(),
+        }));
+    });
+
     it('returns new data when a shipping option is updated', () => {
         const action = {
             type: ConsignmentActionType.UpdateShippingOptionSucceeded,

@@ -10,8 +10,16 @@ import { getShippingAddress } from './shipping-addresses.mock';
 
 describe('ConsignmentSelector', () => {
     const emptyState: ConsignmentState = {
-        statuses: { isUpdating: {}, isUpdatingShippingOption: {} },
-        errors: { updateError: {}, updateShippingOptionError: {} },
+        statuses: {
+            isUpdating: {},
+            isUpdatingShippingOption: {},
+            isDeleting: {},
+        },
+        errors: {
+            updateError: {},
+            updateShippingOptionError: {},
+            deleteError: {},
+        },
     };
 
     const existingAddress = getShippingAddress();
@@ -206,6 +214,39 @@ describe('ConsignmentSelector', () => {
         });
     });
 
+    describe('#getDeleteError()', () => {
+        it('returns undefined if none errored', () => {
+            selector = new ConsignmentSelector(merge({}, emptyState));
+            expect(selector.getDeleteError()).toEqual(undefined);
+        });
+
+        describe('when only one consignment errored', () => {
+            const error = new Error();
+
+            beforeEach(() => {
+                selector = new ConsignmentSelector(merge({}, emptyState, {
+                    errors: {
+                        deleteError: {
+                            foo: error,
+                        },
+                    },
+                }));
+            });
+
+            it('returns first encountered error', () => {
+                expect(selector.getDeleteError()).toEqual(error);
+            });
+
+            it('returns error if requested id errored', () => {
+                expect(selector.getDeleteError('foo')).toEqual(error);
+            });
+
+            it('returns undefined if requested id did not error', () => {
+                expect(selector.getDeleteError('bar')).toEqual(undefined);
+            });
+        });
+    });
+
     describe('#getItemAssignmentError()', () => {
         const updateError = new Error();
         const createError = new Error();
@@ -306,6 +347,38 @@ describe('ConsignmentSelector', () => {
 
             it('returns false if requested id is not being updated', () => {
                 expect(selector.isUpdating('bar')).toEqual(false);
+            });
+        });
+    });
+
+    describe('#isDeleting()', () => {
+        it('returns false if none is deleting', () => {
+            selector = new ConsignmentSelector(merge({}, emptyState));
+            expect(selector.isDeleting()).toEqual(false);
+        });
+
+        describe('when only one consignment is being deleted', () => {
+            beforeEach(() => {
+                selector = new ConsignmentSelector(merge({}, emptyState, {
+                    statuses: {
+                        isDeleting: {
+                            foo: true,
+                            bar: false,
+                        },
+                    },
+                }));
+            });
+
+            it('returns true if deleting any', () => {
+                expect(selector.isDeleting()).toEqual(true);
+            });
+
+            it('returns true if requested id is being deleted', () => {
+                expect(selector.isDeleting('foo')).toEqual(true);
+            });
+
+            it('returns false if requested id is not being deleted', () => {
+                expect(selector.isDeleting('bar')).toEqual(false);
             });
         });
     });

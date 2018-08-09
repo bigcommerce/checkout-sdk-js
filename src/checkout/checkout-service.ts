@@ -768,6 +768,28 @@ export default class CheckoutService {
     }
 
     /**
+     * Deletes a consignment
+     *
+     * ```js
+     * const state = await service.deleteConsignment('55c96cda6f04c');
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignmentId - The ID of the consignment to be deleted
+     * @param options - Options for the consignment delete request
+     * @returns A promise that resolves to the current state.
+     */
+    deleteConsignment(
+        consignmentId: string,
+        options?: RequestOptions
+    ): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.deleteConsignment(consignmentId, options);
+
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    }
+
+    /**
      * Updates a specific consignment.
      *
      * Note: this is used when items need to be shipped to multiple addresses,

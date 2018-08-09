@@ -22,6 +22,7 @@ import Consignment, {
 import {
     ConsignmentActionType,
     CreateConsignmentsAction,
+    DeleteConsignmentAction,
     LoadShippingOptionsAction,
     UpdateConsignmentAction,
     UpdateShippingOptionAction,
@@ -190,6 +191,31 @@ export default class ConsignmentActionCreator {
                 })
                 .catch(response => {
                     observer.error(createErrorAction(ConsignmentActionType.UpdateConsignmentFailed, response, consignmentMeta));
+                });
+        });
+    }
+
+    deleteConsignment(
+        consignmentId: string,
+        options?: RequestOptions
+    ): ThunkAction<DeleteConsignmentAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<DeleteConsignmentAction>) => {
+            const checkout = store.getState().checkout.getCheckout();
+            const consignmentMeta = { id: consignmentId };
+
+            if (!checkout || !checkout.id) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
+
+            observer.next(createAction(ConsignmentActionType.DeleteConsignmentRequested, undefined, consignmentMeta));
+
+            this._consignmentRequestSender.deleteConsignment(checkout.id, consignmentId, options)
+                .then(({ body }) => {
+                    observer.next(createAction(ConsignmentActionType.DeleteConsignmentSucceeded, body, consignmentMeta));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(ConsignmentActionType.DeleteConsignmentFailed, response, consignmentMeta));
                 });
         });
     }
