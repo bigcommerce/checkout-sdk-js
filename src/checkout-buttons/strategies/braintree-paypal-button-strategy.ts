@@ -53,14 +53,14 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
 
                 return paypal.Button.render({
                     env: paymentMethod.config.testMode ? 'sandbox' : 'production',
-                    commit: false,
+                    commit: paypalOptions.shouldProcessPayment ? true : false,
                     style: {
                         shape: 'rect',
                         label: this._offerCredit ? 'credit' : undefined,
                         ...pick(paypalOptions.style, 'color', 'shape', 'size'),
                     },
                     payment: () => this._setupPayment(paypalOptions.onPaymentError),
-                    onAuthorize: data => this._tokenizePayment(data, paypalOptions.onAuthorizeError),
+                    onAuthorize: data => this._tokenizePayment(data, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
                 }, paypalOptions.container);
             })
             .then(() => super.initialize(options));
@@ -116,7 +116,11 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
             });
     }
 
-    private _tokenizePayment(data: PaypalAuthorizeData, onError?: (error: BraintreeError | StandardError) => void): Promise<BraintreeTokenizePayload> {
+    private _tokenizePayment(
+        data: PaypalAuthorizeData,
+        shouldProcessPayment?: boolean,
+        onError?: (error: BraintreeError | StandardError) => void
+    ): Promise<BraintreeTokenizePayload> {
         if (!this._paypalCheckout || !this._paymentMethod) {
             throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
         }
@@ -131,7 +135,7 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
                 this._formPoster.postForm('/checkout.php', {
                     payment_type: 'paypal',
                     provider: methodId,
-                    action: 'set_external_checkout',
+                    action: shouldProcessPayment ? 'process_payment' : 'set_external_checkout',
                     nonce: payload.nonce,
                     device_data: deviceData,
                     shipping_address: JSON.stringify(this._mapToLegacyShippingAddress(payload)),
