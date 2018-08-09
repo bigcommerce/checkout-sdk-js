@@ -86,6 +86,7 @@ export default class CheckoutStoreErrorSelector {
             this.getUpdateBillingAddressError() ||
             this.getUpdateConsignmentError() ||
             this.getCreateConsignmentsError() ||
+            this.getDeleteConsignmentError() ||
             this.getInitializeShippingError() ||
             this.getApplyCouponError() ||
             this.getRemoveCouponError() ||
@@ -265,6 +266,19 @@ export default class CheckoutStoreErrorSelector {
      */
     getUpdateShippingAddressError(): Error | undefined {
         return this._shippingStrategies.getUpdateAddressError();
+    }
+
+    /**
+     * Returns an error if unable to delete a consignment.
+     *
+     * A consignment ID should be provided when checking for an error for a
+     * specific consignment, otherwise it will check for all available consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns The error object if unable to delete, otherwise undefined.
+     */
+    getDeleteConsignmentError(consignmentId?: string): Error | undefined {
+        return this._consignments.getDeleteError(consignmentId);
     }
 
     /**

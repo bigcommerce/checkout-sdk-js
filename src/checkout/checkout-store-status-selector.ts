@@ -85,6 +85,7 @@ export default class CheckoutStoreStatusSelector {
             this.isUpdatingShippingAddress() ||
             this.isUpdatingConsignment() ||
             this.isCreatingConsignments() ||
+            this.isDeletingConsignment() ||
             this.isInitializingShipping() ||
             this.isApplyingCoupon() ||
             this.isRemovingCoupon() ||
@@ -299,6 +300,19 @@ export default class CheckoutStoreStatusSelector {
      */
     isUpdatingConsignment(consignmentId?: string): boolean {
         return this._consignments.isUpdating(consignmentId);
+    }
+
+    /**
+     * Checks whether a given/any consignment is being deleted.
+     *
+     * A consignment ID should be provided when checking for a specific consignment,
+     * otherwise it will check for any consignment.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns True if deleting consignment(s), otherwise false.
+     */
+    isDeletingConsignment(consignmentId?: string): boolean {
+        return this._consignments.isDeleting(consignmentId);
     }
 
     /**
