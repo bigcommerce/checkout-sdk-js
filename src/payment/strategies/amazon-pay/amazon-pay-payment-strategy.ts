@@ -1,6 +1,6 @@
 import { noop } from 'lodash';
 
-import { isAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../../address';
+import { isInternalAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError, StandardError } from '../../../common/error/errors';
@@ -202,7 +202,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (!remoteAddress || isAddressEqual(remoteAddress, internalBillingAddress || {})) {
+                if (!remoteAddress || isInternalAddressEqual(remoteAddress, internalBillingAddress || {})) {
                     return this._store.getState();
                 }
 

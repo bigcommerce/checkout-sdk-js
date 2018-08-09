@@ -1,6 +1,6 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
-import { isAddressEqual, mapFromInternalAddress, AddressRequestBody } from '../../address';
+import { isInternalAddressEqual, mapFromInternalAddress, AddressRequestBody } from '../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
@@ -151,7 +151,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                     throw new RemoteCheckoutSynchronizationError();
                 }
 
-                if (!remoteAddress || isAddressEqual(remoteAddress, address || {})) {
+                if (!remoteAddress || isInternalAddressEqual(remoteAddress, address || {})) {
                     return this._store.getState();
                 }
 

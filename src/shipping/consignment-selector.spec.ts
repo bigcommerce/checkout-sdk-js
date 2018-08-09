@@ -6,6 +6,7 @@ import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import ConsignmentSelector from './consignment-selector';
 import ConsignmentState from './consignment-state';
 import { getConsignment, getConsignmentsState } from './consignments.mock';
+import { getShippingAddress } from './shipping-addresses.mock';
 
 describe('ConsignmentSelector', () => {
     const emptyState: ConsignmentState = {
@@ -13,11 +14,48 @@ describe('ConsignmentSelector', () => {
         errors: { updateError: {}, updateShippingOptionError: {} },
     };
 
+    const existingAddress = getShippingAddress();
+    const nonexistentAddress = { ...getShippingAddress(), address1: 'foo' };
+
     let selector: ConsignmentSelector;
     let state: CheckoutStoreState;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
+    });
+
+    describe('#getConsignmentByAddress()', () => {
+        it('returns first matched consignment when address matches', () => {
+            selector = new ConsignmentSelector(state.consignments);
+
+            expect(selector.getConsignmentByAddress(existingAddress))
+                // tslint:disable-next-line:no-non-null-assertion
+                .toEqual(getConsignmentsState().data![0]);
+        });
+
+        it('returns undefined if no address matches a consignment', () => {
+            selector = new ConsignmentSelector(emptyState);
+
+            expect(selector.getConsignmentByAddress(nonexistentAddress))
+                .toEqual(undefined);
+        });
+    });
+
+    describe('#getConsignmentById()', () => {
+        it('returns consignment that matches id', () => {
+            selector = new ConsignmentSelector(state.consignments);
+
+            expect(selector.getConsignmentById('55c96cda6f04c'))
+                // tslint:disable-next-line:no-non-null-assertion
+                .toEqual(getConsignmentsState().data![0]);
+        });
+
+        it('returns undefined if no id matches a consignment', () => {
+            selector = new ConsignmentSelector(emptyState);
+
+            expect(selector.getConsignmentById('none'))
+                .toEqual(undefined);
+        });
     });
 
     describe('#getConsignments()', () => {
@@ -168,6 +206,30 @@ describe('ConsignmentSelector', () => {
         });
     });
 
+    describe('#getItemAssignmentError()', () => {
+        const updateError = new Error();
+        const createError = new Error();
+
+        beforeEach(() => {
+            selector = new ConsignmentSelector(merge(state.consignments, {
+                errors: {
+                    updateError: {
+                        '55c96cda6f04c': updateError,
+                    },
+                    createError,
+                },
+            }));
+        });
+
+        it('returns first encountered error for consignment with matching address', () => {
+            expect(selector.getItemAssignmentError(existingAddress)).toEqual(updateError);
+        });
+
+        it('returns create error when address does not match any consignment', () => {
+            expect(selector.getItemAssignmentError(nonexistentAddress)).toEqual(createError);
+        });
+    });
+
     describe('#isLoading()', () => {
         it('returns true if loading', () => {
             selector = new ConsignmentSelector(merge({}, emptyState, {
@@ -245,6 +307,27 @@ describe('ConsignmentSelector', () => {
             it('returns false if requested id is not being updated', () => {
                 expect(selector.isUpdating('bar')).toEqual(false);
             });
+        });
+    });
+
+    describe('#isAssigningItems()', () => {
+        beforeEach(() => {
+            selector = new ConsignmentSelector(merge(state.consignments, {
+                statuses: {
+                    isUpdating: {
+                        '55c96cda6f04c': true,
+                    },
+                    isCreating: false,
+                },
+            }));
+        });
+
+        it('returns isUpdating state for consignment that matches given address', () => {
+            expect(selector.isAssigningItems(existingAddress)).toEqual(true);
+        });
+
+        it('returns isCreating state when no consignment matches address', () => {
+            expect(selector.isAssigningItems(nonexistentAddress)).toEqual(false);
         });
     });
 

@@ -1,8 +1,8 @@
-import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
+import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
 import isAddressEqual from './is-address-equal';
 
-describe('isAddressEqual', () => {
+describe('isInternalAddressEqual', () => {
     it('returns true if addresses are equal', () => {
         const output = isAddressEqual(getShippingAddress(), getShippingAddress());
 
@@ -12,7 +12,7 @@ describe('isAddressEqual', () => {
     it('returns false if addresses are different', () => {
         const output = isAddressEqual(getShippingAddress(), {
             ...getShippingAddress(),
-            addressLine1: '1 Foobar St',
+            address1: '1 Foobar St',
         });
 
         expect(output).toEqual(false);
@@ -21,12 +21,12 @@ describe('isAddressEqual', () => {
     it('returns true if addresses have different values for ignored fields', () => {
         expect(isAddressEqual(
             getShippingAddress(),
-            { ...getShippingAddress(), id: '123' }
+            { ...getShippingAddress(), country: 'x' }
         )).toEqual(true);
 
         expect(isAddressEqual(
             getShippingAddress(),
-            { ...getShippingAddress(), provinceCode: '123' }
+            { ...getShippingAddress(), stateOrProvinceCode: '123' }
         )).toEqual(true);
     });
 });
