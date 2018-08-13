@@ -224,7 +224,7 @@ describe('BraintreePaypalButtonStrategy', () => {
         expect(paypalCheckout.tokenizePayment).toHaveBeenCalledWith({ payerId: 'PAYER_ID' });
     });
 
-    it('posts payment details to server when PayPal payment details are tokenized', async () => {
+    it('posts payment details to server to set checkout data when PayPal payment details are tokenized', async () => {
         jest.spyOn(formPoster, 'postForm');
 
         await strategy.initialize(options);
@@ -237,6 +237,56 @@ describe('BraintreePaypalButtonStrategy', () => {
             payment_type: 'paypal',
             provider: 'braintreepaypal',
             action: 'set_external_checkout',
+            device_data: dataCollector.deviceData,
+            nonce: 'NONCE',
+            billing_address: JSON.stringify({
+                email: 'foo@bar.com',
+                first_name: 'Foo',
+                last_name: 'Bar',
+                phone_number: '123456789',
+                address_line_1: '56789 Testing Way',
+                address_line_2: 'Level 2',
+                city: 'Some Other City',
+                state: 'Arizona',
+                country_code: 'US',
+                postal_code: '96666',
+            }),
+            shipping_address: JSON.stringify({
+                email: 'foo@bar.com',
+                first_name: 'Hello',
+                last_name: 'World',
+                phone_number: '987654321',
+                address_line_1: '12345 Testing Way',
+                address_line_2: 'Level 1',
+                city: 'Some City',
+                state: 'California',
+                country_code: 'US',
+                postal_code: '95555',
+            }),
+        }));
+    });
+
+    it('posts payment details to server to process payment if `shouldProcessPayment` is passed when PayPal payment details are tokenized', async () => {
+        jest.spyOn(formPoster, 'postForm');
+
+        options = {
+            ...options,
+            braintreepaypal: {
+                ...paypalOptions,
+                shouldProcessPayment: true,
+            },
+        };
+
+        await strategy.initialize(options);
+
+        eventEmitter.emit('authorize');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(formPoster.postForm).toHaveBeenCalledWith('/checkout.php', expect.objectContaining({
+            payment_type: 'paypal',
+            provider: 'braintreepaypal',
+            action: 'process_payment',
             device_data: dataCollector.deviceData,
             nonce: 'NONCE',
             billing_address: JSON.stringify({
