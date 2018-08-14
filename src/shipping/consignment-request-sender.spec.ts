@@ -1,16 +1,23 @@
-import { createTimeout } from '@bigcommerce/request-sender';
+import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
+
+import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType } from '../common/http-request';
+
 import ConsignmentRequestSender from './consignment-request-sender';
 import { getConsignmentRequestBody } from './consignments.mock';
-import { getCheckout } from '../checkout/checkouts.mock';
 
 describe('ConsignmentRequestSender', () => {
-    let consignmentRequestSender;
-    let requestSender;
+    let consignmentRequestSender: ConsignmentRequestSender;
+    const requestSender = createRequestSender();
 
     const checkoutId = 'foo';
     const consignment = getConsignmentRequestBody();
-    const consignments = [consignment];
+    const consignments = [{
+        // tslint:disable-next-line:no-non-null-assertion
+        shippingAddress: consignment.shippingAddress!,
+        // tslint:disable-next-line:no-non-null-assertion
+        lineItems: consignment.lineItems!,
+    }];
     const options = { timeout: createTimeout() };
     const include = [
         'consignments.availableShippingOptions',
@@ -21,10 +28,9 @@ describe('ConsignmentRequestSender', () => {
     ].join(',');
 
     beforeEach(() => {
-        requestSender = {
-            post: jest.fn(() => Promise.resolve({ body: getCheckout() })),
-            put: jest.fn(() => Promise.resolve({ body: getCheckout() })),
-        };
+        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve({ body: getCheckout() }));
+        jest.spyOn(requestSender, 'put').mockReturnValue(Promise.resolve({ body: getCheckout() }));
+        jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve({ body: getCheckout() }));
 
         consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     });
@@ -83,6 +89,35 @@ describe('ConsignmentRequestSender', () => {
             expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${id}`, {
                 ...options,
                 body,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: {
+                    include,
+                },
+            });
+        });
+    });
+
+    describe('#deleteConsignment()', () => {
+        it('deletes a consignment', async () => {
+            await consignmentRequestSender.deleteConsignment(checkoutId, consignment.id);
+
+            expect(requestSender.delete).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${consignment.id}`, {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: {
+                    include,
+                },
+            });
+        });
+
+        it('deletes a consignment with timeout', async () => {
+            await consignmentRequestSender.deleteConsignment(checkoutId, consignment.id, options);
+
+            expect(requestSender.delete).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${consignment.id}`, {
+                ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
                 },

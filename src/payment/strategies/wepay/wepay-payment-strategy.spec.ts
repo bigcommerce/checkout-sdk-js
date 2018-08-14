@@ -102,9 +102,7 @@ describe('WepayPaymentStrategy', () => {
                 ...payload.payment,
                 paymentData: {
                     ...(payload.payment && payload.payment.paymentData),
-                    extraData: {
-                        riskToken: testRiskToken,
-                    },
+                    deviceSessionId: testRiskToken,
                 },
             };
 

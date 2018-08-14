@@ -303,6 +303,22 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
+    describe('#getDeleteConsignmentError()', () => {
+        it('returns error if there is an error when deleting consignments', () => {
+            jest.spyOn(selectors.consignments, 'getDeleteError').mockReturnValue(errorResponse);
+
+            expect(errors.getDeleteConsignmentError('foo')).toEqual(errorResponse);
+            expect(selectors.consignments.getDeleteError).toHaveBeenCalledWith('foo');
+        });
+
+        it('returns undefined if there is NO error when deleting consignments', () => {
+            jest.spyOn(selectors.consignments, 'getDeleteError');
+
+            expect(errors.getDeleteConsignmentError('foo')).toEqual(undefined);
+            expect(selectors.consignments.getDeleteError).toHaveBeenCalledWith('foo');
+        });
+    });
+
     describe('#getCreateConsignmentsError()', () => {
         it('returns error if there is an error when creating consignments', () => {
             jest.spyOn(selectors.consignments, 'getCreateError').mockReturnValue(errorResponse);

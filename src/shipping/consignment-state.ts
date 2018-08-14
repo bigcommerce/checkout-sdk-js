@@ -11,6 +11,7 @@ export interface ConsignmentErrorsState {
     loadShippingOptionsError?: Error;
     createError?: Error;
     updateError: { [key: string]: Error | undefined };
+    deleteError: { [key: string]: Error | undefined };
     updateShippingOptionError: { [key: string]: Error | undefined };
 }
 
@@ -19,5 +20,6 @@ export interface ConsignmentStatusesState {
     isLoadingShippingOptions?: boolean;
     isCreating?: boolean;
     isUpdating: { [key: string]: boolean };
+    isDeleting: { [key: string]: boolean };
     isUpdatingShippingOption: { [key: string]: boolean };
 }

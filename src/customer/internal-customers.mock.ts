@@ -23,7 +23,7 @@ export function getCustomer(): InternalCustomer {
         addresses: [
             {
                 ...getShippingAddress(),
-                id: '55c96cda6f04c',
+                id: 5,
             },
         ],
         customerId: 4,

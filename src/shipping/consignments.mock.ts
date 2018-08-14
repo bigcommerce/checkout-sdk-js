@@ -4,7 +4,7 @@ import { Address } from '../address';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOption } from '../shipping/shipping-options.mock';
 
-import Consignment, { ConsignmentRequestBody } from './consignment';
+import Consignment, { ConsignmentUpdateRequestBody } from './consignment';
 import ConsignmentState from './consignment-state';
 
 export function getConsignment(): Consignment {
@@ -32,15 +32,17 @@ export function getConsignmentsState(): ConsignmentState {
         errors: {
             updateError: {},
             updateShippingOptionError: {},
+            deleteError: {},
         },
         statuses: {
             isUpdating: {},
             isUpdatingShippingOption: {},
+            isDeleting: {},
         },
     };
 }
 
-export function getConsignmentRequestBody(): ConsignmentRequestBody {
+export function getConsignmentRequestBody(): ConsignmentUpdateRequestBody {
     return {
         id: '55c96cda6f04c',
         lineItems: [{

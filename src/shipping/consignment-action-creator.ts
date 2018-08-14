@@ -1,37 +1,59 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-
+import { find, map } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { AddressRequestBody } from '../address';
+import { Cart } from '../cart';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import CheckoutRequestSender from '../checkout/checkout-request-sender';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import {
+import Consignment, {
     ConsignmentsRequestBody,
+    ConsignmentAssignmentRequestBody,
     ConsignmentCreateRequestBody,
+    ConsignmentLineItem,
     ConsignmentRequestBody,
     ConsignmentShippingOptionRequestBody,
     ConsignmentUpdateRequestBody
 } from './consignment';
-
-import ConsignmentRequestSender from './consignment-request-sender';
-
 import {
     ConsignmentActionType,
     CreateConsignmentsAction,
+    DeleteConsignmentAction,
     LoadShippingOptionsAction,
     UpdateConsignmentAction,
     UpdateShippingOptionAction,
 } from './consignment-actions';
+import ConsignmentRequestSender from './consignment-request-sender';
 
 export default class ConsignmentActionCreator {
     constructor(
         private _consignmentRequestSender: ConsignmentRequestSender,
         private _checkoutRequestSender: CheckoutRequestSender
     ) {}
+
+    assignItemsByAddress(
+        consignment: ConsignmentAssignmentRequestBody,
+        options?: RequestOptions
+    ): ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
+        return store => {
+            const state = store.getState();
+            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.shippingAddress);
+
+            return this._createOrUpdateConsignment({
+                id: existingConsignment && existingConsignment.id,
+                shippingAddress: consignment.shippingAddress,
+                lineItems: this._combineLineItems(
+                    consignment,
+                    existingConsignment,
+                    state.cart.getCart()
+                ),
+            }, options)(store);
+        };
+    }
 
     selectShippingOption(
         id: string,
@@ -110,22 +132,17 @@ export default class ConsignmentActionCreator {
     updateAddress(
         address: AddressRequestBody,
         options?: RequestOptions
-    ): ThunkAction<CreateConsignmentsAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<CreateConsignmentsAction | UpdateConsignmentAction>) => {
+    ): ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
+        return store => {
             const consignment = this._getConsignmentRequestBody(address, store);
-            const checkout = store.getState().checkout.getCheckout();
             const consignments = store.getState().consignments.getConsignments();
-
-            if (!checkout || !checkout.id) {
-                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-            }
 
             if (consignments && consignments.length) {
                 (consignment as ConsignmentUpdateRequestBody).id = consignments[0].id;
             }
 
-            this._createOrUpdateConsignment(checkout.id, consignment, observer, options);
-        });
+            return this._createOrUpdateConsignment(consignment, options)(store);
+        };
     }
 
     createConsignments(
@@ -153,14 +170,10 @@ export default class ConsignmentActionCreator {
     }
 
     updateConsignment(
-        consignment: ConsignmentUpdateRequestBody | ConsignmentShippingOptionRequestBody,
+        consignment: ConsignmentUpdateRequestBody,
         options?: RequestOptions
-    ): ThunkAction<UpdateConsignmentAction | UpdateShippingOptionAction, InternalCheckoutSelectors> {
-        if (this._isUpdateShippingOptionRequest(consignment)) {
-            return this._updateShippingOption(consignment, options);
-        }
-
-        return store => Observable.create((observer: Observer<UpdateConsignmentAction | UpdateShippingOptionAction>) => {
+    ): ThunkAction<UpdateConsignmentAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<UpdateConsignmentAction>) => {
             const checkout = store.getState().checkout.getCheckout();
 
             if (!checkout || !checkout.id) {
@@ -182,11 +195,36 @@ export default class ConsignmentActionCreator {
         });
     }
 
-    private _updateShippingOption(
+    deleteConsignment(
+        consignmentId: string,
+        options?: RequestOptions
+    ): ThunkAction<DeleteConsignmentAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<DeleteConsignmentAction>) => {
+            const checkout = store.getState().checkout.getCheckout();
+            const consignmentMeta = { id: consignmentId };
+
+            if (!checkout || !checkout.id) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
+
+            observer.next(createAction(ConsignmentActionType.DeleteConsignmentRequested, undefined, consignmentMeta));
+
+            this._consignmentRequestSender.deleteConsignment(checkout.id, consignmentId, options)
+                .then(({ body }) => {
+                    observer.next(createAction(ConsignmentActionType.DeleteConsignmentSucceeded, body, consignmentMeta));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(ConsignmentActionType.DeleteConsignmentFailed, response, consignmentMeta));
+                });
+        });
+    }
+
+    updateShippingOption(
         consignment: ConsignmentShippingOptionRequestBody,
         options?: RequestOptions
-    ): ThunkAction<UpdateConsignmentAction | UpdateShippingOptionAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<UpdateConsignmentAction | UpdateShippingOptionAction>) => {
+    ): ThunkAction<UpdateShippingOptionAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<UpdateShippingOptionAction>) => {
             const checkout = store.getState().checkout.getCheckout();
 
             if (!checkout || !checkout.id) {
@@ -209,53 +247,22 @@ export default class ConsignmentActionCreator {
     }
 
     private _createOrUpdateConsignment(
-        checkoutId: string,
         consignment: ConsignmentCreateRequestBody | ConsignmentUpdateRequestBody,
-        observer: Observer<CreateConsignmentsAction | UpdateConsignmentAction>,
         options?: RequestOptions
-    ) {
-        if ((consignment as ConsignmentUpdateRequestBody).id) {
-            const consignmentMeta = { id: (consignment as ConsignmentUpdateRequestBody).id };
+    ): ThunkAction<UpdateConsignmentAction | CreateConsignmentsAction, InternalCheckoutSelectors> {
+        return store => {
+            const checkout = store.getState().checkout.getCheckout();
 
-            observer.next(createAction(ConsignmentActionType.UpdateConsignmentRequested, undefined, consignmentMeta));
+            if (!checkout || !checkout.id) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
 
-            return this._consignmentRequestSender.updateConsignment(
-                checkoutId,
-                consignment as ConsignmentUpdateRequestBody,
-                options
-            )
-                .then(({ body }) => {
-                    observer.next(createAction(
-                        ConsignmentActionType.UpdateConsignmentSucceeded,
-                        body,
-                        consignmentMeta
-                    ));
+            if (this._isUpdateConsignmentRequest(consignment)) {
+                return this.updateConsignment(consignment, options)(store);
+            }
 
-                    observer.complete();
-                })
-                .catch(response => {
-                    observer.error(createErrorAction(
-                        ConsignmentActionType.UpdateConsignmentFailed,
-                        response,
-                        consignmentMeta
-                    ));
-                });
-        }
-
-        observer.next(createAction(ConsignmentActionType.CreateConsignmentsRequested, consignment));
-
-        return this._consignmentRequestSender.createConsignments(
-            checkoutId,
-            [consignment as ConsignmentCreateRequestBody],
-            options
-        )
-            .then(({ body }) => {
-                observer.next(createAction(ConsignmentActionType.CreateConsignmentsSucceeded, body, consignment));
-                observer.complete();
-            })
-            .catch(response => {
-                observer.error(createErrorAction(ConsignmentActionType.CreateConsignmentsFailed, response, consignment));
-            });
+            return this.createConsignments([consignment], options)(store);
+        };
     }
 
     private _getConsignmentRequestBody(
@@ -280,9 +287,36 @@ export default class ConsignmentActionCreator {
         };
     }
 
-    private _isUpdateShippingOptionRequest(request: ConsignmentUpdateRequestBody): request is ConsignmentShippingOptionRequestBody {
-        const shippingOptionRequest = request as ConsignmentShippingOptionRequestBody;
+    private _combineLineItems(
+        consignment: ConsignmentAssignmentRequestBody,
+        existingConsignment?: Consignment,
+        cart?: Cart
+    ): ConsignmentLineItem[] {
+        if (!existingConsignment) {
+            return consignment.lineItems;
+        }
 
-        return typeof shippingOptionRequest.shippingOptionId !== 'undefined';
+        if (!cart) {
+            throw new MissingDataError(MissingDataErrorType.MissingCart);
+        }
+
+        const existingLineItems = map(existingConsignment.lineItemIds, itemId => {
+            const item = find(cart.lineItems.physicalItems, { id: itemId });
+
+            return {
+                itemId,
+                quantity: item ? item.quantity : 0,
+            };
+        }) as ConsignmentLineItem[];
+
+        return existingLineItems.concat(consignment.lineItems);
+    }
+
+    private _isUpdateConsignmentRequest(
+        request: ConsignmentRequestBody
+    ): request is ConsignmentUpdateRequestBody {
+        const updateRequest = request as ConsignmentUpdateRequestBody;
+
+        return !!updateRequest.id;
     }
 }

@@ -35,6 +35,7 @@ function dataReducer(
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionType.CreateConsignmentsSucceeded:
+    case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
     case CouponActionType.ApplyCouponSucceeded:

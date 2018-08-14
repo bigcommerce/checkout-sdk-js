@@ -29,6 +29,30 @@ describe('giftCertificateReducer()', () => {
         }));
     });
 
+    it('returns new state when consignment gets updated', () => {
+        const action = createAction(ConsignmentActionType.UpdateConsignmentSucceeded, getCheckoutWithGiftCertificates(), { id: '123' });
+
+        expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: action.payload && action.payload.giftCertificates,
+        }));
+    });
+
+    it('returns new state when consignment gets created', () => {
+        const action = createAction(ConsignmentActionType.CreateConsignmentsSucceeded, getCheckoutWithGiftCertificates(), { id: '123' });
+
+        expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: action.payload && action.payload.giftCertificates,
+        }));
+    });
+
+    it('returns new state when consignment gets deleted', () => {
+        const action = createAction(ConsignmentActionType.DeleteConsignmentSucceeded, getCheckoutWithGiftCertificates(), { id: '123' });
+
+        expect(giftCertificateReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: action.payload && action.payload.giftCertificates,
+        }));
+    });
+
     it('returns new state when shipping option gets updated', () => {
         const action = createAction(ConsignmentActionType.UpdateShippingOptionSucceeded, getCheckoutWithGiftCertificates(), { id: '123' });
 

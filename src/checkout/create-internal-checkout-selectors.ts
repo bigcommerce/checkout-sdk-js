@@ -34,7 +34,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const instruments = new InstrumentSelector(state.instruments);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
     const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
-    const shippingAddress = new ShippingAddressSelector(state.consignments, state.config);
+    const shippingAddress = new ShippingAddressSelector(state.consignments);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);

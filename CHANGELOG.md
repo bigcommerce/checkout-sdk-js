@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.8...v1.0.0) (2018-08-08)
+
+
+
+<a name="0.28.8"></a>
+## [0.28.8](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.7...v0.28.8) (2018-08-07)
+
+
+### Bug Fixes
+
+* **shipping:** CHECKOUT-3399 Use geo-ip only for the public shippingAddress selector ([178f145](https://github.com/bigcommerce/checkout-sdk-js/commit/178f145))
+
+
+
+<a name="0.28.7"></a>
+## [0.28.7](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.6...v0.28.7) (2018-08-07)
+
+
+
 <a name="0.28.6"></a>
 ## [0.28.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.5...v0.28.6) (2018-07-31)
 
