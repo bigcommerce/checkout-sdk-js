@@ -1,12 +1,8 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender } from '../checkout';
-import { CheckoutActionType, CheckoutStore } from '../checkout';
-import { getCheckout } from '../checkout/checkouts.mock';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
-import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_REQUESTED, LOAD_PAYMENT_METHOD_SUCCEEDED, PaymentMethodActionCreator } from '../payment';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
 
@@ -16,7 +12,6 @@ import CheckoutButtonStrategyActionCreator from './checkout-button-strategy-acti
 import { CheckoutButtonStrategy } from './strategies';
 
 describe('CheckoutButtonStrategyActionCreator', () => {
-    let checkoutActionCreator: CheckoutActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let registry: Registry<CheckoutButtonStrategy>;
     let options: CheckoutButtonOptions;
@@ -29,20 +24,10 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         registry = new Registry<CheckoutButtonStrategy>();
-        checkoutActionCreator = new CheckoutActionCreator(
-            new CheckoutRequestSender(createRequestSender()),
-            new ConfigActionCreator(new ConfigRequestSender(createRequestSender()))
-        );
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
         strategy = new MockButtonStrategy();
 
         registry.register('test', () => strategy);
-
-        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
-            .mockReturnValue(() => Observable.from([
-                createAction(CheckoutActionType.LoadCheckoutRequested),
-                createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
-            ]));
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
             .mockReturnValue(Observable.from([
@@ -54,17 +39,8 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
         strategyActionCreator = new CheckoutButtonStrategyActionCreator(
             registry,
-            checkoutActionCreator,
             paymentMethodActionCreator
         );
-    });
-
-    it('loads default checkout data', async () => {
-        await Observable.from(strategyActionCreator.initialize(options)(store))
-            .toArray()
-            .toPromise();
-
-        expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalledWith(options);
     });
 
     it('loads required payment method', async () => {
@@ -94,31 +70,9 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
         expect(actions).toEqual([
             { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId: 'test' } },
-            { type: CheckoutActionType.LoadCheckoutRequested },
-            { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
             { type: LOAD_PAYMENT_METHOD_REQUESTED },
             { type: LOAD_PAYMENT_METHOD_SUCCEEDED, payload: { paymentMethod: getPaymentMethod() } },
             { type: CheckoutButtonActionType.InitializeButtonSucceeded, meta: { methodId: 'test' } },
-        ]);
-    });
-
-    it('emits error if unable to load default checkout data', async () => {
-        const expectedError = new Error('Unable to load checkout');
-
-        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
-            .mockReturnValue(() => Observable.throw(createErrorAction(CheckoutActionType.LoadCheckoutFailed, expectedError)));
-
-        const errorHandler = jest.fn(action => Observable.of(action));
-        const actions = await Observable.from(strategyActionCreator.initialize({ methodId: 'test' })(store))
-            .catch(errorHandler)
-            .toArray()
-            .toPromise();
-
-        expect(errorHandler).toHaveBeenCalled();
-        expect(actions).toEqual([
-            { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId: 'test' } },
-            { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: expectedError },
-            { type: CheckoutButtonActionType.InitializeButtonFailed, error: true, payload: expectedError, meta: { methodId: 'test' } },
         ]);
     });
 
@@ -137,8 +91,6 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
             { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId: 'test' } },
-            { type: CheckoutActionType.LoadCheckoutRequested },
-            { type: CheckoutActionType.LoadCheckoutSucceeded, payload: expect.any(Object) },
             { type: LOAD_PAYMENT_METHOD_FAILED, error: true, payload: expectedError },
             { type: CheckoutButtonActionType.InitializeButtonFailed, error: true, payload: expectedError, meta: { methodId: 'test' } },
         ]);
@@ -159,8 +111,6 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
             { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId: 'test' } },
-            { type: CheckoutActionType.LoadCheckoutRequested },
-            { type: CheckoutActionType.LoadCheckoutSucceeded, payload: expect.any(Object) },
             { type: LOAD_PAYMENT_METHOD_REQUESTED },
             { type: LOAD_PAYMENT_METHOD_SUCCEEDED, payload: expect.any(Object) },
             { type: CheckoutButtonActionType.InitializeButtonFailed, error: true, payload: expectedError, meta: { methodId: 'test' } },

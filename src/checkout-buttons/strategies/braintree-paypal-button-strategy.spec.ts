@@ -1,11 +1,15 @@
+import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 import { merge } from 'lodash';
+import { Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore } from '../../checkout';
-import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../checkout';
+import { getCheckout, getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { MissingDataError } from '../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../config';
 import { getBraintreePaypal } from '../../payment/payment-methods.mock';
 import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator } from '../../payment/strategies/braintree';
 import { getDataCollectorMock, getPaypalCheckoutMock } from '../../payment/strategies/braintree/braintree.mock';
@@ -18,6 +22,7 @@ import BraintreePaypalButtonStrategy from './braintree-paypal-button-strategy';
 
 describe('BraintreePaypalButtonStrategy', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
+    let checkoutActionCreator: CheckoutActionCreator;
     let dataCollector: BraintreeDataCollector;
     let eventEmitter: EventEmitter;
     let formPoster: FormPoster;
@@ -31,6 +36,10 @@ describe('BraintreePaypalButtonStrategy', () => {
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(createRequestSender()),
+            new ConfigActionCreator(new ConfigRequestSender(createRequestSender()))
+        );
         braintreeSDKCreator = new BraintreeSDKCreator(new BraintreeScriptLoader(getScriptLoader()));
         formPoster = createFormPoster();
         paypalScriptLoader = new PaypalScriptLoader(getScriptLoader());
@@ -62,6 +71,12 @@ describe('BraintreePaypalButtonStrategy', () => {
                 });
             });
 
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
+            .mockReturnValue(() => Observable.from([
+                createAction(CheckoutActionType.LoadCheckoutRequested),
+                createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
+            ]));
+
         jest.spyOn(braintreeSDKCreator, 'getPaypalCheckout')
             .mockReturnValue(Promise.resolve(paypalCheckout));
 
@@ -73,6 +88,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         strategy = new BraintreePaypalButtonStrategy(
             store,
+            checkoutActionCreator,
             braintreeSDKCreator,
             paypalScriptLoader,
             formPoster
@@ -84,6 +100,7 @@ describe('BraintreePaypalButtonStrategy', () => {
             store = createCheckoutStore();
             strategy = new BraintreePaypalButtonStrategy(
                 store,
+                checkoutActionCreator,
                 braintreeSDKCreator,
                 paypalScriptLoader,
                 formPoster
@@ -180,6 +197,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         strategy = new BraintreePaypalButtonStrategy(
             store,
+            checkoutActionCreator,
             braintreeSDKCreator,
             paypalScriptLoader,
             formPoster
@@ -191,10 +209,25 @@ describe('BraintreePaypalButtonStrategy', () => {
             .toHaveBeenCalledWith(expect.objectContaining({ env: 'sandbox' }), 'checkout-button');
     });
 
+    it('loads checkout details when customer is ready to pay', async () => {
+        jest.spyOn(store, 'dispatch');
+
+        await strategy.initialize(options);
+
+        eventEmitter.emit('payment');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalled();
+        expect(store.dispatch).toHaveBeenCalledWith(checkoutActionCreator.loadDefaultCheckout());
+    });
+
     it('sets up PayPal payment flow with current checkout details when customer is ready to pay', async () => {
         await strategy.initialize(options);
 
         eventEmitter.emit('payment');
+
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(paypalCheckout.createPayment).toHaveBeenCalledWith({
             amount: 190,
@@ -366,6 +399,7 @@ describe('BraintreePaypalButtonStrategy', () => {
 
             strategy = new BraintreePaypalButtonStrategy(
                 store,
+                checkoutActionCreator,
                 braintreeSDKCreator,
                 paypalScriptLoader,
                 formPoster,
@@ -392,6 +426,8 @@ describe('BraintreePaypalButtonStrategy', () => {
             await strategy.initialize(options);
 
             eventEmitter.emit('payment');
+
+            await new Promise(resolve => process.nextTick(resolve));
 
             expect(paypalCheckout.createPayment).toHaveBeenCalledWith({
                 amount: 190,

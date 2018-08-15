@@ -1,9 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
-import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../checkout';
 import { PaymentMethodActionCreator } from '../payment';
 
 import { CheckoutButtonActionType } from './checkout-button-actions';
@@ -22,10 +20,6 @@ describe('CheckoutButtonInitializer', () => {
         store = createCheckoutStore();
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store),
-            new CheckoutActionCreator(
-                new CheckoutRequestSender(createRequestSender()),
-                new ConfigActionCreator(new ConfigRequestSender(createRequestSender()))
-            ),
             new PaymentMethodActionCreator(createCheckoutClient())
         );
 
