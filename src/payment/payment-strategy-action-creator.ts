@@ -1,7 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat } from 'rxjs/observable/concat';
 import { empty } from 'rxjs/observable/empty';
-import { from } from 'rxjs/observable/from';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -174,10 +173,11 @@ export default class PaymentStrategyActionCreator {
     }
 
     private _loadOrderPaymentsIfNeeded(store: ReadableCheckoutStore, options?: RequestOptions): Observable<LoadOrderPaymentsAction> {
-        const checkout = store.getState().checkout.getCheckout();
+        const state = store.getState();
+        const checkout = state.checkout.getCheckout();
 
         if (checkout && checkout.orderId) {
-            return from(this._orderActionCreator.loadCurrentOrderPayments(options)(store));
+            return this._orderActionCreator.loadOrderPayments(checkout.orderId, options);
         }
 
         return empty();

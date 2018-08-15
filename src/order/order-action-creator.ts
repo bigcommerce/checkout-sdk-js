@@ -34,15 +34,18 @@ export default class OrderActionCreator {
     }
 
     // TODO: Remove when checkout does not contain unrelated order data.
-    loadCurrentOrderPayments(options?: RequestOptions): ThunkAction<LoadOrderPaymentsAction, InternalCheckoutSelectors> {
-        return store => defer(() => {
-            const orderId = this._getCurrentOrderId(store.getState());
+    loadOrderPayments(orderId: number, options?: RequestOptions): Observable<LoadOrderPaymentsAction> {
+        return new Observable((observer: Observer<LoadOrderPaymentsAction>) => {
+            observer.next(createAction(OrderActionType.LoadOrderPaymentsRequested));
 
-            if (!orderId) {
-                throw new MissingDataError(MissingDataErrorType.MissingOrderId);
-            }
-
-            return this._loadOrderPayments(orderId, options);
+            this._checkoutClient.loadOrder(orderId, options)
+                .then(response => {
+                    observer.next(createAction(OrderActionType.LoadOrderPaymentsSucceeded, response.body));
+                    observer.complete();
+                })
+                .catch(response => {
+                    observer.error(createErrorAction(OrderActionType.LoadOrderPaymentsFailed, response));
+                });
         });
     }
 
@@ -104,25 +107,10 @@ export default class OrderActionCreator {
         );
     }
 
-    // TODO: Remove when checkout does not contain unrelated order data.
-    private _loadOrderPayments(orderId: number, options?: RequestOptions): Observable<LoadOrderPaymentsAction> {
-        return new Observable((observer: Observer<LoadOrderPaymentsAction>) => {
-            observer.next(createAction(OrderActionType.LoadOrderPaymentsRequested));
-
-            this._checkoutClient.loadOrder(orderId, options)
-                .then(response => {
-                    observer.next(createAction(OrderActionType.LoadOrderPaymentsSucceeded, response.body));
-                    observer.complete();
-                })
-                .catch(response => {
-                    observer.error(createErrorAction(OrderActionType.LoadOrderPaymentsFailed, response));
-                });
-        });
-    }
-
     private _getCurrentOrderId(state: InternalCheckoutSelectors): number | undefined {
         const order = state.order.getOrder();
         const checkout = state.checkout.getCheckout();
+
         return (order && order.orderId) || (checkout && checkout.orderId);
     }
 

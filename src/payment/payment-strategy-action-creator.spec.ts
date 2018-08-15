@@ -209,8 +209,8 @@ describe('PaymentStrategyActionCreator', () => {
             jest.spyOn(noPaymentDataStrategy, 'execute')
                 .mockReturnValue(Promise.resolve(store.getState()));
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrderPayments')
-                .mockReturnValue(() => Observable.of(createAction(OrderActionType.LoadOrderPaymentsRequested)));
+            jest.spyOn(orderActionCreator, 'loadOrderPayments')
+                .mockReturnValue(Observable.of(createAction(OrderActionType.LoadOrderPaymentsRequested)));
         });
 
         it('finds payment strategy by method', async () => {
@@ -246,7 +246,7 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.execute(payload)(store))
                 .toPromise();
 
-            expect(orderActionCreator.loadCurrentOrderPayments).toHaveBeenCalled();
+            expect(orderActionCreator.loadOrderPayments).toHaveBeenCalled();
         });
 
         it('emits action to load order and notify execution progress', async () => {
@@ -343,8 +343,8 @@ describe('PaymentStrategyActionCreator', () => {
             jest.spyOn(strategy, 'finalize')
                 .mockReturnValue(Promise.resolve(store.getState()));
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrderPayments')
-                .mockReturnValue((() => Observable.of(createAction(OrderActionType.LoadOrderPaymentsRequested))));
+            jest.spyOn(orderActionCreator, 'loadOrderPayments')
+                .mockReturnValue(Observable.of(createAction(OrderActionType.LoadOrderPaymentsRequested)));
         });
 
         it('finds payment strategy by method', async () => {
@@ -372,7 +372,7 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.finalize()(store))
                 .toPromise();
 
-            expect(orderActionCreator.loadCurrentOrderPayments).toHaveBeenCalled();
+            expect(orderActionCreator.loadOrderPayments).toHaveBeenCalled();
         });
 
         it('emits action to load order and notify finalization progress', async () => {
