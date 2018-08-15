@@ -2,7 +2,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { pick } from 'lodash';
 
 import { Address, LegacyAddress } from '../../address';
-import { CheckoutStore } from '../../checkout';
+import { CheckoutActionCreator, CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
 import { PaymentMethod } from '../../payment';
 import { BraintreeAddress, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../payment/strategies/braintree';
@@ -17,6 +17,7 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
 
     constructor(
         private _store: CheckoutStore,
+        private _checkoutActionCreator: CheckoutActionCreator,
         private _braintreeSDKCreator: BraintreeSDKCreator,
         private _paypalScriptLoader: PaypalScriptLoader,
         private _formPoster: FormPoster,
@@ -80,33 +81,35 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
     }
 
     private _setupPayment(onError?: (error: BraintreeError | StandardError) => void): Promise<string> {
-        if (!this._paypalCheckout) {
-            throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
-        }
+        return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
+            .then(state => {
+                const checkout = state.checkout.getCheckout();
+                const config = state.config.getStoreConfig();
+                const customer = state.customer.getCustomer();
+                const address = customer && customer.addresses && customer.addresses[0];
 
-        const state = this._store.getState();
-        const checkout = state.checkout.getCheckout();
-        const config = state.config.getStoreConfig();
-        const customer = state.customer.getCustomer();
-        const address = customer && customer.addresses && customer.addresses[0];
+                if (!this._paypalCheckout) {
+                    throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
+                }
 
-        if (!checkout) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-        }
+                if (!checkout) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                }
 
-        if (!config) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
+                if (!config) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
 
-        return this._paypalCheckout.createPayment({
-            flow: 'checkout',
-            enableShippingAddress: true,
-            shippingAddressEditable: false,
-            shippingAddressOverride: address ? this._mapToBraintreeAddress(address) : undefined,
-            amount: checkout.grandTotal,
-            currency: config.currency.code,
-            offerCredit: this._offerCredit,
-        })
+                return this._paypalCheckout.createPayment({
+                    flow: 'checkout',
+                    enableShippingAddress: true,
+                    shippingAddressEditable: false,
+                    shippingAddressOverride: address ? this._mapToBraintreeAddress(address) : undefined,
+                    amount: checkout.grandTotal,
+                    currency: config.currency.code,
+                    offerCredit: this._offerCredit,
+                });
+            })
             .catch(error => {
                 if (onError) {
                     onError(error);
