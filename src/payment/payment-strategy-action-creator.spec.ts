@@ -208,9 +208,6 @@ describe('PaymentStrategyActionCreator', () => {
 
             jest.spyOn(noPaymentDataStrategy, 'execute')
                 .mockReturnValue(Promise.resolve(store.getState()));
-
-            jest.spyOn(orderActionCreator, 'loadOrderPayments')
-                .mockReturnValue(Observable.of(createAction(OrderActionType.LoadOrderPaymentsRequested)));
         });
 
         it('finds payment strategy by method', async () => {
@@ -239,16 +236,6 @@ describe('PaymentStrategyActionCreator', () => {
             );
         });
 
-        it('loads payment data for the current order', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const payload = getOrderRequestBody();
-
-            await Observable.from(actionCreator.execute(payload)(store))
-                .toPromise();
-
-            expect(orderActionCreator.loadOrderPayments).toHaveBeenCalled();
-        });
-
         it('emits action to load order and notify execution progress', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
@@ -258,7 +245,6 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: OrderActionType.LoadOrderPaymentsRequested },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId } },
             ]);
@@ -281,7 +267,6 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: OrderActionType.LoadOrderPaymentsRequested },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId } },
             ]);
