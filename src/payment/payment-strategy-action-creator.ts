@@ -1,7 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat } from 'rxjs/observable/concat';
 import { empty } from 'rxjs/observable/empty';
-import { from } from 'rxjs/observable/from';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -30,45 +29,38 @@ export default class PaymentStrategyActionCreator {
         private _orderActionCreator: OrderActionCreator
     ) {}
 
-    execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction | LoadOrderPaymentsAction, InternalCheckoutSelectors> {
-        return store => {
-            const executeAction = new Observable((observer: Observer<PaymentStrategyExecuteAction>) => {
-                const state = store.getState();
-                const { payment = {} as Payment, useStoreCredit } = payload;
-                const meta = { methodId: payment.methodId };
+    execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction, InternalCheckoutSelectors> {
+        return store => new Observable((observer: Observer<PaymentStrategyExecuteAction>) => {
+            const state = store.getState();
+            const { payment = {} as Payment, useStoreCredit } = payload;
+            const meta = { methodId: payment.methodId };
 
-                let strategy: PaymentStrategy;
+            let strategy: PaymentStrategy;
 
-                if (state.payment.isPaymentDataRequired(useStoreCredit)) {
-                    const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
+            if (state.payment.isPaymentDataRequired(useStoreCredit)) {
+                const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
 
-                    if (!method) {
-                        throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                    }
-
-                    strategy = this._strategyRegistry.getByMethod(method);
-                } else {
-                    strategy = this._strategyRegistry.get('nopaymentdatarequired');
+                if (!method) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                observer.next(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta));
+                strategy = this._strategyRegistry.getByMethod(method);
+            } else {
+                strategy = this._strategyRegistry.get('nopaymentdatarequired');
+            }
 
-                strategy
-                    .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
-                    .then(() => {
-                        observer.next(createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
-                        observer.complete();
-                    })
-                    .catch(error => {
-                        observer.error(createErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta));
-                    });
-            });
+            observer.next(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta));
 
-            return concat(
-                this._loadOrderPaymentsIfNeeded(store, options),
-                executeAction
-            );
-        };
+            strategy
+                .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
+                .then(() => {
+                    observer.next(createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
+                    observer.complete();
+                })
+                .catch(error => {
+                    observer.error(createErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta));
+                });
+        });
     }
 
     finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction | LoadOrderPaymentsAction, InternalCheckoutSelectors> {
@@ -174,10 +166,11 @@ export default class PaymentStrategyActionCreator {
     }
 
     private _loadOrderPaymentsIfNeeded(store: ReadableCheckoutStore, options?: RequestOptions): Observable<LoadOrderPaymentsAction> {
-        const checkout = store.getState().checkout.getCheckout();
+        const state = store.getState();
+        const checkout = state.checkout.getCheckout();
 
         if (checkout && checkout.orderId) {
-            return from(this._orderActionCreator.loadCurrentOrderPayments(options)(store));
+            return this._orderActionCreator.loadOrderPayments(checkout.orderId, options);
         }
 
         return empty();
