@@ -224,6 +224,8 @@ describe('OrderActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: OrderActionType.SubmitOrderRequested },
+                { type: OrderActionType.LoadOrderRequested },
+                { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
                 {
                     type: OrderActionType.SubmitOrderSucceeded,
                     payload: submitResponse.body.data,
@@ -232,8 +234,6 @@ describe('OrderActionCreator', () => {
                         token: submitResponse.headers.token,
                     },
                 },
-                { type: OrderActionType.LoadOrderRequested },
-                { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
             ]);
         });
 
@@ -315,9 +315,9 @@ describe('OrderActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: OrderActionType.FinalizeOrderRequested },
-                { type: OrderActionType.FinalizeOrderSucceeded, payload: response.body.data },
                 { type: OrderActionType.LoadOrderRequested },
                 { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
+                { type: OrderActionType.FinalizeOrderSucceeded, payload: response.body.data },
             ]);
         });
 

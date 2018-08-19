@@ -1,5 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { LoadOrderAction } from '../order';
+
 import PaymentResponseBody from './payment-response-body';
 
 export enum PaymentActionType {
@@ -18,7 +20,8 @@ export type PaymentAction = SubmitPaymentAction |
 export type SubmitPaymentAction =
     SubmitPaymentRequestedAction |
     SubmitPaymentSucceededAction |
-    SubmitPaymentFailedAction;
+    SubmitPaymentFailedAction |
+    LoadOrderAction;
 
 export type InitializeOffsitePaymentAction =
     InitializeOffsitePaymentRequestedAction |

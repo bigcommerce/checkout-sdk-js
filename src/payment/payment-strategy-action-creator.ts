@@ -1,10 +1,14 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat } from 'rxjs/observable/concat';
+import { defer } from 'rxjs/observable/defer';
 import { empty } from 'rxjs/observable/empty';
+import { of } from 'rxjs/observable/of';
+import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { LoadOrderPaymentsAction, OrderActionCreator, OrderRequestBody } from '../order';
@@ -63,9 +67,11 @@ export default class PaymentStrategyActionCreator {
         });
     }
 
-    finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction | LoadOrderPaymentsAction, InternalCheckoutSelectors> {
-        return store => {
-            const finalizeAction = new Observable((observer: Observer<PaymentStrategyFinalizeAction>) => {
+    finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction, InternalCheckoutSelectors> {
+        return store => concat(
+            of(createAction(PaymentStrategyActionType.FinalizeRequested)),
+            this._loadOrderPaymentsIfNeeded(store, options),
+            defer(() => {
                 const state = store.getState();
                 const payment = state.payment.getPaymentId();
 
@@ -74,30 +80,23 @@ export default class PaymentStrategyActionCreator {
                 }
 
                 const method = state.paymentMethods.getPaymentMethod(payment.providerId, payment.gatewayId);
-                const meta = { methodId: payment.providerId };
 
                 if (!method) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                observer.next(createAction(PaymentStrategyActionType.FinalizeRequested, undefined, meta));
-
-                this._strategyRegistry.getByMethod(method)
+                return this._strategyRegistry.getByMethod(method)
                     .finalize({ ...options, methodId: method.id, gatewayId: method.gateway })
-                    .then(() => {
-                        observer.next(createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, meta));
-                        observer.complete();
-                    })
-                    .catch(error => {
-                        observer.error(createErrorAction(PaymentStrategyActionType.FinalizeFailed, error, meta));
-                    });
-            });
+                    .then(() => createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, { methodId: payment.providerId }));
+            })
+        ).pipe(
+            catchError(error => {
+                const state = store.getState();
+                const payment = state.payment.getPaymentId();
 
-            return concat(
-                this._loadOrderPaymentsIfNeeded(store, options),
-                finalizeAction
-            );
-        };
+                return throwErrorAction(PaymentStrategyActionType.FinalizeFailed, error, { methodId: payment && payment.providerId });
+            })
+        );
     }
 
     initialize(options: PaymentInitializeOptions): ThunkAction<PaymentStrategyInitializeAction, InternalCheckoutSelectors> {

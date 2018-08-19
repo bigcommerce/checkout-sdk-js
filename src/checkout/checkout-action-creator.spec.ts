@@ -206,7 +206,7 @@ describe('CheckoutActionCreator', () => {
             store = createCheckoutStore();
 
             try {
-                await from(actionCreator.loadCurrentCheckout()(store))
+                await Observable.from(actionCreator.loadCurrentCheckout()(store))
                     .toPromise();
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
@@ -237,10 +237,10 @@ describe('CheckoutActionCreator', () => {
             store = createCheckoutStore();
 
             try {
-                await from(actionCreator.loadDefaultCheckout()(store))
+                await Observable.from(actionCreator.loadDefaultCheckout()(store))
                     .toPromise();
-            } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+            } catch ({ payload }) {
+                expect(payload).toBeInstanceOf(StandardError);
             }
         });
 
