@@ -824,7 +824,7 @@ declare class CheckoutService {
      * not get validated until you submit the order.
      *
      * ```js
-     * const state = await service.createConsignments(consignments, address);
+     * const state = await service.createConsignments(consignments);
      *
      * console.log(state.checkout.getConsignments());
      * ```
@@ -834,6 +834,20 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     createConsignments(consignments: ConsignmentsRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Deletes a consignment
+     *
+     * ```js
+     * const state = await service.deleteConsignment('55c96cda6f04c');
+     *
+     * console.log(state.checkout.getConsignments());
+     * ```
+     *
+     * @param consignmentId - The ID of the consignment to be deleted
+     * @param options - Options for the consignment delete request
+     * @returns A promise that resolves to the current state.
+     */
+    deleteConsignment(consignmentId: string, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Updates a specific consignment.
      *
@@ -858,7 +872,7 @@ declare class CheckoutService {
      * not get validated until you submit the order.
      *
      * ```js
-     * const state = await service.updateConsignment(consignmentId, address);
+     * const state = await service.updateConsignment(consignment);
      *
      * console.log(state.checkout.getConsignments());
      * ```
@@ -868,6 +882,18 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     updateConsignment(consignment: ConsignmentUpdateRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
+     * Convenience method that assigns items to be shipped to a specific address.
+     *
+     * Note: this method finds an existing consignment that matches the provided address
+     * and assigns the provided items. If no consignment matches the address, a new one
+     * will be created.
+     *
+     * @param consignment - The consignment data that will be used.
+     * @param options - Options for the request
+     * @returns A promise that resolves to the current state.
+     */
+    assignItemsToAddress(consignment: ConsignmentAssignmentRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Selects a shipping option for a given consignment.
      *
@@ -1181,6 +1207,16 @@ declare class CheckoutStoreErrorSelector {
      * @returns The error object if unable to update, otherwise undefined.
      */
     getUpdateShippingAddressError(): Error | undefined;
+    /**
+     * Returns an error if unable to delete a consignment.
+     *
+     * A consignment ID should be provided when checking for an error for a
+     * specific consignment, otherwise it will check for all available consignments.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns The error object if unable to delete, otherwise undefined.
+     */
+    getDeleteConsignmentError(consignmentId?: string): Error | undefined;
     /**
      * Returns an error if unable to update a consignment.
      *
@@ -1630,6 +1666,16 @@ declare class CheckoutStoreStatusSelector {
      */
     isUpdatingConsignment(consignmentId?: string): boolean;
     /**
+     * Checks whether a given/any consignment is being deleted.
+     *
+     * A consignment ID should be provided when checking for a specific consignment,
+     * otherwise it will check for any consignment.
+     *
+     * @param consignmentId - The identifier of the consignment to be checked.
+     * @returns True if deleting consignment(s), otherwise false.
+     */
+    isDeletingConsignment(consignmentId?: string): boolean;
+    /**
      * Checks whether a given/any consignment is being updated.
      *
      * A consignment ID should be provided when checking for a specific consignment,
@@ -1720,7 +1766,12 @@ declare interface Consignment {
     shippingCost: number;
     availableShippingOptions?: ShippingOption[];
     selectedShippingOption?: ShippingOption;
-    lineItemIds?: string[];
+    lineItemIds: string[];
+}
+
+declare interface ConsignmentAssignmentRequestBody {
+    shippingAddress: AddressRequestBody;
+    lineItems: ConsignmentLineItem[];
 }
 
 declare interface ConsignmentCreateRequestBody {
@@ -1830,7 +1881,7 @@ declare interface Customer {
 }
 
 declare interface CustomerAddress extends Address {
-    id: string;
+    id: number;
 }
 
 declare interface CustomerCredentials {

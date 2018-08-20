@@ -17,6 +17,7 @@ This object has a set of getters that would return an error if an action is not 
 * [getApplyCouponError](checkoutstoreerrorselector.md#getapplycouponerror)
 * [getApplyGiftCertificateError](checkoutstoreerrorselector.md#getapplygiftcertificateerror)
 * [getCreateConsignmentsError](checkoutstoreerrorselector.md#getcreateconsignmentserror)
+* [getDeleteConsignmentError](checkoutstoreerrorselector.md#getdeleteconsignmenterror)
 * [getDeleteInstrumentError](checkoutstoreerrorselector.md#getdeleteinstrumenterror)
 * [getError](checkoutstoreerrorselector.md#geterror)
 * [getFinalizeOrderError](checkoutstoreerrorselector.md#getfinalizeordererror)
@@ -85,6 +86,27 @@ Returns an error if unable to create consignments.
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to create, otherwise undefined.
+
+___
+<a id="getdeleteconsignmenterror"></a>
+
+###  getDeleteConsignmentError
+
+▸ **getDeleteConsignmentError**(consignmentId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
+
+Returns an error if unable to delete a consignment.
+
+A consignment ID should be provided when checking for an error for a specific consignment, otherwise it will check for all available consignments.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| `Optional` consignmentId |  `undefined` &#124; `string`|  The identifier of the consignment to be checked. |
+
+**Returns:**  `Error` &#124; `undefined`
+
+The error object if unable to delete, otherwise undefined.
 
 ___
 <a id="getdeleteinstrumenterror"></a>

@@ -18,6 +18,7 @@ This object has a set of getters that return true if an action is in progress. F
 * [isApplyingGiftCertificate](checkoutstorestatusselector.md#isapplyinggiftcertificate)
 * [isCreatingConsignments](checkoutstorestatusselector.md#iscreatingconsignments)
 * [isCustomerStepPending](checkoutstorestatusselector.md#iscustomersteppending)
+* [isDeletingConsignment](checkoutstorestatusselector.md#isdeletingconsignment)
 * [isDeletingInstrument](checkoutstorestatusselector.md#isdeletinginstrument)
 * [isFinalizingOrder](checkoutstorestatusselector.md#isfinalizingorder)
 * [isInitializingCustomer](checkoutstorestatusselector.md#isinitializingcustomer)
@@ -100,6 +101,26 @@ The customer step is considered to be pending if it is in the process of initial
 
 **Returns:** `boolean`
 True if the customer step is pending, otherwise false.
+
+___
+<a id="isdeletingconsignment"></a>
+
+###  isDeletingConsignment
+
+▸ **isDeletingConsignment**(consignmentId?: * `undefined` &#124; `string`*): `boolean`
+
+Checks whether a given/any consignment is being deleted.
+
+A consignment ID should be provided when checking for a specific consignment, otherwise it will check for any consignment.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| `Optional` consignmentId |  `undefined` &#124; `string`|  The identifier of the consignment to be checked. |
+
+**Returns:** `boolean`
+True if deleting consignment(s), otherwise false.
 
 ___
 <a id="isdeletinginstrument"></a>
