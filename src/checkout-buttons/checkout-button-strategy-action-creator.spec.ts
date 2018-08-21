@@ -1,7 +1,7 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../checkout';
+import { createCheckoutClient } from '../checkout';
 import { Registry } from '../common/registry';
 import { LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_REQUESTED, LOAD_PAYMENT_METHOD_SUCCEEDED, PaymentMethodActionCreator } from '../payment';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
@@ -15,14 +15,12 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let registry: Registry<CheckoutButtonStrategy>;
     let options: CheckoutButtonOptions;
-    let store: CheckoutStore;
     let strategyActionCreator: CheckoutButtonStrategyActionCreator;
     let strategy: CheckoutButtonStrategy;
 
     class MockButtonStrategy extends CheckoutButtonStrategy { }
 
     beforeEach(() => {
-        store = createCheckoutStore();
         registry = new Registry<CheckoutButtonStrategy>();
         paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
         strategy = new MockButtonStrategy();
@@ -44,7 +42,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     });
 
     it('loads required payment method', async () => {
-        await Observable.from(strategyActionCreator.initialize(options)(store))
+        await strategyActionCreator.initialize(options)
             .toArray()
             .toPromise();
 
@@ -55,7 +53,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         jest.spyOn(registry, 'get');
         jest.spyOn(strategy, 'initialize');
 
-        await Observable.from(strategyActionCreator.initialize(options)(store))
+        await strategyActionCreator.initialize(options)
             .toArray()
             .toPromise();
 
@@ -64,7 +62,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     });
 
     it('emits actions indicating initialization progress', async () => {
-        const actions = await Observable.from(strategyActionCreator.initialize({ methodId: 'test' })(store))
+        const actions = await strategyActionCreator.initialize({ methodId: 'test' })
             .toArray()
             .toPromise();
 
@@ -83,7 +81,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
             .mockReturnValue(Observable.throw(createErrorAction(LOAD_PAYMENT_METHOD_FAILED, expectedError)));
 
         const errorHandler = jest.fn(action => Observable.of(action));
-        const actions = await Observable.from(strategyActionCreator.initialize({ methodId: 'test' })(store))
+        const actions = await strategyActionCreator.initialize({ methodId: 'test' })
             .catch(errorHandler)
             .toArray()
             .toPromise();
@@ -103,7 +101,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
             .mockReturnValue(Promise.reject(expectedError));
 
         const errorHandler = jest.fn(action => Observable.of(action));
-        const actions = await Observable.from(strategyActionCreator.initialize({ methodId: 'test' })(store))
+        const actions = await strategyActionCreator.initialize({ methodId: 'test' })
             .catch(errorHandler)
             .toArray()
             .toPromise();
