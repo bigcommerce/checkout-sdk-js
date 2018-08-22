@@ -1,5 +1,4 @@
 export * from './payment-request-options';
-export * from './payment-method-responses';
 export * from './payment-method-actions';
 export * from './payment-method-types';
 export * from './payment-status-types';
@@ -9,7 +8,7 @@ export { default as createPaymentStrategyRegistry } from './create-payment-strat
 export { default as PaymentActionCreator } from './payment-action-creator';
 export { default as Payment, CreditCardInstrument, VaultedInstrument, PaymentInstrument } from './payment';
 export { default as PaymentMethod } from './payment-method';
-export { default as PaymentMethodsMeta } from './payment-method-meta';
+export { default as PaymentMethodMeta } from './payment-method-meta';
 export { default as PaymentMethodConfig } from './payment-method-config';
 export { default as PaymentMethodActionCreator } from './payment-method-action-creator';
 export { default as paymentMethodReducer } from './payment-method-reducer';

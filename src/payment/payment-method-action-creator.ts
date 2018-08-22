@@ -18,7 +18,12 @@ export default class PaymentMethodActionCreator {
 
             this._requestSender.loadPaymentMethods(options)
                 .then(response => {
-                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, response.body.data, response.body.meta));
+                    const meta = {
+                        deviceSessionId: response.headers['x-device-session-id'],
+                        sessionHash: response.headers['x-session-hash'],
+                    };
+
+                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodsSucceeded, response.body, meta));
                     observer.complete();
                 })
                 .catch(response => {
@@ -33,7 +38,7 @@ export default class PaymentMethodActionCreator {
 
             this._requestSender.loadPaymentMethod(methodId, options)
                 .then(response => {
-                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, response.body.data, { methodId }));
+                    observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, response.body, { methodId }));
                     observer.complete();
                 })
                 .catch(response => {

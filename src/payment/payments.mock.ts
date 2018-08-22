@@ -35,7 +35,7 @@ export function getPaymentRequestBody(): PaymentRequestBody {
         order: getSubmittedOrder(),
         payment: getPayment().paymentData as CreditCardInstrument,
         paymentMethod: getAuthorizenet(),
-        quoteMeta: getPaymentMethodsMeta(),
+        quoteMeta: { request: getPaymentMethodsMeta() },
         shippingAddress: getQuote().shippingAddress,
         shippingOption: getFlatRateOption(),
         source: 'bcapp-checkout-uco',

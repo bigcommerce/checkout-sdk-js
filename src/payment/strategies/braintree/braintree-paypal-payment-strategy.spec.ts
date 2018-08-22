@@ -42,7 +42,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
-        loadPaymentMethodAction = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod: paymentMethodMock }, { methodId: paymentMethodMock.id }));
+        loadPaymentMethodAction = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: paymentMethodMock.id }));
 
         store = createCheckoutStore(getCheckoutStoreState());
 

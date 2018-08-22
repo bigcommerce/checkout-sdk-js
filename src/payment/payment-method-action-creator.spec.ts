@@ -4,23 +4,26 @@ import { Observable } from 'rxjs';
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
+import PaymentMethod from './payment-method';
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import { PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodRequestSender from './payment-method-request-sender';
-import { PaymentMethodsResponseBody, PaymentMethodResponseBody } from './payment-method-responses';
-import { getPaymentMethodsResponseBody, getPaymentMethodResponseBody } from './payment-methods.mock';
+import { getPaymentMethod, getPaymentMethods, getPaymentMethodsMeta } from './payment-methods.mock';
 
 describe('PaymentMethodActionCreator', () => {
     let errorResponse: Response<ErrorResponseBody>;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodRequestSender: PaymentMethodRequestSender;
-    let paymentMethodResponse: Response<PaymentMethodResponseBody>;
-    let paymentMethodsResponse: Response<PaymentMethodsResponseBody>;
+    let paymentMethodResponse: Response<PaymentMethod>;
+    let paymentMethodsResponse: Response<PaymentMethod[]>;
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
-        paymentMethodResponse = getResponse(getPaymentMethodResponseBody());
-        paymentMethodsResponse = getResponse(getPaymentMethodsResponseBody());
+        paymentMethodResponse = getResponse(getPaymentMethod());
+        paymentMethodsResponse = getResponse(getPaymentMethods(), {
+            'x-device-session-id': getPaymentMethodsMeta().deviceSessionId,
+            'x-session-hash': getPaymentMethodsMeta().sessionHash,
+        });
 
         paymentMethodRequestSender = new PaymentMethodRequestSender(createRequestSender());
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
@@ -39,33 +42,39 @@ describe('PaymentMethodActionCreator', () => {
             expect(paymentMethodRequestSender.loadPaymentMethods).toHaveBeenCalled();
         });
 
-        it('emits actions if able to load payment methods', () => {
-            paymentMethodActionCreator.loadPaymentMethods()
+        it('emits actions if able to load payment methods', async () => {
+            const actions = await paymentMethodActionCreator.loadPaymentMethods()
                 .toArray()
-                .subscribe(actions => {
-                    expect(actions).toEqual([
-                        { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
-                        { type: PaymentMethodActionType.LoadPaymentMethodsSucceeded, payload: paymentMethodsResponse.body.data },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
+                {
+                    type: PaymentMethodActionType.LoadPaymentMethodsSucceeded,
+                    payload: paymentMethodsResponse.body,
+                    meta: {
+                        deviceSessionId: paymentMethodsResponse.headers['x-device-session-id'],
+                        sessionHash: paymentMethodsResponse.headers['x-session-hash'],
+                    },
+                },
+            ]);
         });
 
-        it('emits error actions if unable to load payment methods', () => {
+        it('emits error actions if unable to load payment methods', async () => {
             jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethods')
                 .mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn(action => Observable.of(action));
-
-            paymentMethodActionCreator.loadPaymentMethods()
+            const actions = await paymentMethodActionCreator.loadPaymentMethods()
                 .catch(errorHandler)
                 .toArray()
-                .subscribe(actions => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
-                        { type: PaymentMethodActionType.LoadPaymentMethodsFailed, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
+                { type: PaymentMethodActionType.LoadPaymentMethodsFailed, payload: errorResponse, error: true },
+            ]);
         });
     });
 
@@ -87,36 +96,34 @@ describe('PaymentMethodActionCreator', () => {
             expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledWith(methodId, options);
         });
 
-        it('emits actions if able to load payment method', () => {
+        it('emits actions if able to load payment method', async () => {
             const methodId = 'braintree';
-
-            paymentMethodActionCreator.loadPaymentMethod(methodId)
+            const actions = await paymentMethodActionCreator.loadPaymentMethod(methodId)
                 .toArray()
-                .subscribe(actions => {
-                    expect(actions).toEqual([
-                        { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
-                        { type: PaymentMethodActionType.LoadPaymentMethodSucceeded, meta: { methodId }, payload: paymentMethodResponse.body.data },
-                    ]);
-                });
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                { type: PaymentMethodActionType.LoadPaymentMethodSucceeded, meta: { methodId }, payload: paymentMethodResponse.body },
+            ]);
         });
 
-        it('emits error actions if unable to load payment method', () => {
+        it('emits error actions if unable to load payment method', async () => {
             jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod')
                 .mockReturnValue(Promise.reject(errorResponse));
 
             const methodId = 'braintree';
             const errorHandler = jest.fn(action => Observable.of(action));
-
-            paymentMethodActionCreator.loadPaymentMethod(methodId)
+            const actions = await paymentMethodActionCreator.loadPaymentMethod(methodId)
                 .catch(errorHandler)
                 .toArray()
-                .subscribe(actions => {
-                    expect(errorHandler).toHaveBeenCalled();
-                    expect(actions).toEqual([
-                        { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
-                        { type: PaymentMethodActionType.LoadPaymentMethodFailed, meta: { methodId }, payload: errorResponse, error: true },
-                    ]);
-                });
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                { type: PaymentMethodActionType.LoadPaymentMethodFailed, meta: { methodId }, payload: errorResponse, error: true },
+            ]);
         });
     });
 });

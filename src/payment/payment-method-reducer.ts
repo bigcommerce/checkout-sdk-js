@@ -32,15 +32,15 @@ function dataReducer(
 ): PaymentMethod[] | undefined {
     switch (action.type) {
     case PaymentMethodActionType.LoadPaymentMethodSucceeded:
-        return action.payload && action.payload.paymentMethod ?
-            mergeOrPush(data || [], action.payload.paymentMethod, {
-                id: action.payload.paymentMethod.id,
-                gateway: action.payload.paymentMethod.gateway,
+        return action.payload ?
+            mergeOrPush(data || [], action.payload, {
+                id: action.payload.id,
+                gateway: action.payload.gateway,
             }) :
             data;
 
     case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
-        return action.payload && action.payload.paymentMethods ? action.payload.paymentMethods : [];
+        return action.payload ? action.payload : [];
 
     default:
         return data;

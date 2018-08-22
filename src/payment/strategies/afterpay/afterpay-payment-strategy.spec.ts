@@ -85,7 +85,7 @@ describe('AfterpayPaymentStrategy', () => {
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         loadPaymentMethodAction = Observable.of(createAction(
             PaymentMethodActionType.LoadPaymentMethodSucceeded,
-            { paymentMethod: { ...paymentMethod, id: 'afterpay' } },
+            { ...paymentMethod, id: 'afterpay' },
             { methodId: paymentMethod.gateway }
         ));
         loadRemoteSettingsAction = Observable.of(createAction(
