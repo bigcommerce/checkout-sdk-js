@@ -1,27 +1,28 @@
-import { createTimeout } from '@bigcommerce/request-sender';
-import { getPaymentMethodsResponseBody, getPaymentMethodResponseBody } from './payment-methods.mock';
+import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+
 import { getResponse } from '../common/http-request/responses.mock';
+
 import PaymentMethodRequestSender from './payment-method-request-sender';
+import { PaymentMethodsResponseBody, PaymentMethodResponseBody } from './payment-method-responses';
+import { getPaymentMethodsResponseBody, getPaymentMethodResponseBody } from './payment-methods.mock';
 
 describe('PaymentMethodRequestSender', () => {
-    let paymentMethodRequestSender;
-    let requestSender;
+    let paymentMethodRequestSender: PaymentMethodRequestSender;
+    let requestSender: RequestSender;
 
     beforeEach(() => {
-        requestSender = {
-            get: jest.fn(() => Promise.resolve()),
-        };
-
+        requestSender = createRequestSender();
         paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
     });
 
     describe('#loadPaymentMethods()', () => {
-        let response;
+        let response: Response<PaymentMethodsResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getPaymentMethodsResponseBody());
 
-            requestSender.get.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get')
+                .mockReturnValue(Promise.resolve(response));
         });
 
         it('loads payment methods', async () => {
@@ -32,7 +33,8 @@ describe('PaymentMethodRequestSender', () => {
         it('loads payment methods with timeout', async () => {
             const options = { timeout: createTimeout() };
 
-            requestSender.get.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get')
+                .mockReturnValue(Promise.resolve(response));
 
             expect(await paymentMethodRequestSender.loadPaymentMethods(options)).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/checkout/payments', options);
@@ -40,16 +42,18 @@ describe('PaymentMethodRequestSender', () => {
     });
 
     describe('#getPaymentMethod()', () => {
-        let response;
+        let response: Response<PaymentMethodResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getPaymentMethodResponseBody());
 
-            requestSender.get.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get')
+                .mockReturnValue(Promise.resolve(response));
         });
 
         it('loads payment method', async () => {
-            requestSender.get.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get')
+                .mockReturnValue(Promise.resolve(response));
 
             expect(await paymentMethodRequestSender.loadPaymentMethod('braintree')).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/checkout/payments/braintree', { timeout: undefined });
@@ -58,7 +62,8 @@ describe('PaymentMethodRequestSender', () => {
         it('loads payment method with timeout', async () => {
             const options = { timeout: createTimeout() };
 
-            requestSender.get.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get')
+                .mockReturnValue(Promise.resolve(response));
 
             expect(await paymentMethodRequestSender.loadPaymentMethod('braintree', options)).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/internalapi/v1/checkout/payments/braintree', options);

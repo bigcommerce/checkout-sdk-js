@@ -1,22 +1,22 @@
-import { getAdyenAmex, getBraintree, getPaymentMethodsState } from './payment-methods.mock';
-import { getOrderState } from '../order/orders.mock';
+import { CheckoutStoreState } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+
 import PaymentMethodSelector from './payment-method-selector';
+import { getAdyenAmex, getBraintree } from './payment-methods.mock';
 
 describe('PaymentMethodSelector', () => {
-    let paymentMethodSelector;
-    let state;
+    let paymentMethodSelector: PaymentMethodSelector;
+    let state: CheckoutStoreState;
 
     beforeEach(() => {
-        state = {
-            paymentMethods: getPaymentMethodsState(),
-            order: getOrderState(),
-        };
+        state = getCheckoutStoreState();
     });
 
     describe('#getPaymentMethods()', () => {
         it('returns a list of payment methods', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods);
 
             expect(paymentMethodSelector.getPaymentMethods()).toEqual(state.paymentMethods.data);
         });
@@ -25,7 +25,7 @@ describe('PaymentMethodSelector', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 data: [],
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.getPaymentMethods()).toEqual([]);
         });
@@ -33,25 +33,25 @@ describe('PaymentMethodSelector', () => {
 
     describe('#getPaymentMethod()', () => {
         it('returns payment method if found', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods);
 
             expect(paymentMethodSelector.getPaymentMethod('braintree')).toEqual(getBraintree());
         });
 
         it('returns multi-option payment method if found', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods);
 
             expect(paymentMethodSelector.getPaymentMethod('amex', 'adyen')).toEqual(getAdyenAmex());
         });
 
         it('returns nothing if payment method is not found', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods);
 
             expect(paymentMethodSelector.getPaymentMethod('xyz')).toBeUndefined();
         });
 
         it('returns nothing if multi-option payment method is not found', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods);
 
             expect(paymentMethodSelector.getPaymentMethod('amex')).toEqual(getAdyenAmex());
         });
@@ -59,18 +59,18 @@ describe('PaymentMethodSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponse();
+            const loadError = new RequestError(getErrorResponse());
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 errors: { loadError },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.getLoadError()).toEqual(loadError);
         });
 
         it('does not returns error if able to load', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods);
 
             expect(paymentMethodSelector.getLoadError()).toBeUndefined();
         });
@@ -78,40 +78,40 @@ describe('PaymentMethodSelector', () => {
 
     describe('#getLoadMethodError()', () => {
         it('returns error if unable to load', () => {
-            const loadMethodError = getErrorResponse();
+            const loadMethodError = new RequestError(getErrorResponse());
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 errors: { loadMethodError, loadMethodId: 'braintree' },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.getLoadMethodError('braintree')).toEqual(loadMethodError);
         });
 
         it('does not returns error if able to load', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods);
 
             expect(paymentMethodSelector.getLoadMethodError('braintree')).toBeUndefined();
         });
 
         it('does not returns error if unable to load irrelevant method', () => {
-            const loadMethodError = getErrorResponse();
+            const loadMethodError = new RequestError(getErrorResponse());
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 errors: { loadMethodError, loadMethodId: 'authorizenet' },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.getLoadMethodError('braintree')).toBeUndefined();
         });
 
         it('returns any error if method id is not passed', () => {
-            const loadMethodError = getErrorResponse();
+            const loadMethodError = new RequestError(getErrorResponse());
 
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 errors: { loadMethodError, loadMethodId: 'braintree' },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.getLoadMethodError()).toEqual(loadMethodError);
         });
@@ -122,13 +122,13 @@ describe('PaymentMethodSelector', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 statuses: { isLoading: true },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.isLoading()).toEqual(true);
         });
 
         it('returns false if not loading payment methods', () => {
-            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods, state.order);
+            paymentMethodSelector = new PaymentMethodSelector(state.paymentMethods);
 
             expect(paymentMethodSelector.isLoading()).toEqual(false);
         });
@@ -139,7 +139,7 @@ describe('PaymentMethodSelector', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 statuses: { isLoadingMethod: true, loadMethodId: 'braintree' },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(true);
         });
@@ -148,7 +148,7 @@ describe('PaymentMethodSelector', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 statuses: { isLoadingMethod: false, loadMethodId: undefined },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(false);
         });
@@ -157,7 +157,7 @@ describe('PaymentMethodSelector', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 statuses: { isLoadingMethod: true, loadMethodId: 'authorizenet' },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.isLoadingMethod('braintree')).toEqual(false);
         });
@@ -166,7 +166,7 @@ describe('PaymentMethodSelector', () => {
             paymentMethodSelector = new PaymentMethodSelector({
                 ...state.paymentMethods,
                 statuses: { isLoadingMethod: true, loadMethodId: 'braintree' },
-            }, state.order);
+            });
 
             expect(paymentMethodSelector.isLoadingMethod()).toEqual(true);
         });
