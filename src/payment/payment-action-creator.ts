@@ -1,12 +1,16 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { pick } from 'lodash';
 import { concat } from 'rxjs/observable/concat';
+import { from } from 'rxjs/observable/from';
+import { of } from 'rxjs/observable/of';
+import { catchError, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
+import { throwErrorAction } from '../common/error';
 import { InvalidArgumentError, StandardError } from '../common/error/errors';
 import { mapToInternalCustomer } from '../customer';
 import { mapToInternalOrder, OrderActionCreator } from '../order';
@@ -28,21 +32,18 @@ export default class PaymentActionCreator {
 
     submitPayment(payment: Payment): ThunkAction<SubmitPaymentAction, InternalCheckoutSelectors> {
         return store => concat(
-            Observable.create((observer: Observer<SubmitPaymentAction>) => {
-                observer.next(createAction(PaymentActionType.SubmitPaymentRequested));
-
-                return this._paymentRequestSender.submitPayment(
-                    this._getPaymentRequestBody(payment, store.getState())
+            of(createAction(PaymentActionType.SubmitPaymentRequested)),
+            from(this._paymentRequestSender.submitPayment(
+                this._getPaymentRequestBody(payment, store.getState())
+            ))
+                .pipe(
+                    switchMap(({ body }) => concat(
+                        this._orderActionCreator.loadCurrentOrder()(store),
+                        of(createAction(PaymentActionType.SubmitPaymentSucceeded, body))
+                    ))
                 )
-                    .then(({ body }) => {
-                        observer.next(createAction(PaymentActionType.SubmitPaymentSucceeded, body));
-                        observer.complete();
-                    })
-                    .catch(response => {
-                        observer.error(createErrorAction(PaymentActionType.SubmitPaymentFailed, response));
-                    });
-            }),
-            this._orderActionCreator.loadCurrentOrder()(store)
+        ).pipe(
+            catchError(error => throwErrorAction(PaymentActionType.SubmitPaymentFailed, error))
         );
     }
 

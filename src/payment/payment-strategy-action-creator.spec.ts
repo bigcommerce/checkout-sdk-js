@@ -368,8 +368,8 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
+                { type: PaymentStrategyActionType.FinalizeRequested },
                 { type: OrderActionType.LoadOrderPaymentsRequested },
-                { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeSucceeded, meta: { methodId: method.id } },
             ]);
         });
@@ -390,8 +390,8 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
+                { type: PaymentStrategyActionType.FinalizeRequested },
                 { type: OrderActionType.LoadOrderPaymentsRequested },
-                { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeFailed, error: true, payload: finalizeError, meta: { methodId: method.id } },
             ]);
         });

@@ -1,8 +1,8 @@
 import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
 import { ConsignmentRequestSender } from '..';
-import { createRequestSender } from '../../../node_modules/@bigcommerce/request-sender';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore } from '../../checkout';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ConsignmentActionType } from '../consignment-actions';
