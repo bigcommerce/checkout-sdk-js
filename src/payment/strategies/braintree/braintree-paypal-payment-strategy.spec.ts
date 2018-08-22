@@ -12,7 +12,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment-method-action-types';
+import { PaymentMethodActionType } from '../../payment-method-actions';
 import { getBraintreePaypal } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
@@ -42,7 +42,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
         paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
-        loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod: paymentMethodMock }, { methodId: paymentMethodMock.id }));
+        loadPaymentMethodAction = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod: paymentMethodMock }, { methodId: paymentMethodMock.id }));
 
         store = createCheckoutStore(getCheckoutStoreState());
 

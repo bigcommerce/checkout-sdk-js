@@ -1,6 +1,6 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import * as actionTypes from './payment-method-action-types';
+import { PaymentMethodActionType } from './payment-method-actions';
 import paymentMethodReducer from './payment-method-reducer';
 import PaymentMethodState from './payment-method-state';
 import { getBraintreePaypal, getPaymentMethod, getPaymentMethodsResponseBody, getPaymentMethodResponseBody } from './payment-methods.mock';
@@ -18,7 +18,7 @@ describe('paymentMethodReducer()', () => {
 
     it('returns new state when loading payment methods', () => {
         const action = {
-            type: actionTypes.LOAD_PAYMENT_METHODS_REQUESTED,
+            type: PaymentMethodActionType.LoadPaymentMethodsRequested,
         };
 
         expect(paymentMethodReducer(initialState, action)).toEqual({
@@ -31,7 +31,7 @@ describe('paymentMethodReducer()', () => {
     it('returns new state when payment methods are loaded', () => {
         const response = getPaymentMethodsResponseBody();
         const action = {
-            type: actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED,
+            type: PaymentMethodActionType.LoadPaymentMethodsSucceeded,
             payload: response.data,
             meta: response.meta,
         };
@@ -47,7 +47,7 @@ describe('paymentMethodReducer()', () => {
 
     it('returns new state when payment methods cannot be loaded', () => {
         const action = {
-            type: actionTypes.LOAD_PAYMENT_METHODS_FAILED,
+            type: PaymentMethodActionType.LoadPaymentMethodsFailed,
             payload: getErrorResponse(),
         };
 
@@ -61,7 +61,7 @@ describe('paymentMethodReducer()', () => {
     it('returns new state when payment method is loaded', () => {
         const response = getPaymentMethodResponseBody();
         const action = {
-            type: actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED,
+            type: PaymentMethodActionType.LoadPaymentMethodSucceeded,
             payload: response.data,
             meta: { methodId: 'braintree' },
         };
@@ -84,7 +84,7 @@ describe('paymentMethodReducer()', () => {
 
     it('returns new state when payment method cannot be loaded', () => {
         const action = {
-            type: actionTypes.LOAD_PAYMENT_METHOD_FAILED,
+            type: PaymentMethodActionType.LoadPaymentMethodFailed,
             payload: getErrorResponse(),
             meta: { methodId: 'braintree' },
         };
@@ -106,7 +106,7 @@ describe('paymentMethodReducer()', () => {
     it('returns new state when payment method is loaded and merged with existing payment methods', () => {
         const response = getPaymentMethodResponseBody();
         const action = {
-            type: actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED,
+            type: PaymentMethodActionType.LoadPaymentMethodSucceeded,
             payload: {
                 ...response.data,
                 paymentMethod: {
