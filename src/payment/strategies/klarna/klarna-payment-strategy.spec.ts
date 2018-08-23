@@ -21,6 +21,7 @@ import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../er
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentMethodActionType } from '../../payment-method-actions';
+import PaymentMethodRequestSender from '../../payment-method-request-sender';
 
 import KlarnaCredit from './klarna-credit';
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
@@ -50,7 +51,7 @@ describe('KlarnaPaymentStrategy', () => {
             client,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(client);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );

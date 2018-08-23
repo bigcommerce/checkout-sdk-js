@@ -4,10 +4,10 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { ConsignmentRequestSender } from '..';
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
-import { PaymentMethodActionCreator, PaymentMethodActionType } from '../../payment';
+import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../payment';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import {
     AmazonPayAddressBook,
@@ -79,7 +79,7 @@ describe('AmazonPayShippingStrategy', () => {
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(createRequestSender()));
-        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
 
         orderReference = {

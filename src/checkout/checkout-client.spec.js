@@ -5,7 +5,6 @@ import { getCompleteOrder } from '../order/internal-orders.mock';
 import { getCheckout } from './checkouts.mock';
 import { getCountries } from '../geography/countries.mock';
 import { getCustomerResponseBody } from '../customer/internal-customers.mock';
-import { getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
 import CheckoutClient from './checkout-client';
 
 describe('CheckoutClient', () => {
@@ -14,7 +13,6 @@ describe('CheckoutClient', () => {
     let countryRequestSender;
     let customerRequestSender;
     let orderRequestSender;
-    let paymentMethodRequestSender;
     let shippingCountryRequestSender;
 
     beforeEach(() => {
@@ -44,11 +42,6 @@ describe('CheckoutClient', () => {
             submitOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrder()))),
         };
 
-        paymentMethodRequestSender = {
-            loadPaymentMethods: jest.fn(() => Promise.resolve(getResponse(getPaymentMethods()))),
-            loadPaymentMethod: jest.fn(() => Promise.resolve(getResponse(getPaymentMethod()))),
-        };
-
         shippingCountryRequestSender = {
             loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
         };
@@ -58,7 +51,6 @@ describe('CheckoutClient', () => {
             countryRequestSender,
             customerRequestSender,
             orderRequestSender,
-            paymentMethodRequestSender,
             shippingCountryRequestSender
         );
     });
@@ -113,40 +105,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getResponse(getCompleteOrder()));
             expect(orderRequestSender.finalizeOrder).toHaveBeenCalledWith(295, options);
-        });
-    });
-
-    describe('#loadPaymentMethods()', () => {
-        it('loads payment methods', async () => {
-            const output = await client.loadPaymentMethods();
-
-            expect(output).toEqual(getResponse(getPaymentMethods()));
-            expect(paymentMethodRequestSender.loadPaymentMethods).toHaveBeenCalledWith(undefined);
-        });
-
-        it('loads payment methods with timeout', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.loadPaymentMethods(options);
-
-            expect(output).toEqual(getResponse(getPaymentMethods()));
-            expect(paymentMethodRequestSender.loadPaymentMethods).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#loadPaymentMethod()', () => {
-        it('loads payment method', async () => {
-            const output = await client.loadPaymentMethod('braintree');
-
-            expect(output).toEqual(getResponse(getPaymentMethod()));
-            expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledWith('braintree', undefined);
-        });
-
-        it('loads payment method with timeout', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.loadPaymentMethod('braintree', options);
-
-            expect(output).toEqual(getResponse(getPaymentMethod()));
-            expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledWith('braintree', options);
         });
     });
 

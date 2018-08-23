@@ -5,7 +5,6 @@ import { RequestOptions } from '../common/http-request';
 import { CustomerCredentials, CustomerRequestSender } from '../customer';
 import { CountryRequestSender, CountryResponseBody } from '../geography';
 import { InternalOrderRequestBody, InternalOrderResponseBody, Order, OrderRequestSender } from '../order';
-import { PaymentMethodsResponseBody, PaymentMethodRequestSender, PaymentMethodResponseBody } from '../payment';
 import { ShippingCountryRequestSender } from '../shipping';
 
 import Checkout from './checkout';
@@ -22,7 +21,6 @@ export default class CheckoutClient {
         private _countryRequestSender: CountryRequestSender,
         private _customerRequestSender: CustomerRequestSender,
         private _orderRequestSender: OrderRequestSender,
-        private _paymentMethodRequestSender: PaymentMethodRequestSender,
         private _shippingCountryRequestSender: ShippingCountryRequestSender
     ) {}
 
@@ -36,14 +34,6 @@ export default class CheckoutClient {
 
     finalizeOrder(orderId: number, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
         return this._orderRequestSender.finalizeOrder(orderId, options);
-    }
-
-    loadPaymentMethods(options?: RequestOptions): Promise<Response<PaymentMethodsResponseBody>> {
-        return this._paymentMethodRequestSender.loadPaymentMethods(options);
-    }
-
-    loadPaymentMethod(methodId: string, options?: RequestOptions): Promise<Response<PaymentMethodResponseBody>> {
-        return this._paymentMethodRequestSender.loadPaymentMethod(methodId, options);
     }
 
     loadCountries(options?: RequestOptions): Promise<Response<CountryResponseBody>> {
