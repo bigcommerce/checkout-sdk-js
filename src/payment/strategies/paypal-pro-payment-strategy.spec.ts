@@ -1,40 +1,54 @@
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { Observable } from 'rxjs';
-import { createCheckoutStore } from '../../checkout';
-import { OrderActionType } from '../../order';
-import { getOrderRequestBody, getIncompleteOrderState } from '../../order/internal-orders.mock';
-import { PaymentActionType } from '../payment-actions';
-import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
+
+import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../checkout';
 import { getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
+import { OrderActionCreator, OrderActionType, SubmitOrderAction } from '../../order';
+import { getOrderRequestBody } from '../../order/internal-orders.mock';
+import PaymentActionCreator from '../payment-action-creator';
+import { PaymentActionType, SubmitPaymentAction } from '../payment-actions';
+import PaymentRequestSender from '../payment-request-sender';
+
+import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 
 describe('PaypalProPaymentStrategy', () => {
-    let orderActionCreator;
-    let paymentActionCreator;
-    let store;
-    let strategy;
-    let submitOrderAction;
-    let submitPaymentAction;
+    let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
+    let state: CheckoutStoreState;
+    let store: CheckoutStore;
+    let strategy: PaypalProPaymentStrategy;
+    let submitOrderAction: Observable<SubmitOrderAction>;
+    let submitPaymentAction: Observable<SubmitPaymentAction>;
 
     beforeEach(() => {
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
-        orderActionCreator = {
-            submitOrder: jest.fn(() => submitOrderAction),
-        };
+        orderActionCreator = new OrderActionCreator(
+            createCheckoutClient(),
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+        );
 
-        paymentActionCreator = {
-            submitPayment: jest.fn(() => submitPaymentAction),
-        };
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator
+        );
 
-        store = createCheckoutStore({
-            order: getIncompleteOrderState(),
-        });
+        state = getCheckoutStoreState();
+        store = createCheckoutStore(state);
 
         strategy = new PaypalProPaymentStrategy(store, orderActionCreator, paymentActionCreator);
 
         jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
     });
 
     it('submits order without payment data', async () => {
@@ -66,11 +80,12 @@ describe('PaypalProPaymentStrategy', () => {
             store = createCheckoutStore({
                 ...getCheckoutStoreState(),
                 checkout: {
+                    ...state.checkout,
                     data: getCheckoutWithPayments(),
                 },
             });
 
-            strategy = new PaypalProPaymentStrategy(store, orderActionCreator);
+            strategy = new PaypalProPaymentStrategy(store, orderActionCreator, paymentActionCreator);
 
             jest.spyOn(store, 'dispatch');
         });
@@ -82,7 +97,7 @@ describe('PaypalProPaymentStrategy', () => {
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({
                 ...payload,
-                payment: { methodId: payload.payment.methodId },
+                payment: { methodId: payload.payment && payload.payment.methodId },
             }, undefined);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });

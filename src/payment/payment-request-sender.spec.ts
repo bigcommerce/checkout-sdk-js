@@ -2,8 +2,8 @@ import PaymentRequestSender from './payment-request-sender';
 import { getErrorPaymentResponseBody, getPaymentRequestBody, getPaymentResponseBody } from './payments.mock';
 
 describe('PaymentRequestSender', () => {
-    let bigpayClient;
-    let paymentRequestSender;
+    let bigpayClient: any;
+    let paymentRequestSender: PaymentRequestSender;
 
     describe('#submitPayment()', () => {
         beforeEach(() => {
@@ -18,7 +18,7 @@ describe('PaymentRequestSender', () => {
         });
 
         it('submits payment data to Bigpay', () => {
-            const payload = {};
+            const payload = getPaymentRequestBody();
 
             paymentRequestSender.submitPayment(payload);
 

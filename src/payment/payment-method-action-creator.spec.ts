@@ -1,28 +1,35 @@
-import { createTimeout } from '@bigcommerce/request-sender';
+import { createTimeout, Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
-import { getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from './payment-methods.mock';
+
+import { createCheckoutClient, CheckoutClient } from '../checkout';
+import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import * as actionTypes from './payment-method-action-types';
+
 import PaymentMethodActionCreator from './payment-method-action-creator';
+import { PaymentMethodActionType } from './payment-method-actions';
+import { PaymentMethodsResponseBody, PaymentMethodResponseBody } from './payment-method-responses';
+import { getPaymentMethodsResponseBody, getPaymentMethodResponseBody } from './payment-methods.mock';
 
 describe('PaymentMethodActionCreator', () => {
-    let checkoutClient;
-    let errorResponse;
-    let paymentMethodActionCreator;
-    let paymentMethodResponse;
-    let paymentMethodsResponse;
+    let checkoutClient: CheckoutClient;
+    let errorResponse: Response<ErrorResponseBody>;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paymentMethodResponse: Response<PaymentMethodResponseBody>;
+    let paymentMethodsResponse: Response<PaymentMethodsResponseBody>;
 
     beforeEach(() => {
         errorResponse = getErrorResponse();
         paymentMethodResponse = getResponse(getPaymentMethodResponseBody());
         paymentMethodsResponse = getResponse(getPaymentMethodsResponseBody());
 
-        checkoutClient = {
-            loadPaymentMethod: jest.fn(() => Promise.resolve(paymentMethodResponse)),
-            loadPaymentMethods: jest.fn(() => Promise.resolve(paymentMethodsResponse)),
-        };
-
+        checkoutClient = createCheckoutClient();
         paymentMethodActionCreator = new PaymentMethodActionCreator(checkoutClient);
+
+        jest.spyOn(checkoutClient, 'loadPaymentMethod')
+            .mockReturnValue(Promise.resolve(paymentMethodResponse));
+
+        jest.spyOn(checkoutClient, 'loadPaymentMethods')
+            .mockReturnValue(Promise.resolve(paymentMethodsResponse));
     });
 
     describe('#loadPaymentMethods()', () => {
@@ -35,27 +42,28 @@ describe('PaymentMethodActionCreator', () => {
         it('emits actions if able to load payment methods', () => {
             paymentMethodActionCreator.loadPaymentMethods()
                 .toArray()
-                .subscribe((actions) => {
+                .subscribe(actions => {
                     expect(actions).toEqual([
-                        { type: actionTypes.LOAD_PAYMENT_METHODS_REQUESTED },
-                        { type: actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED, payload: paymentMethodsResponse.body.data },
+                        { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
+                        { type: PaymentMethodActionType.LoadPaymentMethodsSucceeded, payload: paymentMethodsResponse.body.data },
                     ]);
                 });
         });
 
         it('emits error actions if unable to load payment methods', () => {
-            checkoutClient.loadPaymentMethods.mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(checkoutClient, 'loadPaymentMethods')
+                .mockReturnValue(Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             paymentMethodActionCreator.loadPaymentMethods()
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
+                .subscribe(actions => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.LOAD_PAYMENT_METHODS_REQUESTED },
-                        { type: actionTypes.LOAD_PAYMENT_METHODS_FAILED, payload: errorResponse, error: true },
+                        { type: PaymentMethodActionType.LoadPaymentMethodsRequested },
+                        { type: PaymentMethodActionType.LoadPaymentMethodsFailed, payload: errorResponse, error: true },
                     ]);
                 });
         });
@@ -84,28 +92,29 @@ describe('PaymentMethodActionCreator', () => {
 
             paymentMethodActionCreator.loadPaymentMethod(methodId)
                 .toArray()
-                .subscribe((actions) => {
+                .subscribe(actions => {
                     expect(actions).toEqual([
-                        { type: actionTypes.LOAD_PAYMENT_METHOD_REQUESTED, meta: { methodId } },
-                        { type: actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED, meta: { methodId }, payload: paymentMethodResponse.body.data },
+                        { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                        { type: PaymentMethodActionType.LoadPaymentMethodSucceeded, meta: { methodId }, payload: paymentMethodResponse.body.data },
                     ]);
                 });
         });
 
         it('emits error actions if unable to load payment method', () => {
-            checkoutClient.loadPaymentMethod.mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(checkoutClient, 'loadPaymentMethod')
+                .mockReturnValue(Promise.reject(errorResponse));
 
             const methodId = 'braintree';
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
 
             paymentMethodActionCreator.loadPaymentMethod(methodId)
                 .catch(errorHandler)
                 .toArray()
-                .subscribe((actions) => {
+                .subscribe(actions => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
-                        { type: actionTypes.LOAD_PAYMENT_METHOD_REQUESTED, meta: { methodId } },
-                        { type: actionTypes.LOAD_PAYMENT_METHOD_FAILED, meta: { methodId }, payload: errorResponse, error: true },
+                        { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                        { type: PaymentMethodActionType.LoadPaymentMethodFailed, meta: { methodId }, payload: errorResponse, error: true },
                     ]);
                 });
         });
