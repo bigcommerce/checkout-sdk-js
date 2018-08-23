@@ -3,11 +3,11 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../checkout';
+import { createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
 import { MissingDataError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
-import { HOSTED, INITIALIZE, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType } from '../../payment';
+import { HOSTED, INITIALIZE, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../payment';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import {
     AmazonPayLogin,
@@ -70,7 +70,7 @@ describe('AmazonPayCustomerStrategy', () => {
         container = document.createElement('div');
         hostWindow = window;
         paymentMethod = getAmazonPay();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
         state = getCheckoutStoreState();

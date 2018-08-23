@@ -17,6 +17,7 @@ import {
     createPaymentClient,
     createPaymentStrategyRegistry,
     PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
     PaymentStrategyActionCreator,
 } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
@@ -66,9 +67,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const paymentClient = createPaymentClient(store);
     const requestSender = createRequestSender();
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-    const configRequestSender = new ConfigRequestSender(requestSender);
-    const configActionCreator = new ConfigActionCreator(configRequestSender);
-    const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
+    const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const orderActionCreator = new OrderActionCreator(client, new CheckoutValidator(checkoutRequestSender));
 
     return new CheckoutService(
@@ -76,20 +75,20 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new BillingAddressActionCreator(client),
         new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
         configActionCreator,
-        new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender),
+        new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
         new CountryActionCreator(client),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
-        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, client)),
+        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store)),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         orderActionCreator,
-        new PaymentMethodActionCreator(client),
+        new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
             createPaymentStrategyRegistry(store, client, paymentClient),
             orderActionCreator
         ),
         new ShippingCountryActionCreator(client),
-        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, client))
+        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store))
     );
 }
 

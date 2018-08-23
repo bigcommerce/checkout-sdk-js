@@ -1,19 +1,19 @@
-import { createTimeout, Response } from '@bigcommerce/request-sender';
+import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, CheckoutClient } from '../checkout';
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import PaymentMethodActionCreator from './payment-method-action-creator';
 import { PaymentMethodActionType } from './payment-method-actions';
+import PaymentMethodRequestSender from './payment-method-request-sender';
 import { PaymentMethodsResponseBody, PaymentMethodResponseBody } from './payment-method-responses';
 import { getPaymentMethodsResponseBody, getPaymentMethodResponseBody } from './payment-methods.mock';
 
 describe('PaymentMethodActionCreator', () => {
-    let checkoutClient: CheckoutClient;
     let errorResponse: Response<ErrorResponseBody>;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paymentMethodRequestSender: PaymentMethodRequestSender;
     let paymentMethodResponse: Response<PaymentMethodResponseBody>;
     let paymentMethodsResponse: Response<PaymentMethodsResponseBody>;
 
@@ -22,13 +22,13 @@ describe('PaymentMethodActionCreator', () => {
         paymentMethodResponse = getResponse(getPaymentMethodResponseBody());
         paymentMethodsResponse = getResponse(getPaymentMethodsResponseBody());
 
-        checkoutClient = createCheckoutClient();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(checkoutClient);
+        paymentMethodRequestSender = new PaymentMethodRequestSender(createRequestSender());
+        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
 
-        jest.spyOn(checkoutClient, 'loadPaymentMethod')
+        jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod')
             .mockReturnValue(Promise.resolve(paymentMethodResponse));
 
-        jest.spyOn(checkoutClient, 'loadPaymentMethods')
+        jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethods')
             .mockReturnValue(Promise.resolve(paymentMethodsResponse));
     });
 
@@ -36,7 +36,7 @@ describe('PaymentMethodActionCreator', () => {
         it('sends a request to get a list of payment methods', async () => {
             await paymentMethodActionCreator.loadPaymentMethods().toPromise();
 
-            expect(checkoutClient.loadPaymentMethods).toHaveBeenCalled();
+            expect(paymentMethodRequestSender.loadPaymentMethods).toHaveBeenCalled();
         });
 
         it('emits actions if able to load payment methods', () => {
@@ -51,7 +51,7 @@ describe('PaymentMethodActionCreator', () => {
         });
 
         it('emits error actions if unable to load payment methods', () => {
-            jest.spyOn(checkoutClient, 'loadPaymentMethods')
+            jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethods')
                 .mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn(action => Observable.of(action));
@@ -75,7 +75,7 @@ describe('PaymentMethodActionCreator', () => {
 
             await paymentMethodActionCreator.loadPaymentMethod(methodId).toPromise();
 
-            expect(checkoutClient.loadPaymentMethod).toHaveBeenCalledWith(methodId, undefined);
+            expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledWith(methodId, undefined);
         });
 
         it('loads payment method data with timeout', async () => {
@@ -84,7 +84,7 @@ describe('PaymentMethodActionCreator', () => {
 
             await paymentMethodActionCreator.loadPaymentMethod(methodId, options).toPromise();
 
-            expect(checkoutClient.loadPaymentMethod).toHaveBeenCalledWith(methodId, options);
+            expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledWith(methodId, options);
         });
 
         it('emits actions if able to load payment method', () => {
@@ -101,7 +101,7 @@ describe('PaymentMethodActionCreator', () => {
         });
 
         it('emits error actions if unable to load payment method', () => {
-            jest.spyOn(checkoutClient, 'loadPaymentMethod')
+            jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod')
                 .mockReturnValue(Promise.reject(errorResponse));
 
             const methodId = 'braintree';

@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore, CheckoutStoreState } from '../checkout';
+import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckoutState, getCheckoutStoreState, getCheckoutWithPayments } from '../checkout/checkouts.mock';
 import { Registry } from '../common/registry';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
@@ -12,7 +12,6 @@ import { ShippingStrategyActionType } from './shipping-strategy-actions';
 import { ShippingStrategy } from './strategies';
 
 describe('ShippingStrategyActionCreator', () => {
-    let client: CheckoutClient;
     let registry: Registry<ShippingStrategy>;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
@@ -20,8 +19,7 @@ describe('ShippingStrategyActionCreator', () => {
     beforeEach(() => {
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
-        client = createCheckoutClient();
-        registry = createShippingStrategyRegistry(store, client);
+        registry = createShippingStrategyRegistry(store);
     });
 
     describe('#initialize()', () => {

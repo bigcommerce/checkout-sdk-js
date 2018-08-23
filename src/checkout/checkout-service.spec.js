@@ -50,6 +50,8 @@ describe('CheckoutService', () => {
     let giftCertificateRequestSender;
     let instrumentActionCreator;
     let orderActionCreator;
+    let paymentMethodRequestSender;
+    let paymentMethodActionCreator;
     let paymentStrategy;
     let paymentStrategyRegistry;
     let shippingStrategyActionCreator;
@@ -75,14 +77,6 @@ describe('CheckoutService', () => {
 
             finalizeOrder: jest.fn(() =>
                 Promise.resolve(getResponse(getCompleteOrderResponseBody()))
-            ),
-
-            loadPaymentMethod: jest.fn(() =>
-                Promise.resolve(getResponse(getPaymentMethodResponseBody()))
-            ),
-
-            loadPaymentMethods: jest.fn(() =>
-                Promise.resolve(getResponse(getPaymentMethodsResponseBody()))
             ),
 
             loadShippingCountries: jest.fn(() =>
@@ -172,6 +166,16 @@ describe('CheckoutService', () => {
             ),
         };
 
+        paymentMethodRequestSender = {
+            loadPaymentMethod: jest.fn(() =>
+                Promise.resolve(getResponse(getPaymentMethodResponseBody()))
+            ),
+
+            loadPaymentMethods: jest.fn(() =>
+                Promise.resolve(getResponse(getPaymentMethodsResponseBody()))
+            ),
+        };
+
         checkoutValidator = {
             validate: jest.fn(() => Promise.resolve()),
         };
@@ -188,15 +192,17 @@ describe('CheckoutService', () => {
         consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
 
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store, checkoutClient)
+            createCustomerStrategyRegistry(store)
         );
 
         instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
 
         orderActionCreator = new OrderActionCreator(checkoutClient, checkoutValidator);
 
+        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
-            createShippingStrategyRegistry(store, checkoutClient)
+            createShippingStrategyRegistry(store)
         );
 
         checkoutService = new CheckoutService(
@@ -211,7 +217,7 @@ describe('CheckoutService', () => {
             new GiftCertificateActionCreator(giftCertificateRequestSender),
             instrumentActionCreator,
             orderActionCreator,
-            new PaymentMethodActionCreator(checkoutClient),
+            paymentMethodActionCreator,
             new PaymentStrategyActionCreator(
                 paymentStrategyRegistry,
                 new OrderActionCreator(checkoutClient, checkoutValidator)
@@ -466,7 +472,7 @@ describe('CheckoutService', () => {
         it('loads payment methods', async () => {
             await checkoutService.loadPaymentMethods();
 
-            expect(checkoutClient.loadPaymentMethods).toHaveBeenCalledWith(undefined);
+            expect(paymentMethodRequestSender.loadPaymentMethods).toHaveBeenCalledWith(undefined);
         });
 
         it('loads payment methods with timeout', async () => {
@@ -474,7 +480,7 @@ describe('CheckoutService', () => {
 
             await checkoutService.loadPaymentMethods(options);
 
-            expect(checkoutClient.loadPaymentMethods).toHaveBeenCalledWith(options);
+            expect(paymentMethodRequestSender.loadPaymentMethods).toHaveBeenCalledWith(options);
         });
 
         it('returns payment methods', async () => {
