@@ -1,6 +1,7 @@
 import { find } from 'lodash';
 
 import { isAddressEqual, AddressRequestBody } from '../address';
+import { CartSelector, PhysicalItem } from '../cart';
 import { selector } from '../common/selector';
 
 import Consignment from './consignment';
@@ -10,7 +11,8 @@ import ShippingOption from './shipping-option';
 @selector
 export default class ConsignmentSelector {
     constructor(
-        private _consignments: ConsignmentState
+        private _consignments: ConsignmentState,
+        private _cart: CartSelector
     ) {}
 
     getConsignments(): Consignment[] | undefined {
@@ -57,6 +59,23 @@ export default class ConsignmentSelector {
 
     getLoadShippingOptionsError(): Error | undefined {
         return this._consignments.errors.loadShippingOptionsError;
+    }
+
+    getUnassignedItems(): PhysicalItem[] {
+        const cart = this._cart.getCart();
+
+        if (!cart) {
+            return [];
+        }
+
+        const assignedLineItemIds = (this.getConsignments() || []).reduce(
+            (itemIds, consignment) => itemIds.concat(consignment.lineItemIds),
+            [] as string[]
+        );
+
+        return (cart.lineItems.physicalItems || []).filter(
+            item => assignedLineItemIds.indexOf(item.id as string) < 0
+        );
     }
 
     getUpdateError(consignmentId?: string): Error | undefined {
