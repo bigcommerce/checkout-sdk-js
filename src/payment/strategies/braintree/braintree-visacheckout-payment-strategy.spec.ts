@@ -22,6 +22,7 @@ import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentActionType } from '../../payment-actions';
+import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getBraintreeVisaCheckout } from '../../payment-methods.mock';
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 
@@ -77,7 +78,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
 
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         orderActionCreator = new OrderActionCreator(client, checkoutValidator);
-        paymentMethodActionCreator = new PaymentMethodActionCreator(client);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient(store)),

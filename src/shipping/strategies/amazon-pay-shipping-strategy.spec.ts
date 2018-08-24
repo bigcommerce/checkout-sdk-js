@@ -4,11 +4,10 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { ConsignmentRequestSender } from '..';
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
-import { PaymentMethodActionCreator } from '../../payment';
-import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment/payment-method-action-types';
+import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../payment';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import {
     AmazonPayAddressBook,
@@ -80,7 +79,7 @@ describe('AmazonPayShippingStrategy', () => {
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(createRequestSender()));
-        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         scriptLoader = new AmazonPayScriptLoader(createScriptLoader());
 
         orderReference = {
@@ -100,7 +99,7 @@ describe('AmazonPayShippingStrategy', () => {
         });
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod: getAmazonPay() })));
+            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod: getAmazonPay() })));
     });
 
     afterEach(() => {
@@ -136,7 +135,7 @@ describe('AmazonPayShippingStrategy', () => {
         const paymentMethod = { ...getAmazonPay(), config: { merchantId: undefined } };
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
+            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod })));
 
         try {
             await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });

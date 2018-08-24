@@ -10,6 +10,7 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../rem
 
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
+import PaymentMethodRequestSender from './payment-method-request-sender';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
@@ -56,12 +57,10 @@ export default function createPaymentStrategyRegistry(
         new PaymentRequestSender(paymentClient),
         orderActionCreator
     );
-    const paymentMethodActionCreator = new PaymentMethodActionCreator(client);
+    const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
         new RemoteCheckoutRequestSender(createRequestSender())
     );
-    const configRequestSender = new ConfigRequestSender(requestSender);
-    const configActionCreator = new ConfigActionCreator(configRequestSender);
 
     registry.register('afterpay', () =>
         new AfterpayPaymentStrategy(
@@ -208,7 +207,10 @@ export default function createPaymentStrategyRegistry(
     registry.register('braintreevisacheckout', () =>
         new BraintreeVisaCheckoutPaymentStrategy(
             store,
-            new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
+            new CheckoutActionCreator(
+                checkoutRequestSender,
+                new ConfigActionCreator(new ConfigRequestSender(requestSender))
+            ),
             paymentMethodActionCreator,
             new PaymentStrategyActionCreator(registry, orderActionCreator),
             paymentActionCreator,

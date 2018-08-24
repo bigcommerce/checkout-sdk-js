@@ -1,5 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { LoadOrderPaymentsAction } from '../order';
+
 export enum PaymentStrategyActionType {
     ExecuteFailed = 'PAYMENT_STRATEGY_EXECUTE_FAILED',
     ExecuteRequested = 'PAYMENT_STRATEGY_EXECUTE_REQUESTED',
@@ -28,12 +30,14 @@ export type PaymentStrategyAction =
 export type PaymentStrategyExecuteAction =
     ExecuteRequestedAction |
     ExecuteSucceededAction |
-    ExecuteFailedAction;
+    ExecuteFailedAction |
+    LoadOrderPaymentsAction;
 
 export type PaymentStrategyFinalizeAction =
     FinalizeRequestedAction |
     FinalizeSucceededAction |
-    FinalizeFailedAction;
+    FinalizeFailedAction |
+    LoadOrderPaymentsAction;
 
 export type PaymentStrategyInitializeAction =
     InitializeRequestedAction |

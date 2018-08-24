@@ -38,12 +38,14 @@ export type LoadOrderAction =
 export type SubmitOrderAction =
     SubmitOrderRequestedAction |
     SubmitOrderSucceededAction |
-    SubmitOrderFailedAction;
+    SubmitOrderFailedAction |
+    LoadOrderAction;
 
 export type FinalizeOrderAction =
     FinalizeOrderRequestedAction |
     FinalizeOrderSucceededAction |
-    FinalizeOrderFailedAction;
+    FinalizeOrderFailedAction |
+    LoadOrderAction;
 
 export interface LoadOrderRequestedAction extends Action {
     type: OrderActionType.LoadOrderRequested;

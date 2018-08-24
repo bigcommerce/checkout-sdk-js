@@ -16,11 +16,13 @@ This object can be used to collect all information that is required for checkout
 
 * [applyCoupon](checkoutservice.md#applycoupon)
 * [applyGiftCertificate](checkoutservice.md#applygiftcertificate)
+* [assignItemsToAddress](checkoutservice.md#assignitemstoaddress)
 * [continueAsGuest](checkoutservice.md#continueasguest)
 * [createConsignments](checkoutservice.md#createconsignments)
 * [deinitializeCustomer](checkoutservice.md#deinitializecustomer)
 * [deinitializePayment](checkoutservice.md#deinitializepayment)
 * [deinitializeShipping](checkoutservice.md#deinitializeshipping)
+* [deleteConsignment](checkoutservice.md#deleteconsignment)
 * [deleteInstrument](checkoutservice.md#deleteinstrument)
 * [finalizeOrderIfNeeded](checkoutservice.md#finalizeorderifneeded)
 * [getState](checkoutservice.md#getstate)
@@ -104,6 +106,27 @@ await service.applyGiftCertificate('GIFT_CERTIFICATE');
 A promise that resolves to the current state.
 
 ___
+<a id="assignitemstoaddress"></a>
+
+###  assignItemsToAddress
+
+▸ **assignItemsToAddress**(consignment: *[ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Convenience method that assigns items to be shipped to a specific address.
+
+Note: this method finds an existing consignment that matches the provided address and assigns the provided items. If no consignment matches the address, a new one will be created.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| consignment | [ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md) |  The consignment data that will be used. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for the request |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
 <a id="continueasguest"></a>
 
 ###  continueAsGuest
@@ -142,7 +165,7 @@ Beware that if a consignment includes all line items from another consignment, t
 You can submit an address that is partially complete. The address does not get validated until you submit the order.
 
 ```js
-const state = await service.createConsignments(consignments, address);
+const state = await service.createConsignments(consignments);
 
 console.log(state.checkout.getConsignments());
 ```
@@ -231,6 +254,31 @@ await service.deinitializeShipping({
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md) |  Options for deinitializing the shipping step of checkout. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="deleteconsignment"></a>
+
+###  deleteConsignment
+
+▸ **deleteConsignment**(consignmentId: *`string`*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Deletes a consignment
+
+```js
+const state = await service.deleteConsignment('55c96cda6f04c');
+
+console.log(state.checkout.getConsignments());
+```
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| consignmentId | `string` |  The ID of the consignment to be deleted |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for the consignment delete request |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.
@@ -973,7 +1021,7 @@ If the shipping address changes and the selected shipping option becomes unavail
 You can submit an address that is partially complete. The address does not get validated until you submit the order.
 
 ```js
-const state = await service.updateConsignment(consignmentId, address);
+const state = await service.updateConsignment(consignment);
 
 console.log(state.checkout.getConsignments());
 ```

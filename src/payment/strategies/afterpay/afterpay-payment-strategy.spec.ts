@@ -16,7 +16,8 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment-method-action-types';
+import { PaymentMethodActionType } from '../../payment-method-actions';
+import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getAfterpay } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
 
@@ -50,7 +51,7 @@ describe('AfterpayPaymentStrategy', () => {
     beforeEach(() => {
         client = createCheckoutClient();
         store = createCheckoutStore(getCheckoutStoreState());
-        paymentMethodActionCreator = new PaymentMethodActionCreator(client);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
         orderActionCreator = new OrderActionCreator(client, checkoutValidator);
@@ -83,7 +84,7 @@ describe('AfterpayPaymentStrategy', () => {
 
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         loadPaymentMethodAction = Observable.of(createAction(
-            LOAD_PAYMENT_METHOD_SUCCEEDED,
+            PaymentMethodActionType.LoadPaymentMethodSucceeded,
             { paymentMethod: { ...paymentMethod, id: 'afterpay' } },
             { methodId: paymentMethod.gateway }
         ));

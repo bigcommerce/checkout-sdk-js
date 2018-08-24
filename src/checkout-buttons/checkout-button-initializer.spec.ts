@@ -1,8 +1,9 @@
 import { createAction } from '@bigcommerce/data-store';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../checkout';
-import { PaymentMethodActionCreator } from '../payment';
+import { createCheckoutStore, CheckoutStore } from '../checkout';
+import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 
 import { CheckoutButtonActionType } from './checkout-button-actions';
 import CheckoutButtonErrorSelector from './checkout-button-error-selector';
@@ -20,7 +21,7 @@ describe('CheckoutButtonInitializer', () => {
         store = createCheckoutStore();
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store),
-            new PaymentMethodActionCreator(createCheckoutClient())
+            new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()))
         );
 
         jest.spyOn(store, 'dispatch');

@@ -1,9 +1,11 @@
-import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { concat } from 'rxjs/observable/concat';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
+import { from } from 'rxjs/observable/from';
+import { of } from 'rxjs/observable/of';
+import { catchError, switchMap } from 'rxjs/operators';
 
-import { CheckoutActionCreator, InternalCheckoutSelectors, LoadCheckoutAction } from '../checkout';
+import { CheckoutActionCreator, InternalCheckoutSelectors } from '../checkout';
+import { throwErrorAction } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 
 import { CustomerActionType, SignInCustomerAction, SignOutCustomerAction } from './customer-actions';
@@ -19,47 +21,35 @@ export default class CustomerActionCreator {
     signInCustomer(
         credentials: CustomerCredentials,
         options?: RequestOptions
-    ): ThunkAction<SignInCustomerAction | LoadCheckoutAction, InternalCheckoutSelectors> {
-        return store => {
-            const signInAction = new Observable((observer: Observer<SignInCustomerAction>) => {
-                observer.next(createAction(CustomerActionType.SignInCustomerRequested));
-
-                this._customerRequestSender.signInCustomer(credentials, options)
-                    .then(({ body }) => {
-                        observer.next(createAction(CustomerActionType.SignInCustomerSucceeded, body.data));
-                        observer.complete();
-                    })
-                    .catch(response => {
-                        observer.error(createErrorAction(CustomerActionType.SignInCustomerFailed, response));
-                    });
-            });
-
-            const loadCheckoutAction = this._checkoutActionCreator.loadCurrentCheckout(options)(store);
-
-            return concat(signInAction, loadCheckoutAction);
-        };
+    ): ThunkAction<SignInCustomerAction, InternalCheckoutSelectors> {
+        return store => concat(
+            of(createAction(CustomerActionType.SignInCustomerRequested)),
+            from(this._customerRequestSender.signInCustomer(credentials, options))
+                .pipe(
+                    switchMap(({ body }) => concat(
+                        this._checkoutActionCreator.loadCurrentCheckout(options)(store),
+                        of(createAction(CustomerActionType.SignInCustomerSucceeded, body.data))
+                    ))
+                )
+        ).pipe(
+            catchError(error => throwErrorAction(CustomerActionType.SignInCustomerFailed, error))
+        );
     }
 
     signOutCustomer(
         options?: RequestOptions
-    ): ThunkAction<SignOutCustomerAction | LoadCheckoutAction, InternalCheckoutSelectors> {
-        return store => {
-            const signOutAction = new Observable((observer: Observer<SignOutCustomerAction>) => {
-                observer.next(createAction(CustomerActionType.SignOutCustomerRequested));
-
-                this._customerRequestSender.signOutCustomer(options)
-                    .then(({ body }) => {
-                        observer.next(createAction(CustomerActionType.SignOutCustomerSucceeded, body.data));
-                        observer.complete();
-                    })
-                    .catch(response => {
-                        observer.error(createErrorAction(CustomerActionType.SignOutCustomerFailed, response));
-                    });
-            });
-
-            const loadCheckoutAction = this._checkoutActionCreator.loadCurrentCheckout(options)(store);
-
-            return concat(signOutAction, loadCheckoutAction);
-        };
+    ): ThunkAction<SignOutCustomerAction, InternalCheckoutSelectors> {
+        return store => concat(
+            of(createAction(CustomerActionType.SignOutCustomerRequested)),
+            from(this._customerRequestSender.signOutCustomer(options))
+                .pipe(
+                    switchMap(({ body }) => concat(
+                        this._checkoutActionCreator.loadCurrentCheckout(options)(store),
+                        of(createAction(CustomerActionType.SignOutCustomerSucceeded, body.data))
+                    ))
+                )
+        ).pipe(
+            catchError(error => throwErrorAction(CustomerActionType.SignOutCustomerFailed, error))
+        );
     }
 }

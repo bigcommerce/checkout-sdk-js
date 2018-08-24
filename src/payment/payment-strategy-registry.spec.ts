@@ -1,43 +1,50 @@
-import { getAdyenAmex, getAuthorizenet, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
-import PaymentStrategyRegistry from './payment-strategy-registry';
-import { createCheckoutStore } from '../checkout';
+import { createCheckoutStore, CheckoutStore } from '../checkout';
 import { getConfigState } from '../config/configs.mock';
 
+import { getAdyenAmex, getAuthorizenet, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
+import PaymentStrategyRegistry from './payment-strategy-registry';
+import { PaymentStrategy } from './strategies';
+
 describe('PaymentStrategyRegistry', () => {
-    let registry;
+    let registry: PaymentStrategyRegistry;
+    let store: CheckoutStore;
 
-    class CreditCardPaymentStrategy {
+    class CreditCardPaymentStrategy extends PaymentStrategy {
         execute() {
-            return new Promise(() => {});
+            return Promise.resolve(this._store.getState());
         }
     }
 
-    class LegacyPaymentStrategy {
+    // tslint:disable-next-line:max-classes-per-file
+    class LegacyPaymentStrategy extends PaymentStrategy {
         execute() {
-            return new Promise(() => {});
+            return Promise.resolve(this._store.getState());
         }
     }
 
-    class OfflinePaymentStrategy {
+    // tslint:disable-next-line:max-classes-per-file
+    class OfflinePaymentStrategy extends PaymentStrategy {
         execute() {
-            return new Promise(() => {});
+            return Promise.resolve(this._store.getState());
         }
     }
 
-    class OffsitePaymentStrategy {
+    // tslint:disable-next-line:max-classes-per-file
+    class OffsitePaymentStrategy extends PaymentStrategy {
         execute() {
-            return new Promise(() => {});
+            return Promise.resolve(this._store.getState());
         }
     }
 
-    class AuthorizenetPaymentStrategy {
+    // tslint:disable-next-line:max-classes-per-file
+    class AuthorizenetPaymentStrategy extends PaymentStrategy {
         execute() {
-            return new Promise(() => {});
+            return Promise.resolve(this._store.getState());
         }
     }
 
     beforeEach(() => {
-        const store = createCheckoutStore({
+        store = createCheckoutStore({
             config: getConfigState(),
         });
 
@@ -46,11 +53,11 @@ describe('PaymentStrategyRegistry', () => {
 
     describe('#getByMethod()', () => {
         beforeEach(() => {
-            registry.register('authorizenet', () => new AuthorizenetPaymentStrategy());
-            registry.register('creditcard', () => new CreditCardPaymentStrategy());
-            registry.register('legacy', () => new LegacyPaymentStrategy());
-            registry.register('offline', () => new OfflinePaymentStrategy());
-            registry.register('offsite', () => new OffsitePaymentStrategy());
+            registry.register('authorizenet', () => new AuthorizenetPaymentStrategy(store));
+            registry.register('creditcard', () => new CreditCardPaymentStrategy(store));
+            registry.register('legacy', () => new LegacyPaymentStrategy(store));
+            registry.register('offline', () => new OfflinePaymentStrategy(store));
+            registry.register('offsite', () => new OffsitePaymentStrategy(store));
         });
 
         it('returns strategy if registered with method name', () => {

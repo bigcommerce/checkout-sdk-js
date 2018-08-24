@@ -3,10 +3,10 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getCartState } from '../../cart/carts.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutStore } from '../../checkout';
+import { createCheckoutStore, CheckoutStore } from '../../checkout';
 import { getCheckoutState } from '../../checkout/checkouts.mock';
 import { getConfigState } from '../../config/configs.mock';
-import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
+import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../payment';
 import { getChasePay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
 import { ChasePayScriptLoader, JPMC } from '../../payment/strategies/chasepay';
 import { getChasePayScriptMock } from '../../payment/strategies/chasepay/chasepay.mock';
@@ -57,7 +57,7 @@ describe('ChasePayCustomerStrategy', () => {
         jest.spyOn(chasePayScriptLoader, 'load')
             .mockReturnValue(Promise.resolve(JPMC));
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         requestSender = createRequestSender();
         formPoster = createFormPoster();
         strategy = new ChasePayCustomerStrategy(

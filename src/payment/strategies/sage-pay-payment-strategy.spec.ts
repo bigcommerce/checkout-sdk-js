@@ -1,45 +1,48 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
-import { Observable } from 'rxjs';
+import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
+import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore } from '../../checkout';
+import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { RequestError } from '../../common/error/errors';
 import { getResponse } from '../../common/http-request/responses.mock';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { OrderActionCreator, OrderActionType } from '../../order';
-import { getOrder } from '../../order/orders.mock';
+import { FinalizeOrderAction, OrderActionCreator, OrderActionType, SubmitOrderAction } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import * as paymentStatusTypes from '../payment-status-types';
+import { getOrderRequestBody } from '../../order/internal-orders.mock';
+import { getOrder } from '../../order/orders.mock';
 import PaymentActionCreator from '../payment-action-creator';
-import { PaymentActionType } from '../payment-actions';
+import { PaymentActionType, SubmitPaymentAction } from '../payment-actions';
 import PaymentRequestSender from '../payment-request-sender';
+import * as paymentStatusTypes from '../payment-status-types';
 import { getErrorPaymentResponseBody } from '../payments.mock';
 
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
 
 describe('SagePayPaymentStrategy', () => {
-    let finalizeOrderAction;
-    let formPoster;
-    let orderActionCreator;
-    let paymentActionCreator;
-    let store;
-    let strategy;
-    let submitOrderAction;
-    let submitPaymentAction;
+    let finalizeOrderAction: Observable<FinalizeOrderAction>;
+    let formPoster: FormPoster;
+    let orderActionCreator: OrderActionCreator;
+    let paymentActionCreator: PaymentActionCreator;
+    let store: CheckoutStore;
+    let strategy: SagePayPaymentStrategy;
+    let submitOrderAction: Observable<SubmitOrderAction>;
+    let submitPaymentAction: Observable<SubmitPaymentAction>;
 
     beforeEach(() => {
-        orderActionCreator = new OrderActionCreator(createCheckoutClient());
+        orderActionCreator = new OrderActionCreator(
+            createCheckoutClient(),
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+        );
+
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator
         );
 
-        formPoster = {
-            postForm: jest.fn((url, data, callback = () => {}) => callback()),
-        };
-
+        formPoster = createFormPoster();
         store = createCheckoutStore(getCheckoutStoreState());
 
         finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
@@ -47,6 +50,9 @@ describe('SagePayPaymentStrategy', () => {
         submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(formPoster, 'postForm')
+            .mockImplementation((url, data, callback = () => {}) => callback());
 
         jest.spyOn(orderActionCreator, 'finalizeOrder')
             .mockReturnValue(finalizeOrderAction);
@@ -67,7 +73,7 @@ describe('SagePayPaymentStrategy', () => {
 
     it('submits order without payment data', async () => {
         const payload = getOrderRequestBody();
-        const options = {};
+        const options = { methodId: 'sagepay' };
 
         await strategy.execute(payload, options);
 
@@ -77,7 +83,7 @@ describe('SagePayPaymentStrategy', () => {
 
     it('submits payment separately', async () => {
         const payload = getOrderRequestBody();
-        const options = {};
+        const options = { methodId: 'sagepay' };
 
         await strategy.execute(payload, options);
 
@@ -111,7 +117,7 @@ describe('SagePayPaymentStrategy', () => {
 
         strategy.execute(getOrderRequestBody());
 
-        await new Promise((resolve) => process.nextTick(resolve));
+        await new Promise(resolve => process.nextTick(resolve));
 
         expect(formPoster.postForm).toHaveBeenCalledWith('https://acs/url', {
             PaReq: 'payer_auth_request',
@@ -151,7 +157,8 @@ describe('SagePayPaymentStrategy', () => {
     it('does not finalize order if order is not created', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue();
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue(null);
 
         try {
             await strategy.finalize();
@@ -180,7 +187,8 @@ describe('SagePayPaymentStrategy', () => {
     it('throws error if order is missing', async () => {
         const state = store.getState();
 
-        jest.spyOn(state.order, 'getOrder').mockReturnValue();
+        jest.spyOn(state.order, 'getOrder')
+            .mockReturnValue(null);
 
         try {
             await strategy.finalize();

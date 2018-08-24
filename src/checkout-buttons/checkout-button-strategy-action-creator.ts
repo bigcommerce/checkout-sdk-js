@@ -21,27 +21,25 @@ export default class CheckoutButtonStrategyActionCreator {
 
     initialize(options: CheckoutButtonInitializeOptions): Observable<InitializeButtonAction> {
         const meta = { methodId: options.methodId };
-        const action$: Observable<InitializeButtonAction> = concat(
+
+        return concat(
             of(createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, meta)),
             this._paymentMethodActionCreator.loadPaymentMethod(options.methodId, options),
             defer(() => this._registry.get(options.methodId).initialize(options)
                 .then(() => createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, meta)))
-        );
-
-        return action$.pipe(
+        ).pipe(
             catchError(error => throwErrorAction(CheckoutButtonActionType.InitializeButtonFailed, error, meta))
         );
     }
 
     deinitialize(options: CheckoutButtonOptions): Observable<DeinitializeButtonAction> {
         const meta = { methodId: options.methodId };
-        const action$ = concat(
+
+        return concat(
             of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested, undefined, meta)),
             defer(() => this._registry.get(options.methodId).deinitialize(options)
                 .then(() => createAction(CheckoutButtonActionType.DeinitializeButtonSucceeded, undefined, meta)))
-        );
-
-        return action$.pipe(
+        ).pipe(
             catchError(error => throwErrorAction(CheckoutButtonActionType.DeinitializeButtonFailed, error, meta))
         );
     }

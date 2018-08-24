@@ -3,11 +3,11 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../checkout';
+import { createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
 import { MissingDataError } from '../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
-import { HOSTED, INITIALIZE, LOAD_PAYMENT_METHOD_FAILED, LOAD_PAYMENT_METHOD_SUCCEEDED, PaymentMethod, PaymentMethodActionCreator } from '../../payment';
+import { HOSTED, INITIALIZE, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../payment';
 import { getAmazonPay } from '../../payment/payment-methods.mock';
 import {
     AmazonPayLogin,
@@ -70,7 +70,7 @@ describe('AmazonPayCustomerStrategy', () => {
         container = document.createElement('div');
         hostWindow = window;
         paymentMethod = getAmazonPay();
-        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(createRequestSender());
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
         state = getCheckoutStoreState();
@@ -103,7 +103,7 @@ describe('AmazonPayCustomerStrategy', () => {
             .mockReturnValue(Promise.resolve(getResponse('')));
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
+            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod })));
     });
 
     afterEach(() => {
@@ -111,7 +111,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('loads payment method', async () => {
-        const action = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod }));
+        const action = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod }));
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
             .mockReturnValue(action);
@@ -128,7 +128,7 @@ describe('AmazonPayCustomerStrategy', () => {
         const response = getErrorResponse();
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createErrorAction(LOAD_PAYMENT_METHOD_FAILED, response)));
+            .mockReturnValue(Observable.of(createErrorAction(PaymentMethodActionType.LoadPaymentMethodFailed, response)));
 
         try {
             await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
@@ -160,7 +160,7 @@ describe('AmazonPayCustomerStrategy', () => {
         paymentMethod = { ...paymentMethod, config: { merchantId: undefined } };
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod })));
+            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod })));
 
         try {
             await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });

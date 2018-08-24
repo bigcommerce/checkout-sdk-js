@@ -6,10 +6,10 @@ import { Observable } from 'rxjs';
 
 import { createCustomerStrategyRegistry, CustomerInitializeOptions, CustomerStrategyActionCreator } from '..';
 import { getBillingAddress } from '../../billing/billing-addresses.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../../config';
-import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
+import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../payment';
 import { getBraintreeVisaCheckout } from '../../payment/payment-methods.mock';
 import { VisaCheckoutScriptLoader, VisaCheckoutSDK } from '../../payment/strategies/braintree';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPaymentProcessor } from '../../payment/strategies/braintree';
@@ -56,14 +56,13 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(scriptLoader);
         visaCheckoutScriptLoader.load = jest.fn(() => Promise.resolve(visaCheckoutSDK));
 
-        const client = createCheckoutClient();
-        const registry = createCustomerStrategyRegistry(store, client);
+        const registry = createCustomerStrategyRegistry(store);
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         const configRequestSender = new ConfigRequestSender(createRequestSender());
         const configActionCreator = new ConfigActionCreator(configRequestSender);
 
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
-        paymentMethodActionCreator = new PaymentMethodActionCreator(createCheckoutClient());
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         customerStrategyActionCreator = new CustomerStrategyActionCreator(registry);
 
         strategy = new BraintreeVisaCheckoutCustomerStrategy(

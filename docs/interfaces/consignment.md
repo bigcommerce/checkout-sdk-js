@@ -45,7 +45,7 @@ ___
 ___
 <a id="lineitemids"></a>
 
-### `<Optional>` lineItemIds
+###  lineItemIds
 
 **● lineItemIds**: *`string`[]*
 

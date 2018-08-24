@@ -1,5 +1,7 @@
-import { createCheckoutClient, createCheckoutStore } from '../checkout';
-import { PaymentMethodActionCreator } from '../payment';
+import { createRequestSender } from '@bigcommerce/request-sender';
+
+import { createCheckoutStore } from '../checkout';
+import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 
 import CheckoutButtonInitializer from './checkout-button-initializer';
 import CheckoutButtonStrategyActionCreator from './checkout-button-strategy-action-creator';
@@ -12,7 +14,7 @@ export default function createCheckoutButtonInitializer(): CheckoutButtonInitial
         store,
         new CheckoutButtonStrategyActionCreator(
             createCheckoutButtonRegistry(store),
-            new PaymentMethodActionCreator(createCheckoutClient())
+            new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()))
         )
     );
 }

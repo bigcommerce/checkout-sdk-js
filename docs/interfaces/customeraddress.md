@@ -91,7 +91,7 @@ ___
 
 ###  id
 
-**● id**: *`string`*
+**● id**: *`number`*
 
 ___
 <a id="lastname"></a>

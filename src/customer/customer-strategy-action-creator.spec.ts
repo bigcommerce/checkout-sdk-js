@@ -1,7 +1,7 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutStore } from '../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 
@@ -13,7 +13,6 @@ import { CustomerStrategyActionType } from './customer-strategy-actions';
 import { CustomerStrategy, DefaultCustomerStrategy } from './strategies';
 
 describe('CustomerStrategyActionCreator', () => {
-    let client: CheckoutClient;
     let registry: Registry<CustomerStrategy>;
     let store: CheckoutStore;
     let strategy: DefaultCustomerStrategy;
@@ -28,8 +27,7 @@ describe('CustomerStrategyActionCreator', () => {
         );
 
         store = createCheckoutStore();
-        client = createCheckoutClient();
-        registry = createCustomerStrategyRegistry(store, client);
+        registry = createCustomerStrategyRegistry(store);
         strategy = new DefaultCustomerStrategy(
             store,
             new CustomerActionCreator(

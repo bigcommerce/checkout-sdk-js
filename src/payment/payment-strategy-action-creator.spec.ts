@@ -208,9 +208,6 @@ describe('PaymentStrategyActionCreator', () => {
 
             jest.spyOn(noPaymentDataStrategy, 'execute')
                 .mockReturnValue(Promise.resolve(store.getState()));
-
-            jest.spyOn(orderActionCreator, 'loadCurrentOrderPayments')
-                .mockReturnValue(() => Observable.of(createAction(OrderActionType.LoadOrderPaymentsRequested)));
         });
 
         it('finds payment strategy by method', async () => {
@@ -239,16 +236,6 @@ describe('PaymentStrategyActionCreator', () => {
             );
         });
 
-        it('loads payment data for the current order', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const payload = getOrderRequestBody();
-
-            await Observable.from(actionCreator.execute(payload)(store))
-                .toPromise();
-
-            expect(orderActionCreator.loadCurrentOrderPayments).toHaveBeenCalled();
-        });
-
         it('emits action to load order and notify execution progress', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
@@ -258,7 +245,6 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
-                { type: OrderActionType.LoadOrderPaymentsRequested },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId } },
             ]);
@@ -281,7 +267,6 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
-                { type: OrderActionType.LoadOrderPaymentsRequested },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId } },
             ]);
@@ -343,8 +328,8 @@ describe('PaymentStrategyActionCreator', () => {
             jest.spyOn(strategy, 'finalize')
                 .mockReturnValue(Promise.resolve(store.getState()));
 
-            jest.spyOn(orderActionCreator, 'loadCurrentOrderPayments')
-                .mockReturnValue((() => Observable.of(createAction(OrderActionType.LoadOrderPaymentsRequested))));
+            jest.spyOn(orderActionCreator, 'loadOrderPayments')
+                .mockReturnValue(Observable.of(createAction(OrderActionType.LoadOrderPaymentsRequested)));
         });
 
         it('finds payment strategy by method', async () => {
@@ -372,7 +357,7 @@ describe('PaymentStrategyActionCreator', () => {
             await Observable.from(actionCreator.finalize()(store))
                 .toPromise();
 
-            expect(orderActionCreator.loadCurrentOrderPayments).toHaveBeenCalled();
+            expect(orderActionCreator.loadOrderPayments).toHaveBeenCalled();
         });
 
         it('emits action to load order and notify finalization progress', async () => {
@@ -383,8 +368,8 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
+                { type: PaymentStrategyActionType.FinalizeRequested },
                 { type: OrderActionType.LoadOrderPaymentsRequested },
-                { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeSucceeded, meta: { methodId: method.id } },
             ]);
         });
@@ -405,8 +390,8 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
+                { type: PaymentStrategyActionType.FinalizeRequested },
                 { type: OrderActionType.LoadOrderPaymentsRequested },
-                { type: PaymentStrategyActionType.FinalizeRequested, meta: { methodId: method.id } },
                 { type: PaymentStrategyActionType.FinalizeFailed, error: true, payload: finalizeError, meta: { methodId: method.id } },
             ]);
         });

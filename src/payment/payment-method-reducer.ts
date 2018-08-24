@@ -3,7 +3,7 @@ import { combineReducers, Action } from '@bigcommerce/data-store';
 import { mergeOrPush } from '../common/utility';
 
 import PaymentMethod from './payment-method';
-import * as actionTypes from './payment-method-action-types';
+import { PaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodMeta from './payment-method-meta';
 import PaymentMethodState, { PaymentMethodErrorsState, PaymentMethodStatusesState } from './payment-method-state';
 
@@ -12,11 +12,10 @@ const DEFAULT_STATE: PaymentMethodState = {
     statuses: {},
 };
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action
- */
-export default function paymentMethodReducer(state: PaymentMethodState = DEFAULT_STATE, action: Action): PaymentMethodState {
+export default function paymentMethodReducer(
+    state: PaymentMethodState = DEFAULT_STATE,
+    action: Action
+): PaymentMethodState {
     const reducer = combineReducers<PaymentMethodState>({
         data: dataReducer,
         errors: errorsReducer,
@@ -27,15 +26,20 @@ export default function paymentMethodReducer(state: PaymentMethodState = DEFAULT
     return reducer(state, action);
 }
 
-function dataReducer(data: PaymentMethod[] | undefined, action: Action): PaymentMethod[] | undefined {
+function dataReducer(
+    data: PaymentMethod[] | undefined,
+    action: PaymentMethodAction
+): PaymentMethod[] | undefined {
     switch (action.type) {
-    case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
-        return mergeOrPush(data || [], action.payload.paymentMethod as PaymentMethod, {
-            id: action.payload.paymentMethod.id,
-            gateway: action.payload.paymentMethod.gateway,
-        });
+    case PaymentMethodActionType.LoadPaymentMethodSucceeded:
+        return action.payload && action.payload.paymentMethod ?
+            mergeOrPush(data || [], action.payload.paymentMethod, {
+                id: action.payload.paymentMethod.id,
+                gateway: action.payload.paymentMethod.gateway,
+            }) :
+            data;
 
-    case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
+    case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
         return action.payload && action.payload.paymentMethods ? action.payload.paymentMethods : [];
 
     default:
@@ -43,9 +47,12 @@ function dataReducer(data: PaymentMethod[] | undefined, action: Action): Payment
     }
 }
 
-function metaReducer(meta: PaymentMethodMeta | undefined, action: Action): PaymentMethodMeta | undefined {
+function metaReducer(
+    meta: PaymentMethodMeta | undefined,
+    action: PaymentMethodAction
+): PaymentMethodMeta | undefined {
     switch (action.type) {
-    case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
+    case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
         return action.meta ? { ...meta, ...action.meta } : meta;
 
     default:
@@ -53,24 +60,27 @@ function metaReducer(meta: PaymentMethodMeta | undefined, action: Action): Payme
     }
 }
 
-function errorsReducer(errors: PaymentMethodErrorsState = DEFAULT_STATE.errors, action: Action): PaymentMethodErrorsState {
+function errorsReducer(
+    errors: PaymentMethodErrorsState = DEFAULT_STATE.errors,
+    action: PaymentMethodAction
+): PaymentMethodErrorsState {
     switch (action.type) {
-    case actionTypes.LOAD_PAYMENT_METHODS_REQUESTED:
-    case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
+    case PaymentMethodActionType.LoadPaymentMethodsRequested:
+    case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
         return { ...errors, loadError: undefined };
 
-    case actionTypes.LOAD_PAYMENT_METHODS_FAILED:
+    case PaymentMethodActionType.LoadPaymentMethodsFailed:
         return { ...errors, loadError: action.payload };
 
-    case actionTypes.LOAD_PAYMENT_METHOD_REQUESTED:
-    case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
+    case PaymentMethodActionType.LoadPaymentMethodRequested:
+    case PaymentMethodActionType.LoadPaymentMethodSucceeded:
         return {
             ...errors,
             loadMethodId: undefined,
             loadMethodError: undefined,
         };
 
-    case actionTypes.LOAD_PAYMENT_METHOD_FAILED:
+    case PaymentMethodActionType.LoadPaymentMethodFailed:
         return {
             ...errors,
             loadMethodId: action.meta.methodId,
@@ -82,24 +92,27 @@ function errorsReducer(errors: PaymentMethodErrorsState = DEFAULT_STATE.errors, 
     }
 }
 
-function statusesReducer(statuses: PaymentMethodStatusesState = DEFAULT_STATE.statuses, action: Action): PaymentMethodStatusesState {
+function statusesReducer(
+    statuses: PaymentMethodStatusesState = DEFAULT_STATE.statuses,
+    action: PaymentMethodAction
+): PaymentMethodStatusesState {
     switch (action.type) {
-    case actionTypes.LOAD_PAYMENT_METHODS_REQUESTED:
+    case PaymentMethodActionType.LoadPaymentMethodsRequested:
         return { ...statuses, isLoading: true };
 
-    case actionTypes.LOAD_PAYMENT_METHODS_SUCCEEDED:
-    case actionTypes.LOAD_PAYMENT_METHODS_FAILED:
+    case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
+    case PaymentMethodActionType.LoadPaymentMethodsFailed:
         return { ...statuses, isLoading: false };
 
-    case actionTypes.LOAD_PAYMENT_METHOD_REQUESTED:
+    case PaymentMethodActionType.LoadPaymentMethodRequested:
         return {
             ...statuses,
             isLoadingMethod: true,
             loadMethodId: action.meta.methodId,
         };
 
-    case actionTypes.LOAD_PAYMENT_METHOD_SUCCEEDED:
-    case actionTypes.LOAD_PAYMENT_METHOD_FAILED:
+    case PaymentMethodActionType.LoadPaymentMethodSucceeded:
+    case PaymentMethodActionType.LoadPaymentMethodFailed:
         return {
             ...statuses,
             isLoadingMethod: false,

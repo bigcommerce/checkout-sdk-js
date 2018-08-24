@@ -1,7 +1,8 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 
-import { createPaymentStrategyRegistry } from '.';
 import { createCheckoutClient, createCheckoutStore } from '../checkout';
+
+import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import {
     AfterpayPaymentStrategy,
@@ -19,7 +20,7 @@ import {
 } from './strategies';
 
 describe('CreatePaymentStrategyRegistry', () => {
-    let registry;
+    let registry: PaymentStrategyRegistry;
 
     beforeEach(() => {
         const store = createCheckoutStore();

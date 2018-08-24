@@ -132,14 +132,14 @@ describe('OrderActionCreator', () => {
         });
     });
 
-    describe('#loadCurrentOrderPayments()', () => {
+    describe('#loadOrderPayments()', () => {
         beforeEach(() => {
             jest.spyOn(checkoutClient, 'loadOrder')
                 .mockReturnValue(Promise.resolve(getResponse(getOrder())));
         });
 
         it('emits actions if able to load order', async () => {
-            const actions = await Observable.from(orderActionCreator.loadCurrentOrderPayments()(store))
+            const actions = await orderActionCreator.loadOrderPayments(295)
                 .toArray()
                 .toPromise();
 
@@ -154,7 +154,7 @@ describe('OrderActionCreator', () => {
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await Observable.from(orderActionCreator.loadCurrentOrderPayments()(store))
+            const actions = await orderActionCreator.loadOrderPayments(295)
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -167,7 +167,7 @@ describe('OrderActionCreator', () => {
         });
 
         it('loads order by using order id from order object', async () => {
-            await orderActionCreator.loadCurrentOrderPayments()(store)
+            await orderActionCreator.loadOrderPayments(295)
                 .toPromise();
 
             expect(checkoutClient.loadOrder).toHaveBeenCalledWith(295, undefined);
@@ -180,25 +180,14 @@ describe('OrderActionCreator', () => {
                 order: getOrderState(),
             });
 
-            await orderActionCreator.loadCurrentOrderPayments()(store)
+            await orderActionCreator.loadOrderPayments(295)
                 .toPromise();
 
             expect(checkoutClient.loadOrder).toHaveBeenCalledWith(295, undefined);
         });
 
-        it('throws error if there is no existing order id', async () => {
-            store = createCheckoutStore();
-
-            try {
-                await orderActionCreator.loadCurrentOrderPayments()(store)
-                    .toPromise();
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
         it('loads order only when action is dispatched', async () => {
-            const action = orderActionCreator.loadCurrentOrderPayments()(store);
+            const action = orderActionCreator.loadOrderPayments(295);
 
             expect(checkoutClient.loadOrder).not.toHaveBeenCalled();
 
@@ -235,6 +224,8 @@ describe('OrderActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: OrderActionType.SubmitOrderRequested },
+                { type: OrderActionType.LoadOrderRequested },
+                { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
                 {
                     type: OrderActionType.SubmitOrderSucceeded,
                     payload: submitResponse.body.data,
@@ -243,8 +234,6 @@ describe('OrderActionCreator', () => {
                         token: submitResponse.headers.token,
                     },
                 },
-                { type: OrderActionType.LoadOrderRequested },
-                { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
             ]);
         });
 
@@ -326,9 +315,9 @@ describe('OrderActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: OrderActionType.FinalizeOrderRequested },
-                { type: OrderActionType.FinalizeOrderSucceeded, payload: response.body.data },
                 { type: OrderActionType.LoadOrderRequested },
                 { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
+                { type: OrderActionType.FinalizeOrderSucceeded, payload: response.body.data },
             ]);
         });
 

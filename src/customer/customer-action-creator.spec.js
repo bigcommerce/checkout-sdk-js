@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutActionType } from '../checkout';
+import { getCheckout } from '../checkout/checkouts.mock';
 
 import { getCustomerResponseBody } from './internal-customers.mock';
 import CustomerActionCreator from './customer-action-creator';
@@ -32,7 +33,10 @@ describe('CustomerActionCreator', () => {
         );
 
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout')
-            .mockReturnValue(() => Observable.of(createAction(CheckoutActionType.LoadCheckoutRequested)));
+            .mockReturnValue(() => Observable.from([
+                createAction(CheckoutActionType.LoadCheckoutRequested),
+                createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
+            ]));
 
         customerActionCreator = new CustomerActionCreator(
             customerRequestSender,
@@ -49,8 +53,9 @@ describe('CustomerActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: CustomerActionType.SignInCustomerRequested },
-                { type: CustomerActionType.SignInCustomerSucceeded, payload: response.body.data },
                 { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+                { type: CustomerActionType.SignInCustomerSucceeded, payload: response.body.data },
             ]);
         });
 
@@ -90,8 +95,9 @@ describe('CustomerActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: CustomerActionType.SignOutCustomerRequested },
-                { type: CustomerActionType.SignOutCustomerSucceeded, payload: response.body.data },
                 { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
+                { type: CustomerActionType.SignOutCustomerSucceeded, payload: response.body.data },
             ]);
         });
 

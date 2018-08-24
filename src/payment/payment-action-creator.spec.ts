@@ -48,15 +48,15 @@ describe('PaymentActionCreator', () => {
                     type: PaymentActionType.SubmitPaymentRequested,
                 },
                 {
-                    type: PaymentActionType.SubmitPaymentSucceeded,
-                    payload: getPaymentResponseBody(),
-                },
-                {
                     type: OrderActionType.LoadOrderRequested,
                 },
                 {
                     type: OrderActionType.LoadOrderSucceeded,
                     payload: getOrder(),
+                },
+                {
+                    type: PaymentActionType.SubmitPaymentSucceeded,
+                    payload: getPaymentResponseBody(),
                 },
             ]);
         });

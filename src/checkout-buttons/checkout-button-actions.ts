@@ -1,5 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { LoadPaymentMethodAction } from '../payment';
+
 export enum CheckoutButtonActionType {
     InitializeButtonFailed = 'INITIALIZE_BUTTON_FAILED',
     InitializeButtonRequested = 'INITIALIZE_BUTTON_REQUESTED',
@@ -15,7 +17,8 @@ export type CheckoutButtonAction = InitializeButtonAction | DeinitializeButtonAc
 export type InitializeButtonAction =
     InitializeButtonRequestedAction |
     InitializeButtonSucceededAction |
-    InitializeButtonFailedAction;
+    InitializeButtonFailedAction |
+    LoadPaymentMethodAction;
 
 export type DeinitializeButtonAction =
     DeinitializeButtonRequestedAction |

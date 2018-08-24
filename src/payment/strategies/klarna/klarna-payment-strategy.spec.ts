@@ -20,7 +20,8 @@ import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../../remote-checkout/re
 import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { LOAD_PAYMENT_METHOD_SUCCEEDED } from '../../payment-method-action-types';
+import { PaymentMethodActionType } from '../../payment-method-actions';
+import PaymentMethodRequestSender from '../../payment-method-request-sender';
 
 import KlarnaCredit from './klarna-credit';
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
@@ -50,7 +51,7 @@ describe('KlarnaPaymentStrategy', () => {
             client,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
-        paymentMethodActionCreator = new PaymentMethodActionCreator(client);
+        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );
@@ -78,7 +79,7 @@ describe('KlarnaPaymentStrategy', () => {
             },
         });
 
-        loadPaymentMethodAction = Observable.of(createAction(LOAD_PAYMENT_METHOD_SUCCEEDED, { paymentMethod }, { methodId: paymentMethod.id }));
+        loadPaymentMethodAction = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod }, { methodId: paymentMethod.id }));
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 

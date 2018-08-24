@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.0.0...v1.1.0) (2018-08-20)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-3401 Load order payments using checkout.orderId ([1bf885d](https://github.com/bigcommerce/checkout-sdk-js/commit/1bf885d))
+* **payment:** CHECKOUT-3401 Stop loading current order before executing payment strategy ([093016d](https://github.com/bigcommerce/checkout-sdk-js/commit/093016d))
+
+
+### Features
+
+* **shipping:** CHECKOUT-3393 Add address comparator and rename previous to isInternalAddressEqual ([26b396c](https://github.com/bigcommerce/checkout-sdk-js/commit/26b396c))
+* **shipping:** CHECKOUT-3393 Add consignment deletion status/error check in store selector ([9ce4774](https://github.com/bigcommerce/checkout-sdk-js/commit/9ce4774))
+* **shipping:** CHECKOUT-3393 Add convenience methods to assign items to addresses/consignments ([f4e0469](https://github.com/bigcommerce/checkout-sdk-js/commit/f4e0469))
+* **shipping:** CHECKOUT-3393 Add getConsignmentById in ConsignmentSelector ([16fbdeb](https://github.com/bigcommerce/checkout-sdk-js/commit/16fbdeb))
+* **shipping:** CHECKOUT-3393 Provide CheckoutService#deleteConsignment method ([b3d401e](https://github.com/bigcommerce/checkout-sdk-js/commit/b3d401e))
+* **shipping:** CHECKOUT-3393 Provide error/status selectors for CheckoutService#deleteConsignment ([66615b0](https://github.com/bigcommerce/checkout-sdk-js/commit/66615b0))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v0.28.8...v1.0.0) (2018-08-08)
 

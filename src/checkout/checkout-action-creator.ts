@@ -26,45 +26,37 @@ export default class CheckoutActionCreator {
     loadCheckout(
         id: string,
         options?: RequestOptions
-    ): ThunkAction<any, InternalCheckoutSelectors> {
-        return (store: ReadableCheckoutStore) => {
-            const action$ = concat(
-                of(createAction(CheckoutActionType.LoadCheckoutRequested)),
-                merge(
-                    this._configActionCreator.loadConfig()(store),
-                    defer(() => this._checkoutRequestSender.loadCheckout(id, options)
-                        .then(({ body }) => createAction(CheckoutActionType.LoadCheckoutSucceeded, body)))
-                )
-            );
-
-            return action$.pipe(
-                catchError(error => throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error))
-            );
-        };
+    ): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
+        return store => concat(
+            of(createAction(CheckoutActionType.LoadCheckoutRequested)),
+            merge(
+                this._configActionCreator.loadConfig()(store),
+                defer(() => this._checkoutRequestSender.loadCheckout(id, options)
+                    .then(({ body }) => createAction(CheckoutActionType.LoadCheckoutSucceeded, body)))
+            )
+        ).pipe(
+            catchError(error => throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error))
+        );
     }
 
     loadDefaultCheckout(options?: RequestOptions): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
-        return (store: ReadableCheckoutStore) => {
-            const action$ = concat(
-                of(createAction(CheckoutActionType.LoadCheckoutRequested)),
-                this._configActionCreator.loadConfig()(store),
-                defer(() => {
-                    const state = store.getState();
-                    const context = state.config.getContextConfig();
+        return store => concat(
+            of(createAction(CheckoutActionType.LoadCheckoutRequested)),
+            this._configActionCreator.loadConfig()(store),
+            defer(() => {
+                const state = store.getState();
+                const context = state.config.getContextConfig();
 
-                    if (!context || !context.checkoutId) {
-                        throw new StandardError('Unable to load checkout: no cart is available');
-                    }
+                if (!context || !context.checkoutId) {
+                    throw new StandardError('Unable to load checkout: no cart is available');
+                }
 
-                    return this._checkoutRequestSender.loadCheckout(context.checkoutId, options)
-                        .then(({ body }) => createAction(CheckoutActionType.LoadCheckoutSucceeded, body));
-                })
-            );
-
-            return action$.pipe(
-                catchError(error => throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error))
-            );
-        };
+                return this._checkoutRequestSender.loadCheckout(context.checkoutId, options)
+                    .then(({ body }) => createAction(CheckoutActionType.LoadCheckoutSucceeded, body));
+            })
+        ).pipe(
+            catchError(error => throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error))
+        );
     }
 
     updateCheckout(
@@ -93,7 +85,7 @@ export default class CheckoutActionCreator {
     }
 
     loadCurrentCheckout(options?: RequestOptions): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
-        return (store: ReadableCheckoutStore) => {
+        return store => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
 
