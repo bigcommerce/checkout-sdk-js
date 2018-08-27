@@ -82,7 +82,7 @@ export default class OrderActionCreator {
                 ).pipe(
                     switchMap(response => concat(
                         // TODO: Remove once we can submit orders using storefront API
-                        this.loadCurrentOrder(options)(store),
+                        this.loadOrder(response.body.data.order.orderId, options),
                         of(createAction(OrderActionType.SubmitOrderSucceeded, response.body.data, { ...response.body.meta, token: response.headers.token }))
                     ))
                 );

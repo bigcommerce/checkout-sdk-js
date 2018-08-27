@@ -291,6 +291,13 @@ describe('OrderActionCreator', () => {
                 expect(action.payload).toEqual('foo');
             }
         });
+
+        it('loads current order after order submission', async () => {
+            await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                .toPromise();
+
+            expect(checkoutClient.loadOrder).toHaveBeenCalledWith(295, undefined);
+        });
     });
 
     describe('#finalizeOrder()', () => {
