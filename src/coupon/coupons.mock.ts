@@ -25,7 +25,7 @@ export function getCouponsState(): CouponState {
     return {
         data: [
             getCoupon(),
-            getCoupon(),
+            getShippingCoupon(),
         ],
         errors: {},
         statuses: {},

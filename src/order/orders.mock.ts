@@ -1,10 +1,9 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getGiftCertificateItem } from '../cart/line-items.mock';
-import { getResponse } from '../common/http-request/responses.mock';
 import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
 import { getCurrency } from '../currency/currencies.mock';
 
-import { getAwaitingOrder, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
+import { getAwaitingOrder, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import { getPhysicalItem } from './line-items.mock';
 import Order, { GatewayOrderPayment, GiftCertificateOrderPayment } from './order';
 import OrderState, { OrderMetaState } from './order-state';
@@ -97,18 +96,9 @@ export function getGiftCertificateOrderPayment(): GiftCertificateOrderPayment {
 }
 
 export function getOrderState(): OrderState {
-    const response = getResponse(
-        getSubmitOrderResponseBody(),
-        getSubmitOrderResponseHeaders()
-    );
-
     return {
         data: getOrder(),
-        meta: {
-            deviceFingerprint: response.body.meta.deviceFingerprint,
-            token: response.headers.token,
-            payment: response.body.data.order.payment,
-        },
+        meta: getOrderMeta(),
         errors: {},
         statuses: {},
     };

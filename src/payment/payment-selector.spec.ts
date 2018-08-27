@@ -94,6 +94,7 @@ describe('PaymentSelector', () => {
                 order: {
                     ...state.order,
                     data: undefined,
+                    meta: undefined,
                 },
             });
             paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
@@ -234,6 +235,7 @@ describe('PaymentSelector', () => {
                 order: {
                     ...state.order,
                     data: undefined,
+                    meta: undefined,
                 },
             });
             paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);

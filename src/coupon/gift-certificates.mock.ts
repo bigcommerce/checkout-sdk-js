@@ -15,7 +15,7 @@ export function getGiftCertificatesState(): GiftCertificateState {
     return {
         data: [
             getGiftCertificate(),
-            getGiftCertificate(),
+            { ...getGiftCertificate(), code: 'gc2' },
         ],
         errors: {},
         statuses: {},

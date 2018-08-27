@@ -10,7 +10,7 @@ import createPaymentClient from './create-payment-client';
 import PaymentActionCreator from './payment-action-creator';
 import { PaymentActionType } from './payment-actions';
 import PaymentRequestSender from './payment-request-sender';
-import { getErrorPaymentResponseBody, getPayment, getPaymentResponseBody } from './payments.mock';
+import { getErrorPaymentResponseBody, getPayment, getPaymentRequestBody, getPaymentResponseBody } from './payments.mock';
 
 describe('PaymentActionCreator', () => {
     let client: CheckoutClient;
@@ -83,6 +83,15 @@ describe('PaymentActionCreator', () => {
                     error: true,
                 },
             ]);
+        });
+
+        it('sends request to submit payment', async () => {
+            await Observable.from(paymentActionCreator.submitPayment(getPayment())(store))
+                .toArray()
+                .toPromise();
+
+            expect(paymentRequestSender.submitPayment)
+                .toHaveBeenCalledWith(getPaymentRequestBody());
         });
     });
 
