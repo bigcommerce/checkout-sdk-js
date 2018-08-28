@@ -65,7 +65,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const client = createCheckoutClient({ locale });
     const store = createCheckoutStore({}, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
-    const requestSender = createRequestSender();
+    const requestSender = createRequestSender({ host: options && options.host });
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const orderActionCreator = new OrderActionCreator(client, new CheckoutValidator(checkoutRequestSender));
@@ -94,5 +94,6 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
 export interface CheckoutServiceOptions {
     locale?: string;
+    host?: string;
     shouldWarnMutation?: boolean;
 }
