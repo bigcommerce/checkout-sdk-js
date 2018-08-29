@@ -1,7 +1,8 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
-import { Masterpass, MasterpassHostWindow } from '../masterpass/masterpass';
+
+import { Masterpass, MasterpassHostWindow } from './masterpass';
 
 export default class MasterpassScriptLoader {
     constructor(
