@@ -79,6 +79,7 @@ export function getCompleteOrder(): InternalOrder {
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
                 variantId: 71,
+                addedByPromotion: false,
                 attributes: [
                     {
                         name: 'n',
