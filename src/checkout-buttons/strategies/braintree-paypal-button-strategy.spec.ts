@@ -86,6 +86,9 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(paypalScriptLoader, 'loadPaypal')
             .mockReturnValue(Promise.resolve(paypal));
 
+        jest.spyOn(formPoster, 'postForm')
+            .mockImplementation(() => {});
+
         strategy = new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,
@@ -258,8 +261,6 @@ describe('BraintreePaypalButtonStrategy', () => {
     });
 
     it('posts payment details to server to set checkout data when PayPal payment details are tokenized', async () => {
-        jest.spyOn(formPoster, 'postForm');
-
         await strategy.initialize(options);
 
         eventEmitter.emit('authorize');
@@ -300,8 +301,6 @@ describe('BraintreePaypalButtonStrategy', () => {
     });
 
     it('posts payment details to server to process payment if `shouldProcessPayment` is passed when PayPal payment details are tokenized', async () => {
-        jest.spyOn(formPoster, 'postForm');
-
         options = {
             ...options,
             braintreepaypal: {
