@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.1.0...v1.1.1) (2018-08-28)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-3449 Return correct status flags for actions that trigger other sub-actions ([23bfd24](https://github.com/bigcommerce/checkout-sdk-js/commit/23bfd24))
+* **common:** CHECKOUT-3462 Update dependencies to remove Node requirement ([ed60802](https://github.com/bigcommerce/checkout-sdk-js/commit/ed60802))
+* **order:** CHECKOUT-3449 Use correct order ID when reloading current order after order creation ([6d39e16](https://github.com/bigcommerce/checkout-sdk-js/commit/6d39e16))
+* **payment:** CHECKOUT-3398 Check payment method payload ([ea621bf](https://github.com/bigcommerce/checkout-sdk-js/commit/ea621bf))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.0.0...v1.1.0) (2018-08-20)
 

@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
-import { getOrder, getOrderState } from './orders.mock';
+import { getOrder } from './orders.mock';
 import { OrderActionType } from './order-actions';
 import orderReducer from './order-reducer';
 
@@ -83,19 +83,6 @@ describe('orderReducer()', () => {
             meta: {
                 payment: action.payload.order.payment,
             },
-        }));
-    });
-
-    it('cleans the order after a new order post', () => {
-        const response = getCompleteOrderResponseBody();
-        const action = {
-            type: OrderActionType.SubmitOrderSucceeded,
-            meta: response.meta,
-            payload: response.data,
-        };
-
-        expect(orderReducer(getOrderState(), action)).toEqual(expect.objectContaining({
-            data: undefined,
         }));
     });
 

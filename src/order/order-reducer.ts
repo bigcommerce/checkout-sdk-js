@@ -29,8 +29,6 @@ function dataReducer(
     action: OrderAction
 ): OrderDataState | undefined {
     switch (action.type) {
-    case OrderActionType.SubmitOrderSucceeded:
-        return undefined;
     case OrderActionType.LoadOrderSucceeded:
     case OrderActionType.LoadOrderPaymentsSucceeded:
         return action.payload
