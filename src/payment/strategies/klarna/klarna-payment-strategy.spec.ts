@@ -79,7 +79,7 @@ describe('KlarnaPaymentStrategy', () => {
             },
         });
 
-        loadPaymentMethodAction = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod }, { methodId: paymentMethod.id }));
+        loadPaymentMethodAction = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id }));
         initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 

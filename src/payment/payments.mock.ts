@@ -1,8 +1,14 @@
-import { getCart } from '../cart/internal-carts.mock';
-import { getGuestCustomer } from '../customer/internal-customers.mock';
-import { getSubmittedOrder } from '../order/internal-orders.mock';
-import { getQuote } from '../quote/internal-quotes.mock';
+import { mapToInternalAddress } from '../address';
+import { getBillingAddress } from '../billing/billing-addresses.mock';
+import { mapToInternalCart } from '../cart';
+import { getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
+import { mapToInternalCustomer } from '../customer';
+import { getCustomer } from '../customer/customers.mock';
+import { mapToInternalOrder } from '../order';
+import { getOrder, getOrderMeta } from '../order/orders.mock';
+import { getConsignments } from '../shipping/consignments.mock';
 import { getFlatRateOption } from '../shipping/internal-shipping-options.mock';
+import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
 import Payment, { CreditCardInstrument } from './payment';
 import { getAuthorizenet, getPaymentMethodsMeta } from './payment-methods.mock';
@@ -29,16 +35,17 @@ export function getPayment(): Payment {
 export function getPaymentRequestBody(): PaymentRequestBody {
     return {
         authToken: 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDcxODcxMzMsIm5iZiI6MTUwNzE4MzUzMywiaXNzIjoicGF5bWVudHMuYmlnY29tbWVyY2UuY29tIiwic3ViIjoiMTUwNDA5ODgyMSIsImp0aSI6IjNkOTA4ZDE5LTY4OTMtNGQzYi1iMWEwLWJjNWYzMjRhM2ZiZCIsImlhdCI6MTUwNzE4MzUzMywiZGF0YSI6eyJzdG9yZV9pZCI6IjE1MDQwOTg4MjEiLCJvcmRlcl9pZCI6IjExOSIsImFtb3VudCI6MjAwMDAsImN1cnJlbmN5IjoiVVNEIn19.FSfZpI98l3_p5rbQdlHNeCfKR5Dwwk8_fvPZvtb64-Q',
-        billingAddress: getQuote().billingAddress,
-        cart: getCart(),
-        customer: getGuestCustomer(),
-        order: getSubmittedOrder(),
+        billingAddress: mapToInternalAddress(getBillingAddress()),
+        cart: mapToInternalCart(getCheckoutWithGiftCertificates()),
+        customer: mapToInternalCustomer(getCustomer(), getBillingAddress()),
+        order: mapToInternalOrder(getOrder(), getOrderMeta()),
+        orderMeta: getOrderMeta(),
         payment: getPayment().paymentData as CreditCardInstrument,
         paymentMethod: getAuthorizenet(),
-        quoteMeta: getPaymentMethodsMeta(),
-        shippingAddress: getQuote().shippingAddress,
+        quoteMeta: { request: getPaymentMethodsMeta() },
+        shippingAddress: mapToInternalAddress(getShippingAddress(), getConsignments()),
         shippingOption: getFlatRateOption(),
-        source: 'bcapp-checkout-uco',
+        source: 'bigcommerce-checkout-js-sdk',
         store: {
             storeHash: 'k1drp8k8',
             storeId: '1504098821',

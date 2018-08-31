@@ -23,12 +23,16 @@ export function getConsignment(): Consignment {
     };
 }
 
+export function getConsignments(): Consignment[] {
+    return [
+        getConsignment(),
+        getConsignment(),
+    ];
+}
+
 export function getConsignmentsState(): ConsignmentState {
     return {
-        data: [
-            getConsignment(),
-            getConsignment(),
-        ],
+        data: getConsignments(),
         errors: {
             updateError: {},
             updateShippingOptionError: {},

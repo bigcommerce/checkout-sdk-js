@@ -3,7 +3,7 @@ import { getErrorResponse } from '../common/http-request/responses.mock';
 import { PaymentMethodActionType } from './payment-method-actions';
 import paymentMethodReducer from './payment-method-reducer';
 import PaymentMethodState from './payment-method-state';
-import { getBraintreePaypal, getPaymentMethod, getPaymentMethodsResponseBody, getPaymentMethodResponseBody } from './payment-methods.mock';
+import { getBraintreePaypal, getPaymentMethod, getPaymentMethods, getPaymentMethodsMeta } from './payment-methods.mock';
 
 describe('paymentMethodReducer()', () => {
     let initialState: PaymentMethodState;
@@ -29,16 +29,15 @@ describe('paymentMethodReducer()', () => {
     });
 
     it('returns new state when payment methods are loaded', () => {
-        const response = getPaymentMethodsResponseBody();
         const action = {
             type: PaymentMethodActionType.LoadPaymentMethodsSucceeded,
-            payload: response.data,
-            meta: response.meta,
+            payload: getPaymentMethods(),
+            meta: getPaymentMethodsMeta(),
         };
 
         expect(paymentMethodReducer(initialState, action)).toEqual({
             ...initialState,
-            data: action.payload.paymentMethods,
+            data: action.payload,
             meta: action.meta,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
@@ -59,17 +58,17 @@ describe('paymentMethodReducer()', () => {
     });
 
     it('returns new state when payment method is loaded', () => {
-        const response = getPaymentMethodResponseBody();
+        const response = getPaymentMethod();
         const action = {
             type: PaymentMethodActionType.LoadPaymentMethodSucceeded,
-            payload: response.data,
+            payload: response,
             meta: { methodId: 'braintree' },
         };
 
         expect(paymentMethodReducer(initialState, action)).toEqual({
             ...initialState,
             data: [
-                action.payload.paymentMethod,
+                action.payload,
             ],
             errors: {
                 loadMethodId: undefined,
@@ -104,15 +103,12 @@ describe('paymentMethodReducer()', () => {
     });
 
     it('returns new state when payment method is loaded and merged with existing payment methods', () => {
-        const response = getPaymentMethodResponseBody();
+        const response = getPaymentMethod();
         const action = {
             type: PaymentMethodActionType.LoadPaymentMethodSucceeded,
             payload: {
-                ...response.data,
-                paymentMethod: {
-                    ...response.data.paymentMethod,
-                    clientToken: '8e738db9-6477-4c92-888e-bea8f1311339',
-                },
+                ...response,
+                clientToken: '8e738db9-6477-4c92-888e-bea8f1311339',
             },
         };
 
@@ -126,7 +122,7 @@ describe('paymentMethodReducer()', () => {
 
         expect(paymentMethodReducer(initialState, action)).toEqual(expect.objectContaining({
             data: [
-                action.payload.paymentMethod,
+                action.payload,
                 getBraintreePaypal(),
             ],
         }));

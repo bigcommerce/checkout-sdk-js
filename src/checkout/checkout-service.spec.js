@@ -18,7 +18,7 @@ import { OrderActionCreator } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
-import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethodResponseBody, getPaymentMethodsResponseBody } from '../payment/payment-methods.mock';
+import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { deleteInstrumentResponseBody, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
@@ -168,11 +168,11 @@ describe('CheckoutService', () => {
 
         paymentMethodRequestSender = {
             loadPaymentMethod: jest.fn(() =>
-                Promise.resolve(getResponse(getPaymentMethodResponseBody()))
+                Promise.resolve(getResponse(getPaymentMethod()))
             ),
 
             loadPaymentMethods: jest.fn(() =>
-                Promise.resolve(getResponse(getPaymentMethodsResponseBody()))
+                Promise.resolve(getResponse(getPaymentMethods()))
             ),
         };
 
@@ -486,7 +486,7 @@ describe('CheckoutService', () => {
         it('returns payment methods', async () => {
             const state = await checkoutService.loadPaymentMethods();
 
-            expect(state.data.getPaymentMethods()).toEqual(getPaymentMethodsResponseBody().data.paymentMethods);
+            expect(state.data.getPaymentMethods()).toEqual(getPaymentMethods());
         });
 
         it('dispatches action with queue id', async () => {

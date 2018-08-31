@@ -78,7 +78,8 @@ export default class PaymentActionCreator {
         const shippingAddress = state.shippingAddress.getShippingAddress();
         const consignments = state.consignments.getConsignments();
         const shippingOption = state.consignments.getShippingOption();
-        const config = state.config.getStoreConfig();
+        const storeConfig = state.config.getStoreConfig();
+        const contextConfig = state.config.getContextConfig();
         const instrumentMeta = state.instruments.getInstrumentsMeta();
         const paymentMeta = state.paymentMethods.getPaymentMethodsMeta();
         const orderMeta = state.order.getOrderMeta();
@@ -104,10 +105,13 @@ export default class PaymentActionCreator {
             orderMeta,
             payment: payment.paymentData,
             quoteMeta: {
-                request: paymentMeta && paymentMeta.request,
+                request: {
+                    ...paymentMeta,
+                    geoCountryCode: contextConfig && contextConfig.geoCountryCode,
+                },
             },
             source: 'bigcommerce-checkout-js-sdk',
-            store: pick(config && config.storeProfile, [
+            store: pick(storeConfig && storeConfig.storeProfile, [
                 'storeHash',
                 'storeId',
                 'storeLanguage',

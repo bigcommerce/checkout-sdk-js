@@ -8,6 +8,7 @@ export function getCart(): InternalCart {
                 id: '666',
                 type: 'ItemPhysicalEntity',
                 name: 'Canvas Laundry Cart',
+                downloadsPageUrl: undefined,
                 imageUrl: '/images/canvas-laundry-cart.jpg',
                 quantity: 1,
                 amount: 200,
@@ -102,7 +103,7 @@ export function getCart(): InternalCart {
             },
         ],
         giftCertificate: {
-            totalDiscountedAmount: 7,
+            totalDiscountedAmount: 14,
             appliedGiftCertificates: {
                 gc: {
                     code: 'gc',
@@ -110,6 +111,16 @@ export function getCart(): InternalCart {
                     remainingBalance: 3,
                     giftCertificate: {
                         code: 'gc',
+                        balance: 10,
+                        purchaseDate: 'ddmmyy',
+                    },
+                },
+                gc2: {
+                    code: 'gc2',
+                    discountedAmount: 7,
+                    remainingBalance: 3,
+                    giftCertificate: {
+                        code: 'gc2',
                         balance: 10,
                         purchaseDate: 'ddmmyy',
                     },

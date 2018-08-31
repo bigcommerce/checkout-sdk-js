@@ -103,7 +103,7 @@ describe('AmazonPayCustomerStrategy', () => {
             .mockReturnValue(Promise.resolve(getResponse('')));
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod })));
+            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod)));
     });
 
     afterEach(() => {
@@ -111,7 +111,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('loads payment method', async () => {
-        const action = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod }));
+        const action = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod));
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
             .mockReturnValue(action);
@@ -160,7 +160,7 @@ describe('AmazonPayCustomerStrategy', () => {
         paymentMethod = { ...paymentMethod, config: { merchantId: undefined } };
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, { paymentMethod })));
+            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod)));
 
         try {
             await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });

@@ -1,6 +1,6 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 
-import { ContentType } from '../common/http-request';
+import { ContentType, INTERNAL_USE_ONLY } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
 
 import Config from './config';
@@ -32,7 +32,7 @@ describe('ConfigRequestSender', () => {
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/checkout-settings', {
                 headers: {
                     Accept: ContentType.JsonV1,
-                    'X-API-INTERNAL': 'This API endpoint is for internal use only and may change in the future',
+                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 },
             });
         });
@@ -46,7 +46,7 @@ describe('ConfigRequestSender', () => {
                 ...options,
                 headers: {
                     Accept: ContentType.JsonV1,
-                    'X-API-INTERNAL': 'This API endpoint is for internal use only and may change in the future',
+                    'X-API-INTERNAL': INTERNAL_USE_ONLY,
                 },
             });
         });

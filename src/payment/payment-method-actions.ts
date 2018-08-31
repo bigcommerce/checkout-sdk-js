@@ -1,6 +1,7 @@
 import { Action } from '@bigcommerce/data-store';
 
-import { PaymentMethodsResponseData, PaymentMethodResponseData } from './payment-method-responses';
+import PaymentMethod from './payment-method';
+import PaymentMethodMeta from './payment-method-meta';
 
 export enum PaymentMethodActionType {
     LoadPaymentMethodRequested = 'LOAD_PAYMENT_METHOD_REQUESTED',
@@ -28,7 +29,7 @@ export interface LoadPaymentMethodRequestedAction extends Action {
     type: PaymentMethodActionType.LoadPaymentMethodRequested;
 }
 
-export interface LoadPaymentMethodSucceededAction extends Action<PaymentMethodResponseData> {
+export interface LoadPaymentMethodSucceededAction extends Action<PaymentMethod> {
     type: PaymentMethodActionType.LoadPaymentMethodSucceeded;
 }
 
@@ -40,7 +41,7 @@ export interface LoadPaymentMethodsRequestedAction extends Action {
     type: PaymentMethodActionType.LoadPaymentMethodsRequested;
 }
 
-export interface LoadPaymentMethodsSucceededAction extends Action<PaymentMethodsResponseData> {
+export interface LoadPaymentMethodsSucceededAction extends Action<PaymentMethod[], PaymentMethodMeta> {
     type: PaymentMethodActionType.LoadPaymentMethodsSucceeded;
 }
 
