@@ -22,7 +22,6 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const billingAddress = new BillingAddressSelector(state.billingAddress);
     const cart = new CartSelector(state.cart);
     const config = new ConfigSelector(state.config);
-    const consignments = new ConsignmentSelector(state.consignments);
     const countries = new CountrySelector(state.countries);
     const coupons = new CouponSelector(state.coupons);
     const customer = new CustomerSelector(state.customer);
@@ -38,6 +37,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
     const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
 
     // Compose selectors
+    const consignments = new ConsignmentSelector(state.consignments, cart);
     const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
     const order = new OrderSelector(state.order, billingAddress, coupons);
     const payment = new PaymentSelector(checkout, order);
