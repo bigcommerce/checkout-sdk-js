@@ -4,30 +4,13 @@ import { BillingAddressActionCreator } from '../billing';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
-import {
-    CouponActionCreator,
-    CouponRequestSender,
-    GiftCertificateActionCreator,
-    GiftCertificateRequestSender,
-} from '../coupon';
+import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator } from '../order';
-import {
-    createPaymentClient,
-    createPaymentStrategyRegistry,
-    PaymentMethodActionCreator,
-    PaymentMethodRequestSender,
-    PaymentStrategyActionCreator,
-} from '../payment';
+import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
-import {
-    createShippingStrategyRegistry,
-    ConsignmentActionCreator,
-    ConsignmentRequestSender,
-    ShippingCountryActionCreator,
-    ShippingStrategyActionCreator,
-} from '../shipping';
+import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';

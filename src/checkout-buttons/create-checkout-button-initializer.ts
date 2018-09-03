@@ -8,6 +8,28 @@ import CheckoutButtonInitializerOptions from './checkout-button-initializer-opti
 import CheckoutButtonStrategyActionCreator from './checkout-button-strategy-action-creator';
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
 
+/**
+ * Creates an instance of `CheckoutButtonInitializer`.
+ *
+ * ```js
+ * const initializer = createCheckoutButtonInitializer();
+ *
+ * initializer.initializeButton({
+ *     methodId: 'braintreepaypal',
+ *     braintreepaypal: {
+ *         container: '#checkoutButton',
+ *     },
+ * });
+ * ```
+ *
+ * Please note that `CheckoutButtonInitializer` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @alpha
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutButtonInitializer`.
+ */
 export default function createCheckoutButtonInitializer(
     options?: CheckoutButtonInitializerOptions
 ): CheckoutButtonInitializer {

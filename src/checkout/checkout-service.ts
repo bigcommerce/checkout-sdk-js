@@ -7,34 +7,13 @@ import { ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
-import {
-    CustomerCredentials,
-    CustomerInitializeOptions,
-    CustomerRequestOptions,
-    CustomerStrategyActionCreator,
-    GuestCredentials
-} from '../customer';
+import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
-import {
-    PaymentInitializeOptions,
-    PaymentMethodActionCreator,
-    PaymentRequestOptions,
-    PaymentStrategyActionCreator
-} from '../payment';
+import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
-import {
-    ConsignmentsRequestBody,
-    ConsignmentActionCreator,
-    ShippingCountryActionCreator,
-    ShippingInitializeOptions,
-    ShippingRequestOptions,
-    ShippingStrategyActionCreator,
-} from '../shipping';
-import {
-    ConsignmentAssignmentRequestBody,
-    ConsignmentUpdateRequestBody
-} from '../shipping/consignment';
+import { ConsignmentsRequestBody, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
+import { ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody } from '../shipping/consignment';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
@@ -93,7 +72,7 @@ export default class CheckoutService {
      * ```js
      * const state = service.getState();
      *
-     * console.log(state.checkout.getOrder());
+     * console.log(state.data.getOrder());
      * console.log(state.errors.getSubmitOrderError());
      * console.log(state.statuses.isSubmittingOrder());
      * ```
@@ -122,7 +101,7 @@ export default class CheckoutService {
      *
      * ```js
      * service.subscribe(state => {
-     *     console.log(state.checkout.getCart());
+     *     console.log(state.data.getCart());
      * });
      * ```
      *
@@ -130,11 +109,11 @@ export default class CheckoutService {
      * relevant changes, by providing a filter function.
      *
      * ```js
-     * const filter = state => state.checkout.getCart();
+     * const filter = state => state.data.getCart();
      *
      * // Only trigger the subscriber when the cart changes.
      * service.subscribe(state => {
-     *     console.log(state.checkout.getCart())
+     *     console.log(state.data.getCart())
      * }, filter);
      * ```
      *
@@ -165,7 +144,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.loadCheckout('0cfd6c06-57c3-4e29-8d7a-de55cc8a9052');
      *
-     * console.log(state.checkout.getCheckout());
+     * console.log(state.data.getCheckout());
      * ```
      *
      * @param id - The identifier of the checkout to load, or the default checkout if not provided.
@@ -185,7 +164,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.updateCheckout(checkout);
      *
-     * console.log(state.checkout.getCheckout());
+     * console.log(state.data.getCheckout());
      * ```
      *
      * @param payload - The checkout properties to be updated.
@@ -208,7 +187,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.loadOrder(123);
      *
-     * console.log(state.checkout.getOrder());
+     * console.log(state.data.getOrder());
      * ```
      *
      * @param orderId - The identifier of the order to load.
@@ -260,7 +239,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.submitOrder(payload);
      *
-     * console.log(state.checkout.getOrder());
+     * console.log(state.data.getOrder());
      * ```
      *
      * @param payload - The request payload to submit for the current order.
@@ -325,7 +304,7 @@ export default class CheckoutService {
      * ```js
      * const state = service.loadPaymentMethods();
      *
-     * console.log(state.checkout.getPaymentMethods());
+     * console.log(state.data.getPaymentMethods());
      * ```
      *
      * @param options - Options for loading the payment methods that are
@@ -414,7 +393,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.loadBillingCountries();
      *
-     * console.log(state.checkout.getBillingCountries());
+     * console.log(state.data.getBillingCountries());
      * ```
      *
      * @param options - Options for loading the available billing countries.
@@ -437,7 +416,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.loadShippingCountries();
      *
-     * console.log(state.checkout.getShippingCountries());
+     * console.log(state.data.getShippingCountries());
      * ```
      *
      * @param options - Options for loading the available shipping countries.
@@ -460,7 +439,7 @@ export default class CheckoutService {
      * ```js
      * const state = service.loadBillingAddressFields();
      *
-     * console.log(state.checkout.getBillingAddressFields('US'));
+     * console.log(state.data.getBillingAddressFields('US'));
      * ```
      *
      * @param options - Options for loading the billing address form fields.
@@ -481,7 +460,7 @@ export default class CheckoutService {
      * ```js
      * const state = service.loadShippingAddressFields();
      *
-     * console.log(state.checkout.getShippingAddressFields('US'));
+     * console.log(state.data.getShippingAddressFields('US'));
      * ```
      *
      * @param options - Options for loading the shipping address form fields.
@@ -569,7 +548,7 @@ export default class CheckoutService {
      *     password: 'password123',
      * });
      *
-     * console.log(state.checkout.getCustomer());
+     * console.log(state.data.getCustomer());
      * ```
      *
      * @param credentials - The credentials to be used for signing in the customer.
@@ -592,7 +571,7 @@ export default class CheckoutService {
      * const state = await service.signOutCustomer();
      *
      * // The returned object should not contain information about the previously signed-in customer.
-     * console.log(state.checkout.getCustomer());
+     * console.log(state.data.getCustomer());
      * ```
      *
      * @param options - Options for signing out the customer.
@@ -615,7 +594,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.loadShippingOptions();
      *
-     * console.log(state.checkout.getShippingOptions());
+     * console.log(state.data.getShippingOptions());
      * ```
      *
      * @param options - Options for loading the available shipping options.
@@ -684,7 +663,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.selectShippingOption('address-id', 'shipping-option-id');
      *
-     * console.log(state.checkout.getSelectedShippingOption());
+     * console.log(state.data.getSelectedShippingOption());
      * ```
      *
      * @param shippingOptionId - The identifier of the shipping option to
@@ -716,7 +695,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.updateShippingAddress(address);
      *
-     * console.log(state.checkout.getShippingAddress());
+     * console.log(state.data.getShippingAddress());
      * ```
      *
      * @param address - The address to be used for shipping.
@@ -751,7 +730,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.createConsignments(consignments);
      *
-     * console.log(state.checkout.getConsignments());
+     * console.log(state.data.getConsignments());
      * ```
      *
      * @param consignments - The list of consignments to be created.
@@ -773,7 +752,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.deleteConsignment('55c96cda6f04c');
      *
-     * console.log(state.checkout.getConsignments());
+     * console.log(state.data.getConsignments());
      * ```
      *
      * @param consignmentId - The ID of the consignment to be deleted
@@ -815,7 +794,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.updateConsignment(consignment);
      *
-     * console.log(state.checkout.getConsignments());
+     * console.log(state.data.getConsignments());
      * ```
      *
      * @param consignment - The consignment data that will be used.
@@ -863,7 +842,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.selectConsignmentShippingOption(consignmentId, optionId);
      *
-     * console.log(state.checkout.getConsignments());
+     * console.log(state.data.getConsignments());
      * ```
      *
      * @param consignmentId - The identified of the consignment to be updated.
@@ -897,7 +876,7 @@ export default class CheckoutService {
      * ```js
      * const state = await service.updateBillingAddress(address);
      *
-     * console.log(state.checkout.getBillingAddress());
+     * console.log(state.data.getBillingAddress());
      * ```
      *
      * @param address - The address to be used for billing.
@@ -1002,7 +981,7 @@ export default class CheckoutService {
      * ```js
      * const state = service.loadInstruments();
      *
-     * console.log(state.checkout.getInstruments());
+     * console.log(state.data.getInstruments());
      * ```
      *
      * @returns A promise that resolves to the current state.
@@ -1022,7 +1001,7 @@ export default class CheckoutService {
      * ```js
      * const state = service.deleteInstrument('123');
      *
-     * console.log(state.checkout.getInstruments());
+     * console.log(state.data.getInstruments());
      * ```
      *
      * @param instrumentId - The identifier of the payment instrument to delete.

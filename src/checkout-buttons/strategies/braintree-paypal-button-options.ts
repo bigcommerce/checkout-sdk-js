@@ -9,8 +9,27 @@ export interface BraintreePaypalButtonInitializeOptions {
      */
     shouldProcessPayment?: boolean;
 
+    /**
+     * The ID of a container which the checkout button should be inserted.
+     */
     container: string;
+
+    /**
+     * A set of styling options for the checkout button.
+     */
     style?: Pick<PaypalButtonStyleOptions, 'color' | 'shape' | 'size'>;
+
+    /**
+     * A callback that gets called if unable to authorize and tokenize payment.
+     *
+     * @param error - The error object describing the failure.
+     */
     onAuthorizeError?(error: BraintreeError | StandardError): void;
+
+    /**
+     * A callback that gets called if unable to submit payment.
+     *
+     * @param error - The error object describing the failure.
+     */
     onPaymentError?(error: BraintreeError | StandardError): void;
 }
