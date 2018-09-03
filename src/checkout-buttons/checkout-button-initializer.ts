@@ -8,6 +8,9 @@ import createCheckoutButtonSelectors from './create-checkout-button-selectors';
 export default class CheckoutButtonInitializer {
     private _state: CheckoutButtonSelectors;
 
+    /**
+     * @internal
+     */
     constructor(
         private _store: CheckoutStore,
         private _buttonStrategyActionCreator: CheckoutButtonStrategyActionCreator
