@@ -14,7 +14,6 @@ import { ConfigActionCreator } from '../config';
 import { CheckoutRequestBody } from './checkout';
 import { CheckoutActionType, LoadCheckoutAction, UpdateCheckoutAction } from './checkout-actions';
 import CheckoutRequestSender from './checkout-request-sender';
-import { ReadableCheckoutStore } from './checkout-store';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 export default class CheckoutActionCreator {
@@ -63,7 +62,7 @@ export default class CheckoutActionCreator {
         body: CheckoutRequestBody,
         options?: RequestOptions
     ): ThunkAction<UpdateCheckoutAction, InternalCheckoutSelectors> {
-        return (store: ReadableCheckoutStore) => new Observable(observer => {
+        return store => new Observable(observer => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
 
