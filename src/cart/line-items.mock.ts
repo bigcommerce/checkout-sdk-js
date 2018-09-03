@@ -19,6 +19,7 @@ export function getPhysicalItem(): PhysicalItem {
         extendedListPrice: 200,
         extendedSalePrice: 200,
         isShippingRequired: true,
+        addedByPromotion: false,
         options: [
             {
                 name: 'n',
@@ -51,6 +52,7 @@ export function getDigitalItem(): DigitalItem {
         downloadSize: '',
         extendedListPrice: 200,
         extendedSalePrice: 200,
+        addedByPromotion: false,
         options: [
             {
                 name: 'n',

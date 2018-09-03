@@ -13,6 +13,7 @@ export default interface InternalLineItem {
     quantity: number;
     type: string;
     variantId: number | null;
+    addedByPromotion?: boolean;
     sender?: {
         name: string;
         email: string;

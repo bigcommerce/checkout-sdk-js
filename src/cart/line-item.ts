@@ -49,6 +49,7 @@ export interface LineItem {
     extendedSalePrice: number;
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
+    addedByPromotion: boolean;
 }
 
 export interface LineItemOption {

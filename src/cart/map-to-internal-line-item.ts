@@ -28,6 +28,7 @@ export default function mapToInternalLineItem(
             name: option.name,
             value: option.value,
         })),
+        addedByPromotion: item.addedByPromotion,
         type,
     };
 }

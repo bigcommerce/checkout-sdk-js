@@ -24,6 +24,7 @@ export function getCart(): InternalCart {
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
                 variantId: 71,
+                addedByPromotion: false,
             },
             {
                 id: '667',
@@ -45,6 +46,7 @@ export function getCart(): InternalCart {
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
                 variantId: 71,
+                addedByPromotion: false,
             },
             {
                 id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
