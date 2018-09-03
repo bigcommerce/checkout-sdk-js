@@ -12,6 +12,7 @@
 
 ### Properties
 
+* [addedByPromotion](physicalitem.md#addedbypromotion)
 * [couponAmount](physicalitem.md#couponamount)
 * [discountAmount](physicalitem.md#discountamount)
 * [discounts](physicalitem.md#discounts)
@@ -37,6 +38,13 @@
 
 ## Properties
 
+<a id="addedbypromotion"></a>
+
+###  addedByPromotion
+
+**● addedByPromotion**: *`boolean`*
+
+___
 <a id="couponamount"></a>
 
 ###  couponAmount

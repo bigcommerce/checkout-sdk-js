@@ -2137,6 +2137,7 @@ declare interface LineItem {
     extendedSalePrice: number;
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
+    addedByPromotion: boolean;
 }
 
 declare interface LineItemMap {

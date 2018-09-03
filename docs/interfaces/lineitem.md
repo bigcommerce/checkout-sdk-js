@@ -14,6 +14,7 @@
 
 ### Properties
 
+* [addedByPromotion](lineitem.md#addedbypromotion)
 * [couponAmount](lineitem.md#couponamount)
 * [discountAmount](lineitem.md#discountamount)
 * [discounts](lineitem.md#discounts)
@@ -37,6 +38,13 @@
 
 ## Properties
 
+<a id="addedbypromotion"></a>
+
+###  addedByPromotion
+
+**● addedByPromotion**: *`boolean`*
+
+___
 <a id="couponamount"></a>
 
 ###  couponAmount
