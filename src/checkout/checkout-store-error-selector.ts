@@ -84,6 +84,7 @@ export default class CheckoutStoreErrorSelector {
             this.getInitializeCustomerError() ||
             this.getUpdateShippingAddressError() ||
             this.getUpdateBillingAddressError() ||
+            this.getContinueAsGuestError() ||
             this.getUpdateConsignmentError() ||
             this.getCreateConsignmentsError() ||
             this.getDeleteConsignmentError() ||
@@ -248,6 +249,15 @@ export default class CheckoutStoreErrorSelector {
     getSelectShippingOptionError(consignmentId?: string): Error | undefined {
         return this._shippingStrategies.getSelectOptionError() ||
             this._consignments.getUpdateShippingOptionError(consignmentId);
+    }
+
+    /**
+     * Returns an error if unable to continue as guest.
+     *
+     * @returns The error object if unable to continue, otherwise undefined.
+     */
+    getContinueAsGuestError(): Error | undefined {
+        return this._billingAddress.getUpdateError();
     }
 
     /**
