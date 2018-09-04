@@ -5,7 +5,6 @@ import { merge } from 'rxjs/observable/merge';
 import { of } from 'rxjs/observable/of';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
 
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType, StandardError } from '../common/error/errors';
@@ -63,7 +62,7 @@ export default class CheckoutActionCreator {
         body: CheckoutRequestBody,
         options?: RequestOptions
     ): ThunkAction<UpdateCheckoutAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<UpdateCheckoutAction>) => {
+        return store => new Observable(observer => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
 

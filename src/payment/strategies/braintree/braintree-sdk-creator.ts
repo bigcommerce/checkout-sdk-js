@@ -5,6 +5,7 @@ import {
     BraintreeDataCollector,
     BraintreeModule,
     BraintreePaypal,
+    BraintreePaypalCheckout,
     BraintreeThreeDSecure,
     BraintreeVisaCheckout,
 } from './braintree';
@@ -13,10 +14,14 @@ import BraintreeScriptLoader from './braintree-script-loader';
 export default class BraintreeSDKCreator {
     private _client?: Promise<BraintreeClient>;
     private _3ds?: Promise<BraintreeThreeDSecure>;
-    private _dataCollector?: Promise<BraintreeDataCollector>;
     private _paypal?: Promise<BraintreePaypal>;
+    private _paypalCheckout?: Promise<BraintreePaypalCheckout>;
     private _clientToken?: string;
     private _visaCheckout?: Promise<BraintreeVisaCheckout>;
+    private _dataCollectors: {
+        default?: Promise<BraintreeDataCollector>,
+        paypal?: Promise<BraintreeDataCollector>,
+    } = {};
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -51,6 +56,18 @@ export default class BraintreeSDKCreator {
         return this._paypal;
     }
 
+    getPaypalCheckout(): Promise<BraintreePaypalCheckout> {
+        if (!this._paypalCheckout) {
+            this._paypalCheckout = Promise.all([
+                this.getClient(),
+                this._braintreeScriptLoader.loadPaypalCheckout(),
+            ])
+                .then(([client, paypalCheckout]) => paypalCheckout.create({ client }));
+        }
+
+        return this._paypalCheckout;
+    }
+
     get3DS(): Promise<BraintreeThreeDSecure> {
         if (!this._3ds) {
             this._3ds = Promise.all([
@@ -63,13 +80,16 @@ export default class BraintreeSDKCreator {
         return this._3ds;
     }
 
-    getDataCollector(): Promise<BraintreeDataCollector> {
-        if (!this._dataCollector) {
-            this._dataCollector = Promise.all([
+    getDataCollector(options?: { paypal: boolean }): Promise<BraintreeDataCollector> {
+        const cacheKey = options && options.paypal ? 'paypal' : 'default';
+        let cached = this._dataCollectors[cacheKey];
+
+        if (!cached) {
+            cached = Promise.all([
                 this.getClient(),
                 this._braintreeScriptLoader.loadDataCollector(),
             ])
-            .then(([client, dataCollector]) => dataCollector.create({ client, kount: true }))
+            .then(([client, dataCollector]) => dataCollector.create({ client, kount: true, ...options }))
             .then(dataCollector => {
                 const { deviceData } = dataCollector;
 
@@ -85,9 +105,11 @@ export default class BraintreeSDKCreator {
 
                 throw error;
             });
+
+            this._dataCollectors[cacheKey] = cached;
         }
 
-        return this._dataCollector;
+        return cached;
     }
 
     getVisaCheckout(): Promise<BraintreeVisaCheckout> {
@@ -105,12 +127,13 @@ export default class BraintreeSDKCreator {
     teardown(): Promise<void> {
         return Promise.all([
             this._teardown(this._3ds),
-            this._teardown(this._dataCollector),
+            this._teardown(this._dataCollectors.default),
+            this._teardown(this._dataCollectors.paypal),
             this._teardown(this._visaCheckout),
         ]).then(() => {
             this._3ds = undefined;
-            this._dataCollector = undefined;
             this._visaCheckout = undefined;
+            this._dataCollectors = {};
         });
     }
 

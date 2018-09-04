@@ -1,6 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { Address } from '../../../address';
+import { Address, LegacyAddress } from '../../../address';
 import { toFormUrlEncoded } from '../../../common/http-request';
 
 import { BraintreeDataCollector } from './braintree';
@@ -106,7 +106,7 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
         };
     }
 
-    private _getAddress(email: string, address: VisaCheckoutAddress = {}) {
+    private _getAddress(email: string, address: VisaCheckoutAddress = {}): Partial<LegacyAddress> {
         return {
             email,
             first_name: address.firstName,

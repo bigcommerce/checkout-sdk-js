@@ -1,6 +1,6 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
@@ -14,6 +14,7 @@ import PaymentMethod from '../payment-method';
 import { getPaypalExpress } from '../payment-methods.mock';
 import * as paymentStatusTypes from '../payment-status-types';
 
+import { PaypalScriptLoader, PaypalSDK } from './paypal';
 import PaypalExpressPaymentStrategy from './paypal-express-payment-strategy';
 
 describe('PaypalExpressPaymentStrategy', () => {
@@ -21,8 +22,8 @@ describe('PaypalExpressPaymentStrategy', () => {
     let order: InternalOrder;
     let orderActionCreator: OrderActionCreator;
     let paymentMethod: PaymentMethod;
-    let paypalSdk: any;
-    let scriptLoader: ScriptLoader;
+    let paypalSdk: PaypalSDK;
+    let scriptLoader: PaypalScriptLoader;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
     let strategy: PaypalExpressPaymentStrategy;
@@ -41,10 +42,12 @@ describe('PaypalExpressPaymentStrategy', () => {
                 startFlow: jest.fn(),
                 closeFlow: jest.fn(),
             },
+            Button: {
+                render: jest.fn(),
+            },
         };
 
-        scriptLoader = createScriptLoader();
-
+        scriptLoader = new PaypalScriptLoader(createScriptLoader());
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
 
@@ -62,11 +65,11 @@ describe('PaypalExpressPaymentStrategy', () => {
         jest.spyOn(window.location, 'assign')
             .mockImplementation(() => { });
 
-        jest.spyOn(scriptLoader, 'loadScript')
+        jest.spyOn(scriptLoader, 'loadPaypal')
             .mockImplementation(() => {
                 (window as any).paypal = paypalSdk;
 
-                return Promise.resolve();
+                return Promise.resolve(paypalSdk);
             });
 
         jest.spyOn(store, 'dispatch');
@@ -90,7 +93,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('loads Paypal SDK', async () => {
                 await strategy.initialize({ methodId: paymentMethod.id });
 
-                expect(scriptLoader.loadScript).toHaveBeenCalledWith('//www.paypalobjects.com/api/checkout.min.js');
+                expect(scriptLoader.loadPaypal).toHaveBeenCalled();
             });
 
             it('initializes Paypal SDK', async () => {
@@ -127,7 +130,7 @@ describe('PaypalExpressPaymentStrategy', () => {
             it('does not load Paypal SDK', async () => {
                 await strategy.initialize({ methodId: paymentMethod.id });
 
-                expect(scriptLoader.loadScript).not.toHaveBeenCalled();
+                expect(scriptLoader.loadPaypal).not.toHaveBeenCalled();
             });
 
             it('does not initialize Paypal SDK', async () => {

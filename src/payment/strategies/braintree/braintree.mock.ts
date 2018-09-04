@@ -6,8 +6,10 @@ import {
     BraintreeDataCollector,
     BraintreeModule,
     BraintreeModuleCreator,
+    BraintreePaypalCheckout,
     BraintreeRequestData,
     BraintreeThreeDSecure,
+    BraintreeTokenizePayload,
     BraintreeTokenizeResponse,
     BraintreeVerifyPayload,
     BraintreeVisaCheckout,
@@ -44,6 +46,14 @@ export function getVisaCheckoutMock(): BraintreeVisaCheckout {
     };
 }
 
+export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
+    return {
+        createPayment: jest.fn((() => Promise.resolve())),
+        teardown: jest.fn(),
+        tokenizePayment: jest.fn(() => Promise.resolve(getTokenizePayload())),
+    };
+}
+
 export function getModuleCreatorMock<T>(module: BraintreeModule | BraintreeClient): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve(module)),
@@ -69,6 +79,38 @@ export function getVerifyPayload(): BraintreeVerifyPayload {
         description: '',
         liabilityShiftPossible: false,
         liabilityShifted: false,
+    };
+}
+
+export function getTokenizePayload(): BraintreeTokenizePayload {
+    return {
+        nonce: 'NONCE',
+        type: 'PaypalAccount',
+        details: {
+            email: 'foo@bar.com',
+            payerId: 'PAYER_ID',
+            firstName: 'Foo',
+            lastName: 'Bar',
+            billingAddress: {
+                line1: '56789 Testing Way',
+                line2: 'Level 2',
+                city: 'Some Other City',
+                state: 'Arizona',
+                countryCode: 'US',
+                postalCode: '96666',
+                phone: '123456789',
+            },
+            shippingAddress: {
+                recipientName: 'Hello World',
+                line1: '12345 Testing Way',
+                line2: 'Level 1',
+                city: 'Some City',
+                state: 'California',
+                countryCode: 'US',
+                postalCode: '95555',
+                phone: '987654321',
+            },
+        },
     };
 }
 

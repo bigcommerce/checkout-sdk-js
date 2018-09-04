@@ -47,7 +47,7 @@
     "@bigcommerce/bigpay-client": "^3.2.2",
     "@bigcommerce/data-store": "^0.2.2",
     "@bigcommerce/form-poster": "^1.2.3",
-    "@bigcommerce/request-sender": "^0.1.8",
+    "@bigcommerce/request-sender": "^0.2.0",
     "@bigcommerce/script-loader": "^0.1.6",
     "@types/lodash": "^4.14.92",
     "lodash": "^4.17.4",

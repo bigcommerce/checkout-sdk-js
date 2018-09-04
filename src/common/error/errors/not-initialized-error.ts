@@ -1,6 +1,7 @@
 import StandardError from './standard-error';
 
 export enum NotInitializedErrorType {
+    CheckoutButtonNotInitialized,
     CustomerNotInitialized,
     PaymentNotInitialized,
     ShippingNotInitialized,

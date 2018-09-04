@@ -2,6 +2,7 @@ import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getBillingAddressState } from '../billing/billing-addresses.mock';
 import { getCart } from '../cart/carts.mock';
 import { getCartState } from '../cart/carts.mock';
+import { getCheckoutButtonState } from '../checkout-buttons/checkout-buttons.mock';
 import { getConfigState } from '../config/configs.mock';
 import { getCoupon, getCouponsState, getShippingCoupon } from '../coupon/coupons.mock';
 import { getGiftCertificate, getGiftCertificatesState } from '../coupon/gift-certificates.mock';
@@ -117,6 +118,7 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         billingAddress: getBillingAddressState(),
         cart: getCartState(),
         checkout: getCheckoutState(),
+        checkoutButton: getCheckoutButtonState(),
         config: getConfigState(),
         consignments: getConsignmentsState(),
         countries: getCountriesState(),

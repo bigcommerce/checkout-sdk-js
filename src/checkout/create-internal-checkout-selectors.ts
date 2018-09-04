@@ -1,5 +1,6 @@
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
+import { CheckoutButtonSelector } from '../checkout-buttons';
 import { createFreezeProxies } from '../common/utility';
 import { ConfigSelector } from '../config';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
@@ -7,8 +8,8 @@ import { CustomerSelector, CustomerStrategySelector } from '../customer';
 import { FormSelector } from '../form';
 import { CountrySelector } from '../geography';
 import { OrderSelector } from '../order';
-import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { PaymentSelector } from '../payment';
+import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { ConsignmentSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
@@ -21,6 +22,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default function createInternalCheckoutSelectors(state: CheckoutStoreState, options: CheckoutStoreOptions = {}): InternalCheckoutSelectors {
     const billingAddress = new BillingAddressSelector(state.billingAddress);
     const cart = new CartSelector(state.cart);
+    const checkoutButton = new CheckoutButtonSelector(state.checkoutButton);
     const config = new ConfigSelector(state.config);
     const countries = new CountrySelector(state.countries);
     const coupons = new CouponSelector(state.coupons);
@@ -46,6 +48,7 @@ export default function createInternalCheckoutSelectors(state: CheckoutStoreStat
         billingAddress,
         cart,
         checkout,
+        checkoutButton,
         config,
         consignments,
         countries,

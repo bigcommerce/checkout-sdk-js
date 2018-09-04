@@ -36,6 +36,7 @@ import { AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from './strategies/braintree';
 import { KlarnaScriptLoader } from './strategies/klarna';
+import { PaypalScriptLoader } from './strategies/paypal';
 import { SquareScriptLoader } from './strategies/square';
 import { WepayRiskClient } from './strategies/wepay';
 
@@ -135,7 +136,7 @@ export default function createPaymentStrategyRegistry(
         new PaypalExpressPaymentStrategy(
             store,
             orderActionCreator,
-            scriptLoader
+            new PaypalScriptLoader(scriptLoader)
         )
     );
 
@@ -143,7 +144,7 @@ export default function createPaymentStrategyRegistry(
         new PaypalExpressPaymentStrategy(
             store,
             orderActionCreator,
-            scriptLoader
+            new PaypalScriptLoader(scriptLoader)
         )
     );
 

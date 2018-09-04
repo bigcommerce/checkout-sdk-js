@@ -1,10 +1,11 @@
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
-import { from } from 'rxjs/observable/from';
 
 import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { ConfigActionType } from '../config/config-actions';
 import { getConfig } from '../config/configs.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
@@ -77,6 +78,30 @@ describe('CheckoutActionCreator', () => {
             expect(actions).toEqual([
                 { type: CheckoutActionType.LoadCheckoutRequested },
                 { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
+            ]);
+        });
+
+        it('emits error action if unable to load config', async () => {
+            const errorResponse = getErrorResponse();
+
+            jest.spyOn(configActionCreator, 'loadConfig')
+                .mockReturnValue(() => Observable.concat(
+                    Observable.of(createAction(ConfigActionType.LoadConfigRequested)),
+                    Observable.throw(createErrorAction(ConfigActionType.LoadConfigFailed, errorResponse))
+                ));
+
+            const errorHandler = jest.fn(action => Observable.of(action));
+            const actions = await Observable.from(actionCreator.loadCheckout('b20deef40f9699e48671bbc3fef6ca44dc80e3c7')(store))
+                .catch(errorHandler)
+                .toArray()
+                .toPromise();
+
+            expect(errorHandler).toHaveBeenCalled();
+            expect(actions).toEqual([
+                { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: ConfigActionType.LoadConfigRequested },
+                { type: ConfigActionType.LoadConfigFailed, error: true, payload: errorResponse },
+                { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: errorResponse },
             ]);
         });
 
@@ -195,7 +220,7 @@ describe('CheckoutActionCreator', () => {
 
     describe('#loadCurrentCheckout()', () => {
         it('loads checkout by using existing id', async () => {
-            await from(actionCreator.loadCurrentCheckout()(store))
+            await Observable.from(actionCreator.loadCurrentCheckout()(store))
                 .toPromise();
 
             expect(checkoutRequestSender.loadCheckout)
@@ -226,7 +251,7 @@ describe('CheckoutActionCreator', () => {
 
     describe('#loadDefaultCheckout()', () => {
         it('loads checkout by using existing id', async () => {
-            await from(actionCreator.loadDefaultCheckout()(store))
+            await Observable.from(actionCreator.loadDefaultCheckout()(store))
                 .toPromise();
 
             expect(checkoutRequestSender.loadCheckout)

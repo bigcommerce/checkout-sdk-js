@@ -1,31 +1,41 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
+
+import { getDefaultLogger, Logger } from '../common/log';
+
 import CheckoutService from './checkout-service';
 import createCheckoutService from './create-checkout-service';
-import { getDefaultLogger } from '../common/log';
+
+jest.mock('@bigcommerce/request-sender');
 
 describe('createCheckoutService()', () => {
     const nodeEnviroment = process.env.NODE_ENV;
-    let logger;
+
+    let logger: Logger;
 
     beforeEach(() => {
         logger = getDefaultLogger();
+
         jest.spyOn(logger, 'warn');
     });
 
     afterEach(() => {
         process.env.NODE_ENV = nodeEnviroment;
+
+        jest.clearAllMocks();
     });
 
     it('creates an instance of CheckoutService', () => {
-        const checkoutClient = jest.fn();
-        const checkoutService = createCheckoutService({ client: checkoutClient });
-
-        expect(checkoutService).toEqual(expect.any(CheckoutService));
-    });
-
-    it('creates an instance without optional params', () => {
         const checkoutService = createCheckoutService();
 
-        expect(checkoutService).toEqual(expect.any(CheckoutService));
+        expect(checkoutService).toBeInstanceOf(CheckoutService);
+    });
+
+    it('configures instance with host URL', () => {
+        const host = 'https://foobar.com';
+
+        createCheckoutService({ host });
+
+        expect(createRequestSender).toHaveBeenCalledWith({ host });
     });
 
     it('throws if production and protocol is not https', () => {
