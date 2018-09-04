@@ -167,7 +167,7 @@ You can submit an address that is partially complete. The address does not get v
 ```js
 const state = await service.createConsignments(consignments);
 
-console.log(state.checkout.getConsignments());
+console.log(state.data.getConsignments());
 ```
 
 **Parameters:**
@@ -270,7 +270,7 @@ Deletes a consignment
 ```js
 const state = await service.deleteConsignment('55c96cda6f04c');
 
-console.log(state.checkout.getConsignments());
+console.log(state.data.getConsignments());
 ```
 
 **Parameters:**
@@ -297,7 +297,7 @@ Once an instrument gets removed, it can no longer be retrieved using `CheckoutSt
 ```js
 const state = service.deleteInstrument('123');
 
-console.log(state.checkout.getInstruments());
+console.log(state.data.getInstruments());
 ```
 
 **Parameters:**
@@ -358,7 +358,7 @@ The method returns a new instance every time there is a change in the checkout s
 ```js
 const state = service.getState();
 
-console.log(state.checkout.getOrder());
+console.log(state.data.getOrder());
 console.log(state.errors.getSubmitOrderError());
 console.log(state.statuses.isSubmittingOrder());
 ```
@@ -467,7 +467,7 @@ Once the method has been executed successfully, you can call `CheckoutStoreSelec
 ```js
 const state = service.loadBillingAddressFields();
 
-console.log(state.checkout.getBillingAddressFields('US'));
+console.log(state.data.getBillingAddressFields('US'));
 ```
 
 **Parameters:**
@@ -493,7 +493,7 @@ Once you make a successful request, you will be able to retrieve the list of cou
 ```js
 const state = await service.loadBillingCountries();
 
-console.log(state.checkout.getBillingCountries());
+console.log(state.data.getBillingCountries());
 ```
 
 **Parameters:**
@@ -519,7 +519,7 @@ This method can only be called if there is an active checkout. Also, it can only
 ```js
 const state = await service.loadCheckout('0cfd6c06-57c3-4e29-8d7a-de55cc8a9052');
 
-console.log(state.checkout.getCheckout());
+console.log(state.data.getCheckout());
 ```
 
 **Parameters:**
@@ -546,7 +546,7 @@ Once the method has been called successfully, you can retrieve the list of payme
 ```js
 const state = service.loadInstruments();
 
-console.log(state.checkout.getInstruments());
+console.log(state.data.getInstruments());
 ```
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
@@ -566,7 +566,7 @@ The method can only retrieve an order if the order belongs to the current custom
 ```js
 const state = await service.loadOrder(123);
 
-console.log(state.checkout.getOrder());
+console.log(state.data.getOrder());
 ```
 
 **Parameters:**
@@ -595,7 +595,7 @@ Once the method is executed successfully, you can call `CheckoutStoreSelector#ge
 ```js
 const state = service.loadPaymentMethods();
 
-console.log(state.checkout.getPaymentMethods());
+console.log(state.data.getPaymentMethods());
 ```
 
 **Parameters:**
@@ -621,7 +621,7 @@ Once the method has been executed successfully, you can call `CheckoutStoreSelec
 ```js
 const state = service.loadShippingAddressFields();
 
-console.log(state.checkout.getShippingAddressFields('US'));
+console.log(state.data.getShippingAddressFields('US'));
 ```
 
 **Parameters:**
@@ -647,7 +647,7 @@ The list is determined based on the shipping zones configured by a merchant. Onc
 ```js
 const state = await service.loadShippingCountries();
 
-console.log(state.checkout.getShippingCountries());
+console.log(state.data.getShippingCountries());
 ```
 
 **Parameters:**
@@ -673,7 +673,7 @@ Available shipping options can only be determined once a customer provides their
 ```js
 const state = await service.loadShippingOptions();
 
-console.log(state.checkout.getShippingOptions());
+console.log(state.data.getShippingOptions());
 ```
 
 **Parameters:**
@@ -764,7 +764,7 @@ If a shipping option has an additional cost, the quote for the current order wil
 ```js
 const state = await service.selectConsignmentShippingOption(consignmentId, optionId);
 
-console.log(state.checkout.getConsignments());
+console.log(state.data.getConsignments());
 ```
 
 **Parameters:**
@@ -792,7 +792,7 @@ If a shipping option has an additional cost, the quote for the current order wil
 ```js
 const state = await service.selectShippingOption('address-id', 'shipping-option-id');
 
-console.log(state.checkout.getSelectedShippingOption());
+console.log(state.data.getSelectedShippingOption());
 ```
 
 **Parameters:**
@@ -822,7 +822,7 @@ const state = await service.signInCustomer({
     password: 'password123',
 });
 
-console.log(state.checkout.getCustomer());
+console.log(state.data.getCustomer());
 ```
 
 **Parameters:**
@@ -850,7 +850,7 @@ Once the customer is successfully signed out, the checkout state will be reset a
 const state = await service.signOutCustomer();
 
 // The returned object should not contain information about the previously signed-in customer.
-console.log(state.checkout.getCustomer());
+console.log(state.data.getCustomer());
 ```
 
 **Parameters:**
@@ -896,7 +896,7 @@ If the order is submitted successfully, you can retrieve the newly created order
 ```js
 const state = await service.submitOrder(payload);
 
-console.log(state.checkout.getOrder());
+console.log(state.data.getOrder());
 ```
 
 **Parameters:**
@@ -922,18 +922,18 @@ The method registers a callback function and executes it every time there is a c
 
 ```js
 service.subscribe(state => {
-    console.log(state.checkout.getCart());
+    console.log(state.data.getCart());
 });
 ```
 
 The method can be configured to notify subscribers only regarding relevant changes, by providing a filter function.
 
 ```js
-const filter = state => state.checkout.getCart();
+const filter = state => state.data.getCart();
 
 // Only trigger the subscriber when the cart changes.
 service.subscribe(state => {
-    console.log(state.checkout.getCart())
+    console.log(state.data.getCart())
 }, filter);
 ```
 
@@ -963,7 +963,7 @@ You can submit an address that is partially complete. The address does not get v
 ```js
 const state = await service.updateBillingAddress(address);
 
-console.log(state.checkout.getBillingAddress());
+console.log(state.data.getBillingAddress());
 ```
 
 **Parameters:**
@@ -988,7 +988,7 @@ Updates specific properties of the current checkout.
 ```js
 const state = await service.updateCheckout(checkout);
 
-console.log(state.checkout.getCheckout());
+console.log(state.data.getCheckout());
 ```
 
 **Parameters:**
@@ -1023,7 +1023,7 @@ You can submit an address that is partially complete. The address does not get v
 ```js
 const state = await service.updateConsignment(consignment);
 
-console.log(state.checkout.getConsignments());
+console.log(state.data.getConsignments());
 ```
 
 **Parameters:**
@@ -1054,7 +1054,7 @@ You can submit an address that is partially complete. The address does not get v
 ```js
 const state = await service.updateShippingAddress(address);
 
-console.log(state.checkout.getShippingAddress());
+console.log(state.data.getShippingAddress());
 ```
 
 **Parameters:**

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.2.0...v1.3.0) (2018-09-04)
+
+
+### Features
+
+* **checkout-button:** CHECKOUT-3011 Add `CheckoutButtonInitializer` for initializing third party checkout buttons ([#374](https://github.com/bigcommerce/checkout-sdk-js/issues/374)) ([4a27a6c](https://github.com/bigcommerce/checkout-sdk-js/commit/4a27a6c))
+* **shipping:** CHECKOUT-3461 Add ConsignmentSelector#getUnassignedItems method ([ba2dae8](https://github.com/bigcommerce/checkout-sdk-js/commit/ba2dae8))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.1.1...v1.2.0) (2018-09-03)
 

@@ -5,6 +5,7 @@
 
 ### Functions
 
+* [createCheckoutButtonInitializer](#createcheckoutbuttoninitializer)
 * [createCheckoutService](#createcheckoutservice)
 * [createLanguageService](#createlanguageservice)
 
@@ -29,6 +30,38 @@ ___
 
 ## Functions
 
+<a id="createcheckoutbuttoninitializer"></a>
+
+###  createCheckoutButtonInitializer
+
+▸ **createCheckoutButtonInitializer**(options?: *[CheckoutButtonInitializerOptions](interfaces/checkoutbuttoninitializeroptions.md)*): [CheckoutButtonInitializer](classes/checkoutbuttoninitializer.md)
+
+Creates an instance of `CheckoutButtonInitializer`.
+
+```js
+const initializer = createCheckoutButtonInitializer();
+
+initializer.initializeButton({
+    methodId: 'braintreepaypal',
+    braintreepaypal: {
+        container: '#checkoutButton',
+    },
+});
+```
+
+Please note that `CheckoutButtonInitializer` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
+*__alpha__*: 
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| `Optional` options | [CheckoutButtonInitializerOptions](interfaces/checkoutbuttoninitializeroptions.md) |  A set of construction options. |
+
+**Returns:** [CheckoutButtonInitializer](classes/checkoutbuttoninitializer.md)
+an instance of `CheckoutButtonInitializer`.
+
+___
 <a id="createcheckoutservice"></a>
 
 ###  createCheckoutService

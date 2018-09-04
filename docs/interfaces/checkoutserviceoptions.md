@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [host](checkoutserviceoptions.md#host)
 * [locale](checkoutserviceoptions.md#locale)
 * [shouldWarnMutation](checkoutserviceoptions.md#shouldwarnmutation)
 
@@ -17,6 +18,14 @@
 
 ## Properties
 
+<a id="host"></a>
+
+### `<Optional>` host
+
+**● host**: * `undefined` &#124; `string`
+*
+
+___
 <a id="locale"></a>
 
 ### `<Optional>` locale

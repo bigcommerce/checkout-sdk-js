@@ -139,6 +139,13 @@ declare interface BillingAddress extends Address {
     email?: string;
 }
 
+declare interface BraintreeError {
+    type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
+    code: string;
+    details: object;
+    message: string;
+}
+
 /**
  * A set of options that are required to initialize the Braintree payment
  * method. You need to provide the options if you want to support 3D Secure
@@ -146,6 +153,29 @@ declare interface BillingAddress extends Address {
  */
 declare interface BraintreePaymentInitializeOptions {
     threeDSecure?: BraintreeThreeDSecureOptions;
+}
+
+declare interface BraintreePaypalButtonInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted.
+     */
+    container: string;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: Pick<PaypalButtonStyleOptions, 'color' | 'shape' | 'size'>;
+    /**
+     * A callback that gets called if unable to authorize and tokenize payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onAuthorizeError?(error: BraintreeError | StandardError): void;
+    /**
+     * A callback that gets called if unable to submit payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onPaymentError?(error: BraintreeError | StandardError): void;
 }
 
 /**
@@ -259,6 +289,135 @@ declare interface Checkout {
     payments?: CheckoutPayment[];
 }
 
+declare class CheckoutButtonErrorSelector {
+    private _checkoutButton;
+    getInitializeButtonError(methodId?: string): Error | undefined;
+    getDeinitializeButtonError(methodId?: string): Error | undefined;
+}
+
+declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
+    /**
+     * The options that are required to facilitate Braintree PayPal. They can be
+     * omitted unless you need to support Braintree PayPal.
+     */
+    braintreepaypal?: BraintreePaypalButtonInitializeOptions;
+    /**
+     * The options that are required to facilitate Braintree Credit. They can be
+     * omitted unless you need to support Braintree Credit.
+     */
+    braintreepaypalcredit?: BraintreePaypalButtonInitializeOptions;
+}
+
+declare class CheckoutButtonInitializer {
+    private _store;
+    private _buttonStrategyActionCreator;
+    private _state;
+    /**
+     * Returns a snapshot of the current state.
+     *
+     * The method returns a new instance every time there is a change in the
+     * state. You can query the state by calling any of its getter methods.
+     *
+     * ```js
+     * const state = service.getState();
+     *
+     * console.log(state.errors.getInitializeButtonError());
+     * console.log(state.statuses.isInitializingButton());
+     * ```
+     *
+     * @returns The current customer's checkout state
+     */
+    getState(): CheckoutButtonSelectors;
+    /**
+     * Subscribes to any changes to the current state.
+     *
+     * The method registers a callback function and executes it every time there
+     * is a change in the current state.
+     *
+     * ```js
+     * service.subscribe(state => {
+     *     console.log(state.statuses.isInitializingButton());
+     * });
+     * ```
+     *
+     * The method can be configured to notify subscribers only regarding
+     * relevant changes, by providing a filter function.
+     *
+     * ```js
+     * const filter = state => state.errors.getInitializeButtonError();
+     *
+     * // Only trigger the subscriber when the cart changes.
+     * service.subscribe(state => {
+     *     console.log(state.errors.getInitializeButtonError())
+     * }, filter);
+     * ```
+     *
+     * @param subscriber - The function to subscribe to state changes.
+     * @param filters - One or more functions to filter out irrelevant state
+     * changes. If more than one function is provided, the subscriber will only
+     * be triggered if all conditions are met.
+     * @returns A function, if called, will unsubscribe the subscriber.
+     */
+    subscribe(subscriber: (state: CheckoutButtonSelectors) => void, ...filters: Array<(state: CheckoutButtonSelectors) => any>): () => void;
+    /**
+     * Initializes the checkout button of a payment method.
+     *
+     * When the checkout button is initialized, it will be inserted into the DOM,
+     * ready to be interacted with by the customer.
+     *
+     * ```js
+     * initializer.initializeButton({
+     *     methodId: 'braintreepaypal',
+     *     braintreepaypal: {
+     *         container: '#checkoutButton',
+     *     },
+     * });
+     * ```
+     *
+     * @param options - Options for initializing the checkout button.
+     * @returns A promise that resolves to the current state.
+     */
+    initializeButton(options: CheckoutButtonInitializeOptions): Promise<CheckoutButtonSelectors>;
+    /**
+     * De-initializes the checkout button by performing any necessary clean-ups.
+     *
+     * ```js
+     * await service.deinitializeButton({
+     *     methodId: 'braintreepaypal',
+     * });
+     * ```
+     *
+     * @param options - Options for deinitializing the checkout button.
+     * @returns A promise that resolves to the current state.
+     */
+    deinitializeButton(options: CheckoutButtonOptions): Promise<CheckoutButtonSelectors>;
+}
+
+declare interface CheckoutButtonInitializerOptions {
+    host?: string;
+}
+
+/**
+ * The set of options for configuring the checkout button.
+ */
+declare interface CheckoutButtonOptions extends RequestOptions {
+    /**
+     * The identifier of the payment method.
+     */
+    methodId: string;
+}
+
+declare interface CheckoutButtonSelectors {
+    errors: CheckoutButtonErrorSelector;
+    statuses: CheckoutButtonStatusSelector;
+}
+
+declare class CheckoutButtonStatusSelector {
+    private _checkoutButton;
+    isInitializingButton(methodId?: string): boolean;
+    isDeinitializingButton(methodId?: string): boolean;
+}
+
 declare interface CheckoutPayment {
     detail: {
         step: string;
@@ -313,7 +472,7 @@ declare class CheckoutService {
      * ```js
      * const state = service.getState();
      *
-     * console.log(state.checkout.getOrder());
+     * console.log(state.data.getOrder());
      * console.log(state.errors.getSubmitOrderError());
      * console.log(state.statuses.isSubmittingOrder());
      * ```
@@ -336,7 +495,7 @@ declare class CheckoutService {
      *
      * ```js
      * service.subscribe(state => {
-     *     console.log(state.checkout.getCart());
+     *     console.log(state.data.getCart());
      * });
      * ```
      *
@@ -344,11 +503,11 @@ declare class CheckoutService {
      * relevant changes, by providing a filter function.
      *
      * ```js
-     * const filter = state => state.checkout.getCart();
+     * const filter = state => state.data.getCart();
      *
      * // Only trigger the subscriber when the cart changes.
      * service.subscribe(state => {
-     *     console.log(state.checkout.getCart())
+     *     console.log(state.data.getCart())
      * }, filter);
      * ```
      *
@@ -370,7 +529,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.loadCheckout('0cfd6c06-57c3-4e29-8d7a-de55cc8a9052');
      *
-     * console.log(state.checkout.getCheckout());
+     * console.log(state.data.getCheckout());
      * ```
      *
      * @param id - The identifier of the checkout to load, or the default checkout if not provided.
@@ -384,7 +543,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.updateCheckout(checkout);
      *
-     * console.log(state.checkout.getCheckout());
+     * console.log(state.data.getCheckout());
      * ```
      *
      * @param payload - The checkout properties to be updated.
@@ -402,7 +561,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.loadOrder(123);
      *
-     * console.log(state.checkout.getOrder());
+     * console.log(state.data.getOrder());
      * ```
      *
      * @param orderId - The identifier of the order to load.
@@ -444,7 +603,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.submitOrder(payload);
      *
-     * console.log(state.checkout.getOrder());
+     * console.log(state.data.getOrder());
      * ```
      *
      * @param payload - The request payload to submit for the current order.
@@ -499,7 +658,7 @@ declare class CheckoutService {
      * ```js
      * const state = service.loadPaymentMethods();
      *
-     * console.log(state.checkout.getPaymentMethods());
+     * console.log(state.data.getPaymentMethods());
      * ```
      *
      * @param options - Options for loading the payment methods that are
@@ -555,7 +714,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.loadBillingCountries();
      *
-     * console.log(state.checkout.getBillingCountries());
+     * console.log(state.data.getBillingCountries());
      * ```
      *
      * @param options - Options for loading the available billing countries.
@@ -573,7 +732,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.loadShippingCountries();
      *
-     * console.log(state.checkout.getShippingCountries());
+     * console.log(state.data.getShippingCountries());
      * ```
      *
      * @param options - Options for loading the available shipping countries.
@@ -591,7 +750,7 @@ declare class CheckoutService {
      * ```js
      * const state = service.loadBillingAddressFields();
      *
-     * console.log(state.checkout.getBillingAddressFields('US'));
+     * console.log(state.data.getBillingAddressFields('US'));
      * ```
      *
      * @param options - Options for loading the billing address form fields.
@@ -609,7 +768,7 @@ declare class CheckoutService {
      * ```js
      * const state = service.loadShippingAddressFields();
      *
-     * console.log(state.checkout.getShippingAddressFields('US'));
+     * console.log(state.data.getShippingAddressFields('US'));
      * ```
      *
      * @param options - Options for loading the shipping address form fields.
@@ -679,7 +838,7 @@ declare class CheckoutService {
      *     password: 'password123',
      * });
      *
-     * console.log(state.checkout.getCustomer());
+     * console.log(state.data.getCustomer());
      * ```
      *
      * @param credentials - The credentials to be used for signing in the customer.
@@ -697,7 +856,7 @@ declare class CheckoutService {
      * const state = await service.signOutCustomer();
      *
      * // The returned object should not contain information about the previously signed-in customer.
-     * console.log(state.checkout.getCustomer());
+     * console.log(state.data.getCustomer());
      * ```
      *
      * @param options - Options for signing out the customer.
@@ -715,7 +874,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.loadShippingOptions();
      *
-     * console.log(state.checkout.getShippingOptions());
+     * console.log(state.data.getShippingOptions());
      * ```
      *
      * @param options - Options for loading the available shipping options.
@@ -769,7 +928,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.selectShippingOption('address-id', 'shipping-option-id');
      *
-     * console.log(state.checkout.getSelectedShippingOption());
+     * console.log(state.data.getSelectedShippingOption());
      * ```
      *
      * @param shippingOptionId - The identifier of the shipping option to
@@ -796,7 +955,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.updateShippingAddress(address);
      *
-     * console.log(state.checkout.getShippingAddress());
+     * console.log(state.data.getShippingAddress());
      * ```
      *
      * @param address - The address to be used for shipping.
@@ -826,7 +985,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.createConsignments(consignments);
      *
-     * console.log(state.checkout.getConsignments());
+     * console.log(state.data.getConsignments());
      * ```
      *
      * @param consignments - The list of consignments to be created.
@@ -840,7 +999,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.deleteConsignment('55c96cda6f04c');
      *
-     * console.log(state.checkout.getConsignments());
+     * console.log(state.data.getConsignments());
      * ```
      *
      * @param consignmentId - The ID of the consignment to be deleted
@@ -874,7 +1033,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.updateConsignment(consignment);
      *
-     * console.log(state.checkout.getConsignments());
+     * console.log(state.data.getConsignments());
      * ```
      *
      * @param consignment - The consignment data that will be used.
@@ -906,7 +1065,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.selectConsignmentShippingOption(consignmentId, optionId);
      *
-     * console.log(state.checkout.getConsignments());
+     * console.log(state.data.getConsignments());
      * ```
      *
      * @param consignmentId - The identified of the consignment to be updated.
@@ -928,7 +1087,7 @@ declare class CheckoutService {
      * ```js
      * const state = await service.updateBillingAddress(address);
      *
-     * console.log(state.checkout.getBillingAddress());
+     * console.log(state.data.getBillingAddress());
      * ```
      *
      * @param address - The address to be used for billing.
@@ -1008,7 +1167,7 @@ declare class CheckoutService {
      * ```js
      * const state = service.loadInstruments();
      *
-     * console.log(state.checkout.getInstruments());
+     * console.log(state.data.getInstruments());
      * ```
      *
      * @returns A promise that resolves to the current state.
@@ -1023,7 +1182,7 @@ declare class CheckoutService {
      * ```js
      * const state = service.deleteInstrument('123');
      *
-     * console.log(state.checkout.getInstruments());
+     * console.log(state.data.getInstruments());
      * ```
      *
      * @param instrumentId - The identifier of the payment instrument to delete.
@@ -1042,6 +1201,7 @@ declare class CheckoutService {
 
 declare interface CheckoutServiceOptions {
     locale?: string;
+    host?: string;
     shouldWarnMutation?: boolean;
 }
 
@@ -1808,6 +1968,30 @@ declare interface Coupon {
 }
 
 /**
+ * Creates an instance of `CheckoutButtonInitializer`.
+ *
+ * ```js
+ * const initializer = createCheckoutButtonInitializer();
+ *
+ * initializer.initializeButton({
+ *     methodId: 'braintreepaypal',
+ *     braintreepaypal: {
+ *         container: '#checkoutButton',
+ *     },
+ * });
+ * ```
+ *
+ * Please note that `CheckoutButtonInitializer` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @alpha
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutButtonInitializer`.
+ */
+export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
+
+/**
  * Creates an instance of `CheckoutService`.
  *
  * ```js
@@ -2325,6 +2509,13 @@ declare interface PaymentRequestOptions extends RequestOptions {
 declare interface PaymentSettings {
     bigpayBaseUrl: string;
     clientSidePaymentProviders: string[];
+}
+
+declare interface PaypalButtonStyleOptions {
+    size?: 'small' | 'medium' | 'large' | 'responsive';
+    color?: 'gold' | 'blue' | 'silver' | 'black';
+    label?: 'credit' | 'checkout';
+    shape?: 'pill' | 'rect';
 }
 
 declare interface PhysicalItem extends LineItem {
