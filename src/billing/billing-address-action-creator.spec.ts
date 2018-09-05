@@ -5,9 +5,10 @@ import { Observable } from 'rxjs';
 import { AddressRequestBody } from '../address';
 import { createCheckoutClient, createCheckoutStore, Checkout, CheckoutClient, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
-import { MissingDataError } from '../common/error/errors';
+import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
+import { BillingAddressRequestBody } from './billing-address';
 import BillingAddressActionCreator from './billing-address-action-creator';
 import { BillingAddressActionType, UpdateBillingAddressAction } from './billing-address-actions';
 import { getBillingAddress } from './billing-addresses.mock';
@@ -20,7 +21,7 @@ describe('BillingAddressActionCreator', () => {
     let response: Response<Checkout>;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
-    let actions: UpdateBillingAddressAction[] | UpdateBillingAddressAction;
+    let actions: UpdateBillingAddressAction[] | UpdateBillingAddressAction | undefined;
 
     beforeEach(() => {
         response = getResponse(getCheckout());
@@ -35,7 +36,9 @@ describe('BillingAddressActionCreator', () => {
         address = getBillingAddress();
     });
 
-    describe('#updateAddress()', () => {
+    describe('#continueAsGuest()', () => {
+        const guestCredentials = { email: 'x' };
+
         describe('when store has no checkout data', () => {
             beforeEach(() => {
                 store = createCheckoutStore({});
@@ -43,7 +46,7 @@ describe('BillingAddressActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
+                    actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
                         .toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
@@ -53,12 +56,167 @@ describe('BillingAddressActionCreator', () => {
             });
         });
 
+        describe('when store has a signed-in shopper', () => {
+            beforeEach(() => {
+                store = createCheckoutStore(state);
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                        .toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(StandardError);
+                    expect(actions).toEqual(undefined);
+                    expect(checkoutClient.updateBillingAddress).not.toHaveBeenCalled();
+                }
+            });
+        });
+
         describe('when store has checkout data but no billing address data', () => {
             beforeEach(() => {
                 store = createCheckoutStore({
-                    ...state,
-                    billingAddress: undefined,
+                    ...omit(state, 'billingAddress'),
+                    customer: {
+                        ...state.customer,
+                        data: {
+                            // tslint:disable-next-line:no-non-null-assertion
+                            ...state.customer.data!,
+                            isGuest: true,
+                        },
+                    },
                 });
+            });
+
+            it('emits actions if able to continue as guest', async () => {
+                actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    .toArray()
+                    .toPromise();
+
+                expect(actions).toEqual([
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionType.UpdateBillingAddressSucceeded, payload: response.body },
+                ]);
+            });
+
+            it('emits error actions if unable to continue as guest', async () => {
+                jest.spyOn(checkoutClient, 'createBillingAddress')
+                    .mockReturnValue(Promise.reject(getErrorResponse()));
+
+                const errorHandler = jest.fn();
+
+                actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    .catch((action: UpdateBillingAddressAction) => {
+                        errorHandler();
+                        return Observable.of(action);
+                    })
+                    .toArray()
+                    .toPromise();
+
+                expect(errorHandler).toHaveBeenCalled();
+                expect(actions).toEqual([
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionType.UpdateBillingAddressFailed, payload: errorResponse, error: true },
+                ]);
+            });
+
+            it('sends request to create billing address', async () => {
+                await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(getCheckout().id, guestCredentials, {});
+            });
+        });
+
+        describe('when store has checkout and billing address data from quote', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({
+                    ...state,
+                    customer: {
+                        ...state.customer,
+                        data: {
+                            // tslint:disable-next-line:no-non-null-assertion
+                            ...state.customer.data!,
+                            isGuest: true,
+                        },
+                    },
+                });
+            });
+
+            it('emits actions if able to update billing address', async () => {
+                actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    .toArray()
+                    .toPromise();
+
+                expect(actions).toEqual([
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionType.UpdateBillingAddressSucceeded, payload: response.body },
+                ]);
+            });
+
+            it('emits error actions if unable to update billing address', async () => {
+                jest.spyOn(checkoutClient, 'updateBillingAddress')
+                    .mockReturnValue(Promise.reject(getErrorResponse()));
+
+                const errorHandler = jest.fn();
+
+                actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    .catch((action: UpdateBillingAddressAction) => {
+                        errorHandler();
+                        return Observable.of(action);
+                    })
+                    .toArray()
+                    .toPromise();
+
+                expect(errorHandler).toHaveBeenCalled();
+                expect(actions).toEqual([
+                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
+                    { type: BillingAddressActionType.UpdateBillingAddressFailed, payload: errorResponse, error: true },
+                ]);
+            });
+
+            it('sends request to update billing address, using billing address email if not provided', async () => {
+                await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials, {})(store))
+                    .toPromise();
+
+                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                    getCheckout().id,
+                    {
+                        ...omit(address, 'country'),
+                        ...guestCredentials,
+                        id: '55c96cda6f04c',
+                    },
+                    {}
+                );
+            });
+        });
+    });
+
+    describe('#updateAddress()', () => {
+        describe('when store has no checkout data', () => {
+            beforeEach(() => {
+                actions = undefined;
+                store = createCheckoutStore(omit(state, 'checkout'));
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    actions = await Observable.from(
+                            billingAddressActionCreator.updateAddress(address)(createCheckoutStore({}))
+                        ).toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(MissingDataError);
+                    expect(actions).toEqual(undefined);
+                    expect(checkoutClient.updateBillingAddress).not.toHaveBeenCalled();
+                    expect(checkoutClient.createBillingAddress).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        describe('when store has checkout data but no billing address data', () => {
+            beforeEach(() => {
+                store = createCheckoutStore(omit(state, 'billingAddress'));
+                address = omit(address, 'id') as BillingAddressRequestBody;
             });
 
             it('emits actions if able to update billing address', async () => {
@@ -208,7 +366,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(
+                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
                         ...address,
@@ -223,7 +381,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(
+                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
                         ...address,

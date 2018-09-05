@@ -2,7 +2,7 @@ import { Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 
 import { AddressRequestBody } from '../address';
-import { BillingAddressActionCreator } from '../billing';
+import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
 import { ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
@@ -550,7 +550,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     continueAsGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._billingAddressActionCreator.updateAddress(credentials, options);
+        const action = this._billingAddressActionCreator.continueAsGuest(credentials, options);
 
         return this._dispatch(action);
     }

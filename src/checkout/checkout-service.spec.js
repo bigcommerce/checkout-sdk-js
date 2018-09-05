@@ -603,14 +603,14 @@ describe('CheckoutService', () => {
         it('dispatches action to continue as guest', async () => {
             const action = Observable.of(createAction('SIGN_IN_GUEST'));
 
-            jest.spyOn(billingAddressActionCreator, 'updateAddress')
+            jest.spyOn(billingAddressActionCreator, 'continueAsGuest')
                 .mockReturnValue(action);
 
             jest.spyOn(store, 'dispatch');
 
             await checkoutService.continueAsGuest({ email: 'foo@bar.com' });
 
-            expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith({ email: 'foo@bar.com' }, undefined);
+            expect(billingAddressActionCreator.continueAsGuest).toHaveBeenCalledWith({ email: 'foo@bar.com' }, undefined);
             expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });
