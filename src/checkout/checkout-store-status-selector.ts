@@ -287,7 +287,7 @@ export default class CheckoutStoreStatusSelector {
      * @returns True if continuing as guest, otherwise false.
      */
     isContinuingAsGuest(): boolean {
-        return this._billingAddress.isUpdating();
+        return this._billingAddress.isContinuingAsGuest();
     }
 
     /**

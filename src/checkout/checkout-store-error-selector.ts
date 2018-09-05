@@ -257,7 +257,7 @@ export default class CheckoutStoreErrorSelector {
      * @returns The error object if unable to continue, otherwise undefined.
      */
     getContinueAsGuestError(): Error | undefined {
-        return this._billingAddress.getUpdateError();
+        return this._billingAddress.getContinueAsGuestError();
     }
 
     /**

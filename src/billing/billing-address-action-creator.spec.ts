@@ -10,7 +10,7 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 
 import { BillingAddressRequestBody } from './billing-address';
 import BillingAddressActionCreator from './billing-address-action-creator';
-import { BillingAddressActionType, UpdateBillingAddressAction } from './billing-address-actions';
+import { BillingAddressAction, BillingAddressActionType, UpdateBillingAddressAction } from './billing-address-actions';
 import { getBillingAddress } from './billing-addresses.mock';
 
 describe('BillingAddressActionCreator', () => {
@@ -21,7 +21,7 @@ describe('BillingAddressActionCreator', () => {
     let response: Response<Checkout>;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
-    let actions: UpdateBillingAddressAction[] | UpdateBillingAddressAction | undefined;
+    let actions: BillingAddressAction[] | BillingAddressAction | undefined;
 
     beforeEach(() => {
         response = getResponse(getCheckout());
@@ -94,8 +94,8 @@ describe('BillingAddressActionCreator', () => {
                     .toPromise();
 
                 expect(actions).toEqual([
-                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
-                    { type: BillingAddressActionType.UpdateBillingAddressSucceeded, payload: response.body },
+                    { type: BillingAddressActionType.ContinueAsGuestRequested },
+                    { type: BillingAddressActionType.ContinueAsGuestSucceeded, payload: response.body },
                 ]);
             });
 
@@ -115,8 +115,8 @@ describe('BillingAddressActionCreator', () => {
 
                 expect(errorHandler).toHaveBeenCalled();
                 expect(actions).toEqual([
-                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
-                    { type: BillingAddressActionType.UpdateBillingAddressFailed, payload: errorResponse, error: true },
+                    { type: BillingAddressActionType.ContinueAsGuestRequested },
+                    { type: BillingAddressActionType.ContinueAsGuestFailed, payload: errorResponse, error: true },
                 ]);
             });
 
@@ -149,8 +149,8 @@ describe('BillingAddressActionCreator', () => {
                     .toPromise();
 
                 expect(actions).toEqual([
-                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
-                    { type: BillingAddressActionType.UpdateBillingAddressSucceeded, payload: response.body },
+                    { type: BillingAddressActionType.ContinueAsGuestRequested },
+                    { type: BillingAddressActionType.ContinueAsGuestSucceeded, payload: response.body },
                 ]);
             });
 
@@ -161,7 +161,7 @@ describe('BillingAddressActionCreator', () => {
                 const errorHandler = jest.fn();
 
                 actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
-                    .catch((action: UpdateBillingAddressAction) => {
+                    .catch((action: BillingAddressAction) => {
                         errorHandler();
                         return Observable.of(action);
                     })
@@ -170,8 +170,8 @@ describe('BillingAddressActionCreator', () => {
 
                 expect(errorHandler).toHaveBeenCalled();
                 expect(actions).toEqual([
-                    { type: BillingAddressActionType.UpdateBillingAddressRequested },
-                    { type: BillingAddressActionType.UpdateBillingAddressFailed, payload: errorResponse, error: true },
+                    { type: BillingAddressActionType.ContinueAsGuestRequested },
+                    { type: BillingAddressActionType.ContinueAsGuestFailed, payload: errorResponse, error: true },
                 ]);
             });
 

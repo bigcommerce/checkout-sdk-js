@@ -9,9 +9,11 @@ export default interface BillingAddressState {
 export interface BillingAddressErrorsState {
     loadError?: Error;
     updateError?: Error;
+    continueAsGuestError?: Error;
 }
 
 export interface BillingAddressStatusesState {
     isLoading?: boolean;
     isUpdating?: boolean;
+    isContinuingAsGuest?: boolean;
 }

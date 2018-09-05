@@ -289,17 +289,17 @@ describe('CheckoutStoreErrorSelector', () => {
 
     describe('#getContinueAsGuestError()', () => {
         it('returns error if there is an error', () => {
-            jest.spyOn(selectors.billingAddress, 'getUpdateError').mockReturnValue(errorResponse);
+            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(errorResponse);
 
             expect(errors.getContinueAsGuestError()).toEqual(errorResponse);
-            expect(selectors.billingAddress.getUpdateError).toHaveBeenCalled();
+            expect(selectors.billingAddress.getContinueAsGuestError).toHaveBeenCalled();
         });
 
         it('returns undefined if there is NO errors', () => {
-            jest.spyOn(selectors.billingAddress, 'getUpdateError').mockReturnValue();
+            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue();
 
             expect(errors.getContinueAsGuestError()).toEqual(undefined);
-            expect(selectors.billingAddress.getUpdateError).toHaveBeenCalled();
+            expect(selectors.billingAddress.getContinueAsGuestError).toHaveBeenCalled();
         });
     });
 

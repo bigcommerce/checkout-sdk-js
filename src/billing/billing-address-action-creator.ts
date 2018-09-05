@@ -9,7 +9,7 @@ import { RequestOptions } from '../common/http-request';
 import { GuestCredentials } from '../customer';
 
 import { BillingAddressUpdateRequestBody } from './billing-address';
-import { BillingAddressActionType, UpdateBillingAddressAction } from './billing-address-actions';
+import { BillingAddressActionType, ContinueAsGuestAction, UpdateBillingAddressAction } from './billing-address-actions';
 
 export default class BillingAddressActionCreator {
     constructor(
@@ -19,8 +19,8 @@ export default class BillingAddressActionCreator {
     continueAsGuest(
         credentials: GuestCredentials,
         options?: RequestOptions
-    ): ThunkAction<UpdateBillingAddressAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<UpdateBillingAddressAction>) => {
+    ): ThunkAction<ContinueAsGuestAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<ContinueAsGuestAction>) => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
 
@@ -49,15 +49,15 @@ export default class BillingAddressActionCreator {
                 };
             }
 
-            observer.next(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
+            observer.next(createAction(BillingAddressActionType.ContinueAsGuestRequested));
 
             this._createOrUpdateBillingAddress(checkout.id, billingAddressRequestBody, options)
                 .then(({ body }) => {
-                    observer.next(createAction(BillingAddressActionType.UpdateBillingAddressSucceeded, body));
+                    observer.next(createAction(BillingAddressActionType.ContinueAsGuestSucceeded, body));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(BillingAddressActionType.UpdateBillingAddressFailed, response));
+                    observer.error(createErrorAction(BillingAddressActionType.ContinueAsGuestFailed, response));
                 });
         });
     }
