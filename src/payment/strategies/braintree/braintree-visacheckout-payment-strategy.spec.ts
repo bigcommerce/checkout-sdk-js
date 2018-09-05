@@ -50,7 +50,8 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
-        braintreeVisaCheckoutPaymentProcessor = createBraintreeVisaCheckoutPaymentProcessor(scriptLoader);
+        const requestSender = createRequestSender();
+        braintreeVisaCheckoutPaymentProcessor = createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender);
         braintreeVisaCheckoutPaymentProcessor.initialize = jest.fn(() => Promise.resolve());
         braintreeVisaCheckoutPaymentProcessor.handleSuccess = jest.fn(() => Promise.resolve());
 
@@ -68,9 +69,9 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(scriptLoader);
         jest.spyOn(visaCheckoutScriptLoader, 'load').mockImplementation(() => Promise.resolve(visaCheckoutSDK));
 
-        const client = createCheckoutClient();
+        const client = createCheckoutClient(requestSender);
         const paymentClient = createPaymentClient(store);
-        const registry = createPaymentStrategyRegistry(store, client, paymentClient);
+        const registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         const configRequestSender = new ConfigRequestSender(createRequestSender());
         const configActionCreator = new ConfigActionCreator(configRequestSender);

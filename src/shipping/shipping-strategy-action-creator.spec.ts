@@ -1,3 +1,4 @@
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../checkout';
@@ -13,13 +14,15 @@ import { ShippingStrategy } from './strategies';
 
 describe('ShippingStrategyActionCreator', () => {
     let registry: Registry<ShippingStrategy>;
+    let requestSender: RequestSender;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
-        registry = createShippingStrategyRegistry(store);
+        requestSender = createRequestSender();
+        registry = createShippingStrategyRegistry(store, requestSender);
     });
 
     describe('#initialize()', () => {

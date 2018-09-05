@@ -84,7 +84,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
     beforeEach(() => {
         container = document.createElement('div');
-        client = createCheckoutClient();
+        client = createCheckoutClient(createRequestSender());
         state = getCheckoutStoreState();
         store = createCheckoutStore({
             ...state,

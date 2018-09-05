@@ -1,5 +1,5 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator } from '../billing';
@@ -43,12 +43,12 @@ import { WepayRiskClient } from './strategies/wepay';
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
     client: CheckoutClient,
-    paymentClient: any
+    paymentClient: any,
+    requestSender: RequestSender
 ) {
     const registry = new PaymentStrategyRegistry(store, { defaultToken: 'creditcard' });
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
-    const requestSender = createRequestSender();
 
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
@@ -59,7 +59,7 @@ export default function createPaymentStrategyRegistry(
     );
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-        new RemoteCheckoutRequestSender(createRequestSender())
+        new RemoteCheckoutRequestSender(requestSender)
     );
 
     registry.register('afterpay', () =>
@@ -215,7 +215,7 @@ export default function createPaymentStrategyRegistry(
             new PaymentStrategyActionCreator(registry, orderActionCreator),
             paymentActionCreator,
             orderActionCreator,
-            createBraintreeVisaCheckoutPaymentProcessor(scriptLoader),
+            createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
             new VisaCheckoutScriptLoader(scriptLoader)
         )
     );

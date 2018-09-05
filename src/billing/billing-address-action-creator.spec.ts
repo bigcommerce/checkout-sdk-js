@@ -1,4 +1,4 @@
-import { Response } from '@bigcommerce/request-sender';
+import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
@@ -26,7 +26,7 @@ describe('BillingAddressActionCreator', () => {
         response = getResponse(getCheckout());
         errorResponse = getErrorResponse();
         state = getCheckoutStoreState();
-        checkoutClient = createCheckoutClient();
+        checkoutClient = createCheckoutClient(createRequestSender());
 
         jest.spyOn(checkoutClient, 'updateBillingAddress').mockImplementation(() => Promise.resolve(response));
         jest.spyOn(checkoutClient, 'createBillingAddress').mockImplementation(() => Promise.resolve(response));

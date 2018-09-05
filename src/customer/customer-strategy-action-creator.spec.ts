@@ -27,7 +27,7 @@ describe('CustomerStrategyActionCreator', () => {
         );
 
         store = createCheckoutStore();
-        registry = createCustomerStrategyRegistry(store);
+        registry = createCustomerStrategyRegistry(store, createRequestSender());
         strategy = new DefaultCustomerStrategy(
             store,
             new CustomerActionCreator(

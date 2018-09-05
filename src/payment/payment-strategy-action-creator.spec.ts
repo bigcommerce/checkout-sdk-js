@@ -1,6 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
@@ -26,6 +26,7 @@ describe('PaymentStrategyActionCreator', () => {
     let client: CheckoutClient;
     let orderActionCreator: OrderActionCreator;
     let paymentClient: any;
+    let requestSender: RequestSender;
     let registry: PaymentStrategyRegistry;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
@@ -35,9 +36,10 @@ describe('PaymentStrategyActionCreator', () => {
     beforeEach(() => {
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
-        client = createCheckoutClient();
+        requestSender = createRequestSender();
+        client = createCheckoutClient(requestSender);
         paymentClient = createPaymentClient();
-        registry = createPaymentStrategyRegistry(store, client, paymentClient);
+        registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
         orderActionCreator = new OrderActionCreator(
             client,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
@@ -277,7 +279,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 paymentMethods: { ...state.paymentMethods, data: [] },
             });
-            registry = createPaymentStrategyRegistry(store, client, paymentClient);
+            registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
@@ -298,7 +300,7 @@ describe('PaymentStrategyActionCreator', () => {
                 }),
             });
 
-            registry = createPaymentStrategyRegistry(store, client, paymentClient);
+            registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
 
             jest.spyOn(registry, 'get')
                 .mockReturnValue(noPaymentDataStrategy);
@@ -401,7 +403,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 order: getOrderState(),
             });
-            registry = createPaymentStrategyRegistry(store, client, paymentClient);
+            registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 

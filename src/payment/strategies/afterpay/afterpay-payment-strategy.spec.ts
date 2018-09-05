@@ -49,7 +49,7 @@ describe('AfterpayPaymentStrategy', () => {
     };
 
     beforeEach(() => {
-        client = createCheckoutClient();
+        client = createCheckoutClient(createRequestSender());
         store = createCheckoutStore(getCheckoutStoreState());
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());

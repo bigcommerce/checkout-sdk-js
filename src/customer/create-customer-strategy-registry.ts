@@ -1,5 +1,5 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { RequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
@@ -22,9 +22,11 @@ import {
     DefaultCustomerStrategy,
 } from './strategies';
 
-export default function createCustomerStrategyRegistry(store: CheckoutStore): Registry<CustomerStrategy> {
+export default function createCustomerStrategyRegistry(
+    store: CheckoutStore,
+    requestSender: RequestSender
+): Registry<CustomerStrategy> {
     const registry = new Registry<CustomerStrategy>();
-    const requestSender = createRequestSender();
     const checkoutActionCreator = new CheckoutActionCreator(
         new CheckoutRequestSender(requestSender),
         new ConfigActionCreator(new ConfigRequestSender(requestSender))
@@ -50,7 +52,7 @@ export default function createCustomerStrategyRegistry(store: CheckoutStore): Re
             paymentMethodActionCreator,
             new CustomerStrategyActionCreator(registry),
             remoteCheckoutActionCreator,
-            createBraintreeVisaCheckoutPaymentProcessor(getScriptLoader()),
+            createBraintreeVisaCheckoutPaymentProcessor(getScriptLoader(), requestSender),
             new VisaCheckoutScriptLoader(getScriptLoader())
         )
     );

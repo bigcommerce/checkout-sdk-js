@@ -1,7 +1,7 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
@@ -19,7 +19,8 @@ import WepayRiskClient from './wepay-risk-client';
 
 describe('WepayPaymentStrategy', () => {
     const testRiskToken = 'test-risk-token';
-    let scriptLoader;
+
+    let scriptLoader: ScriptLoader;
     let wepayRiskClient: WepayRiskClient;
     let client: CheckoutClient;
     let orderActionCreator: OrderActionCreator;
@@ -32,7 +33,7 @@ describe('WepayPaymentStrategy', () => {
     let submitPaymentAction: Observable<Action>;
 
     beforeEach(() => {
-        client = createCheckoutClient();
+        client = createCheckoutClient(createRequestSender());
         store = createCheckoutStore();
         scriptLoader = createScriptLoader();
         wepayRiskClient = new WepayRiskClient(scriptLoader);
