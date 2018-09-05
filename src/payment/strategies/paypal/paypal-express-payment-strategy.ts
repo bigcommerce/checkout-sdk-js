@@ -1,12 +1,13 @@
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
-import PaymentMethod from '../payment-method';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
-import * as paymentStatusTypes from '../payment-status-types';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import PaymentMethod from '../../payment-method';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import * as paymentStatusTypes from '../../payment-status-types';
+import PaymentStrategy from '../payment-strategy';
 
-import PaymentStrategy from './payment-strategy';
-import { PaypalScriptLoader, PaypalSDK } from './paypal';
+import PaypalScriptLoader from './paypal-script-loader';
+import { PaypalSDK } from './paypal-sdk';
 
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     private _paypalSdk?: PaypalSDK;
