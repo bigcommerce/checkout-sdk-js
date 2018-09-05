@@ -43,7 +43,7 @@ describe('KlarnaPaymentStrategy', () => {
     let strategy: KlarnaPaymentStrategy;
 
     beforeEach(() => {
-        client = createCheckoutClient();
+        client = createCheckoutClient(createRequestSender());
         store = createCheckoutStore({
             paymentMethods: getPaymentMethodsState(),
         });

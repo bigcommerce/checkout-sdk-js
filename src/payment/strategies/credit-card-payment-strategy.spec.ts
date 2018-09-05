@@ -33,7 +33,7 @@ describe('CreditCardPaymentStrategy', () => {
         submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(),
+            createCheckoutClient(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 

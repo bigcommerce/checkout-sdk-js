@@ -29,7 +29,7 @@ describe('OffsitePaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(),
+            createCheckoutClient(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentActionCreator = new PaymentActionCreator(

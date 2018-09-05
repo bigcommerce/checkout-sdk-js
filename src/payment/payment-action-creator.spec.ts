@@ -1,3 +1,4 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
 import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore, CheckoutValidator } from '../checkout';
@@ -21,7 +22,7 @@ describe('PaymentActionCreator', () => {
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreStateWithOrder());
-        client = createCheckoutClient();
+        client = createCheckoutClient(createRequestSender());
         paymentRequestSender = new PaymentRequestSender(createPaymentClient(store));
 
         jest.spyOn(client, 'loadOrder')

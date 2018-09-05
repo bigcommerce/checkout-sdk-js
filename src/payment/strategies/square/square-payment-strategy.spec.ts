@@ -57,7 +57,7 @@ describe('SquarePaymentStrategy', () => {
         });
         paymentMethod = getSquare();
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(),
+            createCheckoutClient(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentActionCreator = new PaymentActionCreator(

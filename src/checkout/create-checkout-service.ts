@@ -45,10 +45,10 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     }
 
     const { locale = '', shouldWarnMutation = true } = options || {};
-    const client = createCheckoutClient({ locale });
+    const requestSender = createRequestSender({ host: options && options.host });
+    const client = createCheckoutClient(requestSender, { locale });
     const store = createCheckoutStore({}, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
-    const requestSender = createRequestSender({ host: options && options.host });
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const orderActionCreator = new OrderActionCreator(client, new CheckoutValidator(checkoutRequestSender));
@@ -61,17 +61,17 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
         new CountryActionCreator(client),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
-        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store)),
+        new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, requestSender)),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         orderActionCreator,
         new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, client, paymentClient),
+            createPaymentStrategyRegistry(store, client, paymentClient, requestSender),
             orderActionCreator
         ),
         new ShippingCountryActionCreator(client),
-        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store))
+        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender))
     );
 }
 

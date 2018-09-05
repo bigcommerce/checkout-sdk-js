@@ -33,7 +33,7 @@ describe('SagePayPaymentStrategy', () => {
 
     beforeEach(() => {
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(),
+            createCheckoutClient(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 

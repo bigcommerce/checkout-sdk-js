@@ -1,4 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { createCheckoutClient, createCheckoutStore } from '../checkout';
 
@@ -24,9 +25,10 @@ describe('CreatePaymentStrategyRegistry', () => {
 
     beforeEach(() => {
         const store = createCheckoutStore();
-        const client = createCheckoutClient();
+        const requestSender = createRequestSender();
+        const client = createCheckoutClient(requestSender);
         const paymentClient = createPaymentClient();
-        registry = createPaymentStrategyRegistry(store, client, paymentClient);
+        registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
     });
 
     it('can create a payment strategy registry', () => {

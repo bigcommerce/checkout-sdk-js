@@ -1,4 +1,4 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
+import { RequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressRequestSender } from '../billing';
 import { CustomerRequestSender } from '../customer';
@@ -8,9 +8,10 @@ import { ShippingCountryRequestSender } from '../shipping';
 
 import CheckoutClient from './checkout-client';
 
-export default function createCheckoutClient(config: { locale?: string } = {}): CheckoutClient {
-    const requestSender = createRequestSender();
-
+export default function createCheckoutClient(
+    requestSender: RequestSender,
+    config: { locale?: string } = {}
+): CheckoutClient {
     const billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
     const countryRequestSender = new CountryRequestSender(requestSender, config);
     const customerRequestSender = new CustomerRequestSender(requestSender);
