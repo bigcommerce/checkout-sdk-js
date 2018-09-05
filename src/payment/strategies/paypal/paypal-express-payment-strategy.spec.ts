@@ -4,18 +4,19 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../checkout';
-import { getCheckoutPayment, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../checkout/checkouts.mock';
-import { getCustomer } from '../../customer/internal-customers.mock';
-import { FinalizeOrderAction, InternalOrder, OrderActionCreator, OrderActionType, OrderRequestBody, SubmitOrderAction } from '../../order';
-import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import { getOrderRequestBody, getSubmittedOrder } from '../../order/internal-orders.mock';
-import PaymentMethod from '../payment-method';
-import { getPaypalExpress } from '../payment-methods.mock';
-import * as paymentStatusTypes from '../payment-status-types';
+import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
+import { getCheckoutPayment, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
+import { getCustomer } from '../../../customer/internal-customers.mock';
+import { FinalizeOrderAction, InternalOrder, OrderActionCreator, OrderActionType, OrderRequestBody, SubmitOrderAction } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
+import PaymentMethod from '../../payment-method';
+import { getPaypalExpress } from '../../payment-methods.mock';
+import * as paymentStatusTypes from '../../payment-status-types';
 
-import { PaypalScriptLoader, PaypalSDK } from './paypal';
 import PaypalExpressPaymentStrategy from './paypal-express-payment-strategy';
+import PaypalScriptLoader from './paypal-script-loader';
+import { PaypalSDK } from './paypal-sdk';
 
 describe('PaypalExpressPaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;

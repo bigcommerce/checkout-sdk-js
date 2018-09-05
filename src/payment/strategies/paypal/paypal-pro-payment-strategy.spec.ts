@@ -1,16 +1,17 @@
+
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../checkout';
-import { getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
-import { OrderActionCreator, OrderActionType, SubmitOrderAction } from '../../order';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import PaymentActionCreator from '../payment-action-creator';
-import { PaymentActionType, SubmitPaymentAction } from '../payment-actions';
-import PaymentRequestSender from '../payment-request-sender';
+import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
+import { getCheckoutStoreState, getCheckoutWithPayments } from '../../../checkout/checkouts.mock';
+import { OrderActionCreator, OrderActionType, SubmitOrderAction } from '../../../order';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
+import PaymentRequestSender from '../../payment-request-sender';
 
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 

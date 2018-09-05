@@ -4,13 +4,12 @@ export { default as NoPaymentDataRequiredPaymentStrategy } from './no-payment-da
 export { default as OfflinePaymentStrategy } from './offline-payment-strategy';
 export { default as OffsitePaymentStrategy } from './offsite-payment-strategy';
 export { default as PaymentStrategy } from './payment-strategy';
-export { default as PaypalExpressPaymentStrategy } from './paypal-express-payment-strategy';
-export { default as PaypalProPaymentStrategy } from './paypal-pro-payment-strategy';
 export { default as SagePayPaymentStrategy } from './sage-pay-payment-strategy';
 
 export { AfterpayPaymentStrategy } from './afterpay';
 export { AmazonPayPaymentStrategy, AmazonPayPaymentInitializeOptions } from './amazon-pay';
 export { BraintreeCreditCardPaymentStrategy, BraintreePaymentInitializeOptions, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy, BraintreeVisaCheckoutPaymentInitializeOptions } from './braintree';
 export { KlarnaPaymentStrategy, KlarnaPaymentInitializeOptions } from './klarna';
+export { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './paypal';
 export { SquarePaymentStrategy, SquarePaymentInitializeOptions } from './square';
 export { WepayPaymentStrategy } from './wepay';

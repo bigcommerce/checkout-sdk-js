@@ -1,11 +1,11 @@
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
-import { PaymentArgumentInvalidError } from '../errors';
-import PaymentActionCreator from '../payment-action-creator';
-import { PaymentRequestOptions } from '../payment-request-options';
-import * as paymentStatusTypes from '../payment-status-types';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { PaymentArgumentInvalidError } from '../../errors';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentRequestOptions } from '../../payment-request-options';
+import * as paymentStatusTypes from '../../payment-status-types';
 
-import PaymentStrategy from './payment-strategy';
+import PaymentStrategy from '../payment-strategy';
 
 export default class PaypalProPaymentStrategy extends PaymentStrategy {
     constructor(
