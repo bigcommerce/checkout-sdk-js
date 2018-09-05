@@ -82,6 +82,7 @@ export default class CheckoutStoreStatusSelector {
             this.isSigningOut() ||
             this.isInitializingCustomer() ||
             this.isUpdatingBillingAddress() ||
+            this.isContinuingAsGuest() ||
             this.isUpdatingShippingAddress() ||
             this.isUpdatingConsignment() ||
             this.isCreatingConsignments() ||
@@ -272,7 +273,7 @@ export default class CheckoutStoreStatusSelector {
     }
 
     /**
-     * Checks whether the current customer is updating their billing address.
+     * Checks whether the billing address is being updated.
      *
      * @returns True if updating their billing address, otherwise false.
      */
@@ -281,7 +282,16 @@ export default class CheckoutStoreStatusSelector {
     }
 
     /**
-     * Checks whether the current customer is updating their shipping address.
+     * Checks whether the shopper is continuing out as a guest.
+     *
+     * @returns True if continuing as guest, otherwise false.
+     */
+    isContinuingAsGuest(): boolean {
+        return this._billingAddress.isContinuingAsGuest();
+    }
+
+    /**
+     * Checks the shipping address is being updated.
      *
      * @returns True if updating their shipping address, otherwise false.
      */

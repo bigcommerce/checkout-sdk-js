@@ -287,6 +287,22 @@ describe('CheckoutStoreStatusSelector', () => {
         });
     });
 
+    describe('#isContinuingAsGuest()', () => {
+        it('returns true if continuing as guest', () => {
+            jest.spyOn(selectors.billingAddress, 'isContinuingAsGuest').mockReturnValue(true);
+
+            expect(statuses.isContinuingAsGuest()).toEqual(true);
+            expect(selectors.billingAddress.isContinuingAsGuest).toHaveBeenCalled();
+        });
+
+        it('returns false if not continuing as guest', () => {
+            jest.spyOn(selectors.billingAddress, 'isContinuingAsGuest').mockReturnValue(false);
+
+            expect(statuses.isContinuingAsGuest()).toEqual(false);
+            expect(selectors.billingAddress.isContinuingAsGuest).toHaveBeenCalled();
+        });
+    });
+
     describe('#isUpdatingShippingAddress()', () => {
         it('returns true if updating shipping address', () => {
             jest.spyOn(selectors.shippingStrategies, 'isUpdatingAddress').mockReturnValue(true);

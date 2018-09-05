@@ -2,7 +2,7 @@ import { Action, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 
 import { AddressRequestBody } from '../address';
-import { BillingAddressActionCreator } from '../billing';
+import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
 import { ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
@@ -529,7 +529,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     continueAsGuest(credentials: GuestCredentials, options?: RequestOptions): Promise<CheckoutSelectors> {
-        const action = this._billingAddressActionCreator.updateAddress(credentials, options);
+        const action = this._billingAddressActionCreator.continueAsGuest(credentials, options);
 
         return this._dispatch(action);
     }
@@ -883,7 +883,7 @@ export default class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: AddressRequestBody, options: RequestOptions = {}): Promise<CheckoutSelectors> {
+    updateBillingAddress(address: BillingAddressRequestBody, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
         return this._dispatch(action);

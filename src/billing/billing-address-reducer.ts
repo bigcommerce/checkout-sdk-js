@@ -31,6 +31,7 @@ function dataReducer(
 ): BillingAddress | undefined {
     switch (action.type) {
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
+    case BillingAddressActionType.ContinueAsGuestSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
     case OrderActionType.LoadOrderSucceeded:
         return action.payload ? action.payload.billingAddress : data;
@@ -59,6 +60,13 @@ function errorsReducer(
     case BillingAddressActionType.UpdateBillingAddressFailed:
         return { ...errors, updateError: action.payload };
 
+    case BillingAddressActionType.ContinueAsGuestRequested:
+    case BillingAddressActionType.ContinueAsGuestSucceeded:
+        return { ...errors, continueAsGuestError: undefined };
+
+    case BillingAddressActionType.ContinueAsGuestFailed:
+        return { ...errors, continueAsGuestError: action.payload };
+
     default:
         return errors;
     }
@@ -82,6 +90,13 @@ function statusesReducer(
     case BillingAddressActionType.UpdateBillingAddressFailed:
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
         return { ...statuses, isUpdating: false };
+
+    case BillingAddressActionType.ContinueAsGuestRequested:
+        return { ...statuses, isContinuingAsGuest: true };
+
+    case BillingAddressActionType.ContinueAsGuestFailed:
+    case BillingAddressActionType.ContinueAsGuestSucceeded:
+        return { ...statuses, isContinuingAsGuest: false };
 
     default:
         return statuses;

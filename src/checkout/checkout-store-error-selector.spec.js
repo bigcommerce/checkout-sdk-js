@@ -287,6 +287,22 @@ describe('CheckoutStoreErrorSelector', () => {
         });
     });
 
+    describe('#getContinueAsGuestError()', () => {
+        it('returns error if there is an error', () => {
+            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(errorResponse);
+
+            expect(errors.getContinueAsGuestError()).toEqual(errorResponse);
+            expect(selectors.billingAddress.getContinueAsGuestError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is NO errors', () => {
+            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue();
+
+            expect(errors.getContinueAsGuestError()).toEqual(undefined);
+            expect(selectors.billingAddress.getContinueAsGuestError).toHaveBeenCalled();
+        });
+    });
+
     describe('#getUpdateConsignmentError()', () => {
         it('returns error if there is an error when updating consignments', () => {
             jest.spyOn(selectors.consignments, 'getUpdateError').mockReturnValue(errorResponse);

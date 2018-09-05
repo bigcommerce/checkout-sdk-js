@@ -45,6 +45,26 @@ describe('BillingAddressSelector', () => {
         });
     });
 
+    describe('#getContinueAsGuestError()', () => {
+        it('returns error if unable to update', () => {
+            const continueAsGuestError = getErrorResponse();
+
+
+            billingAddressSelector = new BillingAddressSelector({
+                ...state.billingAddress,
+                errors: { continueAsGuestError },
+            });
+
+            expect(billingAddressSelector.getContinueAsGuestError()).toEqual(continueAsGuestError);
+        });
+
+        it('does not returns error if able to update', () => {
+            billingAddressSelector = new BillingAddressSelector(state.billingAddress);
+
+            expect(billingAddressSelector.getContinueAsGuestError()).toBeUndefined();
+        });
+    });
+
     describe('#isUpdating()', () => {
         it('returns true if updating billing address', () => {
             billingAddressSelector = new BillingAddressSelector({
@@ -59,6 +79,23 @@ describe('BillingAddressSelector', () => {
             billingAddressSelector = new BillingAddressSelector(state.billingAddress);
 
             expect(billingAddressSelector.isUpdating()).toEqual(false);
+        });
+    });
+
+    describe('#isContinuingAsGuest()', () => {
+        it('returns true if updating billing address', () => {
+            billingAddressSelector = new BillingAddressSelector({
+                ...state.billingAddress,
+                statuses: { isContinuingAsGuest: true },
+            });
+
+            expect(billingAddressSelector.isContinuingAsGuest()).toEqual(true);
+        });
+
+        it('returns false if not updating billing address', () => {
+            billingAddressSelector = new BillingAddressSelector(state.billingAddress);
+
+            expect(billingAddressSelector.isContinuingAsGuest()).toEqual(false);
         });
     });
 });

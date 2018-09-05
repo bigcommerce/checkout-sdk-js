@@ -17,12 +17,20 @@ export default class BillingAddressSelector {
         return this._billingAddress.errors.updateError;
     }
 
+    getContinueAsGuestError(): Error | undefined {
+        return this._billingAddress.errors.continueAsGuestError;
+    }
+
     getLoadError(): Error | undefined {
         return this._billingAddress.errors.loadError;
     }
 
     isUpdating(): boolean {
         return !!this._billingAddress.statuses.isUpdating;
+    }
+
+    isContinuingAsGuest(): boolean {
+        return !!this._billingAddress.statuses.isContinuingAsGuest;
     }
 
     isLoading(): boolean {
