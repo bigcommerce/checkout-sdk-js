@@ -1,30 +1,36 @@
-import { createTimeout } from '@bigcommerce/request-sender';
+import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
+
 import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
+
+import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
+import Order from './order';
 import OrderRequestSender from './order-request-sender';
+import { getOrder } from './orders.mock';
 
 describe('OrderRequestSender', () => {
-    let orderRequestSender;
-    let requestSender;
-    const include = 'payments,lineItems.physicalItems.socialMedia,lineItems.digitalItems.socialMedia';
+    let orderRequestSender: OrderRequestSender;
+    const include = [
+        'payments',
+        'lineItems.physicalItems.socialMedia',
+        'lineItems.physicalItems.options',
+        'lineItems.digitalItems.socialMedia',
+        'lineItems.digitalItems.options',
+    ].join(',');
+
+    const requestSender = createRequestSender();
 
     beforeEach(() => {
-        requestSender = {
-            get: jest.fn(() => Promise.resolve()),
-            post: jest.fn(() => Promise.resolve()),
-        };
-
         orderRequestSender = new OrderRequestSender(requestSender);
     });
 
     describe('#loadOrder()', () => {
-        let response;
+        let response: Response<Order>;
 
         beforeEach(() => {
-            response = getResponse(getCompleteOrderResponseBody());
-
-            requestSender.get.mockReturnValue(Promise.resolve(response));
+            response = getResponse(getOrder());
+            jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve(response));
         });
 
         it('loads order', async () => {
@@ -68,12 +74,11 @@ describe('OrderRequestSender', () => {
     });
 
     describe('#submitOrder()', () => {
-        let response;
+        let response: Response<InternalOrderResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getCompleteOrderResponseBody());
-
-            requestSender.post.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
         });
 
         it('submits order and returns response', async () => {
@@ -100,12 +105,11 @@ describe('OrderRequestSender', () => {
     });
 
     describe('#finalizeOrder()', () => {
-        let response;
+        let response: Response<InternalOrderResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getCompleteOrderResponseBody());
-
-            requestSender.post.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
         });
 
         it('finalizes order and returns response', async () => {
