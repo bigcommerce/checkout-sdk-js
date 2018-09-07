@@ -112,12 +112,13 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                     reject(error);
                     onError(error);
                 },
-                onOrderReferenceCreate: orderReference => {
-                    this._handleOrderReferenceCreate(orderReference);
-                },
-                onReady: () => {
-                    resolve();
-                    onReady();
+                onReady: orderReference => {
+                    this._updateOrderReference(orderReference)
+                        .then(() => {
+                            resolve();
+                            onReady(orderReference);
+                        })
+                        .catch(onError);
                 },
             });
 
@@ -133,7 +134,7 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
         const referenceId = amazon ? amazon.referenceId : undefined;
 
         if (!methodId || !referenceId) {
-            throw new NotInitializedError(NotInitializedErrorType.ShippingNotInitialized);
+            throw new RemoteCheckoutSynchronizationError();
         }
 
         return this._store.dispatch(
@@ -167,13 +168,9 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
             ));
     }
 
-    private _handleOrderReferenceCreate(orderReference: AmazonPayOrderReference): void {
-        if (!this._paymentMethod) {
-            throw new NotInitializedError(NotInitializedErrorType.ShippingNotInitialized);
-        }
-
-        this._store.dispatch(
-            this._remoteCheckoutActionCreator.updateCheckout(this._paymentMethod.id as 'amazon', {
+    private _updateOrderReference(orderReference: AmazonPayOrderReference): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._remoteCheckoutActionCreator.updateCheckout('amazon', {
                 referenceId: orderReference.getAmazonOrderReferenceId(),
             })
         );
@@ -211,6 +208,8 @@ export interface AmazonPayShippingInitializeOptions {
     /**
      * A callback that gets called when the widget is loaded and ready to be
      * interacted with.
+     *
+     * @param reference - The order reference provided by Amazon.
      */
-    onReady?(): void;
+    onReady?(reference: AmazonPayOrderReference): void;
 }

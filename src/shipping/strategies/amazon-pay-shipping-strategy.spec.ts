@@ -62,8 +62,8 @@ describe('AmazonPayShippingStrategy', () => {
                 }));
             });
 
-            element.addEventListener('orderReferenceCreate', () => {
-                this.options.onOrderReferenceCreate(orderReference);
+            element.addEventListener('ready', () => {
+                this.options.onReady(orderReference);
             });
         }
     }
@@ -228,7 +228,7 @@ describe('AmazonPayShippingStrategy', () => {
         const element = document.getElementById('addressBook');
 
         if (element) {
-            element.dispatchEvent(new CustomEvent('orderReferenceCreate'));
+            element.dispatchEvent(new CustomEvent('ready'));
         }
 
         expect(remoteCheckoutActionCreator.updateCheckout)

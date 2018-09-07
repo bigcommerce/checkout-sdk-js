@@ -18,5 +18,4 @@ export interface AmazonPayAddressBookOptions {
     onAddressSelect(orderReference: AmazonPayOrderReference): void;
     onError(error: AmazonPayWidgetError): void;
     onReady(orderReference: AmazonPayOrderReference): void;
-    onOrderReferenceCreate(orderReference: AmazonPayOrderReference): void;
 }
