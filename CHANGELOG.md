@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.3.0...v1.4.0) (2018-09-10)
+
+
+### Bug Fixes
+
+* **billing:** CHECKOUT-3492 Update CheckoutService#updateBillingAddress signature ([3a190cb](https://github.com/bigcommerce/checkout-sdk-js/commit/3a190cb))
+* **checkout:** CHECKOUT-3011 Make sure host config is passed along for `CheckoutService` ([c5612c5](https://github.com/bigcommerce/checkout-sdk-js/commit/c5612c5))
+* **checkout-button:** CHECKOUT-3011 Make sure host config is passed along for `CheckoutButtonInitializer` ([b95784b](https://github.com/bigcommerce/checkout-sdk-js/commit/b95784b))
+* **order:** CHECKOUT-3437 Include options in line items ([7b04cd8](https://github.com/bigcommerce/checkout-sdk-js/commit/7b04cd8))
+* **payment:** CHECKOUT-3516 Trigger `onReady` callback after order reference is passed to BC ([8d441a7](https://github.com/bigcommerce/checkout-sdk-js/commit/8d441a7))
+
+
+### Features
+
+* **billing:** CHECKOUT-3492 Add error/status selectors for CheckoutService#continueAsGuest ([b537d14](https://github.com/bigcommerce/checkout-sdk-js/commit/b537d14))
+* **billing:** CHECKOUT-3492 Do not overwrite billing info when continuing as guest ([d42b2de](https://github.com/bigcommerce/checkout-sdk-js/commit/d42b2de))
+* **billing:** CHECKOUT-3492 Track error/status independently for CheckoutService#continueAsGuest ([d271781](https://github.com/bigcommerce/checkout-sdk-js/commit/d271781))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.2.0...v1.3.0) (2018-09-04)
 

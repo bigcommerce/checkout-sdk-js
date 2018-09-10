@@ -8,6 +8,8 @@
 
 ↳  [Address](address.md)
 
+↳  [BillingAddressRequestBody](billingaddressrequestbody.md)
+
 ## Index
 
 ### Properties

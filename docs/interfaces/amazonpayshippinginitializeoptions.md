@@ -76,9 +76,15 @@ ___
 
 ### `<Optional>` onReady
 
-▸ **onReady**(): `void`
+▸ **onReady**(reference: *[AmazonPayOrderReference](amazonpayorderreference.md)*): `void`
 
 A callback that gets called when the widget is loaded and ready to be interacted with.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| reference | [AmazonPayOrderReference](amazonpayorderreference.md) |  The order reference provided by Amazon. |
 
 **Returns:** `void`
 

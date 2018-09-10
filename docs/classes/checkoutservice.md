@@ -952,7 +952,7 @@ ___
 
 ###  updateBillingAddress
 
-▸ **updateBillingAddress**(address: *[AddressRequestBody](../interfaces/addressrequestbody.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **updateBillingAddress**(address: *[BillingAddressRequestBody](../interfaces/billingaddressrequestbody.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Updates the billing address for the current checkout.
 
@@ -970,7 +970,7 @@ console.log(state.data.getBillingAddress());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| address | [AddressRequestBody](../interfaces/addressrequestbody.md) |  The address to be used for billing. |
+| address | [BillingAddressRequestBody](../interfaces/billingaddressrequestbody.md) |  The address to be used for billing. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for updating the billing address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>

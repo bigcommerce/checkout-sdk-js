@@ -16,6 +16,7 @@ This object has a set of getters that would return an error if an action is not 
 
 * [getApplyCouponError](checkoutstoreerrorselector.md#getapplycouponerror)
 * [getApplyGiftCertificateError](checkoutstoreerrorselector.md#getapplygiftcertificateerror)
+* [getContinueAsGuestError](checkoutstoreerrorselector.md#getcontinueasguesterror)
 * [getCreateConsignmentsError](checkoutstoreerrorselector.md#getcreateconsignmentserror)
 * [getDeleteConsignmentError](checkoutstoreerrorselector.md#getdeleteconsignmenterror)
 * [getDeleteInstrumentError](checkoutstoreerrorselector.md#getdeleteinstrumenterror)
@@ -73,6 +74,19 @@ Returns an error if unable to apply a gift certificate.
 **Returns:**  `Error` &#124; `undefined`
 
 The error object if unable to apply, otherwise undefined.
+
+___
+<a id="getcontinueasguesterror"></a>
+
+###  getContinueAsGuestError
+
+▸ **getContinueAsGuestError**():  `Error` &#124; `undefined`
+
+Returns an error if unable to continue as guest.
+
+**Returns:**  `Error` &#124; `undefined`
+
+The error object if unable to continue, otherwise undefined.
 
 ___
 <a id="getcreateconsignmentserror"></a>

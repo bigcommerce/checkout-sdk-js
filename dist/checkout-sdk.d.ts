@@ -121,8 +121,10 @@ declare interface AmazonPayShippingInitializeOptions {
     /**
      * A callback that gets called when the widget is loaded and ready to be
      * interacted with.
+     *
+     * @param reference - The order reference provided by Amazon.
      */
-    onReady?(): void;
+    onReady?(reference: AmazonPayOrderReference): void;
 }
 
 declare interface AmazonPayWidgetError extends Error {
@@ -136,6 +138,10 @@ declare interface Banner {
 
 declare interface BillingAddress extends Address {
     id: string;
+    email?: string;
+}
+
+declare interface BillingAddressRequestBody extends AddressRequestBody {
     email?: string;
 }
 
@@ -1094,7 +1100,7 @@ declare class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: AddressRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    updateBillingAddress(address: BillingAddressRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Applies a coupon code to the current checkout.
      *
@@ -1355,6 +1361,12 @@ declare class CheckoutStoreErrorSelector {
      * @returns The error object if unable to select, otherwise undefined.
      */
     getSelectShippingOptionError(consignmentId?: string): Error | undefined;
+    /**
+     * Returns an error if unable to continue as guest.
+     *
+     * @returns The error object if unable to continue, otherwise undefined.
+     */
+    getContinueAsGuestError(): Error | undefined;
     /**
      * Returns an error if unable to update billing address.
      *
@@ -1804,13 +1816,19 @@ declare class CheckoutStoreStatusSelector {
      */
     isSelectingShippingOption(consignmentId?: string): boolean;
     /**
-     * Checks whether the current customer is updating their billing address.
+     * Checks whether the billing address is being updated.
      *
      * @returns True if updating their billing address, otherwise false.
      */
     isUpdatingBillingAddress(): boolean;
     /**
-     * Checks whether the current customer is updating their shipping address.
+     * Checks whether the shopper is continuing out as a guest.
+     *
+     * @returns True if continuing as guest, otherwise false.
+     */
+    isContinuingAsGuest(): boolean;
+    /**
+     * Checks the shipping address is being updated.
      *
      * @returns True if updating their shipping address, otherwise false.
      */

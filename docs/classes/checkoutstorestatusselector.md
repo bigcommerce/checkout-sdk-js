@@ -16,6 +16,7 @@ This object has a set of getters that return true if an action is in progress. F
 
 * [isApplyingCoupon](checkoutstorestatusselector.md#isapplyingcoupon)
 * [isApplyingGiftCertificate](checkoutstorestatusselector.md#isapplyinggiftcertificate)
+* [isContinuingAsGuest](checkoutstorestatusselector.md#iscontinuingasguest)
 * [isCreatingConsignments](checkoutstorestatusselector.md#iscreatingconsignments)
 * [isCustomerStepPending](checkoutstorestatusselector.md#iscustomersteppending)
 * [isDeletingConsignment](checkoutstorestatusselector.md#isdeletingconsignment)
@@ -73,6 +74,18 @@ Checks whether the current customer is applying a gift certificate.
 
 **Returns:** `boolean`
 True if applying a gift certificate, otherwise false.
+
+___
+<a id="iscontinuingasguest"></a>
+
+###  isContinuingAsGuest
+
+▸ **isContinuingAsGuest**(): `boolean`
+
+Checks whether the shopper is continuing out as a guest.
+
+**Returns:** `boolean`
+True if continuing as guest, otherwise false.
 
 ___
 <a id="iscreatingconsignments"></a>
@@ -469,7 +482,7 @@ ___
 
 ▸ **isUpdatingBillingAddress**(): `boolean`
 
-Checks whether the current customer is updating their billing address.
+Checks whether the billing address is being updated.
 
 **Returns:** `boolean`
 True if updating their billing address, otherwise false.
@@ -513,7 +526,7 @@ ___
 
 ▸ **isUpdatingShippingAddress**(): `boolean`
 
-Checks whether the current customer is updating their shipping address.
+Checks the shipping address is being updated.
 
 **Returns:** `boolean`
 True if updating their shipping address, otherwise false.
