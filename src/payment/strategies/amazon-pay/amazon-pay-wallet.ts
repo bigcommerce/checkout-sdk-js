@@ -19,5 +19,4 @@ export interface AmazonPayWalletOptions {
     onError(error: WidgetError): void;
     onReady(orderReference: OrderReference): void;
     onPaymentSelect(orderReference: OrderReference): void;
-    onOrderReferenceCreate?(orderReference: OrderReference): void;
 }

@@ -68,9 +68,9 @@ describe('AmazonPayPaymentStrategy', () => {
                 this.options.onPaymentSelect(orderReference);
             });
 
-            element.addEventListener('orderReferenceCreate', () => {
-                if (this.options.onOrderReferenceCreate) {
-                    this.options.onOrderReferenceCreate(orderReference);
+            element.addEventListener('ready', () => {
+                if (this.options.onReady) {
+                    this.options.onReady(orderReference);
                 }
             });
 
@@ -192,9 +192,8 @@ describe('AmazonPayPaymentStrategy', () => {
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
             sellerId: merchantId,
             onError: expect.any(Function),
-            onOrderReferenceCreate: expect.any(Function),
-            onPaymentSelect: expect.any(Function),
             onReady: expect.any(Function),
+            onPaymentSelect: expect.any(Function),
         });
     });
 
@@ -214,7 +213,7 @@ describe('AmazonPayPaymentStrategy', () => {
         const element = document.getElementById('wallet');
 
         if (element) {
-            element.dispatchEvent(new CustomEvent('orderReferenceCreate'));
+            element.dispatchEvent(new CustomEvent('ready'));
         }
 
         expect(remoteCheckoutActionCreator.updateCheckout)

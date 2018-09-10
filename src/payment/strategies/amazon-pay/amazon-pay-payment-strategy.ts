@@ -139,6 +139,7 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             }
 
             const walletOptions: AmazonPayWalletOptions = {
+                amazonOrderReferenceId: referenceId,
                 design: { designMode: 'responsive' },
                 scope: 'payments:billing_address payments:shipping_address payments:widget profile',
                 sellerId: merchantId,
@@ -157,19 +158,14 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                 },
             };
 
-            if (referenceId) {
-                walletOptions.amazonOrderReferenceId = referenceId;
-            } else {
-                walletOptions.onOrderReferenceCreate = orderReference => {
-                    if (!this._paymentMethod) {
-                        throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-                    }
-
-                    this._store.dispatch(
-                        this._remoteCheckoutActionCreator.updateCheckout(this._paymentMethod.id as 'amazon', {
-                            referenceId: orderReference.getAmazonOrderReferenceId(),
+            if (!walletOptions.amazonOrderReferenceId) {
+                walletOptions.onReady = orderReference => {
+                    this._updateOrderReference(orderReference)
+                        .then(() => {
+                            resolve();
+                            onReady(orderReference);
                         })
-                    );
+                        .catch(onError);
                 };
             }
 
@@ -210,6 +206,14 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
                     this._billingAddressActionCreator.updateAddress(mapFromInternalAddress(remoteAddress))
                 );
             });
+    }
+
+    private _updateOrderReference(orderReference: AmazonPayOrderReference): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(
+            this._remoteCheckoutActionCreator.updateCheckout('amazon', {
+                referenceId: orderReference.getAmazonOrderReferenceId(),
+            })
+        );
     }
 }
 
