@@ -1,13 +1,14 @@
-import { createTimeout } from '@bigcommerce/request-sender';
+import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
 
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
+
 import CouponRequestSender from './coupon-request-sender';
 
 describe('Coupon Request Sender', () => {
-    let couponRequestSender;
-    let requestSender;
+    let couponRequestSender: CouponRequestSender;
+    let requestSender: RequestSender;
     const defaultIncludes = [
         'cart.lineItems.physicalItems.options',
         'cart.lineItems.digitalItems.options',
@@ -17,11 +18,7 @@ describe('Coupon Request Sender', () => {
     ].join(',');
 
     beforeEach(() => {
-        requestSender = {
-            delete: jest.fn(() => Promise.resolve()),
-            post: jest.fn(() => Promise.resolve()),
-        };
-
+        requestSender = createRequestSender();
         couponRequestSender = new CouponRequestSender(requestSender);
     });
 
@@ -35,7 +32,7 @@ describe('Coupon Request Sender', () => {
     describe('#applyCoupon()', () => {
         it('applies coupon code', async () => {
             const response = getResponse(getCheckoutWithCoupons());
-            requestSender.post.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.applyCoupon(checkoutId, couponCode);
 
@@ -54,7 +51,7 @@ describe('Coupon Request Sender', () => {
         it('applies coupon with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCheckoutWithCoupons());
-            requestSender.post.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.applyCoupon(checkoutId, couponCode, options);
 
@@ -75,7 +72,7 @@ describe('Coupon Request Sender', () => {
     describe('#removeCoupon()', () => {
         it('removes coupon code', async () => {
             const response = getResponse(getCheckoutWithCoupons());
-            requestSender.delete.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.removeCoupon(checkoutId, couponCode);
 
@@ -93,7 +90,7 @@ describe('Coupon Request Sender', () => {
         it('removes coupon code with timeout', async () => {
             const options = { timeout: createTimeout() };
             const response = getResponse(getCheckoutWithCoupons());
-            requestSender.delete.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
 
             const output = await couponRequestSender.removeCoupon(checkoutId, couponCode, options);
 
