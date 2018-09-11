@@ -17,8 +17,7 @@ checks:
             threshold: 5
 
     method-count:
-        config:
-            threshold: 20
+        enabled: false
 
     method-lines:
         enabled: false
@@ -28,16 +27,13 @@ checks:
             threshold: 4
 
     return-statements:
-        config:
-            threshold: 4
+        enabled: false
 
     similar-code:
-        config:
-            threshold: 100
+        enabled: false
 
     identical-code:
-        config:
-            threshold: 100
+        enabled: false
 
 exclude_patterns:
     - "dist/"
