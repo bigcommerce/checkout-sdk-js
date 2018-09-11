@@ -4,3 +4,11 @@ export default interface Currency {
     symbol: string;
     decimalPlaces: number;
 }
+
+export interface CurrencyConfig {
+    decimalPlaces: number;
+    decimalSeparator: string;
+    symbolLocation: string;
+    symbol: string;
+    thousandsSeparator: string;
+}

@@ -9,7 +9,7 @@ export default interface Config {
 export interface StoreConfig {
     cdnPath: string;
     checkoutSettings: CheckoutSettings;
-    currency: Currency;
+    currency: StoreCurrency;
     formFields: FormFields;
     links: StoreLinks;
     paymentSettings: PaymentSettings;
@@ -20,13 +20,7 @@ export interface StoreConfig {
     shopperCurrency: ShopperCurrency;
 }
 
-export interface ShopperCurrency {
-    code: string;
-    symbolLocation: string;
-    symbol: string;
-    decimalPlaces: string;
-    decimalSeparator: string;
-    thousandsSeparator: string;
+export interface ShopperCurrency extends StoreCurrency {
     exchangeRate: string;
 }
 
@@ -70,7 +64,7 @@ export interface FormFields {
     billingAddressFields: FormField[];
 }
 
-export interface Currency {
+export interface StoreCurrency {
     code: string;
     decimalPlaces: string;
     decimalSeparator: string;
