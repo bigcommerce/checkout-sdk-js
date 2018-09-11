@@ -159,6 +159,10 @@ describe('BraintreePaypalButtonStrategy', () => {
                     color: 'blue',
                     shape: 'pill',
                     size: 'responsive',
+                    layout: 'horizontal',
+                    label: 'paypal',
+                    tagline: true,
+                    fundingicons: false,
                 },
             },
         };
@@ -170,6 +174,10 @@ describe('BraintreePaypalButtonStrategy', () => {
                 color: 'blue',
                 shape: 'pill',
                 size: 'responsive',
+                layout: 'horizontal',
+                label: 'paypal',
+                tagline: true,
+                fundingicons: false,
             },
         }), 'checkout-button');
     });

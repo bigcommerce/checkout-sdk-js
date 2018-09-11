@@ -17,7 +17,7 @@ export interface BraintreePaypalButtonInitializeOptions {
     /**
      * A set of styling options for the checkout button.
      */
-    style?: Pick<PaypalButtonStyleOptions, 'color' | 'shape' | 'size'>;
+    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
 
     /**
      * A callback that gets called if unable to authorize and tokenize payment.

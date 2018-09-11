@@ -58,7 +58,7 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
                     style: {
                         shape: 'rect',
                         label: this._offerCredit ? 'credit' : undefined,
-                        ...pick(paypalOptions.style, 'color', 'shape', 'size'),
+                        ...pick(paypalOptions.style, 'layout', 'size', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
                     },
                     payment: () => this._setupPayment(paypalOptions.onPaymentError),
                     onAuthorize: data => this._tokenizePayment(data, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
