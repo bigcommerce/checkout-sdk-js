@@ -16,10 +16,13 @@ export interface PaypalButtonOptions {
 }
 
 export interface PaypalButtonStyleOptions {
+    layout?: 'horizontal' | 'vertical';
     size?: 'small' | 'medium' | 'large' | 'responsive';
     color?: 'gold' | 'blue' | 'silver' | 'black';
-    label?: 'credit' | 'checkout';
+    label?: 'checkout' | 'pay' | 'buynow' | 'paypal' | 'credit';
     shape?: 'pill' | 'rect';
+    tagline?: boolean;
+    fundingicons?: boolean;
 }
 
 export interface PaypalAuthorizeData {
