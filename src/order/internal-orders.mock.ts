@@ -86,6 +86,7 @@ export function getCompleteOrder(): InternalOrder {
                         value: 'v',
                     },
                 ],
+                productId: 103,
             },
             {
                 id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
