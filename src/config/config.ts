@@ -84,6 +84,7 @@ export interface CheckoutSettings {
     enableTermsAndConditions: boolean;
     guestCheckoutEnabled: boolean;
     isCardVaultingEnabled: boolean;
+    isCouponCodeCollapsed: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
     orderTermsAndConditions: string;
