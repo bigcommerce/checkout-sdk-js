@@ -23,6 +23,7 @@ export function getConfig(): Config {
                 isCardVaultingEnabled: true,
                 isPaymentRequestEnabled: false,
                 isPaymentRequestCanMakePaymentEnabled: false,
+                isCouponCodeCollapsed: true,
                 orderTermsAndConditions: '',
                 orderTermsAndConditionsLink: '',
                 orderTermsAndConditionsType: '',
