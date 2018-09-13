@@ -1,5 +1,7 @@
 import {createAction, createErrorAction} from '@bigcommerce/data-store';
 
+import {isInternalAddressEqual, mapFromInternalAddress, mapToInternalAddress} from '../../../address';
+import InternalAddress from '../../../address/internal-address';
 import {BillingAddressActionCreator} from '../../../billing';
 import CheckoutStore from '../../../checkout/checkout-store';
 import { CheckoutActionCreator } from '../../../checkout/index';
@@ -22,18 +24,19 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import {
-    default as mapGooglePayAddressToRequestAddress,
     BraintreeGooglePayPaymentInitializeOptions,
     EnvironmentType,
     GooglePaymentsError,
     GooglePaymentData,
-    GooglePayAddress,
     GooglePayBraintreePaymentDataRequest,
     GooglePayBraintreeSDK,
     GooglePayClient,
     GooglePayIsReadyToPayResponse,
     GooglePayPaymentDataRequest,
-    GooglePayPaymentOptions, GooglePaySDK, GATEWAY, PaymentSuccessPayload, TokenizePayload
+    GooglePayPaymentOptions,
+    GooglePaySDK,
+    GATEWAY,
+    PaymentSuccessPayload, TokenizePayload
 } from './googlepay';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayScriptLoader from './googlepay-script-loader';
@@ -107,6 +110,66 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
             .then(payment =>
                 this._createOrder(payment, payload.useStoreCredit, options)
             );
+    }
+
+    private _synchronizeBillingAddress(): Promise<InternalCheckoutSelectors> {
+        const methodId = this._paymentMethod && this._paymentMethod.id;
+
+        if (!methodId) {
+            throw new RemoteCheckoutSynchronizationError();
+        }
+
+        return this._store.dispatch(
+            this._remoteCheckoutActionCreator.initializeBilling(methodId, { referenceId: '' })
+        )
+            .then(state => {
+                const billingAddress = state.billingAddress.getBillingAddress();
+                const internalBillingAddress = billingAddress && mapToInternalAddress(billingAddress);
+                if (!billingAddress) {
+                    throw new Error('error');
+                }
+                const remoteAddress: InternalAddress = mapToInternalAddress(billingAddress); // TODO: Update with the wallet's address
+                remoteAddress.addressLine1 = 'known street example BILLING';
+
+                return this._store.dispatch(
+                    this._billingAddressActionCreator.updateAddress(mapFromInternalAddress(remoteAddress))
+                );
+            });
+    }
+
+    private _synchronizeShippingAddress(): Promise<InternalCheckoutSelectors> {
+        const methodId = this._paymentMethod && this._paymentMethod.id;
+
+        if (!methodId) {
+            throw new RemoteCheckoutSynchronizationError();
+        }
+
+        return this._store.dispatch(
+            createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId })
+        )
+            .then(() => this._store.dispatch(
+                this._remoteCheckoutActionCreator.initializeShipping(methodId, { referenceId: '' })
+            ))
+            .then(state => {
+                const address = state.shippingAddress.getShippingAddress();
+
+                if (!address) {
+                    throw new Error('error');
+                }
+
+                const remoteAddress: InternalAddress = mapToInternalAddress(address); // TODO: Update with the wallet's address
+                remoteAddress.addressLine1 = 'known street example SHIPPING';
+
+                return this._store.dispatch(
+                    this._consignmentActionCreator.updateAddress(mapFromInternalAddress(remoteAddress))
+                );
+            })
+            .then(() => this._store.dispatch(
+                createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId })
+            ))
+            .catch(error => this._store.dispatch(
+                createErrorAction(ShippingStrategyActionType.UpdateAddressFailed, error, { methodId })
+            ));
     }
 
     private _configureWallet(): Promise<void> {
@@ -188,9 +251,7 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
         }
         const googlePaymentDataRequest: GooglePayPaymentDataRequest = {
             merchantInfo: {
-                merchantId: '01234567890123456789',
-                // merchantName: 'BIGCOMMERCE',
-                // authJwt: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjaGFudE9yaWdpbiI6Ind3dy5iaWdjb21tZXJjZS5jb20iLCJtZXJjaGFudElkIjoiMTIzNDUiLCJpYXQiOjE1Mzc1MDE0Mjh9.YjA2YTg5MmQ0MWI3Mjk4ZTdlNzI2ZmYzYzIyYzZkMTY0ZTU4OTlmNTljYmVkNjZkNWEwOGI2MjE3ZmZlNTc1Mg',
+                merchantId: 'your-merchant-id-from-google',
             },
             transactionInfo: {
                 currencyCode: checkout.cart.currency.code,
@@ -214,11 +275,11 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
 
     private _getGooglePaymentsClient(google: GooglePaySDK, testMode: boolean | undefined): GooglePayClient {
         let environment: EnvironmentType;
-        testMode = true;
+
         if (testMode === undefined) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         } else {
-            if (!testMode) {
+            if (testMode) {
                 environment = 'PRODUCTION';
             } else {
                 environment = 'TEST';
@@ -245,11 +306,12 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
                     onPaymentSelect = () => {},
                 } = this._googlePayOptions;
 
-                this._updateShippingAndBillingAddress(paymentSuccessPayload).then(() => {
-                    return this._paymentInstrumentSelected(paymentSuccessPayload)
-                        .then(() => onPaymentSelect())
-                        .catch(error => onError(error));
-                });
+                this._synchronizeBillingAddress();
+                this._synchronizeShippingAddress();
+
+                return this._paymentInstrumentSelected(paymentSuccessPayload)
+                    .then(() => onPaymentSelect())
+                    .catch(error => onError(error));
             });
     }
 
@@ -299,56 +361,6 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
                     methodId: this._methodId,
                     paymentData,
                 };
-            });
-    }
-
-    private _updateShippingAndBillingAddress(paymentSucessPayload: PaymentSuccessPayload): Promise<void> {
-        return Promise.all([
-                this._synchronizeShippingAddress(paymentSucessPayload.shippingAddress),
-                this._synchronizeBillingAddress(paymentSucessPayload.billingAddress),
-            ]).then(() => Promise.resolve());
-    }
-
-    private _synchronizeShippingAddress(shippingAddress: GooglePayAddress): Promise<InternalCheckoutSelectors> {
-
-        if (!this._methodId) {
-            throw new RemoteCheckoutSynchronizationError();
-        }
-
-        return this._store.dispatch(
-            createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId: this._methodId })
-        )
-            .then(() => {
-                return this._store.dispatch(
-                        this._consignmentActionCreator.updateAddress(mapGooglePayAddressToRequestAddress(shippingAddress))
-                    );
-            })
-            .then(() => this._store.dispatch(
-                createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId: this._methodId })
-            ))
-            .catch(error => this._store.dispatch(
-                createErrorAction(ShippingStrategyActionType.UpdateAddressFailed, error, { methodId: this._methodId })
-            ));
-    }
-
-    private _synchronizeBillingAddress(billingAddress: GooglePayAddress): Promise<InternalCheckoutSelectors> {
-        if (!this._methodId) {
-            throw new RemoteCheckoutSynchronizationError();
-        }
-
-        return this._store.dispatch(
-            this._remoteCheckoutActionCreator.initializeBilling(this._methodId, { referenceId: '' })
-        )
-            .then(state => {
-                const remoteBillingAddress = state.billingAddress.getBillingAddress();
-
-                if (!remoteBillingAddress) {
-                    throw new RemoteCheckoutSynchronizationError();
-                }
-
-                return this._store.dispatch(
-                    this._billingAddressActionCreator.updateAddress(mapGooglePayAddressToRequestAddress(billingAddress, remoteBillingAddress.id))
-                );
             });
     }
 
