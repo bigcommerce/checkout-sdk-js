@@ -36,7 +36,8 @@ import {
     GooglePayPaymentOptions,
     GooglePaySDK,
     GATEWAY,
-    PaymentSuccessPayload, TokenizePayload
+    PaymentSuccessPayload,
+    TokenizePayload
 } from './googlepay';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayScriptLoader from './googlepay-script-loader';
