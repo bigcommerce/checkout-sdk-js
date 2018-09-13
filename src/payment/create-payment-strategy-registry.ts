@@ -1,5 +1,6 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
+import createRequestSender from '@bigcommerce/request-sender/lib/create-request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator } from '../billing';
@@ -21,6 +22,7 @@ import {
     BraintreePaypalPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
     CreditCardPaymentStrategy,
+    GooglepayPaymentStrategy,
     KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
     NoPaymentDataRequiredPaymentStrategy,
@@ -35,10 +37,15 @@ import {
 import { AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from './strategies/braintree';
+import { GooglePayScriptLoader } from './strategies/googlepay';
+import GooglePayPaymentProcessor from './strategies/googlepay/googlepay-payment-processor';
 import { KlarnaScriptLoader } from './strategies/klarna';
 import { PaypalScriptLoader } from './strategies/paypal';
 import { SquareScriptLoader } from './strategies/square';
 import { WepayRiskClient } from './strategies/wepay';
+
+import BraintreeScriptLoader from './strategies/braintree/braintree-script-loader';
+import BraintreeSDKCreator from './strategies/braintree/braintree-sdk-creator';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
@@ -217,6 +224,25 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
             new VisaCheckoutScriptLoader(scriptLoader)
+        )
+    );
+
+    const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader);
+    const braintreeSdkCreator = new BraintreeSDKCreator(braintreeScriptLoader);
+
+    registry.register('googlepay', () =>
+        new GooglepayPaymentStrategy(
+            store,
+            new CheckoutActionCreator(
+                checkoutRequestSender,
+                new ConfigActionCreator(new ConfigRequestSender(requestSender))
+            ),
+            paymentMethodActionCreator,
+            new PaymentStrategyActionCreator(registry, orderActionCreator),
+            paymentActionCreator,
+            orderActionCreator,
+            new GooglePayScriptLoader(scriptLoader),
+            new GooglePayPaymentProcessor(braintreeSdkCreator, createRequestSender())
         )
     );
 

@@ -2,6 +2,8 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
+import {GooglePayCreator} from '../googlepay';
+
 import {
     BraintreeClientCreator,
     BraintreeDataCollectorCreator,
@@ -87,6 +89,18 @@ export default class BraintreeScriptLoader {
                 }
 
                 return this._window.braintree.visaCheckout;
+            });
+    }
+
+    loadGooglePaymentComponent(): Promise<GooglePayCreator> {
+        return this._scriptLoader
+            .loadScript('//js.braintreegateway.com/web/3.37.0/js/google-payment.min.js')
+            .then(() => {
+                if (!this._window.braintree || !this._window.braintree.googlePayment) {
+                    throw new StandardError();
+                }
+
+                return this._window.braintree.googlePayment;
             });
     }
 }

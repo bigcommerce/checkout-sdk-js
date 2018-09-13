@@ -1,3 +1,4 @@
+import {GooglePayCreator} from '../googlepay';
 
 import { PaypalAuthorizeData, PaypalSDK } from '../paypal';
 
@@ -10,6 +11,7 @@ export interface BraintreeSDK {
     paypalCheckout?: BraintreePaypalCheckoutCreator;
     threeDSecure?: BraintreeThreeDSecureCreator;
     visaCheckout?: BraintreeVisaCheckoutCreator;
+    googlePayment?: GooglePayCreator;
 }
 
 export interface BraintreeModuleCreator<T> {
