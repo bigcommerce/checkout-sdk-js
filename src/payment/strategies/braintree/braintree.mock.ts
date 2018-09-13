@@ -26,9 +26,13 @@ export function getClientMock(): BraintreeClient {
 
 export function getDataCollectorMock(): BraintreeDataCollector {
     return {
-        deviceData: '{"device_session_id": "my_device_session_id", "fraud_merchant_id": "we_dont_use_this_field"}',
+        deviceData: getDeviceDataMock(),
         teardown: jest.fn(() => Promise.resolve()),
     };
+}
+
+export function getDeviceDataMock(): string {
+    return '{"device_session_id": "my_device_session_id", "fraud_merchant_id": "we_dont_use_this_field"}';
 }
 
 export function getThreeDSecureMock(): BraintreeThreeDSecure {
@@ -58,6 +62,12 @@ export function getPaypalCheckoutMock(): BraintreePaypalCheckout {
 export function getModuleCreatorMock<T>(module: BraintreeModule | BraintreeClient): BraintreeModuleCreator<T> {
     return {
         create: jest.fn(() => Promise.resolve(module)),
+    };
+}
+
+export function getModuleCreatorNewMock<T>(module: BraintreeDataCollector): BraintreeModuleCreator<T> {
+    return {
+        create: jest.fn(() => Promise.resolve({ ...module })),
     };
 }
 
