@@ -22,7 +22,7 @@ export default class BraintreeScriptLoader {
 
     loadClient(): Promise<BraintreeClientCreator> {
         return this._scriptLoader
-            .loadScript('//js.braintreegateway.com/web/3.15.0/js/client.min.js')
+            .loadScript('//js.braintreegateway.com/web/3.37.0/js/client.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.client) {
                     throw new StandardError();
