@@ -13,6 +13,7 @@ import {
     BraintreeTokenizeResponse,
     BraintreeVerifyPayload,
     BraintreeVisaCheckout,
+    GooglePayBraintreeSDK,
 } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
@@ -75,6 +76,14 @@ export function getTokenizeResponseBody(): BraintreeTokenizeResponse {
         creditCards: [
             { nonce: 'demo_nonce' },
         ],
+    };
+}
+
+export function getGooglePayMock(): GooglePayBraintreeSDK {
+    return {
+        createPaymentDataRequest: jest.fn((() => Promise.resolve())),
+        parseResponse: jest.fn((() => Promise.resolve())),
+        teardown: jest.fn(),
     };
 }
 
