@@ -11,6 +11,7 @@ export default interface InternalLineItem {
     imageUrl: string;
     name?: string;
     quantity: number;
+    brand?: string;
     type: string;
     variantId: number | null;
     addedByPromotion?: boolean;

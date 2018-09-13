@@ -23,6 +23,7 @@ export default function mapToInternalLineItem(
         downloadsPageUrl: (item as DigitalItem).downloadPageUrl,
         name: item.name,
         quantity: item.quantity,
+        brand: item.brand,
         variantId: item.variantId,
         attributes: (item.options || []).map(option => ({
             name: option.name,
