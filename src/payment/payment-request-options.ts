@@ -8,6 +8,7 @@ import {
     KlarnaPaymentInitializeOptions,
     SquarePaymentInitializeOptions,
 } from './strategies';
+import {BraintreeGooglePayPaymentInitializeOptions} from './strategies/googlepay';
 
 /**
  * The set of options for configuring any requests related to the payment step of
@@ -68,4 +69,10 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Chasepay.
      */
     chasepay?: ChasePayInitializeOptions;
+
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepay?: BraintreeGooglePayPaymentInitializeOptions;
 }

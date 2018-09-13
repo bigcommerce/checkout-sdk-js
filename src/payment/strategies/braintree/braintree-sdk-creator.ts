@@ -1,5 +1,7 @@
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
+import {GooglePayBraintreeSDK} from '../googlepay';
+
 import {
     BraintreeClient,
     BraintreeDataCollector,
@@ -22,6 +24,7 @@ export default class BraintreeSDKCreator {
         default?: Promise<BraintreeDataCollector>,
         paypal?: Promise<BraintreeDataCollector>,
     } = {};
+    private _googlePay?: Promise<GooglePayBraintreeSDK>;
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -116,6 +119,20 @@ export default class BraintreeSDKCreator {
         return this._visaCheckout;
     }
 
+    getGooglePaymentComponent(): Promise<GooglePayBraintreeSDK> {
+        if (!this._googlePay) {
+            this._googlePay = Promise.all ([
+                this.getClient(),
+                this._braintreeScriptLoader.loadGooglePaymentComponent(),
+            ])
+                .then(([client, googlePay]) => {
+                    return googlePay.create({ client });
+                });
+        }
+
+        return this._googlePay;
+    }
+
     teardown(): Promise<void> {
         return Promise.all([
             this._teardown(this._3ds),
@@ -126,6 +143,7 @@ export default class BraintreeSDKCreator {
             this._3ds = undefined;
             this._visaCheckout = undefined;
             this._dataCollectors = {};
+            this._googlePay = undefined;
         });
     }
 
