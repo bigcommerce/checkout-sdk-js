@@ -6,7 +6,9 @@ import BraintreeSDKCreator from './braintree-sdk-creator';
 import {
     getClientMock,
     getDataCollectorMock,
+    getDeviceDataMock,
     getModuleCreatorMock,
+    getModuleCreatorNewMock,
     getThreeDSecureMock,
     getVisaCheckoutMock,
 } from './braintree.mock';
@@ -112,7 +114,7 @@ describe('Braintree SDK Creator', () => {
 
         beforeEach(() => {
             dataCollectorMock = getDataCollectorMock();
-            dataCollectorCreatorMock = getModuleCreatorMock(dataCollectorMock);
+            dataCollectorCreatorMock = getModuleCreatorNewMock(dataCollectorMock);
             braintreeScriptLoader.loadDataCollector = jest.fn().mockReturnValue(Promise.resolve(dataCollectorCreatorMock));
             braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
             jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(Promise.resolve(clientMock));
@@ -126,7 +128,7 @@ describe('Braintree SDK Creator', () => {
             expect(dataCollectorCreatorMock.create).toHaveBeenCalledWith({ client: clientMock, kount: true, paypal: true });
         });
 
-        it('always returns the same instance of the 3ds client', async () => {
+        it('always returns the same instance of the data collector', async () => {
             const dataCollector1 = await braintreeSDKCreator.getDataCollector();
             const dataCollector2 = await braintreeSDKCreator.getDataCollector();
             expect(dataCollector1).toBe(dataCollector2);
@@ -145,7 +147,8 @@ describe('Braintree SDK Creator', () => {
 
         it('returns the data collector information', async () => {
             const dataCollector = await braintreeSDKCreator.getDataCollector();
-            expect(dataCollector).toEqual(expect.objectContaining({ deviceData: 'my_device_session_id' }));
+
+            expect(dataCollector).toEqual(expect.objectContaining({ deviceData: getDeviceDataMock() }));
         });
 
         it('catches the KOUNT_IS_NOT_ENABLED error ', async () => {
