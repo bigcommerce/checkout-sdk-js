@@ -57,10 +57,15 @@ export default function createPaymentStrategyRegistry(
         new PaymentRequestSender(paymentClient),
         orderActionCreator
     );
+
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
         new RemoteCheckoutRequestSender(requestSender)
     );
+    const configRequestSender = new ConfigRequestSender(requestSender);
+    const configActionCreator = new ConfigActionCreator(configRequestSender);
+    const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
+    const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
     registry.register('afterpay', () =>
         new AfterpayPaymentStrategy(
@@ -160,8 +165,12 @@ export default function createPaymentStrategyRegistry(
     registry.register('squarev2', () =>
         new SquarePaymentStrategy(
             store,
+            checkoutActionCreator,
             orderActionCreator,
             paymentActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            requestSender,
             new SquareScriptLoader(scriptLoader)
         )
     );
@@ -207,12 +216,9 @@ export default function createPaymentStrategyRegistry(
     registry.register('braintreevisacheckout', () =>
         new BraintreeVisaCheckoutPaymentStrategy(
             store,
-            new CheckoutActionCreator(
-                checkoutRequestSender,
-                new ConfigActionCreator(new ConfigRequestSender(requestSender))
-            ),
+            checkoutActionCreator,
             paymentMethodActionCreator,
-            new PaymentStrategyActionCreator(registry, orderActionCreator),
+            paymentStrategyActionCreator,
             paymentActionCreator,
             orderActionCreator,
             createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),

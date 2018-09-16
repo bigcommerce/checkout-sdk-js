@@ -220,9 +220,13 @@ export function getSquare(): PaymentMethod {
             applicationId: 'test',
             env: 'bar',
             locationId: 'foo',
+            paymentData: {
+                nonce: undefined,
+            },
         },
     };
 }
+
 export function getChasePay(): PaymentMethod {
     return {
         id: 'chasepay',
