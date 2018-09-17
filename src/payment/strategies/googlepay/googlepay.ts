@@ -1,4 +1,4 @@
-import { BraintreeModuleCreator } from '../braintree/braintree';
+import {BraintreeModule, BraintreeModuleCreator} from '../braintree/braintree';
 
 type EnvironmentType = 'PRODUCTION' | 'TEST';
 type AddressFormat = 'FULL' | 'MIN';
@@ -6,7 +6,7 @@ type TotalPriceStatus = 'ESTIMATED' | 'FINAL' | 'NOT_CURRENTLY_KNOWN';
 type TokenizeType = 'AndroidPayCard' | 'CreditCard';
 export const GATEWAY = { braintree: 'braintree' };
 
-export interface GooglePayBraintreeSDK {
+export interface GooglePayBraintreeSDK extends BraintreeModule {
     createPaymentDataRequest(request?: GooglePayPaymentDataRequest): { allowedPaymentMethods: string[] } | GooglePayBraintreePaymentDataRequest;
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
 }
