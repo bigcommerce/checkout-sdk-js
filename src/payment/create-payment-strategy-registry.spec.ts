@@ -19,6 +19,7 @@ import {
     SagePayPaymentStrategy,
     SquarePaymentStrategy,
 } from './strategies';
+import GooglepayPaymentStrategy from "./strategies/googlepay/googlepay-payment-strategy";
 
 describe('CreatePaymentStrategyRegistry', () => {
     let registry: PaymentStrategyRegistry;
@@ -97,5 +98,10 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate nopaymentdatarequired', () => {
         const paymentStrategy = registry.get('nopaymentdatarequired');
         expect(paymentStrategy).toBeInstanceOf(NoPaymentDataRequiredPaymentStrategy);
+    });
+
+    it('can instantiate googlepay', () => {
+        const paymentStrategy = registry.get('googlepay');
+        expect(paymentStrategy).toBeInstanceOf(GooglepayPaymentStrategy);
     });
 });

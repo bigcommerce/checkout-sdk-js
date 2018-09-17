@@ -15,6 +15,7 @@ import {
     BraintreeVisaCheckout,
 } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
+import {GooglePayBraintreeSDK} from "../googlepay/googlepay";
 
 export function getClientMock(): BraintreeClient {
     return {
@@ -75,6 +76,14 @@ export function getTokenizeResponseBody(): BraintreeTokenizeResponse {
         creditCards: [
             { nonce: 'demo_nonce' },
         ],
+    };
+}
+
+export function getGooglePayMock(): GooglePayBraintreeSDK {
+    return {
+        createPaymentDataRequest: jest.fn((() => Promise.resolve())),
+        parseResponse: jest.fn((() => Promise.resolve())),
+        teardown: jest.fn(),
     };
 }
 

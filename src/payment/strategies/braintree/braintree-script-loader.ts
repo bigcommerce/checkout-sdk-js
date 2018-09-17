@@ -34,7 +34,7 @@ export default class BraintreeScriptLoader {
 
     load3DS(): Promise<BraintreeThreeDSecureCreator> {
         return this._scriptLoader
-            .loadScript('//js.braintreegateway.com/web/3.15.0/js/three-d-secure.min.js')
+            .loadScript('//js.braintreegateway.com/web/3.37.0/js/three-d-secure.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.threeDSecure) {
                     throw new StandardError();
@@ -46,7 +46,7 @@ export default class BraintreeScriptLoader {
 
     loadDataCollector(): Promise<BraintreeDataCollectorCreator> {
         return this._scriptLoader
-            .loadScript('//js.braintreegateway.com/web/3.15.0/js/data-collector.min.js')
+            .loadScript('//js.braintreegateway.com/web/3.37.0/js/data-collector.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.dataCollector) {
                     throw new StandardError();
@@ -58,7 +58,7 @@ export default class BraintreeScriptLoader {
 
     loadPaypal(): Promise<BraintreePaypalCreator> {
         return this._scriptLoader
-            .loadScript('//js.braintreegateway.com/web/3.15.0/js/paypal.min.js')
+            .loadScript('//js.braintreegateway.com/web/3.37.0/js/paypal.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.paypal) {
                     throw new StandardError();
@@ -70,7 +70,7 @@ export default class BraintreeScriptLoader {
 
     loadPaypalCheckout(): Promise<BraintreePaypalCheckoutCreator> {
         return this._scriptLoader
-            .loadScript('//js.braintreegateway.com/web/3.15.0/js/paypal-checkout.min.js')
+            .loadScript('//js.braintreegateway.com/web/3.37.0/js/paypal-checkout.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.paypalCheckout) {
                     throw new StandardError();
@@ -82,7 +82,7 @@ export default class BraintreeScriptLoader {
 
     loadVisaCheckout(): Promise<BraintreeVisaCheckoutCreator> {
         return this._scriptLoader
-            .loadScript('//js.braintreegateway.com/web/3.15.0/js/visa-checkout.min.js')
+            .loadScript('//js.braintreegateway.com/web/3.37.0/js/visa-checkout.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.visaCheckout) {
                     throw new StandardError();
