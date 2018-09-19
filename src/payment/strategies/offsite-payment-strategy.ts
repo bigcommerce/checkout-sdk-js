@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { OrderActionCreator, OrderRequestBody } from '../../order';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../order';
 import { PaymentArgumentInvalidError } from '../errors';
 import PaymentActionCreator from '../payment-action-creator';
 import { PaymentRequestOptions } from '../payment-request-options';
@@ -19,7 +19,7 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const paymentData = payment && payment.paymentData;
-        const orderPayload = payment && payment.gatewayId === 'adyen' ? payload : order;
+        const orderPayload = this._shouldSubmitFullPayload(payment) ? payload : order;
 
         if (!payment || !paymentData) {
             throw new PaymentArgumentInvalidError(['payment.paymentData']);
@@ -41,5 +41,15 @@ export default class OffsitePaymentStrategy extends PaymentStrategy {
         }
 
         return super.finalize();
+    }
+
+    private _shouldSubmitFullPayload(payment?: OrderPaymentRequestBody): boolean {
+        // FIXME: A temporary workaround to support offsite payment methods
+        // where their return URL needs to be provided by the core app.
+        if (!payment) {
+            return false;
+        }
+
+        return payment.gatewayId === 'adyen' || payment.methodId === 'ccavenuemars';
     }
 }
