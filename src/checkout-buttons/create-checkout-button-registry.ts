@@ -6,9 +6,10 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
+import { GooglePayScriptLoader } from '../payment/strategies/googlepay';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
-import { BraintreePaypalButtonStrategy, CheckoutButtonStrategy } from './strategies';
+import { BraintreeGooglePayButtonStrategy, BraintreePaypalButtonStrategy, CheckoutButtonStrategy } from './strategies';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -39,6 +40,14 @@ export default function createCheckoutButtonRegistry(
             new PaypalScriptLoader(scriptLoader),
             createFormPoster(),
             true
+        )
+    );
+
+    registry.register('braintreegooglepay', () =>
+        new BraintreeGooglePayButtonStrategy(
+            store,
+            new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
+            new GooglePayScriptLoader(scriptLoader)
         )
     );
 

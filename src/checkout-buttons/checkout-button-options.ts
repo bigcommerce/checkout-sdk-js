@@ -1,6 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
-import { BraintreePaypalButtonInitializeOptions } from './strategies';
+import { BraintreeGooglePayButtonInitializeOptions, BraintreePaypalButtonInitializeOptions } from './strategies';
 
 /**
  * The set of options for configuring the checkout button.
@@ -24,4 +24,10 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * omitted unless you need to support Braintree Credit.
      */
     braintreepaypalcredit?: BraintreePaypalButtonInitializeOptions;
+
+    /**
+     * The options that are required to facilitate Braintree GooglePay. They can be
+     * omitted unles you need to support Braintree GooglePay.
+     */
+    braintreegooglepay?: BraintreeGooglePayButtonInitializeOptions;
 }
