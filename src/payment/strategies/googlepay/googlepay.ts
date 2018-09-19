@@ -1,6 +1,6 @@
 import {BraintreeModule, BraintreeModuleCreator} from '../braintree/braintree';
 
-type EnvironmentType = 'PRODUCTION' | 'TEST';
+export type EnvironmentType = 'PRODUCTION' | 'TEST';
 type AddressFormat = 'FULL' | 'MIN';
 type TotalPriceStatus = 'ESTIMATED' | 'FINAL' | 'NOT_CURRENTLY_KNOWN';
 type TokenizeType = 'AndroidPayCard' | 'CreditCard';
