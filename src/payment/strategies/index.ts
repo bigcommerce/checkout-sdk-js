@@ -9,7 +9,7 @@ export { default as SagePayPaymentStrategy } from './sage-pay-payment-strategy';
 export { AfterpayPaymentStrategy } from './afterpay';
 export { AmazonPayPaymentStrategy, AmazonPayPaymentInitializeOptions } from './amazon-pay';
 export { BraintreeCreditCardPaymentStrategy, BraintreePaymentInitializeOptions, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy, BraintreeVisaCheckoutPaymentInitializeOptions } from './braintree';
-export { GooglepayPaymentStrategy } from './googlepay';
+export { GooglePayPaymentStrategy } from './googlepay';
 export { KlarnaPaymentStrategy, KlarnaPaymentInitializeOptions } from './klarna';
 export { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './paypal';
 export { ChasePayPaymentStrategy, ChasePayInitializeOptions } from './chasepay';

@@ -139,6 +139,7 @@ export default class BraintreeSDKCreator {
             this._teardown(this._dataCollectors.default),
             this._teardown(this._dataCollectors.paypal),
             this._teardown(this._visaCheckout),
+            this._teardown(this._googlePay),
         ]).then(() => {
             this._3ds = undefined;
             this._visaCheckout = undefined;
