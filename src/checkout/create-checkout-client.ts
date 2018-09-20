@@ -17,8 +17,6 @@ export default function createCheckoutClient(
     const shippingCountryRequestSender = new ShippingCountryRequestSender(requestSender, config);
 
     return new CheckoutClient(
-        customerRequestSender,
-        orderRequestSender,
         shippingCountryRequestSender
     );
 }
