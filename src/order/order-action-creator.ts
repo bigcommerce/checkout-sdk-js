@@ -15,10 +15,11 @@ import { RequestOptions } from '../common/http-request';
 import InternalOrderRequestBody from './internal-order-request-body';
 import { FinalizeOrderAction, LoadOrderAction, LoadOrderPaymentsAction, OrderActionType, SubmitOrderAction } from './order-actions';
 import OrderRequestBody from './order-request-body';
+import OrderRequestSender from './order-request-sender';
 
 export default class OrderActionCreator {
     constructor(
-        private _checkoutClient: CheckoutClient,
+        private _orderRequestSender: OrderRequestSender,
         private _checkoutValidator: CheckoutValidator
     ) {}
 
@@ -26,7 +27,7 @@ export default class OrderActionCreator {
         return new Observable((observer: Observer<LoadOrderAction>) => {
             observer.next(createAction(OrderActionType.LoadOrderRequested));
 
-            this._checkoutClient.loadOrder(orderId, options)
+            this._orderRequestSender.loadOrder(orderId, options)
                 .then(response => {
                     observer.next(createAction(OrderActionType.LoadOrderSucceeded, response.body));
                     observer.complete();
@@ -42,7 +43,7 @@ export default class OrderActionCreator {
         return new Observable((observer: Observer<LoadOrderPaymentsAction>) => {
             observer.next(createAction(OrderActionType.LoadOrderPaymentsRequested));
 
-            this._checkoutClient.loadOrder(orderId, options)
+            this._orderRequestSender.loadOrder(orderId, options)
                 .then(response => {
                     observer.next(createAction(OrderActionType.LoadOrderPaymentsSucceeded, response.body));
                     observer.complete();
@@ -78,7 +79,7 @@ export default class OrderActionCreator {
 
                 return from(
                     this._checkoutValidator.validate(checkout, options)
-                        .then(() => this._checkoutClient.submitOrder(this._mapToOrderRequestBody(payload, checkout.customerMessage), options))
+                        .then(() => this._orderRequestSender.submitOrder(this._mapToOrderRequestBody(payload, checkout.customerMessage), options))
                 ).pipe(
                     switchMap(response => concat(
                         // TODO: Remove once we can submit orders using storefront API
@@ -95,7 +96,7 @@ export default class OrderActionCreator {
     finalizeOrder(orderId: number, options?: RequestOptions): Observable<FinalizeOrderAction | LoadOrderAction> {
         return concat(
             of(createAction(OrderActionType.FinalizeOrderRequested)),
-            from(this._checkoutClient.finalizeOrder(orderId, options))
+            from(this._orderRequestSender.finalizeOrder(orderId, options))
                 .pipe(
                     switchMap(response => concat(
                         this.loadOrder(orderId, options),

@@ -10,7 +10,6 @@ import CheckoutClient from './checkout-client';
 describe('CheckoutClient', () => {
     let client;
     let customerRequestSender;
-    let orderRequestSender;
     let shippingCountryRequestSender;
 
     beforeEach(() => {
@@ -19,80 +18,14 @@ describe('CheckoutClient', () => {
             signOutCustomer: jest.fn(() => Promise.resolve(getCustomerResponseBody())),
         };
 
-        orderRequestSender = {
-            loadOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrder()))),
-            finalizeOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrder()))),
-            submitOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrder()))),
-        };
-
-        orderRequestSender = {
-            loadOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrder()))),
-            finalizeOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrder()))),
-            submitOrder: jest.fn(() => Promise.resolve(getResponse(getCompleteOrder()))),
-        };
-
         shippingCountryRequestSender = {
             loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
         };
 
         client = new CheckoutClient(
             customerRequestSender,
-            orderRequestSender,
             shippingCountryRequestSender
         );
-    });
-
-    describe('#loadOrder()', () => {
-        it('loads order', async () => {
-            const output = await client.loadOrder(295);
-
-            expect(output).toEqual(getResponse(getCompleteOrder()));
-            expect(orderRequestSender.loadOrder).toHaveBeenCalledWith(295, undefined);
-        });
-
-        it('loads order with timeout', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.loadOrder(295, options);
-
-            expect(output).toEqual(getResponse(getCompleteOrder()));
-            expect(orderRequestSender.loadOrder).toHaveBeenCalledWith(295, options);
-        });
-    });
-
-    describe('#submitOrder()', () => {
-        it('submits order', async () => {
-            const payload = { useStoreCredit: false };
-            const output = await client.submitOrder(payload);
-
-            expect(output).toEqual(getResponse(getCompleteOrder()));
-            expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(payload, undefined);
-        });
-
-        it('submits order with timeout', async () => {
-            const payload = { useStoreCredit: false };
-            const options = { timeout: createTimeout() };
-            const output = await client.submitOrder(payload, options);
-
-            expect(output).toEqual(getResponse(getCompleteOrder()));
-            expect(orderRequestSender.submitOrder).toHaveBeenCalledWith(payload, options);
-        });
-    });
-
-    describe('#finalizeOrder()', () => {
-        it('finalizes order', async () => {
-            const output = await client.finalizeOrder(295);
-
-            expect(output).toEqual(getResponse(getCompleteOrder()));
-            expect(orderRequestSender.finalizeOrder).toHaveBeenCalledWith(295, undefined);
-        });
-
-        it('finalizes order with timeout', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.finalizeOrder(295, options);
-
-            expect(output).toEqual(getResponse(getCompleteOrder()));
-            expect(orderRequestSender.finalizeOrder).toHaveBeenCalledWith(295, options);
-        });
     });
 
     describe('#loadShippingCountries()', () => {
