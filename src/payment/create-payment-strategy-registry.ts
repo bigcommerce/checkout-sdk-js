@@ -3,10 +3,10 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import createRequestSender from '@bigcommerce/request-sender/lib/create-request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 
-import { BillingAddressActionCreator } from '../billing';
-import { CheckoutActionCreator, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
+import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
-import { OrderActionCreator } from '../order';
+import { OrderActionCreator, OrderRequestSender } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 
 import PaymentActionCreator from './payment-action-creator';
@@ -51,7 +51,6 @@ import ConsignmentRequestSender from "../shipping/consignment-request-sender";
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
-    client: CheckoutClient,
     paymentClient: any,
     requestSender: RequestSender
 ) {
@@ -64,7 +63,10 @@ export default function createPaymentStrategyRegistry(
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const orderActionCreator = new OrderActionCreator(client, checkoutValidator);
+    const orderActionCreator = new OrderActionCreator(
+        new OrderRequestSender(requestSender),
+        checkoutValidator
+    );
     const paymentActionCreator = new PaymentActionCreator(
         new PaymentRequestSender(paymentClient),
         orderActionCreator
@@ -90,7 +92,9 @@ export default function createPaymentStrategyRegistry(
         new AmazonPayPaymentStrategy(
             store,
             orderActionCreator,
-            new BillingAddressActionCreator(client),
+            new BillingAddressActionCreator(
+                new BillingAddressRequestSender(requestSender)
+            ),
             remoteCheckoutActionCreator,
             new AmazonPayScriptLoader(scriptLoader)
         )

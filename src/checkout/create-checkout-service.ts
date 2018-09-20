@@ -7,16 +7,15 @@ import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
-import { OrderActionCreator } from '../order';
+import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
-import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
+import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutService from './checkout-service';
 import CheckoutValidator from './checkout-validator';
-import createCheckoutClient from './create-checkout-client';
 import createCheckoutStore from './create-checkout-store';
 
 /**
@@ -46,12 +45,12 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     const { locale = '', shouldWarnMutation = true } = options || {};
     const requestSender = createRequestSender({ host: options && options.host });
-    const client = createCheckoutClient(requestSender, { locale });
     const store = createCheckoutStore({}, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
+    const orderRequestSender = new OrderRequestSender(requestSender);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
-    const orderActionCreator = new OrderActionCreator(client, new CheckoutValidator(checkoutRequestSender));
+    const orderActionCreator = new OrderActionCreator(orderRequestSender, new CheckoutValidator(checkoutRequestSender));
 
     return new CheckoutService(
         store,
@@ -67,10 +66,10 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         orderActionCreator,
         new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, client, paymentClient, requestSender),
+            createPaymentStrategyRegistry(store, paymentClient, requestSender),
             orderActionCreator
         ),
-        new ShippingCountryActionCreator(client),
+        new ShippingCountryActionCreator(new ShippingCountryRequestSender(requestSender, { locale })),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender))
     );
 }

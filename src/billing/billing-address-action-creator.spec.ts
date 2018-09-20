@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
-import { createCheckoutClient, createCheckoutStore, Checkout, CheckoutClient, CheckoutStore, CheckoutStoreState } from '../checkout';
+import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';

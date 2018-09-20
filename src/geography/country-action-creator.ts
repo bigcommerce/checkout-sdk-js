@@ -2,7 +2,6 @@ import { createAction, createErrorAction, Action } from '@bigcommerce/data-store
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutClient } from '../checkout';
 import { RequestOptions } from '../common/http-request';
 
 import Country from './country';
