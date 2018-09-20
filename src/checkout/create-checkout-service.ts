@@ -6,7 +6,7 @@ import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
-import { CountryActionCreator } from '../geography';
+import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator } from '../order';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
@@ -59,7 +59,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
         configActionCreator,
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),
-        new CountryActionCreator(client),
+        new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, requestSender)),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
