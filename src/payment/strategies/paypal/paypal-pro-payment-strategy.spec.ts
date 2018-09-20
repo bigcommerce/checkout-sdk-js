@@ -5,9 +5,9 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState, getCheckoutWithPayments } from '../../../checkout/checkouts.mock';
-import { OrderActionCreator, OrderActionType, SubmitOrderAction } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -29,7 +29,7 @@ describe('PaypalProPaymentStrategy', () => {
         submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(createRequestSender()),
+            new OrderRequestSender(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 

@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { getCartResponseBody } from '../cart/internal-carts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator } from '../config';
 import { getConfig } from '../config/configs.mock';
@@ -38,7 +37,7 @@ describe('CheckoutService', () => {
     let billingAddressActionCreator;
     let billingAddressRequestSender;
     let checkoutActionCreator;
-    let checkoutClient;
+    let instrumentRequestSender;
     let countryRequestSender;
     let consignmentRequestSender;
     let consignmentActionCreator;
@@ -58,18 +57,11 @@ describe('CheckoutService', () => {
     let paymentStrategy;
     let paymentStrategyRegistry;
     let shippingStrategyActionCreator;
+    let shippingCountryRequestSender;
     let store;
 
     beforeEach(() => {
-        checkoutClient = {
-            loadCart: jest.fn(() =>
-                Promise.resolve(getResponse(getCartResponseBody()))
-            ),
-
-            loadShippingCountries: jest.fn(() =>
-                Promise.resolve(getResponse(getCountriesResponseBody()))
-            ),
-
+        instrumentRequestSender = {
             getVaultAccessToken: jest.fn(() =>
                 Promise.resolve(getResponse(getVaultAccessTokenResponseBody()))
             ),
@@ -84,6 +76,12 @@ describe('CheckoutService', () => {
         };
 
         store = createCheckoutStore(getCheckoutStoreState());
+
+        shippingCountryRequestSender = {
+            loadCountries: jest.fn(() =>
+                Promise.resolve(getResponse(getCountriesResponseBody()))
+            ),
+        };
 
         billingAddressRequestSender = {
             updateAddress: jest.fn(() =>
@@ -204,7 +202,7 @@ describe('CheckoutService', () => {
             createCustomerStrategyRegistry(store)
         );
 
-        instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
+        instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
 
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
 
@@ -231,11 +229,10 @@ describe('CheckoutService', () => {
                 paymentStrategyRegistry,
                 new OrderActionCreator(orderRequestSender, checkoutValidator)
             ),
-            new ShippingCountryActionCreator(checkoutClient),
+            new ShippingCountryActionCreator(shippingCountryRequestSender),
             shippingStrategyActionCreator
         );
     });
-
     describe('#getState()', () => {
         it('returns state', () => {
             expect(checkoutService.getState()).toEqual(expect.objectContaining({

@@ -3,7 +3,7 @@ import { Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { Checkout, CheckoutClient, InternalCheckoutSelectors } from '../checkout';
+import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError, MissingDataErrorType, StandardError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { GuestCredentials } from '../customer';

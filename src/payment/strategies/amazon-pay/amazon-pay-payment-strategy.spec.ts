@@ -4,15 +4,15 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { BillingAddressActionCreator } from '../../../billing';
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { BillingAddressActionType } from '../../../billing/billing-address-actions';
 import { getBillingAddress, getBillingAddressState } from '../../../billing/billing-addresses.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, RequestError } from '../../../common/error/errors';
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
-import { OrderActionCreator, OrderActionType } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import {
@@ -33,12 +33,13 @@ import AmazonPayWindow from './amazon-pay-window';
 
 describe('AmazonPayPaymentStrategy', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
-    let client: CheckoutClient;
     let container: HTMLDivElement;
     let hostWindow: AmazonPayWindow;
+    let billingAddressRequestSender: BillingAddressRequestSender;
     let initializeBillingAction: Observable<Action>;
     let initializePaymentAction: Observable<Action>;
     let orderActionCreator: OrderActionCreator;
+    let orderRequestSender: OrderRequestSender;
     let orderReference: AmazonPayOrderReference;
     let paymentMethod: PaymentMethod;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
@@ -84,7 +85,8 @@ describe('AmazonPayPaymentStrategy', () => {
 
     beforeEach(() => {
         container = document.createElement('div');
-        client = createCheckoutClient(createRequestSender());
+        orderRequestSender = new OrderRequestSender(createRequestSender());
+        billingAddressRequestSender = new BillingAddressRequestSender(createRequestSender());
         state = getCheckoutStoreState();
         store = createCheckoutStore({
             ...state,
@@ -93,9 +95,9 @@ describe('AmazonPayPaymentStrategy', () => {
                 data: undefined,
             },
         });
-        billingAddressActionCreator = new BillingAddressActionCreator(client);
+        billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender);
         orderActionCreator = new OrderActionCreator(
-            client,
+            orderRequestSender,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(

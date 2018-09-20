@@ -1,7 +1,7 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore, CheckoutValidator } from '../checkout';
+import { createCheckoutStore, CheckoutStore, CheckoutValidator } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';

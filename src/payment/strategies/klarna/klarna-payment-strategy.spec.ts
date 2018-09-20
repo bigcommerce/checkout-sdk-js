@@ -5,14 +5,12 @@ import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
 import {
-    createCheckoutClient,
     createCheckoutStore,
-    CheckoutClient,
     CheckoutRequestSender,
     CheckoutStore,
     CheckoutValidator
 } from '../../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getKlarna, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
@@ -28,7 +26,6 @@ import KlarnaPaymentStrategy from './klarna-payment-strategy';
 import KlarnaScriptLoader from './klarna-script-loader';
 
 describe('KlarnaPaymentStrategy', () => {
-    let client: CheckoutClient;
     let initializePaymentAction: Observable<Action>;
     let klarnaCredit: KlarnaCredit;
     let loadPaymentMethodAction: Observable<Action>;
@@ -43,12 +40,11 @@ describe('KlarnaPaymentStrategy', () => {
     let strategy: KlarnaPaymentStrategy;
 
     beforeEach(() => {
-        client = createCheckoutClient(createRequestSender());
         store = createCheckoutStore({
             paymentMethods: getPaymentMethodsState(),
         });
         orderActionCreator = new OrderActionCreator(
-            client,
+            new OrderRequestSender(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));

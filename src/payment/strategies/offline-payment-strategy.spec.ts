@@ -2,8 +2,8 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { OrderActionCreator, OrderActionType, SubmitOrderAction } from '../../order';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
+import { OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../order';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 
 import OfflinePaymentStrategy from './offline-payment-strategy';
@@ -17,7 +17,7 @@ describe('OfflinePaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(createRequestSender()),
+            new OrderRequestSender(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));

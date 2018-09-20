@@ -7,7 +7,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { CheckoutClient, CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
+import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';

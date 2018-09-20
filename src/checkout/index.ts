@@ -3,7 +3,6 @@ export * from './checkout-actions';
 export { default as Checkout, CheckoutPayment } from './checkout';
 export { default as CheckoutDefaultIncludes } from './checkout-default-includes';
 export { default as CheckoutActionCreator } from './checkout-action-creator';
-export { default as CheckoutClient } from './checkout-client';
 export { default as CheckoutParams } from './checkout-params';
 export { default as checkoutReducer } from './checkout-reducer';
 export { default as CheckoutRequestSender } from './checkout-request-sender';
@@ -20,7 +19,6 @@ export { default as CheckoutValidator } from './checkout-validator';
 export { default as InternalCheckoutSelectors } from './internal-checkout-selectors';
 
 export { default as createActionTransformer } from './create-action-transformer';
-export { default as createCheckoutClient } from './create-checkout-client';
 export { default as createCheckoutService } from './create-checkout-service';
 export { default as createCheckoutStore } from './create-checkout-store';
 export { default as createCheckoutSelectors } from './create-checkout-selectors';
