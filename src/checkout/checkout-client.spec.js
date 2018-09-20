@@ -9,16 +9,11 @@ import CheckoutClient from './checkout-client';
 
 describe('CheckoutClient', () => {
     let client;
-    let countryRequestSender;
     let customerRequestSender;
     let orderRequestSender;
     let shippingCountryRequestSender;
 
     beforeEach(() => {
-        countryRequestSender = {
-            loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
-        };
-
         customerRequestSender = {
             signInCustomer: jest.fn(() => Promise.resolve(getCustomerResponseBody())),
             signOutCustomer: jest.fn(() => Promise.resolve(getCustomerResponseBody())),
@@ -41,7 +36,6 @@ describe('CheckoutClient', () => {
         };
 
         client = new CheckoutClient(
-            countryRequestSender,
             customerRequestSender,
             orderRequestSender,
             shippingCountryRequestSender
@@ -98,23 +92,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getResponse(getCompleteOrder()));
             expect(orderRequestSender.finalizeOrder).toHaveBeenCalledWith(295, options);
-        });
-    });
-
-    describe('#loadCountries()', () => {
-        it('loads billing countries', async () => {
-            const output = await client.loadCountries();
-
-            expect(output).toEqual(getResponse(getCountries()));
-            expect(countryRequestSender.loadCountries).toHaveBeenCalled();
-        });
-
-        it('loads billing countries with timeout', async () => {
-            const options = { timeout: createTimeout() };
-            const output = await client.loadCountries(options);
-
-            expect(output).toEqual(getResponse(getCountries()));
-            expect(countryRequestSender.loadCountries).toHaveBeenCalledWith(options);
         });
     });
 

@@ -17,7 +17,6 @@ export default class CheckoutClient {
      * @internal
      */
     constructor(
-        private _countryRequestSender: CountryRequestSender,
         private _customerRequestSender: CustomerRequestSender,
         private _orderRequestSender: OrderRequestSender,
         private _shippingCountryRequestSender: ShippingCountryRequestSender
@@ -33,10 +32,6 @@ export default class CheckoutClient {
 
     finalizeOrder(orderId: number, options?: RequestOptions): Promise<Response<InternalOrderResponseBody>> {
         return this._orderRequestSender.finalizeOrder(orderId, options);
-    }
-
-    loadCountries(options?: RequestOptions): Promise<Response<CountryResponseBody>> {
-        return this._countryRequestSender.loadCountries(options);
     }
 
     loadShippingCountries(options?: RequestOptions): Promise<Response<CountryResponseBody>> {

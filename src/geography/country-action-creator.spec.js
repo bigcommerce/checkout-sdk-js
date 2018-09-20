@@ -5,7 +5,7 @@ import * as actionTypes from './country-action-types';
 import CountryActionCreator from './country-action-creator';
 
 describe('CountryActionCreator', () => {
-    let checkoutClient;
+    let countryRequestSender;
     let countryActionCreator;
     let errorResponse;
     let response;
@@ -14,11 +14,11 @@ describe('CountryActionCreator', () => {
         response = getResponse({ data: getCountries() });
         errorResponse = getErrorResponse();
 
-        checkoutClient = {
+        countryRequestSender = {
             loadCountries: jest.fn(() => Promise.resolve(response)),
         };
 
-        countryActionCreator = new CountryActionCreator(checkoutClient);
+        countryActionCreator = new CountryActionCreator(countryRequestSender);
     });
 
     describe('#loadCountries()', () => {
@@ -34,7 +34,7 @@ describe('CountryActionCreator', () => {
         });
 
         it('emits error actions if unable to load countries', () => {
-            checkoutClient.loadCountries.mockReturnValue(Promise.reject(errorResponse));
+            countryRequestSender.loadCountries.mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn((action) => Observable.of(action));
 

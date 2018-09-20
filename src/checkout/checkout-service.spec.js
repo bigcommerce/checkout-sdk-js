@@ -39,6 +39,7 @@ describe('CheckoutService', () => {
     let billingAddressRequestSender;
     let checkoutActionCreator;
     let checkoutClient;
+    let countryRequestSender;
     let consignmentRequestSender;
     let consignmentActionCreator;
     let checkoutRequestSender;
@@ -62,10 +63,6 @@ describe('CheckoutService', () => {
         checkoutClient = {
             loadCart: jest.fn(() =>
                 Promise.resolve(getResponse(getCartResponseBody()))
-            ),
-
-            loadCountries: jest.fn(() =>
-                Promise.resolve(getResponse(getCountriesResponseBody()))
             ),
 
             loadOrder: jest.fn(() =>
@@ -109,6 +106,12 @@ describe('CheckoutService', () => {
                         email: 'foo@bar.com',
                     },
                 })))
+            ),
+        };
+
+        countryRequestSender = {
+            loadCountries: jest.fn(() =>
+                Promise.resolve(getResponse(getCountriesResponseBody()))
             ),
         };
 
@@ -214,7 +217,7 @@ describe('CheckoutService', () => {
             checkoutActionCreator,
             configActionCreator,
             consignmentActionCreator,
-            new CountryActionCreator(checkoutClient),
+            new CountryActionCreator(countryRequestSender),
             new CouponActionCreator(couponRequestSender),
             customerStrategyActionCreator,
             new GiftCertificateActionCreator(giftCertificateRequestSender),
