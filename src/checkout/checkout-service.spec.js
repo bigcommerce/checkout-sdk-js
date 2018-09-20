@@ -52,6 +52,7 @@ describe('CheckoutService', () => {
     let giftCertificateRequestSender;
     let instrumentActionCreator;
     let orderActionCreator;
+    let orderRequestSender;
     let paymentMethodRequestSender;
     let paymentMethodActionCreator;
     let paymentStrategy;
@@ -63,18 +64,6 @@ describe('CheckoutService', () => {
         checkoutClient = {
             loadCart: jest.fn(() =>
                 Promise.resolve(getResponse(getCartResponseBody()))
-            ),
-
-            loadOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getOrder()))
-            ),
-
-            submitOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
-            ),
-
-            finalizeOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
             ),
 
             loadShippingCountries: jest.fn(() =>
@@ -124,6 +113,20 @@ describe('CheckoutService', () => {
 
         paymentStrategyRegistry = {
             getByMethod: jest.fn(() => paymentStrategy),
+        };
+
+        orderRequestSender = {
+            loadOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getOrder()))
+            ),
+
+            submitOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
+            ),
+
+            finalizeOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
+            ),
         };
 
         consignmentRequestSender = {
@@ -203,7 +206,7 @@ describe('CheckoutService', () => {
 
         instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
 
-        orderActionCreator = new OrderActionCreator(checkoutClient, checkoutValidator);
+        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
 
@@ -226,7 +229,7 @@ describe('CheckoutService', () => {
             paymentMethodActionCreator,
             new PaymentStrategyActionCreator(
                 paymentStrategyRegistry,
-                new OrderActionCreator(checkoutClient, checkoutValidator)
+                new OrderActionCreator(orderRequestSender, checkoutValidator)
             ),
             new ShippingCountryActionCreator(checkoutClient),
             shippingStrategyActionCreator
