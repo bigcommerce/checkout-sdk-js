@@ -18,6 +18,7 @@ export function getInternalOrderRequestBody(): InternalOrderRequestBody {
 
     return {
         customerMessage: 'comment',
+        externalSource: 'Partner',
         useStoreCredit: false,
         payment: {
             name: payment.methodId,

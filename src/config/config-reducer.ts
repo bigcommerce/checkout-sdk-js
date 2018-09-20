@@ -5,6 +5,7 @@ import { ConfigActionType, LoadConfigAction } from './config-actions';
 import ConfigState, { ConfigErrorsState, ConfigStatusesState } from './config-state';
 
 const DEFAULT_STATE: ConfigState = {
+    meta: {},
     errors: {},
     statuses: {},
 };
