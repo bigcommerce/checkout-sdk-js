@@ -46,6 +46,8 @@ import { WepayRiskClient } from './strategies/wepay';
 
 import BraintreeScriptLoader from './strategies/braintree/braintree-script-loader';
 import BraintreeSDKCreator from './strategies/braintree/braintree-sdk-creator';
+import ConsignmentActionCreator from "../shipping/consignment-action-creator";
+import ConsignmentRequestSender from "../shipping/consignment-request-sender";
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
@@ -56,8 +58,11 @@ export default function createPaymentStrategyRegistry(
     const registry = new PaymentStrategyRegistry(store, { defaultToken: 'creditcard' });
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
+    const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader);
+    const braintreeSdkCreator = new BraintreeSDKCreator(braintreeScriptLoader);
 
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
+    const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const orderActionCreator = new OrderActionCreator(client, checkoutValidator);
     const paymentActionCreator = new PaymentActionCreator(
@@ -227,9 +232,6 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader);
-    const braintreeSdkCreator = new BraintreeSDKCreator(braintreeScriptLoader);
-
     registry.register('googlepay', () =>
         new GooglePayPaymentStrategy(
             store,
@@ -242,7 +244,10 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             orderActionCreator,
             new GooglePayScriptLoader(scriptLoader),
-            new GooglePayPaymentProcessor(braintreeSdkCreator, createRequestSender())
+            new GooglePayPaymentProcessor(braintreeSdkCreator, createRequestSender()),
+            new BillingAddressActionCreator(client),
+            remoteCheckoutActionCreator,
+            new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender)
         )
     );
 

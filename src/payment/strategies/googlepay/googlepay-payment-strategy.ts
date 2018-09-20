@@ -1,3 +1,8 @@
+import {createAction, createErrorAction} from '@bigcommerce/data-store';
+
+import {isInternalAddressEqual, mapFromInternalAddress, mapToInternalAddress} from '../../../address';
+import InternalAddress from '../../../address/internal-address';
+import {BillingAddressActionCreator} from '../../../billing';
 import CheckoutStore from '../../../checkout/checkout-store';
 import { CheckoutActionCreator } from '../../../checkout/index';
 import InternalCheckoutSelectors from '../../../checkout/internal-checkout-selectors';
@@ -8,6 +13,10 @@ import {
 import NotInitializedError from '../../../common/error/errors/not-initialized-error';
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order/index';
+import {RemoteCheckoutActionCreator} from '../../../remote-checkout';
+import {RemoteCheckoutSynchronizationError} from '../../../remote-checkout/errors';
+import ConsignmentActionCreator from '../../../shipping/consignment-action-creator';
+import {ShippingStrategyActionType} from '../../../shipping/shipping-strategy-actions';
 import { PaymentActionCreator, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../../index';
 import Payment from '../../payment';
 import PaymentMethod from '../../payment-method';
@@ -48,7 +57,10 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _googlePayScriptLoader: GooglePayScriptLoader,
-        private _googlePayPaymentProcessor: GooglePayPaymentProcessor
+        private _googlePayPaymentProcessor: GooglePayPaymentProcessor,
+        private _billingAddressActionCreator: BillingAddressActionCreator,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
+        private _consignmentActionCreator: ConsignmentActionCreator
     ) {
         super(store);
     }
@@ -98,6 +110,66 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
             .then(payment =>
                 this._createOrder(payment, payload.useStoreCredit, options)
             );
+    }
+
+    private _synchronizeBillingAddress(): Promise<InternalCheckoutSelectors> {
+        const methodId = this._paymentMethod && this._paymentMethod.id;
+
+        if (!methodId) {
+            throw new RemoteCheckoutSynchronizationError();
+        }
+
+        return this._store.dispatch(
+            this._remoteCheckoutActionCreator.initializeBilling(methodId, { referenceId: '' })
+        )
+            .then(state => {
+                const billingAddress = state.billingAddress.getBillingAddress();
+                const internalBillingAddress = billingAddress && mapToInternalAddress(billingAddress);
+                if (!billingAddress) {
+                    throw new Error('error');
+                }
+                const remoteAddress: InternalAddress = mapToInternalAddress(billingAddress); // TODO: Update with the wallet's address
+                remoteAddress.addressLine1 = 'known street example BILLING';
+
+                return this._store.dispatch(
+                    this._billingAddressActionCreator.updateAddress(mapFromInternalAddress(remoteAddress))
+                );
+            });
+    }
+
+    private _synchronizeShippingAddress(): Promise<InternalCheckoutSelectors> {
+        const methodId = this._paymentMethod && this._paymentMethod.id;
+
+        if (!methodId) {
+            throw new RemoteCheckoutSynchronizationError();
+        }
+
+        return this._store.dispatch(
+            createAction(ShippingStrategyActionType.UpdateAddressRequested, undefined, { methodId })
+        )
+            .then(() => this._store.dispatch(
+                this._remoteCheckoutActionCreator.initializeShipping(methodId, { referenceId: '' })
+            ))
+            .then(state => {
+                const address = state.shippingAddress.getShippingAddress();
+
+                if (!address) {
+                    throw new Error('error');
+                }
+
+                const remoteAddress: InternalAddress = mapToInternalAddress(address); // TODO: Update with the wallet's address
+                remoteAddress.addressLine1 = 'known street example SHIPPING';
+
+                return this._store.dispatch(
+                    this._consignmentActionCreator.updateAddress(mapFromInternalAddress(remoteAddress))
+                );
+            })
+            .then(() => this._store.dispatch(
+                createAction(ShippingStrategyActionType.UpdateAddressSucceeded, undefined, { methodId })
+            ))
+            .catch(error => this._store.dispatch(
+                createErrorAction(ShippingStrategyActionType.UpdateAddressFailed, error, { methodId })
+            ));
     }
 
     private _configureWallet(): Promise<void> {
@@ -233,6 +305,9 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
                     onError = () => {},
                     onPaymentSelect = () => {},
                 } = this._googlePayOptions;
+
+                this._synchronizeBillingAddress();
+                this._synchronizeShippingAddress();
 
                 return this._paymentInstrumentSelected(paymentSuccessPayload)
                     .then(() => onPaymentSelect())
