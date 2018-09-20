@@ -17,19 +17,10 @@ export default class CheckoutClient {
      * @internal
      */
     constructor(
-        private _customerRequestSender: CustomerRequestSender,
         private _shippingCountryRequestSender: ShippingCountryRequestSender
     ) {}
 
     loadShippingCountries(options?: RequestOptions): Promise<Response<CountryResponseBody>> {
         return this._shippingCountryRequestSender.loadCountries(options);
-    }
-
-    signInCustomer(credentials: CustomerCredentials, options?: RequestOptions): Promise<Response> {
-        return this._customerRequestSender.signInCustomer(credentials, options);
-    }
-
-    signOutCustomer(options?: RequestOptions): Promise<Response> {
-        return this._customerRequestSender.signOutCustomer(options);
     }
 }
