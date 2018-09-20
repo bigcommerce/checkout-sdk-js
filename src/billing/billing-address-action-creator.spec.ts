@@ -11,12 +11,13 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import { BillingAddressRequestBody } from './billing-address';
 import BillingAddressActionCreator from './billing-address-action-creator';
 import { BillingAddressAction, BillingAddressActionType, UpdateBillingAddressAction } from './billing-address-actions';
+import BillingAddressRequestSender from './billing-address-request-sender';
 import { getBillingAddress } from './billing-addresses.mock';
 
 describe('BillingAddressActionCreator', () => {
     let address: AddressRequestBody;
     let billingAddressActionCreator: BillingAddressActionCreator;
-    let checkoutClient: CheckoutClient;
+    let billingAddressRequestSender: BillingAddressRequestSender;
     let errorResponse: Response<Error>;
     let response: Response<Checkout>;
     let state: CheckoutStoreState;
@@ -27,12 +28,12 @@ describe('BillingAddressActionCreator', () => {
         response = getResponse(getCheckout());
         errorResponse = getErrorResponse();
         state = getCheckoutStoreState();
-        checkoutClient = createCheckoutClient(createRequestSender());
+        billingAddressRequestSender = new BillingAddressRequestSender(createRequestSender());
 
-        jest.spyOn(checkoutClient, 'updateBillingAddress').mockImplementation(() => Promise.resolve(response));
-        jest.spyOn(checkoutClient, 'createBillingAddress').mockImplementation(() => Promise.resolve(response));
+        jest.spyOn(billingAddressRequestSender, 'updateAddress').mockImplementation(() => Promise.resolve(response));
+        jest.spyOn(billingAddressRequestSender, 'createAddress').mockImplementation(() => Promise.resolve(response));
 
-        billingAddressActionCreator = new BillingAddressActionCreator(checkoutClient);
+        billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender);
         address = getBillingAddress();
     });
 
@@ -51,7 +52,7 @@ describe('BillingAddressActionCreator', () => {
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(actions).toEqual(undefined);
-                    expect(checkoutClient.updateBillingAddress).not.toHaveBeenCalled();
+                    expect(billingAddressRequestSender.updateAddress).not.toHaveBeenCalled();
                 }
             });
         });
@@ -68,7 +69,7 @@ describe('BillingAddressActionCreator', () => {
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(StandardError);
                     expect(actions).toEqual(undefined);
-                    expect(checkoutClient.updateBillingAddress).not.toHaveBeenCalled();
+                    expect(billingAddressRequestSender.updateAddress).not.toHaveBeenCalled();
                 }
             });
         });
@@ -100,7 +101,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('emits error actions if unable to continue as guest', async () => {
-                jest.spyOn(checkoutClient, 'createBillingAddress')
+                jest.spyOn(billingAddressRequestSender, 'createAddress')
                     .mockReturnValue(Promise.reject(getErrorResponse()));
 
                 const errorHandler = jest.fn();
@@ -124,7 +125,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(getCheckout().id, guestCredentials, {});
+                expect(billingAddressRequestSender.createAddress).toHaveBeenCalledWith(getCheckout().id, guestCredentials, {});
             });
         });
 
@@ -155,7 +156,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('emits error actions if unable to update billing address', async () => {
-                jest.spyOn(checkoutClient, 'updateBillingAddress')
+                jest.spyOn(billingAddressRequestSender, 'updateAddress')
                     .mockReturnValue(Promise.reject(getErrorResponse()));
 
                 const errorHandler = jest.fn();
@@ -179,7 +180,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
                         ...omit(address, 'country'),
@@ -207,8 +208,8 @@ describe('BillingAddressActionCreator', () => {
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(actions).toEqual(undefined);
-                    expect(checkoutClient.updateBillingAddress).not.toHaveBeenCalled();
-                    expect(checkoutClient.createBillingAddress).not.toHaveBeenCalled();
+                    expect(billingAddressRequestSender.updateAddress).not.toHaveBeenCalled();
+                    expect(billingAddressRequestSender.createAddress).not.toHaveBeenCalled();
                 }
             });
         });
@@ -231,7 +232,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('emits error actions if unable to create billing address', async () => {
-                jest.spyOn(checkoutClient, 'createBillingAddress')
+                jest.spyOn(billingAddressRequestSender, 'createAddress')
                     .mockReturnValue(Promise.reject(getErrorResponse()));
 
                 const errorHandler = jest.fn();
@@ -255,7 +256,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(getCheckout().id, address, {});
+                expect(billingAddressRequestSender.createAddress).toHaveBeenCalledWith(getCheckout().id, address, {});
             });
 
             it('sends request to update email', async () => {
@@ -263,7 +264,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress(payload, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.createBillingAddress).toHaveBeenCalledWith(getCheckout().id, payload, {});
+                expect(billingAddressRequestSender.createAddress).toHaveBeenCalledWith(getCheckout().id, payload, {});
             });
         });
 
@@ -284,7 +285,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('emits error actions if unable to update billing address', async () => {
-                jest.spyOn(checkoutClient, 'updateBillingAddress')
+                jest.spyOn(billingAddressRequestSender, 'updateAddress')
                     .mockReturnValue(Promise.reject(getErrorResponse()));
 
                 const errorHandler = jest.fn();
@@ -308,7 +309,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
                         ...address,
@@ -324,7 +325,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
                         ...address,
@@ -340,7 +341,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
                         ...address,
@@ -366,7 +367,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
                         ...address,
@@ -381,7 +382,7 @@ describe('BillingAddressActionCreator', () => {
                 await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
-                expect(checkoutClient.updateBillingAddress).toHaveBeenCalledWith(
+                expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
                     getCheckout().id,
                     {
                         ...address,

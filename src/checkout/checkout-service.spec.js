@@ -36,6 +36,7 @@ import { getConsignment } from '../shipping/consignments.mock';
 
 describe('CheckoutService', () => {
     let billingAddressActionCreator;
+    let billingAddressRequestSender;
     let checkoutActionCreator;
     let checkoutClient;
     let consignmentRequestSender;
@@ -83,17 +84,6 @@ describe('CheckoutService', () => {
                 Promise.resolve(getResponse(getCountriesResponseBody()))
             ),
 
-            updateBillingAddress: jest.fn(() =>
-                Promise.resolve(getResponse(merge({}, getCheckout(), {
-                    customer: {
-                        email: 'foo@bar.com',
-                    },
-                    billingAddress: {
-                        email: 'foo@bar.com',
-                    },
-                })))
-            ),
-
             getVaultAccessToken: jest.fn(() =>
                 Promise.resolve(getResponse(getVaultAccessTokenResponseBody()))
             ),
@@ -108,6 +98,19 @@ describe('CheckoutService', () => {
         };
 
         store = createCheckoutStore(getCheckoutStoreState());
+
+        billingAddressRequestSender = {
+            updateAddress: jest.fn(() =>
+                Promise.resolve(getResponse(merge({}, getCheckout(), {
+                    customer: {
+                        email: 'foo@bar.com',
+                    },
+                    billingAddress: {
+                        email: 'foo@bar.com',
+                    },
+                })))
+            ),
+        };
 
         paymentStrategy = {
             execute: jest.fn(() => Promise.resolve(store.getState())),
@@ -180,7 +183,7 @@ describe('CheckoutService', () => {
             validate: jest.fn(() => Promise.resolve()),
         };
 
-        billingAddressActionCreator = new BillingAddressActionCreator(checkoutClient);
+        billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender);
 
         configActionCreator = new ConfigActionCreator(configRequestSender);
 
@@ -829,7 +832,7 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             await checkoutService.updateBillingAddress(address, options);
 
-            expect(checkoutClient.updateBillingAddress)
+            expect(billingAddressRequestSender.updateAddress)
                 .toHaveBeenCalledWith(getCheckout().id, address, options);
         });
     });
