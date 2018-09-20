@@ -1,6 +1,6 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
-import { BillingAddressActionCreator } from '../billing';
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
@@ -55,7 +55,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     return new CheckoutService(
         store,
-        new BillingAddressActionCreator(client),
+        new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender)),
         new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
         configActionCreator,
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),

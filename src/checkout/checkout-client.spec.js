@@ -9,18 +9,12 @@ import CheckoutClient from './checkout-client';
 
 describe('CheckoutClient', () => {
     let client;
-    let billingAddressRequestSender;
     let countryRequestSender;
     let customerRequestSender;
     let orderRequestSender;
     let shippingCountryRequestSender;
 
     beforeEach(() => {
-        billingAddressRequestSender = {
-            updateAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
-            createAddress: jest.fn(() => Promise.resolve(getResponse(getCheckout()))),
-        };
-
         countryRequestSender = {
             loadCountries: jest.fn(() => Promise.resolve(getResponse(getCountries()))),
         };
@@ -47,7 +41,6 @@ describe('CheckoutClient', () => {
         };
 
         client = new CheckoutClient(
-            billingAddressRequestSender,
             countryRequestSender,
             customerRequestSender,
             orderRequestSender,
@@ -139,56 +132,6 @@ describe('CheckoutClient', () => {
 
             expect(output).toEqual(getResponse(getCountries()));
             expect(shippingCountryRequestSender.loadCountries).toHaveBeenCalledWith(options);
-        });
-    });
-
-    describe('#updateBillingAddress()', () => {
-        let address;
-        let options;
-
-        beforeEach(() => {
-            address = getBillingAddress();
-            options = {
-                timeout: createTimeout(),
-            };
-        });
-
-        it('updates the billing address', async () => {
-            await client.updateBillingAddress('foo', address, options);
-
-            expect(billingAddressRequestSender.updateAddress)
-                .toHaveBeenCalledWith('foo', address, options);
-        });
-
-        it('returns the billing address', async () => {
-            const output = await client.updateBillingAddress('foo', address, options);
-
-            expect(output).toEqual(getResponse(getCheckout()));
-        });
-    });
-
-    describe('#createBillingAddress()', () => {
-        let address;
-        let options;
-
-        beforeEach(() => {
-            address = getBillingAddress();
-            options = {
-                timeout: createTimeout(),
-            };
-        });
-
-        it('creates the billing address', async () => {
-            await client.createBillingAddress('foo', address, options);
-
-            expect(billingAddressRequestSender.createAddress)
-                .toHaveBeenCalledWith('foo', address, options);
-        });
-
-        it('creates the billing address', async () => {
-            const output = await client.createBillingAddress('foo', address, options);
-
-            expect(output).toEqual(getResponse(getCheckout()));
         });
     });
 
