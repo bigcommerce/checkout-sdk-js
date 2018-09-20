@@ -5,9 +5,9 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { Observable } from 'rxjs';
 
 import { PaymentActionCreator, PaymentRequestSender } from '../..';
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, TimeoutError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderActionType } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -24,6 +24,7 @@ describe('SquarePaymentStrategy', () => {
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
     let callbacks: SquareFormCallbacks;
+    let orderRequestSender: OrderRequestSender;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
 
@@ -55,9 +56,10 @@ describe('SquarePaymentStrategy', () => {
         store = createCheckoutStore({
             paymentMethods: getPaymentMethodsState(),
         });
+        orderRequestSender = new OrderRequestSender(createRequestSender());
         paymentMethod = getSquare();
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(createRequestSender()),
+            orderRequestSender,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentActionCreator = new PaymentActionCreator(

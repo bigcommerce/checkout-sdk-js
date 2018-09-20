@@ -5,11 +5,11 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { RequestError } from '../../common/error/errors';
 import { getResponse } from '../../common/http-request/responses.mock';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, SubmitOrderAction } from '../../order';
+import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import { getOrder } from '../../order/orders.mock';
@@ -27,13 +27,15 @@ describe('SagePayPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let store: CheckoutStore;
+    let orderRequestSender: OrderRequestSender;
     let strategy: SagePayPaymentStrategy;
     let submitOrderAction: Observable<SubmitOrderAction>;
     let submitPaymentAction: Observable<SubmitPaymentAction>;
 
     beforeEach(() => {
+        orderRequestSender = new OrderRequestSender(createRequestSender());
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(createRequestSender()),
+            orderRequestSender,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 

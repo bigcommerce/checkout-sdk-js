@@ -3,17 +3,18 @@ import { Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
-import { Checkout, CheckoutClient, InternalCheckoutSelectors } from '../checkout';
+import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError, MissingDataErrorType, StandardError } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { GuestCredentials } from '../customer';
 
+import { BillingAddressRequestSender } from '.';
 import { BillingAddressUpdateRequestBody } from './billing-address';
 import { BillingAddressActionType, ContinueAsGuestAction, UpdateBillingAddressAction } from './billing-address-actions';
 
 export default class BillingAddressActionCreator {
     constructor(
-        private _checkoutClient: CheckoutClient
+        private _requestSender: BillingAddressRequestSender
     ) {}
 
     continueAsGuest(
@@ -109,9 +110,9 @@ export default class BillingAddressActionCreator {
         options?: RequestOptions
     ): Promise<Response<Checkout>> {
         if (!address.id) {
-            return this._checkoutClient.createBillingAddress(checkoutId, address, options);
+            return this._requestSender.createAddress(checkoutId, address, options);
         }
 
-        return this._checkoutClient.updateBillingAddress(checkoutId, address, options);
+        return this._requestSender.updateAddress(checkoutId, address, options);
     }
 }

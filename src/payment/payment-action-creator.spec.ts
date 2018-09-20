@@ -1,10 +1,10 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutStore, CheckoutValidator } from '../checkout';
+import { createCheckoutStore, CheckoutStore, CheckoutValidator } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
-import { OrderActionCreator, OrderActionType } from '../order';
+import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { getOrder } from '../order/orders.mock';
 
 import createPaymentClient from './create-payment-client';
@@ -14,7 +14,7 @@ import PaymentRequestSender from './payment-request-sender';
 import { getErrorPaymentResponseBody, getPayment, getPaymentRequestBody, getPaymentResponseBody } from './payments.mock';
 
 describe('PaymentActionCreator', () => {
-    let client: CheckoutClient;
+    let orderRequestSender: OrderRequestSender;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentRequestSender: PaymentRequestSender;
@@ -22,10 +22,10 @@ describe('PaymentActionCreator', () => {
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreStateWithOrder());
-        client = createCheckoutClient(createRequestSender());
+        orderRequestSender = new OrderRequestSender(createRequestSender());
         paymentRequestSender = new PaymentRequestSender(createPaymentClient(store));
 
-        jest.spyOn(client, 'loadOrder')
+        jest.spyOn(orderRequestSender, 'loadOrder')
             .mockReturnValue(Promise.resolve(getResponse(getOrder())));
 
         jest.spyOn(paymentRequestSender, 'initializeOffsitePayment')
@@ -34,7 +34,7 @@ describe('PaymentActionCreator', () => {
         jest.spyOn(paymentRequestSender, 'submitPayment')
             .mockReturnValue(Promise.resolve(getResponse(getPaymentResponseBody())));
 
-        orderActionCreator = new OrderActionCreator(client, {} as CheckoutValidator);
+        orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator);
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
     });
 

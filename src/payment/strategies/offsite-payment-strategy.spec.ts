@@ -4,9 +4,9 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, SubmitOrderAction } from '../../order';
+import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../order';
 import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../order/internal-orders.mock';
 import { getOrder } from '../../order/orders.mock';
@@ -29,7 +29,7 @@ describe('OffsitePaymentStrategy', () => {
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
         orderActionCreator = new OrderActionCreator(
-            createCheckoutClient(createRequestSender()),
+            new OrderRequestSender(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentActionCreator = new PaymentActionCreator(

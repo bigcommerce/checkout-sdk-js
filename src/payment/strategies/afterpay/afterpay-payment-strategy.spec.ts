@@ -5,10 +5,10 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED, LOAD_REMOTE_SETTINGS_SUCCEEDED } from '../../../remote-checkout/remote-checkout-action-types';
@@ -27,11 +27,11 @@ import AfterpayScriptLoader from './afterpay-script-loader';
 describe('AfterpayPaymentStrategy', () => {
     let checkoutValidator: CheckoutValidator;
     let checkoutRequestSender: CheckoutRequestSender;
-    let client: CheckoutClient;
     let initializePaymentAction: Observable<Action>;
     let loadPaymentMethodAction: Observable<Action>;
     let loadRemoteSettingsAction: Observable<Action>;
     let orderActionCreator: OrderActionCreator;
+    let orderRequestSender: OrderRequestSender;
     let payload: OrderRequestBody;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
@@ -49,12 +49,12 @@ describe('AfterpayPaymentStrategy', () => {
     };
 
     beforeEach(() => {
-        client = createCheckoutClient(createRequestSender());
+        orderRequestSender = new OrderRequestSender(createRequestSender());
         store = createCheckoutStore(getCheckoutStoreState());
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-        orderActionCreator = new OrderActionCreator(client, checkoutValidator);
+        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator

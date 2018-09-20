@@ -14,11 +14,11 @@ import {
     PaymentStrategyActionCreator,
 } from '../..';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { createCheckoutClient, createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentActionType } from '../../payment-actions';
@@ -69,16 +69,18 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         visaCheckoutScriptLoader = new VisaCheckoutScriptLoader(scriptLoader);
         jest.spyOn(visaCheckoutScriptLoader, 'load').mockImplementation(() => Promise.resolve(visaCheckoutSDK));
 
-        const client = createCheckoutClient(requestSender);
         const paymentClient = createPaymentClient(store);
-        const registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
+        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         const configRequestSender = new ConfigRequestSender(createRequestSender());
         const configActionCreator = new ConfigActionCreator(configRequestSender);
         const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
-        orderActionCreator = new OrderActionCreator(client, checkoutValidator);
+        orderActionCreator = new OrderActionCreator(
+            new OrderRequestSender(createRequestSender()),
+            checkoutValidator
+        );
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
         paymentActionCreator = new PaymentActionCreator(

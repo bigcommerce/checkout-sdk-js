@@ -5,8 +5,8 @@ import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
@@ -22,9 +22,9 @@ describe('WepayPaymentStrategy', () => {
 
     let scriptLoader: ScriptLoader;
     let wepayRiskClient: WepayRiskClient;
-    let client: CheckoutClient;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
+    let orderRequestSender: OrderRequestSender;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
     let store: CheckoutStore;
@@ -33,12 +33,12 @@ describe('WepayPaymentStrategy', () => {
     let submitPaymentAction: Observable<Action>;
 
     beforeEach(() => {
-        client = createCheckoutClient(createRequestSender());
         store = createCheckoutStore();
         scriptLoader = createScriptLoader();
         wepayRiskClient = new WepayRiskClient(scriptLoader);
+        orderRequestSender = new OrderRequestSender(createRequestSender());
         orderActionCreator = new OrderActionCreator(
-            client,
+            orderRequestSender,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 

@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 
 import { BillingAddressActionCreator } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
-import { getCartResponseBody } from '../cart/internal-carts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator } from '../config';
 import { getConfig } from '../config/configs.mock';
@@ -36,8 +35,10 @@ import { getConsignment } from '../shipping/consignments.mock';
 
 describe('CheckoutService', () => {
     let billingAddressActionCreator;
+    let billingAddressRequestSender;
     let checkoutActionCreator;
-    let checkoutClient;
+    let instrumentRequestSender;
+    let countryRequestSender;
     let consignmentRequestSender;
     let consignmentActionCreator;
     let checkoutRequestSender;
@@ -50,50 +51,17 @@ describe('CheckoutService', () => {
     let giftCertificateRequestSender;
     let instrumentActionCreator;
     let orderActionCreator;
+    let orderRequestSender;
     let paymentMethodRequestSender;
     let paymentMethodActionCreator;
     let paymentStrategy;
     let paymentStrategyRegistry;
     let shippingStrategyActionCreator;
+    let shippingCountryRequestSender;
     let store;
 
     beforeEach(() => {
-        checkoutClient = {
-            loadCart: jest.fn(() =>
-                Promise.resolve(getResponse(getCartResponseBody()))
-            ),
-
-            loadCountries: jest.fn(() =>
-                Promise.resolve(getResponse(getCountriesResponseBody()))
-            ),
-
-            loadOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getOrder()))
-            ),
-
-            submitOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
-            ),
-
-            finalizeOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
-            ),
-
-            loadShippingCountries: jest.fn(() =>
-                Promise.resolve(getResponse(getCountriesResponseBody()))
-            ),
-
-            updateBillingAddress: jest.fn(() =>
-                Promise.resolve(getResponse(merge({}, getCheckout(), {
-                    customer: {
-                        email: 'foo@bar.com',
-                    },
-                    billingAddress: {
-                        email: 'foo@bar.com',
-                    },
-                })))
-            ),
-
+        instrumentRequestSender = {
             getVaultAccessToken: jest.fn(() =>
                 Promise.resolve(getResponse(getVaultAccessTokenResponseBody()))
             ),
@@ -109,6 +77,31 @@ describe('CheckoutService', () => {
 
         store = createCheckoutStore(getCheckoutStoreState());
 
+        shippingCountryRequestSender = {
+            loadCountries: jest.fn(() =>
+                Promise.resolve(getResponse(getCountriesResponseBody()))
+            ),
+        };
+
+        billingAddressRequestSender = {
+            updateAddress: jest.fn(() =>
+                Promise.resolve(getResponse(merge({}, getCheckout(), {
+                    customer: {
+                        email: 'foo@bar.com',
+                    },
+                    billingAddress: {
+                        email: 'foo@bar.com',
+                    },
+                })))
+            ),
+        };
+
+        countryRequestSender = {
+            loadCountries: jest.fn(() =>
+                Promise.resolve(getResponse(getCountriesResponseBody()))
+            ),
+        };
+
         paymentStrategy = {
             execute: jest.fn(() => Promise.resolve(store.getState())),
             finalize: jest.fn(() => Promise.resolve(store.getState())),
@@ -118,6 +111,20 @@ describe('CheckoutService', () => {
 
         paymentStrategyRegistry = {
             getByMethod: jest.fn(() => paymentStrategy),
+        };
+
+        orderRequestSender = {
+            loadOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getOrder()))
+            ),
+
+            submitOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
+            ),
+
+            finalizeOrder: jest.fn(() =>
+                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
+            ),
         };
 
         consignmentRequestSender = {
@@ -180,7 +187,7 @@ describe('CheckoutService', () => {
             validate: jest.fn(() => Promise.resolve()),
         };
 
-        billingAddressActionCreator = new BillingAddressActionCreator(checkoutClient);
+        billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender);
 
         configActionCreator = new ConfigActionCreator(configRequestSender);
 
@@ -195,9 +202,9 @@ describe('CheckoutService', () => {
             createCustomerStrategyRegistry(store)
         );
 
-        instrumentActionCreator = new InstrumentActionCreator(checkoutClient);
+        instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
 
-        orderActionCreator = new OrderActionCreator(checkoutClient, checkoutValidator);
+        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
 
@@ -211,7 +218,7 @@ describe('CheckoutService', () => {
             checkoutActionCreator,
             configActionCreator,
             consignmentActionCreator,
-            new CountryActionCreator(checkoutClient),
+            new CountryActionCreator(countryRequestSender),
             new CouponActionCreator(couponRequestSender),
             customerStrategyActionCreator,
             new GiftCertificateActionCreator(giftCertificateRequestSender),
@@ -220,13 +227,12 @@ describe('CheckoutService', () => {
             paymentMethodActionCreator,
             new PaymentStrategyActionCreator(
                 paymentStrategyRegistry,
-                new OrderActionCreator(checkoutClient, checkoutValidator)
+                new OrderActionCreator(orderRequestSender, checkoutValidator)
             ),
-            new ShippingCountryActionCreator(checkoutClient),
+            new ShippingCountryActionCreator(shippingCountryRequestSender),
             shippingStrategyActionCreator
         );
     });
-
     describe('#getState()', () => {
         it('returns state', () => {
             expect(checkoutService.getState()).toEqual(expect.objectContaining({
@@ -829,7 +835,7 @@ describe('CheckoutService', () => {
             const options = { timeout: createTimeout() };
             await checkoutService.updateBillingAddress(address, options);
 
-            expect(checkoutClient.updateBillingAddress)
+            expect(billingAddressRequestSender.updateAddress)
                 .toHaveBeenCalledWith(getCheckout().id, address, options);
         });
     });

@@ -4,11 +4,11 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutClient, createCheckoutStore, CheckoutClient, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../checkout';
 import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/customers.mock';
-import { OrderActionCreator, OrderActionType } from '../order';
+import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrderState } from '../order/orders.mock';
@@ -23,7 +23,6 @@ import PaymentStrategyRegistry from './payment-strategy-registry';
 import { CreditCardPaymentStrategy, NoPaymentDataRequiredPaymentStrategy, PaymentStrategy } from './strategies';
 
 describe('PaymentStrategyActionCreator', () => {
-    let client: CheckoutClient;
     let orderActionCreator: OrderActionCreator;
     let paymentClient: any;
     let requestSender: RequestSender;
@@ -37,11 +36,10 @@ describe('PaymentStrategyActionCreator', () => {
         state = getCheckoutStoreState();
         store = createCheckoutStore(state);
         requestSender = createRequestSender();
-        client = createCheckoutClient(requestSender);
         paymentClient = createPaymentClient();
-        registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
+        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
         orderActionCreator = new OrderActionCreator(
-            client,
+            new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         strategy = new CreditCardPaymentStrategy(
@@ -279,7 +277,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 paymentMethods: { ...state.paymentMethods, data: [] },
             });
-            registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
@@ -300,7 +298,7 @@ describe('PaymentStrategyActionCreator', () => {
                 }),
             });
 
-            registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
 
             jest.spyOn(registry, 'get')
                 .mockReturnValue(noPaymentDataStrategy);
@@ -403,7 +401,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 order: getOrderState(),
             });
-            registry = createPaymentStrategyRegistry(store, client, paymentClient, requestSender);
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
