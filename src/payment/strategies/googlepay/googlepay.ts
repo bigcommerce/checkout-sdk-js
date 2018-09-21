@@ -1,4 +1,7 @@
-import {BraintreeModule, BraintreeModuleCreator} from '../braintree/braintree';
+import InternalAddress from '../../../address/internal-address';
+import {BraintreeModule, BraintreeModuleCreator} from '../braintree';
+import {AddressRequestBody} from "../../../address/address";
+import {BillingAddressUpdateRequestBody} from "../../../billing/billing-address";
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 type AddressFormat = 'FULL' | 'MIN';
@@ -20,6 +23,8 @@ export interface GooglePayPaymentOptions {
 export interface GooglePayPaymentDataRequest {
     merchantInfo: {
         merchantId: string,
+        merchantName?: string,
+        authJwt?: string,
     };
     transactionInfo: {
         currencyCode: string,
@@ -183,4 +188,22 @@ export interface BraintreeGooglePayPaymentInitializeOptions {
      * A callback that gets called when the customer selects a payment option.
      */
     onPaymentSelect?(): void;
+}
+
+export default function mapGooglePayAddressToRequestAddress(address: GooglePayAddress, id?: string): AddressRequestBody | BillingAddressUpdateRequestBody {
+    return {
+        id,
+        firstName: address.name.split(' ').slice(0, -1).join(' '),
+        lastName: address.name.split(' ').slice(-1).join(' '),
+        company: address.companyName,
+        address1: address.address1,
+        address2: address.address2 + address.address3 + address.address4 + address.address5,
+        city: address.locality,
+        stateOrProvince: address.administrativeArea,
+        stateOrProvinceCode: address.administrativeArea,
+        postalCode: address.postalCode,
+        countryCode: address.countryCode,
+        phone: address.phoneNumber,
+        customFields: [],
+    };
 }
