@@ -6,7 +6,7 @@ export default interface Currency {
 }
 
 export interface CurrencyConfig {
-    decimalPlaces: number;
+    decimalPlaces: string;
     decimalSeparator: string;
     symbolLocation: string;
     symbol: string;

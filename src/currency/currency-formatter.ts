@@ -1,3 +1,5 @@
+import { InvalidArgumentError } from '../common/error/errors';
+
 import { CurrencyConfig } from './currency';
 
 export default class CurrencyFormatter {
@@ -8,7 +10,7 @@ export default class CurrencyFormatter {
     private _decimalSeparator: string;
 
     constructor(
-        currencySettings?: CurrencyConfig | any
+        currencySettings: CurrencyConfig
     ) {
         if (!currencySettings) {
             throw new Error('Currency settings missing');
@@ -29,7 +31,7 @@ export default class CurrencyFormatter {
             typeof decimalSeparator !== 'string' ||
             typeof decimalPlaces !== 'string'
         ) {
-            throw new Error('Invalid currency settings provided');
+            throw new InvalidArgumentError('Invalid currency settings provided');
         }
 
         this._decimalPlaces = parseInt(decimalPlaces, 10);
@@ -41,7 +43,7 @@ export default class CurrencyFormatter {
 
     format(amount?: number): string {
         if (typeof amount !== 'number') {
-            throw new Error('Invalid amount provided');
+            throw new InvalidArgumentError('Invalid amount provided');
         }
 
         const formattedNumber = this._formatNumber(amount);
@@ -56,7 +58,11 @@ export default class CurrencyFormatter {
     private _formatNumber(amount: number): string {
         const positiveAmount = Math.abs(amount);
         const [ integerAmount, decimalAmount = '' ] = positiveAmount.toString().split('.');
-        const decimalPadding = Array(this._decimalPlaces).fill('0').join('');
+        let decimalPadding = '';
+
+        for (let i = 0; i < this._decimalPlaces; i += 1) {
+            decimalPadding += '0';
+        }
 
         return [
             integerAmount.replace(/\B(?=(\d{3})+(?!\d))/g, this._thousandsSeparator),

@@ -4,18 +4,6 @@ describe('CurrencyFormater', () => {
     let currencyFormatter: CurrencyFormatter;
 
     describe('#format()', () => {
-        describe('when no config is provided', () => {
-            it('throws error', () => {
-                expect(() =>  new CurrencyFormatter()).toThrow();
-            });
-        });
-
-        describe('when invalid config is provided', () => {
-            it('throws error', () => {
-                expect(() => new CurrencyFormatter({})).toThrow();
-            });
-        });
-
         describe('when regular config is provided', () => {
             beforeEach(() => {
                 currencyFormatter = new CurrencyFormatter({
