@@ -11,9 +11,12 @@
 ### Properties
 
 * [color](paypalbuttonstyleoptions.md#color)
+* [fundingicons](paypalbuttonstyleoptions.md#fundingicons)
 * [label](paypalbuttonstyleoptions.md#label)
+* [layout](paypalbuttonstyleoptions.md#layout)
 * [shape](paypalbuttonstyleoptions.md#shape)
 * [size](paypalbuttonstyleoptions.md#size)
+* [tagline](paypalbuttonstyleoptions.md#tagline)
 
 ---
 
@@ -27,11 +30,27 @@
 *
 
 ___
+<a id="fundingicons"></a>
+
+### `<Optional>` fundingicons
+
+**● fundingicons**: * `undefined` &#124; `true` &#124; `false`
+*
+
+___
 <a id="label"></a>
 
 ### `<Optional>` label
 
-**● label**: * "credit" &#124; "checkout"
+**● label**: * "checkout" &#124; "pay" &#124; "buynow" &#124; "paypal" &#124; "credit"
+*
+
+___
+<a id="layout"></a>
+
+### `<Optional>` layout
+
+**● layout**: * "horizontal" &#124; "vertical"
 *
 
 ___
@@ -48,6 +67,14 @@ ___
 ### `<Optional>` size
 
 **● size**: * "small" &#124; "medium" &#124; "large" &#124; "responsive"
+*
+
+___
+<a id="tagline"></a>
+
+### `<Optional>` tagline
+
+**● tagline**: * `undefined` &#124; `true` &#124; `false`
 *
 
 ___

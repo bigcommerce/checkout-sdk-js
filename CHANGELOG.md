@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.4.0...v1.5.0) (2018-09-24)
+
+
+### Bug Fixes
+
+* **cart:** CP-3982 Add missing `productId` property to `LineItem` interface ([#405](https://github.com/bigcommerce/checkout-sdk-js/issues/405)) ([4fbca67](https://github.com/bigcommerce/checkout-sdk-js/commit/4fbca67))
+* **payment:** PAYMENTS-3288 Leave deviceData as it is in dataCollector ([26863b4](https://github.com/bigcommerce/checkout-sdk-js/commit/26863b4))
+
+
+### Features
+
+* **checkout-button:** PAYMENTS-3071 Support more features of paypal checkout buttons ([67a7cba](https://github.com/bigcommerce/checkout-sdk-js/commit/67a7cba))
+* **common:** CHECKOUT-3239 Add isCouponCodeCollapsed checkout setting ([e51c01e](https://github.com/bigcommerce/checkout-sdk-js/commit/e51c01e))
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.3.0...v1.4.0) (2018-09-10)
 

@@ -35,7 +35,7 @@ ___
 
 ### `<Optional>` style
 
-**● style**: *`Pick`<[PaypalButtonStyleOptions](paypalbuttonstyleoptions.md),  "color" &#124; "shape" &#124; "size">*
+**● style**: *`Pick`<[PaypalButtonStyleOptions](paypalbuttonstyleoptions.md),  "layout" &#124; "size" &#124; "color" &#124; "label" &#124; "shape" &#124; "tagline" &#124; "fundingicons">*
 
 A set of styling options for the checkout button.
 

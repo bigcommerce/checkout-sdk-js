@@ -14,6 +14,7 @@
 * [enableTermsAndConditions](checkoutsettings.md#enabletermsandconditions)
 * [guestCheckoutEnabled](checkoutsettings.md#guestcheckoutenabled)
 * [isCardVaultingEnabled](checkoutsettings.md#iscardvaultingenabled)
+* [isCouponCodeCollapsed](checkoutsettings.md#iscouponcodecollapsed)
 * [isPaymentRequestCanMakePaymentEnabled](checkoutsettings.md#ispaymentrequestcanmakepaymentenabled)
 * [isPaymentRequestEnabled](checkoutsettings.md#ispaymentrequestenabled)
 * [orderTermsAndConditions](checkoutsettings.md#ordertermsandconditions)
@@ -53,6 +54,13 @@ ___
 ###  isCardVaultingEnabled
 
 **● isCardVaultingEnabled**: *`boolean`*
+
+___
+<a id="iscouponcodecollapsed"></a>
+
+###  isCouponCodeCollapsed
+
+**● isCouponCodeCollapsed**: *`boolean`*
 
 ___
 <a id="ispaymentrequestcanmakepaymentenabled"></a>
