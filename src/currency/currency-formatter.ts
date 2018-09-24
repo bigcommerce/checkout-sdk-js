@@ -58,6 +58,12 @@ export default class CurrencyFormatter {
     private _formatNumber(amount: number): string {
         const positiveAmount = Math.abs(amount);
         const [ integerAmount, decimalAmount = '' ] = positiveAmount.toString().split('.');
+        const parsedIntegerAmount = integerAmount.replace(/\B(?=(\d{3})+(?!\d))/g, this._thousandsSeparator);
+
+        if (this._decimalPlaces < 1) {
+            return parsedIntegerAmount;
+        }
+
         let decimalPadding = '';
 
         for (let i = 0; i < this._decimalPlaces; i += 1) {
@@ -65,7 +71,7 @@ export default class CurrencyFormatter {
         }
 
         return [
-            integerAmount.replace(/\B(?=(\d{3})+(?!\d))/g, this._thousandsSeparator),
+            parsedIntegerAmount,
             `${decimalAmount}${decimalPadding}`.slice(0, this._decimalPlaces),
         ].join(this._decimalSeparator);
     }
