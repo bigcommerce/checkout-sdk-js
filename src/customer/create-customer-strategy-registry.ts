@@ -21,6 +21,7 @@ import {
     CustomerStrategy,
     DefaultCustomerStrategy,
 } from './strategies';
+import SquareCustomerStrategy from './strategies/square-customer-strategy';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
@@ -67,6 +68,13 @@ export default function createCustomerStrategyRegistry(
             createFormPoster()
         )
     );
+
+    registry.register('squarev2', () =>
+        new SquareCustomerStrategy(
+            store,
+            new RemoteCheckoutActionCreator(remoteCheckoutRequestSender)
+    )
+);
 
     registry.register('default', () =>
         new DefaultCustomerStrategy(
