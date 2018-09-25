@@ -37,7 +37,6 @@ import {
 } from './googlepay';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayScriptLoader from './googlepay-script-loader';
-import {isInternalAddressEqual, mapFromInternalAddress, mapToInternalAddress} from "../../../address";
 
 export default class GooglePayPaymentStrategy extends PaymentStrategy {
     private _googlePaymentsClient!: GooglePayClient;
