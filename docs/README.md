@@ -7,6 +7,7 @@
 
 * [createCheckoutButtonInitializer](#createcheckoutbuttoninitializer)
 * [createCheckoutService](#createcheckoutservice)
+* [createCurrencyService](#createcurrencyservice)
 * [createLanguageService](#createlanguageservice)
 
 ---
@@ -88,6 +89,37 @@ service.loadCheckout();
 
 **Returns:** [CheckoutService](classes/checkoutservice.md)
 an instance of `CheckoutService`.
+
+___
+<a id="createcurrencyservice"></a>
+
+###  createCurrencyService
+
+▸ **createCurrencyService**(config: *[Config](interfaces/config.md)*): [CurrencyService](classes/currencyservice.md)
+
+Creates an instance of `CurrencyService`.
+
+```js
+const { data } = checkoutService.getState();
+const config = data.getConfig();
+const checkout = data.getCheckout();
+const currencyService = createCurrencyService(config);
+
+currencyService.toStoreCurrency(checkout.grandTotal);
+currencyService.toCustomerCurrency(checkout.grandTotal);
+```
+
+Please note that `CurrencyService` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
+*__alpha__*: 
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| config | [Config](interfaces/config.md) |  The config object containing the currency configuration |
+
+**Returns:** [CurrencyService](classes/currencyservice.md)
+an instance of `CurrencyService`.
 
 ___
 <a id="createlanguageservice"></a>

@@ -1938,6 +1938,12 @@ declare class CheckoutStoreStatusSelector {
     isPaymentStepPending(): boolean;
 }
 
+declare interface Config {
+    context: ContextConfig;
+    customization: CustomizationConfig;
+    storeConfig: StoreConfig;
+}
+
 declare interface Consignment {
     id: string;
     shippingAddress: Address;
@@ -1969,6 +1975,15 @@ declare interface ConsignmentUpdateRequestBody {
     id: string;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
+}
+
+declare interface ContextConfig {
+    checkoutId?: string;
+    geoCountryCode: string;
+    flashMessages: any[];
+    payment: {
+        token?: string;
+    };
 }
 
 declare interface Country {
@@ -2029,6 +2044,29 @@ export declare function createCheckoutButtonInitializer(options?: CheckoutButton
 export declare function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService;
 
 /**
+ * Creates an instance of `CurrencyService`.
+ *
+ * ```js
+ * const { data } = checkoutService.getState();
+ * const config = data.getConfig();
+ * const checkout = data.getCheckout();
+ * const currencyService = createCurrencyService(config);
+ *
+ * currencyService.toStoreCurrency(checkout.grandTotal);
+ * currencyService.toCustomerCurrency(checkout.grandTotal);
+ * ```
+ *
+ * Please note that `CurrencyService` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @alpha
+ * @param config - The config object containing the currency configuration
+ * @returns an instance of `CurrencyService`.
+ */
+export declare function createCurrencyService(config: Config): CurrencyService;
+
+/**
  * Creates an instance of `LanguageService`.
  *
  * ```js
@@ -2063,13 +2101,15 @@ declare interface Currency {
     decimalPlaces: number;
 }
 
-declare interface Currency_2 {
-    code: string;
-    decimalPlaces: string;
-    decimalSeparator: string;
-    symbolLocation: string;
-    symbol: string;
-    thousandsSeparator: string;
+/**
+ * Responsible for formatting and converting currencies.
+ */
+declare class CurrencyService {
+    private _config;
+    private _customerFormatter;
+    private _storeFormatter;
+    toCustomerCurrency(amount: number): string;
+    toStoreCurrency(amount: number): string;
 }
 
 declare interface Customer {
@@ -2125,6 +2165,10 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
  */
 declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
+}
+
+declare interface CustomizationConfig {
+    languageData: any[];
 }
 
 declare interface DigitalItem extends LineItem {
@@ -2365,6 +2409,12 @@ declare interface LineItemSocialData {
 
 declare interface Locales {
     [key: string]: string;
+}
+
+declare interface NonceGenerationError {
+    type: string;
+    message: string;
+    field: string;
 }
 
 declare interface Order {
@@ -2621,13 +2671,7 @@ declare interface ShopperConfig {
     showNewsletterSignup: boolean;
 }
 
-declare interface ShopperCurrency {
-    code: string;
-    symbolLocation: string;
-    symbol: string;
-    decimalPlaces: string;
-    decimalSeparator: string;
-    thousandsSeparator: string;
+declare interface ShopperCurrency extends StoreCurrency {
     exchangeRate: string;
 }
 
@@ -2679,6 +2723,18 @@ declare interface SquarePaymentInitializeOptions {
     inputStyles?: Array<{
         [key: string]: string;
     }>;
+    /**
+     * Initialize Masterpass placeholder ID
+     */
+    masterpass?: SquareFormElement;
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
+    onPaymentSelect?(): void;
+    /**
+     * A callback that gets called when an error occurs in the card nonce generation
+     */
+    onError?(errors?: NonceGenerationError[]): void;
 }
 
 declare class StandardError extends Error {
@@ -2689,7 +2745,7 @@ declare class StandardError extends Error {
 declare interface StoreConfig {
     cdnPath: string;
     checkoutSettings: CheckoutSettings;
-    currency: Currency_2;
+    currency: StoreCurrency;
     formFields: FormFields;
     links: StoreLinks;
     paymentSettings: PaymentSettings;
@@ -2698,6 +2754,15 @@ declare interface StoreConfig {
     imageDirectory: string;
     isAngularDebuggingEnabled: boolean;
     shopperCurrency: ShopperCurrency;
+}
+
+declare interface StoreCurrency {
+    code: string;
+    decimalPlaces: string;
+    decimalSeparator: string;
+    symbolLocation: string;
+    symbol: string;
+    thousandsSeparator: string;
 }
 
 declare interface StoreLinks {

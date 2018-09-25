@@ -1,21 +1,23 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Currency_2](../interfaces/currency_2.md)
+[@bigcommerce/checkout-sdk](../README.md) > [StoreCurrency](../interfaces/storecurrency.md)
 
-# Currency_2
+# StoreCurrency
 
 ## Hierarchy
 
-**Currency_2**
+**StoreCurrency**
+
+↳  [ShopperCurrency](shoppercurrency.md)
 
 ## Index
 
 ### Properties
 
-* [code](currency_2.md#code)
-* [decimalPlaces](currency_2.md#decimalplaces)
-* [decimalSeparator](currency_2.md#decimalseparator)
-* [symbol](currency_2.md#symbol)
-* [symbolLocation](currency_2.md#symbollocation)
-* [thousandsSeparator](currency_2.md#thousandsseparator)
+* [code](storecurrency.md#code)
+* [decimalPlaces](storecurrency.md#decimalplaces)
+* [decimalSeparator](storecurrency.md#decimalseparator)
+* [symbol](storecurrency.md#symbol)
+* [symbolLocation](storecurrency.md#symbollocation)
+* [thousandsSeparator](storecurrency.md#thousandsseparator)
 
 ---
 

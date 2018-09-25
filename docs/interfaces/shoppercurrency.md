@@ -4,7 +4,9 @@
 
 ## Hierarchy
 
-**ShopperCurrency**
+ [StoreCurrency](storecurrency.md)
+
+**↳ ShopperCurrency**
 
 ## Index
 

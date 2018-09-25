@@ -19,7 +19,13 @@ Once Square payment is initialized, credit card form fields, provided by the pay
 * [expirationDate](squarepaymentinitializeoptions.md#expirationdate)
 * [inputClass](squarepaymentinitializeoptions.md#inputclass)
 * [inputStyles](squarepaymentinitializeoptions.md#inputstyles)
+* [masterpass](squarepaymentinitializeoptions.md#masterpass)
 * [postalCode](squarepaymentinitializeoptions.md#postalcode)
+
+### Methods
+
+* [onError](squarepaymentinitializeoptions.md#onerror)
+* [onPaymentSelect](squarepaymentinitializeoptions.md#onpaymentselect)
 
 ---
 
@@ -71,6 +77,15 @@ ___
 The set of CSS styles to apply to all form fields.
 
 ___
+<a id="masterpass"></a>
+
+### `<Optional>` masterpass
+
+**● masterpass**: *[SquareFormElement](squareformelement.md)*
+
+Initialize Masterpass placeholder ID
+
+___
 <a id="postalcode"></a>
 
 ###  postalCode
@@ -78,6 +93,37 @@ ___
 **● postalCode**: *[SquareFormElement](squareformelement.md)*
 
 The location to insert the postal code form field.
+
+___
+
+## Methods
+
+<a id="onerror"></a>
+
+### `<Optional>` onError
+
+▸ **onError**(errors?: *[NonceGenerationError](noncegenerationerror.md)[]*): `void`
+
+A callback that gets called when an error occurs in the card nonce generation
+
+**Parameters:**
+
+| Param | Type |
+| ------ | ------ |
+| `Optional` errors | [NonceGenerationError](noncegenerationerror.md)[] |
+
+**Returns:** `void`
+
+___
+<a id="onpaymentselect"></a>
+
+### `<Optional>` onPaymentSelect
+
+▸ **onPaymentSelect**(): `void`
+
+A callback that gets called when the customer selects a payment option.
+
+**Returns:** `void`
 
 ___
 

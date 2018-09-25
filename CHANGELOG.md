@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.6.0"></a>
+# [1.6.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.5.0...v1.6.0) (2018-09-25)
+
+
+### Bug Fixes
+
+* **payment:** INT-751 Show Masterpass button in payments section into square form ([35f0aae](https://github.com/bigcommerce/checkout-sdk-js/commit/35f0aae))
+
+
+### Features
+
+* **common:** CHECKOUT-3529 Add currency utilities ([67ee82f](https://github.com/bigcommerce/checkout-sdk-js/commit/67ee82f))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.4.0...v1.5.0) (2018-09-24)
 

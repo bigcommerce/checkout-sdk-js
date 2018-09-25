@@ -44,7 +44,7 @@ ___
 
 ###  currency
 
-**● currency**: *[Currency_2](currency_2.md)*
+**● currency**: *[StoreCurrency](storecurrency.md)*
 
 ___
 <a id="formfields"></a>
