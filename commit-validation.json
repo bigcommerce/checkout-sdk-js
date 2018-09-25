@@ -5,6 +5,7 @@
         "checkout",
         "checkout-button",
         "common",
+        "embedded-checkout",
         "forms",
         "order",
         "payment",
