@@ -1,7 +1,7 @@
-import InternalAddress from '../../../address/internal-address';
+import {AddressRequestBody} from '../../../address/address';
+import {BillingAddressUpdateRequestBody} from '../../../billing/billing-address';
+import Checkout from '../../../checkout/checkout';
 import {BraintreeModule, BraintreeModuleCreator} from '../braintree';
-import {AddressRequestBody} from "../../../address/address";
-import {BillingAddressUpdateRequestBody} from "../../../billing/billing-address";
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 type AddressFormat = 'FULL' | 'MIN';
@@ -87,7 +87,7 @@ export interface GooglePaySDK {
 
 export interface GooglePayClient {
     isReadyToPay(options: object): Promise<GooglePayIsReadyToPayResponse>;
-    loadPaymentData(paymentDataRequest: GooglePayBraintreePaymentDataRequest): Promise<GooglePaymentData>;
+    loadPaymentData(paymentDataRequest: any): Promise<GooglePaymentData>;
 }
 
 export interface GooglePayHostWindow extends Window {
@@ -206,4 +206,11 @@ export default function mapGooglePayAddressToRequestAddress(address: GooglePayAd
         phone: address.phoneNumber,
         customFields: [],
     };
+}
+
+// TODO: Type all this variables and methods
+export interface GooglePayInitializer {
+    initialize(checkout: Checkout, clientToken?: string, publishableKey?: string): any;
+    teardown(): Promise<void>;
+    parseResponse(paymentData: any): Promise<any>;
 }

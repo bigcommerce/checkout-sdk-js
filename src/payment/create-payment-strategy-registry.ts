@@ -43,7 +43,7 @@ import BraintreeScriptLoader from './strategies/braintree/braintree-script-loade
 import BraintreeSDKCreator from './strategies/braintree/braintree-sdk-creator';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { GooglePayScriptLoader } from './strategies/googlepay';
-import GooglePayPaymentProcessor from './strategies/googlepay/googlepay-payment-processor';
+import GooglePayBraintreeInitializer from './strategies/googlepay/googlepay-braintree-initializer';
 import { KlarnaScriptLoader } from './strategies/klarna';
 import { PaypalScriptLoader } from './strategies/paypal';
 import { SquareScriptLoader } from './strategies/square';
@@ -255,6 +255,7 @@ export default function createPaymentStrategyRegistry(
             new WepayRiskClient(scriptLoader))
     );
 
+    // TODO: change token googlepay to googlepay<gateway> and it defines the googlepay initializer
     registry.register('googlepay', () =>
         new GooglePayPaymentStrategy(
             store,
@@ -267,7 +268,8 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             orderActionCreator,
             new GooglePayScriptLoader(scriptLoader),
-            new GooglePayPaymentProcessor(braintreeSdkCreator, createRequestSender()),
+            new GooglePayBraintreeInitializer(braintreeSdkCreator),
+            createRequestSender(),
             new BillingAddressActionCreator(client),
             remoteCheckoutActionCreator,
             new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender)
