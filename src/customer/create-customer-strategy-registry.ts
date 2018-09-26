@@ -9,6 +9,7 @@ import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payme
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
+import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 
 import CustomerActionCreator from './customer-action-creator';
@@ -20,6 +21,7 @@ import {
     ChasePayCustomerStrategy,
     CustomerStrategy,
     DefaultCustomerStrategy,
+    MasterpassCustomerStrategy,
 } from './strategies';
 import SquareCustomerStrategy from './strategies/square-customer-strategy';
 
@@ -35,6 +37,7 @@ export default function createCustomerStrategyRegistry(
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
+    const scriptLoader = getScriptLoader();
 
     registry.register('amazon', () =>
         new AmazonPayCustomerStrategy(
@@ -42,7 +45,7 @@ export default function createCustomerStrategyRegistry(
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             remoteCheckoutRequestSender,
-            new AmazonPayScriptLoader(getScriptLoader())
+            new AmazonPayScriptLoader(scriptLoader)
         )
     );
 
@@ -53,8 +56,8 @@ export default function createCustomerStrategyRegistry(
             paymentMethodActionCreator,
             new CustomerStrategyActionCreator(registry),
             remoteCheckoutActionCreator,
-            createBraintreeVisaCheckoutPaymentProcessor(getScriptLoader(), requestSender),
-            new VisaCheckoutScriptLoader(getScriptLoader())
+            createBraintreeVisaCheckoutPaymentProcessor(scriptLoader, requestSender),
+            new VisaCheckoutScriptLoader(scriptLoader)
         )
     );
 
@@ -63,7 +66,7 @@ export default function createCustomerStrategyRegistry(
             store,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            new ChasePayScriptLoader(getScriptLoader()),
+            new ChasePayScriptLoader(scriptLoader),
             requestSender,
             createFormPoster()
         )
@@ -73,8 +76,17 @@ export default function createCustomerStrategyRegistry(
         new SquareCustomerStrategy(
             store,
             new RemoteCheckoutActionCreator(remoteCheckoutRequestSender)
-    )
-);
+        )
+    );
+
+    registry.register('masterpass', () =>
+        new MasterpassCustomerStrategy(
+            store,
+            paymentMethodActionCreator,
+            remoteCheckoutActionCreator,
+            new MasterpassScriptLoader(scriptLoader)
+        )
+    );
 
     registry.register('default', () =>
         new DefaultCustomerStrategy(

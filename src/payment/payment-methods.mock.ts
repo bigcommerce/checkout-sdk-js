@@ -244,6 +244,28 @@ export function getChasePay(): PaymentMethod {
     };
 }
 
+export function getMasterpass(): PaymentMethod {
+    return {
+        id: 'masterpass',
+        logoUrl: '',
+        method: 'masterpass',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+        ],
+        config: {
+            displayName: 'Masterpass',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        initializationData: {
+            checkoutId: 'checkoutId',
+            allowedCardTypes: ['visa', 'amex', 'mastercard'],
+        },
+    };
+}
+
 export function getWepay(): PaymentMethod {
     return {
         id: 'wepay',
