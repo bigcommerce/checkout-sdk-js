@@ -1,4 +1,4 @@
-import { Config } from '../config';
+import { StoreConfig } from '../config';
 
 import CurrencyService from './currency-service';
 
@@ -24,7 +24,7 @@ import CurrencyService from './currency-service';
  * @returns an instance of `CurrencyService`.
  */
 export default function createCurrencyService(
-    config: Config
+    config: StoreConfig
 ): CurrencyService {
     return new CurrencyService(config);
 }

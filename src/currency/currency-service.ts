@@ -1,4 +1,4 @@
-import { Config } from '../config';
+import { StoreConfig } from '../config';
 
 import CurrencyFormatter from './currency-formatter';
 
@@ -13,14 +13,14 @@ export default class CurrencyService {
      * @internal
      */
     constructor(
-        private _config: Config
+        private _storeConfig: StoreConfig
     ) {
-        this._customerFormatter = new CurrencyFormatter(this._config.storeConfig.shopperCurrency);
-        this._storeFormatter = new CurrencyFormatter(this._config.storeConfig.currency);
+        this._customerFormatter = new CurrencyFormatter(this._storeConfig.shopperCurrency);
+        this._storeFormatter = new CurrencyFormatter(this._storeConfig.currency);
     }
 
     toCustomerCurrency(amount: number): string {
-        const exchangeRate = parseFloat(this._config.storeConfig.shopperCurrency.exchangeRate);
+        const exchangeRate = parseFloat(this._storeConfig.shopperCurrency.exchangeRate);
         return this._customerFormatter.format(amount * exchangeRate);
     }
 
