@@ -1938,12 +1938,6 @@ declare class CheckoutStoreStatusSelector {
     isPaymentStepPending(): boolean;
 }
 
-declare interface Config {
-    context: ContextConfig;
-    customization: CustomizationConfig;
-    storeConfig: StoreConfig;
-}
-
 declare interface Consignment {
     id: string;
     shippingAddress: Address;
@@ -1975,15 +1969,6 @@ declare interface ConsignmentUpdateRequestBody {
     id: string;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
-}
-
-declare interface ContextConfig {
-    checkoutId?: string;
-    geoCountryCode: string;
-    flashMessages: any[];
-    payment: {
-        token?: string;
-    };
 }
 
 declare interface Country {
@@ -2064,7 +2049,7 @@ export declare function createCheckoutService(options?: CheckoutServiceOptions):
  * @param config - The config object containing the currency configuration
  * @returns an instance of `CurrencyService`.
  */
-export declare function createCurrencyService(config: Config): CurrencyService;
+export declare function createCurrencyService(config: StoreConfig): CurrencyService;
 
 /**
  * Creates an instance of `LanguageService`.
@@ -2105,7 +2090,7 @@ declare interface Currency {
  * Responsible for formatting and converting currencies.
  */
 declare class CurrencyService {
-    private _config;
+    private _storeConfig;
     private _customerFormatter;
     private _storeFormatter;
     toCustomerCurrency(amount: number): string;
@@ -2165,10 +2150,6 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
  */
 declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
-}
-
-declare interface CustomizationConfig {
-    languageData: any[];
 }
 
 declare interface DigitalItem extends LineItem {

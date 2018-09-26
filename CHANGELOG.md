@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.6.1"></a>
+## [1.6.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.6.0...v1.6.1) (2018-09-26)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3529 Fix createCurrencyService type ([7f4b828](https://github.com/bigcommerce/checkout-sdk-js/commit/7f4b828))
+
+
+
 <a name="1.6.0"></a>
 # [1.6.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.5.0...v1.6.0) (2018-09-25)
 
