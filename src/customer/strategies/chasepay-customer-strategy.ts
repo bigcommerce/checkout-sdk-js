@@ -59,6 +59,10 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
                     .then(JPMC => {
                         const ChasePay = JPMC.ChasePay;
 
+                        ChasePay.configure({
+                            language: storeConfig.storeProfile.storeLanguage,
+                        });
+
                         if (ChasePay.isChasePayUp) {
                             ChasePay.insertButtons({
                                 containers: [container],

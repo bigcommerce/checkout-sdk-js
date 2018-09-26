@@ -123,8 +123,18 @@ export default class PaymentActionCreator {
     private _getPaymentMethod(payment: Payment, paymentMethodSelector: PaymentMethodSelector): PaymentMethod | undefined {
         const paymentMethod = paymentMethodSelector.getPaymentMethod(payment.methodId, payment.gatewayId);
 
-        return (paymentMethod && paymentMethod.method === 'multi-option' && !paymentMethod.gateway) ?
-            { ...paymentMethod, gateway: paymentMethod.id } :
-            paymentMethod;
+        if (!paymentMethod) {
+            return;
+        }
+
+        if (paymentMethod.method === 'multi-option' && !paymentMethod.gateway) {
+            return { ...paymentMethod, gateway: paymentMethod.id };
+        }
+
+        if (paymentMethod.initializationData && paymentMethod.initializationData.gateway) {
+            return { ...paymentMethod, id: paymentMethod.initializationData.gateway };
+        }
+
+        return paymentMethod;
     }
 }

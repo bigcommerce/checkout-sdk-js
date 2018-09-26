@@ -8,6 +8,7 @@ export enum MissingDataErrorType {
     MissingOrder,
     MissingOrderConfig,
     MissingOrderId,
+    MissingPayment,
     MissingPaymentMethod,
 }
 
@@ -41,6 +42,9 @@ function getErrorMessage(type: MissingDataErrorType): string {
 
     case MissingDataErrorType.MissingOrderId:
         return 'Unable to proceed because order ID is unavailable or not generated yet.';
+
+    case MissingDataErrorType.MissingPayment:
+        return 'Unable to proceed because payment data is unavailable.';
 
     case MissingDataErrorType.MissingPaymentMethod:
         return 'Unable to proceed because payment method data is unavailable or not properly configured.';
