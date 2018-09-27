@@ -76,6 +76,18 @@ describe('OffsitePaymentStrategy', () => {
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
+    it('submits order with payment data if payment method is "ccavenuemars"', async () => {
+        const payload = merge({}, getOrderRequestBody(), {
+            payment: { methodId: 'ccavenuemars' },
+        });
+        const options = { methodId: 'ccavenuemars', gatewayId: '' };
+
+        await strategy.execute(payload, options);
+
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
+        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
+    });
+
     it('initializes offsite payment flow', async () => {
         const payload = getOrderRequestBody();
         const options = { methodId: 'amex', gatewayId: 'adyen' };
