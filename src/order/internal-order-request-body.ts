@@ -4,6 +4,7 @@ export default interface InternalOrderRequestBody {
     payment?: InternalOrderPaymentRequestBody;
     useStoreCredit?: boolean;
     customerMessage?: string;
+    externalSource?: string;
 }
 
 export interface InternalOrderPaymentRequestBody {

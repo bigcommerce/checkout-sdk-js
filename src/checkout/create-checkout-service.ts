@@ -3,7 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
-import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { ConfigActionCreator, ConfigRequestSender, ConfigState } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -43,9 +43,16 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         getDefaultLogger().warn('Note that the development build is not optimized. To create a production build, set process.env.NODE_ENV to `production`.');
     }
 
+    const config: ConfigState = {
+        meta: {
+            externalSource: options && options.externalSource,
+        },
+        errors: {},
+        statuses: {},
+    };
     const { locale = '', shouldWarnMutation = true } = options || {};
     const requestSender = createRequestSender({ host: options && options.host });
-    const store = createCheckoutStore({}, { shouldWarnMutation });
+    const store = createCheckoutStore({ config }, { shouldWarnMutation });
     const paymentClient = createPaymentClient(store);
     const orderRequestSender = new OrderRequestSender(requestSender);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
@@ -78,4 +85,5 @@ export interface CheckoutServiceOptions {
     locale?: string;
     host?: string;
     shouldWarnMutation?: boolean;
+    externalSource?: string;
 }

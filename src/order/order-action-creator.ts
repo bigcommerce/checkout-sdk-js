@@ -71,6 +71,7 @@ export default class OrderActionCreator {
             of(createAction(OrderActionType.SubmitOrderRequested)),
             defer(() => {
                 const state = store.getState();
+                const externalSource = state.config.getExternalSource();
                 const checkout = state.checkout.getCheckout();
 
                 if (!checkout) {
@@ -79,7 +80,7 @@ export default class OrderActionCreator {
 
                 return from(
                     this._checkoutValidator.validate(checkout, options)
-                        .then(() => this._orderRequestSender.submitOrder(this._mapToOrderRequestBody(payload, checkout.customerMessage), options))
+                        .then(() => this._orderRequestSender.submitOrder(this._mapToOrderRequestBody(payload, checkout.customerMessage, externalSource), options))
                 ).pipe(
                     switchMap(response => concat(
                         // TODO: Remove once we can submit orders using storefront API
@@ -115,19 +116,21 @@ export default class OrderActionCreator {
         return (order && order.orderId) || (checkout && checkout.orderId);
     }
 
-    private _mapToOrderRequestBody(payload: OrderRequestBody, customerMessage: string): InternalOrderRequestBody {
+    private _mapToOrderRequestBody(payload: OrderRequestBody, customerMessage: string, externalSource?: string): InternalOrderRequestBody {
         const { payment, ...order } = payload;
 
         if (!payment) {
             return {
                 ...order,
                 customerMessage,
+                externalSource,
             };
         }
 
         return {
             ...order,
             customerMessage,
+            externalSource,
             payment: {
                 paymentData: payment.paymentData,
                 name: payment.methodId,

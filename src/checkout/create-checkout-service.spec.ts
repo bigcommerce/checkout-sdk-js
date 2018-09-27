@@ -9,12 +9,10 @@ jest.mock('@bigcommerce/request-sender');
 
 describe('createCheckoutService()', () => {
     const nodeEnviroment = process.env.NODE_ENV;
-
     let logger: Logger;
 
     beforeEach(() => {
         logger = getDefaultLogger();
-
         jest.spyOn(logger, 'warn');
     });
 

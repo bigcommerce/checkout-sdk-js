@@ -21,6 +21,10 @@ export default class ConfigSelector {
         return this._config.data && this._config.data.context;
     }
 
+    getExternalSource(): string | undefined {
+        return this._config.meta && this._config.meta.externalSource;
+    }
+
     getLoadError(): Error | undefined {
         return this._config.errors.loadError;
     }
