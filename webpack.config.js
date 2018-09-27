@@ -10,6 +10,7 @@ const assetConfig = {
     entry: {
         'checkout-sdk': './src/index.ts',
         'checkout-button': './src/checkout-button.ts',
+        'embedded-checkout': './src/embedded-checkout/index.ts',
         'internal-mappers': './src/internal-mappers.ts',
     },
 

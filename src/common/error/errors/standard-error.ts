@@ -1,6 +1,8 @@
 import { setPrototypeOf } from '../../utility';
 
-export default class StandardError extends Error {
+import CustomError from './custom-error';
+
+export default class StandardError extends Error implements CustomError {
     type = 'standard';
 
     constructor(message?: string) {
