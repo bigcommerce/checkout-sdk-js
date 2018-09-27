@@ -1,20 +1,21 @@
+import { FormPoster } from '@bigcommerce/form-poster';
+
 import { CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { PaymentInitializeOptions, PaymentMethod } from '../../../payment';
-import { BraintreeSDKCreator } from '../../../payment/strategies/braintree';
 import { GooglePayPaymentStrategy, GooglePayScriptLoader } from '../../../payment/strategies/googlepay';
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from '../../checkout-button-options';
 
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-export default class BraintreeGooglePayButtonStrategy extends CheckoutButtonStrategy {
-    private _googlePayPaymentStrategy?: GooglePayPaymentStrategy;
+export default class GooglePayBraintreeButtonStrategy extends CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
 
     constructor(
         private _store: CheckoutStore,
-        private _braintreeSDKCreator: BraintreeSDKCreator,
-        private _googlePayScriptLoader: GooglePayScriptLoader
+        private _formPoster: FormPoster,
+        private _googlePayScriptLoader: GooglePayScriptLoader,
+        private _googlePayPaymentStrategy: GooglePayPaymentStrategy
     ) {
         super();
     }
@@ -24,7 +25,7 @@ export default class BraintreeGooglePayButtonStrategy extends CheckoutButtonStra
             return super.initialize(options);
         }
 
-        const googlePayOptions = options.braintreegooglepay;
+        const googlePayOptions = options.googlepaybraintree;
         const state = this._store.getState();
         const paymentMethod = this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
 
@@ -36,18 +37,18 @@ export default class BraintreeGooglePayButtonStrategy extends CheckoutButtonStra
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
-
-        return Promise.all([
-            this._braintreeSDKCreator.getGooglePaymentComponent(),
-            this._googlePayScriptLoader.load(),
-        ])
-            .then(([sdkCreator, googlePayScriptLoader]) => {
+        return this._googlePayScriptLoader.load()
+            .then(googlePayScriptLoader => {
+                const googlepayClient = new googlePayScriptLoader.payments.api.PaymentsClient({
+                    environment: googlePayOptions.environment,
+                });
+                const buttonGooglePay = googlepayClient.createButton({
+                    buttonColor: googlePayOptions.buttonColor,
+                    buttonType: googlePayOptions.buttonType,
+                });
                 const button = document.getElementById(googlePayOptions.container);
-                const text = document.createElement('p');
-                text.innerText = 'HOLA SI';
                 if (button) {
-                    button.appendChild(text);
+                    button.innerHTML = buttonGooglePay;
                 }
                 if (this._googlePayPaymentStrategy) {
                     const paymentOptions: PaymentInitializeOptions = {
@@ -71,13 +72,19 @@ export default class BraintreeGooglePayButtonStrategy extends CheckoutButtonStra
 
         this._paymentMethod = undefined;
 
-        this._braintreeSDKCreator.teardown();
-
         return super.deinitialize(options);
     }
 
     private _onPaymentSelectComplete(): void {
-        return window.location.assign('/checkout.php');
+        this._formPoster.postForm('/checkout.php', {
+            headers: {
+                Accept: 'text/html',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            params: {
+                fromGooglePay: true,
+            },
+        });
     }
 
     private _onError(error?: Error): void {
