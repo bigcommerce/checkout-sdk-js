@@ -6,9 +6,10 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
+import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
-import { BraintreePaypalButtonStrategy, CheckoutButtonStrategy } from './strategies';
+import { BraintreePaypalButtonStrategy, CheckoutButtonStrategy, MasterpassButtonStrategy } from './strategies';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -39,6 +40,14 @@ export default function createCheckoutButtonRegistry(
             new PaypalScriptLoader(scriptLoader),
             createFormPoster(),
             true
+        )
+    );
+
+    registry.register('masterpass', () =>
+        new MasterpassButtonStrategy(
+            store,
+            checkoutActionCreator,
+            new MasterpassScriptLoader(scriptLoader)
         )
     );
 
