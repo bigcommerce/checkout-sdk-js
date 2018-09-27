@@ -255,7 +255,6 @@ export default function createPaymentStrategyRegistry(
             new WepayRiskClient(scriptLoader))
     );
 
-    // TODO: change token googlepay to googlepay<gateway> and it defines the googlepay initializer
     registry.register('googlepay', () =>
         new GooglePayPaymentStrategy(
             store,
@@ -270,8 +269,7 @@ export default function createPaymentStrategyRegistry(
             new GooglePayScriptLoader(scriptLoader),
             new GooglePayBraintreeInitializer(braintreeSdkCreator),
             createRequestSender(),
-            new BillingAddressActionCreator(client),
-            remoteCheckoutActionCreator,
+            new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender)),
             new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender)
         )
     );

@@ -1,8 +1,12 @@
 import Checkout from '../../../checkout/checkout';
-import {StandardError} from '../../../common/error/errors';
+import {MissingDataError, MissingDataErrorType, StandardError} from '../../../common/error/errors';
+import PaymentMethod from '../../payment-method';
 import BraintreeSDKCreator from '../braintree/braintree-sdk-creator';
 
-import {GooglePayInitializer, GooglePayPaymentDataRequest} from './googlepay';
+import {
+    GooglePaymentData, GooglePayDataRequestV1, GooglePayInitializer,
+    GooglePayPaymentDataRequestV1, TokenizePayload
+} from './googlepay';
 import {GooglePayBraintreeSDK} from './index';
 
 export default class GooglePayBraintreeInitializer implements GooglePayInitializer {
@@ -12,15 +16,17 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         private _braintreeSDKCreator: BraintreeSDKCreator
     ) {}
 
-    initialize(checkout: Checkout, clientToken: string): Promise<any> {
-        if (!clientToken) {
-            throw new Error('clientToken undefined');
+    initialize(checkout: Checkout, paymentMethod: PaymentMethod): Promise<GooglePayPaymentDataRequestV1> {
+        if (!paymentMethod.clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
-        this._braintreeSDKCreator.initialize(clientToken);
+
+        this._braintreeSDKCreator.initialize(paymentMethod.clientToken);
+
         return this._braintreeSDKCreator.getGooglePaymentComponent()
             .then(googleBraintreePaymentInstance => {
                 this._googlePaymentInstance = googleBraintreePaymentInstance;
-                return this._createGooglePayPayload(googleBraintreePaymentInstance, checkout);
+                return this._createGooglePayPayload(googleBraintreePaymentInstance, checkout, paymentMethod.initializationData.platformToken);
             }).catch((error: Error) => {
                 throw new StandardError(error.message);
             });
@@ -29,16 +35,20 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         return this._braintreeSDKCreator.teardown();
     }
 
-    parseResponse(paymentData: any): Promise<any> {
+    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
         return this._googlePaymentInstance.parseResponse(paymentData);
     }
 
-    private _createGooglePayPayload(googleBraintreePaymentInstance: GooglePayBraintreeSDK, checkout: Checkout): any {
-        const googlePaymentDataRequest: any = {
+    private _createGooglePayPayload(googleBraintreePaymentInstance: GooglePayBraintreeSDK, checkout: Checkout, platformToken: string): GooglePayPaymentDataRequestV1 {
+        if (!platformToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const googlePaymentDataRequest: GooglePayDataRequestV1 = {
             merchantInfo: {
                 merchantId: '01234567890123456789',
-                // merchantName: 'BIGCOMMERCE',
-                // authJwt: 'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjaGFudE9yaWdpbiI6Ind3dy5iaWdjb21tZXJjZS5jb20iLCJtZXJjaGFudElkIjoiMTIzNDUiLCJpYXQiOjE1Mzc1MDE0Mjh9.YjA2YTg5MmQ0MWI3Mjk4ZTdlNzI2ZmYzYzIyYzZkMTY0ZTU4OTlmNTljYmVkNjZkNWEwOGI2MjE3ZmZlNTc1Mg',
+                merchantName: 'BIGCOMMERCE',
+                authJwt: platformToken,
             },
             transactionInfo: {
                 currencyCode: checkout.cart.currency.code,
@@ -57,6 +67,6 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
             phoneNumberRequired: true,
         };
 
-        return googleBraintreePaymentInstance.createPaymentDataRequest(googlePaymentDataRequest);
+        return googleBraintreePaymentInstance.createPaymentDataRequest(googlePaymentDataRequest) as GooglePayPaymentDataRequestV1;
     }
 }
