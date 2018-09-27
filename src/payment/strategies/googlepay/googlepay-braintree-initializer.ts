@@ -16,7 +16,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         private _braintreeSDKCreator: BraintreeSDKCreator
     ) {}
 
-    initialize(checkout: Checkout, paymentMethod: PaymentMethod): Promise<GooglePayPaymentDataRequestV1> {
+    initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean): Promise<GooglePayPaymentDataRequestV1> {
         if (!paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
@@ -26,7 +26,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         return this._braintreeSDKCreator.getGooglePaymentComponent()
             .then(googleBraintreePaymentInstance => {
                 this._googlePaymentInstance = googleBraintreePaymentInstance;
-                return this._createGooglePayPayload(googleBraintreePaymentInstance, checkout, paymentMethod.initializationData.platformToken);
+                return this._createGooglePayPayload(googleBraintreePaymentInstance, checkout, paymentMethod.initializationData.platformToken, hasShippingAddress);
             }).catch((error: Error) => {
                 throw new StandardError(error.message);
             });
@@ -39,7 +39,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         return this._googlePaymentInstance.parseResponse(paymentData);
     }
 
-    private _createGooglePayPayload(googleBraintreePaymentInstance: GooglePayBraintreeSDK, checkout: Checkout, platformToken: string): GooglePayPaymentDataRequestV1 {
+    private _createGooglePayPayload(googleBraintreePaymentInstance: GooglePayBraintreeSDK, checkout: Checkout, platformToken: string, hasShippingAddress: boolean): GooglePayPaymentDataRequestV1 {
         if (!platformToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
@@ -62,7 +62,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                 billingAddressRequired: true,
                 billingAddressFormat: 'FULL',
             },
-            shippingAddressRequired: true,
+            shippingAddressRequired: !hasShippingAddress,
             emailRequired: true,
             phoneNumberRequired: true,
         };
