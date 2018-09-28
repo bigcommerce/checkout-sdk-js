@@ -23,8 +23,6 @@ export interface GooglePayPaymentOptions {
 
 export interface GooglePayDataRequestV1 {
     merchantInfo: {
-        merchantId: string,
-        merchantName?: string,
         authJwt?: string,
     };
     transactionInfo: {

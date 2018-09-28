@@ -2,6 +2,7 @@ import {RequestSender} from '@bigcommerce/request-sender';
 import Response from '@bigcommerce/request-sender/lib/response';
 
 import {BillingAddressActionCreator} from '../../../billing';
+import {BillingAddressUpdateRequestBody} from '../../../billing/billing-address';
 import CheckoutStore from '../../../checkout/checkout-store';
 import { CheckoutActionCreator } from '../../../checkout/index';
 import InternalCheckoutSelectors from '../../../checkout/internal-checkout-selectors';
@@ -96,7 +97,7 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._getPayment()
-            .catch(error => {
+            .catch((error: MissingDataError) => {
                 if (error.subtype === MissingDataErrorType.MissingPayment) {
                     return this._displayWallet()
                         .then(() => this._getPayment());
@@ -325,13 +326,16 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(this._methodId))
             .then(state => {
                 const remoteBillingAddress = state.billingAddress.getBillingAddress();
+                let googlePayAddressMapped: BillingAddressUpdateRequestBody;
 
                 if (!remoteBillingAddress) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                    googlePayAddressMapped = mapGooglePayAddressToRequestAddress(billingAddress) as BillingAddressUpdateRequestBody;
+                } else {
+                    googlePayAddressMapped = mapGooglePayAddressToRequestAddress(billingAddress, remoteBillingAddress.id) as BillingAddressUpdateRequestBody;
                 }
 
                 return this._store.dispatch(
-                    this._billingAddressActionCreator.updateAddress(mapGooglePayAddressToRequestAddress(billingAddress, remoteBillingAddress.id))
+                    this._billingAddressActionCreator.updateAddress(googlePayAddressMapped)
                 );
             });
     }
