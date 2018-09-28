@@ -270,6 +270,28 @@ declare interface ChasePayCustomerInitializeOptions {
     container: string;
 }
 
+declare interface ChasePayInitializeOptions {
+    /**
+     * This container is used to host the chasepay branding logo.
+     * It should be an HTML element.
+     */
+    logoContainer?: string;
+    /**
+     * This walletButton is used to set an event listener, provide an element ID if you want
+     * users to be able to launch the ChasePay wallet modal by clicking on a button.
+     * It should be an HTML element.
+     */
+    walletButton?: string;
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
+    onPaymentSelect?(): void;
+    /**
+     * A callback that gets called when the customer cancels their payment selection.
+     */
+    onCancel?(): void;
+}
+
 declare interface Checkout {
     id: string;
     billingAddress?: BillingAddress;
@@ -1209,6 +1231,7 @@ declare interface CheckoutServiceOptions {
     locale?: string;
     host?: string;
     shouldWarnMutation?: boolean;
+    externalSource?: string;
 }
 
 declare interface CheckoutSettings {
@@ -2137,7 +2160,12 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the Chasepay payment method.
+     * They can be omitted unless you need to support Chasepay.
+     */
     chasepay?: ChasePayCustomerInitializeOptions;
+    masterpass?: MasterpassCustomerInitializeOptions;
 }
 
 /**
@@ -2392,6 +2420,13 @@ declare interface Locales {
     [key: string]: string;
 }
 
+declare interface MasterpassCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+}
+
 declare interface NonceGenerationError {
     type: string;
     message: string;
@@ -2510,6 +2545,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Square.
      */
     square?: SquarePaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Chasepay payment method.
+     * They can be omitted unless you need to support Chasepay.
+     */
+    chasepay?: ChasePayInitializeOptions;
 }
 
 declare interface PaymentMethod {

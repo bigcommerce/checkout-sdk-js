@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [externalSource](checkoutserviceoptions.md#externalsource)
 * [host](checkoutserviceoptions.md#host)
 * [locale](checkoutserviceoptions.md#locale)
 * [shouldWarnMutation](checkoutserviceoptions.md#shouldwarnmutation)
@@ -18,6 +19,14 @@
 
 ## Properties
 
+<a id="externalsource"></a>
+
+### `<Optional>` externalSource
+
+**● externalSource**: * `undefined` &#124; `string`
+*
+
+___
 <a id="host"></a>
 
 ### `<Optional>` host

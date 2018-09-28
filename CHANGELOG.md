@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.0"></a>
+# [1.7.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.6.1...v1.7.0) (2018-09-28)
+
+
+### Features
+
+* **checkout:** INT-775 Implement Masterpass button in customer section ([898381c](https://github.com/bigcommerce/checkout-sdk-js/commit/898381c))
+* **order:** CHECKOUT-3563 Add External Source param when creating order ([41d76a0](https://github.com/bigcommerce/checkout-sdk-js/commit/41d76a0))
+* **payment:** INT-616 Add Chase Pay wallet support ([e40a457](https://github.com/bigcommerce/checkout-sdk-js/commit/e40a457))
+* **payment:** INT-685 Correctly set up CCAvenue MARS return URL ([7a563c3](https://github.com/bigcommerce/checkout-sdk-js/commit/7a563c3))
+
+
+
 <a name="1.6.1"></a>
 ## [1.6.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.6.0...v1.6.1) (2018-09-26)
 
