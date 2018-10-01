@@ -2,7 +2,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import Response from '@bigcommerce/request-sender/lib/response';
 
 import { BillingAddressActionCreator } from '../../../billing';
-import { BillingAddressUpdateRequestBody } from '../../../billing/billing-address';
+import { BillingAddressUpdateRequestBody } from '../../../billing';
 import CheckoutStore from '../../../checkout/checkout-store';
 import { CheckoutActionCreator } from '../../../checkout/index';
 import InternalCheckoutSelectors from '../../../checkout/internal-checkout-selectors';
@@ -37,6 +37,8 @@ import PaymentStrategy from '../payment-strategy';
 
 import {
     default as mapGooglePayAddressToRequestAddress,
+    ButtonColor,
+    ButtonType,
     EnvironmentType,
     GooglePaymentsError,
     GooglePaymentData,
@@ -46,8 +48,9 @@ import {
     GooglePayIsReadyToPayResponse,
     GooglePayPaymentDataRequestV1,
     GooglePayPaymentInitializeOptions,
-    GooglePayPaymentOptions,
-    GooglePaySDK, PaymentSuccessPayload, TokenizePayload
+    GooglePayPaymentOptions, GooglePaySDK,
+    PaymentSuccessPayload,
+    TokenizePayload
 } from './googlepay';
 import GooglePayScriptLoader from './googlepay-script-loader';
 
@@ -120,6 +123,14 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
             .then(payment => {
                 return this._createOrder(payment, payload.useStoreCredit, options);
             });
+    }
+
+    createButton(): HTMLElement {
+        return this._googlePaymentsClient.createButton({
+            buttonColor: ButtonColor.default,
+            buttonType: ButtonType.short,
+            onClick: this._handleWalletButtonClick,
+        });
     }
 
     private _configureWallet(): Promise<void> {

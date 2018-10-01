@@ -86,9 +86,20 @@ export interface GooglePaySDK {
     payments: any;
 }
 
+export enum ButtonType {
+    long = 'long',
+    short = 'short',
+}
+export enum ButtonColor {
+    default = 'default',
+    black = 'black',
+    white = 'white',
+}
+
 export interface GooglePayClient {
     isReadyToPay(options: object): Promise<GooglePayIsReadyToPayResponse>;
     loadPaymentData(paymentDataRequest: any): Promise<GooglePaymentData>;
+    createButton(options: { [key: string]: string | object }): HTMLElement;
 }
 
 export interface GooglePayHostWindow extends Window {
