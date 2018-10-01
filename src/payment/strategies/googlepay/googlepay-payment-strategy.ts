@@ -49,7 +49,6 @@ import {
     GooglePayPaymentOptions,
     GooglePaySDK, PaymentSuccessPayload, TokenizePayload
 } from './googlepay';
-import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
 import GooglePayScriptLoader from './googlepay-script-loader';
 
 export default class GooglePayPaymentStrategy extends PaymentStrategy {

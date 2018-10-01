@@ -1,5 +1,7 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
+import { GooglePayBraintreeSDK } from '../googlepay/googlepay';
+
 import { BraintreeClientCreator, BraintreeDataCollector, BraintreeHostWindow, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
@@ -9,7 +11,6 @@ import {
     getThreeDSecureMock,
     getVisaCheckoutMock,
 } from './braintree.mock';
-import {GooglePayBraintreeSDK} from "../googlepay/googlepay";
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;

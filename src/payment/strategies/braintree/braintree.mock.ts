@@ -1,5 +1,6 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { GooglePayBraintreeSDK } from '../googlepay/googlepay';
 
 import {
     BraintreeClient,
@@ -15,7 +16,6 @@ import {
     BraintreeVisaCheckout,
 } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
-import {GooglePayBraintreeSDK} from "../googlepay/googlepay";
 
 export function getClientMock(): BraintreeClient {
     return {
