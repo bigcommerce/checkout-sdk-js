@@ -1,25 +1,38 @@
-import {RequestSender} from '@bigcommerce/request-sender';
+import { RequestSender } from '@bigcommerce/request-sender';
 import Response from '@bigcommerce/request-sender/lib/response';
 
-import {BillingAddressActionCreator} from '../../../billing';
-import {BillingAddressUpdateRequestBody} from '../../../billing/billing-address';
+import { BillingAddressActionCreator } from '../../../billing';
+import { BillingAddressUpdateRequestBody } from '../../../billing/billing-address';
 import CheckoutStore from '../../../checkout/checkout-store';
 import { CheckoutActionCreator } from '../../../checkout/index';
 import InternalCheckoutSelectors from '../../../checkout/internal-checkout-selectors';
 import {
-    InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedErrorType,
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedErrorType,
     StandardError
 } from '../../../common/error/errors/index';
 import NotInitializedError from '../../../common/error/errors/not-initialized-error';
-import {toFormUrlEncoded} from '../../../common/http-request';
+import { toFormUrlEncoded } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
-import { OrderActionCreator, OrderRequestBody } from '../../../order/index';
-import {RemoteCheckoutSynchronizationError} from '../../../remote-checkout/errors';
+import {
+    OrderActionCreator,
+    OrderRequestBody
+} from '../../../order/index';
+import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
 import ConsignmentActionCreator from '../../../shipping/consignment-action-creator';
-import { PaymentActionCreator, PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../../index';
+import {
+    PaymentActionCreator,
+    PaymentMethodActionCreator,
+    PaymentStrategyActionCreator
+} from '../../index';
 import Payment from '../../payment';
 import PaymentMethod from '../../payment-method';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import {
+    PaymentInitializeOptions,
+    PaymentRequestOptions
+} from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import {
@@ -186,12 +199,12 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
         testMode = true; // TODO: remove when push this code to final review
         if (testMode === undefined) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        if (!testMode) {
+            environment = 'PRODUCTION';
         } else {
-            if (!testMode) {
-                environment = 'PRODUCTION';
-            } else {
-                environment = 'TEST';
-            }
+            environment = 'TEST';
         }
 
         const options: GooglePayPaymentOptions = { environment };

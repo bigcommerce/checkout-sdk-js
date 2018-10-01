@@ -2,7 +2,10 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors/index';
 
-import {GooglePayHostWindow, GooglePaySDK} from './googlepay';
+import {
+    GooglePayHostWindow,
+    GooglePaySDK
+} from './googlepay';
 
 export default class GooglePayScriptLoader {
     constructor(

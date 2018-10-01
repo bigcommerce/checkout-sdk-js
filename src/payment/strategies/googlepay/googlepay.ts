@@ -1,8 +1,11 @@
-import {AddressRequestBody} from '../../../address/address';
-import {BillingAddressUpdateRequestBody} from '../../../billing/billing-address';
+import { AddressRequestBody } from '../../../address/address';
+import { BillingAddressUpdateRequestBody } from '../../../billing/billing-address';
 import Checkout from '../../../checkout/checkout';
 import PaymentMethod from '../../payment-method';
-import {BraintreeModule, BraintreeModuleCreator} from '../braintree';
+import {
+    BraintreeModule,
+    BraintreeModuleCreator
+} from '../braintree';
 
 export type EnvironmentType = 'PRODUCTION' | 'TEST';
 type AddressFormat = 'FULL' | 'MIN';

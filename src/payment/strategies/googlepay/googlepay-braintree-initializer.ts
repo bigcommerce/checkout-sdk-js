@@ -1,13 +1,20 @@
 import Checkout from '../../../checkout/checkout';
-import {MissingDataError, MissingDataErrorType, StandardError} from '../../../common/error/errors';
+import {
+    MissingDataError,
+    MissingDataErrorType,
+    StandardError
+} from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';
 import BraintreeSDKCreator from '../braintree/braintree-sdk-creator';
 
 import {
-    GooglePaymentData, GooglePayDataRequestV1, GooglePayInitializer,
-    GooglePayPaymentDataRequestV1, TokenizePayload
+    GooglePaymentData,
+    GooglePayDataRequestV1,
+    GooglePayInitializer,
+    GooglePayPaymentDataRequestV1,
+    TokenizePayload
 } from './googlepay';
-import {GooglePayBraintreeSDK} from './index';
+import { GooglePayBraintreeSDK } from './index';
 
 export default class GooglePayBraintreeInitializer implements GooglePayInitializer {
     private _googlePaymentInstance!: GooglePayBraintreeSDK;

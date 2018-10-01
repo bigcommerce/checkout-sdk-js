@@ -258,17 +258,14 @@ export default function createPaymentStrategyRegistry(
     registry.register('googlepay', () =>
         new GooglePayPaymentStrategy(
             store,
-            new CheckoutActionCreator(
-                checkoutRequestSender,
-                new ConfigActionCreator(new ConfigRequestSender(requestSender))
-            ),
+            checkoutActionCreator,
             paymentMethodActionCreator,
-            new PaymentStrategyActionCreator(registry, orderActionCreator),
+            paymentStrategyActionCreator,
             paymentActionCreator,
             orderActionCreator,
             new GooglePayScriptLoader(scriptLoader),
             new GooglePayBraintreeInitializer(braintreeSdkCreator),
-            createRequestSender(),
+            requestSender,
             new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender)),
             new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender)
         )
