@@ -33,6 +33,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         return this._braintreeSDKCreator.getGooglePaymentComponent()
             .then(googleBraintreePaymentInstance => {
                 this._googlePaymentInstance = googleBraintreePaymentInstance;
+
                 return this._createGooglePayPayload(
                     googleBraintreePaymentInstance,
                     checkout,
