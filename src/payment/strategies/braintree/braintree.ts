@@ -1,4 +1,4 @@
-import {GooglePayCreator} from '../googlepay';
+import { GooglePayCreator } from '../googlepay';
 
 import { PaypalAuthorizeData, PaypalSDK } from '../paypal';
 

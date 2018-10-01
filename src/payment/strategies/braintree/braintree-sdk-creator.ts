@@ -1,6 +1,6 @@
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
-import {GooglePayBraintreeSDK} from '../googlepay';
+import { GooglePayBraintreeSDK } from '../googlepay';
 
 import {
     BraintreeClient,
