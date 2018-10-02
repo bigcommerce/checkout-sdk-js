@@ -14,12 +14,16 @@ import {
     GooglePayAddress,
     GooglePayBraintreeSDK,
     GooglePayPaymentDataRequestV1,
-    GooglePaySDK
+    GooglePaySDK, GooglePayClient, GooglePayPaymentOptions
 } from './googlepay';
 
 export function getGooglePaySDKMock(): GooglePaySDK {
     return {
-        payments: jest.fn(),
+        payments: {
+            api: {
+                PaymentsClient: jest.fn(),
+            },
+        },
     };
 }
 

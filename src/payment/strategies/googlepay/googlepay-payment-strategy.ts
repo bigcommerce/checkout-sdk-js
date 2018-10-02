@@ -219,7 +219,7 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
 
         const options: GooglePayPaymentOptions = { environment };
 
-        return new google.payments.api.PaymentsClient(options) as GooglePayClient;
+        return new google.payments.api.PaymentsClient(options);
     }
 
     private _setExternalCheckoutData(paymentData: GooglePaymentData): Promise<void> {

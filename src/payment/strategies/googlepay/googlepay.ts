@@ -80,7 +80,13 @@ export interface GooglePayIsReadyToPayResponse {
 }
 
 export interface GooglePaySDK {
-    payments: any;
+    payments: {
+        api: {
+            PaymentsClient: {
+                new(options: GooglePayPaymentOptions): GooglePayClient;
+            },
+        },
+    };
 }
 
 export enum ButtonType {
