@@ -89,6 +89,7 @@ export function getCompleteOrder(): InternalOrder {
                     },
                 ],
                 productId: 103,
+                categoryNames: ['Cat 1'],
             },
             {
                 id: 'bd391ead-8c58-4105-b00e-d75d233b429a',

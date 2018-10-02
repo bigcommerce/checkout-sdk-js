@@ -29,6 +29,7 @@ export function getPhysicalItem(): PhysicalItem {
                 valueId: 3,
             },
         ],
+        categoryNames: ['Cat 1'],
     };
 }
 
@@ -63,6 +64,7 @@ export function getDigitalItem(): DigitalItem {
                 valueId: 3,
             },
         ],
+        categoryNames: ['Cat 1'],
     };
 }
 

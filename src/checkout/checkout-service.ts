@@ -17,6 +17,7 @@ import { ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody } from '
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
+import CheckoutParams from './checkout-params';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
 import createCheckoutSelectors from './create-checkout-selectors';
@@ -151,7 +152,7 @@ export default class CheckoutService {
      * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    loadCheckout(id?: string, options?: RequestOptions): Promise<CheckoutSelectors> {
+    loadCheckout(id?: string, options?: RequestOptions<CheckoutParams>): Promise<CheckoutSelectors> {
         return this._dispatch(id ?
             this._checkoutActionCreator.loadCheckout(id, options) :
             this._checkoutActionCreator.loadDefaultCheckout(options)
