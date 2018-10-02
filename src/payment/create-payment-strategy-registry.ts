@@ -254,7 +254,7 @@ export default function createPaymentStrategyRegistry(
             new WepayRiskClient(scriptLoader))
     );
 
-    registry.register('googlepay-braintree', () =>
+    registry.register('googlepaybraintree', () =>
         new GooglePayPaymentStrategy(
             store,
             checkoutActionCreator,

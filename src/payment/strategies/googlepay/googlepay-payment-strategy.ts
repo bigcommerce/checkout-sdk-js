@@ -272,7 +272,7 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
             body: toFormUrlEncoded({
                 payment_type: paymentData.tokenizePayload.type,
                 nonce: paymentData.tokenizePayload.nonce,
-                provider: 'googlepay',
+                provider: this._methodId,
                 action: 'set_external_checkout',
                 card_information: this._getCardInformation(cardInformation),
             }),
