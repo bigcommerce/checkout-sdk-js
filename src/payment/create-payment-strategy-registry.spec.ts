@@ -100,8 +100,8 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(NoPaymentDataRequiredPaymentStrategy);
     });
 
-    it('can instantiate googlepay', () => {
-        const paymentStrategy = registry.get('googlepay');
+    it('can instantiate googlepaybraintree', () => {
+        const paymentStrategy = registry.get('googlepaybraintree');
         expect(paymentStrategy).toBeInstanceOf(GooglepayPaymentStrategy);
     });
 });

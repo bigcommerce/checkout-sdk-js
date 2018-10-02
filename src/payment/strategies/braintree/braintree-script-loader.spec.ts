@@ -1,6 +1,7 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { GooglePayBraintreeSDK } from '../googlepay/googlepay';
+import StandardError from '../../../common/error/errors/standard-error';
+import { GooglePayBraintreeSDK } from '../googlepay';
 
 import { BraintreeClientCreator, BraintreeDataCollector, BraintreeHostWindow, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
@@ -146,6 +147,22 @@ describe('BraintreeScriptLoader', () => {
             const googlePay = await braintreeScriptLoader.loadGooglePaymentComponent();
             expect(googlePay).toBe(googlePayMock);
         });
-    });
 
+        it('throws when window is not set', async () => {
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.googlePayment = undefined;
+                    mockWindow.braintree = undefined;
+                }
+
+                return Promise.resolve();
+            });
+
+            try {
+                await braintreeScriptLoader.loadGooglePaymentComponent();
+            } catch (error) {
+                expect(error).toBeInstanceOf(StandardError);
+            }
+        });
+    });
 });

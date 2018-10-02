@@ -3,6 +3,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import {GooglePayHostWindow, GooglePaySDK} from './googlepay';
 import GooglePayScriptLoader from './googlepay-script-loader';
 import { getGooglePaySDKMock } from './googlepay.mock';
+import StandardError from "../../../common/error/errors/standard-error";
 
 describe('GooglePayScriptLoader', () => {
     let googlePayScriptLoader: GooglePayScriptLoader;
@@ -34,6 +35,19 @@ describe('GooglePayScriptLoader', () => {
         it('returns the SDK from the window', async () => {
             const sdk = await googlePayScriptLoader.load();
             expect(sdk).toBe(googlePaySDKMock);
+        });
+
+        it('throws an error when window is not set', async () => {
+            scriptLoader.loadScript = jest.fn(() => {
+                mockWindow.google = undefined;
+                return Promise.resolve();
+            });
+
+            try {
+                await googlePayScriptLoader.load();
+            } catch (error) {
+                expect(error).toBeInstanceOf(StandardError);
+            }
         });
     });
 });

@@ -1,4 +1,6 @@
 import { NotInitializedError } from '../../../common/error/errors';
+import { GooglePayBraintreeSDK } from '../googlepay';
+import { getGooglePayBraintreeMock } from '../googlepay/googlepay.mock';
 
 import { BraintreeClient, BraintreeDataCollector, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
@@ -202,6 +204,45 @@ describe('Braintree SDK Creator', () => {
                 .mockImplementation(() => { throw new Error(errorMessage); });
 
             expect(() => braintreeSDKCreator.getVisaCheckout()).toThrow(errorMessage);
+        });
+    });
+
+    describe('#getGooglePaymentComponent()', () => {
+        let googlePayMock: GooglePayBraintreeSDK;
+        let googlePayCreatorMock: BraintreeModuleCreator<GooglePayBraintreeSDK>;
+        let braintreeSDKCreator: BraintreeSDKCreator;
+
+        beforeEach(() => {
+            googlePayMock = getGooglePayBraintreeMock();
+            googlePayCreatorMock = getModuleCreatorMock(googlePayMock);
+            braintreeScriptLoader.loadGooglePaymentComponent = jest.fn().mockReturnValue(Promise.resolve(googlePayCreatorMock));
+            braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
+            jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(Promise.resolve(clientMock));
+        });
+
+        it('returns a promise that resolves to the Google Pay client', async () => {
+            const googlePay = await braintreeSDKCreator.getGooglePaymentComponent();
+
+            expect(googlePayCreatorMock.create).toHaveBeenCalledWith({ client: clientMock });
+            expect(googlePay).toBe(googlePayMock);
+        });
+
+        it('always returns the same instance of the Google Pay client', async () => {
+            const googlePay1 = await braintreeSDKCreator.getGooglePaymentComponent();
+            const googlePay2 = await braintreeSDKCreator.getGooglePaymentComponent();
+
+            expect(googlePay1).toBe(googlePay2);
+            expect(braintreeScriptLoader.loadGooglePaymentComponent).toHaveBeenCalledTimes(1);
+            expect(googlePayCreatorMock.create).toHaveBeenCalledTimes(1);
+        });
+
+        it('throws if getting the client throws', async () => {
+            const errorMessage = 'some_error';
+
+            jest.spyOn(braintreeSDKCreator, 'getClient')
+                .mockImplementation(() => { throw new Error(errorMessage); });
+
+            expect(() => braintreeSDKCreator.getGooglePaymentComponent()).toThrow(errorMessage);
         });
     });
 
