@@ -1,7 +1,3 @@
-import {
-    createRequestSender,
-    RequestSender
-} from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import {MissingDataError, MissingDataErrorType} from '../../../common/error/errors';
@@ -21,14 +17,11 @@ import {
 
 describe('GooglePayBraintreeInitializer', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
-    let requestSender: RequestSender;
 
     beforeEach(() => {
         const braintreeScriptLoader = new BraintreeScriptLoader(createScriptLoader());
         braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
         braintreeSDKCreator.initialize = jest.fn();
-
-        requestSender = createRequestSender();
     });
 
     it('creates an instance of GooglePayBraintreeInitializer', () => {
@@ -83,7 +76,7 @@ describe('GooglePayBraintreeInitializer', () => {
             paymentMethod.clientToken = undefined;
 
             try {
-                googlePayBraintreeInitializer.initialize(getCheckoutMock(), paymentMethod, false)
+                googlePayBraintreeInitializer.initialize(getCheckoutMock(), paymentMethod, false);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(error).toBeTruthy();

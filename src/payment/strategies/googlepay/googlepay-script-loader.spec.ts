@@ -1,9 +1,10 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
+import StandardError from '../../../common/error/errors/standard-error';
+
 import {GooglePayHostWindow, GooglePaySDK} from './googlepay';
 import GooglePayScriptLoader from './googlepay-script-loader';
 import { getGooglePaySDKMock } from './googlepay.mock';
-import StandardError from "../../../common/error/errors/standard-error";
 
 describe('GooglePayScriptLoader', () => {
     let googlePayScriptLoader: GooglePayScriptLoader;
