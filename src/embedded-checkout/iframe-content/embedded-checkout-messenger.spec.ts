@@ -1,4 +1,5 @@
 import { CartChangedError } from '../../cart/errors';
+import { StandardError } from '../../common/error/errors';
 import { EmbeddedCheckoutEventType } from '../embedded-checkout-events';
 
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
@@ -53,6 +54,20 @@ describe('EmbeddedCheckoutMessenger', () => {
 
         expect(parentWindow.postMessage).toHaveBeenCalledWith({
             type: EmbeddedCheckoutEventType.FrameLoaded,
+        }, parentOrigin);
+    });
+
+    it('posts `frame_error` event to parent window', () => {
+        const error = new StandardError();
+
+        messenger.postFrameError(error);
+
+        expect(parentWindow.postMessage).toHaveBeenCalledWith({
+            type: EmbeddedCheckoutEventType.FrameError,
+            payload: {
+                message: error.message,
+                type: error.type,
+            },
         }, parentOrigin);
     });
 });

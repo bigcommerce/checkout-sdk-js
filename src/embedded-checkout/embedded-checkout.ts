@@ -54,7 +54,7 @@ export default class EmbeddedCheckout {
                 this._isAttached = false;
 
                 this._messageListener.trigger({
-                    type: EmbeddedCheckoutEventType.CheckoutError,
+                    type: EmbeddedCheckoutEventType.FrameError,
                     payload: error,
                 });
 

@@ -2,6 +2,7 @@ import { iframeResizer, IFrameComponent } from 'iframe-resizer';
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError } from './errors';
+import { isEmbeddedCheckoutEventType } from './is-embedded-checkout-event';
 import parseOrigin from './parse-origin';
 
 export default class ResizableIframeCreator {
@@ -43,23 +44,32 @@ export default class ResizableIframeCreator {
             }, timeoutInterval);
 
             const handleMessage = (event: MessageEvent) => {
-                if (event.origin !== parseOrigin(iframe.src) ||
-                    event.data.type !== EmbeddedCheckoutEventType.FrameLoaded) {
+                if (event.origin !== parseOrigin(iframe.src)) {
                     return;
                 }
 
-                iframe.style.display = '';
+                if (isEmbeddedCheckoutEventType(event.data, EmbeddedCheckoutEventType.FrameError)) {
+                    teardown();
+                    reject(new NotEmbeddableError(event.data.payload.message));
+                }
 
-                const iframes = iframeResizer({
-                    scrolling: false,
-                    sizeWidth: false,
-                    heightCalculationMethod: 'lowestElement',
-                }, iframe);
+                if (isEmbeddedCheckoutEventType(event.data, EmbeddedCheckoutEventType.FrameLoaded)) {
+                    iframe.style.display = '';
 
+                    const iframes = iframeResizer({
+                        scrolling: false,
+                        sizeWidth: false,
+                        heightCalculationMethod: 'lowestElement',
+                    }, iframe);
+
+                    teardown();
+                    resolve(iframes[iframes.length - 1]);
+                }
+            };
+
+            const teardown = () => {
                 window.removeEventListener('message', handleMessage);
                 window.clearTimeout(timeout);
-
-                resolve(iframes[iframes.length - 1]);
             };
 
             window.addEventListener('message', handleMessage);

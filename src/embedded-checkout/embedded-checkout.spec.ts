@@ -66,7 +66,7 @@ describe('EmbeddedCheckout', () => {
         } catch (thrown) {
             expect(messageListener.trigger)
                 .toHaveBeenCalledWith({
-                    type: EmbeddedCheckoutEventType.CheckoutError,
+                    type: EmbeddedCheckoutEventType.FrameError,
                     payload: error,
                 });
 

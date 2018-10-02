@@ -63,6 +63,21 @@ describe('iframeCreator.createFrame()', () => {
         expect(frame.iFrameResizer).toBeDefined();
     });
 
+    it('removes message listener if iframe is loaded successfully', async () => {
+        jest.spyOn(window, 'removeEventListener');
+
+        setTimeout(() => {
+            eventEmitter.emit('message', {
+                origin: 'http://mybigcommerce.com',
+                data: { type: EmbeddedCheckoutEventType.FrameLoaded },
+            });
+        });
+
+        await iframeCreator.createFrame(url, 'checkout');
+
+        expect(window.removeEventListener).toHaveBeenCalledWith('message', expect.any(Function));
+    });
+
     it('throws error if unable to find container element', () => {
         expect(() => iframeCreator.createFrame(url, 'invalid_container')).toThrow(NotEmbeddableError);
     });
@@ -75,11 +90,42 @@ describe('iframeCreator.createFrame()', () => {
         }
     });
 
+    it('throws error if receiving "error" event from iframe', async () => {
+        const event = {
+            type: EmbeddedCheckoutEventType.FrameError,
+            payload: { message: 'Not available' },
+        };
+
+        setTimeout(() => {
+            eventEmitter.emit('message', {
+                origin: 'http://mybigcommerce.com',
+                data: event,
+            });
+        });
+
+        try {
+            await iframeCreator.createFrame(url, 'checkout');
+        } catch (error) {
+            expect(error).toBeInstanceOf(NotEmbeddableError);
+            expect(error.message).toEqual(event.payload.message);
+        }
+    });
+
     it('removes iframe from container element if unable to load', async () => {
         try {
             await iframeCreator.createFrame(url, 'checkout');
         } catch (error) {
             expect(container.childNodes.length).toEqual(0);
+        }
+    });
+
+    it('removes message listener if unable to load', async () => {
+        jest.spyOn(window, 'removeEventListener');
+
+        try {
+            await iframeCreator.createFrame(url, 'checkout');
+        } catch (error) {
+            expect(window.removeEventListener).toHaveBeenCalledWith('message', expect.any(Function));
         }
     });
 });
