@@ -1,9 +1,11 @@
 import { isCustomError, CustomError } from '../../common/error/errors';
 import {
     EmbeddedCheckoutCompleteEvent,
+    EmbeddedCheckoutError,
     EmbeddedCheckoutErrorEvent,
     EmbeddedCheckoutEvent,
     EmbeddedCheckoutEventType,
+    EmbeddedCheckoutFrameErrorEvent,
     EmbeddedCheckoutFrameLoadedEvent,
     EmbeddedCheckoutLoadedEvent,
 } from '../embedded-checkout-events';
@@ -35,11 +37,16 @@ export default class EmbeddedCheckoutMessenger {
     postError(payload: Error | CustomError): void {
         const message: EmbeddedCheckoutErrorEvent = {
             type: EmbeddedCheckoutEventType.CheckoutError,
-            payload: {
-                message: payload.message,
-                type: isCustomError(payload) ? payload.type : undefined,
-                subtype: isCustomError(payload) ? payload.subtype : undefined,
-            },
+            payload: this._transformError(payload),
+        };
+
+        this._notifyParent(message);
+    }
+
+    postFrameError(payload: Error | CustomError): void {
+        const message: EmbeddedCheckoutFrameErrorEvent = {
+            type: EmbeddedCheckoutEventType.FrameError,
+            payload: this._transformError(payload),
         };
 
         this._notifyParent(message);
@@ -59,6 +66,14 @@ export default class EmbeddedCheckoutMessenger {
         };
 
         this._notifyParent(message);
+    }
+
+    private _transformError(error: Error | CustomError): EmbeddedCheckoutError {
+        return {
+            message: error.message,
+            type: isCustomError(error) ? error.type : undefined,
+            subtype: isCustomError(error) ? error.subtype : undefined,
+        };
     }
 
     private _notifyParent(message: EmbeddedCheckoutEvent): void {
