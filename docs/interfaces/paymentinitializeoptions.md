@@ -20,6 +20,7 @@ A set of options that are required to initialize the payment step of the current
 * [amazon](paymentinitializeoptions.md#amazon)
 * [braintree](paymentinitializeoptions.md#braintree)
 * [braintreevisacheckout](paymentinitializeoptions.md#braintreevisacheckout)
+* [chasepay](paymentinitializeoptions.md#chasepay)
 * [gatewayId](paymentinitializeoptions.md#gatewayid)
 * [klarna](paymentinitializeoptions.md#klarna)
 * [methodId](paymentinitializeoptions.md#methodid)
@@ -56,6 +57,15 @@ ___
 **● braintreevisacheckout**: *[BraintreeVisaCheckoutPaymentInitializeOptions](braintreevisacheckoutpaymentinitializeoptions.md)*
 
 The options that are required to initialize the Visa Checkout payment method provided by Braintree. They can be omitted unless you need to support Visa Checkout.
+
+___
+<a id="chasepay"></a>
+
+### `<Optional>` chasepay
+
+**● chasepay**: *[ChasePayInitializeOptions](chasepayinitializeoptions.md)*
+
+The options that are required to initialize the Chasepay payment method. They can be omitted unless you need to support Chasepay.
 
 ___
 <a id="gatewayid"></a>

@@ -22,6 +22,7 @@ Some payment methods have specific requirements for setting the customer details
 * [amazon](customerinitializeoptions.md#amazon)
 * [braintreevisacheckout](customerinitializeoptions.md#braintreevisacheckout)
 * [chasepay](customerinitializeoptions.md#chasepay)
+* [masterpass](customerinitializeoptions.md#masterpass)
 * [methodId](customerinitializeoptions.md#methodid)
 * [params](customerinitializeoptions.md#params)
 * [timeout](customerinitializeoptions.md#timeout)
@@ -53,6 +54,15 @@ ___
 ### `<Optional>` chasepay
 
 **● chasepay**: *[ChasePayCustomerInitializeOptions](chasepaycustomerinitializeoptions.md)*
+
+The options that are required to initialize the Chasepay payment method. They can be omitted unless you need to support Chasepay.
+
+___
+<a id="masterpass"></a>
+
+### `<Optional>` masterpass
+
+**● masterpass**: *[MasterpassCustomerInitializeOptions](masterpasscustomerinitializeoptions.md)*
 
 ___
 <a id="methodid"></a>

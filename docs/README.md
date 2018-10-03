@@ -95,7 +95,7 @@ ___
 
 ###  createCurrencyService
 
-▸ **createCurrencyService**(config: *[Config](interfaces/config.md)*): [CurrencyService](classes/currencyservice.md)
+▸ **createCurrencyService**(config: *[StoreConfig](interfaces/storeconfig.md)*): [CurrencyService](classes/currencyservice.md)
 
 Creates an instance of `CurrencyService`.
 
@@ -116,7 +116,7 @@ Please note that `CurrencyService` is currently in an early stage of development
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| config | [Config](interfaces/config.md) |  The config object containing the currency configuration |
+| config | [StoreConfig](interfaces/storeconfig.md) |  The config object containing the currency configuration |
 
 **Returns:** [CurrencyService](classes/currencyservice.md)
 an instance of `CurrencyService`.

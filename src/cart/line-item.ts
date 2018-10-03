@@ -38,6 +38,7 @@ export interface LineItem {
     name: string;
     url: string;
     quantity: number;
+    brand: string;
     isTaxable: boolean;
     imageUrl: string;
     discounts: Array<{ name: string, discountedAmount: number }>;

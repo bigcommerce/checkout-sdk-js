@@ -270,6 +270,28 @@ declare interface ChasePayCustomerInitializeOptions {
     container: string;
 }
 
+declare interface ChasePayInitializeOptions {
+    /**
+     * This container is used to host the chasepay branding logo.
+     * It should be an HTML element.
+     */
+    logoContainer?: string;
+    /**
+     * This walletButton is used to set an event listener, provide an element ID if you want
+     * users to be able to launch the ChasePay wallet modal by clicking on a button.
+     * It should be an HTML element.
+     */
+    walletButton?: string;
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
+    onPaymentSelect?(): void;
+    /**
+     * A callback that gets called when the customer cancels their payment selection.
+     */
+    onCancel?(): void;
+}
+
 declare interface Checkout {
     id: string;
     billingAddress?: BillingAddress;
@@ -1209,6 +1231,7 @@ declare interface CheckoutServiceOptions {
     locale?: string;
     host?: string;
     shouldWarnMutation?: boolean;
+    externalSource?: string;
 }
 
 declare interface CheckoutSettings {
@@ -1938,12 +1961,6 @@ declare class CheckoutStoreStatusSelector {
     isPaymentStepPending(): boolean;
 }
 
-declare interface Config {
-    context: ContextConfig;
-    customization: CustomizationConfig;
-    storeConfig: StoreConfig;
-}
-
 declare interface Consignment {
     id: string;
     shippingAddress: Address;
@@ -1975,15 +1992,6 @@ declare interface ConsignmentUpdateRequestBody {
     id: string;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
-}
-
-declare interface ContextConfig {
-    checkoutId?: string;
-    geoCountryCode: string;
-    flashMessages: any[];
-    payment: {
-        token?: string;
-    };
 }
 
 declare interface Country {
@@ -2064,7 +2072,7 @@ export declare function createCheckoutService(options?: CheckoutServiceOptions):
  * @param config - The config object containing the currency configuration
  * @returns an instance of `CurrencyService`.
  */
-export declare function createCurrencyService(config: Config): CurrencyService;
+export declare function createCurrencyService(config: StoreConfig): CurrencyService;
 
 /**
  * Creates an instance of `LanguageService`.
@@ -2105,7 +2113,7 @@ declare interface Currency {
  * Responsible for formatting and converting currencies.
  */
 declare class CurrencyService {
-    private _config;
+    private _storeConfig;
     private _customerFormatter;
     private _storeFormatter;
     toCustomerCurrency(amount: number): string;
@@ -2152,7 +2160,12 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Visa Checkout provided by Braintree.
      */
     braintreevisacheckout?: BraintreeVisaCheckoutCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the Chasepay payment method.
+     * They can be omitted unless you need to support Chasepay.
+     */
     chasepay?: ChasePayCustomerInitializeOptions;
+    masterpass?: MasterpassCustomerInitializeOptions;
 }
 
 /**
@@ -2165,10 +2178,6 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
  */
 declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
-}
-
-declare interface CustomizationConfig {
-    languageData: any[];
 }
 
 declare interface DigitalItem extends LineItem {
@@ -2411,6 +2420,13 @@ declare interface Locales {
     [key: string]: string;
 }
 
+declare interface MasterpassCustomerInitializeOptions {
+    /**
+     * The ID of a container which the checkout button should be inserted into.
+     */
+    container: string;
+}
+
 declare interface NonceGenerationError {
     type: string;
     message: string;
@@ -2529,6 +2545,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Square.
      */
     square?: SquarePaymentInitializeOptions;
+    /**
+     * The options that are required to initialize the Chasepay payment method.
+     * They can be omitted unless you need to support Chasepay.
+     */
+    chasepay?: ChasePayInitializeOptions;
 }
 
 declare interface PaymentMethod {

@@ -114,6 +114,9 @@ export function getConfig(): Config {
 export function getConfigState(): ConfigState {
     return {
         data: getConfig(),
+        meta: {
+            externalSource: 'Partner',
+        },
         errors: {},
         statuses: {},
     };

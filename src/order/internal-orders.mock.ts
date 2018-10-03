@@ -18,6 +18,7 @@ export function getInternalOrderRequestBody(): InternalOrderRequestBody {
 
     return {
         customerMessage: 'comment',
+        externalSource: 'Partner',
         useStoreCredit: false,
         payment: {
             name: payment.methodId,
@@ -72,6 +73,7 @@ export function getCompleteOrder(): InternalOrder {
                 name: 'Canvas Laundry Cart',
                 imageUrl: '/images/canvas-laundry-cart.jpg',
                 quantity: 1,
+                brand: 'OFS',
                 amount: 200,
                 discount: 0,
                 amountAfterDiscount: 200,

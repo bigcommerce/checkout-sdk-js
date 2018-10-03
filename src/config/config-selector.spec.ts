@@ -33,6 +33,19 @@ describe('ConfigSelector', () => {
         });
     });
 
+    describe('#getExternalSource()', () => {
+        it('returns the external source', () => {
+            const externalSource = 'Partner';
+
+            configSelector = new ConfigSelector({
+                ...state.config,
+                meta: { externalSource },
+            });
+
+            expect(configSelector.getExternalSource()).toEqual(externalSource);
+        });
+    });
+
     describe('#getLoadingError()', () => {
         it('returns error if unable to load config', () => {
             const loadError = new Error();
