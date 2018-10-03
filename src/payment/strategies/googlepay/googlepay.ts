@@ -1,6 +1,4 @@
-import { AddressRequestBody } from '../../../address/address';
-import { BillingAddressUpdateRequestBody } from '../../../billing/billing-address';
-import Checkout from '../../../checkout/checkout';
+import { Checkout } from '../../../checkout';
 import PaymentMethod from '../../payment-method';
 import { BraintreeModule, BraintreeModuleCreator } from '../braintree';
 
@@ -158,13 +156,6 @@ export interface GooglePayAddress {
     postalCode: string;
     sortingCode: string;
     phoneNumber: string;
-}
-
-export interface PaymentSuccessPayload {
-    email: string;
-    tokenizePayload: TokenizePayload;
-    billingAddress: GooglePayAddress;
-    shippingAddress: GooglePayAddress;
 }
 
 export interface GooglePaymentsError {

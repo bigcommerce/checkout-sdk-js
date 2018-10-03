@@ -1,7 +1,7 @@
 import {Cart} from '../../../cart';
-import Checkout from '../../../checkout/checkout';
+import { Checkout } from '../../../checkout';
 import {Coupon} from '../../../coupon';
-import GiftCertificate from '../../../coupon/gift-certificate';
+import { GiftCertificate } from '../../../coupon';
 import {Customer} from '../../../customer';
 import {Discount} from '../../../discount';
 import {Consignment} from '../../../shipping';
@@ -14,7 +14,7 @@ import {
     GooglePayAddress,
     GooglePayBraintreeSDK,
     GooglePayPaymentDataRequestV1,
-    GooglePaySDK, GooglePayClient, GooglePayPaymentOptions
+    GooglePaySDK
 } from './googlepay';
 
 export function getGooglePaySDKMock(): GooglePaySDK {

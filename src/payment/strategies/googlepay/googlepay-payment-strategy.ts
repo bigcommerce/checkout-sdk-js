@@ -1,4 +1,4 @@
-import { RequestSender, Response } from '@bigcommerce/request-sender';
+import { RequestSender } from '@bigcommerce/request-sender';
 
 import {
     PaymentActionCreator,
@@ -42,7 +42,6 @@ import {
     GooglePayPaymentDataRequestV1,
     GooglePaySDK,
     PaymentMethodData,
-    PaymentSuccessPayload,
     TokenizePayload
 } from './googlepay';
 import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
