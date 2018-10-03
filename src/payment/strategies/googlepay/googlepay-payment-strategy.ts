@@ -1,4 +1,4 @@
-import { RequestSender, Response } from '@bigcommerce/request-sender';
+import { RequestSender } from '@bigcommerce/request-sender';
 
 import {
     PaymentActionCreator,
@@ -220,16 +220,11 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
         const { id: methodId } = this._paymentMethod;
 
         return this._store.dispatch(this._paymentStrategyActionCreator.widgetInteraction(() => {
-            return this._postForm(tokenizePayload, billingAddress)
-                .then(() => Promise.all([
-                        this._synchronizeBillingAddress(billingAddress),
-                        this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
-                        this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
-                    ]));
+            return this._postForm(tokenizePayload, billingAddress);
         }, { methodId }), { queueId: 'widgetInteraction' });
     }
 
-    private _postForm(postPaymentData: TokenizePayload, billingAddress: GooglePayAddress): Promise<Response<any>> {
+    private _postForm(postPaymentData: TokenizePayload, billingAddress: GooglePayAddress): Promise<InternalCheckoutSelectors> {
         const cardInformation = postPaymentData.details;
 
         return this._requestSender.post('/checkout.php', {
@@ -244,6 +239,17 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
                 action: 'set_external_checkout',
                 card_information: this._getCardInformation(cardInformation),
             }),
+        }).then(() => {
+            if (!this._paymentMethod) {
+                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            }
+            const { id: methodId } = this._paymentMethod;
+
+            return Promise.all([
+                this._synchronizeBillingAddress(billingAddress),
+                this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
+                this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
+            ]).then(() => this._store.getState());
         });
     }
 
