@@ -215,7 +215,7 @@ describe('Braintree SDK Creator', () => {
         beforeEach(() => {
             googlePayMock = getGooglePayBraintreeMock();
             googlePayCreatorMock = getModuleCreatorMock(googlePayMock);
-            braintreeScriptLoader.loadGooglePaymentComponent = jest.fn().mockReturnValue(Promise.resolve(googlePayCreatorMock));
+            braintreeScriptLoader.loadGooglePayment = jest.fn().mockReturnValue(Promise.resolve(googlePayCreatorMock));
             braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
             jest.spyOn(braintreeSDKCreator, 'getClient').mockReturnValue(Promise.resolve(clientMock));
         });
@@ -232,7 +232,7 @@ describe('Braintree SDK Creator', () => {
             const googlePay2 = await braintreeSDKCreator.getGooglePaymentComponent();
 
             expect(googlePay1).toBe(googlePay2);
-            expect(braintreeScriptLoader.loadGooglePaymentComponent).toHaveBeenCalledTimes(1);
+            expect(braintreeScriptLoader.loadGooglePayment).toHaveBeenCalledTimes(1);
             expect(googlePayCreatorMock.create).toHaveBeenCalledTimes(1);
         });
 

@@ -139,12 +139,12 @@ describe('BraintreeScriptLoader', () => {
         });
 
         it('loads the GooglePay library', async () => {
-            await braintreeScriptLoader.loadGooglePaymentComponent();
+            await braintreeScriptLoader.loadGooglePayment();
             expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.37.0/js/google-payment.min.js');
         });
 
         it('returns the GooglePay from the window', async () => {
-            const googlePay = await braintreeScriptLoader.loadGooglePaymentComponent();
+            const googlePay = await braintreeScriptLoader.loadGooglePayment();
             expect(googlePay).toBe(googlePayMock);
         });
 
@@ -159,7 +159,7 @@ describe('BraintreeScriptLoader', () => {
             });
 
             try {
-                await braintreeScriptLoader.loadGooglePaymentComponent();
+                await braintreeScriptLoader.loadGooglePayment();
             } catch (error) {
                 expect(error).toBeInstanceOf(StandardError);
             }

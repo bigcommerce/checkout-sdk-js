@@ -19,7 +19,7 @@ import {
     SagePayPaymentStrategy,
     SquarePaymentStrategy,
 } from './strategies';
-import GooglepayPaymentStrategy from './strategies/googlepay/googlepay-payment-strategy';
+import { GooglePayPaymentStrategy } from './strategies/googlepay';
 
 describe('CreatePaymentStrategyRegistry', () => {
     let registry: PaymentStrategyRegistry;
@@ -102,6 +102,6 @@ describe('CreatePaymentStrategyRegistry', () => {
 
     it('can instantiate googlepaybraintree', () => {
         const paymentStrategy = registry.get('googlepaybraintree');
-        expect(paymentStrategy).toBeInstanceOf(GooglepayPaymentStrategy);
+        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
     });
 });

@@ -7,8 +7,6 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutVa
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import ConsignmentActionCreator from '../shipping/consignment-action-creator';
-import ConsignmentRequestSender from '../shipping/consignment-request-sender';
 
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
@@ -37,12 +35,15 @@ import {
 } from './strategies';
 import { AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayScriptLoader } from './strategies/amazon-pay';
-import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from './strategies/braintree';
-import BraintreeScriptLoader from './strategies/braintree/braintree-script-loader';
-import BraintreeSDKCreator from './strategies/braintree/braintree-sdk-creator';
+import {
+    createBraintreePaymentProcessor,
+    createBraintreeVisaCheckoutPaymentProcessor,
+    BraintreeScriptLoader,
+    BraintreeSDKCreator,
+    VisaCheckoutScriptLoader
+} from './strategies/braintree';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import { GooglePayScriptLoader } from './strategies/googlepay';
-import GooglePayBraintreeInitializer from './strategies/googlepay/googlepay-braintree-initializer';
+import { GooglePayBraintreeInitializer, GooglePayScriptLoader } from './strategies/googlepay';
 import { KlarnaScriptLoader } from './strategies/klarna';
 import { PaypalScriptLoader } from './strategies/paypal';
 import { SquareScriptLoader } from './strategies/square';
@@ -60,7 +61,6 @@ export default function createPaymentStrategyRegistry(
     const braintreeSdkCreator = new BraintreeSDKCreator(braintreeScriptLoader);
 
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
-    const consignmentRequestSender = new ConsignmentRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const orderActionCreator = new OrderActionCreator(
         new OrderRequestSender(requestSender),
@@ -265,8 +265,7 @@ export default function createPaymentStrategyRegistry(
             new GooglePayScriptLoader(scriptLoader),
             new GooglePayBraintreeInitializer(braintreeSdkCreator),
             requestSender,
-            new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender)),
-            new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender)
+            new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender))
         )
     );
 

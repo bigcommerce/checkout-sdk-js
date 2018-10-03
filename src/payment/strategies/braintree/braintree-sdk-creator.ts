@@ -123,7 +123,7 @@ export default class BraintreeSDKCreator {
         if (!this._googlePay) {
             this._googlePay = Promise.all ([
                 this.getClient(),
-                this._braintreeScriptLoader.loadGooglePaymentComponent(),
+                this._braintreeScriptLoader.loadGooglePayment(),
             ])
                 .then(([client, googlePay]) => {
                     return googlePay.create({ client });

@@ -5,10 +5,10 @@ import {
     BraintreePaymentInitializeOptions,
     BraintreeVisaCheckoutPaymentInitializeOptions,
     ChasePayInitializeOptions,
+    GooglePayPaymentInitializeOptions,
     KlarnaPaymentInitializeOptions,
-    SquarePaymentInitializeOptions,
+    SquarePaymentInitializeOptions
 } from './strategies';
-import GooglePayPaymentInitializeOptions from './strategies/googlepay/googlepay-initialize-options';
 
 /**
  * The set of options for configuring any requests related to the payment step of

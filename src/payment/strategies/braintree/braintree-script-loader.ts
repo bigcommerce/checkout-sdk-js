@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import {GooglePayCreator} from '../googlepay';
+import { GooglePayCreator } from '../googlepay';
 
 import {
     BraintreeClientCreator,
@@ -92,7 +92,7 @@ export default class BraintreeScriptLoader {
             });
     }
 
-    loadGooglePaymentComponent(): Promise<GooglePayCreator> {
+    loadGooglePayment(): Promise<GooglePayCreator> {
         return this._scriptLoader
             .loadScript('//js.braintreegateway.com/web/3.37.0/js/google-payment.min.js')
             .then(() => {

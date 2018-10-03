@@ -15,7 +15,7 @@ export {
     BraintreeVisaCheckoutPaymentStrategy,
     BraintreeVisaCheckoutPaymentInitializeOptions
 } from './braintree';
-export { GooglePayPaymentStrategy } from './googlepay';
+export { GooglePayPaymentStrategy, GooglePayPaymentInitializeOptions } from './googlepay';
 export { KlarnaPaymentStrategy, KlarnaPaymentInitializeOptions } from './klarna';
 export { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './paypal';
 export { ChasePayPaymentStrategy, ChasePayInitializeOptions } from './chasepay';

@@ -11,7 +11,13 @@ type TokenizeType = 'AndroidPayCard' | 'CreditCard';
 export const GATEWAY = { braintree: 'braintree' };
 
 export interface GooglePayBraintreeSDK extends BraintreeModule {
-    createPaymentDataRequest(request?: GooglePayDataRequestV1): { allowedPaymentMethods: string[] } | GooglePayPaymentDataRequestV1;
+    createPaymentDataRequest(request?: GooglePayDataRequestV1): GooglePayPaymentDataRequestV1;
+    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
+}
+
+export interface GooglePayInitializer {
+    initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean, publishableKey?: string): Promise<GooglePayPaymentDataRequestV1>;
+    teardown(): Promise<void>;
     parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload>;
 }
 
@@ -89,19 +95,9 @@ export interface GooglePaySDK {
     };
 }
 
-export enum ButtonType {
-    long = 'long',
-    short = 'short',
-}
-export enum ButtonColor {
-    default = 'default',
-    black = 'black',
-    white = 'white',
-}
-
 export interface GooglePayClient {
     isReadyToPay(options: object): Promise<GooglePayIsReadyToPayResponse>;
-    loadPaymentData(paymentDataRequest: any): Promise<GooglePaymentData>;
+    loadPaymentData(paymentDataRequest: GooglePayPaymentDataRequestV1): Promise<GooglePaymentData>;
     createButton(options: { [key: string]: string | object }): HTMLElement;
 }
 
@@ -176,26 +172,14 @@ export interface GooglePaymentsError {
     statusMessage?: string;
 }
 
-export default function mapGooglePayAddressToRequestAddress(address: GooglePayAddress, id?: string): AddressRequestBody | BillingAddressUpdateRequestBody {
-    return {
-        id,
-        firstName: address.name.split(' ').slice(0, -1).join(' '),
-        lastName: address.name.split(' ').slice(-1).join(' '),
-        company: address.companyName,
-        address1: address.address1,
-        address2: address.address2 + address.address3 + address.address4 + address.address5,
-        city: address.locality,
-        stateOrProvince: address.administrativeArea,
-        stateOrProvinceCode: address.administrativeArea,
-        postalCode: address.postalCode,
-        countryCode: address.countryCode,
-        phone: address.phoneNumber,
-        customFields: [],
+export interface PaymentMethodData {
+    methodId: string;
+    paymentData: {
+        method: string,
+        nonce: string,
+        cardInformation: {
+            type: string,
+            number: string,
+        },
     };
-}
-
-export interface GooglePayInitializer {
-    initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean, publishableKey?: string): Promise<GooglePayPaymentDataRequestV1>;
-    teardown(): Promise<void>;
-    parseResponse(paymentData: any): Promise<TokenizePayload>;
 }

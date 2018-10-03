@@ -1,11 +1,11 @@
-import Checkout from '../../../checkout/checkout';
+import { Checkout } from '../../../checkout';
 import {
     MissingDataError,
     MissingDataErrorType,
     StandardError
 } from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';
-import BraintreeSDKCreator from '../braintree/braintree-sdk-creator';
+import { BraintreeSDKCreator } from '../braintree';
 
 import {
     GooglePaymentData,
@@ -14,7 +14,7 @@ import {
     GooglePayPaymentDataRequestV1,
     TokenizePayload
 } from './googlepay';
-import { GooglePayBraintreeSDK } from './index';
+import { GooglePayBraintreeSDK } from './googlepay';
 
 export default class GooglePayBraintreeInitializer implements GooglePayInitializer {
     private _googlePaymentInstance!: GooglePayBraintreeSDK;
@@ -23,7 +23,11 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         private _braintreeSDKCreator: BraintreeSDKCreator
     ) {}
 
-    initialize(checkout: Checkout, paymentMethod: PaymentMethod, hasShippingAddress: boolean): Promise<GooglePayPaymentDataRequestV1> {
+    initialize(
+               checkout: Checkout,
+               paymentMethod: PaymentMethod,
+               hasShippingAddress: boolean
+    ): Promise<GooglePayPaymentDataRequestV1> {
         if (!paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
@@ -35,7 +39,6 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                 this._googlePaymentInstance = googleBraintreePaymentInstance;
 
                 return this._createGooglePayPayload(
-                    googleBraintreePaymentInstance,
                     checkout,
                     paymentMethod.initializationData.platformToken,
                     hasShippingAddress);
@@ -52,10 +55,11 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         return this._googlePaymentInstance.parseResponse(paymentData);
     }
 
-    private _createGooglePayPayload(googleBraintreePaymentInstance: GooglePayBraintreeSDK,
+    private _createGooglePayPayload(
                                     checkout: Checkout,
                                     platformToken: string,
-                                    hasShippingAddress: boolean): GooglePayPaymentDataRequestV1 {
+                                    hasShippingAddress: boolean
+    ): GooglePayPaymentDataRequestV1 {
         if (!platformToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
@@ -70,9 +74,6 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
                 totalPrice: checkout.grandTotal.toString(),
             },
             cardRequirements: {
-                // We recommend collecting billing address information, at minimum
-                // billing postal code, and passing that billing postal code with all
-                // Google Pay transactions as a best practice.
                 billingAddressRequired: true,
                 billingAddressFormat: 'FULL',
             },
@@ -81,6 +82,6 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
             phoneNumberRequired: true,
         };
 
-        return googleBraintreePaymentInstance.createPaymentDataRequest(googlePaymentDataRequest) as GooglePayPaymentDataRequestV1;
+        return this._googlePaymentInstance.createPaymentDataRequest(googlePaymentDataRequest);
     }
 }
