@@ -43,6 +43,7 @@ export default class GooglePayBraintreeButtonStrategy extends CheckoutButtonStra
                     environment: googlePayOptions.environment,
                 });
                 const buttonGooglePay = googlepayClient.createButton({
+                    onClick: () => {},
                     buttonColor: googlePayOptions.buttonColor,
                     buttonType: googlePayOptions.buttonType,
                 });
