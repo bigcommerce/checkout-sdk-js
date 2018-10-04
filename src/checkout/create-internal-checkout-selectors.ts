@@ -20,26 +20,26 @@ import CheckoutStoreState from './checkout-store-state';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 export default function createInternalCheckoutSelectors(state: CheckoutStoreState, options: CheckoutStoreOptions = {}): InternalCheckoutSelectors {
-    const billingAddress = new BillingAddressSelector(state.billingAddress);
+    const countries = new CountrySelector(state.countries);
     const cart = new CartSelector(state.cart);
     const checkoutButton = new CheckoutButtonSelector(state.checkoutButton);
     const config = new ConfigSelector(state.config);
-    const countries = new CountrySelector(state.countries);
     const coupons = new CouponSelector(state.coupons);
-    const customer = new CustomerSelector(state.customer);
     const customerStrategies = new CustomerStrategySelector(state.customerStrategies);
     const form = new FormSelector(state.config);
     const giftCertificates = new GiftCertificateSelector(state.giftCertificates);
     const instruments = new InstrumentSelector(state.instruments);
     const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
     const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
-    const shippingAddress = new ShippingAddressSelector(state.consignments);
     const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
     const shippingCountries = new ShippingCountrySelector(state.shippingCountries);
     const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
 
     // Compose selectors
-    const consignments = new ConsignmentSelector(state.consignments, cart);
+    const billingAddress = new BillingAddressSelector(state.billingAddress, countries);
+    const customer = new CustomerSelector(state.customer, countries);
+    const consignments = new ConsignmentSelector(state.consignments, cart, countries);
+    const shippingAddress = new ShippingAddressSelector(consignments);
     const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
     const order = new OrderSelector(state.order, billingAddress, coupons);
     const payment = new PaymentSelector(checkout, order);

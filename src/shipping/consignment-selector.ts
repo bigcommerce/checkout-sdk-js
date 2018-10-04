@@ -1,8 +1,10 @@
 import { find } from 'lodash';
 
 import { isAddressEqual, AddressRequestBody } from '../address';
+import localeAddress from '../address/locale-address';
 import { CartSelector, PhysicalItem } from '../cart';
 import { selector } from '../common/selector';
+import { CountrySelector } from '../geography';
 
 import Consignment from './consignment';
 import ConsignmentState from './consignment-state';
@@ -12,15 +14,16 @@ import ShippingOption from './shipping-option';
 export default class ConsignmentSelector {
     constructor(
         private _consignments: ConsignmentState,
-        private _cart: CartSelector
+        private _cart: CartSelector,
+        private _countries: CountrySelector
     ) {}
 
     getConsignments(): Consignment[] | undefined {
-        return this._consignments.data;
+        return this._getConsignments();
     }
 
     getConsignmentById(id: string): Consignment | undefined {
-        const consignments = this._consignments.data;
+        const consignments = this._getConsignments();
 
         if (!consignments || !consignments.length) {
             return;
@@ -30,7 +33,7 @@ export default class ConsignmentSelector {
     }
 
     getConsignmentByAddress(address: AddressRequestBody): Consignment | undefined {
-        const consignments = this._consignments.data;
+        const consignments = this._getConsignments();
 
         if (!consignments || !consignments.length) {
             return;
@@ -42,7 +45,7 @@ export default class ConsignmentSelector {
     }
 
     getShippingOption(): ShippingOption | undefined {
-        const consignments = this._consignments.data;
+        const consignments = this._getConsignments();
 
         if (consignments && consignments.length) {
             return consignments[0].selectedShippingOption;
@@ -148,5 +151,16 @@ export default class ConsignmentSelector {
         }
 
         return find(this._consignments.statuses.isUpdatingShippingOption) === true;
+    }
+
+    _getConsignments(): Consignment[] | undefined {
+        if (!this._consignments.data || !this._consignments.data.length) {
+            return;
+        }
+
+        return this._consignments.data.map(consignment => ({
+            ...consignment,
+            shippingAddress: localeAddress(consignment.shippingAddress, this._countries.getCountries()),
+        }));
     }
 }
