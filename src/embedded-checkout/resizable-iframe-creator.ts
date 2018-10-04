@@ -2,7 +2,7 @@ import { iframeResizer, IFrameComponent } from 'iframe-resizer';
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError } from './errors';
-import { isEmbeddedCheckoutEventType } from './is-embedded-checkout-event';
+import isIframeEvent from './is-iframe-event';
 import parseOrigin from './parse-origin';
 
 export default class ResizableIframeCreator {
@@ -48,12 +48,12 @@ export default class ResizableIframeCreator {
                     return;
                 }
 
-                if (isEmbeddedCheckoutEventType(event.data, EmbeddedCheckoutEventType.FrameError)) {
+                if (isIframeEvent(event.data, EmbeddedCheckoutEventType.FrameError)) {
                     teardown();
                     reject(new NotEmbeddableError(event.data.payload.message));
                 }
 
-                if (isEmbeddedCheckoutEventType(event.data, EmbeddedCheckoutEventType.FrameLoaded)) {
+                if (isIframeEvent(event.data, EmbeddedCheckoutEventType.FrameLoaded)) {
                     iframe.style.display = '';
 
                     const iframes = iframeResizer({

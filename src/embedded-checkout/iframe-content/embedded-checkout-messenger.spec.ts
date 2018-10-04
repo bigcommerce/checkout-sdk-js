@@ -1,30 +1,37 @@
 import { CartChangedError } from '../../cart/errors';
 import { StandardError } from '../../common/error/errors';
-import { EmbeddedCheckoutEventType } from '../embedded-checkout-events';
+import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-checkout-events';
+import IframeEventListener from '../iframe-event-listener';
+import IframeEventPoster from '../iframe-event-poster';
 
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
+import { EmbeddedContentEventMap, EmbeddedContentEventType } from './embedded-content-events';
 
 describe('EmbeddedCheckoutMessenger', () => {
     let messenger: EmbeddedCheckoutMessenger;
+    let messageListener: IframeEventListener<EmbeddedContentEventMap>;
+    let messagePoster: IframeEventPoster<EmbeddedCheckoutEvent>;
     let parentWindow: Window;
-    let parentOrigin: string;
 
     beforeEach(() => {
+        const parentOrigin = 'https://foobar.mybigcommerece.com';
+
         parentWindow = Object.create(window);
-        parentOrigin = 'https://foobar.mybigcommerece.com';
+        messageListener = new IframeEventListener<EmbeddedContentEventMap>(parentOrigin);
+        messagePoster = new IframeEventPoster<EmbeddedCheckoutEvent>(parentOrigin, parentWindow);
 
-        jest.spyOn(parentWindow, 'postMessage')
-            .mockImplementation(() => {});
+        jest.spyOn(messagePoster, 'post');
+        jest.spyOn(messageListener, 'addListener');
 
-        messenger = new EmbeddedCheckoutMessenger({ parentOrigin, parentWindow });
+        messenger = new EmbeddedCheckoutMessenger(messageListener, messagePoster);
     });
 
     it('posts `complete` event to parent window', () => {
         messenger.postComplete();
 
-        expect(parentWindow.postMessage).toHaveBeenCalledWith({
+        expect(messagePoster.post).toHaveBeenCalledWith({
             type: EmbeddedCheckoutEventType.CheckoutComplete,
-        }, parentOrigin);
+        });
     });
 
     it('posts `complete` event to parent window', () => {
@@ -32,29 +39,29 @@ describe('EmbeddedCheckoutMessenger', () => {
 
         messenger.postError(error);
 
-        expect(parentWindow.postMessage).toHaveBeenCalledWith({
+        expect(messagePoster.post).toHaveBeenCalledWith({
             type: EmbeddedCheckoutEventType.CheckoutError,
             payload: {
                 message: error.message,
                 type: error.type,
             },
-        }, parentOrigin);
+        });
     });
 
     it('posts `loaded` event to parent window', () => {
         messenger.postLoaded();
 
-        expect(parentWindow.postMessage).toHaveBeenCalledWith({
+        expect(messagePoster.post).toHaveBeenCalledWith({
             type: EmbeddedCheckoutEventType.CheckoutLoaded,
-        }, parentOrigin);
+        });
     });
 
     it('posts `frame_loaded` event to parent window', () => {
         messenger.postFrameLoaded();
 
-        expect(parentWindow.postMessage).toHaveBeenCalledWith({
+        expect(messagePoster.post).toHaveBeenCalledWith({
             type: EmbeddedCheckoutEventType.FrameLoaded,
-        }, parentOrigin);
+        });
     });
 
     it('posts `frame_error` event to parent window', () => {
@@ -62,12 +69,28 @@ describe('EmbeddedCheckoutMessenger', () => {
 
         messenger.postFrameError(error);
 
-        expect(parentWindow.postMessage).toHaveBeenCalledWith({
+        expect(messagePoster.post).toHaveBeenCalledWith({
             type: EmbeddedCheckoutEventType.FrameError,
             payload: {
                 message: error.message,
                 type: error.type,
             },
-        }, parentOrigin);
+        });
+    });
+
+    it('listens to `style_configured` event from parent window', () => {
+        const handler = jest.fn();
+        const styles = { body: { backgroundColor: '#00ff00' } };
+
+        messenger.receiveStyles(handler);
+        messageListener.trigger({
+            type: EmbeddedContentEventType.StyleConfigured,
+            payload: styles,
+        });
+
+        expect(messageListener.addListener)
+            .toHaveBeenCalledWith(EmbeddedContentEventType.StyleConfigured, expect.any(Function));
+
+        expect(handler).toHaveBeenCalledWith(styles);
     });
 });

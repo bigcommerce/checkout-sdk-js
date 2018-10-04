@@ -1,5 +1,10 @@
+import { EmbeddedCheckoutEvent } from '../embedded-checkout-events';
+import IframeEventListener from '../iframe-event-listener';
+import IframeEventPoster from '../iframe-event-poster';
+
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
 import EmbeddedCheckoutMessengerOptions from './embedded-checkout-messenger-options';
+import { EmbeddedContentEventMap } from './embedded-content-events';
 
 /**
  * Create an instance of `EmbeddedCheckoutMessenger`.
@@ -26,5 +31,8 @@ import EmbeddedCheckoutMessengerOptions from './embedded-checkout-messenger-opti
  * @returns - An instance of `EmbeddedCheckoutMessenger`
  */
 export default function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger {
-    return new EmbeddedCheckoutMessenger(options);
+    return new EmbeddedCheckoutMessenger(
+        new IframeEventListener<EmbeddedContentEventMap>(options.parentOrigin),
+        new IframeEventPoster<EmbeddedCheckoutEvent>(options.parentOrigin, window.parent)
+    );
 }

@@ -1,18 +1,18 @@
 import { EventEmitter } from 'events';
 
-import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
-import EmbeddedCheckoutListener from './embedded-checkout-listener';
+import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
+import IframeEventListener from './iframe-event-listener';
 
-describe('EmbeddedCheckoutListener', () => {
+describe('IframeEventListener', () => {
     let origin: string;
     let eventEmitter: EventEmitter;
-    let listener: EmbeddedCheckoutListener;
+    let listener: IframeEventListener<EmbeddedCheckoutEventMap>;
     let handleLoaded: () => void;
     let handleComplete: () => void;
 
     beforeEach(() => {
         origin = document.location.origin;
-        listener = new EmbeddedCheckoutListener(origin);
+        listener = new IframeEventListener(origin);
         eventEmitter = new EventEmitter();
         handleLoaded = jest.fn();
         handleComplete = jest.fn();
