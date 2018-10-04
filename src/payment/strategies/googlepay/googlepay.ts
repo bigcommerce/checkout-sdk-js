@@ -6,7 +6,6 @@ export type EnvironmentType = 'PRODUCTION' | 'TEST';
 type AddressFormat = 'FULL' | 'MIN';
 type TotalPriceStatus = 'ESTIMATED' | 'FINAL' | 'NOT_CURRENTLY_KNOWN';
 type TokenizeType = 'AndroidPayCard' | 'CreditCard';
-export const GATEWAY = { braintree: 'braintree' };
 
 export interface GooglePayBraintreeSDK extends BraintreeModule {
     createPaymentDataRequest(request?: GooglePayDataRequestV1): GooglePayPaymentDataRequestV1;
@@ -173,4 +172,14 @@ export interface PaymentMethodData {
             number: string,
         },
     };
+}
+
+export enum ButtonType {
+    Long = 'long',
+    Short = 'short',
+}
+export enum ButtonColor {
+    Default = 'default',
+    Black = 'black',
+    White = 'white',
 }
