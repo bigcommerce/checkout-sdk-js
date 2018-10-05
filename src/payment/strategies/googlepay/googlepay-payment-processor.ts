@@ -12,10 +12,17 @@ import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/err
 import { ShippingStrategyActionCreator } from '../../../shipping';
 
 import {
-    ButtonColor, ButtonType,
-    EnvironmentType, GooglePaymentsError, GooglePaymentData, GooglePayAddress, GooglePayClient, GooglePayInitializer,
+    ButtonColor,
+    ButtonType,
+    EnvironmentType,
+    GooglePaymentsError,
+    GooglePaymentData,
+    GooglePayAddress,
+    GooglePayClient,
+    GooglePayInitializer,
     GooglePayPaymentDataRequestV1,
-    GooglePaySDK, TokenizePayload
+    GooglePaySDK,
+    TokenizePayload
 } from './googlepay';
 import GooglePayScriptLoader from './googlepay-script-loader';
 
