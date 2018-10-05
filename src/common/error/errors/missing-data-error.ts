@@ -1,6 +1,7 @@
 import StandardError from './standard-error';
 
 export enum MissingDataErrorType {
+    MissingBillingAddress,
     MissingCart,
     MissingCheckout,
     MissingConsignments,
@@ -24,6 +25,9 @@ export default class MissingDataError extends StandardError {
 
 function getErrorMessage(type: MissingDataErrorType): string {
     switch (type) {
+    case MissingDataErrorType.MissingBillingAddress:
+        return 'Unable to proceed because billing address data is unavailable.';
+
     case MissingDataErrorType.MissingCart:
         return 'Unable to proceed because cart data is unavailable.';
 

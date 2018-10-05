@@ -14,9 +14,10 @@ import { GooglePayBraintreeSDK } from '../braintree';
 import {
     GooglePaymentData,
     GooglePayAddress,
-    GooglePayPaymentDataRequestV1,
-    GooglePaySDK
+    GooglePayPaymentDataRequestV2,
+    GooglePaySDK,
 } from './googlepay';
+import { GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
 
 export function getGooglePaySDKMock(): GooglePaySDK {
     return {
@@ -30,9 +31,49 @@ export function getGooglePaySDKMock(): GooglePaySDK {
 
 export function getGooglePayBraintreeMock(): GooglePayBraintreeSDK {
     return {
-        createPaymentDataRequest: jest.fn(dataRequest => Promise.resolve(dataRequest as GooglePayPaymentDataRequestV1)),
+        createPaymentDataRequest: jest.fn(() => getGooglePayBraintreePaymentDataRequest()),
         parseResponse: jest.fn(),
         teardown: jest.fn(() => Promise.resolve()),
+    };
+}
+
+export function getGooglePayBraintreePaymentDataRequest(): GooglePayBraintreePaymentDataRequestV1 {
+    return {
+        allowedPaymentMethods: [],
+        apiVersion: 1,
+        cardRequirements: {
+            allowedCardNetworks: [],
+            billingAddressFormat: '',
+            billingAddressRequired: true,
+        },
+        enviroment: '',
+        i: {
+            googleTransactionId: '',
+            startTimeMs: 1,
+        },
+        merchantInfo: {
+            authJwt: '',
+            googleMerchantId: '',
+            googleMerchantName: '',
+        },
+        paymentMethodTokenizationParameters: {
+            parameters: {
+                'braintree:apiVersion': '',
+                'braintree:authorizationFingerprint': '',
+                'braintree:merchantId': '',
+                'braintree:metadata': '',
+                'braintree:sdkVersion': '',
+                gateway: '',
+            },
+            tokenizationType: '',
+        },
+        shippingAddressRequired: true,
+        phoneNumberRequired: true,
+        transactionInfo: {
+            currencyCode: '',
+            totalPrice: '',
+            totalPriceStatus: '',
+        },
     };
 }
 
@@ -74,6 +115,8 @@ export function getPaymentMethodMock(): PaymentMethod {
         nonce: 'nonce',
         initializationData: {
             platformToken: 'platformToken',
+            googleMerchantId: '123',
+            googleMerchantName: 'name',
         },
     };
 }
@@ -100,20 +143,23 @@ export function getGooglePaymentDataPayload() {
 
 export function getGooglePaymentDataMock(): GooglePaymentData {
     return {
-        cardInfo: {
-            cardClass: 'cardClass',
-            cardDescription: 'cardDescription',
-            cardDetails: 'cardDetails',
-            cardImageUri: 'cardImageUri',
-            cardNetwork: 'cardNetwork',
-            billingAddress: {} as GooglePayAddress,
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        email: 'carlos.lopez@bigcommerce.com',
+        paymentMethodData: {
+            description: 'Mastercard •••• 0304',
+            info: {
+                billingAddress: getGooglePayAddressMock(),
+                cardDetails: '0304',
+                cardNetwork: 'MASTERCARD',
+            },
+            tokenizationData: {
+                token: `{"androidPayCards": [{"nonce": "nonce", "type": "AndroidPayCard", "description": "", "details": {"cardType": "type", "lastFour": "", "lastTwo": ""}}]}`,
+                type: 'PAYMENT_GATEWAY',
+            },
+            type: 'CARD',
         },
-        paymentMethodToken: {
-            token: 'token',
-            tokenizationType: 'tokenizationType',
-        },
-        shippingAddress: {} as GooglePayAddress,
-        email: 'email',
+        shippingAddress: getGooglePayAddressMock(),
     };
 }
 
@@ -128,8 +174,6 @@ export function getGooglePayAddressMock(): GooglePayAddress {
         address1: 'mock',
         address2: 'mock',
         address3: 'mock',
-        address4: 'mock',
-        address5: 'mock',
         administrativeArea: 'mock',
         companyName: 'mock',
         countryCode: 'mock',
@@ -141,41 +185,25 @@ export function getGooglePayAddressMock(): GooglePayAddress {
     };
 }
 
-export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataRequestV1 {
+export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataRequestV2 {
     return {
-        allowedPaymentMethods: [
-            'CreditCard',
-        ],
-        apiVersion: 1,
-        cardRequirements: {
-            allowedCardNetworks: [''],
-            billingAddressRequired: true,
-            billingAddressFormat: '',
-        },
-        enviroment: '',
-        i: {
-            googleTransactionId: '',
-            startTimeMs: 1,
-        },
-        merchantInfo: {
-            merchantId: '',
-        },
-        paymentMethodTokenizationParameters: {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        merchantInfo: { },
+        allowedPaymentMethods: [{
+            type: 'type',
             parameters: {
-                'braintree:apiVersion': '',
-                'braintree:authorizationFingerprint': '',
-                'braintree:merchantId': '',
-                'braintree:metadata': '',
-                'braintree:sdkVersion': '',
-                gateway: '',
+                allowedAuthMethods: [
+                    'dummy',
+                ],
+                allowedCardNetworks: [
+                    'dummy',
+                ],
             },
-            tokenizationType: '',
-        },
-        shippingAddressRequired: true,
+        }],
         transactionInfo: {
-            currencyCode: '',
-            totalPrice: '',
-            totalPriceStatus: '',
+            currencyCode: 'USD',
+            totalPriceStatus: 'FINAL',
         },
     };
 }

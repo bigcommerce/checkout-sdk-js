@@ -1,6 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
-import { BraintreePaypalButtonInitializeOptions, CheckoutButtonMethodType } from './strategies';
+import { BraintreePaypalButtonInitializeOptions, CheckoutButtonMethodType, GooglePayBraintreeButtonInitializeOptions } from './strategies';
 
 /**
  * The set of options for configuring the checkout button.
@@ -29,4 +29,10 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
+
+    /**
+     * The options that are required to facilitate Braintree GooglePay. They can be
+     * omitted unles you need to support Braintree GooglePay.
+     */
+    googlepaybraintree?: GooglePayBraintreeButtonInitializeOptions;
 }

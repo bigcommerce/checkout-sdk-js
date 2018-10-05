@@ -1,7 +1,7 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { PaymentMethod } from '../..';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import PaymentMethod from '../../payment-method';
 import { BraintreeScriptLoader, BraintreeSDKCreator, GooglePayBraintreeSDK } from '../braintree';
 
 import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
@@ -10,7 +10,7 @@ import {
     getGooglePaymentDataMock,
     getGooglePaymentDataPayload,
     getGooglePayBraintreeMock,
-    getPaymentMethodMock
+    getPaymentMethodMock,
 } from './googlepay.mock';
 
 describe('GooglePayBraintreeInitializer', () => {
@@ -29,11 +29,10 @@ describe('GooglePayBraintreeInitializer', () => {
     });
 
     describe('#initialize', async () => {
-        let googlePayMock: GooglePayBraintreeSDK;
+        const googlePayMock = getGooglePayBraintreeMock();
         let googlePayBraintreeInitializer: GooglePayBraintreeInitializer;
 
         beforeEach(() => {
-            googlePayMock = getGooglePayBraintreeMock();
             braintreeSDKCreator.initialize = jest.fn();
             braintreeSDKCreator.getGooglePaymentComponent = jest.fn(() => Promise.resolve(googlePayMock));
             googlePayBraintreeInitializer = new GooglePayBraintreeInitializer(braintreeSDKCreator);
@@ -49,11 +48,11 @@ describe('GooglePayBraintreeInitializer', () => {
         });
 
         it('initializes the google pay configuration for braintree and fail to create google pay payload', async () => {
-            spyOn(googlePayMock, 'createPaymentDataRequest').and.returnValue(Promise.reject({message: 'error'}));
+            jest.spyOn(googlePayMock, 'createPaymentDataRequest').mockReturnValue(Promise.reject());
 
             await googlePayBraintreeInitializer.initialize(getCheckoutMock(), getPaymentMethodMock(), false)
                 .catch(error => {
-                    expect(error.message).toEqual('error');
+                    expect(error.message).toEqual(`Cannot read property 'authJwt' of undefined`);
                 });
         });
 
@@ -115,13 +114,20 @@ describe('GooglePayBraintreeInitializer', () => {
         });
 
         it('parses a response from google pay payload received', async () => {
-            spyOn(googlePayMock, 'parseResponse');
+            await googlePayBraintreeInitializer.initialize(getCheckoutMock(), getPaymentMethodMock(), false);
+            const tokenizePayload = googlePayBraintreeInitializer.parseResponse(getGooglePaymentDataMock());
+
+            expect(tokenizePayload).toBeTruthy();
+        });
+
+        it('parses a response from google pay payload received', async () => {
+            spyOn(googlePayBraintreeInitializer, 'parseResponse');
 
             await googlePayBraintreeInitializer.initialize(getCheckoutMock(), getPaymentMethodMock(), false);
-            await googlePayBraintreeInitializer.parseResponse(getGooglePaymentDataMock());
+            googlePayBraintreeInitializer.parseResponse(getGooglePaymentDataMock());
 
-            expect(googlePayMock.parseResponse).toHaveBeenCalled();
-            expect(googlePayMock.parseResponse).toHaveBeenCalledTimes(1);
+            expect(googlePayBraintreeInitializer.parseResponse).toHaveBeenCalled();
+            expect(googlePayBraintreeInitializer.parseResponse).toHaveBeenCalledTimes(1);
         });
     });
 });
