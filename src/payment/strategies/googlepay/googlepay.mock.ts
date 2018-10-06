@@ -16,6 +16,7 @@ import {
     GooglePayPaymentDataRequestV1,
     GooglePaySDK
 } from './googlepay';
+import OrderRequestBody from "../../../order/order-request-body";
 
 export function getGooglePaySDKMock(): GooglePaySDK {
     return {
@@ -113,5 +114,11 @@ export function getGooglePaymentDataMock(): GooglePaymentData {
         },
         shippingAddress: {} as GooglePayAddress,
         email: 'email',
+    };
+}
+
+export function getGoogleOrderRequestBody(): OrderRequestBody {
+    return {
+        useStoreCredit: true,
     };
 }

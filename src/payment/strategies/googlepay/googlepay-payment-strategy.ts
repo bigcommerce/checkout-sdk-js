@@ -95,18 +95,7 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return this._getPayment()
-            .catch((error: MissingDataError) => {
-                if (error.subtype === MissingDataErrorType.MissingPayment) {
-                    return this._googlePayPaymentProcessor.displayWallet()
-                        .then(() => this._getPayment());
-                }
-
-                throw error;
-            })
-            .then(payment => {
-                return this._createOrder(payment, payload.useStoreCredit, options);
-            });
+        return this._createOrder(this._getPayment(), payload.useStoreCredit, options);
     }
 
     private _createOrder(payment: Payment, useStoreCredit?: boolean, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -173,31 +162,28 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
         };
     }
 
-    private _getPayment(): Promise<PaymentMethodData> {
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(this._methodId))
-            .then(() => {
-                const state = this._store.getState();
-                const paymentMethod = state.paymentMethods.getPaymentMethod(this._methodId);
+    private _getPayment(): PaymentMethodData {
+        const state = this._store.getState();
+        const paymentMethod = state.paymentMethods.getPaymentMethod(this._methodId);
 
-                if (!paymentMethod) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
+        if (!paymentMethod) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
-                if (!paymentMethod.initializationData.nonce) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPayment);
-                }
+        if (!paymentMethod.initializationData.nonce) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
 
-                const paymentData = {
-                    method: this._methodId,
-                    nonce: paymentMethod.initializationData.nonce,
-                    cardInformation: paymentMethod.initializationData.card_information,
-                };
+        const paymentData = {
+            method: this._methodId,
+            nonce: paymentMethod.initializationData.nonce,
+            cardInformation: paymentMethod.initializationData.card_information,
+        };
 
-                return {
-                    methodId: this._methodId,
-                    paymentData,
-                };
-            });
+        return {
+            methodId: this._methodId,
+            paymentData,
+        };
     }
 
     @bind
