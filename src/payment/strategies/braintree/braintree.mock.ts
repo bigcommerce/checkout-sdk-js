@@ -1,5 +1,6 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { GooglePayBraintreeSDK } from '../googlepay/googlepay';
 
 import {
     BraintreeClient,
@@ -75,6 +76,14 @@ export function getTokenizeResponseBody(): BraintreeTokenizeResponse {
         creditCards: [
             { nonce: 'demo_nonce' },
         ],
+    };
+}
+
+export function getGooglePayMock(): GooglePayBraintreeSDK {
+    return {
+        createPaymentDataRequest: jest.fn((() => Promise.resolve())),
+        parseResponse: jest.fn((() => Promise.resolve())),
+        teardown: jest.fn(),
     };
 }
 

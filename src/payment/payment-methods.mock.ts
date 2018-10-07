@@ -290,6 +290,33 @@ export function getWepay(): PaymentMethod {
     };
 }
 
+export function getGooglePay(): PaymentMethod {
+    return {
+        id: 'googlepay',
+        logoUrl: '',
+        method: 'googlepay',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+        ],
+        config: {
+            displayName: 'Google Pay',
+            merchantId: '',
+            testMode: true,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+        initializationData: {
+            nonce: 'nonce',
+            card_information: {
+                type: 'MasterCard',
+                number: '4111',
+            },
+        },
+    };
+}
+
 export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
@@ -307,6 +334,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getAmazonPay(),
         getKlarna(),
         getSquare(),
+        getGooglePay(),
     ];
 }
 
