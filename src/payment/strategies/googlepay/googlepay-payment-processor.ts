@@ -1,4 +1,4 @@
-import { PaymentMethod, PaymentMethodActionCreator } from '../..';
+import { PaymentMethodActionCreator } from '../..';
 import { BillingAddressActionCreator, BillingAddressUpdateRequestBody } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
@@ -9,7 +9,6 @@ import {
     StandardError,
 } from '../../../common/error/errors';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
-import { ShippingStrategyActionCreator } from '../../../shipping';
 
 import {
     ButtonColor,
@@ -29,8 +28,6 @@ import GooglePayScriptLoader from './googlepay-script-loader';
 export default class GooglePayPaymentProcessor {
     private _googlePaymentsClient!: GooglePayClient;
     private _methodId!: string;
-    private _paymentMethod?: PaymentMethod;
-    private _walletButton?: HTMLElement;
     private _googlePaymentDataRequest!: GooglePayPaymentDataRequestV1;
 
     constructor(
@@ -38,8 +35,7 @@ export default class GooglePayPaymentProcessor {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _googlePayScriptLoader: GooglePayScriptLoader,
         private _googlePayInitializer: GooglePayInitializer,
-        private _billingAddressActionCreator: BillingAddressActionCreator,
-        private _shippingStrategyActionCreator: ShippingStrategyActionCreator
+        private _billingAddressActionCreator: BillingAddressActionCreator
     ) { }
 
     initialize(methodId: string): Promise<void> {
@@ -79,10 +75,6 @@ export default class GooglePayPaymentProcessor {
     }
 
     displayWallet(): Promise<GooglePaymentData> {
-        if (!this._paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
         if (!this._googlePaymentsClient && !this._googlePaymentDataRequest) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -90,7 +82,7 @@ export default class GooglePayPaymentProcessor {
         return this._googlePaymentsClient.isReadyToPay({
             allowedPaymentMethods: this._googlePaymentDataRequest.allowedPaymentMethods,
         }).then( response => {
-            if (response) {
+            if (response.result) {
                 return this._googlePaymentsClient.loadPaymentData(this._googlePaymentDataRequest)
                     .then(paymentData => paymentData)
                     .catch((err: GooglePaymentsError) => {
@@ -102,19 +94,14 @@ export default class GooglePayPaymentProcessor {
         });
     }
 
-    parseResponse(paymentData: any): Promise<TokenizePayload> {
+    parseResponse(paymentData: GooglePaymentData): Promise<TokenizePayload> {
         return this._googlePayInitializer.parseResponse(paymentData);
     }
 
     private _configureWallet(): Promise<void> {
-        if (!this._methodId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
-
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(this._methodId))
             .then(state => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(this._methodId);
-                const storeConfig = state.config.getStoreConfig();
                 const checkout = state.checkout.getCheckout();
                 const hasShippingAddress = !!state.shippingAddress.getShippingAddress();
 
@@ -122,15 +109,10 @@ export default class GooglePayPaymentProcessor {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                if (!storeConfig) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-                }
-
                 if (!checkout) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
 
-                this._paymentMethod = paymentMethod;
                 const testMode = paymentMethod.config.testMode;
 
                 return Promise.all([
@@ -148,7 +130,6 @@ export default class GooglePayPaymentProcessor {
     }
 
     private _getGooglePaymentsClient(google: GooglePaySDK, testMode?: boolean): GooglePayClient {
-        testMode = true; // TODO: remove when push this code to final review
         if (testMode === undefined) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }

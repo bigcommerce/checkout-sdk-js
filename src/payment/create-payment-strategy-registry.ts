@@ -7,7 +7,6 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutVa
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
-import { createShippingStrategyRegistry, ShippingStrategyActionCreator } from '../shipping';
 
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
@@ -270,8 +269,7 @@ export default function createPaymentStrategyRegistry(
                 paymentMethodActionCreator,
                 new GooglePayScriptLoader(scriptLoader),
                 new GooglePayBraintreeInitializer(braintreeSdkCreator),
-                new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender)),
-                new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender))
+                new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender))
             )
         )
     );

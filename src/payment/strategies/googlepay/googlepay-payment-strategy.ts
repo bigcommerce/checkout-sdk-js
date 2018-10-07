@@ -30,9 +30,7 @@ import PaymentStrategy from '../payment-strategy';
 import {
     GooglePaymentData,
     GooglePayAddress,
-    GooglePayClient,
     GooglePayInitializer,
-    GooglePayPaymentDataRequestV1,
     PaymentMethodData,
     TokenizePayload,
 } from './googlepay';
@@ -40,11 +38,9 @@ import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 
 export default class GooglePayPaymentStrategy extends PaymentStrategy {
-    private _googlePaymentsClient!: GooglePayClient;
     private _googlePayOptions!: GooglePayPaymentInitializeOptions;
     private _methodId!: string;
     private _walletButton?: HTMLElement;
-    private _googlePaymentDataRequest!: GooglePayPaymentDataRequestV1;
 
     constructor(
         store: CheckoutStore,

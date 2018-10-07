@@ -4,6 +4,7 @@ import {Coupon} from '../../../coupon';
 import { GiftCertificate } from '../../../coupon';
 import {Customer} from '../../../customer';
 import {Discount} from '../../../discount';
+import { OrderRequestBody } from '../../../order';
 import {Consignment} from '../../../shipping';
 import {Tax} from '../../../tax';
 import PaymentMethod from '../../payment-method';
@@ -16,7 +17,6 @@ import {
     GooglePayPaymentDataRequestV1,
     GooglePaySDK
 } from './googlepay';
-import OrderRequestBody from "../../../order/order-request-body";
 
 export function getGooglePaySDKMock(): GooglePaySDK {
     return {
@@ -120,5 +120,62 @@ export function getGooglePaymentDataMock(): GooglePaymentData {
 export function getGoogleOrderRequestBody(): OrderRequestBody {
     return {
         useStoreCredit: true,
+    };
+}
+
+export function getGooglePayAddressMock(): GooglePayAddress {
+    return {
+        address1: 'mock',
+        address2: 'mock',
+        address3: 'mock',
+        address4: 'mock',
+        address5: 'mock',
+        administrativeArea: 'mock',
+        companyName: 'mock',
+        countryCode: 'mock',
+        locality: 'mock',
+        name: 'mock',
+        postalCode: 'mock',
+        sortingCode: 'mock',
+        phoneNumber: 'mock',
+    };
+}
+
+export function getGooglePayPaymentDataRequestMock(): GooglePayPaymentDataRequestV1 {
+    return {
+        allowedPaymentMethods: [
+            'CreditCard',
+        ],
+        apiVersion: 1,
+        cardRequirements: {
+            allowedCardNetworks: [''],
+            billingAddressRequired: true,
+            billingAddressFormat: '',
+        },
+        enviroment: '',
+        i: {
+            googleTransactionId: '',
+            startTimeMs: 1,
+        },
+        merchantInfo: {
+            merchantId: '',
+        },
+        paymentMethodTokenizationParameters: {
+            parameters: {
+                'braintree:apiVersion': '',
+                'braintree:authorizationFingerprint': '',
+                'braintree:merchantId': '',
+                'braintree:metadata': '',
+                'braintree:sdkVersion': '',
+                gateway: '',
+            },
+            tokenizationType: '',
+        },
+        shippingAddressRequired: true,
+        transactionInfo: {
+            currencyCode: '',
+            totalPrice: '',
+            totalPriceStatus: '',
+        },
     };
 }
