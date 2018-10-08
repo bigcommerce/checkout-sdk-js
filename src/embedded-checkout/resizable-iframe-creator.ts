@@ -12,7 +12,7 @@ export default class ResizableIframeCreator {
 
     createFrame(src: string, containerId: string): Promise<IFrameComponent> {
         const container = document.getElementById(containerId);
-        const { timeout = 5000 } = this._options || {};
+        const { timeout = 60000 } = this._options || {};
 
         if (!container) {
             throw new NotEmbeddableError('Unable to embed the iframe because the container element could not be found.');
