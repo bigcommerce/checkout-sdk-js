@@ -149,26 +149,4 @@ describe('EmbeddedCheckout', () => {
         expect(messageListener.addListener)
             .toHaveBeenCalledWith(EmbeddedCheckoutEventType.FrameLoaded, options.onFrameLoad);
     });
-
-    it('listens to specific checkout event', () => {
-        const handeLoad = jest.fn();
-
-        jest.spyOn(messageListener, 'addListener');
-
-        embeddedCheckout.on(EmbeddedCheckoutEventType.CheckoutLoaded, handeLoad);
-
-        expect(messageListener.addListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.CheckoutLoaded, handeLoad);
-    });
-
-    it('removes specific checkout event listener', () => {
-        const handeLoad = jest.fn();
-
-        jest.spyOn(messageListener, 'removeListener');
-
-        embeddedCheckout.off(EmbeddedCheckoutEventType.CheckoutLoaded, handeLoad);
-
-        expect(messageListener.removeListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.CheckoutLoaded, handeLoad);
-    });
 });
