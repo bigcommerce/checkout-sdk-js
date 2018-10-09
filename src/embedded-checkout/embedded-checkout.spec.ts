@@ -1,17 +1,17 @@
 import { iframeResizer, IFrameComponent } from 'iframe-resizer';
 
 import EmbeddedCheckout from './embedded-checkout';
-import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
-import EmbeddedCheckoutListener from './embedded-checkout-listener';
+import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import { NotEmbeddableError } from './errors';
+import IframeEventListener from './iframe-event-listener';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 describe('EmbeddedCheckout', () => {
     let embeddedCheckout: EmbeddedCheckout;
     let iframe: IFrameComponent;
     let iframeCreator: ResizableIframeCreator;
-    let messageListener: EmbeddedCheckoutListener;
+    let messageListener: IframeEventListener<EmbeddedCheckoutEventMap>;
     let options: EmbeddedCheckoutOptions;
 
     beforeEach(() => {
@@ -21,7 +21,7 @@ describe('EmbeddedCheckout', () => {
         };
 
         iframeCreator = new ResizableIframeCreator();
-        messageListener = new EmbeddedCheckoutListener('https://mybigcommerce.com');
+        messageListener = new IframeEventListener('https://mybigcommerce.com');
 
         jest.spyOn(iframeCreator, 'createFrame')
             .mockImplementation(() => {
@@ -148,27 +148,5 @@ describe('EmbeddedCheckout', () => {
 
         expect(messageListener.addListener)
             .toHaveBeenCalledWith(EmbeddedCheckoutEventType.FrameLoaded, options.onFrameLoad);
-    });
-
-    it('listens to specific checkout event', () => {
-        const handeLoad = jest.fn();
-
-        jest.spyOn(messageListener, 'addListener');
-
-        embeddedCheckout.on(EmbeddedCheckoutEventType.CheckoutLoaded, handeLoad);
-
-        expect(messageListener.addListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.CheckoutLoaded, handeLoad);
-    });
-
-    it('removes specific checkout event listener', () => {
-        const handeLoad = jest.fn();
-
-        jest.spyOn(messageListener, 'removeListener');
-
-        embeddedCheckout.off(EmbeddedCheckoutEventType.CheckoutLoaded, handeLoad);
-
-        expect(messageListener.removeListener)
-            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.CheckoutLoaded, handeLoad);
     });
 });

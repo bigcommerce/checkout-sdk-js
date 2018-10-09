@@ -9,21 +9,21 @@ import {
     EmbeddedCheckoutFrameLoadedEvent,
     EmbeddedCheckoutLoadedEvent,
 } from '../embedded-checkout-events';
+import EmbeddedCheckoutStyles from '../embedded-checkout-styles';
+import IframeEventListener from '../iframe-event-listener';
+import IframeEventPoster from '../iframe-event-poster';
 
-import EmbeddedCheckoutMessengerOptions from './embedded-checkout-messenger-options';
+import { EmbeddedContentEventMap, EmbeddedContentEventType } from './embedded-content-events';
 
 export default class EmbeddedCheckoutMessenger {
-    private _parentOrigin: string;
-    private _parentWindow: Window;
-
     /**
      * @internal
      */
     constructor(
-        options: EmbeddedCheckoutMessengerOptions
+        private _messageListener: IframeEventListener<EmbeddedContentEventMap>,
+        private _messagePoster: IframeEventPoster<EmbeddedCheckoutEvent>
     ) {
-        this._parentOrigin = options.parentOrigin;
-        this._parentWindow = options.parentWindow || window.parent;
+        this._messageListener.listen();
     }
 
     postComplete(): void {
@@ -31,7 +31,7 @@ export default class EmbeddedCheckoutMessenger {
             type: EmbeddedCheckoutEventType.CheckoutComplete,
         };
 
-        this._notifyParent(message);
+        this._messagePoster.post(message);
     }
 
     postError(payload: Error | CustomError): void {
@@ -40,7 +40,7 @@ export default class EmbeddedCheckoutMessenger {
             payload: this._transformError(payload),
         };
 
-        this._notifyParent(message);
+        this._messagePoster.post(message);
     }
 
     postFrameError(payload: Error | CustomError): void {
@@ -49,7 +49,7 @@ export default class EmbeddedCheckoutMessenger {
             payload: this._transformError(payload),
         };
 
-        this._notifyParent(message);
+        this._messagePoster.post(message);
     }
 
     postFrameLoaded(): void {
@@ -57,7 +57,7 @@ export default class EmbeddedCheckoutMessenger {
             type: EmbeddedCheckoutEventType.FrameLoaded,
         };
 
-        this._notifyParent(message);
+        this._messagePoster.post(message);
     }
 
     postLoaded(): void {
@@ -65,7 +65,13 @@ export default class EmbeddedCheckoutMessenger {
             type: EmbeddedCheckoutEventType.CheckoutLoaded,
         };
 
-        this._notifyParent(message);
+        this._messagePoster.post(message);
+    }
+
+    receiveStyles(handler: (styles: EmbeddedCheckoutStyles) => void): void {
+        this._messageListener.addListener(EmbeddedContentEventType.StyleConfigured, ({ payload }) => {
+            handler(payload);
+        });
     }
 
     private _transformError(error: Error | CustomError): EmbeddedCheckoutError {
@@ -74,13 +80,5 @@ export default class EmbeddedCheckoutMessenger {
             type: isCustomError(error) ? error.type : undefined,
             subtype: isCustomError(error) ? error.subtype : undefined,
         };
-    }
-
-    private _notifyParent(message: EmbeddedCheckoutEvent): void {
-        if (window === this._parentWindow) {
-            return;
-        }
-
-        this._parentWindow.postMessage(message, this._parentOrigin);
     }
 }

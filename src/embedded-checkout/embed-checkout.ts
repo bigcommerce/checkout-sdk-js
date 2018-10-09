@@ -1,6 +1,7 @@
 import EmbeddedCheckout from './embedded-checkout';
-import EmbeddedCheckoutListener from './embedded-checkout-listener';
+import { EmbeddedCheckoutEventMap } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
+import IframeEventListener from './iframe-event-listener';
 import parseOrigin from './parse-origin';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
@@ -28,7 +29,7 @@ import ResizableIframeCreator from './resizable-iframe-creator';
 export default function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout> {
     const embeddedCheckout = new EmbeddedCheckout(
         new ResizableIframeCreator(),
-        new EmbeddedCheckoutListener(parseOrigin(options.url)),
+        new IframeEventListener<EmbeddedCheckoutEventMap>(parseOrigin(options.url)),
         options
     );
 
