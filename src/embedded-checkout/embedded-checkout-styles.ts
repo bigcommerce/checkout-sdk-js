@@ -20,6 +20,7 @@ export default interface EmbeddedCheckoutStyles {
     checklist?: ChecklistStyles;
     discountBanner?: BlockElementStyles;
     loadingBanner?: BlockElementStyles;
+    orderSummary?: BlockElementStyles;
     step?: StepStyles;
 }
 
