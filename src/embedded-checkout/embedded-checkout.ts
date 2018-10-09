@@ -5,7 +5,6 @@ import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
-import parseOrigin from './parse-origin';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 export default class EmbeddedCheckout {
@@ -18,6 +17,7 @@ export default class EmbeddedCheckout {
     constructor(
         private _iframeCreator: ResizableIframeCreator,
         private _messageListener: IframeEventListener<EmbeddedCheckoutEventMap>,
+        private _messagePoster: IframeEventPoster<EmbeddedContentEvent>,
         private _options: EmbeddedCheckoutOptions
     ) {
         this._isAttached = false;
@@ -37,6 +37,8 @@ export default class EmbeddedCheckout {
         if (this._options.onFrameLoad) {
             this._messageListener.addListener(EmbeddedCheckoutEventType.FrameLoaded, this._options.onFrameLoad);
         }
+
+        this._messageListener.addListener(EmbeddedCheckoutEventType.FrameLoaded, () => this._configureStyles());
     }
 
     attach(): Promise<this> {
@@ -49,19 +51,9 @@ export default class EmbeddedCheckout {
 
         return this._iframeCreator.createFrame(this._options.url, this._options.containerId)
             .then(iframe => {
-                if (iframe.contentWindow && this._options.styles) {
-                    const messagePoster = new IframeEventPoster<EmbeddedContentEvent>(
-                        parseOrigin(this._options.url),
-                        iframe.contentWindow
-                    );
-
-                    messagePoster.post({
-                        type: EmbeddedContentEventType.StyleConfigured,
-                        payload: this._options.styles,
-                    });
-                }
-
                 this._iframe = iframe;
+
+                this._configureStyles();
 
                 return this;
             })
@@ -89,5 +81,18 @@ export default class EmbeddedCheckout {
             this._iframe.parentNode.removeChild(this._iframe);
             this._iframe.iFrameResizer.close();
         }
+    }
+
+    private _configureStyles(): void {
+        if (!this._iframe || !this._iframe.contentWindow || !this._options.styles) {
+            return;
+        }
+
+        this._messagePoster.setTarget(this._iframe.contentWindow);
+
+        this._messagePoster.post({
+            type: EmbeddedContentEventType.StyleConfigured,
+            payload: this._options.styles,
+        });
     }
 }

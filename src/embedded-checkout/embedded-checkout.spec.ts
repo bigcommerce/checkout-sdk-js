@@ -3,8 +3,11 @@ import { iframeResizer, IFrameComponent } from 'iframe-resizer';
 import EmbeddedCheckout from './embedded-checkout';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
+import EmbeddedCheckoutStyles from './embedded-checkout-styles';
 import { NotEmbeddableError } from './errors';
+import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
+import IframeEventPoster from './iframe-event-poster';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 describe('EmbeddedCheckout', () => {
@@ -12,7 +15,9 @@ describe('EmbeddedCheckout', () => {
     let iframe: IFrameComponent;
     let iframeCreator: ResizableIframeCreator;
     let messageListener: IframeEventListener<EmbeddedCheckoutEventMap>;
+    let messagePoster: IframeEventPoster<EmbeddedContentEvent>;
     let options: EmbeddedCheckoutOptions;
+    let styles: EmbeddedCheckoutStyles;
 
     beforeEach(() => {
         options = {
@@ -20,19 +25,24 @@ describe('EmbeddedCheckout', () => {
             containerId: 'checkout',
         };
 
+        styles = {
+            body: {
+                backgroundColor: '#000',
+            },
+        };
+
+        iframe = iframeResizer({}, document.body.appendChild(document.createElement('iframe')))[0];
         iframeCreator = new ResizableIframeCreator();
         messageListener = new IframeEventListener('https://mybigcommerce.com');
+        messagePoster = new IframeEventPoster('https://mybigcommerce.com');
 
         jest.spyOn(iframeCreator, 'createFrame')
-            .mockImplementation(() => {
-                iframe = iframeResizer({}, document.body.appendChild(document.createElement('iframe')))[0];
-
-                return Promise.resolve(iframe);
-            });
+            .mockReturnValue(Promise.resolve(iframe));
 
         embeddedCheckout = new EmbeddedCheckout(
             iframeCreator,
             messageListener,
+            messagePoster,
             options
         );
     });
@@ -134,6 +144,7 @@ describe('EmbeddedCheckout', () => {
         embeddedCheckout = new EmbeddedCheckout(
             iframeCreator,
             messageListener,
+            messagePoster,
             options
         );
 
@@ -148,5 +159,46 @@ describe('EmbeddedCheckout', () => {
 
         expect(messageListener.addListener)
             .toHaveBeenCalledWith(EmbeddedCheckoutEventType.FrameLoaded, options.onFrameLoad);
+    });
+
+    it('configures styles when iframe is loaded', async () => {
+        options = { ...options, styles };
+        embeddedCheckout = new EmbeddedCheckout(
+            iframeCreator,
+            messageListener,
+            messagePoster,
+            options
+        );
+
+        jest.spyOn(messagePoster, 'post');
+
+        await embeddedCheckout.attach();
+
+        expect(messagePoster.post).toHaveBeenCalledWith({
+            type: EmbeddedContentEventType.StyleConfigured,
+            payload: styles,
+        });
+    });
+
+    it('reconfigures styles when iframe is reloaded again', async () => {
+        options = { ...options, styles };
+        embeddedCheckout = new EmbeddedCheckout(
+            iframeCreator,
+            messageListener,
+            messagePoster,
+            options
+        );
+
+        jest.spyOn(messagePoster, 'post');
+
+        await embeddedCheckout.attach();
+
+        messageListener.trigger({ type: EmbeddedCheckoutEventType.FrameLoaded });
+
+        expect(messagePoster.post).toHaveBeenCalledTimes(2);
+        expect(messagePoster.post).toHaveBeenCalledWith({
+            type: EmbeddedContentEventType.StyleConfigured,
+            payload: styles,
+        });
     });
 });

@@ -2,6 +2,7 @@ import embedCheckout from './embed-checkout';
 import EmbeddedCheckout from './embedded-checkout';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import IframeEventListener from './iframe-event-listener';
+import IframeEventPoster from './iframe-event-poster';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 jest.mock('./embedded-checkout', () => {
@@ -38,6 +39,7 @@ describe('embedCheckout()', () => {
         expect(EmbeddedCheckout).toHaveBeenCalledWith(
             expect.any(ResizableIframeCreator),
             expect.any(IframeEventListener),
+            expect.any(IframeEventPoster),
             options
         );
     });
