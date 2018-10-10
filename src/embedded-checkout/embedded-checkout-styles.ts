@@ -33,7 +33,7 @@ export interface InlineElementStyles {
     lineHeight?: string;
 }
 
-export interface BlockElementStyles {
+export interface BlockElementStyles extends InlineElementStyles {
     backgroundColor?: string;
     boxShadow?: string;
     borderColor?: string;
