@@ -8,12 +8,14 @@ import { NotEmbeddableError } from './errors';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
+import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 describe('EmbeddedCheckout', () => {
     let embeddedCheckout: EmbeddedCheckout;
     let iframe: IFrameComponent;
     let iframeCreator: ResizableIframeCreator;
+    let loadingIndicator: LoadingIndicator;
     let messageListener: IframeEventListener<EmbeddedCheckoutEventMap>;
     let messagePoster: IframeEventPoster<EmbeddedContentEvent>;
     let options: EmbeddedCheckoutOptions;
@@ -35,14 +37,22 @@ describe('EmbeddedCheckout', () => {
         iframeCreator = new ResizableIframeCreator();
         messageListener = new IframeEventListener('https://mybigcommerce.com');
         messagePoster = new IframeEventPoster('https://mybigcommerce.com');
+        loadingIndicator = new LoadingIndicator();
 
         jest.spyOn(iframeCreator, 'createFrame')
             .mockReturnValue(Promise.resolve(iframe));
+
+        jest.spyOn(loadingIndicator, 'show')
+            .mockImplementation(() => {});
+
+        jest.spyOn(loadingIndicator, 'hide')
+            .mockImplementation(() => {});
 
         embeddedCheckout = new EmbeddedCheckout(
             iframeCreator,
             messageListener,
             messagePoster,
+            loadingIndicator,
             options
         );
     });
@@ -145,6 +155,7 @@ describe('EmbeddedCheckout', () => {
             iframeCreator,
             messageListener,
             messagePoster,
+            loadingIndicator,
             options
         );
 
@@ -167,6 +178,7 @@ describe('EmbeddedCheckout', () => {
             iframeCreator,
             messageListener,
             messagePoster,
+            loadingIndicator,
             options
         );
 
@@ -186,6 +198,7 @@ describe('EmbeddedCheckout', () => {
             iframeCreator,
             messageListener,
             messagePoster,
+            loadingIndicator,
             options
         );
 
@@ -200,5 +213,16 @@ describe('EmbeddedCheckout', () => {
             type: EmbeddedContentEventType.StyleConfigured,
             payload: styles,
         });
+    });
+
+    it('toggles loading indicator', done => {
+        embeddedCheckout.attach()
+            .then(() => {
+                expect(loadingIndicator.hide).toHaveBeenCalled();
+                done();
+            });
+
+        expect(loadingIndicator.show).toHaveBeenCalled();
+        expect(loadingIndicator.hide).not.toHaveBeenCalled();
     });
 });

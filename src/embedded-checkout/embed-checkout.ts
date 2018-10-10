@@ -4,6 +4,7 @@ import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import { EmbeddedContentEvent } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
+import LoadingIndicator from './loading-indicator';
 import parseOrigin from './parse-origin';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
@@ -34,6 +35,7 @@ export default function embedCheckout(options: EmbeddedCheckoutOptions): Promise
         new ResizableIframeCreator(),
         new IframeEventListener<EmbeddedCheckoutEventMap>(origin),
         new IframeEventPoster<EmbeddedContentEvent>(origin),
+        new LoadingIndicator({ styles: options.styles && options.styles.loadingIndicator }),
         options
     );
 

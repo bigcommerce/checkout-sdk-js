@@ -5,6 +5,7 @@ import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
+import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 export default class EmbeddedCheckout {
@@ -18,6 +19,7 @@ export default class EmbeddedCheckout {
         private _iframeCreator: ResizableIframeCreator,
         private _messageListener: IframeEventListener<EmbeddedCheckoutEventMap>,
         private _messagePoster: IframeEventPoster<EmbeddedContentEvent>,
+        private _loadingIndicator: LoadingIndicator,
         private _options: EmbeddedCheckoutOptions
     ) {
         this._isAttached = false;
@@ -48,12 +50,14 @@ export default class EmbeddedCheckout {
 
         this._isAttached = true;
         this._messageListener.listen();
+        this._loadingIndicator.show(this._options.containerId);
 
         return this._iframeCreator.createFrame(this._options.url, this._options.containerId)
             .then(iframe => {
                 this._iframe = iframe;
 
                 this._configureStyles();
+                this._loadingIndicator.hide();
 
                 return this;
             })
@@ -64,6 +68,8 @@ export default class EmbeddedCheckout {
                     type: EmbeddedCheckoutEventType.FrameError,
                     payload: error,
                 });
+
+                this._loadingIndicator.hide();
 
                 throw error;
             });

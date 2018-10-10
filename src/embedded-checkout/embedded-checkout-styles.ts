@@ -20,6 +20,7 @@ export default interface EmbeddedCheckoutStyles {
     checklist?: ChecklistStyles;
     discountBanner?: BlockElementStyles;
     loadingBanner?: BlockElementStyles;
+    loadingIndicator?: LoadingIndicatorStyles;
     orderSummary?: BlockElementStyles;
     step?: StepStyles;
 }
@@ -84,4 +85,10 @@ export interface ChecklistStyles extends BlockElementStyles {
 
 export interface StepStyles extends BlockElementStyles {
     icon?: BlockElementStyles;
+}
+
+export interface LoadingIndicatorStyles {
+    size?: number;
+    color?: string;
+    backgroundColor?: string;
 }

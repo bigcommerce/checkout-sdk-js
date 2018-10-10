@@ -3,6 +3,7 @@ import EmbeddedCheckout from './embedded-checkout';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
+import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 jest.mock('./embedded-checkout', () => {
@@ -40,6 +41,7 @@ describe('embedCheckout()', () => {
             expect.any(ResizableIframeCreator),
             expect.any(IframeEventListener),
             expect.any(IframeEventPoster),
+            expect.any(LoadingIndicator),
             options
         );
     });
