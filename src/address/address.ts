@@ -7,11 +7,11 @@ export interface AddressRequestBody {
     lastName: string;
     company: string;
     address1: string;
-    address2: string;
+    address2: string | null;
     city: string;
     stateOrProvince: string;
     stateOrProvinceCode: string;
-    countryCode: string;
+    countryCode: string | null;
     postalCode: string;
     phone: string;
     customFields: Array<{
