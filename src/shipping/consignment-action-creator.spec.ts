@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { Address } from '../address';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { getCheckout, getCheckoutState, getCheckoutStoreState } from '../checkout/checkouts.mock';
-import { MissingDataError } from '../common/error/errors';
+import { InvalidArgumentError, MissingDataError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import { Consignment, ConsignmentRequestSender } from '.';
@@ -187,6 +187,188 @@ describe('consignmentActionCreator', () => {
         });
     });
 
+    describe('#unassignItemsByAddress()', () => {
+        let thunkAction: ThunkAction<DeleteConsignmentAction | UpdateConsignmentAction>;
+        let payload: ConsignmentAssignmentRequestBody;
+
+        beforeEach(() => {
+            payload = {
+                shippingAddress: consignment.shippingAddress,
+                lineItems: [{
+                    itemId: 'unassigned',
+                    quantity: 1,
+                }, {
+                    itemId: 'existing',
+                    quantity: 1,
+                }],
+            };
+
+            thunkAction = consignmentActionCreator.unassignItemsByAddress(payload, options);
+        });
+
+        describe('when store has no checkout data / id', () => {
+            beforeEach(() => {
+                store = createCheckoutStore({});
+            });
+
+            it('throws an exception, emit no actions and does not send a request', async () => {
+                try {
+                    await Observable.from(thunkAction(store)).toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(MissingDataError);
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
+                    expect(consignmentRequestSender.deleteConsignment).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        describe('when address matches an existing consignment', () => {
+            beforeEach(() => {
+                jest.spyOn(store.getState().consignments, 'getConsignmentByAddress')
+                    .mockReturnValue(consignment);
+
+                const checkoutStoreState = getCheckoutStoreState();
+                // tslint:disable-next-line:no-non-null-assertion
+                const physicalItems = checkoutStoreState.cart.data!.lineItems.physicalItems;
+
+                // tslint:disable-next-line:no-non-null-assertion
+                checkoutStoreState.cart.data!.lineItems.physicalItems = [
+                    physicalItems[0],
+                    {
+                        ...physicalItems[0],
+                        id: 'existing',
+                        quantity: 2,
+                    },
+                ];
+
+                // tslint:disable-next-line:no-non-null-assertion
+                checkoutStoreState.consignments.data![0].lineItemIds = [
+                    'existing',
+                ];
+                store = createCheckoutStore(checkoutStoreState);
+            });
+
+            it('emits actions if able to update consignment', async () => {
+                const actions = await Observable.from(thunkAction(store))
+                    .toArray()
+                    .toPromise();
+
+                expect(actions).toEqual([
+                    {
+                        type: ConsignmentActionType.UpdateConsignmentRequested,
+                        payload: undefined,
+                        meta: { id: consignment.id },
+                    },
+                    {
+                        type: ConsignmentActionType.UpdateConsignmentSucceeded,
+                        payload: response.body,
+                        meta: { id: consignment.id },
+                    },
+                ]);
+            });
+
+            it('emits error actions if unable to update consignment', async () => {
+                jest.spyOn(consignmentRequestSender, 'updateConsignment')
+                    .mockImplementation(() => Promise.reject(errorResponse));
+
+                const errorHandler = jest.fn(action => Observable.of(action));
+
+                await Observable.from(consignmentActionCreator.updateConsignment(consignment)(store))
+                    .catch(errorHandler)
+                    .toArray()
+                    .subscribe(actions => {
+                        expect(actions).toEqual([
+                            {
+                                type: ConsignmentActionType.UpdateConsignmentRequested,
+                                payload: undefined,
+                                meta: { id: consignment.id },
+                            },
+                            {
+                                type: ConsignmentActionType.UpdateConsignmentFailed,
+                                payload: errorResponse,
+                                error: true,
+                                meta: { id: consignment.id },
+                            },
+                        ]);
+                    });
+            });
+
+            it('sends request to update consignment combining existing items', async () => {
+                await Observable.from(thunkAction(store)).toPromise();
+
+                expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
+                    'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    {
+                        id: consignment.id,
+                        shippingAddress: consignment.shippingAddress,
+                        lineItems: [
+                            {
+                                itemId: 'existing',
+                                quantity: 1,
+                            },
+                        ],
+                    },
+                    options
+                );
+            });
+        });
+
+        describe('when payload has empty line items', () => {
+            let actions: any;
+
+            beforeEach(async () => {
+                thunkAction = consignmentActionCreator.unassignItemsByAddress({
+                    ...payload,
+                    lineItems: [],
+                }, options);
+
+                actions = await Observable.from(thunkAction(store))
+                    .toArray()
+                    .toPromise();
+            });
+
+            it('deletes a consignment when has no line items', () => {
+                expect(consignmentRequestSender.deleteConsignment).toHaveBeenCalledWith(
+                    'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    consignment.id,
+                    options
+                );
+            });
+
+            it('emits actions if able to update consignment', async () => {
+                expect(actions).toEqual([
+                    {
+                        type: ConsignmentActionType.DeleteConsignmentRequested,
+                        payload: undefined,
+                        meta: { id: consignment.id },
+                    },
+                    {
+                        type: ConsignmentActionType.DeleteConsignmentSucceeded,
+                        payload: response.body,
+                        meta: { id: consignment.id },
+                    },
+                ]);
+            });
+        });
+
+        describe('when address does not match any existing consignment', () => {
+            beforeEach(() => {
+                jest.spyOn(store.getState().consignments, 'getConsignmentByAddress')
+                    .mockReturnValue(undefined);
+            });
+
+            it('throws invalid argument exception', async () => {
+                try {
+                    await Observable.from(thunkAction(store)).toPromise();
+                } catch (exception) {
+                    expect(exception).toBeInstanceOf(InvalidArgumentError);
+                    expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
+                    expect(consignmentRequestSender.deleteConsignment).not.toHaveBeenCalled();
+                }
+            });
+        });
+    });
+
     describe('#assignItemsByAddress()', () => {
         let thunkAction: ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction>;
         let payload: ConsignmentAssignmentRequestBody;
@@ -195,8 +377,11 @@ describe('consignmentActionCreator', () => {
             payload = {
                 shippingAddress: consignment.shippingAddress,
                 lineItems: [{
-                    itemId: 'bar',
+                    itemId: 'unassigned',
                     quantity: 2,
+                }, {
+                    itemId: 'existing',
+                    quantity: 1,
                 }],
             };
 
@@ -269,7 +454,51 @@ describe('consignmentActionCreator', () => {
                     });
             });
 
-            it('sends request to update consignment using stored state', async () => {
+            it('filters out items with 0 quantities', async () => {
+                const thunkAction = consignmentActionCreator.assignItemsByAddress({
+                    ...payload,
+                    lineItems: [
+                        ...payload.lineItems,
+                        {
+                            itemId: 'invalid qty',
+                            quantity: 0,
+                        },
+                    ],
+                }, options);
+                await Observable.from(thunkAction(store)).toPromise();
+
+                expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
+                    'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
+                    {
+                        id: consignment.id,
+                        shippingAddress: consignment.shippingAddress,
+                        lineItems: payload.lineItems,
+                    },
+                    options
+                );
+            });
+
+            it('sends request to update consignment combining existing items', async () => {
+                const checkoutStoreState = getCheckoutStoreState();
+                // tslint:disable-next-line:no-non-null-assertion
+                checkoutStoreState.cart.data!.lineItems.physicalItems = [
+                    // tslint:disable-next-line:no-non-null-assertion
+                    checkoutStoreState.cart.data!.lineItems.physicalItems[0],
+                    {
+                        // tslint:disable-next-line:no-non-null-assertion
+                        ...checkoutStoreState.cart.data!.lineItems.physicalItems[0],
+                        id: 'existing',
+                        quantity: 3,
+                    },
+                ];
+
+                // tslint:disable-next-line:no-non-null-assertion
+                checkoutStoreState.consignments.data![0].lineItemIds = [
+                    '12e11c8f-7dce-4da3-9413-b649533f8bad',
+                    'existing',
+                ];
+                store = createCheckoutStore(checkoutStoreState);
+
                 await Observable.from(thunkAction(store)).toPromise();
 
                 expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
@@ -279,10 +508,17 @@ describe('consignmentActionCreator', () => {
                         shippingAddress: consignment.shippingAddress,
                         lineItems: [
                             {
-                                itemId: '12e11c8f-7dce-4da3-9413-b649533f8bad',
-                                quantity: 0,
+                                itemId: 'unassigned',
+                                quantity: 2,
                             },
-                            ...payload.lineItems,
+                            {
+                                itemId: 'existing',
+                                quantity: 1,
+                            },
+                            {
+                                itemId: 'existing',
+                                quantity: 3,
+                            },
                         ],
                     },
                     options
@@ -294,23 +530,6 @@ describe('consignmentActionCreator', () => {
             beforeEach(() => {
                 jest.spyOn(store.getState().consignments, 'getConsignmentByAddress')
                     .mockReturnValue(undefined);
-            });
-
-            it('emits actions if able to create consignment', async () => {
-                const actions = await Observable.from(thunkAction(store))
-                    .toArray()
-                    .toPromise();
-
-                expect(actions).toEqual([
-                    {
-                        type: ConsignmentActionType.CreateConsignmentsRequested,
-                        payload: undefined,
-                    },
-                    {
-                        type: ConsignmentActionType.CreateConsignmentsSucceeded,
-                        payload: response.body,
-                    },
-                ]);
             });
 
             it('emits error actions if unable to update consignment', async () => {
@@ -339,7 +558,7 @@ describe('consignmentActionCreator', () => {
                     });
             });
 
-            it('sends request to update consignment using stored state', async () => {
+            it('sends request to create consignment with provided data', async () => {
                 await Observable.from(thunkAction(store)).toPromise();
 
                 expect(consignmentRequestSender.createConsignments).toHaveBeenCalledWith(

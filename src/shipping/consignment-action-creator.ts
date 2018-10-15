@@ -1,5 +1,4 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { find, map } from 'lodash';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -7,7 +6,7 @@ import { AddressRequestBody } from '../address';
 import { Cart } from '../cart';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import CheckoutRequestSender from '../checkout/checkout-request-sender';
-import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
 import Consignment, {
@@ -35,10 +34,46 @@ export default class ConsignmentActionCreator {
         private _checkoutRequestSender: CheckoutRequestSender
     ) {}
 
+    unassignItemsByAddress(
+        consignment: ConsignmentAssignmentRequestBody,
+        options?: RequestOptions
+    ): ThunkAction<DeleteConsignmentAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
+        return store => {
+            const state = store.getState();
+            const checkout = state.checkout.getCheckout();
+
+            if (!checkout) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            }
+
+            const existingConsignment = state.consignments.getConsignmentByAddress(consignment.shippingAddress);
+
+            if (!existingConsignment) {
+                throw new InvalidArgumentError('No consignment found for the specified address');
+            }
+
+            const lineItems = this._removeLineItems(
+                consignment.lineItems,
+                existingConsignment,
+                state.cart.getCart()
+            );
+
+            if (!lineItems.length) {
+                return this.deleteConsignment(existingConsignment.id, options)(store);
+            }
+
+            return this.updateConsignment({
+                id: existingConsignment.id,
+                shippingAddress: consignment.shippingAddress,
+                lineItems,
+            }, options)(store);
+        };
+    }
+
     assignItemsByAddress(
         consignment: ConsignmentAssignmentRequestBody,
         options?: RequestOptions
-    ): ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
+    ): ThunkAction<UpdateConsignmentAction | CreateConsignmentsAction, InternalCheckoutSelectors> {
         return store => {
             const state = store.getState();
             const existingConsignment = state.consignments.getConsignmentByAddress(consignment.shippingAddress);
@@ -46,8 +81,8 @@ export default class ConsignmentActionCreator {
             return this._createOrUpdateConsignment({
                 id: existingConsignment && existingConsignment.id,
                 shippingAddress: consignment.shippingAddress,
-                lineItems: this._combineLineItems(
-                    consignment,
+                lineItems: this._addLineItems(
+                    consignment.lineItems,
                     existingConsignment,
                     state.cart.getCart()
                 ),
@@ -287,29 +322,52 @@ export default class ConsignmentActionCreator {
         };
     }
 
-    private _combineLineItems(
-        consignment: ConsignmentAssignmentRequestBody,
-        existingConsignment?: Consignment,
+    private _removeLineItems(
+        lineItems: ConsignmentLineItem[],
+        consignment: Consignment,
         cart?: Cart
     ): ConsignmentLineItem[] {
-        if (!existingConsignment) {
-            return consignment.lineItems;
+        if (!cart) {
+            throw new MissingDataError(MissingDataErrorType.MissingCart);
+        }
+
+        return this._hydrateLineItems(consignment.lineItemIds, cart).map(existingItem => {
+            const sharedItem = lineItems.find(lineItem => lineItem.itemId === existingItem.itemId);
+
+            return {
+                ...existingItem,
+                quantity: sharedItem ? (existingItem.quantity - sharedItem.quantity) : existingItem.quantity,
+            };
+        }).filter(lineItem => lineItem.quantity > 0);
+    }
+
+    private _addLineItems(
+        lineItems: ConsignmentLineItem[],
+        consignment?: Consignment,
+        cart?: Cart
+    ): ConsignmentLineItem[] {
+        if (!consignment) {
+            return lineItems;
         }
 
         if (!cart) {
             throw new MissingDataError(MissingDataErrorType.MissingCart);
         }
 
-        const existingLineItems = map(existingConsignment.lineItemIds, itemId => {
-            const item = find(cart.lineItems.physicalItems, { id: itemId });
+        return lineItems
+            .concat(this._hydrateLineItems(consignment.lineItemIds, cart))
+            .filter(lineItem => lineItem.quantity > 0);
+    }
+
+    private _hydrateLineItems(lineItemIds: string[], cart: Cart): ConsignmentLineItem[] {
+        return lineItemIds.map(itemId => {
+            const item = cart.lineItems.physicalItems.find(lineItem => lineItem.id === itemId );
 
             return {
                 itemId,
                 quantity: item ? item.quantity : 0,
             };
-        }) as ConsignmentLineItem[];
-
-        return existingLineItems.concat(consignment.lineItems);
+        });
     }
 
     private _isUpdateConsignmentRequest(
