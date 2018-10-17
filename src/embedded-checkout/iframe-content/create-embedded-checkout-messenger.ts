@@ -5,6 +5,8 @@ import IframeEventPoster from '../iframe-event-poster';
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
 import EmbeddedCheckoutMessengerOptions from './embedded-checkout-messenger-options';
 import { EmbeddedContentEventMap } from './embedded-content-events';
+import IframeEmbeddedCheckoutMessenger from './iframe-embedded-checkout-messenger';
+import NoopEmbeddedCheckoutMessenger from './noop-embedded-checkout-messenger';
 
 /**
  * Create an instance of `EmbeddedCheckoutMessenger`.
@@ -31,8 +33,15 @@ import { EmbeddedContentEventMap } from './embedded-content-events';
  * @returns - An instance of `EmbeddedCheckoutMessenger`
  */
 export default function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger {
-    return new EmbeddedCheckoutMessenger(
+    const parentWindow = options.parentWindow || window.parent;
+
+    // Return a No-op messenger if it is not called inside an iframe
+    if (window === parentWindow) {
+        return new NoopEmbeddedCheckoutMessenger();
+    }
+
+    return new IframeEmbeddedCheckoutMessenger(
         new IframeEventListener<EmbeddedContentEventMap>(options.parentOrigin),
-        new IframeEventPoster<EmbeddedCheckoutEvent>(options.parentOrigin, window.parent)
+        new IframeEventPoster<EmbeddedCheckoutEvent>(options.parentOrigin, parentWindow)
     );
 }

@@ -4,11 +4,11 @@ import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-ch
 import IframeEventListener from '../iframe-event-listener';
 import IframeEventPoster from '../iframe-event-poster';
 
-import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
 import { EmbeddedContentEventMap, EmbeddedContentEventType } from './embedded-content-events';
+import IframeEmbeddedCheckoutMessenger from './iframe-embedded-checkout-messenger';
 
 describe('EmbeddedCheckoutMessenger', () => {
-    let messenger: EmbeddedCheckoutMessenger;
+    let messenger: IframeEmbeddedCheckoutMessenger;
     let messageListener: IframeEventListener<EmbeddedContentEventMap>;
     let messagePoster: IframeEventPoster<EmbeddedCheckoutEvent>;
     let parentWindow: Window;
@@ -23,7 +23,7 @@ describe('EmbeddedCheckoutMessenger', () => {
         jest.spyOn(messagePoster, 'post');
         jest.spyOn(messageListener, 'addListener');
 
-        messenger = new EmbeddedCheckoutMessenger(messageListener, messagePoster);
+        messenger = new IframeEmbeddedCheckoutMessenger(messageListener, messagePoster);
     });
 
     it('posts `complete` event to parent window', () => {
