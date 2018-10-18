@@ -54,6 +54,7 @@ export default class MasterpassCustomerStrategy extends CustomerStrategy {
                     amount: cart.cartAmount.toString(),
                     currency: cart.currency.code,
                     cartId: cart.id,
+                    suppressShippingAddress: true,
                 };
 
                 return this._masterpassScriptLoader.load(this._paymentMethod.config.testMode)
