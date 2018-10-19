@@ -7,6 +7,7 @@ import {
     ChasePayInitializeOptions,
     GooglePayPaymentInitializeOptions,
     KlarnaPaymentInitializeOptions,
+    MasterpassPaymentInitializeOptions,
     SquarePaymentInitializeOptions,
 } from './strategies';
 
@@ -57,6 +58,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Klarna.
      */
     klarna?: KlarnaPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Masterpass payment method.
+     * They can be omitted unless you need to support Masterpass.
+     */
+    masterpass?: MasterpassPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Square payment method.

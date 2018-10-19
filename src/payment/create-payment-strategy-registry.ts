@@ -45,6 +45,7 @@ import {
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { GooglePayBraintreeInitializer, GooglePayPaymentProcessor, GooglePayScriptLoader } from './strategies/googlepay';
 import { KlarnaScriptLoader } from './strategies/klarna';
+import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { PaypalScriptLoader } from './strategies/paypal';
 import { SquareScriptLoader } from './strategies/square';
 import { WepayRiskClient } from './strategies/wepay';
@@ -280,6 +281,16 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             new WepayRiskClient(scriptLoader)
+        )
+    );
+
+    registry.register('masterpass', () =>
+        new MasterpassPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            new MasterpassScriptLoader(scriptLoader)
         )
     );
 

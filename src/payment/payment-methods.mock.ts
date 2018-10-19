@@ -194,6 +194,31 @@ export function getAmazonPay(): PaymentMethod {
     };
 }
 
+export function getStripe(): PaymentMethod {
+    return {
+        id: 'stripe',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+            'DISCOVER',
+            'JCB',
+            'DINERS',
+        ],
+        config: {
+            displayName: 'Credit Card',
+            cardCode: true,
+            enablePaypal: true,
+            merchantId: '',
+            testMode: true,
+            isVisaCheckoutEnabled: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getSquare(): PaymentMethod {
     return {
         id: 'square',
@@ -259,10 +284,6 @@ export function getMasterpass(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
-        initializationData: {
-            checkoutId: 'checkoutId',
-            allowedCardTypes: ['visa', 'amex', 'mastercard'],
-        },
     };
 }
 
