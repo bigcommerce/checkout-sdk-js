@@ -94,7 +94,10 @@ export default class PaymentStrategyActionCreator {
                 const state = store.getState();
                 const payment = state.payment.getPaymentId();
 
-                return throwErrorAction(PaymentStrategyActionType.FinalizeFailed, error, { methodId: payment && payment.providerId });
+                return concat(
+                    this._loadOrderPaymentsIfNeeded(store, options),
+                    throwErrorAction(PaymentStrategyActionType.FinalizeFailed, error, { methodId: payment && payment.providerId })
+                );
             })
         );
     }

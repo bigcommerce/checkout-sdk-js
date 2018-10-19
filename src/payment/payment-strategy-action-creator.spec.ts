@@ -374,7 +374,7 @@ describe('PaymentStrategyActionCreator', () => {
             ]);
         });
 
-        it('emits error action if unable to finalize', async () => {
+        it('emits error action and reloads payment data if unable to finalize', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const finalizeError = new Error();
@@ -391,6 +391,7 @@ describe('PaymentStrategyActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: PaymentStrategyActionType.FinalizeRequested },
+                { type: OrderActionType.LoadOrderPaymentsRequested },
                 { type: OrderActionType.LoadOrderPaymentsRequested },
                 { type: PaymentStrategyActionType.FinalizeFailed, error: true, payload: finalizeError, meta: { methodId: method.id } },
             ]);
