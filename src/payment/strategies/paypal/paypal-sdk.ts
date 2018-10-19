@@ -1,6 +1,12 @@
 export interface PaypalSDK {
     Button: PaypalButton;
     checkout: PaypalExpressCheckout;
+    FUNDING: PaypalFundingTypeList;
+}
+
+export interface PaypalFundingTypeList {
+    CARD: string;
+    CREDIT: string;
 }
 
 export interface PaypalButton {
@@ -11,8 +17,14 @@ export interface PaypalButtonOptions {
     env?: string;
     commit?: boolean;
     style?: PaypalButtonStyleOptions;
+    funding?: PaypalFundingType;
     payment(): Promise<any>;
     onAuthorize(data: PaypalAuthorizeData): Promise<any>;
+}
+
+export interface PaypalFundingType {
+    allowed?: string[];
+    disallowed?: string[];
 }
 
 export interface PaypalButtonStyleOptions {

@@ -48,9 +48,22 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
             .then(([paypalCheckout, paypal]) => {
                 this._paypalCheckout = paypalCheckout;
 
+                const allowedSources = [];
+                const disallowedSources = [];
+
+                if (paypalOptions.allowCredit) {
+                    allowedSources.push(paypal.FUNDING.CREDIT);
+                } else {
+                    disallowedSources.push(paypal.FUNDING.CREDIT);
+                }
+
                 return paypal.Button.render({
                     env: paymentMethod.config.testMode ? 'sandbox' : 'production',
                     commit: paypalOptions.shouldProcessPayment ? true : false,
+                    funding: {
+                        allowed: allowedSources,
+                        disallowed: disallowedSources,
+                    },
                     style: {
                         shape: 'rect',
                         label: this._offerCredit ? 'credit' : undefined,
