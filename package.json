@@ -44,7 +44,7 @@
     "validate-commits": "validate-commits"
   },
   "dependencies": {
-    "@bigcommerce/bigpay-client": "^3.2.2",
+    "@bigcommerce/bigpay-client": "^3.2.3",
     "@bigcommerce/data-store": "^0.2.2",
     "@bigcommerce/form-poster": "^1.2.3",
     "@bigcommerce/request-sender": "^0.2.0",
