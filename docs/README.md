@@ -8,7 +8,9 @@
 * [createCheckoutButtonInitializer](#createcheckoutbuttoninitializer)
 * [createCheckoutService](#createcheckoutservice)
 * [createCurrencyService](#createcurrencyservice)
+* [createEmbeddedCheckoutMessenger](#createembeddedcheckoutmessenger)
 * [createLanguageService](#createlanguageservice)
+* [embedCheckout](#embedcheckout)
 
 ---
 
@@ -122,6 +124,39 @@ Please note that `CurrencyService` is currently in an early stage of development
 an instance of `CurrencyService`.
 
 ___
+<a id="createembeddedcheckoutmessenger"></a>
+
+###  createEmbeddedCheckoutMessenger
+
+▸ **createEmbeddedCheckoutMessenger**(options: *[EmbeddedCheckoutMessengerOptions](interfaces/embeddedcheckoutmessengeroptions.md)*): [EmbeddedCheckoutMessenger](interfaces/embeddedcheckoutmessenger.md)
+
+Create an instance of `EmbeddedCheckoutMessenger`.
+
+The object is responsible for posting messages to the parent window from the iframe when certain events have occurred. For example, when the checkout form is first loaded, you should notify the parent window about it.
+
+The iframe can only be embedded in domains that are allowed by the store.
+
+```ts
+const messenger = createEmbeddedCheckoutMessenger({
+    parentOrigin: 'https://some/website',
+});
+
+messenger.postFrameLoaded();
+```
+
+Please note that this feature is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
+*__alpha__*: 
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| options | [EmbeddedCheckoutMessengerOptions](interfaces/embeddedcheckoutmessengeroptions.md) |  Options for creating \`EmbeddedCheckoutMessenger\` |
+
+**Returns:** [EmbeddedCheckoutMessenger](interfaces/embeddedcheckoutmessenger.md)
+- An instance of `EmbeddedCheckoutMessenger`
+
+___
 <a id="createlanguageservice"></a>
 
 ###  createLanguageService
@@ -145,6 +180,36 @@ console.log(service.translate('address.city_label'));
 
 **Returns:** [LanguageService](classes/languageservice.md)
 An instance of `LanguageService`.
+
+___
+<a id="embedcheckout"></a>
+
+###  embedCheckout
+
+▸ **embedCheckout**(options: *[EmbeddedCheckoutOptions](interfaces/embeddedcheckoutoptions.md)*): `Promise`<[EmbeddedCheckout](classes/embeddedcheckout.md)>
+
+Embed the checkout form in an iframe.
+
+Once the iframe is embedded, it will automatically resize according to the size of the checkout form. It will also notify the parent window when certain events have occurred. i.e.: when the form is loaded and ready to be used.
+
+```js
+embedCheckout({
+    url: 'https://checkout/url',
+    containerId: 'container-id',
+});
+```
+
+Please note that this feature is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
+*__alpha__*: 
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| options | [EmbeddedCheckoutOptions](interfaces/embeddedcheckoutoptions.md) |  Options for embedding the checkout form. |
+
+**Returns:** `Promise`<[EmbeddedCheckout](classes/embeddedcheckout.md)>
+A promise that resolves to an instance of `EmbeddedCheckout`.
 
 ___
 

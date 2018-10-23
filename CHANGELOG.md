@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.0"></a>
+# [1.9.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.8.0...v1.9.0) (2018-10-23)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-1739 Fix mocks linting issues ([990a2c6](https://github.com/bigcommerce/checkout-sdk-js/commit/990a2c6))
+
+
+### Features
+
+* **cart:** CHECKOUT-1739 Add custom items types to cart type ([7821329](https://github.com/bigcommerce/checkout-sdk-js/commit/7821329))
+* **embedded-checkout:** CHECKOUT-3475 Add ability to embed checkout form as iframe ([#441](https://github.com/bigcommerce/checkout-sdk-js/issues/441)) ([0215fe9](https://github.com/bigcommerce/checkout-sdk-js/commit/0215fe9))
+
+
+
 <a name="1.8.0"></a>
 # [1.8.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.7.0...v1.8.0) (2018-10-19)
 
