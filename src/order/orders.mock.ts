@@ -35,6 +35,7 @@ export function getOrder(): Order {
             giftCertificates: [
                 getGiftCertificateItem(),
             ],
+            customItems: [],
         },
          taxes: [
             {
