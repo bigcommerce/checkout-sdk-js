@@ -18,7 +18,7 @@ import ResizableIframeCreator from './resizable-iframe-creator';
  * ```js
  * embedCheckout({
  *     url: 'https://checkout/url',
- *     container: 'container-id',
+ *     containerId: 'container-id',
  * });
  * ```
  *
