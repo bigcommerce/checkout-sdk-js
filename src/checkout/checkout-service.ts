@@ -831,6 +831,26 @@ export default class CheckoutService {
     }
 
     /**
+     * Convenience method that unassigns items from a specific shipping address.
+     *
+     * Note: this method finds an existing consignment that matches the provided address
+     * and unassigns the specified items. If the consignment ends up with no line items
+     * after the unassignment, it will be deleted.
+     *
+     * @param consignment - The consignment data that will be used.
+     * @param options - Options for the request
+     * @returns A promise that resolves to the current state.
+     */
+    unassignItemsToAddress(
+        consignment: ConsignmentAssignmentRequestBody,
+        options?: RequestOptions
+    ): Promise<CheckoutSelectors> {
+        const action = this._consignmentActionCreator.unassignItemsByAddress(consignment, options);
+
+        return this._dispatch(action, { queueId: 'shippingStrategy' });
+    }
+
+    /**
      * Selects a shipping option for a given consignment.
      *
      * Note: this is used when items need to be shipped to multiple addresses,

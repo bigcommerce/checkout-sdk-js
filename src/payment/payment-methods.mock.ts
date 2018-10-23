@@ -194,6 +194,31 @@ export function getAmazonPay(): PaymentMethod {
     };
 }
 
+export function getStripe(): PaymentMethod {
+    return {
+        id: 'stripe',
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+            'DISCOVER',
+            'JCB',
+            'DINERS',
+        ],
+        config: {
+            displayName: 'Credit Card',
+            cardCode: true,
+            enablePaypal: true,
+            merchantId: '',
+            testMode: true,
+            isVisaCheckoutEnabled: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getSquare(): PaymentMethod {
     return {
         id: 'square',
@@ -259,10 +284,6 @@ export function getMasterpass(): PaymentMethod {
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
-        initializationData: {
-            checkoutId: 'checkoutId',
-            allowedCardTypes: ['visa', 'amex', 'mastercard'],
-        },
     };
 }
 
@@ -290,6 +311,33 @@ export function getWepay(): PaymentMethod {
     };
 }
 
+export function getGooglePay(): PaymentMethod {
+    return {
+        id: 'googlepay',
+        logoUrl: '',
+        method: 'googlepay',
+        supportedCards: [
+            'VISA',
+            'MC',
+            'AMEX',
+        ],
+        config: {
+            displayName: 'Google Pay',
+            merchantId: '',
+            testMode: true,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+        initializationData: {
+            nonce: 'nonce',
+            card_information: {
+                type: 'MasterCard',
+                number: '4111',
+            },
+        },
+    };
+}
+
 export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
@@ -307,6 +355,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getAmazonPay(),
         getKlarna(),
         getSquare(),
+        getGooglePay(),
     ];
 }
 

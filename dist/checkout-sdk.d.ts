@@ -1082,6 +1082,18 @@ declare class CheckoutService {
      */
     assignItemsToAddress(consignment: ConsignmentAssignmentRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
+     * Convenience method that unassigns items from a specific shipping address.
+     *
+     * Note: this method finds an existing consignment that matches the provided address
+     * and unassigns the specified items. If the consignment ends up with no line items
+     * after the unassignment, it will be deleted.
+     *
+     * @param consignment - The consignment data that will be used.
+     * @param options - Options for the request
+     * @returns A promise that resolves to the current state.
+     */
+    unassignItemsToAddress(consignment: ConsignmentAssignmentRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
      * Selects a shipping option for a given consignment.
      *
      * Note: this is used when items need to be shipped to multiple addresses,
@@ -2258,6 +2270,33 @@ declare interface GiftCertificateOrderPayment extends OrderPayment {
     };
 }
 
+/**
+ * A set of options that are required to initialize the GooglePay payment method
+ *
+ * If the customer chooses to pay with GooglePay, they will be asked to
+ * enter their payment details via a modal. You can hook into events emitted by
+ * the modal by providing the callbacks listed below.
+ */
+declare interface GooglePayPaymentInitializeOptions {
+    /**
+     * This walletButton is used to set an event listener, provide an element ID if you want
+     * users to be able to launch the GooglePay wallet modal by clicking on a button.
+     * It should be an HTML element.
+     */
+    walletButton?: string;
+    /**
+     * A callback that gets called when GooglePay fails to initialize or
+     * selects a payment option.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onError?(error: Error): void;
+    /**
+     * A callback that gets called when the customer selects a payment option.
+     */
+    onPaymentSelect?(): void;
+}
+
 declare interface GuestCredentials {
     id?: string;
     email: string;
@@ -2379,6 +2418,7 @@ declare interface LineItem {
     name: string;
     url: string;
     quantity: number;
+    brand: string;
     isTaxable: boolean;
     imageUrl: string;
     discounts: Array<{
@@ -2425,6 +2465,15 @@ declare interface MasterpassCustomerInitializeOptions {
      * The ID of a container which the checkout button should be inserted into.
      */
     container: string;
+}
+
+declare interface MasterpassPaymentInitializeOptions {
+    /**
+     * This walletButton is used to set an event listener, provide an element ID if you want
+     * users to be able to launch the ChasePay wallet modal by clicking on a button.
+     * It should be an HTML element.
+     */
+    walletButton?: string;
 }
 
 declare interface NonceGenerationError {
@@ -2541,6 +2590,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      */
     klarna?: KlarnaPaymentInitializeOptions;
     /**
+     * The options that are required to initialize the Masterpass payment method.
+     * They can be omitted unless you need to support Masterpass.
+     */
+    masterpass?: MasterpassPaymentInitializeOptions;
+    /**
      * The options that are required to initialize the Square payment method.
      * They can be omitted unless you need to support Square.
      */
@@ -2550,6 +2604,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Chasepay.
      */
     chasepay?: ChasePayInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepay?: GooglePayPaymentInitializeOptions;
 }
 
 declare interface PaymentMethod {

@@ -22,7 +22,9 @@ A set of options that are required to initialize the payment step of the current
 * [braintreevisacheckout](paymentinitializeoptions.md#braintreevisacheckout)
 * [chasepay](paymentinitializeoptions.md#chasepay)
 * [gatewayId](paymentinitializeoptions.md#gatewayid)
+* [googlepay](paymentinitializeoptions.md#googlepay)
 * [klarna](paymentinitializeoptions.md#klarna)
+* [masterpass](paymentinitializeoptions.md#masterpass)
 * [methodId](paymentinitializeoptions.md#methodid)
 * [params](paymentinitializeoptions.md#params)
 * [square](paymentinitializeoptions.md#square)
@@ -78,6 +80,15 @@ ___
 The identifier of the payment provider providing the payment method. This option is only required if the provider offers multiple payment options. i.e.: Adyen and Klarna.
 
 ___
+<a id="googlepay"></a>
+
+### `<Optional>` googlepay
+
+**● googlepay**: *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay payment method. They can be omitted unless you need to support GooglePay.
+
+___
 <a id="klarna"></a>
 
 ### `<Optional>` klarna
@@ -85,6 +96,15 @@ ___
 **● klarna**: *[KlarnaPaymentInitializeOptions](klarnapaymentinitializeoptions.md)*
 
 The options that are required to initialize the Klarna payment method. They can be omitted unless you need to support Klarna.
+
+___
+<a id="masterpass"></a>
+
+### `<Optional>` masterpass
+
+**● masterpass**: *[MasterpassPaymentInitializeOptions](masterpasspaymentinitializeoptions.md)*
+
+The options that are required to initialize the Masterpass payment method. They can be omitted unless you need to support Masterpass.
 
 ___
 <a id="methodid"></a>

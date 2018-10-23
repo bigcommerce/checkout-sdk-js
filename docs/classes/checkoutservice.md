@@ -47,6 +47,7 @@ This object can be used to collect all information that is required for checkout
 * [signOutCustomer](checkoutservice.md#signoutcustomer)
 * [submitOrder](checkoutservice.md#submitorder)
 * [subscribe](checkoutservice.md#subscribe)
+* [unassignItemsToAddress](checkoutservice.md#unassignitemstoaddress)
 * [updateBillingAddress](checkoutservice.md#updatebillingaddress)
 * [updateCheckout](checkoutservice.md#updatecheckout)
 * [updateConsignment](checkoutservice.md#updateconsignment)
@@ -946,6 +947,27 @@ service.subscribe(state => {
 
 **Returns:** `function`
 A function, if called, will unsubscribe the subscriber.
+
+___
+<a id="unassignitemstoaddress"></a>
+
+###  unassignItemsToAddress
+
+▸ **unassignItemsToAddress**(consignment: *[ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Convenience method that unassigns items from a specific shipping address.
+
+Note: this method finds an existing consignment that matches the provided address and unassigns the specified items. If the consignment ends up with no line items after the unassignment, it will be deleted.
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| consignment | [ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md) |  The consignment data that will be used. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for the request |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
 
 ___
 <a id="updatebillingaddress"></a>

@@ -13,6 +13,15 @@ export interface DigitalItem extends LineItem {
     downloadSize: string;
 }
 
+export interface CustomItem {
+    id: string;
+    listPrice: number;
+    extendedListPrice: number;
+    name: string;
+    quantity: number;
+    sku: string;
+}
+
 export interface GiftCertificateItem {
     id: string | number;
     name: string;

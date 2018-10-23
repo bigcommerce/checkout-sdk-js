@@ -21,6 +21,7 @@ import {
     BraintreePaypalPaymentStrategy,
     BraintreeVisaCheckoutPaymentStrategy,
     CreditCardPaymentStrategy,
+    GooglePayPaymentStrategy,
     KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
     NoPaymentDataRequiredPaymentStrategy,
@@ -34,9 +35,17 @@ import {
 } from './strategies';
 import { AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayScriptLoader } from './strategies/amazon-pay';
-import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from './strategies/braintree';
+import {
+    createBraintreePaymentProcessor,
+    createBraintreeVisaCheckoutPaymentProcessor,
+    BraintreeScriptLoader,
+    BraintreeSDKCreator,
+    VisaCheckoutScriptLoader
+} from './strategies/braintree';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
+import { GooglePayBraintreeInitializer, GooglePayPaymentProcessor, GooglePayScriptLoader } from './strategies/googlepay';
 import { KlarnaScriptLoader } from './strategies/klarna';
+import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { PaypalScriptLoader } from './strategies/paypal';
 import { SquareScriptLoader } from './strategies/square';
 import { WepayRiskClient } from './strategies/wepay';
@@ -49,6 +58,9 @@ export default function createPaymentStrategyRegistry(
     const registry = new PaymentStrategyRegistry(store, { defaultToken: 'creditcard' });
     const scriptLoader = getScriptLoader();
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
+    const braintreeScriptLoader = new BraintreeScriptLoader(scriptLoader);
+    const braintreeSdkCreator = new BraintreeSDKCreator(braintreeScriptLoader);
+
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const orderActionCreator = new OrderActionCreator(
@@ -244,12 +256,41 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
+    registry.register('googlepaybraintree', () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            new GooglePayPaymentProcessor(
+                store,
+                paymentMethodActionCreator,
+                new GooglePayScriptLoader(scriptLoader),
+                new GooglePayBraintreeInitializer(braintreeSdkCreator),
+                requestSender,
+                new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender))
+            )
+        )
+    );
+
     registry.register('wepay', () =>
         new WepayPaymentStrategy(
             store,
             orderActionCreator,
             paymentActionCreator,
             new WepayRiskClient(scriptLoader)
+        )
+    );
+
+    registry.register('masterpass', () =>
+        new MasterpassPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            new MasterpassScriptLoader(scriptLoader)
         )
     );
 

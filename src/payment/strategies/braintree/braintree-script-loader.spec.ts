@@ -1,10 +1,21 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { BraintreeClientCreator, BraintreeDataCollector, BraintreeHostWindow, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout } from './braintree';
+import { StandardError } from '../../../common/error/errors';
+
+import {
+    BraintreeClientCreator,
+    BraintreeDataCollector,
+    BraintreeHostWindow,
+    BraintreeModuleCreator,
+    BraintreeThreeDSecure,
+    BraintreeVisaCheckout,
+    GooglePayBraintreeSDK,
+} from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import {
     getClientMock,
     getDataCollectorMock,
+    getGooglePayMock,
     getModuleCreatorMock,
     getThreeDSecureMock,
     getVisaCheckoutMock,
@@ -37,7 +48,7 @@ describe('BraintreeScriptLoader', () => {
 
         it('loads the client', async () => {
             await braintreeScriptLoader.loadClient();
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.15.0/js/client.min.js');
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.37.0/js/client.min.js');
         });
 
         it('returns the client from the window', async () => {
@@ -62,7 +73,7 @@ describe('BraintreeScriptLoader', () => {
 
         it('loads the ThreeDSecure library', async () => {
             await braintreeScriptLoader.load3DS();
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.15.0/js/three-d-secure.min.js');
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.37.0/js/three-d-secure.min.js');
         });
 
         it('returns the ThreeDSecure from the window', async () => {
@@ -87,7 +98,7 @@ describe('BraintreeScriptLoader', () => {
 
         it('loads the data collector library', async () => {
             await braintreeScriptLoader.loadDataCollector();
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.15.0/js/data-collector.min.js');
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.37.0/js/data-collector.min.js');
         });
 
         it('returns the data collector from the window', async () => {
@@ -112,7 +123,7 @@ describe('BraintreeScriptLoader', () => {
 
         it('loads the VisaCheckout library', async () => {
             await braintreeScriptLoader.loadVisaCheckout();
-            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.15.0/js/visa-checkout.min.js');
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.37.0/js/visa-checkout.min.js');
         });
 
         it('returns the VisaCheckout from the window', async () => {
@@ -121,4 +132,45 @@ describe('BraintreeScriptLoader', () => {
         });
     });
 
+    describe('#loadGooglePay()', () => {
+        let googlePayMock: BraintreeModuleCreator<GooglePayBraintreeSDK>;
+
+        beforeEach(() => {
+            googlePayMock = getModuleCreatorMock(getGooglePayMock());
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.googlePayment = googlePayMock;
+                }
+
+                return Promise.resolve();
+            });
+        });
+
+        it('loads the GooglePay library', async () => {
+            await braintreeScriptLoader.loadGooglePayment();
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith('//js.braintreegateway.com/web/3.37.0/js/google-payment.min.js');
+        });
+
+        it('returns the GooglePay from the window', async () => {
+            const googlePay = await braintreeScriptLoader.loadGooglePayment();
+            expect(googlePay).toBe(googlePayMock);
+        });
+
+        it('throws when window is not set', async () => {
+            scriptLoader.loadScript = jest.fn(() => {
+                if (mockWindow.braintree) {
+                    mockWindow.braintree.googlePayment = undefined;
+                    mockWindow.braintree = undefined;
+                }
+
+                return Promise.resolve();
+            });
+
+            try {
+                await braintreeScriptLoader.loadGooglePayment();
+            } catch (error) {
+                expect(error).toBeInstanceOf(StandardError);
+            }
+        });
+    });
 });

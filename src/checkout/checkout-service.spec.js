@@ -774,6 +774,35 @@ describe('CheckoutService', () => {
         });
     });
 
+    describe('#unassignItemsToAddress()', () => {
+        it('dispatches action to update consignment', async () => {
+            const address = getShippingAddress();
+            const options = { timeout: createTimeout() };
+            const action = Observable.of(createAction('bar'));
+
+            jest.spyOn(consignmentActionCreator, 'unassignItemsByAddress')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+
+            const payload = {
+                shippingAddress: address,
+                lineItems: [{
+                    itemId: 'item-foo',
+                    quantity: 2,
+                }],
+            };
+
+            await checkoutService.unassignItemsToAddress(payload, options);
+
+            expect(consignmentActionCreator.unassignItemsByAddress)
+                .toHaveBeenCalledWith(payload, options);
+
+            expect(store.dispatch)
+                .toHaveBeenCalledWith(action, { queueId: 'shippingStrategy' });
+        });
+    });
+
     describe('#createConsignments()', () => {
         it('dispatches action to create consignments', async () => {
             const consignments = [getConsignment()];

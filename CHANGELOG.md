@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.8.0"></a>
+# [1.8.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.7.0...v1.8.0) (2018-10-19)
+
+
+### Features
+
+* **cart:** CP-4013 Add `brand` property to `LineItem` interface ([#409](https://github.com/bigcommerce/checkout-sdk-js/issues/409)) ([fd43113](https://github.com/bigcommerce/checkout-sdk-js/commit/fd43113))
+* **payment:** INT-774 Add stripe strategy ([b7af881](https://github.com/bigcommerce/checkout-sdk-js/commit/b7af881))
+* **payment:** INT-835 Add Google Pay + Braintree support ([201f0ae](https://github.com/bigcommerce/checkout-sdk-js/commit/201f0ae))
+* **shipping:** CHECKOUT-3589 Allow unassigning items from consignments ([445d5af](https://github.com/bigcommerce/checkout-sdk-js/commit/445d5af))
+
+
+
 <a name="1.7.0"></a>
 # [1.7.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.6.1...v1.7.0) (2018-09-28)
 

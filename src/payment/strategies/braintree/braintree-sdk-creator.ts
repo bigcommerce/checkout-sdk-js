@@ -8,6 +8,7 @@ import {
     BraintreePaypalCheckout,
     BraintreeThreeDSecure,
     BraintreeVisaCheckout,
+    GooglePayBraintreeSDK,
 } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
@@ -22,6 +23,7 @@ export default class BraintreeSDKCreator {
         default?: Promise<BraintreeDataCollector>,
         paypal?: Promise<BraintreeDataCollector>,
     } = {};
+    private _googlePay?: Promise<GooglePayBraintreeSDK>;
 
     constructor(
         private _braintreeScriptLoader: BraintreeScriptLoader
@@ -116,16 +118,30 @@ export default class BraintreeSDKCreator {
         return this._visaCheckout;
     }
 
+    getGooglePaymentComponent(): Promise<GooglePayBraintreeSDK> {
+        if (!this._googlePay) {
+            this._googlePay = Promise.all ([
+                this.getClient(),
+                this._braintreeScriptLoader.loadGooglePayment(),
+            ])
+                .then(([client, googlePay]) => googlePay.create({ client }));
+        }
+
+        return this._googlePay;
+    }
+
     teardown(): Promise<void> {
         return Promise.all([
             this._teardown(this._3ds),
             this._teardown(this._dataCollectors.default),
             this._teardown(this._dataCollectors.paypal),
             this._teardown(this._visaCheckout),
+            this._teardown(this._googlePay),
         ]).then(() => {
             this._3ds = undefined;
             this._visaCheckout = undefined;
             this._dataCollectors = {};
+            this._googlePay = undefined;
         });
     }
 

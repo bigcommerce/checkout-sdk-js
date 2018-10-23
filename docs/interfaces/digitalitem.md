@@ -13,6 +13,7 @@
 ### Properties
 
 * [addedByPromotion](digitalitem.md#addedbypromotion)
+* [brand](digitalitem.md#brand)
 * [couponAmount](digitalitem.md#couponamount)
 * [discountAmount](digitalitem.md#discountamount)
 * [discounts](digitalitem.md#discounts)
@@ -44,6 +45,13 @@
 ###  addedByPromotion
 
 **● addedByPromotion**: *`boolean`*
+
+___
+<a id="brand"></a>
+
+###  brand
+
+**● brand**: *`string`*
 
 ___
 <a id="couponamount"></a>
