@@ -1,4 +1,4 @@
-import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from '../';
+import { CheckoutButtonInitializeOptions } from '../';
 import { CheckoutActionCreator, CheckoutStore } from '../../checkout';
 import {
     InvalidArgumentError,
@@ -10,7 +10,7 @@ import {
 import { bindDecorator as bind } from '../../common/utility';
 import { Masterpass, MasterpassCheckoutOptions, MasterpassScriptLoader } from '../../payment/strategies/masterpass';
 
-import { CheckoutButtonStrategy } from './';
+import CheckoutButtonStrategy from './checkout-button-strategy';
 
 export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
     private _masterpassClient?: Masterpass;
@@ -26,13 +26,13 @@ export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
     }
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        const { masterpass: masterpassOptions, methodId } = options;
+        const { containerId, methodId } = options;
 
-        if (!masterpassOptions || !methodId) {
-            throw new InvalidArgumentError('Unable to proceed because "options.masterpass" argument is not provided.');
+        if (!containerId || !methodId) {
+            throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
         }
 
-        if (this._isInitialized) {
+        if (this._isInitialized[containerId]) {
             return super.initialize(options);
         }
 
@@ -50,7 +50,7 @@ export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
             })
             .then(masterpass => {
                 this._masterpassClient = masterpass;
-                this._signInButton = this._createSignInButton(masterpassOptions.container);
+                this._signInButton = this._createSignInButton(containerId);
 
                 return super.initialize(options);
             });

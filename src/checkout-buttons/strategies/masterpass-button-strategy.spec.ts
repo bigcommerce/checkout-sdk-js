@@ -19,9 +19,11 @@ import { Masterpass, MasterpassScriptLoader } from '../../payment/strategies/mas
 import { getMasterpassScriptMock } from '../../payment/strategies/masterpass/masterpass.mock';
 
 import { CheckoutButtonStrategy, MasterpassButtonStrategy } from './';
+import { CheckoutButtonMethodType } from './checkout-button-method-type';
 
 describe('MasterpassCustomerStrategy', () => {
     let container: HTMLDivElement;
+    let containerFoo: HTMLDivElement;
     let masterpass: Masterpass;
     let masterpassScriptLoader: MasterpassScriptLoader;
     let checkoutActionCreator: CheckoutActionCreator;
@@ -78,12 +80,16 @@ describe('MasterpassCustomerStrategy', () => {
         );
 
         container = document.createElement('div');
+        containerFoo = document.createElement('div');
         container.setAttribute('id', 'login');
+        containerFoo.setAttribute('id', 'foo');
         document.body.appendChild(container);
+        document.body.appendChild(containerFoo);
     });
 
     afterEach(() => {
         document.body.removeChild(container);
+        document.body.removeChild(containerFoo);
     });
 
     it('creates an instance of MasterpassCustomerStrategy', () => {
@@ -92,8 +98,10 @@ describe('MasterpassCustomerStrategy', () => {
 
     describe('#initialize()', () => {
         let masterpassOptions: CheckoutButtonInitializeOptions;
+        const methodId = CheckoutButtonMethodType.MASTERPASS;
+
         beforeEach(() => {
-            masterpassOptions = { methodId: 'masterpass', masterpass: { container: 'login' } };
+            masterpassOptions = { methodId, containerId: 'login' };
         });
 
         it('loads masterpass script in test mode if enabled', async () => {
@@ -112,8 +120,24 @@ describe('MasterpassCustomerStrategy', () => {
             expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false);
         });
 
-        it('fails to initialize the strategy if no methodid is supplied', async () => {
-            masterpassOptions = { methodId: '', masterpass: { container: 'login' } };
+        it('loads masterpass once if the same container is passed', async () => {
+            await strategy.initialize(masterpassOptions);
+            await strategy.initialize(masterpassOptions);
+
+            expect(masterpassScriptLoader.load).toHaveBeenCalledTimes(1);
+        });
+
+        it('loads masterpass twice if different container is passed', async () => {
+            await strategy.initialize(masterpassOptions);
+            await strategy.initialize({ ...masterpassOptions, containerId: 'foo' });
+            await strategy.initialize(masterpassOptions);
+            await strategy.initialize({ ...masterpassOptions, containerId: 'foo' });
+
+            expect(masterpassScriptLoader.load).toHaveBeenCalledTimes(2);
+        });
+
+        it('fails to initialize the strategy if no container is supplied', async () => {
+            masterpassOptions = { methodId, containerId: '' };
             try {
                 await strategy.initialize(masterpassOptions);
             } catch (e) {
@@ -164,14 +188,13 @@ describe('MasterpassCustomerStrategy', () => {
         it('proceeds to checkout if masterpass button is clicked', async () => {
             jest.spyOn(masterpass, 'checkout');
             await strategy.initialize(masterpassOptions);
-            if (masterpassOptions.masterpass) {
-                const masterpassButton = document.getElementById(masterpassOptions.masterpass.container);
-                if (masterpassButton) {
-                    const btn = masterpassButton.firstChild as HTMLElement;
-                    if (btn) {
-                        btn.click();
-                        expect(masterpass.checkout).toHaveBeenCalled();
-                    }
+
+            const masterpassButton = document.getElementById(masterpassOptions.containerId);
+            if (masterpassButton) {
+                const btn = masterpassButton.firstChild as HTMLElement;
+                if (btn) {
+                    btn.click();
+                    expect(masterpass.checkout).toHaveBeenCalled();
                 }
             }
         });
@@ -179,21 +202,22 @@ describe('MasterpassCustomerStrategy', () => {
 
     describe('#deinitialize()', () => {
         let masterpassOptions: CheckoutButtonInitializeOptions;
+        const methodId = CheckoutButtonMethodType.MASTERPASS;
 
         beforeEach(() => {
-            masterpassOptions = { methodId: 'masterpass', masterpass: { container: 'login' } };
+            masterpassOptions = { methodId, containerId: 'login' };
         });
 
         it('succesfully deinitializes the strategy', async () => {
             jest.spyOn(masterpass, 'checkout');
             await strategy.initialize(masterpassOptions);
-            strategy.deinitialize({ methodId: 'masterpass' });
-            if (masterpassOptions.masterpass) {
-                const masterpassButton = document.getElementById(masterpassOptions.masterpass.container);
-                if (masterpassButton) {
-                    expect(masterpassButton.firstChild).toBe(null);
-                }
+            strategy.deinitialize();
+
+            const masterpassButton = document.getElementById(masterpassOptions.containerId);
+            if (masterpassButton) {
+                expect(masterpassButton.firstChild).toBe(null);
             }
+
             // Prevent "After Each" failure
             container = document.createElement('div');
             document.body.appendChild(container);
