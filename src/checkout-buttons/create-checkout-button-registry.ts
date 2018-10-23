@@ -9,11 +9,7 @@ import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategie
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
-<<<<<<< HEAD
-import { BraintreePaypalButtonStrategy, CheckoutButtonStrategy, MasterpassButtonStrategy } from './strategies';
-=======
-import { BraintreePaypalButtonStrategy, CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
->>>>>>> fix(checkout-button): CHECKOUT-3584 Allow rendering checkout buttons more than once
+import { BraintreePaypalButtonStrategy, CheckoutButtonMethodType, CheckoutButtonStrategy, MasterpassButtonStrategy } from './strategies';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -47,7 +43,7 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    registry.register('masterpass', () =>
+    registry.register(CheckoutButtonMethodType.MASTERPASS, () =>
         new MasterpassButtonStrategy(
             store,
             checkoutActionCreator,
