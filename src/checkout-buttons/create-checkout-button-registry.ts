@@ -8,20 +8,20 @@ import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
-import { BraintreePaypalButtonStrategy, CheckoutButtonStrategy } from './strategies';
+import { BraintreePaypalButtonStrategy, CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
     requestSender: RequestSender
-): Registry<CheckoutButtonStrategy> {
-    const registry = new Registry<CheckoutButtonStrategy>();
+): Registry<CheckoutButtonStrategy, CheckoutButtonMethodType> {
+    const registry = new Registry<CheckoutButtonStrategy, CheckoutButtonMethodType>();
     const scriptLoader = getScriptLoader();
     const checkoutActionCreator = new CheckoutActionCreator(
         new CheckoutRequestSender(requestSender),
         new ConfigActionCreator(new ConfigRequestSender(requestSender))
     );
 
-    registry.register('braintreepaypal', () =>
+    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
         new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,
@@ -31,7 +31,7 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    registry.register('braintreepaypalcredit', () =>
+    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, () =>
         new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,

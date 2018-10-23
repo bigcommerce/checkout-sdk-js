@@ -1,6 +1,6 @@
 import { InvalidArgumentError } from '../error/errors';
 
-export default class Registry<T> {
+export default class Registry<T, K extends string = string> {
     private _factories: { [key: string]: Factory<T> };
     private _instances: { [key: string]: T };
     private _options: RegistryOptions;
@@ -11,32 +11,38 @@ export default class Registry<T> {
         this._options = { defaultToken: 'default', ...options };
     }
 
-    get(token: string = this._options.defaultToken, cacheToken: string = token): T {
+    get(token?: K, cacheToken?: K): T {
         try {
-            return this._getInstance(token, cacheToken);
+            return this._getInstance(
+                token || this._options.defaultToken,
+                cacheToken || token || this._options.defaultToken
+            );
         } catch (error) {
-            return this._getInstance(this._options.defaultToken, cacheToken);
+            return this._getInstance(
+                this._options.defaultToken,
+                cacheToken || this._options.defaultToken
+            );
         }
     }
 
-    register(token: string, factory: Factory<T>): void {
-        if (this.hasFactory(token)) {
+    register(token: K, factory: Factory<T>): void {
+        if (this._hasFactory(token)) {
             throw new InvalidArgumentError(`'${token}' is already registered.`);
         }
 
         this._factories[token] = factory;
     }
 
-    hasFactory(token: string): boolean {
+    protected _hasFactory(token: string): boolean {
         return !!this._factories[token];
     }
 
-    hasInstance(token: string): boolean {
+    private _hasInstance(token: string): boolean {
         return !!this._instances[token];
     }
 
     private _getInstance(token: string, cacheToken: string): T {
-        if (!this.hasInstance(cacheToken)) {
+        if (!this._hasInstance(cacheToken)) {
             const factory = this._factories[token];
 
             if (!factory) {

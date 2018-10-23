@@ -10,11 +10,6 @@ export interface BraintreePaypalButtonInitializeOptions {
     shouldProcessPayment?: boolean;
 
     /**
-     * The ID of a container which the checkout button should be inserted.
-     */
-    container: string;
-
-    /**
      * A set of styling options for the checkout button.
      */
     style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;

@@ -1,9 +1,11 @@
+import { CheckoutButtonMethodType } from './strategies';
+
 export default interface CheckoutButtonState {
     errors: {
-        [key: string]: CheckoutButtonErrorsState | undefined,
+        [key in CheckoutButtonMethodType]?: CheckoutButtonErrorsState | undefined
     };
     statuses: {
-        [key: string]: CheckoutButtonStatusesState | undefined,
+        [key in CheckoutButtonMethodType]?: CheckoutButtonStatusesState | undefined
     };
 }
 
