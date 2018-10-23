@@ -1,4 +1,4 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
 import { CheckoutButtonAction, CheckoutButtonActionType } from './checkout-button-actions';
 import CheckoutButtonState, { CheckoutButtonErrorsState, CheckoutButtonStatusesState } from './checkout-button-state';
@@ -8,9 +8,12 @@ const DEFAULT_STATE: CheckoutButtonState = {
     statuses: {},
 };
 
+const DEFAULT_ERROR_STATE: CheckoutButtonErrorsState = {};
+const DEFAULT_STATUS_STATE: CheckoutButtonStatusesState = {};
+
 export default function checkoutButtonReducer(
     state: CheckoutButtonState = DEFAULT_STATE,
-    action: Action
+    action: CheckoutButtonAction
 ): CheckoutButtonState {
     if (!action.meta || !action.meta.methodId) {
         return state;
@@ -29,7 +32,7 @@ export default function checkoutButtonReducer(
 }
 
 function errorsReducer(
-    errors: CheckoutButtonErrorsState = DEFAULT_STATE.errors,
+    errors: CheckoutButtonErrorsState = DEFAULT_ERROR_STATE,
     action: CheckoutButtonAction
 ): CheckoutButtonErrorsState {
     switch (action.type) {
@@ -65,7 +68,7 @@ function errorsReducer(
 }
 
 function statusesReducer(
-    statuses: CheckoutButtonStatusesState = DEFAULT_STATE.statuses,
+    statuses: CheckoutButtonStatusesState = DEFAULT_STATUS_STATE,
     action: CheckoutButtonAction
 ): CheckoutButtonStatusesState {
     switch (action.type) {

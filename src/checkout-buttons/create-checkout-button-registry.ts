@@ -9,20 +9,24 @@ import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategie
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
+<<<<<<< HEAD
 import { BraintreePaypalButtonStrategy, CheckoutButtonStrategy, MasterpassButtonStrategy } from './strategies';
+=======
+import { BraintreePaypalButtonStrategy, CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
+>>>>>>> fix(checkout-button): CHECKOUT-3584 Allow rendering checkout buttons more than once
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
     requestSender: RequestSender
-): Registry<CheckoutButtonStrategy> {
-    const registry = new Registry<CheckoutButtonStrategy>();
+): Registry<CheckoutButtonStrategy, CheckoutButtonMethodType> {
+    const registry = new Registry<CheckoutButtonStrategy, CheckoutButtonMethodType>();
     const scriptLoader = getScriptLoader();
     const checkoutActionCreator = new CheckoutActionCreator(
         new CheckoutRequestSender(requestSender),
         new ConfigActionCreator(new ConfigRequestSender(requestSender))
     );
 
-    registry.register('braintreepaypal', () =>
+    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
         new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,
@@ -32,7 +36,7 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    registry.register('braintreepaypalcredit', () =>
+    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, () =>
         new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,

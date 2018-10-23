@@ -1,6 +1,7 @@
 import CheckoutButtonSelector from './checkout-button-selector';
 import CheckoutButtonState from './checkout-button-state';
 import { getCheckoutButtonState } from './checkout-buttons.mock';
+import { CheckoutButtonMethodType } from './strategies';
 
 describe('CheckoutButtonSelector', () => {
     let state: CheckoutButtonState;
@@ -10,10 +11,7 @@ describe('CheckoutButtonSelector', () => {
             state = {
                 ...getCheckoutButtonState(),
                 statuses: {
-                    foobar: {
-                        isInitializing: true,
-                    },
-                    foobar2: {
+                    braintreepaypal: {
                         isInitializing: true,
                     },
                 },
@@ -23,8 +21,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns true if initializing checkout button', () => {
             const selector = new CheckoutButtonSelector(state);
 
-            expect(selector.isInitializing('foobar')).toEqual(true);
-            expect(selector.isInitializing('foobar2')).toEqual(true);
+            expect(selector.isInitializing(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(true);
         });
 
         it('returns true if initializing any checkout button', () => {
@@ -36,7 +33,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns false if not initializing checkout button', () => {
             const selector = new CheckoutButtonSelector(state);
 
-            expect(selector.isInitializing('not_foobar')).toEqual(false);
+            expect(selector.isInitializing(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT)).toEqual(false);
         });
 
         it('returns false if not initializing any checkout button', () => {
@@ -53,10 +50,7 @@ describe('CheckoutButtonSelector', () => {
             state = {
                 ...getCheckoutButtonState(),
                 statuses: {
-                    foobar: {
-                        isDeinitializing: true,
-                    },
-                    foobar2: {
+                    braintreepaypal: {
                         isDeinitializing: true,
                     },
                 },
@@ -66,8 +60,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns true if deinitializing checkout button', () => {
             const selector = new CheckoutButtonSelector(state);
 
-            expect(selector.isDeinitializing('foobar')).toEqual(true);
-            expect(selector.isDeinitializing('foobar2')).toEqual(true);
+            expect(selector.isDeinitializing(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(true);
         });
 
         it('returns true if deinitializing any checkout button', () => {
@@ -79,7 +72,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns false if not deinitializing checkout button', () => {
             const selector = new CheckoutButtonSelector(state);
 
-            expect(selector.isDeinitializing('not_foobar')).toEqual(false);
+            expect(selector.isDeinitializing(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT)).toEqual(false);
         });
 
         it('returns false if not deinitializing any checkout button', () => {
@@ -93,20 +86,15 @@ describe('CheckoutButtonSelector', () => {
 
     describe('#getInitializeError()', () => {
         let expectedError: Error;
-        let expectedError2: Error;
 
         beforeEach(() => {
             expectedError = new Error('Unable to initialize foobar');
-            expectedError2 = new Error('Unable to initialize foobar2');
 
             state = {
                 ...getCheckoutButtonState(),
                 errors: {
-                    foobar: {
+                    braintreepaypal: {
                         initializeError: expectedError,
-                    },
-                    foobar2: {
-                        initializeError: expectedError2,
                     },
                 },
             };
@@ -115,8 +103,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns error if unable to initialize checkout button', () => {
             const selector = new CheckoutButtonSelector(state);
 
-            expect(selector.getInitializeError('foobar')).toEqual(expectedError);
-            expect(selector.getInitializeError('foobar2')).toEqual(expectedError2);
+            expect(selector.getInitializeError(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(expectedError);
         });
 
         it('returns error if unable to initialize any checkout button', () => {
@@ -128,7 +115,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns undefined if able to initialize checkout button', () => {
             const selector = new CheckoutButtonSelector(state);
 
-            expect(selector.getInitializeError('not_foobar')).toBeUndefined();
+            expect(selector.getInitializeError(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT)).toBeUndefined();
         });
 
         it('returns undefined if there are no issues initializing any checkout button', () => {
@@ -142,20 +129,15 @@ describe('CheckoutButtonSelector', () => {
 
     describe('#getDeinitializeError()', () => {
         let expectedError: Error;
-        let expectedError2: Error;
 
         beforeEach(() => {
             expectedError = new Error('Unable to deinitialize foobar');
-            expectedError2 = new Error('Unable to deinitialize foobar2');
 
             state = {
                 ...getCheckoutButtonState(),
                 errors: {
-                    foobar: {
+                    braintreepaypal: {
                         deinitializeError: expectedError,
-                    },
-                    foobar2: {
-                        deinitializeError: expectedError2,
                     },
                 },
             };
@@ -164,8 +146,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns error if unable to deinitialize checkout button', () => {
             const selector = new CheckoutButtonSelector(state);
 
-            expect(selector.getDeinitializeError('foobar')).toEqual(expectedError);
-            expect(selector.getDeinitializeError('foobar2')).toEqual(expectedError2);
+            expect(selector.getDeinitializeError(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(expectedError);
         });
 
         it('returns error if unable to deinitialize any checkout button', () => {
@@ -177,7 +158,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns undefined if able to deinitialize checkout button', () => {
             const selector = new CheckoutButtonSelector(state);
 
-            expect(selector.getDeinitializeError('not_foobar')).toBeUndefined();
+            expect(selector.getDeinitializeError(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT)).toBeUndefined();
         });
 
         it('returns undefined if there are no issues deinitializing any checkout button', () => {

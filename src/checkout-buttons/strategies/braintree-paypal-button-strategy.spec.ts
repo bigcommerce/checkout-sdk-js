@@ -19,6 +19,7 @@ import { CheckoutButtonInitializeOptions } from '../checkout-button-options';
 
 import { BraintreePaypalButtonInitializeOptions } from './braintree-paypal-button-options';
 import BraintreePaypalButtonStrategy from './braintree-paypal-button-strategy';
+import { CheckoutButtonMethodType } from './checkout-button-method-type';
 
 describe('BraintreePaypalButtonStrategy', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
@@ -45,13 +46,13 @@ describe('BraintreePaypalButtonStrategy', () => {
         paypalScriptLoader = new PaypalScriptLoader(getScriptLoader());
 
         paypalOptions = {
-            container: 'checkout-button',
             onAuthorizeError: jest.fn(),
             onPaymentError: jest.fn(),
         };
 
         options = {
-            methodId: 'braintreepaypal',
+            methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
+            containerId: 'checkout-button',
             braintreepaypal: paypalOptions,
         };
 
@@ -148,6 +149,22 @@ describe('BraintreePaypalButtonStrategy', () => {
                 shape: 'rect',
             },
         }, 'checkout-button');
+    });
+
+    it('renders PayPal checkout button once when same containerId is passed', async () => {
+        await strategy.initialize(options);
+        await strategy.initialize(options);
+
+        expect(paypal.Button.render).toHaveBeenCalledTimes(1);
+    });
+
+    it('renders PayPal checkout button once per containerId', async () => {
+        await strategy.initialize(options);
+        await strategy.initialize({ ...options, containerId: 'foo' });
+        await strategy.initialize(options);
+        await strategy.initialize({ ...options, containerId: 'foo' });
+
+        expect(paypal.Button.render).toHaveBeenCalledTimes(2);
     });
 
     it('customizes style of PayPal checkout button', async () => {
@@ -390,7 +407,7 @@ describe('BraintreePaypalButtonStrategy', () => {
         jest.spyOn(braintreeSDKCreator, 'teardown');
 
         await strategy.initialize(options);
-        await strategy.deinitialize({ methodId: 'braintreepaypal' });
+        await strategy.deinitialize();
 
         expect(braintreeSDKCreator.teardown).toHaveBeenCalled();
     });
@@ -398,10 +415,8 @@ describe('BraintreePaypalButtonStrategy', () => {
     describe('if PayPal Credit is offered', () => {
         beforeEach(() => {
             options = {
-                methodId: 'braintreepaypalcredit',
-                braintreepaypalcredit: {
-                    container: 'checkout-button',
-                },
+                methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT,
+                containerId: 'checkout-button',
             };
 
             strategy = new BraintreePaypalButtonStrategy(

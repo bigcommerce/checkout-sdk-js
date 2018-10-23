@@ -11,6 +11,7 @@ import CheckoutButtonInitializer from './checkout-button-initializer';
 import CheckoutButtonStatusSelector from './checkout-button-status-selector';
 import CheckoutButtonStrategyActionCreator from './checkout-button-strategy-action-creator';
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
+import { CheckoutButtonMethodType } from './strategies';
 
 describe('CheckoutButtonInitializer', () => {
     let initializer: CheckoutButtonInitializer;
@@ -37,26 +38,32 @@ describe('CheckoutButtonInitializer', () => {
     });
 
     it('dispatches action to initialize button strategy', async () => {
-        const options = { methodId: 'foobar' };
+        const options = {
+            methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
+            containerId: 'checkout-button',
+        };
 
         await initializer.initializeButton(options);
 
         expect(buttonActionCreator.initialize).toHaveBeenCalledWith(options);
         expect(store.dispatch).toHaveBeenCalledWith(
             Observable.of(createAction(CheckoutButtonActionType.InitializeButtonRequested)),
-            { queueId: `foobarButtonStrategy` }
+            { queueId: `${CheckoutButtonMethodType.BRAINTREE_PAYPAL}ButtonStrategy` }
         );
     });
 
     it('dispatches action to deinitialize button strategy', async () => {
-        const options = { methodId: 'foobar' };
+        const options = {
+            methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
+            containerId: 'checkout-button',
+        };
 
         await initializer.deinitializeButton(options);
 
         expect(buttonActionCreator.deinitialize).toHaveBeenCalledWith(options);
         expect(store.dispatch).toHaveBeenCalledWith(
             Observable.of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested)),
-            { queueId: `foobarButtonStrategy` }
+            { queueId: `${CheckoutButtonMethodType.BRAINTREE_PAYPAL}ButtonStrategy` }
         );
     });
 
