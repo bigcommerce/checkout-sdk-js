@@ -1,6 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
-import { BraintreePaypalButtonInitializeOptions } from './strategies';
+import { BraintreePaypalButtonInitializeOptions, MasterpassButtonInitializeOptions } from './strategies';
 
 /**
  * The set of options for configuring the checkout button.
@@ -24,4 +24,5 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * omitted unless you need to support Braintree Credit.
      */
     braintreepaypalcredit?: BraintreePaypalButtonInitializeOptions;
+    masterpass?: MasterpassButtonInitializeOptions;
 }
