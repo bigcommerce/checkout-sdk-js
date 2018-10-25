@@ -28,6 +28,11 @@ const assetConfig = {
     module: {
         rules: [
             {
+                parser: {
+                    amd: false,
+                },
+            },
+            {
                 test: /\.(js|ts)$/,
                 exclude: /node_modules/,
                 loader: 'ts-loader',
