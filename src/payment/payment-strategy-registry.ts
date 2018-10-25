@@ -32,7 +32,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
     private _getToken(paymentMethod: PaymentMethod): string {
         const methodId = paymentMethod.gateway || paymentMethod.id;
 
-        if (this.hasFactory(methodId)) {
+        if (this._hasFactory(methodId)) {
             return methodId;
         }
 

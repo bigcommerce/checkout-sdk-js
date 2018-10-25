@@ -9,20 +9,20 @@ import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategie
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
-import { BraintreePaypalButtonStrategy, CheckoutButtonStrategy, MasterpassButtonStrategy } from './strategies';
+import { BraintreePaypalButtonStrategy, CheckoutButtonMethodType, CheckoutButtonStrategy, MasterpassButtonStrategy } from './strategies';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
     requestSender: RequestSender
-): Registry<CheckoutButtonStrategy> {
-    const registry = new Registry<CheckoutButtonStrategy>();
+): Registry<CheckoutButtonStrategy, CheckoutButtonMethodType> {
+    const registry = new Registry<CheckoutButtonStrategy, CheckoutButtonMethodType>();
     const scriptLoader = getScriptLoader();
     const checkoutActionCreator = new CheckoutActionCreator(
         new CheckoutRequestSender(requestSender),
         new ConfigActionCreator(new ConfigRequestSender(requestSender))
     );
 
-    registry.register('braintreepaypal', () =>
+    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
         new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,
@@ -32,7 +32,7 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    registry.register('braintreepaypalcredit', () =>
+    registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT, () =>
         new BraintreePaypalButtonStrategy(
             store,
             checkoutActionCreator,
@@ -43,7 +43,7 @@ export default function createCheckoutButtonRegistry(
         )
     );
 
-    registry.register('masterpass', () =>
+    registry.register(CheckoutButtonMethodType.MASTERPASS, () =>
         new MasterpassButtonStrategy(
             store,
             checkoutActionCreator,

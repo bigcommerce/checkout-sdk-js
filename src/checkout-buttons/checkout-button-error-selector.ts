@@ -2,6 +2,7 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { selector } from '../common/selector';
 
 import CheckoutButtonSelector from './checkout-button-selector';
+import { CheckoutButtonMethodType } from './strategies';
 
 @selector
 export default class CheckoutButtonErrorSelector {
@@ -14,11 +15,11 @@ export default class CheckoutButtonErrorSelector {
         this._checkoutButton = selectors.checkoutButton;
     }
 
-    getInitializeButtonError(methodId?: string): Error | undefined {
+    getInitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined {
         return this._checkoutButton.getInitializeError(methodId);
     }
 
-    getDeinitializeButtonError(methodId?: string): Error | undefined {
+    getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined {
         return this._checkoutButton.getDeinitializeError(methodId);
     }
 }

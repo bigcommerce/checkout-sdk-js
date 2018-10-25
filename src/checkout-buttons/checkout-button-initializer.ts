@@ -91,8 +91,8 @@ export default class CheckoutButtonInitializer {
      * ```js
      * initializer.initializeButton({
      *     methodId: 'braintreepaypal',
+     *     containerId: 'checkoutButton',
      *     braintreepaypal: {
-     *         container: '#checkoutButton',
      *     },
      * });
      * ```
