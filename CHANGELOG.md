@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.10.1"></a>
+## [1.10.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.10.0...v1.10.1) (2018-10-25)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3688 Prevent Lodash from leaking to global scope ([#444](https://github.com/bigcommerce/checkout-sdk-js/issues/444)) ([ac5238b](https://github.com/bigcommerce/checkout-sdk-js/commit/ac5238b))
+
+
+
 <a name="1.10.0"></a>
 # [1.10.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.9.0...v1.10.0) (2018-10-25)
 
