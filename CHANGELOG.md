@@ -10,6 +10,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **checkout:** INT-951 Implement Masterpass button in cart and quick cart ([724eff5](https://github.com/bigcommerce/checkout-sdk-js/commit/724eff5))
 
+### Bug Fixes
+
+* **checkout-button:** CHECKOUT-3584 Allow rendering checkout buttons more than once (#443) ([8c479c8](https://github.com/bigcommerce/checkout-sdk-js/commit/8c479c87cb06e9c8919bcc8b0b930d3a2c00fa2d)).
+
+ :warning: **Important:** Includes breaking changes in checkout buttons options (alpha stage).
 
 
 <a name="1.9.0"></a>
