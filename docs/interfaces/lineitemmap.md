@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [customItems](lineitemmap.md#customitems)
 * [digitalItems](lineitemmap.md#digitalitems)
 * [giftCertificates](lineitemmap.md#giftcertificates)
 * [physicalItems](lineitemmap.md#physicalitems)
@@ -18,6 +19,13 @@
 
 ## Properties
 
+<a id="customitems"></a>
+
+###  customItems
+
+**● customItems**: *[CustomItem](customitem.md)[]*
+
+___
 <a id="digitalitems"></a>
 
 ###  digitalItems

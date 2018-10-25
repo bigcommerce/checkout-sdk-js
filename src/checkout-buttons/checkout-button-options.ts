@@ -1,6 +1,7 @@
 import { RequestOptions } from '../common/http-request';
 
 import { BraintreePaypalButtonInitializeOptions, CheckoutButtonMethodType } from './strategies';
+import { MasterpassButtonInitializeOptions } from './strategies';
 
 /**
  * The set of options for configuring the checkout button.
@@ -29,4 +30,5 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
+    masterpass?: MasterpassButtonInitializeOptions;
 }

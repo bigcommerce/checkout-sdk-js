@@ -8,6 +8,10 @@
 
 **↳ StandardError**
 
+## Implements
+
+* [CustomError](../interfaces/customerror.md)
+
 ## Index
 
 ### Properties
