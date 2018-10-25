@@ -23,6 +23,7 @@ import { CheckoutButtonMethodType } from './checkout-button-method-type';
 
 describe('MasterpassCustomerStrategy', () => {
     let container: HTMLDivElement;
+    let containerFoo: HTMLDivElement;
     let masterpass: Masterpass;
     let masterpassScriptLoader: MasterpassScriptLoader;
     let checkoutActionCreator: CheckoutActionCreator;
@@ -81,10 +82,15 @@ describe('MasterpassCustomerStrategy', () => {
         container = document.createElement('div');
         container.setAttribute('id', 'login');
         document.body.appendChild(container);
+
+        containerFoo = document.createElement('div');
+        containerFoo.setAttribute('id', 'foo');
+        document.body.appendChild(containerFoo);
     });
 
     afterEach(() => {
         document.body.removeChild(container);
+        document.body.removeChild(containerFoo);
     });
 
     it('creates an instance of MasterpassCustomerStrategy', () => {
@@ -113,6 +119,17 @@ describe('MasterpassCustomerStrategy', () => {
             await strategy.initialize(masterpassOptions);
 
             expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false);
+        });
+
+        it('loads masterpass once per container', async () => {
+            paymentMethodMock.config.testMode = false;
+
+            await strategy.initialize(masterpassOptions);
+            await strategy.initialize({ ...masterpassOptions, containerId: 'foo' });
+            await strategy.initialize(masterpassOptions);
+            await strategy.initialize({ ...masterpassOptions, containerId: 'foo' });
+
+            expect(masterpassScriptLoader.load).toHaveBeenCalledTimes(2);
         });
 
         it('fails to initialize the strategy if no container is supplied', async () => {
