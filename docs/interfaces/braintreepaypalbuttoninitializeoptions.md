@@ -10,7 +10,6 @@
 
 ### Properties
 
-* [container](braintreepaypalbuttoninitializeoptions.md#container)
 * [style](braintreepaypalbuttoninitializeoptions.md#style)
 
 ### Methods
@@ -22,15 +21,6 @@
 
 ## Properties
 
-<a id="container"></a>
-
-###  container
-
-**● container**: *`string`*
-
-The ID of a container which the checkout button should be inserted.
-
-___
 <a id="style"></a>
 
 ### `<Optional>` style

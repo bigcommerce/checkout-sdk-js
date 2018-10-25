@@ -17,6 +17,7 @@
 
 * [braintreepaypal](checkoutbuttoninitializeoptions.md#braintreepaypal)
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#braintreepaypalcredit)
+* [containerId](checkoutbuttoninitializeoptions.md#containerid)
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
 * [params](checkoutbuttoninitializeoptions.md#params)
 * [timeout](checkoutbuttoninitializeoptions.md#timeout)
@@ -43,11 +44,20 @@ ___
 The options that are required to facilitate Braintree Credit. They can be omitted unless you need to support Braintree Credit.
 
 ___
+<a id="containerid"></a>
+
+###  containerId
+
+**● containerId**: *`string`*
+
+The ID of a container which the checkout button should be inserted.
+
+___
 <a id="methodid"></a>
 
 ###  methodId
 
-**● methodId**: *`string`*
+**● methodId**: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*
 
 The identifier of the payment method.
 

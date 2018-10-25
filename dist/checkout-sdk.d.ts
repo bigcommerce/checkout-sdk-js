@@ -174,10 +174,6 @@ declare interface BraintreePaymentInitializeOptions {
 
 declare interface BraintreePaypalButtonInitializeOptions {
     /**
-     * The ID of a container which the checkout button should be inserted.
-     */
-    container: string;
-    /**
      * A set of styling options for the checkout button.
      */
     style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
@@ -347,8 +343,8 @@ declare interface Checkout {
 
 declare class CheckoutButtonErrorSelector {
     private _checkoutButton;
-    getInitializeButtonError(methodId?: string): Error | undefined;
-    getDeinitializeButtonError(methodId?: string): Error | undefined;
+    getInitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
+    getDeinitializeButtonError(methodId?: CheckoutButtonMethodType): Error | undefined;
 }
 
 declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
@@ -362,6 +358,10 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * omitted unless you need to support Braintree Credit.
      */
     braintreepaypalcredit?: BraintreePaypalButtonInitializeOptions;
+    /**
+     * The ID of a container which the checkout button should be inserted.
+     */
+    containerId: string;
 }
 
 declare class CheckoutButtonInitializer {
@@ -424,8 +424,8 @@ declare class CheckoutButtonInitializer {
      * ```js
      * initializer.initializeButton({
      *     methodId: 'braintreepaypal',
+     *     containerId: 'checkoutButton',
      *     braintreepaypal: {
-     *         container: '#checkoutButton',
      *     },
      * });
      * ```
@@ -453,6 +453,12 @@ declare interface CheckoutButtonInitializerOptions {
     host?: string;
 }
 
+declare enum CheckoutButtonMethodType {
+    BRAINTREE_PAYPAL = "braintreepaypal",
+    BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
+    MASTERPASS = "masterpass"
+}
+
 /**
  * The set of options for configuring the checkout button.
  */
@@ -460,7 +466,7 @@ declare interface CheckoutButtonOptions extends RequestOptions {
     /**
      * The identifier of the payment method.
      */
-    methodId: string;
+    methodId: CheckoutButtonMethodType;
 }
 
 declare interface CheckoutButtonSelectors {
@@ -470,8 +476,8 @@ declare interface CheckoutButtonSelectors {
 
 declare class CheckoutButtonStatusSelector {
     private _checkoutButton;
-    isInitializingButton(methodId?: string): boolean;
-    isDeinitializingButton(methodId?: string): boolean;
+    isInitializingButton(methodId?: CheckoutButtonMethodType): boolean;
+    isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
 }
 
 declare interface CheckoutPayment {

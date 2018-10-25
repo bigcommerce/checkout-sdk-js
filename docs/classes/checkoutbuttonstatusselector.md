@@ -21,13 +21,13 @@
 
 ###  isDeinitializingButton
 
-▸ **isDeinitializingButton**(methodId?: * `undefined` &#124; `string`*): `boolean`
+▸ **isDeinitializingButton**(methodId?: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*): `boolean`
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| `Optional` methodId |  `undefined` &#124; `string`|
+| `Optional` methodId | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
 
 **Returns:** `boolean`
 
@@ -36,13 +36,13 @@ ___
 
 ###  isInitializingButton
 
-▸ **isInitializingButton**(methodId?: * `undefined` &#124; `string`*): `boolean`
+▸ **isInitializingButton**(methodId?: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*): `boolean`
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| `Optional` methodId |  `undefined` &#124; `string`|
+| `Optional` methodId | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
 
 **Returns:** `boolean`
 

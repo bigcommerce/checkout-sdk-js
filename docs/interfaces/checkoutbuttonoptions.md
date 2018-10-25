@@ -31,7 +31,7 @@ The set of options for configuring the checkout button.
 
 ###  methodId
 
-**● methodId**: *`string`*
+**● methodId**: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*
 
 The identifier of the payment method.
 

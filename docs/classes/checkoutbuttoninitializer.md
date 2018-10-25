@@ -77,8 +77,8 @@ When the checkout button is initialized, it will be inserted into the DOM, ready
 ```js
 initializer.initializeButton({
     methodId: 'braintreepaypal',
+    containerId: 'checkoutButton',
     braintreepaypal: {
-        container: '#checkoutButton',
     },
 });
 ```

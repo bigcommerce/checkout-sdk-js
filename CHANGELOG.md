@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.10.0"></a>
+# [1.10.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.9.0...v1.10.0) (2018-10-25)
+
+
+### Features
+
+* **checkout:** INT-951 Implement Masterpass button in cart and quick cart ([724eff5](https://github.com/bigcommerce/checkout-sdk-js/commit/724eff5))
+
+
+
 <a name="1.9.0"></a>
 # [1.9.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.8.0...v1.9.0) (2018-10-23)
 

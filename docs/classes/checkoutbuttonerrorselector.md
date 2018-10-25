@@ -21,13 +21,13 @@
 
 ###  getDeinitializeButtonError
 
-▸ **getDeinitializeButtonError**(methodId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
+▸ **getDeinitializeButtonError**(methodId?: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*):  `Error` &#124; `undefined`
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| `Optional` methodId |  `undefined` &#124; `string`|
+| `Optional` methodId | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
 
 **Returns:**  `Error` &#124; `undefined`
 
@@ -36,13 +36,13 @@ ___
 
 ###  getInitializeButtonError
 
-▸ **getInitializeButtonError**(methodId?: * `undefined` &#124; `string`*):  `Error` &#124; `undefined`
+▸ **getInitializeButtonError**(methodId?: *[CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md)*):  `Error` &#124; `undefined`
 
 **Parameters:**
 
 | Param | Type |
 | ------ | ------ |
-| `Optional` methodId |  `undefined` &#124; `string`|
+| `Optional` methodId | [CheckoutButtonMethodType](../enums/checkoutbuttonmethodtype.md) |
 
 **Returns:**  `Error` &#124; `undefined`
 
