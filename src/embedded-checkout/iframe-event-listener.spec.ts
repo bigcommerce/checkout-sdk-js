@@ -39,6 +39,27 @@ describe('IframeEventListener', () => {
         expect(handleComplete).not.toHaveBeenCalled();
     });
 
+    it('does not respond to event with unrecognized origin', () => {
+        eventEmitter.emit('message', {
+            origin: 'https://foobar.com',
+            data: {
+                type: EmbeddedCheckoutEventType.CheckoutLoaded,
+            },
+        });
+
+        expect(handleLoaded).not.toHaveBeenCalled();
+    });
+
+    it('triggers relevant listeners when origin URL has trailing slash', () => {
+        listener = new IframeEventListener(`${origin}/`);
+        listener.listen();
+        listener.addListener(EmbeddedCheckoutEventType.CheckoutLoaded, handleLoaded);
+
+        eventEmitter.emit('message', { origin, data: { type: EmbeddedCheckoutEventType.CheckoutLoaded } });
+
+        expect(handleLoaded).toHaveBeenCalled();
+    });
+
     it('does not respond to invalid event', () => {
         eventEmitter.emit('message', { origin, data: { type: 'FOOBAR' } });
 

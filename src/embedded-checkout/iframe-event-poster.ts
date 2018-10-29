@@ -1,8 +1,14 @@
+import parseOrigin from './parse-origin';
+
 export default class IframeEventPoster<TEvent> {
+    private _targetOrigin: string;
+
     constructor(
-        private _targetOrigin: string,
+        targetOrigin: string,
         private _targetWindow?: Window
-    ) {}
+    ) {
+        this._targetOrigin = parseOrigin(targetOrigin);
+    }
 
     post(event: TEvent): void {
         if (window === this._targetWindow) {
