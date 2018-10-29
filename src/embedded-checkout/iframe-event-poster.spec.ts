@@ -21,6 +21,19 @@ describe('IframeEventPoster', () => {
             .toHaveBeenCalledWith(message, origin);
     });
 
+    it('strips out irrelevant information from origin URL', () => {
+        const message = { type: 'FOOBAR' };
+        const targetWindow = Object.create(window);
+        const poster = new IframeEventPoster<IframeEvent>(`${origin}/url/path`, targetWindow);
+
+        jest.spyOn(targetWindow, 'postMessage');
+
+        poster.post(message);
+
+        expect(targetWindow.postMessage)
+            .toHaveBeenCalledWith(message, origin);
+    });
+
     it('does not post event to target window if it is same as current window', () => {
         const message = { type: 'FOOBAR' };
         const targetWindow = window;

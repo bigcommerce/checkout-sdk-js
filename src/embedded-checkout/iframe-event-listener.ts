@@ -2,14 +2,17 @@ import { bindDecorator as bind } from '../common/utility';
 
 import { IframeEventMap } from './iframe-event';
 import isIframeEvent from './is-iframe-event';
+import parseOrigin from './parse-origin';
 
 export default class IframeEventListener<TEventMap extends IframeEventMap<keyof TEventMap>> {
     private _isListening: boolean;
     private _listeners: EventListeners<TEventMap>;
+    private _sourceOrigin: string;
 
     constructor(
-        private _origin: string
+        sourceOrigin: string
     ) {
+        this._sourceOrigin = parseOrigin(sourceOrigin);
         this._isListening = false;
         this._listeners = {};
     }
@@ -70,7 +73,7 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
 
     @bind
     private _handleMessage(event: MessageEvent): void {
-        if ((event.origin !== this._origin) || !isIframeEvent(event.data, event.data.type)) {
+        if ((event.origin !== this._sourceOrigin) || !isIframeEvent(event.data, event.data.type)) {
             return;
         }
 
