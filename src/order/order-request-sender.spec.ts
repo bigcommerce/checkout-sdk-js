@@ -6,6 +6,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import Order from './order';
+// import OrderDefaultIncludes from './order-default-includes';
 import OrderRequestSender from './order-request-sender';
 import { getOrder } from './orders.mock';
 
@@ -61,7 +62,7 @@ describe('OrderRequestSender', () => {
         });
 
         it('loads order including payment data', async () => {
-            await orderRequestSender.loadOrder(295, { params: { include: ['payments'] } });
+            await orderRequestSender.loadOrder(295, { params: { include: [] } });
 
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
                 headers: {

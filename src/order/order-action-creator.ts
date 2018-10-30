@@ -14,6 +14,7 @@ import { RequestOptions } from '../common/http-request';
 
 import InternalOrderRequestBody from './internal-order-request-body';
 import { FinalizeOrderAction, LoadOrderAction, LoadOrderPaymentsAction, OrderActionType, SubmitOrderAction } from './order-actions';
+import OrderParams from './order-params';
 import OrderRequestBody from './order-request-body';
 import OrderRequestSender from './order-request-sender';
 
@@ -23,7 +24,7 @@ export default class OrderActionCreator {
         private _checkoutValidator: CheckoutValidator
     ) {}
 
-    loadOrder(orderId: number, options?: RequestOptions): Observable<LoadOrderAction> {
+    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Observable<LoadOrderAction> {
         return new Observable((observer: Observer<LoadOrderAction>) => {
             observer.next(createAction(OrderActionType.LoadOrderRequested));
 

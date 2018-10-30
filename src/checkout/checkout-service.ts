@@ -10,6 +10,7 @@ import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
+import OrderParams from '../order/order-params';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { ConsignmentsRequestBody, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
@@ -195,7 +196,7 @@ export default class CheckoutService {
      * @param options - Options for loading the order.
      * @returns A promise that resolves to the current state.
      */
-    loadOrder(orderId: number, options?: RequestOptions): Promise<CheckoutSelectors> {
+    loadOrder(orderId: number, options?: RequestOptions<OrderParams>): Promise<CheckoutSelectors> {
         const loadCheckoutAction = this._orderActionCreator.loadOrder(orderId, options);
         const loadConfigAction = this._configActionCreator.loadConfig(options);
 
