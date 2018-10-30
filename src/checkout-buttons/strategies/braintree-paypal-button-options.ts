@@ -15,6 +15,11 @@ export interface BraintreePaypalButtonInitializeOptions {
     style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
 
     /**
+     * Whether or not to show a credit button.
+     */
+    allowCredit?: boolean;
+
+    /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *
      * @param error - The error object describing the failure.

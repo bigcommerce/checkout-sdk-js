@@ -2,6 +2,10 @@ import { PaypalSDK } from './paypal-sdk';
 
 export function getPaypalMock(): PaypalSDK {
     return {
+        FUNDING: {
+            CARD: 'card',
+            CREDIT: 'credit',
+        },
         Button: {
             render: jest.fn(),
         },

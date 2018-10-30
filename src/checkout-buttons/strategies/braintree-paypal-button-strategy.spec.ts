@@ -148,6 +148,10 @@ describe('BraintreePaypalButtonStrategy', () => {
                 label: undefined,
                 shape: 'rect',
             },
+            funding: {
+                allowed: [],
+                disallowed: [paypal.FUNDING.CREDIT],
+            },
         }, 'checkout-button');
     });
 
@@ -417,6 +421,9 @@ describe('BraintreePaypalButtonStrategy', () => {
             options = {
                 methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT,
                 containerId: 'checkout-button',
+                braintreepaypalcredit: {
+                    allowCredit: true,
+                },
             };
 
             strategy = new BraintreePaypalButtonStrategy(
@@ -440,6 +447,10 @@ describe('BraintreePaypalButtonStrategy', () => {
                 style: {
                     label: 'credit',
                     shape: 'rect',
+                },
+                funding: {
+                    allowed: [paypal.FUNDING.CREDIT],
+                    disallowed: [],
                 },
             }, 'checkout-button');
         });
