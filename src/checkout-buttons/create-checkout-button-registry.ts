@@ -7,7 +7,7 @@ import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
 
-import { createGooglePayPaymentProcessor } from '../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
@@ -15,7 +15,7 @@ import {
     BraintreePaypalButtonStrategy,
     CheckoutButtonMethodType,
     CheckoutButtonStrategy,
-    GooglePayBraintreeButtonStrategy,
+    GooglePayButtonStrategy,
     MasterpassButtonStrategy,
     PaypalButtonStrategy
 } from './strategies';
@@ -61,11 +61,30 @@ export default function createCheckoutButtonRegistry(
         ));
 
     registry.register(CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE, () =>
-        new GooglePayBraintreeButtonStrategy(
+        new GooglePayButtonStrategy(
             store,
             formPoster,
             checkoutActionCreator,
-            createGooglePayPaymentProcessor(store)
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayBraintreeInitializer(
+                    new BraintreeSDKCreator(
+                        new BraintreeScriptLoader(scriptLoader)
+                    )
+                )
+            )
+        )
+    );
+
+    registry.register(CheckoutButtonMethodType.GOOGLEPAY_STRIPE, () =>
+        new GooglePayButtonStrategy(
+            store,
+            formPoster,
+            checkoutActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayStripeInitializer()
+            )
         )
     );
 
@@ -73,7 +92,7 @@ export default function createCheckoutButtonRegistry(
         new PaypalButtonStrategy(
             store,
             new PaypalScriptLoader(scriptLoader),
-            createFormPoster()
+            formPoster
         )
     );
 

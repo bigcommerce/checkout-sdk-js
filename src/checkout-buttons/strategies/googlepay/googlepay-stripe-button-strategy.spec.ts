@@ -1,7 +1,6 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
-import { createScriptLoader } from '../../../../node_modules/@bigcommerce/script-loader';
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
@@ -11,12 +10,11 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
 import {
     createGooglePayPaymentProcessor,
     GooglePaymentData,
-    GooglePayBraintreeInitializer,
-    GooglePayPaymentProcessor
+    GooglePayPaymentProcessor,
+    GooglePayStripeInitializer
 } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
@@ -56,11 +54,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
 
         paymentProcessor = createGooglePayPaymentProcessor(
             store,
-            new GooglePayBraintreeInitializer(
-                new BraintreeSDKCreator(
-                    new BraintreeScriptLoader(createScriptLoader())
-                )
-            )
+            new GooglePayStripeInitializer()
         );
 
         formPoster = createFormPoster();
@@ -158,7 +152,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         let checkoutButtonOptions: CheckoutButtonInitializeOptions;
 
         beforeEach(() => {
-            checkoutButtonOptions = getCheckoutButtonOptions(Mode.GooglePayBraintree);
+            checkoutButtonOptions = getCheckoutButtonOptions(Mode.GooglePayStripe);
         });
 
         it('check if googlepay payment processor deinitialize is called', async () => {
@@ -207,7 +201,7 @@ describe('GooglePayCheckoutButtonStrategy', () => {
         let paymentData: GooglePaymentData;
 
         beforeEach(() => {
-            googlePayOptions = getCheckoutButtonOptions(Mode.GooglePayBraintree);
+            googlePayOptions = getCheckoutButtonOptions(Mode.GooglePayStripe);
 
             paymentData = getGooglePaymentDataMock();
         });

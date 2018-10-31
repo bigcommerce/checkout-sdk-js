@@ -9,7 +9,9 @@ import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
-export default class GooglePayBraintreeCustomerStrategy extends CustomerStrategy {
+import GooglePayCustomerInitializeOptions from './googlepay-customer-initialize-options';
+
+export default class GooglePayCustomerStrategy extends CustomerStrategy {
     private _walletButton?: HTMLElement;
 
     constructor(
@@ -26,15 +28,17 @@ export default class GooglePayBraintreeCustomerStrategy extends CustomerStrategy
             return super.initialize(options);
         }
 
-        const { googlepaybraintree, methodId }  = options;
+        const { methodId }  = options;
 
-        if (!googlepaybraintree || !methodId) {
+        const googlePayOptions = this._getGooglePayOptions(options);
+
+        if (!methodId) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         return this._googlePayPaymentProcessor.initialize(methodId)
             .then(() => {
-                this._walletButton = this._createSignInButton(googlepaybraintree.container);
+                this._walletButton = this._createSignInButton(googlePayOptions.container);
             })
             .then(() => super.initialize(options));
     }
@@ -86,6 +90,18 @@ export default class GooglePayBraintreeCustomerStrategy extends CustomerStrategy
         return button;
     }
 
+    private _getGooglePayOptions(options: CustomerInitializeOptions): GooglePayCustomerInitializeOptions {
+        if (options.methodId === 'googlepaybraintree' && options.googlepaybraintree) {
+            return options.googlepaybraintree;
+        }
+
+        if (options.methodId === 'googlepaystripe' && options.googlepaystripe) {
+            return options.googlepaystripe;
+        }
+
+        throw new InvalidArgumentError();
+    }
+
     private _onPaymentSelectComplete(): void {
         this._formPoster.postForm('/checkout.php', {
             headers: {
@@ -107,7 +123,7 @@ export default class GooglePayBraintreeCustomerStrategy extends CustomerStrategy
 
         return this._googlePayPaymentProcessor.displayWallet()
             .then(paymentData => this._googlePayPaymentProcessor.handleSuccess(paymentData)
-            .then(() => this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress)))
+                .then(() => this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress)))
             .then(() => this._onPaymentSelectComplete())
             .catch(error => this._onError(error));
     }

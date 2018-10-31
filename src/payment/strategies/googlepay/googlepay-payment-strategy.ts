@@ -41,13 +41,13 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
 
         return this._googlePayPaymentProcessor.initialize(this._methodId)
             .then(() => {
-                if (!options.googlepay) {
+                this._googlePayOptions = this._getGooglePayOptions(options);
+
+                if (!this._googlePayOptions) {
                     throw new InvalidArgumentError('Unable to initialize payment because "options.googlepay" argument is not provided.');
                 }
 
-                this._googlePayOptions = options.googlepay;
-
-                const walletButton = options.googlepay.walletButton && document.getElementById(options.googlepay.walletButton);
+                const walletButton = this._googlePayOptions.walletButton && document.getElementById(this._googlePayOptions.walletButton);
 
                 if (walletButton) {
                     this._walletButton = walletButton;
@@ -115,6 +115,18 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
                 this._store.dispatch(this._checkoutActionCreator.loadCurrentCheckout()),
                 this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)),
             ]));
+    }
+
+    private _getGooglePayOptions(options: PaymentInitializeOptions): GooglePayPaymentInitializeOptions {
+        if (options.methodId === 'googlepaybraintree' && options.googlepaybraintree) {
+            return options.googlepaybraintree;
+        }
+
+        if (options.methodId === 'googlepaystripe' && options.googlepaystripe) {
+            return options.googlepaystripe;
+        }
+
+        throw new InvalidArgumentError();
     }
 
     private _getPayment(): PaymentMethodData {

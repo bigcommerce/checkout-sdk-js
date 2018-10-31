@@ -1,6 +1,5 @@
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster/';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
@@ -9,14 +8,13 @@ import { InvalidArgumentError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import PaymentMethod from '../../../payment/payment-method';
 import { getPaymentMethod, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
-import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayPaymentProcessor, GooglePayStripeInitializer } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 import { getCustomerState } from '../../customers.mock';
 
-import { getBraintreeCustomerInitializeOptions, Mode } from './googlepay-customer-mock';
+import { getStripeCustomerInitializeOptions, Mode } from './googlepay-customer-mock';
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
 
 describe('GooglePayCustomerStrategy', () => {
@@ -50,11 +48,7 @@ describe('GooglePayCustomerStrategy', () => {
 
         paymentProcessor = createGooglePayPaymentProcessor(
             store,
-            new GooglePayBraintreeInitializer(
-                new BraintreeSDKCreator(
-                    new BraintreeScriptLoader(createScriptLoader())
-                )
-            )
+            new GooglePayStripeInitializer()
         );
 
         formPoster = createFormPoster();
@@ -103,7 +97,7 @@ describe('GooglePayCustomerStrategy', () => {
         describe('Payment method exist', () => {
 
             it('Creates the button', async () => {
-                customerInitializeOptions = getBraintreeCustomerInitializeOptions();
+                customerInitializeOptions = getStripeCustomerInitializeOptions();
 
                 await strategy.initialize(customerInitializeOptions);
 
@@ -111,7 +105,7 @@ describe('GooglePayCustomerStrategy', () => {
             });
 
             it('Validates if strategy is been initialized', async () => {
-                customerInitializeOptions = getBraintreeCustomerInitializeOptions();
+                customerInitializeOptions = getStripeCustomerInitializeOptions();
 
                 await strategy.initialize(customerInitializeOptions);
 
@@ -125,7 +119,7 @@ describe('GooglePayCustomerStrategy', () => {
             });
 
             it('fails to initialize the strategy if no GooglePayCustomerInitializeOptions is provided ', async () => {
-                customerInitializeOptions = getBraintreeCustomerInitializeOptions(Mode.Incomplete);
+                customerInitializeOptions = getStripeCustomerInitializeOptions(Mode.Incomplete);
 
                 try {
                     await strategy.initialize(customerInitializeOptions);
@@ -135,7 +129,7 @@ describe('GooglePayCustomerStrategy', () => {
             });
 
             it('fails to initialize the strategy if no methodid is supplied', async () => {
-                customerInitializeOptions = getBraintreeCustomerInitializeOptions(Mode.UndefinedMethodId);
+                customerInitializeOptions = getStripeCustomerInitializeOptions(Mode.UndefinedMethodId);
 
                 try {
                     await strategy.initialize(customerInitializeOptions);
@@ -145,7 +139,7 @@ describe('GooglePayCustomerStrategy', () => {
             });
 
             it('fails to initialize the strategy if no valid container id is supplied', async () => {
-                customerInitializeOptions = getBraintreeCustomerInitializeOptions(Mode.InvalidContainer);
+                customerInitializeOptions = getStripeCustomerInitializeOptions(Mode.InvalidContainer);
 
                 try {
                     await strategy.initialize(customerInitializeOptions);
@@ -160,7 +154,7 @@ describe('GooglePayCustomerStrategy', () => {
         let customerInitializeOptions: CustomerInitializeOptions;
 
         beforeEach(() => {
-            customerInitializeOptions = getBraintreeCustomerInitializeOptions();
+            customerInitializeOptions = getStripeCustomerInitializeOptions();
         });
 
         it('succesfully deinitializes the strategy', async () => {
@@ -168,8 +162,8 @@ describe('GooglePayCustomerStrategy', () => {
 
             strategy.deinitialize();
 
-            if (customerInitializeOptions.googlepaybraintree) {
-                const button = document.getElementById(customerInitializeOptions.googlepaybraintree.container);
+            if (customerInitializeOptions.googlepaystripe) {
+                const button = document.getElementById(customerInitializeOptions.googlepaystripe.container);
 
                 if (button) {
                     expect(button.firstChild).toBe(null);
@@ -184,8 +178,8 @@ describe('GooglePayCustomerStrategy', () => {
         it('Validates if strategy is loaded before call deinitialize', async () => {
             await strategy.deinitialize();
 
-            if (customerInitializeOptions.googlepaybraintree) {
-                const button = document.getElementById(customerInitializeOptions.googlepaybraintree.container);
+            if (customerInitializeOptions.googlepaystripe) {
+                const button = document.getElementById(customerInitializeOptions.googlepaystripe.container);
 
                 if (button) {
                     expect(button.firstChild).toBe(null);
@@ -201,7 +195,7 @@ describe('GooglePayCustomerStrategy', () => {
     describe('#signIn()', () => {
 
         it('throws error if trying to sign in programmatically', async () => {
-            customerInitializeOptions = getBraintreeCustomerInitializeOptions();
+            customerInitializeOptions = getStripeCustomerInitializeOptions();
 
             await strategy.initialize(customerInitializeOptions);
 
@@ -211,14 +205,14 @@ describe('GooglePayCustomerStrategy', () => {
 
     describe('#signOut()', () => {
         beforeEach(async () => {
-            customerInitializeOptions = getBraintreeCustomerInitializeOptions();
+            customerInitializeOptions = getStripeCustomerInitializeOptions();
 
             await strategy.initialize(customerInitializeOptions);
         });
 
         it('throws error if trying to sign out programmatically', async () => {
             const paymentId = {
-                providerId: 'googlepaybraintree',
+                providerId: 'googlepaystripe',
             };
 
             jest.spyOn(store.getState().payment, 'getPaymentId')
@@ -228,12 +222,12 @@ describe('GooglePayCustomerStrategy', () => {
                 .mockReturnValue('data');
 
             const options = {
-                methodId: 'googlepaybraintree',
+                methodId: 'googlepaystripe',
             };
 
             await strategy.signOut(options);
 
-            expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('googlepaybraintree', options);
+            expect(remoteCheckoutActionCreator.signOut).toHaveBeenCalledWith('googlepaystripe', options);
             expect(store.dispatch).toHaveBeenCalled();
         });
 
@@ -245,7 +239,7 @@ describe('GooglePayCustomerStrategy', () => {
                 .mockReturnValue(paymentId);
 
             const options = {
-                methodId: 'googlepaybraintree',
+                methodId: 'googlepaystripe',
             };
 
             await strategy.signOut(options);
@@ -259,8 +253,8 @@ describe('GooglePayCustomerStrategy', () => {
 
         beforeEach(() => {
             googlePayOptions = {
-                methodId: 'googlepaybraintree',
-                googlepaybraintree: {
+                methodId: 'googlepaystripe',
+                googlepaystripe: {
                     container: 'googlePayCheckoutButton',
                 },
             };
