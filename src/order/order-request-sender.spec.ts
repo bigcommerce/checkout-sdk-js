@@ -7,6 +7,7 @@ import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import Order from './order';
 // import OrderDefaultIncludes from './order-default-includes';
+import { OrderIncludes } from './order-params';
 import OrderRequestSender from './order-request-sender';
 import { getOrder } from './orders.mock';
 
@@ -62,8 +63,37 @@ describe('OrderRequestSender', () => {
         });
 
         it('loads order including payment data', async () => {
-            await orderRequestSender.loadOrder(295, { params: { include: [] } });
+            const options = { params: { include : [] }};
+            await orderRequestSender.loadOrder(295, options);
 
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: { include },
+                timeout: undefined,
+            });
+        });
+
+        it('loads order with product category names', async () => {
+            const options = { params: { include: [OrderIncludes.DigitalItemsCategoryNames, OrderIncludes.PhysicalItemsCategoryNames] } };
+            const output = await orderRequestSender.loadOrder(295, options);
+
+            expect(output).toEqual(response);
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: { include },
+                timeout: undefined,
+            });
+        });
+
+        it('loads order with product brand name', async () => {
+            const options = { params: { include: [OrderIncludes.DigitalItemsBrandName, OrderIncludes.PhysicalItemsBrandName] } };
+            const output = await orderRequestSender.loadOrder(295, options);
+
+            expect(output).toEqual(response);
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
                 headers: {
                     Accept: ContentType.JsonV1,
