@@ -9,6 +9,7 @@ import {
     AfterpayPaymentStrategy,
     AmazonPayPaymentStrategy,
     CreditCardPaymentStrategy,
+    GooglePayPaymentStrategy,
     KlarnaPaymentStrategy,
     LegacyPaymentStrategy,
     NoPaymentDataRequiredPaymentStrategy,
@@ -19,7 +20,6 @@ import {
     SagePayPaymentStrategy,
     SquarePaymentStrategy,
 } from './strategies';
-import { GooglePayPaymentStrategy } from './strategies/googlepay';
 
 describe('CreatePaymentStrategyRegistry', () => {
     let registry: PaymentStrategyRegistry;

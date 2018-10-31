@@ -9,6 +9,7 @@ import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payme
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
+import { createGooglePayPaymentProcessor } from '../payment/strategies/googlepay/';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 
@@ -21,23 +22,26 @@ import {
     ChasePayCustomerStrategy,
     CustomerStrategy,
     DefaultCustomerStrategy,
+    GooglePayBraintreeCustomerStrategy,
     MasterpassCustomerStrategy,
+    SquareCustomerStrategy
 } from './strategies';
-import SquareCustomerStrategy from './strategies/square-customer-strategy';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,
     requestSender: RequestSender
 ): Registry<CustomerStrategy> {
     const registry = new Registry<CustomerStrategy>();
+    const scriptLoader = getScriptLoader();
+    const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutActionCreator = new CheckoutActionCreator(
-        new CheckoutRequestSender(requestSender),
+        checkoutRequestSender,
         new ConfigActionCreator(new ConfigRequestSender(requestSender))
     );
+    const formPoster = createFormPoster();
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutRequestSender = new RemoteCheckoutRequestSender(requestSender);
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(remoteCheckoutRequestSender);
-    const scriptLoader = getScriptLoader();
 
     registry.register('amazon', () =>
         new AmazonPayCustomerStrategy(
@@ -68,7 +72,7 @@ export default function createCustomerStrategyRegistry(
             remoteCheckoutActionCreator,
             new ChasePayScriptLoader(scriptLoader),
             requestSender,
-            createFormPoster()
+            formPoster
         )
     );
 
@@ -85,6 +89,15 @@ export default function createCustomerStrategyRegistry(
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             new MasterpassScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register('googlepaybraintree', () =>
+        new GooglePayBraintreeCustomerStrategy(
+            store,
+            remoteCheckoutActionCreator,
+            createGooglePayPaymentProcessor(store),
+            formPoster
         )
     );
 

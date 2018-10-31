@@ -1,28 +1,23 @@
-import { PaymentStrategy } from '../';
-import {
-    PaymentActionCreator,
-    PaymentInitializeOptions,
-    PaymentMethodActionCreator,
-    PaymentRequestOptions,
-    PaymentStrategyActionCreator
-} from '../..';
+
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { NotInitializedError } from '../../../common/error/errors';
 import {
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
+    NotInitializedError,
     NotInitializedErrorType,
 } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
-import {
-    OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
+import PaymentStrategy from '../payment-strategy';
 
-import { GooglePayPaymentInitializeOptions, GooglePayPaymentProcessor } from './';
-import {
-    GooglePaymentData,
-    PaymentMethodData,
-} from './googlepay';
+import { GooglePaymentData, PaymentMethodData } from './googlepay';
+import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
+import GooglePayPaymentProcessor from './googlepay-payment-processor';
 
 export default class GooglePayPaymentStrategy extends PaymentStrategy {
     private _googlePayOptions?: GooglePayPaymentInitializeOptions;
@@ -44,13 +39,13 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         this._methodId = options.methodId;
 
-        this._googlePayOptions = options.googlepay;
-
         return this._googlePayPaymentProcessor.initialize(this._methodId)
             .then(() => {
                 if (!options.googlepay) {
                     throw new InvalidArgumentError('Unable to initialize payment because "options.googlepay" argument is not provided.');
                 }
+
+                this._googlePayOptions = options.googlepay;
 
                 const walletButton = options.googlepay.walletButton && document.getElementById(options.googlepay.walletButton);
 
@@ -70,9 +65,8 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
 
         this._walletButton = undefined;
 
-        return Promise.all([
-            this._googlePayPaymentProcessor.deinitialize(),
-        ]).then(() => super.deinitialize(options));
+        return this._googlePayPaymentProcessor.deinitialize()
+            .then(() => super.deinitialize(options));
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

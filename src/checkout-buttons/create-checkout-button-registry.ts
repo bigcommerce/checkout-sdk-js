@@ -6,10 +6,18 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategies/braintree';
+
+import { createGooglePayPaymentProcessor } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
 
-import { BraintreePaypalButtonStrategy, CheckoutButtonMethodType, CheckoutButtonStrategy, MasterpassButtonStrategy } from './strategies';
+import {
+    BraintreePaypalButtonStrategy,
+    CheckoutButtonMethodType,
+    CheckoutButtonStrategy,
+    GooglePayBraintreeButtonStrategy,
+    MasterpassButtonStrategy
+} from './strategies';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
@@ -21,6 +29,7 @@ export default function createCheckoutButtonRegistry(
         new CheckoutRequestSender(requestSender),
         new ConfigActionCreator(new ConfigRequestSender(requestSender))
     );
+    const formPoster = createFormPoster();
 
     registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () =>
         new BraintreePaypalButtonStrategy(
@@ -28,7 +37,7 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
             new PaypalScriptLoader(scriptLoader),
-            createFormPoster()
+            formPoster
         )
     );
 
@@ -38,7 +47,7 @@ export default function createCheckoutButtonRegistry(
             checkoutActionCreator,
             new BraintreeSDKCreator(new BraintreeScriptLoader(scriptLoader)),
             new PaypalScriptLoader(scriptLoader),
-            createFormPoster(),
+            formPoster,
             true
         )
     );
@@ -48,6 +57,14 @@ export default function createCheckoutButtonRegistry(
             store,
             checkoutActionCreator,
             new MasterpassScriptLoader(scriptLoader)
+        ));
+
+    registry.register(CheckoutButtonMethodType.GOOGLEPAY_BRAINTREE, () =>
+        new GooglePayBraintreeButtonStrategy(
+            store,
+            formPoster,
+            checkoutActionCreator,
+            createGooglePayPaymentProcessor(store)
         )
     );
 
