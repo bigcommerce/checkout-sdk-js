@@ -22,6 +22,13 @@ ___
 **BRAINTREE_PAYPAL_CREDIT**:  = "braintreepaypalcredit"
 
 ___
+<a id="googlepay_braintree"></a>
+
+###  GOOGLEPAY_BRAINTREE
+
+**GOOGLEPAY_BRAINTREE**:  = "googlepaybraintree"
+
+___
 <a id="masterpass"></a>
 
 ###  MASTERPASS

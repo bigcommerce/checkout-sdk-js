@@ -178,6 +178,10 @@ declare interface BraintreePaypalButtonInitializeOptions {
      */
     style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
     /**
+     * Whether or not to show a credit button.
+     */
+    allowCredit?: boolean;
+    /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *
      * @param error - The error object describing the failure.
@@ -258,11 +262,22 @@ declare interface BraintreeVisaCheckoutPaymentInitializeOptions {
     onPaymentSelect?(): void;
 }
 
+declare enum ButtonColor {
+    Default = "default",
+    Black = "black",
+    White = "white"
+}
+
 declare interface ButtonStyles extends BlockElementStyles {
     active?: BlockElementStyles;
     focus?: BlockElementStyles;
     hover?: BlockElementStyles;
     disabled?: BlockElementStyles;
+}
+
+declare enum ButtonType {
+    Long = "long",
+    Short = "short"
 }
 
 declare interface Cart {
@@ -362,6 +377,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
+    /**
+     * The options that are required to facilitate Braintree GooglePay. They can be
+     * omitted unles you need to support Braintree GooglePay.
+     */
+    googlepaybraintree?: GooglePayBraintreeButtonInitializeOptions;
 }
 
 declare class CheckoutButtonInitializer {
@@ -456,6 +476,7 @@ declare interface CheckoutButtonInitializerOptions {
 declare enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
+    GOOGLEPAY_BRAINTREE = "googlepaybraintree",
     MASTERPASS = "masterpass"
 }
 
@@ -2238,6 +2259,16 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      */
     chasepay?: ChasePayCustomerInitializeOptions;
     masterpass?: MasterpassCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaybraintree?: GooglePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the GooglePay payment method.
+     * They can be omitted unless you need to support GooglePay.
+     */
+    googlepaystripe?: GooglePayCustomerInitializeOptions;
 }
 
 /**
@@ -2462,6 +2493,31 @@ declare interface GiftCertificateOrderPayment extends OrderPayment {
         code: string;
         remaining: number;
     };
+}
+
+declare interface GooglePayBraintreeButtonInitializeOptions {
+    /**
+     * The color of the GooglePay button that will be inserted.
+     *  black (default): a black button suitable for use on white or light backgrounds.
+     *  white: a white button suitable for use on colorful backgrounds.
+     */
+    buttonColor?: ButtonColor;
+    /**
+     * The size of the GooglePay button that will be inserted.
+     *  long: "Buy with Google Pay" button (default). A translated button label may appear
+     *         if a language specified in the viewer's browser matches an available language.
+     *  short: Google Pay payment button without the "Buy with" text.
+     */
+    buttonType?: ButtonType;
+}
+
+declare interface GooglePayCustomerInitializeOptions {
+    /**
+     * This container is used to set an event listener, provide an element ID if you want
+     * users to be able to launch the GooglePay wallet modal by clicking on a button.
+     * It should be an HTML element.
+     */
+    container: string;
 }
 
 /**

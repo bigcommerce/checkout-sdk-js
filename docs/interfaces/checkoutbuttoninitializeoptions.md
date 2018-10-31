@@ -18,6 +18,7 @@
 * [braintreepaypal](checkoutbuttoninitializeoptions.md#braintreepaypal)
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#braintreepaypalcredit)
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
+* [googlepaybraintree](checkoutbuttoninitializeoptions.md#googlepaybraintree)
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
 * [params](checkoutbuttoninitializeoptions.md#params)
 * [timeout](checkoutbuttoninitializeoptions.md#timeout)
@@ -51,6 +52,15 @@ ___
 **● containerId**: *`string`*
 
 The ID of a container which the checkout button should be inserted.
+
+___
+<a id="googlepaybraintree"></a>
+
+### `<Optional>` googlepaybraintree
+
+**● googlepaybraintree**: *[GooglePayBraintreeButtonInitializeOptions](googlepaybraintreebuttoninitializeoptions.md)*
+
+The options that are required to facilitate Braintree GooglePay. They can be omitted unles you need to support Braintree GooglePay.
 
 ___
 <a id="methodid"></a>

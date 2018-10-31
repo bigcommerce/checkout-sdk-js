@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [allowCredit](braintreepaypalbuttoninitializeoptions.md#allowcredit)
 * [style](braintreepaypalbuttoninitializeoptions.md#style)
 
 ### Methods
@@ -21,6 +22,16 @@
 
 ## Properties
 
+<a id="allowcredit"></a>
+
+### `<Optional>` allowCredit
+
+**● allowCredit**: * `undefined` &#124; `true` &#124; `false`
+*
+
+Whether or not to show a credit button.
+
+___
 <a id="style"></a>
 
 ### `<Optional>` style

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.11.0"></a>
+# [1.11.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.10.1...v1.11.0) (2018-10-31)
+
+
+### Bug Fixes
+
+* **embedded-checkout:** CHECKOUT-3695 Ignore trailing slash and other irrelevant information when comparing event origin ([#448](https://github.com/bigcommerce/checkout-sdk-js/issues/448)) ([c9b80b3](https://github.com/bigcommerce/checkout-sdk-js/commit/c9b80b3))
+
+
+### Features
+
+* **checkout-button:** INT-836 Add checkout button to support GooglePay provided by Braintree ([95e3732](https://github.com/bigcommerce/checkout-sdk-js/commit/95e3732))
+* **checkout-button:** PAYMENTS-3073 Support credit buttons by implementing funding sources ([5dff675](https://github.com/bigcommerce/checkout-sdk-js/commit/5dff675))
+
+
+
 <a name="1.10.1"></a>
 ## [1.10.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.10.0...v1.10.1) (2018-10-25)
 
