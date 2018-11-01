@@ -18,8 +18,14 @@ export interface PaypalButtonOptions {
     commit?: boolean;
     style?: PaypalButtonStyleOptions;
     funding?: PaypalFundingType;
-    payment(): Promise<any>;
-    onAuthorize(data: PaypalAuthorizeData): Promise<any>;
+    client?: PaypalClientToken;
+    payment(data?: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+    onAuthorize(data: PaypalAuthorizeData, actions?: PaypalActions): Promise<any>;
+}
+
+export interface PaypalClientToken {
+    production?: string;
+    sandbox?: string;
 }
 
 export interface PaypalFundingType {
@@ -37,10 +43,83 @@ export interface PaypalButtonStyleOptions {
     fundingicons?: boolean;
 }
 
+export interface PaypalActions {
+    payment: PaypalPaymentActions;
+    request: PaypalRequestActions;
+}
+
+export interface PaypalPaymentActions {
+    get(id: string): Promise<PaypalPaymentPayload>;
+}
+
+export interface PaypalRequestActions {
+    post(url: string, payload?: object): Promise<{ id: string }>;
+}
+
+export interface PaypalTransaction {
+    amount?: PaypalAmount;
+    payee?: PaypalPayee;
+    description?: string;
+    note_to_payee?: string;
+    item_list?: PaypalItemList;
+}
+
+export interface PaypalItemList {
+    items?: PaypalItem[];
+    shipping_address?: PaypalAddress;
+}
+
+export interface PaypalItem {
+    sku?: string;
+    name?: string;
+    description?: string;
+    quantity: string;
+    price: string;
+    currency: string;
+    tax?: string;
+}
+
+export interface PaypalAmount {
+    currency: string;
+    total: string;
+}
+
+export interface PaypalPayer {
+    payer_info: object;
+}
+
+export interface PaypalPayee {
+    email?: string;
+    merchant_id?: string;
+}
+
+export interface PaypalAddress {
+    line1: string;
+    line2?: string;
+    city?: string;
+    country_code: string;
+    postal_code?: string;
+    state?: string;
+    phone?: string;
+    type?: string;
+}
+
+export interface PaypalPaymentPayload {
+    payment: PaypalPaymentPayload;
+    payer: PaypalPayer;
+}
+
+export interface PaypalPaymentPayload {
+    transactions?: PaypalTransaction[];
+}
+
 export interface PaypalAuthorizeData {
     payerId: string;
     paymentId?: string;
     billingToken?: string;
+    // the PayPal side of things uses uppercase ID instead of camel case Id
+    payerID?: string;
+    paymentID?: string;
 }
 
 export interface PaypalExpressCheckout {
