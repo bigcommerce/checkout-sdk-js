@@ -24,6 +24,7 @@ export default function mapToInternalLineItem(
         name: item.name,
         quantity: item.quantity,
         brand: item.brand,
+        categoryNames: item.categoryNames,
         variantId: item.variantId,
         productId: item.productId,
         attributes: (item.options || []).map(option => ({

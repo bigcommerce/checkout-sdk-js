@@ -5,6 +5,7 @@ import { Observer } from 'rxjs/Observer';
 import { AddressRequestBody } from '../address';
 import { Cart } from '../cart';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import { CheckoutIncludes } from '../checkout/checkout-params';
 import CheckoutRequestSender from '../checkout/checkout-request-sender';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -151,7 +152,7 @@ export default class ConsignmentActionCreator {
             this._checkoutRequestSender.loadCheckout(checkout.id, {
                 ...options,
                 params: {
-                    include: ['consignments.availableShippingOptions'],
+                    include: [CheckoutIncludes.AvailableShippingOptions],
                 },
             })
             .then(({ body }) => {
