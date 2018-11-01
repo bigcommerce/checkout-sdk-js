@@ -501,6 +501,16 @@ declare class CheckoutButtonStatusSelector {
     isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
 }
 
+declare enum CheckoutIncludes {
+    AvailableShippingOptions = "consignments.availableShippingOptions",
+    PhysicalItemsCategoryNames = "cart.lineItems.physicalItems.categoryNames",
+    DigitalItemsCategoryNames = "cart.lineItems.digitalItems.categoryNames"
+}
+
+declare interface CheckoutParams {
+    include?: CheckoutIncludes[];
+}
+
 declare interface CheckoutPayment {
     detail: {
         step: string;
@@ -619,7 +629,7 @@ declare class CheckoutService {
      * @param options - Options for loading the current checkout.
      * @returns A promise that resolves to the current state.
      */
-    loadCheckout(id?: string, options?: RequestOptions): Promise<CheckoutSelectors>;
+    loadCheckout(id?: string, options?: RequestOptions<CheckoutParams>): Promise<CheckoutSelectors>;
     /**
      * Updates specific properties of the current checkout.
      *
@@ -2689,6 +2699,7 @@ declare interface LineItem {
     url: string;
     quantity: number;
     brand: string;
+    categoryNames?: string[];
     isTaxable: boolean;
     imageUrl: string;
     discounts: Array<{

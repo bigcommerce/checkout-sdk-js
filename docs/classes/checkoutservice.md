@@ -511,7 +511,7 @@ ___
 
 ###  loadCheckout
 
-▸ **loadCheckout**(id?: * `undefined` &#124; `string`*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **loadCheckout**(id?: * `undefined` &#124; `string`*, options?: *[RequestOptions](../interfaces/requestoptions.md)<[CheckoutParams](../interfaces/checkoutparams.md)>*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Loads the current checkout.
 
@@ -528,7 +528,7 @@ console.log(state.data.getCheckout());
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | `Optional` id |  `undefined` &#124; `string`|  The identifier of the checkout to load, or the default checkout if not provided. |
-| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for loading the current checkout. |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md)<[CheckoutParams](../interfaces/checkoutparams.md)> |  Options for loading the current checkout. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.

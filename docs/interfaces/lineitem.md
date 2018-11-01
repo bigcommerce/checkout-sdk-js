@@ -16,6 +16,7 @@
 
 * [addedByPromotion](lineitem.md#addedbypromotion)
 * [brand](lineitem.md#brand)
+* [categoryNames](lineitem.md#categorynames)
 * [couponAmount](lineitem.md#couponamount)
 * [discountAmount](lineitem.md#discountamount)
 * [discounts](lineitem.md#discounts)
@@ -51,6 +52,13 @@ ___
 ###  brand
 
 **● brand**: *`string`*
+
+___
+<a id="categorynames"></a>
+
+### `<Optional>` categoryNames
+
+**● categoryNames**: *`string`[]*
 
 ___
 <a id="couponamount"></a>

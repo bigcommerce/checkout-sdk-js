@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.12.0"></a>
+# [1.12.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.11.0...v1.12.0) (2018-11-01)
+
+
+### Features
+
+* **checkout:** CP-4020 Added Product Category to cart & checkout process. ([6ed6799](https://github.com/bigcommerce/checkout-sdk-js/commit/6ed6799))
+
+
+
 <a name="1.11.0"></a>
 # [1.11.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.10.1...v1.11.0) (2018-10-31)
 
