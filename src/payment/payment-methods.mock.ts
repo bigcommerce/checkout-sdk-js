@@ -82,6 +82,20 @@ export function getPaypalExpress(): PaymentMethod {
     };
 }
 
+export function getPaypal(): PaymentMethod {
+    return {
+        id: 'paypal',
+        logoUrl: '',
+        method: 'paypal',
+        supportedCards: [],
+        config: {
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
+    };
+}
+
 export function getAdyenAmex(): PaymentMethod {
     return {
         id: 'amex',

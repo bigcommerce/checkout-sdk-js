@@ -16,7 +16,8 @@ import {
     CheckoutButtonMethodType,
     CheckoutButtonStrategy,
     GooglePayBraintreeButtonStrategy,
-    MasterpassButtonStrategy
+    MasterpassButtonStrategy,
+    PaypalButtonStrategy
 } from './strategies';
 
 export default function createCheckoutButtonRegistry(
@@ -65,6 +66,14 @@ export default function createCheckoutButtonRegistry(
             formPoster,
             checkoutActionCreator,
             createGooglePayPaymentProcessor(store)
+        )
+    );
+
+    registry.register(CheckoutButtonMethodType.PAYPALEXPRESS, () =>
+        new PaypalButtonStrategy(
+            store,
+            new PaypalScriptLoader(scriptLoader),
+            createFormPoster()
         )
     );
 

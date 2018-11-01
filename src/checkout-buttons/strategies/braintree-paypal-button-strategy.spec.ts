@@ -423,6 +423,9 @@ describe('BraintreePaypalButtonStrategy', () => {
                 containerId: 'checkout-button',
                 braintreepaypalcredit: {
                     allowCredit: true,
+                    style: {
+                        label: 'credit',
+                    },
                 },
             };
 
