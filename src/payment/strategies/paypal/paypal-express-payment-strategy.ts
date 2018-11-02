@@ -7,16 +7,18 @@ import * as paymentStatusTypes from '../../payment-status-types';
 import PaymentStrategy from '../payment-strategy';
 
 import PaypalScriptLoader from './paypal-script-loader';
-import { PaypalSDK } from './paypal-sdk';
+import { PaypalHostWindow, PaypalSDK } from './paypal-sdk';
 
 export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
     private _paypalSdk?: PaypalSDK;
     private _paymentMethod?: PaymentMethod;
+    private _useRedirectFlow: boolean = false;
 
     constructor(
         store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
-        private _scriptLoader: PaypalScriptLoader
+        private _scriptLoader: PaypalScriptLoader,
+        private _window: PaypalHostWindow = window
     ) {
         super(store);
     }
@@ -25,6 +27,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         const state = this._store.getState();
 
         this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
+        this._useRedirectFlow = (options.paypalexpress && options.paypalexpress.useRedirectFlow) === true;
 
         if (!this._isInContextEnabled() || this._isInitialized) {
             return super.initialize(options);
@@ -66,13 +69,13 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
         }
 
-        if (!this._isInContextEnabled()) {
+        if (!this._isInContextEnabled() || this._useRedirectFlow) {
             return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
                 .then(state => {
                     const redirectUrl = state.payment.getPaymentRedirectUrl();
 
                     if (redirectUrl) {
-                        window.location.assign(redirectUrl);
+                        this._window.top.location.href = redirectUrl;
                     }
 
                     // We need to hold execution so the consumer does not redirect us somewhere else
