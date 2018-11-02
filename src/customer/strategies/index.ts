@@ -6,4 +6,4 @@ export { default as ChasePayCustomerStrategy, ChasePayCustomerInitializeOptions 
 export { default as SquareCustomerStrategy } from './square-customer-strategy';
 export { default as MasterpassCustomerInitializeOptions} from './masterpass-customer-initialize-options';
 export { default as MasterpassCustomerStrategy } from './masterpass-customer-strategy';
-export { GooglePayBraintreeCustomerStrategy, GooglePayCustomerInitializeOptions } from './googlepay';
+export { GooglePayCustomerStrategy, GooglePayCustomerInitializeOptions } from './googlepay';

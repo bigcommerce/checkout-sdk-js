@@ -7,7 +7,7 @@ import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-export default class GooglePayBraintreeButtonStrategy extends CheckoutButtonStrategy {
+export default class GooglePayButtonStrategy extends CheckoutButtonStrategy {
     private _methodId?: string;
     private _walletButton?: HTMLElement;
 
@@ -83,7 +83,7 @@ export default class GooglePayBraintreeButtonStrategy extends CheckoutButtonStra
 
         return this._googlePayPaymentProcessor.displayWallet()
             .then(paymentData => this._googlePayPaymentProcessor.handleSuccess(paymentData)
-            .then(() => this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress)))
+                .then(() => this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress)))
             .then(() => this._onPaymentSelectComplete())
             .catch(error => this._onError(error));
     }

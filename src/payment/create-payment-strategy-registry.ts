@@ -35,9 +35,15 @@ import {
 } from './strategies';
 import { AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayScriptLoader } from './strategies/amazon-pay';
-import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from './strategies/braintree';
+import {
+    createBraintreePaymentProcessor,
+    createBraintreeVisaCheckoutPaymentProcessor,
+    BraintreeScriptLoader,
+    BraintreeSDKCreator,
+    VisaCheckoutScriptLoader
+} from './strategies/braintree';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import { createGooglePayPaymentProcessor } from './strategies/googlepay/';
+import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from './strategies/googlepay';
 import { KlarnaScriptLoader } from './strategies/klarna';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { PaypalScriptLoader } from './strategies/paypal';
@@ -255,7 +261,14 @@ export default function createPaymentStrategyRegistry(
             paymentStrategyActionCreator,
             paymentActionCreator,
             orderActionCreator,
-            createGooglePayPaymentProcessor(store)
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayBraintreeInitializer(
+                    new BraintreeSDKCreator(
+                        new BraintreeScriptLoader(scriptLoader)
+                    )
+                )
+            )
         )
     );
 
@@ -275,6 +288,21 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             paymentMethodActionCreator,
             new MasterpassScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register('googlepaystripe', () =>
+        new GooglePayPaymentStrategy(
+            store,
+            checkoutActionCreator,
+            paymentMethodActionCreator,
+            paymentStrategyActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayStripeInitializer()
+            )
         )
     );
 

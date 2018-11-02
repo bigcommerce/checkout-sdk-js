@@ -1,4 +1,3 @@
-
 import { Checkout } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';

@@ -7,9 +7,14 @@ import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
-import { createBraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
+import {
+    createBraintreeVisaCheckoutPaymentProcessor,
+    BraintreeScriptLoader,
+    BraintreeSDKCreator,
+    VisaCheckoutScriptLoader
+} from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
-import { createGooglePayPaymentProcessor } from '../payment/strategies/googlepay/';
+import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 
@@ -22,7 +27,7 @@ import {
     ChasePayCustomerStrategy,
     CustomerStrategy,
     DefaultCustomerStrategy,
-    GooglePayBraintreeCustomerStrategy,
+    GooglePayCustomerStrategy,
     MasterpassCustomerStrategy,
     SquareCustomerStrategy
 } from './strategies';
@@ -93,13 +98,32 @@ export default function createCustomerStrategyRegistry(
     );
 
     registry.register('googlepaybraintree', () =>
-        new GooglePayBraintreeCustomerStrategy(
+        new GooglePayCustomerStrategy(
             store,
             remoteCheckoutActionCreator,
-            createGooglePayPaymentProcessor(store),
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayBraintreeInitializer(
+                    new BraintreeSDKCreator(
+                        new BraintreeScriptLoader(scriptLoader)
+                    )
+                )
+            ),
             formPoster
         )
     );
+
+    registry.register('googlepaystripe', () =>
+        new GooglePayCustomerStrategy(
+            store,
+            remoteCheckoutActionCreator,
+            createGooglePayPaymentProcessor(
+                store,
+                new GooglePayStripeInitializer()
+            ),
+            formPoster
+    )
+);
 
     registry.register('default', () =>
         new DefaultCustomerStrategy(

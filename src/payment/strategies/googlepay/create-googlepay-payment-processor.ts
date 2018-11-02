@@ -6,13 +6,12 @@ import { CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
-import { BraintreeScriptLoader, BraintreeSDKCreator } from '../braintree';
 
-import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
+import { GooglePayInitializer } from './googlepay';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 import GooglePayScriptLoader from './googlepay-script-loader';
 
-export default function createGooglePayPaymentProcessor(store: CheckoutStore): GooglePayPaymentProcessor {
+export default function createGooglePayPaymentProcessor(store: CheckoutStore, initializer: GooglePayInitializer): GooglePayPaymentProcessor {
     const requestSender = createRequestSender();
     const scriptLoader = getScriptLoader();
 
@@ -22,11 +21,7 @@ export default function createGooglePayPaymentProcessor(store: CheckoutStore): G
             new PaymentMethodRequestSender(requestSender)
         ),
         new GooglePayScriptLoader(scriptLoader),
-        new GooglePayBraintreeInitializer(
-            new BraintreeSDKCreator(
-                new BraintreeScriptLoader(scriptLoader)
-            )
-        ),
+        initializer,
         new BillingAddressActionCreator(
             new BillingAddressRequestSender(requestSender)
         ),

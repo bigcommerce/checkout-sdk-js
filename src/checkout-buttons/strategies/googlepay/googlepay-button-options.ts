@@ -1,6 +1,6 @@
 import { ButtonColor, ButtonType } from '../../../payment/strategies/googlepay/googlepay';
 
-export interface GooglePayBraintreeButtonInitializeOptions {
+export interface GooglePayButtonInitializeOptions {
     /**
      * The color of the GooglePay button that will be inserted.
      *  black (default): a black button suitable for use on white or light backgrounds.
