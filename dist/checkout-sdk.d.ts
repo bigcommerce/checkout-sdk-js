@@ -374,6 +374,11 @@ declare interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions 
      */
     braintreepaypalcredit?: BraintreePaypalButtonInitializeOptions;
     /**
+     * The options that are required to facilitate PayPal. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypal?: PaypalButtonInitializeOptions;
+    /**
      * The ID of a container which the checkout button should be inserted.
      */
     containerId: string;
@@ -477,7 +482,8 @@ declare enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = "braintreepaypal",
     BRAINTREE_PAYPAL_CREDIT = "braintreepaypalcredit",
     GOOGLEPAY_BRAINTREE = "googlepaybraintree",
-    MASTERPASS = "masterpass"
+    MASTERPASS = "masterpass",
+    PAYPALEXPRESS = "paypalexpress"
 }
 
 /**
@@ -2952,6 +2958,33 @@ declare interface PaymentRequestOptions extends RequestOptions {
 declare interface PaymentSettings {
     bigpayBaseUrl: string;
     clientSidePaymentProviders: string[];
+}
+
+declare interface PaypalButtonInitializeOptions {
+    /**
+     * The Client ID of the Paypal App
+     */
+    clientId: string;
+    /**
+     * Whether or not to show a credit button.
+     */
+    allowCredit?: boolean;
+    /**
+     * A set of styling options for the checkout button.
+     */
+    style?: Pick<PaypalButtonStyleOptions, 'layout' | 'size' | 'color' | 'label' | 'shape' | 'tagline' | 'fundingicons'>;
+    /**
+     * A callback that gets called if unable to authorize and tokenize payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onAuthorizeError?(error: StandardError): void;
+    /**
+     * A callback that gets called if unable to submit payment.
+     *
+     * @param error - The error object describing the failure.
+     */
+    onPaymentError?(error: StandardError): void;
 }
 
 declare interface PaypalButtonStyleOptions {

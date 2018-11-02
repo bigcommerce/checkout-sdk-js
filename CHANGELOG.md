@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.13.0"></a>
+# [1.13.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.12.0...v1.13.0) (2018-11-02)
+
+
+### Features
+
+* **payment:** PAYMENTS-3071 Support the Paypal checkout button strategy for smart buttons ([6f4d31d](https://github.com/bigcommerce/checkout-sdk-js/commit/6f4d31d))
+
+
+
 <a name="1.12.0"></a>
 # [1.12.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.11.0...v1.12.0) (2018-11-01)
 

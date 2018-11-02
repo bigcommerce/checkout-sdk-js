@@ -21,6 +21,7 @@
 * [googlepaybraintree](checkoutbuttoninitializeoptions.md#googlepaybraintree)
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
 * [params](checkoutbuttoninitializeoptions.md#params)
+* [paypal](checkoutbuttoninitializeoptions.md#paypal)
 * [timeout](checkoutbuttoninitializeoptions.md#timeout)
 
 ---
@@ -79,6 +80,15 @@ ___
 **● params**: *[TParams]()*
 
 The parameters of the request, if required.
+
+___
+<a id="paypal"></a>
+
+### `<Optional>` paypal
+
+**● paypal**: *[PaypalButtonInitializeOptions](paypalbuttoninitializeoptions.md)*
+
+The options that are required to facilitate PayPal. They can be omitted unless you need to support Paypal.
 
 ___
 <a id="timeout"></a>

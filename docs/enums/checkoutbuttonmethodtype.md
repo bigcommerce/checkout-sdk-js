@@ -36,4 +36,11 @@ ___
 **MASTERPASS**:  = "masterpass"
 
 ___
+<a id="paypalexpress"></a>
+
+###  PAYPALEXPRESS
+
+**PAYPALEXPRESS**:  = "paypalexpress"
+
+___
 
