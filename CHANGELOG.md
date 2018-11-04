@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.14.0"></a>
+# [1.14.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.13.0...v1.14.0) (2018-11-04)
+
+
+### Features
+
+* **checkout-button:** INT-856 Add checkout button to support GooglePay provided by Stripe ([32f241c](https://github.com/bigcommerce/checkout-sdk-js/commit/32f241c))
+
+
+
 <a name="1.13.0"></a>
 # [1.13.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.12.0...v1.13.0) (2018-11-02)
 

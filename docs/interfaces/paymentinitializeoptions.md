@@ -22,7 +22,8 @@ A set of options that are required to initialize the payment step of the current
 * [braintreevisacheckout](paymentinitializeoptions.md#braintreevisacheckout)
 * [chasepay](paymentinitializeoptions.md#chasepay)
 * [gatewayId](paymentinitializeoptions.md#gatewayid)
-* [googlepay](paymentinitializeoptions.md#googlepay)
+* [googlepaybraintree](paymentinitializeoptions.md#googlepaybraintree)
+* [googlepaystripe](paymentinitializeoptions.md#googlepaystripe)
 * [klarna](paymentinitializeoptions.md#klarna)
 * [masterpass](paymentinitializeoptions.md#masterpass)
 * [methodId](paymentinitializeoptions.md#methodid)
@@ -80,13 +81,22 @@ ___
 The identifier of the payment provider providing the payment method. This option is only required if the provider offers multiple payment options. i.e.: Adyen and Klarna.
 
 ___
-<a id="googlepay"></a>
+<a id="googlepaybraintree"></a>
 
-### `<Optional>` googlepay
+### `<Optional>` googlepaybraintree
 
-**● googlepay**: *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
+**● googlepaybraintree**: *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
 
-The options that are required to initialize the GooglePay payment method. They can be omitted unless you need to support GooglePay.
+The options that are required to initialize the GooglePay Braintree payment method. They can be omitted unless you need to support GooglePay.
+
+___
+<a id="googlepaystripe"></a>
+
+### `<Optional>` googlepaystripe
+
+**● googlepaystripe**: *[GooglePayPaymentInitializeOptions](googlepaypaymentinitializeoptions.md)*
+
+The options that are required to initialize the GooglePay Stripe payment method. They can be omitted unless you need to support GooglePay.
 
 ___
 <a id="klarna"></a>

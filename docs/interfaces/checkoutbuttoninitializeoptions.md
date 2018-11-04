@@ -19,6 +19,7 @@
 * [braintreepaypalcredit](checkoutbuttoninitializeoptions.md#braintreepaypalcredit)
 * [containerId](checkoutbuttoninitializeoptions.md#containerid)
 * [googlepaybraintree](checkoutbuttoninitializeoptions.md#googlepaybraintree)
+* [googlepaystripe](checkoutbuttoninitializeoptions.md#googlepaystripe)
 * [methodId](checkoutbuttoninitializeoptions.md#methodid)
 * [params](checkoutbuttoninitializeoptions.md#params)
 * [paypal](checkoutbuttoninitializeoptions.md#paypal)
@@ -59,9 +60,18 @@ ___
 
 ### `<Optional>` googlepaybraintree
 
-**● googlepaybraintree**: *[GooglePayBraintreeButtonInitializeOptions](googlepaybraintreebuttoninitializeoptions.md)*
+**● googlepaybraintree**: *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
 
 The options that are required to facilitate Braintree GooglePay. They can be omitted unles you need to support Braintree GooglePay.
+
+___
+<a id="googlepaystripe"></a>
+
+### `<Optional>` googlepaystripe
+
+**● googlepaystripe**: *[GooglePayButtonInitializeOptions](googlepaybuttoninitializeoptions.md)*
+
+The options that are required to facilitate Stripe GooglePay. They can be omitted unles you need to support Stripe GooglePay.
 
 ___
 <a id="methodid"></a>

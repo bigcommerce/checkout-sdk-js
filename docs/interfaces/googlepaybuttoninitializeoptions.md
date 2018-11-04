@@ -1,17 +1,17 @@
-[@bigcommerce/checkout-sdk](../README.md) > [GooglePayBraintreeButtonInitializeOptions](../interfaces/googlepaybraintreebuttoninitializeoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) > [GooglePayButtonInitializeOptions](../interfaces/googlepaybuttoninitializeoptions.md)
 
-# GooglePayBraintreeButtonInitializeOptions
+# GooglePayButtonInitializeOptions
 
 ## Hierarchy
 
-**GooglePayBraintreeButtonInitializeOptions**
+**GooglePayButtonInitializeOptions**
 
 ## Index
 
 ### Properties
 
-* [buttonColor](googlepaybraintreebuttoninitializeoptions.md#buttoncolor)
-* [buttonType](googlepaybraintreebuttoninitializeoptions.md#buttontype)
+* [buttonColor](googlepaybuttoninitializeoptions.md#buttoncolor)
+* [buttonType](googlepaybuttoninitializeoptions.md#buttontype)
 
 ---
 

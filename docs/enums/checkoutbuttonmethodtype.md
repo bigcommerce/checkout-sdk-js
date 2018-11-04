@@ -29,6 +29,13 @@ ___
 **GOOGLEPAY_BRAINTREE**:  = "googlepaybraintree"
 
 ___
+<a id="googlepay_stripe"></a>
+
+###  GOOGLEPAY_STRIPE
+
+**GOOGLEPAY_STRIPE**:  = "googlepaystripe"
+
+___
 <a id="masterpass"></a>
 
 ###  MASTERPASS
