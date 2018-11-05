@@ -22,7 +22,8 @@ import {
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
-    requestSender: RequestSender
+    requestSender: RequestSender,
+    host?: string
 ): Registry<CheckoutButtonStrategy, CheckoutButtonMethodType> {
     const registry = new Registry<CheckoutButtonStrategy, CheckoutButtonMethodType>();
     const scriptLoader = getScriptLoader();
@@ -92,7 +93,8 @@ export default function createCheckoutButtonRegistry(
         new PaypalButtonStrategy(
             store,
             new PaypalScriptLoader(scriptLoader),
-            formPoster
+            formPoster,
+            host
         )
     );
 
