@@ -63,7 +63,11 @@ describe('PaypalButtonStrategy', () => {
         jest.spyOn(paypal.Button, 'render')
             .mockImplementation((options: PaypalButtonOptions) => {
                 eventEmitter.on('payment', () => {
-                    options.payment().catch(() => {});
+                    options.payment({
+                        payerId: 'PAYER_ID',
+                        paymentID: 'PAYMENT_ID',
+                        payerID: 'PAYER_ID',
+                    }, actionsMock).catch(() => {});
                 });
 
                 eventEmitter.on('authorize', () => {
@@ -249,6 +253,37 @@ describe('PaypalButtonStrategy', () => {
                     disallowed: [],
                 },
             }, 'checkout-button');
+        });
+    });
+
+    it('sends requests to the relative url by default', async () => {
+        await strategy.initialize(options);
+
+        eventEmitter.emit('payment');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(actionsMock.request.post).toHaveBeenCalledWith('/api/storefront/paypal-payment/', expect.any(Object), expect.any(Object));
+    });
+
+    describe('with a provided host', () => {
+        beforeEach(() => {
+            strategy = new PaypalButtonStrategy(
+                store,
+                paypalScriptLoader,
+                formPoster,
+                'https://example.com'
+            );
+        });
+
+        it('sends requests to the absolute url instead of the relative url', async () => {
+            await strategy.initialize(options);
+
+            eventEmitter.emit('payment');
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(actionsMock.request.post).toHaveBeenCalledWith('https://example.com/api/storefront/paypal-payment/', expect.any(Object), expect.any(Object));
         });
     });
 });
