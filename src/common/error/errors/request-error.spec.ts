@@ -1,5 +1,6 @@
-import RequestError from './request-error';
 import { getErrorResponse, getErrorResponseBody } from '../../http-request/responses.mock';
+
+import RequestError from './request-error';
 
 describe('RequestError', () => {
     it('sets error type', () => {
@@ -33,7 +34,7 @@ describe('RequestError', () => {
             ...getErrorResponseBody(),
             errors: [
                 null,
-                { code: 'invalid_cvv', message: null },
+                { code: 'invalid_cvv', message: undefined },
                 { code: 'invalid_number', message: '' },
                 { code: 'invalid_account', message: 'Invalid account.' },
             ],
@@ -45,7 +46,7 @@ describe('RequestError', () => {
     it('sets error message with detail contained in response', () => {
         const response = getErrorResponse({
             ...getErrorResponseBody(),
-            errors: null,
+            errors: undefined,
         });
         const error = new RequestError(response);
 
@@ -55,8 +56,8 @@ describe('RequestError', () => {
     it('sets error message with title contained in response', () => {
         const response = getErrorResponse({
             ...getErrorResponseBody(),
-            detail: null,
-            errors: null,
+            detail: undefined,
+            errors: undefined,
         });
         const error = new RequestError(response);
 
@@ -71,8 +72,8 @@ describe('RequestError', () => {
     });
 
     it('sets default error message if none is provided', () => {
-        const error = new RequestError({});
+        const error = new RequestError({ body: {}, headers: [], status: 0, statusText: '' });
 
-        expect(error.message).toBeDefined();
+        expect(error.message).toEqual('An unexpected error has occurred.');
     });
 });

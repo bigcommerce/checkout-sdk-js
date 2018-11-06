@@ -33,7 +33,9 @@ export default class RequestErrorFactory {
 
         const error = last(response.body && response.body.errors);
 
-        return error && error.code ? error.code : 'default';
+        return error && typeof error === 'object' && error.code ?
+            error.code :
+            'default';
     }
 }
 

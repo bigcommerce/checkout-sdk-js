@@ -1,6 +1,8 @@
 import { merge } from 'lodash';
-import { RequestError, UnrecoverableError, TimeoutError } from './errors';
+
 import { getErrorResponse, getTimeoutResponse } from '../http-request/responses.mock';
+
+import { RequestError, TimeoutError, UnrecoverableError } from './errors';
 import RequestErrorFactory from './request-error-factory';
 
 describe('RequestErrorFactory', () => {
@@ -8,7 +10,7 @@ describe('RequestErrorFactory', () => {
         const factory = new RequestErrorFactory();
         const response = merge({}, getErrorResponse(), { body: { type: 'empty_cart' } });
 
-        factory.register('empty_cart', (data) => new UnrecoverableError(data));
+        factory.register('empty_cart', data => new UnrecoverableError(data));
 
         expect(factory.createError(response)).toBeInstanceOf(UnrecoverableError);
     });
@@ -17,7 +19,7 @@ describe('RequestErrorFactory', () => {
         const factory = new RequestErrorFactory();
         const response = merge({}, getErrorResponse(), { body: { type: 'foobar/empty_cart' } });
 
-        factory.register('empty_cart', (data) => new UnrecoverableError(data));
+        factory.register('empty_cart', data => new UnrecoverableError(data));
 
         expect(factory.createError(response)).toBeInstanceOf(UnrecoverableError);
     });
@@ -26,7 +28,7 @@ describe('RequestErrorFactory', () => {
         const factory = new RequestErrorFactory();
         const response = merge({}, getErrorResponse(), { body: { errors: [{ code: 'empty_cart' }] } });
 
-        factory.register('empty_cart', (data) => new UnrecoverableError(data));
+        factory.register('empty_cart', data => new UnrecoverableError(data));
 
         expect(factory.createError(response)).toBeInstanceOf(UnrecoverableError);
     });
@@ -42,6 +44,6 @@ describe('RequestErrorFactory', () => {
         const error = factory.createError(getTimeoutResponse());
 
         expect(error).toBeInstanceOf(TimeoutError);
-        expect(error.status).toEqual(0);
+        expect((error as TimeoutError).status).toEqual(0);
     });
 });
