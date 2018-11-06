@@ -1,15 +1,14 @@
-import { getErrorResponse } from '../common/http-request/responses.mock';
+import { CheckoutStoreState } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+
 import BillingAddressSelector from './billing-address-selector';
-import { getBillingAddressState } from './billing-addresses.mock';
 
 describe('BillingAddressSelector', () => {
-    let billingAddressSelector;
-    let state;
+    let billingAddressSelector: BillingAddressSelector;
+    let state: CheckoutStoreState;
 
     beforeEach(() => {
-        state = {
-            billingAddress: getBillingAddressState(),
-        };
+        state = getCheckoutStoreState();
     });
 
     describe('#getBillingAddress()', () => {
@@ -22,13 +21,13 @@ describe('BillingAddressSelector', () => {
         it('returns undefined if quote is not available', () => {
             billingAddressSelector = new BillingAddressSelector({ ...state.billingAddress, data: undefined });
 
-            expect(billingAddressSelector.getBillingAddress()).toEqual();
+            expect(billingAddressSelector.getBillingAddress()).toBeFalsy();
         });
     });
 
     describe('#getUpdateError()', () => {
         it('returns error if unable to update', () => {
-            const updateError = getErrorResponse();
+            const updateError = new Error();
 
             billingAddressSelector = new BillingAddressSelector({
                 ...state.billingAddress,
@@ -47,8 +46,7 @@ describe('BillingAddressSelector', () => {
 
     describe('#getContinueAsGuestError()', () => {
         it('returns error if unable to update', () => {
-            const continueAsGuestError = getErrorResponse();
-
+            const continueAsGuestError = new Error();
 
             billingAddressSelector = new BillingAddressSelector({
                 ...state.billingAddress,
