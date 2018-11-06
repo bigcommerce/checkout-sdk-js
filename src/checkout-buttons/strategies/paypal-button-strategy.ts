@@ -3,7 +3,6 @@ import { pick } from 'lodash';
 
 import { CheckoutStore } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
-import { INTERNAL_USE_ONLY } from '../../common/http-request';
 import { PaymentMethod } from '../../payment';
 import { PaypalActions, PaypalAuthorizeData, PaypalClientToken } from '../../payment/strategies/paypal';
 import { PaypalScriptLoader } from '../../payment/strategies/paypal';
@@ -17,8 +16,7 @@ export default class PaypalButtonStrategy extends CheckoutButtonStrategy {
     constructor(
         private _store: CheckoutStore,
         private _paypalScriptLoader: PaypalScriptLoader,
-        private _formPoster: FormPoster,
-        private _host: string = ''
+        private _formPoster: FormPoster
     ) {
         super();
     }
@@ -89,13 +87,7 @@ export default class PaypalButtonStrategy extends CheckoutButtonStrategy {
             throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
         }
 
-        return actions.request.post(`${this._host}/api/storefront/paypal-payment/`, {
-            merchantId,
-        }, {
-            headers: {
-                'X-API-INTERNAL': INTERNAL_USE_ONLY,
-            },
-        })
+        return actions.request.post('/api/storefront/paypal-payment/', { merchantId })
             .then(res => res.id)
             .catch(error => {
                 if (onError) {
