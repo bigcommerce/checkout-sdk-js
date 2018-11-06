@@ -2,6 +2,7 @@ export * from './coupon-actions';
 export * from './gift-certificate-actions';
 
 export { default as Coupon } from './coupon';
+export { default as CouponErrorResponseBody } from './errors/coupon-error-response-body';
 export { default as CouponState } from './coupon-state';
 export { default as InternalCoupon } from './internal-coupon';
 export { default as CouponActionCreator } from './coupon-action-creator';

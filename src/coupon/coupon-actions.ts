@@ -1,6 +1,9 @@
 import { Action } from '@bigcommerce/data-store';
 
 import { Checkout } from '../checkout';
+import { RequestError } from '../common/error/errors';
+
+import CouponErrorResponseBody from './errors/coupon-error-response-body';
 
 export enum CouponActionType {
     ApplyCouponRequested = 'APPLY_COUPON_REQUESTED',
@@ -34,7 +37,7 @@ export interface ApplyCouponSucceededAction extends Action<Checkout> {
     type: CouponActionType.ApplyCouponSucceeded;
 }
 
-export interface ApplyCouponFailedAction extends Action<Error> {
+export interface ApplyCouponFailedAction extends Action<RequestError<CouponErrorResponseBody>> {
     type: CouponActionType.ApplyCouponFailed;
 }
 
