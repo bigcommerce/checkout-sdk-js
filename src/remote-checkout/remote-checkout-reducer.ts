@@ -1,19 +1,16 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers } from '@bigcommerce/data-store';
 
-import { AfterpayRemoteCheckout, AmazonPayRemoteCheckout } from './methods';
-
-import * as actionTypes from './remote-checkout-action-types';
+import RemoteCheckout from './remote-checkout';
+import { RemoteCheckoutAction, RemoteCheckoutActionType } from './remote-checkout-actions';
 import RemoteCheckoutState, { RemoteCheckoutStateData } from './remote-checkout-state';
 
 const DEFAULT_STATE: RemoteCheckoutState = {
     data: {},
 };
 
-type RemoteCheckout = AfterpayRemoteCheckout | AmazonPayRemoteCheckout;
-
 export default function remoteCheckoutReducer(
     state: RemoteCheckoutState = DEFAULT_STATE,
-    action: Action
+    action: RemoteCheckoutAction
 ): RemoteCheckoutState {
     if (!action.meta || !action.meta.methodId) {
         return state;
@@ -29,20 +26,20 @@ export default function remoteCheckoutReducer(
 }
 
 function dataReducer(
-    data: RemoteCheckout = {},
-    action: Action
+    data: RemoteCheckout = DEFAULT_STATE.data,
+    action: RemoteCheckoutAction
 ): RemoteCheckout {
     switch (action.type) {
-    case actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED:
-        return { ...data, billing: action.payload.billing };
+    case RemoteCheckoutActionType.InitializeRemoteBillingSucceeded:
+        return action.payload ? { ...data, billing: action.payload.billing } : data;
 
-    case actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED:
-        return { ...data, shipping: action.payload.shipping };
+    case RemoteCheckoutActionType.InitializeRemoteShippingSucceeded:
+        return action.payload ? { ...data, shipping: action.payload.shipping } : data;
 
-    case actionTypes.LOAD_REMOTE_SETTINGS_SUCCEEDED:
+    case RemoteCheckoutActionType.LoadRemoteSettingsSucceeded:
         return { ...data, settings: action.payload };
 
-    case actionTypes.UPDATE_REMOTE_CHECKOUT:
+    case RemoteCheckoutActionType.UpdateRemoteCheckout:
         return { ...data, ...action.payload };
 
     default:

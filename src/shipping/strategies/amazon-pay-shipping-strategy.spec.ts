@@ -16,8 +16,7 @@ import {
     AmazonPayScriptLoader,
     AmazonPayWindow,
 } from '../../payment/strategies/amazon-pay';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { INITIALIZE_REMOTE_SHIPPING_REQUESTED } from '../../remote-checkout/remote-checkout-action-types';
+import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import ConsignmentActionCreator from '../consignment-action-creator';
 import { ConsignmentActionType } from '../consignment-actions';
 import { getFlatRateOption } from '../internal-shipping-options.mock';
@@ -158,7 +157,7 @@ describe('AmazonPayShippingStrategy', () => {
     it('synchronizes checkout address when selecting new address', async () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
-        const initializeShippingAction = Observable.of(createAction(INITIALIZE_REMOTE_SHIPPING_REQUESTED));
+        const initializeShippingAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemoteShippingRequested));
         const updateAddressAction = Observable.of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
@@ -196,7 +195,7 @@ describe('AmazonPayShippingStrategy', () => {
         const paymentMethod = getAmazonPay();
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
-            .mockReturnValue(Observable.of(createAction(INITIALIZE_REMOTE_SHIPPING_REQUESTED)));
+            .mockReturnValue(Observable.of(createAction(RemoteCheckoutActionType.InitializeRemoteShippingRequested)));
 
         jest.spyOn(consignmentActionCreator, 'updateAddress')
             .mockReturnValue(Observable.of(createAction(ConsignmentActionType.CreateConsignmentsRequested)));

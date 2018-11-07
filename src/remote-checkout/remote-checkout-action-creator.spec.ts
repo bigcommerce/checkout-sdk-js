@@ -1,14 +1,16 @@
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
-import { getRemoteBillingResponseBody, getRemoteShippingResponseBody, getRemotePaymentResponseBody } from './remote-checkout.mock';
+
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import * as actionTypes from './remote-checkout-action-types';
+
 import RemoteCheckoutActionCreator from './remote-checkout-action-creator';
+import { RemoteCheckoutActionType } from './remote-checkout-actions';
 import RemoteCheckoutRequestSender from './remote-checkout-request-sender';
+import { getRemoteBillingResponseBody, getRemotePaymentResponseBody, getRemoteShippingResponseBody } from './remote-checkout.mock';
 
 describe('RemoteCheckoutActionCreator', () => {
-    let actionCreator;
-    let requestSender;
+    let actionCreator: RemoteCheckoutActionCreator;
+    let requestSender: RemoteCheckoutRequestSender;
 
     beforeEach(() => {
         requestSender = new RemoteCheckoutRequestSender(createRequestSender());
@@ -29,8 +31,8 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(requestSender.initializeBilling).toHaveBeenCalledWith('amazon', params, options);
         expect(actions).toEqual([
-            { type: actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED, meta: { methodId: 'amazon' } },
-            { type: actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED, payload: response.body, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemoteBillingRequested, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemoteBillingSucceeded, payload: response.body, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -41,15 +43,15 @@ describe('RemoteCheckoutActionCreator', () => {
         jest.spyOn(requestSender, 'initializeBilling')
             .mockReturnValue(Promise.reject(response));
 
-        const actions = await actionCreator.initializeBilling('amazon')
+        const actions = await Observable.from(actionCreator.initializeBilling('amazon'))
             .catch(errorHandler)
             .toArray()
             .toPromise();
 
         expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
-            { type: actionTypes.INITIALIZE_REMOTE_BILLING_REQUESTED, meta: { methodId: 'amazon' } },
-            { type: actionTypes.INITIALIZE_REMOTE_BILLING_FAILED, error: true, payload: response, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemoteBillingRequested, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemoteBillingFailed, error: true, payload: response, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -67,8 +69,8 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(requestSender.initializeShipping).toHaveBeenCalledWith('amazon', params, options);
         expect(actions).toEqual([
-            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED, meta: { methodId: 'amazon' } },
-            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED, payload: response.body, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemoteShippingRequested, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemoteShippingSucceeded, payload: response.body, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -85,8 +87,8 @@ describe('RemoteCheckoutActionCreator', () => {
             .toPromise();
 
         expect(actions).toEqual([
-            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_REQUESTED, meta: { methodId: 'amazon' } },
-            { type: actionTypes.INITIALIZE_REMOTE_SHIPPING_FAILED, error: true, payload: response, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemoteShippingRequested, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemoteShippingFailed, error: true, payload: response, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -104,8 +106,8 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(requestSender.initializePayment).toHaveBeenCalledWith('amazon', params, options);
         expect(actions).toEqual([
-            { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED, meta: { methodId: 'amazon' } },
-            { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_SUCCEEDED, payload: response.body, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemotePaymentRequested, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemotePaymentSucceeded, payload: response.body, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -123,13 +125,13 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
-            { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_REQUESTED, meta: { methodId: 'amazon' } },
-            { type: actionTypes.INITIALIZE_REMOTE_PAYMENT_FAILED, error: true, payload: response, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemotePaymentRequested, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.InitializeRemotePaymentFailed, error: true, payload: response, meta: { methodId: 'amazon' } },
         ]);
     });
 
     it('signs out and emits actions to notify progress', async () => {
-        const response = getResponse();
+        const response = getResponse({});
         const options = { timeout: createTimeout() };
 
         jest.spyOn(requestSender, 'signOut')
@@ -141,8 +143,8 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(requestSender.signOut).toHaveBeenCalledWith('amazon', options);
         expect(actions).toEqual([
-            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED, meta: { methodId: 'amazon' } },
-            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.SignOutRemoteCustomerRequested, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.SignOutRemoteCustomerSucceeded, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -160,8 +162,8 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
-            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_REQUESTED, meta: { methodId: 'amazon' } },
-            { type: actionTypes.SIGN_OUT_REMOTE_CUSTOMER_FAILED, error: true, payload: response, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.SignOutRemoteCustomerRequested, meta: { methodId: 'amazon' } },
+            { type: RemoteCheckoutActionType.SignOutRemoteCustomerFailed, error: true, payload: response, meta: { methodId: 'amazon' } },
         ]);
     });
 
@@ -170,7 +172,7 @@ describe('RemoteCheckoutActionCreator', () => {
 
         expect(actionCreator.updateCheckout('amazon', meta))
             .toEqual({
-                type: actionTypes.UPDATE_REMOTE_CHECKOUT,
+                type: RemoteCheckoutActionType.UpdateRemoteCheckout,
                 payload: meta,
                 meta: { methodId: 'amazon' },
             });
