@@ -4,6 +4,7 @@ export enum EmbeddedCheckoutEventType {
     CheckoutLoaded = 'CHECKOUT_LOADED',
     FrameError = 'FRAME_ERROR',
     FrameLoaded = 'FRAME_LOADED',
+    SignedOut = 'SIGNED_OUT',
 }
 
 export interface EmbeddedCheckoutEventMap {
@@ -12,6 +13,7 @@ export interface EmbeddedCheckoutEventMap {
     [EmbeddedCheckoutEventType.CheckoutLoaded]: EmbeddedCheckoutLoadedEvent;
     [EmbeddedCheckoutEventType.FrameError]: EmbeddedCheckoutFrameErrorEvent;
     [EmbeddedCheckoutEventType.FrameLoaded]: EmbeddedCheckoutFrameLoadedEvent;
+    [EmbeddedCheckoutEventType.SignedOut]: EmbeddedCheckoutSignedOutEvent;
 }
 
 export type EmbeddedCheckoutEvent = (
@@ -19,7 +21,8 @@ export type EmbeddedCheckoutEvent = (
     EmbeddedCheckoutErrorEvent |
     EmbeddedCheckoutFrameErrorEvent |
     EmbeddedCheckoutFrameLoadedEvent |
-    EmbeddedCheckoutLoadedEvent
+    EmbeddedCheckoutLoadedEvent |
+    EmbeddedCheckoutSignedOutEvent
 );
 
 export interface EmbeddedCheckoutCompleteEvent {
@@ -42,6 +45,10 @@ export interface EmbeddedCheckoutFrameErrorEvent {
 
 export interface EmbeddedCheckoutFrameLoadedEvent {
     type: EmbeddedCheckoutEventType.FrameLoaded;
+}
+
+export interface EmbeddedCheckoutSignedOutEvent {
+    type: EmbeddedCheckoutEventType.SignedOut;
 }
 
 export interface EmbeddedCheckoutError {

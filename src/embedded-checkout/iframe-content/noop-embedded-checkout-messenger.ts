@@ -11,5 +11,7 @@ export default class NoopEmbeddedCheckoutMessenger implements EmbeddedCheckoutMe
 
     postLoaded(): void {}
 
+    postSignedOut(): void {}
+
     receiveStyles(): void {}
 }

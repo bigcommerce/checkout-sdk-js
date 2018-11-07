@@ -4,6 +4,7 @@ import {
     EmbeddedCheckoutFrameErrorEvent,
     EmbeddedCheckoutFrameLoadedEvent,
     EmbeddedCheckoutLoadedEvent,
+    EmbeddedCheckoutSignedOutEvent,
 } from './embedded-checkout-events';
 import EmbeddedCheckoutStyles from './embedded-checkout-styles';
 
@@ -16,4 +17,5 @@ export default interface EmbeddedCheckoutOptions {
     onFrameError?(event: EmbeddedCheckoutFrameErrorEvent): void;
     onFrameLoad?(event: EmbeddedCheckoutFrameLoadedEvent): void;
     onLoad?(event: EmbeddedCheckoutLoadedEvent): void;
+    onSignOut?(event: EmbeddedCheckoutSignedOutEvent): void;
 }

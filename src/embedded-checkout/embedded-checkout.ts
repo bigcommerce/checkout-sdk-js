@@ -40,6 +40,10 @@ export default class EmbeddedCheckout {
             this._messageListener.addListener(EmbeddedCheckoutEventType.FrameLoaded, this._options.onFrameLoad);
         }
 
+        if (this._options.onSignOut) {
+            this._messageListener.addListener(EmbeddedCheckoutEventType.SignedOut, this._options.onSignOut);
+        }
+
         this._messageListener.addListener(EmbeddedCheckoutEventType.FrameLoaded, () => this._configureStyles());
     }
 
