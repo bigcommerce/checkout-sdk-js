@@ -63,6 +63,19 @@ describe('iframeCreator.createFrame()', () => {
         expect(frame.iFrameResizer).toBeDefined();
     });
 
+    it('allows cross-origin iframe to use payment request API', async () => {
+        setTimeout(() => {
+            eventEmitter.emit('message', {
+                origin: 'http://mybigcommerce.com',
+                data: { type: EmbeddedCheckoutEventType.FrameLoaded },
+            });
+        });
+
+        const frame = await iframeCreator.createFrame(url, 'checkout');
+
+        expect(frame.allowPaymentRequest).toEqual(true);
+    });
+
     it('removes message listener if iframe is loaded successfully', async () => {
         jest.spyOn(window, 'removeEventListener');
 

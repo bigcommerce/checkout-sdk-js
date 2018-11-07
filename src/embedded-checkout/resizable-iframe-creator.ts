@@ -24,6 +24,7 @@ export default class ResizableIframeCreator {
         iframe.style.border = 'none';
         iframe.style.display = 'none';
         iframe.style.width = '100%';
+        iframe.allowPaymentRequest = true;
 
         container.appendChild(iframe);
 
