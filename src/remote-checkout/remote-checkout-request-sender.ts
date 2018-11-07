@@ -10,19 +10,19 @@ export default class RemoteCheckoutRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    initializeBilling(methodName: string, params: { referenceId: string }, { timeout }: RequestOptions = {}): Promise<Response> {
+    initializeBilling(methodName: string, params?: { referenceId: string }, { timeout }: RequestOptions = {}): Promise<Response> {
         const url = `/remote-checkout/${methodName}/billing`;
 
         return this._requestSender.get(url, { params, timeout });
     }
 
-    initializeShipping(methodName: string, params: { referenceId: string }, { timeout }: RequestOptions = {}): Promise<Response> {
+    initializeShipping(methodName: string, params?: { referenceId: string }, { timeout }: RequestOptions = {}): Promise<Response> {
         const url = `/remote-checkout/${methodName}/shipping`;
 
         return this._requestSender.get(url, { params, timeout });
     }
 
-    initializePayment(methodName: string, params: InitializePaymentOptions, { timeout }: RequestOptions = {}): Promise<Response> {
+    initializePayment(methodName: string, params?: InitializePaymentOptions, { timeout }: RequestOptions = {}): Promise<Response> {
         const url = `/remote-checkout/${methodName}/payment`;
 
         return this._requestSender.get(url, { params, timeout });

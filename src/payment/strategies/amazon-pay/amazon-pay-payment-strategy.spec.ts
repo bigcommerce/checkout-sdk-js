@@ -14,12 +14,7 @@ import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
-import {
-    INITIALIZE_REMOTE_BILLING_FAILED,
-    INITIALIZE_REMOTE_BILLING_REQUESTED,
-    INITIALIZE_REMOTE_PAYMENT_REQUESTED,
-} from '../../../remote-checkout/remote-checkout-action-types';
+import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import PaymentMethod from '../../payment-method';
@@ -120,8 +115,8 @@ describe('AmazonPayPaymentStrategy', () => {
         };
 
         paymentMethod = getAmazonPay();
-        initializeBillingAction = Observable.of(createAction(INITIALIZE_REMOTE_BILLING_REQUESTED));
-        initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
+        initializeBillingAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemoteBillingRequested));
+        initializePaymentAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
         updateAddressAction = Observable.of(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
@@ -271,7 +266,7 @@ describe('AmazonPayPaymentStrategy', () => {
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError } });
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling')
-            .mockReturnValue(Observable.of(createErrorAction(INITIALIZE_REMOTE_BILLING_FAILED, new Error())));
+            .mockReturnValue(Observable.of(createErrorAction(RemoteCheckoutActionType.InitializeRemoteBillingFailed, new Error())));
 
         if (element) {
             element.dispatchEvent(new CustomEvent('paymentSelect'));

@@ -10,8 +10,7 @@ import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../..
 import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
-import { INITIALIZE_REMOTE_PAYMENT_FAILED, INITIALIZE_REMOTE_PAYMENT_REQUESTED, LOAD_REMOTE_SETTINGS_SUCCEEDED } from '../../../remote-checkout/remote-checkout-action-types';
+import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -82,14 +81,14 @@ describe('AfterpayPaymentStrategy', () => {
             },
         });
 
-        initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
+        initializePaymentAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
         loadPaymentMethodAction = Observable.of(createAction(
             PaymentMethodActionType.LoadPaymentMethodSucceeded,
             { ...paymentMethod, id: 'afterpay' },
             { methodId: paymentMethod.gateway }
         ));
         loadRemoteSettingsAction = Observable.of(createAction(
-            LOAD_REMOTE_SETTINGS_SUCCEEDED,
+            RemoteCheckoutActionType.LoadRemoteSettingsSucceeded,
             { useStoreCredit: false },
             { methodId: paymentMethod.gateway }
         ));
@@ -169,7 +168,7 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('rejects with error if execution is unsuccessful', async () => {
             jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-                .mockReturnValue(Observable.of(createErrorAction(INITIALIZE_REMOTE_PAYMENT_FAILED, new Error())));
+                .mockReturnValue(Observable.of(createErrorAction(RemoteCheckoutActionType.InitializeRemotePaymentFailed, new Error())));
 
             const errorHandler = jest.fn();
 

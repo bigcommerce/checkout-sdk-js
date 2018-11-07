@@ -17,7 +17,7 @@ import {
     AmazonPayScriptLoader,
     AmazonPayWindow,
 } from '../../payment/strategies/amazon-pay';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender, SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED } from '../../remote-checkout';
+import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../remote-checkout';
 import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
 
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
@@ -226,7 +226,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('signs out from remote checkout provider', async () => {
-        const action = Observable.of(createAction(SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
+        const action = Observable.of(createAction(RemoteCheckoutActionType.SignOutRemoteCustomerSucceeded));
 
         store = createCheckoutStore({
             ...state,
@@ -263,7 +263,7 @@ describe('AmazonPayCustomerStrategy', () => {
     });
 
     it('does nothing if already signed out from remote checkout provider', async () => {
-        const action = Observable.of(createAction(SIGN_OUT_REMOTE_CUSTOMER_SUCCEEDED));
+        const action = Observable.of(createAction(RemoteCheckoutActionType.SignOutRemoteCustomerSucceeded));
 
         jest.spyOn(remoteCheckoutActionCreator, 'signOut')
             .mockReturnValue(action);

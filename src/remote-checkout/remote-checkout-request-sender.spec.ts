@@ -1,11 +1,13 @@
-import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
-import { getRemoteBillingResponseBody, getRemoteShippingResponseBody, getRemotePaymentResponseBody, getRemoteTokenResponseBody } from './remote-checkout.mock';
+import { createRequestSender, createTimeout, RequestSender } from '@bigcommerce/request-sender';
+
 import { getResponse } from '../common/http-request/responses.mock';
+
 import RemoteCheckoutRequestSender from './remote-checkout-request-sender';
+import { getRemoteBillingResponseBody, getRemotePaymentResponseBody, getRemoteShippingResponseBody, getRemoteTokenResponseBody } from './remote-checkout.mock';
 
 describe('RemoteCheckoutRequestSender', () => {
-    let remoteCheckoutRequestSender;
-    let requestSender;
+    let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
+    let requestSender: RequestSender;
 
     beforeEach(() => {
         requestSender = createRequestSender();
@@ -52,7 +54,7 @@ describe('RemoteCheckoutRequestSender', () => {
     });
 
     it('sends request to sign out from remote checkout provider', async () => {
-        const response = getResponse();
+        const response = getResponse({});
         const options = { timeout: createTimeout() };
 
         jest.spyOn(requestSender, 'get').mockReturnValue(response);
@@ -76,7 +78,7 @@ describe('RemoteCheckoutRequestSender', () => {
     });
 
     it('sends request to track authorization event', async () => {
-        const response = getResponse();
+        const response = getResponse({});
         const options = { timeout: createTimeout() };
 
         jest.spyOn(requestSender, 'post').mockReturnValue(response);

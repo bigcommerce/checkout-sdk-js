@@ -13,8 +13,7 @@ import {
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getKlarna, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
-import { INITIALIZE_REMOTE_PAYMENT_REQUESTED } from '../../../remote-checkout/remote-checkout-action-types';
+import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -76,7 +75,7 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         loadPaymentMethodAction = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id }));
-        initializePaymentAction = Observable.of(createAction(INITIALIZE_REMOTE_PAYMENT_REQUESTED));
+        initializePaymentAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
         submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(store, 'dispatch');

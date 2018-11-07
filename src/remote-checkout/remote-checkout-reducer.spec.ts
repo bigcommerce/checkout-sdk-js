@@ -1,18 +1,28 @@
 import { getResponse } from '../common/http-request/responses.mock';
-import { getRemoteBillingResponseBody, getRemoteShippingResponseBody } from './remote-checkout.mock';
-import * as actionTypes from './remote-checkout-action-types';
+
+import { RemoteCheckoutAction, RemoteCheckoutActionType } from './remote-checkout-actions';
 import remoteCheckoutReducer from './remote-checkout-reducer';
+import RemoteCheckoutState from './remote-checkout-state';
+import { getRemoteBillingResponseBody, getRemoteShippingResponseBody } from './remote-checkout.mock';
 
 describe('remoteCheckoutReducer', () => {
+    let initialState: RemoteCheckoutState;
+
+    beforeEach(() => {
+        initialState = {
+            data: {},
+        };
+    });
+
     it('returns state with billing address', () => {
         const response = getResponse(getRemoteBillingResponseBody());
-        const action = {
-            type: actionTypes.INITIALIZE_REMOTE_BILLING_SUCCEEDED,
+        const action: RemoteCheckoutAction = {
+            type: RemoteCheckoutActionType.InitializeRemoteBillingSucceeded,
             payload: response.body,
             meta: { methodId: 'amazon' },
         };
 
-        expect(remoteCheckoutReducer({}, action))
+        expect(remoteCheckoutReducer(initialState, action))
             .toEqual(expect.objectContaining({
                 data: {
                     amazon: {
@@ -26,13 +36,13 @@ describe('remoteCheckoutReducer', () => {
 
     it('returns state with shipping address', () => {
         const response = getResponse(getRemoteShippingResponseBody());
-        const action = {
-            type: actionTypes.INITIALIZE_REMOTE_SHIPPING_SUCCEEDED,
+        const action: RemoteCheckoutAction = {
+            type: RemoteCheckoutActionType.InitializeRemoteShippingSucceeded,
             payload: response.body,
             meta: { methodId: 'amazon' },
         };
 
-        expect(remoteCheckoutReducer({}, action))
+        expect(remoteCheckoutReducer(initialState, action))
             .toEqual(expect.objectContaining({
                 data: {
                     amazon: {
