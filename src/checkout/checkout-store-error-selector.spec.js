@@ -15,6 +15,22 @@ describe('CheckoutStoreErrorSelector', () => {
         errorResponse = getErrorResponse();
     });
 
+    describe('#getError()', () => {
+        it('returns no error if there are no errors', () => {
+            expect(errors.getError()).toEqual(undefined);
+        });
+
+        it('returns the first error that it encounters', () => {
+            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(errorResponse);
+
+            expect(errors.getError()).toEqual(errorResponse);
+
+            expect(selectors.checkout.getLoadError).toHaveBeenCalled();
+            expect(selectors.paymentStrategies.getExecuteError).toHaveBeenCalled();
+        });
+    });
+
     describe('#getLoadCheckoutError()', () => {
         it('returns error if there is an error when loading checkout', () => {
             jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(errorResponse);
@@ -412,6 +428,38 @@ describe('CheckoutStoreErrorSelector', () => {
 
             expect(errors.getRemoveCouponError()).toEqual(undefined);
             expect(selectors.coupons.getRemoveError).toHaveBeenCalled();
+        });
+    });
+
+    describe('#getApplyGiftCertificateError()', () => {
+        it('returns error if there is an error when applying gift certificate', () => {
+            jest.spyOn(selectors.giftCertificates, 'getApplyError').mockReturnValue(errorResponse);
+
+            expect(errors.getApplyGiftCertificateError()).toEqual(errorResponse);
+            expect(selectors.giftCertificates.getApplyError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is NO error when applying gift certificate', () => {
+            jest.spyOn(selectors.giftCertificates, 'getApplyError').mockReturnValue();
+
+            expect(errors.getApplyGiftCertificateError()).toEqual(undefined);
+            expect(selectors.giftCertificates.getApplyError).toHaveBeenCalled();
+        });
+    });
+
+    describe('#getRemoveGiftCertificateError()', () => {
+        it('returns error if there is an error when removing gift certificate', () => {
+            jest.spyOn(selectors.giftCertificates, 'getRemoveError').mockReturnValue(errorResponse);
+
+            expect(errors.getRemoveGiftCertificateError()).toEqual(errorResponse);
+            expect(selectors.giftCertificates.getRemoveError).toHaveBeenCalled();
+        });
+
+        it('returns undefined if there is NO error when removing gift certificate', () => {
+            jest.spyOn(selectors.giftCertificates, 'getRemoveError').mockReturnValue();
+
+            expect(errors.getRemoveGiftCertificateError()).toEqual(undefined);
+            expect(selectors.giftCertificates.getRemoveError).toHaveBeenCalled();
         });
     });
 
