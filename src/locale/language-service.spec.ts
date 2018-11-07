@@ -1,9 +1,12 @@
+import { Logger } from '../common/log';
+import NoopLogger from '../common/log/noop-logger';
+
 import LanguageService from './language-service';
 
 describe('LanguageService', () => {
     let config;
-    let langService;
-    let logger;
+    let langService: LanguageService;
+    let logger: Logger;
 
     beforeEach(() => {
         config = {
@@ -24,9 +27,9 @@ describe('LanguageService', () => {
             },
         };
 
-        logger = {
-            warn: jest.fn(),
-        };
+        logger = new NoopLogger();
+
+        jest.spyOn(logger, 'warn');
 
         langService = new LanguageService(config, logger);
     });

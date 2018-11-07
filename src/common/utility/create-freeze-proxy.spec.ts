@@ -1,6 +1,8 @@
 import createFreezeProxy, { createFreezeProxies } from './create-freeze-proxy';
 
 class Foobar {
+    protected _data: any;
+
     constructor(data = {}) {
         this._data = data;
     }
@@ -14,6 +16,7 @@ class Foobar {
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 class ExtendedFoobar extends Foobar {
     getExtendedData() {
         return {
