@@ -3,9 +3,9 @@ import mergeOrPush from './merge-or-push';
 describe('mergeOrPush()', () => {
     it('replaces primitive value in target array if found in array', () => {
         const array = [1, 2, 3, 4, 5];
-        const expected = [1, 2, 'a', 4, 5];
+        const expected = [1, 2, 99, 4, 5];
 
-        expect(mergeOrPush(array, 'a', (value) => value === 3)).toEqual(expected);
+        expect(mergeOrPush<number>(array, 99, value => value === 3)).toEqual(expected);
     });
 
     it('merges input object in target array if found in array', () => {
@@ -17,16 +17,16 @@ describe('mergeOrPush()', () => {
 
     it('replaces input array in target array if found in array', () => {
         const array = [[1], [1, 2], [1, 2, 3]];
-        const expected = [[1], ['a'], [1, 2, 3]];
+        const expected = [[1], [99], [1, 2, 3]];
 
-        expect(mergeOrPush(array, ['a'], (item) => item.length === 2)).toEqual(expected);
+        expect(mergeOrPush(array, [99], item => item.length === 2)).toEqual(expected);
     });
 
     it('pushes primitive value to target array if not found in array', () => {
         const array = [1, 2, 3, 4, 5];
-        const expected = [1, 2, 3, 4, 5, 'a'];
+        const expected = [1, 2, 3, 4, 5, 99];
 
-        expect(mergeOrPush(array, 'a', (value) => value === 6)).toEqual(expected);
+        expect(mergeOrPush(array, 99, value => value === 6)).toEqual(expected);
     });
 
     it('pushes input object to target array if not found in array', () => {
@@ -38,8 +38,8 @@ describe('mergeOrPush()', () => {
 
     it('pushes input array to target array if not found in array', () => {
         const array = [[1], [1, 2], [1, 2, 3]];
-        const expected = [[1], [1, 2], [1, 2, 3], ['a', 'b']];
+        const expected = [[1], [1, 2], [1, 2, 3], [99, 98]];
 
-        expect(mergeOrPush(array, ['a', 'b'], (item) => item.length === 4)).toEqual(expected);
+        expect(mergeOrPush(array, [99, 98], item => item.length === 4)).toEqual(expected);
     });
 });

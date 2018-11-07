@@ -1,30 +1,33 @@
-import { createTimeout } from '@bigcommerce/request-sender';
-import { getCustomerResponseBody } from './internal-customers.mock';
+import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+
 import { getResponse } from '../common/http-request/responses.mock';
+
+import CustomerCredentials from './customer-credentials';
 import CustomerRequestSender from './customer-request-sender';
+import { getCustomerResponseBody } from './internal-customers.mock';
 
 describe('CustomerRequestSender', () => {
-    let customerRequestSender;
-    let requestSender;
+    let customerRequestSender: CustomerRequestSender;
+    let requestSender: RequestSender;
 
     beforeEach(() => {
-        requestSender = {
-            delete: jest.fn(() => Promise.resolve()),
-            post: jest.fn(() => Promise.resolve()),
-        };
+        requestSender = createRequestSender();
+
+        jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve());
+        jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
 
         customerRequestSender = new CustomerRequestSender(requestSender);
     });
 
     describe('#signInCustomer()', () => {
-        let credentials;
-        let response;
+        let credentials: CustomerCredentials;
+        let response: Response;
 
         beforeEach(() => {
             credentials = { email: 'foo@bar.com', password: 'foobar' };
             response = getResponse(getCustomerResponseBody());
 
-            requestSender.post.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve(response));
         });
 
         it('posts customer credentials', async () => {
@@ -49,12 +52,12 @@ describe('CustomerRequestSender', () => {
     });
 
     describe('#signOutCustomer()', () => {
-        let response;
+        let response: Response;
 
         beforeEach(() => {
             response = getResponse(getCustomerResponseBody());
 
-            requestSender.delete.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'delete').mockReturnValue(Promise.resolve(response));
         });
 
         it('signs out customer', async () => {

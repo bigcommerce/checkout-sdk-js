@@ -6,7 +6,7 @@ import { PartialDeep } from '../types';
  * Push an item to an array if it doesn't exist in the array. Otherwise, merge
  * with the existing item in the array. This function always returns a new array.
  */
-export default function mergeOrPush<T extends object>(
+export default function mergeOrPush<T>(
     array: T[],
     item: T,
     predicate: ((item: T) => boolean) | PartialDeep<T>
