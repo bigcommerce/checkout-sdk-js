@@ -35,8 +35,8 @@ export interface GooglePayBraintreePaymentDataRequestV1 {
         startTimeMs: number;
     };
     merchantInfo: {
-        googleMerchantId: string;
-        googleMerchantName: string;
+        merchantId: string;
+        merchantName: string;
         authJwt?: string;
     };
     paymentMethodTokenizationParameters: {

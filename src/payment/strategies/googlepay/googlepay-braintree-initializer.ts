@@ -73,8 +73,8 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
         const googlePayBraintreePaymentDataRequest: GooglePayBraintreeDataRequest = {
             merchantInfo: {
                 authJwt: initializationData.platformToken,
-                merchantName: initializationData.merchantName,
-                merchantId: initializationData.merchantId,
+                merchantName: initializationData.googleMerchantName,
+                merchantId: initializationData.googleMerchantId,
             },
             transactionInfo: {
                 currencyCode: checkout.cart.currency.code,
@@ -101,8 +101,8 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
             apiVersionMinor: 0,
             merchantInfo: {
                 authJwt: googlePayBraintreeDataRequestV1.merchantInfo.authJwt,
-                merchantId: googlePayBraintreeDataRequestV1.merchantInfo.googleMerchantId,
-                merchantName: googlePayBraintreeDataRequestV1.merchantInfo.googleMerchantName,
+                merchantId: googlePayBraintreeDataRequestV1.merchantInfo.merchantId,
+                merchantName: googlePayBraintreeDataRequestV1.merchantInfo.merchantName,
             },
             allowedPaymentMethods: [{
                 type: 'CARD',

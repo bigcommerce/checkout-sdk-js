@@ -54,8 +54,8 @@ export function getGooglePayBraintreePaymentDataRequest(): GooglePayBraintreePay
         },
         merchantInfo: {
             authJwt: '',
-            googleMerchantId: '',
-            googleMerchantName: '',
+            merchantId: '',
+            merchantName: '',
         },
         paymentMethodTokenizationParameters: {
             parameters: {
@@ -131,6 +131,8 @@ export function getGooglePaymentDataPayload() {
         emailRequired: true,
         merchantInfo: {
             authJwt: 'platformToken',
+            merchantId: '123',
+            merchantName: 'name',
         },
         phoneNumberRequired: true,
         shippingAddressRequired: true,
