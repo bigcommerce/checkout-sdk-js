@@ -149,6 +149,7 @@ describe('EmbeddedCheckout', () => {
             onError: jest.fn(),
             onFrameLoad: jest.fn(),
             onLoad: jest.fn(),
+            onSignOut: jest.fn(),
         };
 
         embeddedCheckout = new EmbeddedCheckout(
@@ -170,6 +171,9 @@ describe('EmbeddedCheckout', () => {
 
         expect(messageListener.addListener)
             .toHaveBeenCalledWith(EmbeddedCheckoutEventType.FrameLoaded, options.onFrameLoad);
+
+        expect(messageListener.addListener)
+            .toHaveBeenCalledWith(EmbeddedCheckoutEventType.SignedOut, options.onSignOut);
     });
 
     it('configures styles when iframe is loaded', async () => {

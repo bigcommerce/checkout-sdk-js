@@ -7,5 +7,6 @@ export default interface EmbeddedCheckoutMessenger {
     postFrameError(payload: Error | CustomError): void;
     postFrameLoaded(): void;
     postLoaded(): void;
+    postSignedOut(): void;
     receiveStyles(handler: (styles: EmbeddedCheckoutStyles) => void): void;
 }

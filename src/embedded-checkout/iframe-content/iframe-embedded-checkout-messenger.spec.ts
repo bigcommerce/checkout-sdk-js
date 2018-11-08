@@ -78,6 +78,14 @@ describe('EmbeddedCheckoutMessenger', () => {
         });
     });
 
+    it('posts `signed_out` event to parent window', () => {
+        messenger.postSignedOut();
+
+        expect(messagePoster.post).toHaveBeenCalledWith({
+            type: EmbeddedCheckoutEventType.SignedOut,
+        });
+    });
+
     it('listens to `style_configured` event from parent window', () => {
         const handler = jest.fn();
         const styles = { body: { backgroundColor: '#00ff00' } };

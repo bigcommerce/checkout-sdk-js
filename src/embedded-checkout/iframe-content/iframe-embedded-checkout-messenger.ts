@@ -8,6 +8,7 @@ import {
     EmbeddedCheckoutFrameErrorEvent,
     EmbeddedCheckoutFrameLoadedEvent,
     EmbeddedCheckoutLoadedEvent,
+    EmbeddedCheckoutSignedOutEvent,
 } from '../embedded-checkout-events';
 import EmbeddedCheckoutStyles from '../embedded-checkout-styles';
 import IframeEventListener from '../iframe-event-listener';
@@ -64,6 +65,14 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
     postLoaded(): void {
         const message: EmbeddedCheckoutLoadedEvent = {
             type: EmbeddedCheckoutEventType.CheckoutLoaded,
+        };
+
+        this._messagePoster.post(message);
+    }
+
+    postSignedOut(): void {
+        const message: EmbeddedCheckoutSignedOutEvent = {
+            type: EmbeddedCheckoutEventType.SignedOut,
         };
 
         this._messagePoster.post(message);
