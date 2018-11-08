@@ -136,7 +136,7 @@ export function getGooglePaymentDataPayload() {
         shippingAddressRequired: true,
         transactionInfo: {
             currencyCode: 'USD',
-            totalPrice: '1',
+            totalPrice: '1.00',
             totalPriceStatus: 'FINAL',
         },
     };
@@ -241,7 +241,7 @@ export function getGooglePayStripePaymentDataRequestMock(): GooglePayPaymentData
         transactionInfo: {
             currencyCode: 'USD',
             totalPriceStatus: 'FINAL',
-            totalPrice: '1',
+            totalPrice: '1.00',
         },
         emailRequired: true,
         shippingAddressRequired: true,
