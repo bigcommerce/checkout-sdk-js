@@ -1,12 +1,29 @@
-export default interface ErrorResponseBody {
-    title?: string;
-    // todo: create different error response bodies, payment error responses use string
-    status?: number | string;
-    type?: string;
+type ErrorResponseBody = StorefrontErrorResponseBody |
+    InternalErrorResponseBody |
+    PaymentErrorResponseBody;
+
+export interface StorefrontErrorResponseBody {
+    title: string;
+    type: string;
+    status: number;
     detail?: string;
-    errors?: ErrorListResponseBody;
+    code?: string;
+    instance?: string;
 }
 
-// todo: create different errorLists, payments use objects, order use strings
-export type ErrorListResponseBody =
-    Array<{ code: string; message?: string; } | null | string>;
+export interface InternalErrorResponseBody {
+    title: string;
+    status: number;
+    type: string;
+    code?: number;
+    detail?: string;
+    instance?: string;
+    errors: string[];
+}
+
+export interface PaymentErrorResponseBody {
+    status: string;
+    errors: Array<{ code: string, message?: string }>;
+}
+
+export default ErrorResponseBody;

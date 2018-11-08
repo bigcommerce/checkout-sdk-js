@@ -1,79 +1,34 @@
-import { getErrorResponse, getErrorResponseBody } from '../../http-request/responses.mock';
+import { getErrorResponse } from '../../http-request/responses.mock';
 
 import RequestError from './request-error';
 
 describe('RequestError', () => {
-    it('sets error type', () => {
+    it('sets type', () => {
         const error = new RequestError(getErrorResponse());
 
         expect(error.type).toEqual('request');
     });
 
-    it('sets error message with errors contained in response', () => {
+    it('sets body', () => {
         const response = getErrorResponse();
         const error = new RequestError(response);
 
-        expect(error.message).toEqual(response.body.errors.join(' '));
+        expect(error.body).toEqual(response.body);
     });
 
-    it('sets error message with error objects contained in response', () => {
-        const response = getErrorResponse({
-            ...getErrorResponseBody(),
-            errors: [
-                { code: 'invalid_cvv', message: 'Invalid CVV.' },
-                { code: 'invalid_account', message: 'Invalid account.' },
-            ],
-        });
+    it('sets status', () => {
+        const response = getErrorResponse();
         const error = new RequestError(response);
 
-        expect(error.message).toEqual('Invalid CVV. Invalid account.');
+        expect(error.status).toEqual(response.status);
     });
 
-    it('does not concatenate error messages if they are blank', () => {
-        const error = new RequestError(getErrorResponse({
-            ...getErrorResponseBody(),
-            errors: [
-                null,
-                { code: 'invalid_cvv', message: undefined },
-                { code: 'invalid_number', message: '' },
-                { code: 'invalid_account', message: 'Invalid account.' },
-            ],
-        }));
-
-        expect(error.message).toEqual('Invalid account.');
-    });
-
-    it('sets error message with detail contained in response', () => {
-        const response = getErrorResponse({
-            ...getErrorResponseBody(),
-            errors: undefined,
-        });
-        const error = new RequestError(response);
-
-        expect(error.message).toEqual(response.body.detail);
-    });
-
-    it('sets error message with title contained in response', () => {
-        const response = getErrorResponse({
-            ...getErrorResponseBody(),
-            detail: undefined,
-            errors: undefined,
-        });
-        const error = new RequestError(response);
-
-        expect(error.message).toEqual(response.body.title);
-    });
-
-    it('sets fallback error message if error message not contained in response', () => {
-        const message = 'Hello world';
-        const error = new RequestError(getErrorResponse({}), message);
-
-        expect(error.message).toEqual(message);
-    });
-
-    it('sets default error message if none is provided', () => {
-        const error = new RequestError({ body: {}, headers: [], status: 0, statusText: '' });
+    it('sets default data when none provided', () => {
+        const error = new RequestError();
 
         expect(error.message).toEqual('An unexpected error has occurred.');
+        expect(error.status).toEqual(0);
+        expect(error.body).toEqual({});
+        expect(error.headers).toEqual({});
     });
 });
