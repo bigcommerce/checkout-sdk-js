@@ -1,27 +1,26 @@
-import { createTimeout } from '@bigcommerce/request-sender';
-import { getShippingCountriesResponseBody } from './shipping-countries.mock';
+import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+
 import { getResponse } from '../common/http-request/responses.mock';
+
+import { getShippingCountriesResponseBody } from './shipping-countries.mock';
 import ShippingCountryRequestSender from './shipping-country-request-sender';
 
 describe('ShippingCountryRequestSender', () => {
-    let shippingCountryRequestSender;
-    let requestSender;
+    let shippingCountryRequestSender: ShippingCountryRequestSender;
+    let requestSender: RequestSender;
 
     beforeEach(() => {
-        requestSender = {
-            get: jest.fn(() => Promise.resolve()),
-        };
-
+        requestSender = createRequestSender();
         shippingCountryRequestSender = new ShippingCountryRequestSender(requestSender, { locale: 'en' });
     });
 
     describe('#loadCountries()', () => {
-        let response;
+        let response: Response;
 
         beforeEach(() => {
             response = getResponse(getShippingCountriesResponseBody());
 
-            requestSender.get.mockReturnValue(Promise.resolve(response));
+            jest.spyOn(requestSender, 'get').mockResolvedValue(response);
         });
 
         it('loads shipping countries', async () => {
