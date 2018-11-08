@@ -1,14 +1,17 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
-import { omit, merge } from 'lodash';
+import { createRequestSender, Response } from '@bigcommerce/request-sender';
+import { merge, omit } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { getCart, getCartState } from '../cart/internal-carts.mock';
-import { CheckoutRequestSender, CheckoutValidator, createCheckoutStore } from '../checkout';
+import { getCart, getCartState } from '../cart/carts.mock';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../checkout';
 import { getCheckout, getCheckoutStoreState } from '../checkout/checkouts.mock';
+import { ErrorResponseBody } from '../common/error';
 import { MissingDataError } from '../common/error/errors';
+import { InternalResponseBody } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 import { getConfigState } from '../config/configs.mock';
 
+import { InternalOrderResponseBody } from './internal-order-responses';
 import {
     getCompleteOrderResponseBody,
     getInternalOrderRequestBody,
@@ -16,17 +19,19 @@ import {
     getSubmitOrderResponseBody,
     getSubmitOrderResponseHeaders,
 } from './internal-orders.mock';
+import Order from './order';
 import OrderActionCreator from './order-action-creator';
 import { OrderActionType } from './order-actions';
+import OrderRequestSender from './order-request-sender';
 import { getOrder, getOrderState } from './orders.mock';
 
 describe('OrderActionCreator', () => {
-    let orderRequestSender;
-    let checkoutValidator;
-    let checkoutRequestSender;
-    let orderActionCreator;
-    let state;
-    let store;
+    let orderRequestSender: OrderRequestSender;
+    let checkoutValidator: CheckoutValidator;
+    let checkoutRequestSender: CheckoutRequestSender;
+    let orderActionCreator: OrderActionCreator;
+    let state: CheckoutStoreState;
+    let store: CheckoutStore;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
@@ -34,14 +39,13 @@ describe('OrderActionCreator', () => {
 
         jest.spyOn(store, 'dispatch');
 
+        orderRequestSender = new OrderRequestSender(createRequestSender());
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
-        orderRequestSender = {
-            loadOrder: jest.fn(() => {}),
-            submitOrder: jest.fn(() => {}),
-            finalizeOrder: jest.fn(() => {}),
-        };
+        jest.spyOn(orderRequestSender, 'loadOrder').mockReturnValue({});
+        jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue({});
+        jest.spyOn(orderRequestSender, 'finalizeOrder').mockReturnValue({});
 
         jest.spyOn(checkoutValidator, 'validate')
             .mockReturnValue(Promise.resolve());
@@ -70,8 +74,8 @@ describe('OrderActionCreator', () => {
             jest.spyOn(orderRequestSender, 'loadOrder')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
-            const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await orderActionCreator.loadOrder()
+            const errorHandler = jest.fn(action => Observable.of(action));
+            const actions = await orderActionCreator.loadOrder(0)
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -91,7 +95,7 @@ describe('OrderActionCreator', () => {
         });
 
         it('loads order by using order id from order object', async () => {
-            await orderActionCreator.loadCurrentOrder()(store)
+            await Observable.from(orderActionCreator.loadCurrentOrder()(store))
                 .toPromise();
 
             expect(orderRequestSender.loadOrder).toHaveBeenCalledWith(295, undefined);
@@ -104,7 +108,7 @@ describe('OrderActionCreator', () => {
                 order: getOrderState(),
             });
 
-            await orderActionCreator.loadCurrentOrder()(store)
+            await Observable.from(orderActionCreator.loadCurrentOrder()(store))
                 .toPromise();
 
             expect(orderRequestSender.loadOrder).toHaveBeenCalledWith(295, undefined);
@@ -114,7 +118,7 @@ describe('OrderActionCreator', () => {
             store = createCheckoutStore();
 
             try {
-                await orderActionCreator.loadCurrentOrder()(store)
+                await Observable.from(orderActionCreator.loadCurrentOrder()(store))
                     .toPromise();
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
@@ -153,7 +157,7 @@ describe('OrderActionCreator', () => {
             jest.spyOn(orderRequestSender, 'loadOrder')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
             const actions = await orderActionCreator.loadOrderPayments(295)
                 .catch(errorHandler)
                 .toArray()
@@ -198,9 +202,9 @@ describe('OrderActionCreator', () => {
     });
 
     describe('#submitOrder()', () => {
-        let errorResponse;
-        let loadResponse;
-        let submitResponse;
+        let errorResponse: Response<ErrorResponseBody>;
+        let loadResponse: Response<Order>;
+        let submitResponse: Response<InternalResponseBody>;
 
         beforeEach(() => {
             loadResponse = getResponse(getOrder());
@@ -238,9 +242,9 @@ describe('OrderActionCreator', () => {
         });
 
         it('emits error actions if unable to submit order', async () => {
-            orderRequestSender.submitOrder.mockReturnValue(Promise.reject(errorResponse));
+            jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue(Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn((action) => Observable.of(action));
+            const errorHandler = jest.fn(action => Observable.of(action));
             const actions = await Observable.from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
                 .catch(errorHandler)
                 .toArray()
@@ -301,8 +305,8 @@ describe('OrderActionCreator', () => {
     });
 
     describe('#finalizeOrder()', () => {
-        let errorResponse;
-        let response;
+        let errorResponse: Response<ErrorResponseBody>;
+        let response: Response<InternalOrderResponseBody>;
 
         beforeEach(() => {
             response = getResponse(getCompleteOrderResponseBody());
@@ -332,8 +336,8 @@ describe('OrderActionCreator', () => {
             jest.spyOn(orderRequestSender, 'finalizeOrder')
                 .mockReturnValue(Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn((action) => Observable.of(action));
-            const actions = await orderActionCreator.finalizeOrder()
+            const errorHandler = jest.fn(action => Observable.of(action));
+            const actions = await orderActionCreator.finalizeOrder(0)
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
