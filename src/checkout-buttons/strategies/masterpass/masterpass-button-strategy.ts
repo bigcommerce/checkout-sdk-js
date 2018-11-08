@@ -107,7 +107,7 @@ export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
             amount: checkout.cart.cartAmount.toString(),
             currency: checkout.cart.currency.code,
             cartId: checkout.cart.id,
-            suppressShippingAddress: true,
+            suppressShippingAddress: false,
         };
     }
 

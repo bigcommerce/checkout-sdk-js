@@ -121,7 +121,7 @@ describe('MasterpassPaymentStragegy', () => {
                     cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
                     checkoutId: 'checkout-id',
                     currency: 'USD',
-                    suppressShippingAddress: true,
+                    suppressShippingAddress: false,
                 };
 
                 walletButton = document.createElement('a');
