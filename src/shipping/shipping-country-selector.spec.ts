@@ -1,15 +1,14 @@
-import { getErrorResponse } from '../common/http-request/responses.mock';
-import { getShippingCountriesState } from './shipping-countries.mock';
+import { CheckoutStoreState } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+
 import ShippingCountrySelector from './shipping-country-selector';
 
 describe('ShippingCountrySelector', () => {
-    let shippingCountrySelector;
-    let state;
+    let shippingCountrySelector: ShippingCountrySelector;
+    let state: CheckoutStoreState;
 
     beforeEach(() => {
-        state = {
-            shippingCountries: getShippingCountriesState(),
-        };
+        state = getCheckoutStoreState();
     });
 
     describe('#getShippingCountries()', () => {
@@ -31,7 +30,7 @@ describe('ShippingCountrySelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponse();
+            const loadError = new Error();
 
             shippingCountrySelector = new ShippingCountrySelector({
                 ...state.shippingCountries,

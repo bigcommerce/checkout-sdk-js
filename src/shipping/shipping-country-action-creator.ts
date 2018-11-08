@@ -1,32 +1,28 @@
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
 import { RequestOptions } from '../common/http-request';
 
-import * as actionTypes from './shipping-country-action-types';
+import { LoadShippingCountriesAction, ShippingCountryActionType } from './shipping-country-actions';
 import ShippingCountryRequestSender from './shipping-country-request-sender';
 
-/**
- * @todo Convert this file into TypeScript properly
- * i.e.: Action<T>
- */
 export default class ShippingCountryActionCreator {
     constructor(
         private _shippingCountryRequestSender: ShippingCountryRequestSender
     ) {}
 
-    loadCountries(options?: RequestOptions): Observable<Action> {
-        return Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.LOAD_SHIPPING_COUNTRIES_REQUESTED));
+    loadCountries(options?: RequestOptions): Observable<LoadShippingCountriesAction> {
+        return Observable.create((observer: Observer<LoadShippingCountriesAction>) => {
+            observer.next(createAction(ShippingCountryActionType.LoadShippingCountriesRequested));
 
             this._shippingCountryRequestSender.loadCountries(options)
                 .then(response => {
-                    observer.next(createAction(actionTypes.LOAD_SHIPPING_COUNTRIES_SUCCEEDED, response.body.data));
+                    observer.next(createAction(ShippingCountryActionType.LoadShippingCountriesSucceeded, response.body.data));
                     observer.complete();
                 })
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.LOAD_SHIPPING_COUNTRIES_FAILED, response));
+                    observer.error(createErrorAction(ShippingCountryActionType.LoadShippingCountriesFailed, response));
                 });
         });
     }
