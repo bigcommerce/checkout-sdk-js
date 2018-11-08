@@ -1,20 +1,27 @@
+import { createErrorAction } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
+
+import { RequestErrorFactory } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
 import { getCompleteOrderResponseBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
-import { getOrder } from './orders.mock';
-import { OrderActionType } from './order-actions';
+import { FinalizeOrderAction, LoadOrderAction, LoadOrderPaymentsAction, OrderActionType, SubmitOrderAction } from './order-actions';
 import orderReducer from './order-reducer';
+import OrderState from './order-state';
+import { getOrder } from './orders.mock';
 
 describe('orderReducer()', () => {
-    let initialState;
+    let initialState: OrderState;
 
     beforeEach(() => {
-        initialState = {};
+        initialState = {
+            errors: {},
+            statuses: {},
+        };
     });
 
     it('returns new status while fetching order', () => {
-        const action = {
+        const action: LoadOrderAction = {
             type: OrderActionType.LoadOrderRequested,
         };
 
@@ -24,7 +31,7 @@ describe('orderReducer()', () => {
     });
 
     it('returns new data if it is fetched successfully', () => {
-        const action = {
+        const action: LoadOrderAction = {
             type: OrderActionType.LoadOrderSucceeded,
             payload: getOrder(),
         };
@@ -37,10 +44,10 @@ describe('orderReducer()', () => {
 
     it('returns error if it is not fetched successfully', () => {
         const response = getErrorResponse();
-        const action = {
-            type: OrderActionType.LoadOrderFailed,
-            payload: response.data,
-        };
+        const action = createErrorAction(
+            OrderActionType.LoadOrderFailed,
+            new RequestErrorFactory().createError(response)
+        );
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
             errors: { loadError: action.payload },
@@ -51,7 +58,7 @@ describe('orderReducer()', () => {
     it('returns new data if it is submitted successfully', () => {
         const response = getSubmitOrderResponseBody();
         const headers = getSubmitOrderResponseHeaders();
-        const action = {
+        const action: SubmitOrderAction = {
             type: OrderActionType.SubmitOrderSucceeded,
             meta: {
                 ...response.meta,
@@ -65,7 +72,8 @@ describe('orderReducer()', () => {
                 callbackUrl: response.data.order.callbackUrl,
                 deviceFingerprint: response.meta.deviceFingerprint,
                 orderToken: response.data.order.token,
-                payment: action.payload.order.payment,
+                // tslint:disable-next-line:no-non-null-assertion
+                payment: action.payload!.order.payment,
                 token: headers.token,
             },
         }));
@@ -73,7 +81,7 @@ describe('orderReducer()', () => {
 
     it('returns new data if it is finalized successfully', () => {
         const response = getCompleteOrderResponseBody();
-        const action = {
+        const action: FinalizeOrderAction = {
             type: OrderActionType.FinalizeOrderSucceeded,
             meta: response.meta,
             payload: response.data,
@@ -81,14 +89,15 @@ describe('orderReducer()', () => {
 
         expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
             meta: {
-                payment: action.payload.order.payment,
+                // tslint:disable-next-line:no-non-null-assertion
+                payment: action.payload!.order.payment,
             },
         }));
     });
 
     describe('loadOrderPayments', () => {
         it('returns new status while fetching order', () => {
-            const action = {
+            const action: LoadOrderPaymentsAction = {
                 type: OrderActionType.LoadOrderPaymentsRequested,
             };
 
@@ -98,7 +107,7 @@ describe('orderReducer()', () => {
         });
 
         it('returns new data if it is fetched successfully', () => {
-            const action = {
+            const action: LoadOrderPaymentsAction = {
                 type: OrderActionType.LoadOrderPaymentsSucceeded,
                 payload: getOrder(),
             };
@@ -111,10 +120,10 @@ describe('orderReducer()', () => {
 
         it('returns error if it is not fetched successfully', () => {
             const response = getErrorResponse();
-            const action = {
-                type: OrderActionType.LoadOrderPaymentsFailed,
-                payload: response.data,
-            };
+            const action = createErrorAction(
+                OrderActionType.LoadOrderPaymentsFailed,
+                new RequestErrorFactory().createError(response)
+            );
 
             expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
                 errors: { loadError: action.payload },
