@@ -7,6 +7,7 @@ export type InstrumentError = Array<{
 
 export interface RawInstrumentResponseBody {
     bigpay_token: string;
+    default_instrument: boolean;
     provider: string;
     iin: string;
     last_4: string;

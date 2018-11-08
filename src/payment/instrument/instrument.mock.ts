@@ -16,6 +16,7 @@ export function getInstruments() {
             expiryYear: '2020',
             brand: 'test',
             trustedShippingAddress: true,
+            defaultInstrument: true,
         },
         {
             bigpayToken: '111',
@@ -26,6 +27,7 @@ export function getInstruments() {
             expiryYear: '2024',
             brand: 'test',
             trustedShippingAddress: false,
+            defaultInstrument: false,
         },
     ];
 }
@@ -84,6 +86,7 @@ export function getRawInstrumentsResponseBody() {
                 expiry_year: '2020',
                 brand: 'test',
                 trusted_shipping_address: true,
+                default_instrument: true,
             },
             {
                 bigpay_token: '111',
@@ -94,6 +97,7 @@ export function getRawInstrumentsResponseBody() {
                 expiry_year: '2024',
                 brand: 'test',
                 trusted_shipping_address: false,
+                default_instrument: false,
             },
         ],
     };

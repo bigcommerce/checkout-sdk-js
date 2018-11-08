@@ -1,5 +1,6 @@
 export default interface Instrument {
     bigpayToken: string;
+    defaultInstrument: boolean;
     provider: string;
     iin: string;
     last4: string;

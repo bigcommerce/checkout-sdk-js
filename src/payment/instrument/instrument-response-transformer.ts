@@ -28,6 +28,7 @@ export default class InstrumentResponseTransformer {
     private _transformVaultedInstruments(vaultedInstruments: RawInstrumentResponseBody[] = []): Instrument[] {
         return vaultedInstruments.map(instrument => ({
             bigpayToken: instrument.bigpay_token,
+            defaultInstrument: instrument.default_instrument,
             provider: instrument.provider,
             iin: instrument.iin,
             last4: instrument.last_4,
