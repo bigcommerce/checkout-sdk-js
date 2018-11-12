@@ -1,20 +1,25 @@
-import { getCountries } from './countries.mock';
+import { RequestErrorFactory } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+
+import { getCountries } from './countries.mock';
+import { CountryActionType, LoadCountriesAction } from './country-actions';
 import countryReducer from './country-reducer';
-import * as actionTypes from './country-action-types';
+import CountryState from './country-state';
 
 describe('countryReducer()', () => {
-    let initialState;
+    let initialState: CountryState;
 
     beforeEach(() => {
         initialState = {
             data: getCountries(),
+            errors: {},
+            statuses: {},
         };
     });
 
     it('returns a new state when fetching new countries', () => {
-        const action = {
-            type: actionTypes.LOAD_COUNTRIES_REQUESTED,
+        const action: LoadCountriesAction = {
+            type: CountryActionType.LoadCountriesRequested,
         };
 
         expect(countryReducer(initialState, action)).toEqual({
@@ -25,10 +30,10 @@ describe('countryReducer()', () => {
     });
 
     it('returns a new state when countries are fetched', () => {
-        const action = {
-            type: actionTypes.LOAD_COUNTRIES_SUCCEEDED,
+        const action: LoadCountriesAction = {
+            type: CountryActionType.LoadCountriesSucceeded,
             payload: [
-                { code: 'JP', name: 'Japan' },
+                { code: 'JP', name: 'Japan', hasPostalCodes: false, subdivisions: [] },
             ],
         };
 
@@ -40,9 +45,9 @@ describe('countryReducer()', () => {
     });
 
     it('returns a new state when countries cannot be fetched', () => {
-        const action = {
-            type: actionTypes.LOAD_COUNTRIES_FAILED,
-            payload: getErrorResponse(),
+        const action: LoadCountriesAction = {
+            type: CountryActionType.LoadCountriesFailed,
+            payload: new RequestErrorFactory().createError(getErrorResponse()),
         };
 
         expect(countryReducer(initialState, action)).toEqual({
