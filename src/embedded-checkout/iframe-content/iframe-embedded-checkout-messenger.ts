@@ -1,9 +1,10 @@
 import { isCustomError, CustomError } from '../../common/error/errors';
+import EmbeddedCheckoutError from '../embedded-checkout-error';
 import {
     EmbeddedCheckoutCompleteEvent,
-    EmbeddedCheckoutError,
     EmbeddedCheckoutErrorEvent,
     EmbeddedCheckoutEvent,
+    EmbeddedCheckoutEventMap,
     EmbeddedCheckoutEventType,
     EmbeddedCheckoutFrameErrorEvent,
     EmbeddedCheckoutFrameLoadedEvent,
@@ -16,6 +17,7 @@ import IframeEventPoster from '../iframe-event-poster';
 
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
 import { EmbeddedContentEventMap, EmbeddedContentEventType } from './embedded-content-events';
+import EmbeddedContentOptions from './embedded-content-options';
 
 export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckoutMessenger {
     /**
@@ -23,7 +25,8 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
      */
     constructor(
         private _messageListener: IframeEventListener<EmbeddedContentEventMap>,
-        private _messagePoster: IframeEventPoster<EmbeddedCheckoutEvent>
+        private _messagePoster: IframeEventPoster<EmbeddedCheckoutEvent>,
+        private _messageHandlers: EventCallbacks<EmbeddedCheckoutEventMap> = {}
     ) {
         this._messageListener.listen();
     }
@@ -33,7 +36,7 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
             type: EmbeddedCheckoutEventType.CheckoutComplete,
         };
 
-        this._messagePoster.post(message);
+        this._postMessage(message);
     }
 
     postError(payload: Error | CustomError): void {
@@ -42,7 +45,7 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
             payload: this._transformError(payload),
         };
 
-        this._messagePoster.post(message);
+        this._postMessage(message);
     }
 
     postFrameError(payload: Error | CustomError): void {
@@ -51,15 +54,16 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
             payload: this._transformError(payload),
         };
 
-        this._messagePoster.post(message);
+        this._postMessage(message);
     }
 
-    postFrameLoaded(): void {
+    postFrameLoaded(payload?: EmbeddedContentOptions): void {
         const message: EmbeddedCheckoutFrameLoadedEvent = {
             type: EmbeddedCheckoutEventType.FrameLoaded,
+            payload,
         };
 
-        this._messagePoster.post(message);
+        this._postMessage(message);
     }
 
     postLoaded(): void {
@@ -67,7 +71,7 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
             type: EmbeddedCheckoutEventType.CheckoutLoaded,
         };
 
-        this._messagePoster.post(message);
+        this._postMessage(message);
     }
 
     postSignedOut(): void {
@@ -75,13 +79,26 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
             type: EmbeddedCheckoutEventType.SignedOut,
         };
 
-        this._messagePoster.post(message);
+        this._postMessage(message);
     }
 
     receiveStyles(handler: (styles: EmbeddedCheckoutStyles) => void): void {
         this._messageListener.addListener(EmbeddedContentEventType.StyleConfigured, ({ payload }) => {
             handler(payload);
         });
+    }
+
+    private _postMessage(message: EmbeddedCheckoutEvent): void {
+        Object.keys(this._messageHandlers)
+            .forEach(key => {
+                const handler = this._messageHandlers[key as keyof EmbeddedCheckoutEventMap];
+
+                if (handler) {
+                    handler.call(null, message);
+                }
+            });
+
+        this._messagePoster.post(message);
     }
 
     private _transformError(error: Error | CustomError): EmbeddedCheckoutError {
@@ -92,3 +109,7 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
         };
     }
 }
+
+export type EventCallbacks<TEventMap> = {
+    [key in keyof TEventMap]?: (event: TEventMap[key]) => void;
+};

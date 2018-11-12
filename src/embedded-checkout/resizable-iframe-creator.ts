@@ -57,10 +57,11 @@ export default class ResizableIframeCreator {
                 if (isIframeEvent(event.data, EmbeddedCheckoutEventType.FrameLoaded)) {
                     iframe.style.display = '';
 
+                    const contentId = event.data.payload && event.data.payload.contentId;
                     const iframes = iframeResizer({
                         scrolling: false,
                         sizeWidth: false,
-                        heightCalculationMethod: 'lowestElement',
+                        heightCalculationMethod: contentId ? 'taggedElement' : 'lowestElement',
                     }, iframe);
 
                     teardown();
