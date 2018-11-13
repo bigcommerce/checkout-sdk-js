@@ -1,4 +1,4 @@
-import { createAction, createErrorAction, Action, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
@@ -8,7 +8,7 @@ import { addMinutes, isFuture } from '../../common/date-time';
 import { MissingDataError, MissingDataErrorType } from '../../common/error/errors';
 
 import { SessionContext, VaultAccessToken } from './instrument';
-import * as actionTypes from './instrument-action-types';
+import { DeleteInstrumentAction, InstrumentActionType, LoadInstrumentsAction } from './instrument-actions';
 import InstrumentRequestSender from './instrument-request-sender';
 
 export default class InstrumentActionCreator {
@@ -16,9 +16,9 @@ export default class InstrumentActionCreator {
         private _instrumentRequestSender: InstrumentRequestSender
     ) {}
 
-    loadInstruments(): ThunkAction<Action, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_REQUESTED));
+    loadInstruments(): ThunkAction<LoadInstrumentsAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<LoadInstrumentsAction>) => {
+            observer.next(createAction(InstrumentActionType.LoadInstrumentsRequested));
 
             const session = this._getSessionContext(store);
             const token = this._getCurrentAccessToken(store);
@@ -33,28 +33,35 @@ export default class InstrumentActionCreator {
                         shippingAddress
                     )
                         .then(({ body }) => {
-                            observer.next(createAction(actionTypes.LOAD_INSTRUMENTS_SUCCEEDED, body, currentToken));
+                            observer.next(createAction(
+                                InstrumentActionType.LoadInstrumentsSucceeded,
+                                body,
+                                currentToken
+                            ));
                             observer.complete();
                         })
                 )
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.LOAD_INSTRUMENTS_FAILED, response));
+                    observer.error(createErrorAction(InstrumentActionType.LoadInstrumentsFailed, response));
                 });
         });
     }
 
-    deleteInstrument(instrumentId: string): ThunkAction<Action, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<Action>) => {
-            observer.next(createAction(actionTypes.DELETE_INSTRUMENT_REQUESTED, undefined, { instrumentId }));
+    deleteInstrument(instrumentId: string): ThunkAction<DeleteInstrumentAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<DeleteInstrumentAction>) => {
+            observer.next(createAction(InstrumentActionType.DeleteInstrumentRequested, undefined, { instrumentId }));
 
             const session = this._getSessionContext(store);
             const token = this._getCurrentAccessToken(store);
 
             return this._getValidAccessToken(token)
                 .then(currentToken =>
-                    this._instrumentRequestSender.deleteInstrument({ ...session, authToken: currentToken.vaultAccessToken }, instrumentId)
-                        .then(() => {
-                            observer.next(createAction(actionTypes.DELETE_INSTRUMENT_SUCCEEDED, undefined, {
+                    this._instrumentRequestSender.deleteInstrument({
+                        ...session,
+                        authToken: currentToken.vaultAccessToken,
+                    }, instrumentId)
+                        .then(({ body }) => {
+                            observer.next(createAction(InstrumentActionType.DeleteInstrumentSucceeded, body, {
                                 instrumentId,
                                 ...currentToken,
                             }));
@@ -62,7 +69,7 @@ export default class InstrumentActionCreator {
                         })
                 )
                 .catch(response => {
-                    observer.error(createErrorAction(actionTypes.DELETE_INSTRUMENT_FAILED, response, { instrumentId }));
+                    observer.error(createErrorAction(InstrumentActionType.DeleteInstrumentFailed, response, { instrumentId }));
                 });
         });
     }
@@ -93,13 +100,9 @@ export default class InstrumentActionCreator {
     }
 
     private _getValidAccessToken(token?: VaultAccessToken): Promise<VaultAccessToken> {
-        return token && this._isValidVaultAccessToken(token)
-            ? Promise.resolve(token)
-            : this._instrumentRequestSender.getVaultAccessToken()
-                .then(({ body = {} }: any) => ({
-                    vaultAccessToken: body.data.token,
-                    vaultAccessExpiry: body.data.expires_at,
-                }));
+        return token && this._isValidVaultAccessToken(token) ?
+            Promise.resolve(token) :
+            this._instrumentRequestSender.getVaultAccessToken().then(({ body }) => body);
     }
 
     private _getShippingAddress(store: ReadableCheckoutStore): Address | undefined {

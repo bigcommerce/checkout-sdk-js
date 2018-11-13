@@ -1,11 +1,19 @@
-export function getInstrumentsMeta() {
+import Instrument, { InstrumentRequestContext, VaultAccessToken } from './instrument';
+import { InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrumentsResponseBody, InternalVaultAccessTokenResponseBody } from './instrument-response-body';
+import InstrumentState, { InstrumentMeta } from './instrument-state';
+
+export function getInstrumentsMeta(): InstrumentMeta {
+    return getVaultAccessToken();
+}
+
+export function getVaultAccessToken(): VaultAccessToken {
     return {
         vaultAccessToken: 'VAT f4k3v4ul74cc3sst0k3n',
         vaultAccessExpiry: 1516097476098,
     };
 }
 
-export function getInstruments() {
+export function getInstruments(): Instrument[] {
     return [
         {
             bigpayToken: '123',
@@ -32,7 +40,7 @@ export function getInstruments() {
     ];
 }
 
-export function getInstrumentsState() {
+export function getInstrumentsState(): InstrumentState {
     return {
         data: getInstruments(),
         meta: getInstrumentsMeta(),
@@ -41,15 +49,15 @@ export function getInstrumentsState() {
     };
 }
 
-export function instrumentRequestContext() {
+export function instrumentRequestContext(): InstrumentRequestContext {
     return {
         storeId: '1504098821',
         customerId: 0,
-        token: getInstrumentsMeta().vaultAccessToken,
+        authToken: getInstrumentsMeta().vaultAccessToken,
     };
 }
 
-export function getErrorInstrumentResponseBody() {
+export function getErrorInstrumentResponseBody(): InstrumentErrorResponseBody {
     return {
         errors: [{
             code: 400,
@@ -58,23 +66,22 @@ export function getErrorInstrumentResponseBody() {
     };
 }
 
-export function getVaultAccessTokenResponseBody() {
+export function getVaultAccessTokenResponseBody(): InternalVaultAccessTokenResponseBody {
     return {
         data: {
             token: 'VAT f4k3v4ul74cc3sst0k3n',
             expires_at: 1516097476098,
         },
-        meta: {},
     };
 }
 
-export function getLoadInstrumentsResponseBody() {
+export function getLoadInstrumentsResponseBody(): InstrumentsResponseBody {
     return {
         vaultedInstruments: getInstruments(),
     };
 }
 
-export function getRawInstrumentsResponseBody() {
+export function getInternalInstrumentsResponseBody(): InternalInstrumentsResponseBody {
     return {
         vaulted_instruments: [
             {
@@ -103,7 +110,7 @@ export function getRawInstrumentsResponseBody() {
     };
 }
 
-export function deleteInstrumentResponseBody() {
+export function deleteInstrumentResponseBody(): InstrumentsResponseBody {
     return {
         vaultedInstruments: [],
     };

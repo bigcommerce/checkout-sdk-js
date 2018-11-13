@@ -1,11 +1,11 @@
 import Instrument from './instrument';
 
-export type InstrumentError = Array<{
-    code: string;
+export interface InstrumentError {
+    code: number;
     message: string;
-}>;
+}
 
-export interface RawInstrumentResponseBody {
+export interface InternalInstrument {
     bigpay_token: string;
     default_instrument: boolean;
     provider: string;
@@ -22,19 +22,21 @@ export interface InstrumentsResponseBody {
 }
 
 export interface InstrumentErrorResponseBody {
-    errors?: [InstrumentError];
+    errors?: InstrumentError[];
 }
 
-export interface RawInstrumentsResponseBody {
-    vaulted_instruments: RawInstrumentResponseBody[];
+export interface InternalInstrumentsResponseBody {
+    vaulted_instruments: InternalInstrument[];
 }
 
-export interface RawInstrumentErrorResponseBody {
-    errors?: [InstrumentError];
+export interface InternalInstrumentErrorResponseBody {
+    errors?: InstrumentError[];
 }
 
-export interface VaultAccessTokenResponseBody {
-    token: string;
-    expires_at: number;
-    errors?: [InstrumentError];
+export interface InternalVaultAccessTokenResponseBody {
+    data: {
+        token: string;
+        expires_at: number;
+        errors?: InstrumentError[];
+    };
 }

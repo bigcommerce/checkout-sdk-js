@@ -1,31 +1,50 @@
 import { Response } from '@bigcommerce/request-sender';
 
-import Instrument from './instrument';
+import PaymentResponse from '../payment-response';
+
+import Instrument, { VaultAccessToken } from './instrument';
 import {
     InstrumentsResponseBody,
     InstrumentErrorResponseBody,
-    RawInstrumentsResponseBody,
-    RawInstrumentErrorResponseBody,
-    RawInstrumentResponseBody,
+    InternalInstrument,
+    InternalInstrumentsResponseBody,
+    InternalInstrumentErrorResponseBody,
+    InternalVaultAccessTokenResponseBody,
 } from './instrument-response-body';
 
 export default class InstrumentResponseTransformer {
-    transformResponse(response: Response<RawInstrumentsResponseBody>): Response<InstrumentsResponseBody> {
-        const payload = this._transformResponse(response);
-        const { vaulted_instruments } = payload.body;
+    transformResponse(
+        response: PaymentResponse<InternalInstrumentsResponseBody>
+    ): Response<InstrumentsResponseBody> {
+        const { body, ...payload } = this._transformResponse(response);
 
-        payload.body = {
-            vaultedInstruments: this._transformVaultedInstruments(vaulted_instruments),
+        return {
+            ...payload,
+            body: {
+                vaultedInstruments: this._transformVaultedInstruments(body.vaulted_instruments),
+            },
         };
-
-        return payload;
     }
 
-    transformErrorResponse(response: Response<RawInstrumentErrorResponseBody>): Response<InstrumentErrorResponseBody> {
+    transformErrorResponse(
+        response: PaymentResponse<InternalInstrumentErrorResponseBody>
+    ): Response<InstrumentErrorResponseBody> {
         return this._transformResponse(response);
     }
 
-    private _transformVaultedInstruments(vaultedInstruments: RawInstrumentResponseBody[] = []): Instrument[] {
+    transformVaultAccessResponse(
+        response: Response<InternalVaultAccessTokenResponseBody>
+    ): Response<VaultAccessToken> {
+        return {
+            ...response,
+            body: {
+                vaultAccessToken: response.body.data.token,
+                vaultAccessExpiry: response.body.data.expires_at,
+            },
+        };
+    }
+
+    private _transformVaultedInstruments(vaultedInstruments: InternalInstrument[] = []): Instrument[] {
         return vaultedInstruments.map(instrument => ({
             bigpayToken: instrument.bigpay_token,
             defaultInstrument: instrument.default_instrument,
@@ -39,12 +58,12 @@ export default class InstrumentResponseTransformer {
         }));
     }
 
-    private _transformResponse({ data: body, status, statusText }: any): Response {
+    private _transformResponse<T>(response: PaymentResponse<T>): Response<T> {
+        const { data: body, ...payload } = response;
+
         return {
-            headers: {},
+            ...payload,
             body,
-            status,
-            statusText,
         };
     }
 }
