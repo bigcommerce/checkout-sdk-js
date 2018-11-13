@@ -1,3 +1,9 @@
+import { createRequestErrorFactory } from '../../common/error';
+import { getErrorResponse } from '../../common/http-request/responses.mock';
+
+import { InstrumentAction, InstrumentActionType } from './instrument-actions';
+import instrumentReducer from './instrument-reducer';
+import InstrumentState from './instrument-state';
 import {
     deleteInstrumentResponseBody,
     getInstruments,
@@ -5,28 +11,20 @@ import {
     getLoadInstrumentsResponseBody,
 } from './instrument.mock';
 
-import { getErrorResponse } from '../../common/http-request/responses.mock';
-import instrumentReducer from './instrument-reducer';
-import * as actionTypes from './instrument-action-types';
-
 describe('instrumentReducer()', () => {
-    let initialState;
+    let initialState: InstrumentState;
 
     beforeEach(() => {
         initialState = {
             data: [],
-        };
-    });
-
-    afterEach(() => {
-        initialState = {
-            data: [],
+            errors: {},
+            statuses: {},
         };
     });
 
     it('returns new state when loading instruments', () => {
-        const action = {
-            type: actionTypes.LOAD_INSTRUMENTS_REQUESTED,
+        const action: InstrumentAction = {
+            type: InstrumentActionType.LoadInstrumentsRequested,
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
@@ -37,15 +35,16 @@ describe('instrumentReducer()', () => {
     });
 
     it('returns new state when instruments are loaded', () => {
-        const action = {
-            type: actionTypes.LOAD_INSTRUMENTS_SUCCEEDED,
+        const action: InstrumentAction = {
+            type: InstrumentActionType.LoadInstrumentsSucceeded,
             meta: getInstrumentsMeta(),
             payload: getLoadInstrumentsResponseBody(),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
-            data: action.payload.vaultedInstruments,
+            // tslint:disable-next-line:no-non-null-assertion
+            data: action.payload!.vaultedInstruments,
             meta: action.meta,
             errors: { loadError: undefined },
             statuses: { isLoading: false },
@@ -53,9 +52,9 @@ describe('instrumentReducer()', () => {
     });
 
     it('returns new state when instruments cannot be loaded', () => {
-        const action = {
-            type: actionTypes.LOAD_INSTRUMENTS_FAILED,
-            payload: getErrorResponse(),
+        const action: InstrumentAction = {
+            type: InstrumentActionType.LoadInstrumentsFailed,
+            payload: createRequestErrorFactory().createError(getErrorResponse()),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({
@@ -66,8 +65,8 @@ describe('instrumentReducer()', () => {
     });
 
     it('returns new state when deleting instruments', () => {
-        const action = {
-            type: actionTypes.DELETE_INSTRUMENT_REQUESTED,
+        const action: InstrumentAction = {
+            type: InstrumentActionType.DeleteInstrumentRequested,
             meta: { instrumentId: '123' },
         };
 
@@ -85,8 +84,8 @@ describe('instrumentReducer()', () => {
         const initialInstruments = getInstruments();
         initialState.data = initialInstruments;
 
-        const action = {
-            type: actionTypes.DELETE_INSTRUMENT_SUCCEEDED,
+        const action: InstrumentAction = {
+            type: InstrumentActionType.DeleteInstrumentSucceeded,
             meta: {
                 ...getInstrumentsMeta(),
                 instrumentId: initialInstruments[0].bigpayToken,
@@ -107,10 +106,10 @@ describe('instrumentReducer()', () => {
     });
 
     it('returns new state when instruments cannot be deleted', () => {
-        const action = {
-            type: actionTypes.DELETE_INSTRUMENT_FAILED,
+        const action: InstrumentAction = {
+            type: InstrumentActionType.DeleteInstrumentFailed,
             meta: { instrumentId: '123' },
-            payload: getErrorResponse(),
+            payload: createRequestErrorFactory().createError(getErrorResponse()),
         };
 
         expect(instrumentReducer(initialState, action)).toEqual({

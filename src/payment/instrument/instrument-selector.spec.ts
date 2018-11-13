@@ -1,15 +1,15 @@
+import { CheckoutStoreState } from '../../checkout';
+import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
+
 import InstrumentSelector from './instrument-selector';
-import { getErrorResponse } from '../../common/http-request/responses.mock';
-import { getInstrumentsState, getInstrumentsMeta } from './instrument.mock';
+import { getInstrumentsMeta } from './instrument.mock';
 
 describe('InstrumentSelector', () => {
-    let instrumentSelector;
-    let state;
+    let instrumentSelector: InstrumentSelector;
+    let state: CheckoutStoreState;
 
     beforeEach(() => {
-        state = {
-            instruments: getInstrumentsState(),
-        };
+        state = getCheckoutStoreState();
     });
 
     describe('#loadInstruments()', () => {
@@ -20,7 +20,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns an empty array if there are no instruments', () => {
-            instrumentSelector = new InstrumentSelector({ data: [] });
+            instrumentSelector = new InstrumentSelector({ data: [], errors: {}, statuses: {} });
 
             expect(instrumentSelector.getInstruments()).toEqual([]);
         });
@@ -56,7 +56,7 @@ describe('InstrumentSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponse();
+            const loadError = new Error();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,
@@ -74,14 +74,10 @@ describe('InstrumentSelector', () => {
     });
 
     describe('#getDeleteError()', () => {
-        let mockInstrumentId;
-
-        beforeEach(() => {
-            mockInstrumentId = '123';
-        });
+        const mockInstrumentId = '123';
 
         it('returns error if unable to delete', () => {
-            const deleteError = getErrorResponse();
+            const deleteError = new Error();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,
@@ -98,7 +94,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('does not return error if unable to delete irrelevant instrument', () => {
-            const deleteError = getErrorResponse();
+            const deleteError = new Error();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,
@@ -109,7 +105,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns any error if instrument id is not passed', () => {
-            const deleteError = getErrorResponse();
+            const deleteError = new Error();
 
             instrumentSelector = new InstrumentSelector({
                 ...state.instruments,
@@ -138,11 +134,7 @@ describe('InstrumentSelector', () => {
     });
 
     describe('#isDeleting()', () => {
-        let mockInstrumentId;
-
-        beforeEach(() => {
-            mockInstrumentId = '123';
-        });
+        const mockInstrumentId = '123';
 
         it('returns true if deleting an instrument', () => {
             instrumentSelector = new InstrumentSelector({

@@ -1,8 +1,7 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
-
-import * as actionTypes from './instrument-action-types';
+import { combineReducers } from '@bigcommerce/data-store';
 
 import Instrument from './instrument';
+import { InstrumentAction, InstrumentActionType } from './instrument-actions';
 import InstrumentState, { InstrumentErrorState, InstrumentMeta, InstrumentStatusState } from './instrument-state';
 
 const DEFAULT_STATE = {
@@ -11,7 +10,10 @@ const DEFAULT_STATE = {
     statuses: {},
 };
 
-export default function instrumentReducer(state: InstrumentState = DEFAULT_STATE, action: Action): InstrumentState {
+export default function instrumentReducer(
+    state: InstrumentState = DEFAULT_STATE,
+    action: InstrumentAction
+): InstrumentState {
     const reducer = combineReducers<InstrumentState>({
         data: dataReducer,
         errors: errorsReducer,
@@ -22,12 +24,15 @@ export default function instrumentReducer(state: InstrumentState = DEFAULT_STATE
     return reducer(state, action);
 }
 
-function dataReducer(data: Instrument[] = DEFAULT_STATE.data, action: Action): Instrument[] {
+function dataReducer(
+    data: Instrument[] = DEFAULT_STATE.data,
+    action: InstrumentAction
+): Instrument[] {
     switch (action.type) {
-    case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
-        return action.payload.vaultedInstruments || [];
+    case InstrumentActionType.LoadInstrumentsSucceeded:
+        return action.payload ? action.payload.vaultedInstruments : [];
 
-    case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
+    case InstrumentActionType.DeleteInstrumentSucceeded:
         return data.filter(instrument =>
             instrument.bigpayToken !== action.meta.instrumentId
         );
@@ -37,10 +42,13 @@ function dataReducer(data: Instrument[] = DEFAULT_STATE.data, action: Action): I
     }
 }
 
-function metaReducer(meta: InstrumentMeta | undefined, action: Action): InstrumentMeta | undefined {
+function metaReducer(
+    meta: InstrumentMeta | undefined,
+    action: InstrumentAction
+): InstrumentMeta | undefined {
     switch (action.type) {
-    case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
-    case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
+    case InstrumentActionType.LoadInstrumentsSucceeded:
+    case InstrumentActionType.DeleteInstrumentSucceeded:
         return { ...meta, ...action.meta };
 
     default:
@@ -48,24 +56,27 @@ function metaReducer(meta: InstrumentMeta | undefined, action: Action): Instrume
     }
 }
 
-function errorsReducer(errors: InstrumentErrorState = DEFAULT_STATE.errors, action: Action): InstrumentErrorState {
+function errorsReducer(
+    errors: InstrumentErrorState = DEFAULT_STATE.errors,
+    action: InstrumentAction
+): InstrumentErrorState {
     switch (action.type) {
-    case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
-    case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
+    case InstrumentActionType.LoadInstrumentsRequested:
+    case InstrumentActionType.LoadInstrumentsSucceeded:
         return { ...errors, loadError: undefined };
 
-    case actionTypes.DELETE_INSTRUMENT_REQUESTED:
-    case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
+    case InstrumentActionType.DeleteInstrumentRequested:
+    case InstrumentActionType.DeleteInstrumentSucceeded:
         return {
             ...errors,
             deleteError: undefined,
             failedInstrument: undefined,
         };
 
-    case actionTypes.LOAD_INSTRUMENTS_FAILED:
+    case InstrumentActionType.LoadInstrumentsFailed:
         return { ...errors, loadError: action.payload };
 
-    case actionTypes.DELETE_INSTRUMENT_FAILED:
+    case InstrumentActionType.DeleteInstrumentFailed:
         return {
             ...errors,
             deleteError: action.payload,
@@ -77,24 +88,27 @@ function errorsReducer(errors: InstrumentErrorState = DEFAULT_STATE.errors, acti
     }
 }
 
-function statusesReducer(statuses: InstrumentStatusState = DEFAULT_STATE.statuses, action: Action): InstrumentStatusState {
+function statusesReducer(
+    statuses: InstrumentStatusState = DEFAULT_STATE.statuses,
+    action: InstrumentAction
+): InstrumentStatusState {
     switch (action.type) {
-    case actionTypes.LOAD_INSTRUMENTS_REQUESTED:
+    case InstrumentActionType.LoadInstrumentsRequested:
         return { ...statuses, isLoading: true };
 
-    case actionTypes.DELETE_INSTRUMENT_REQUESTED:
+    case InstrumentActionType.DeleteInstrumentRequested:
         return {
             ...statuses,
             isDeleting: true,
             deletingInstrument: action.meta.instrumentId,
         };
 
-    case actionTypes.LOAD_INSTRUMENTS_SUCCEEDED:
-    case actionTypes.LOAD_INSTRUMENTS_FAILED:
+    case InstrumentActionType.LoadInstrumentsSucceeded:
+    case InstrumentActionType.LoadInstrumentsFailed:
         return { ...statuses, isLoading: false };
 
-    case actionTypes.DELETE_INSTRUMENT_SUCCEEDED:
-    case actionTypes.DELETE_INSTRUMENT_FAILED:
+    case InstrumentActionType.DeleteInstrumentSucceeded:
+    case InstrumentActionType.DeleteInstrumentFailed:
         return {
             ...statuses,
             isDeleting: false,

@@ -1,12 +1,16 @@
+import { getPaymentResponse, getResponse } from '../../common/http-request/responses.mock';
+
 import InstrumentResponseTransformer from './instrument-response-transformer';
 import {
     getErrorInstrumentResponseBody,
+    getInternalInstrumentsResponseBody,
     getLoadInstrumentsResponseBody,
-    getRawInstrumentsResponseBody,
+    getVaultAccessToken,
+    getVaultAccessTokenResponseBody,
 } from './instrument.mock';
 
 describe('InstrumentResponseTransformer', () => {
-    let instrumentResponseTransformer;
+    let instrumentResponseTransformer: InstrumentResponseTransformer;
 
     beforeEach(() => {
         instrumentResponseTransformer = new InstrumentResponseTransformer();
@@ -14,7 +18,7 @@ describe('InstrumentResponseTransformer', () => {
 
     describe('#transformResponse()', () => {
         it('transforms the loadInstruments response', () => {
-            const response = { data: getRawInstrumentsResponseBody() };
+            const response = getPaymentResponse(getInternalInstrumentsResponseBody());
             const result = instrumentResponseTransformer.transformResponse(response);
 
             expect(result).toEqual(
@@ -23,7 +27,7 @@ describe('InstrumentResponseTransformer', () => {
         });
 
         it('transforms an empty loadInstruments response', () => {
-            const response = { data: { vaulted_instruments: [] } };
+            const response = getPaymentResponse({ vaulted_instruments: [] });
             const result = instrumentResponseTransformer.transformResponse(response);
 
             expect(result).toEqual(expect.objectContaining({
@@ -32,9 +36,20 @@ describe('InstrumentResponseTransformer', () => {
         });
     });
 
+    describe('#transformVaultAccessResponse()', () => {
+        it('transforms loadInstruments errors', () => {
+            const response = getResponse(getVaultAccessTokenResponseBody());
+            const result = instrumentResponseTransformer.transformVaultAccessResponse(response);
+
+            expect(result).toEqual(
+                expect.objectContaining({ body: getVaultAccessToken() })
+            );
+        });
+    });
+
     describe('#transformErrorResponse()', () => {
         it('transforms loadInstruments errors', () => {
-            const response = { data: getErrorInstrumentResponseBody() };
+            const response = getPaymentResponse(getErrorInstrumentResponseBody());
             const result = instrumentResponseTransformer.transformErrorResponse(response);
 
             expect(result).toEqual(

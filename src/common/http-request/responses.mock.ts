@@ -1,10 +1,23 @@
 import { Response } from '@bigcommerce/request-sender';
 
+import PaymentResponse from '../../payment/payment-response';
 import ErrorResponseBody from '../error/error-response-body';
 
 export function getResponse<T>(body: T, headers = {}, status = 200, statusText = 'OK'): Response<T> {
     return {
         body,
+        status,
+        statusText,
+        headers: {
+            'content-type': 'application/json',
+            ...headers,
+        },
+    };
+}
+
+export function getPaymentResponse<T>(data: T, headers = {}, status = 200, statusText = 'OK'): PaymentResponse<T> {
+    return {
+        data,
         status,
         statusText,
         headers: {
