@@ -101,4 +101,21 @@ describe('EmbeddedCheckoutMessenger', () => {
 
         expect(handler).toHaveBeenCalledWith(styles);
     });
+
+    it('invokes message callbacks if registered', () => {
+        const handler = jest.fn();
+
+        messenger = new IframeEmbeddedCheckoutMessenger(
+            messageListener,
+            messagePoster,
+            { [EmbeddedCheckoutEventType.FrameLoaded]: handler }
+        );
+
+        messenger.postFrameLoaded({ contentId: 'foobar' });
+
+        expect(handler).toHaveBeenCalledWith({
+            type: EmbeddedCheckoutEventType.FrameLoaded,
+            payload: { contentId: 'foobar' },
+        });
+    });
 });

@@ -1,10 +1,19 @@
 import { EventEmitter } from 'events';
+import { iframeResizer, IFrameComponent, IFrameObject, IFrameOptions } from 'iframe-resizer';
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError } from './errors';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
-describe('iframeCreator.createFrame()', () => {
+jest.mock('iframe-resizer', () => ({
+    iframeResizer: jest.fn((options: IFrameOptions, element: HTMLIFrameElement) => {
+        (element as IFrameComponent).iFrameResizer = {} as IFrameObject;
+
+        return [element];
+    }),
+}));
+
+describe('ResizableIframeCreator', () => {
     let url: string;
     let container: HTMLElement;
     let eventEmitter: EventEmitter;
@@ -61,6 +70,29 @@ describe('iframeCreator.createFrame()', () => {
         expect(frame.style.border).toEqual('');
         expect(frame.style.width).toEqual('100%');
         expect(frame.iFrameResizer).toBeDefined();
+        expect(iframeResizer).toHaveBeenCalledWith({
+            scrolling: false,
+            sizeWidth: false,
+            heightCalculationMethod: 'lowestElement',
+        }, frame);
+    });
+
+    it('calculates iframe height based on body element if option is passed', async () => {
+        setTimeout(() => {
+            eventEmitter.emit('message', {
+                origin: 'http://mybigcommerce.com',
+                data: {
+                    type: EmbeddedCheckoutEventType.FrameLoaded,
+                    payload: { contentId: 'foobar' },
+                },
+            });
+        });
+
+        await iframeCreator.createFrame(url, 'checkout');
+
+        expect(iframeResizer).toHaveBeenCalledWith(expect.objectContaining({
+            heightCalculationMethod: 'taggedElement',
+        }), expect.any(HTMLIFrameElement));
     });
 
     it('allows cross-origin iframe to use payment request API', async () => {

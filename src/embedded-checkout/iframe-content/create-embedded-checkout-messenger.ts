@@ -1,10 +1,11 @@
-import { EmbeddedCheckoutEvent } from '../embedded-checkout-events';
+import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-checkout-events';
 import IframeEventListener from '../iframe-event-listener';
 import IframeEventPoster from '../iframe-event-poster';
 
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
 import EmbeddedCheckoutMessengerOptions from './embedded-checkout-messenger-options';
 import { EmbeddedContentEventMap } from './embedded-content-events';
+import handleFrameLoadedEvent from './handle-frame-loaded-event';
 import IframeEmbeddedCheckoutMessenger from './iframe-embedded-checkout-messenger';
 import NoopEmbeddedCheckoutMessenger from './noop-embedded-checkout-messenger';
 
@@ -42,6 +43,7 @@ export default function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
 
     return new IframeEmbeddedCheckoutMessenger(
         new IframeEventListener<EmbeddedContentEventMap>(options.parentOrigin),
-        new IframeEventPoster<EmbeddedCheckoutEvent>(options.parentOrigin, parentWindow)
+        new IframeEventPoster<EmbeddedCheckoutEvent>(options.parentOrigin, parentWindow),
+        { [EmbeddedCheckoutEventType.FrameLoaded]: handleFrameLoadedEvent }
     );
 }

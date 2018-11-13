@@ -1,3 +1,6 @@
+import EmbeddedCheckoutError from './embedded-checkout-error';
+import EmbeddedContentOptions from './iframe-content/embedded-content-options';
+
 export enum EmbeddedCheckoutEventType {
     CheckoutComplete = 'CHECKOUT_COMPLETE',
     CheckoutError = 'CHECKOUT_ERROR',
@@ -45,14 +48,9 @@ export interface EmbeddedCheckoutFrameErrorEvent {
 
 export interface EmbeddedCheckoutFrameLoadedEvent {
     type: EmbeddedCheckoutEventType.FrameLoaded;
+    payload?: EmbeddedContentOptions;
 }
 
 export interface EmbeddedCheckoutSignedOutEvent {
     type: EmbeddedCheckoutEventType.SignedOut;
-}
-
-export interface EmbeddedCheckoutError {
-    message: string;
-    type?: string;
-    subtype?: string;
 }
