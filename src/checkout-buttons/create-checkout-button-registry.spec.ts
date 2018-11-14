@@ -1,3 +1,4 @@
+import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { createCheckoutStore } from '../checkout';
@@ -10,7 +11,7 @@ describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
 
     beforeEach(() => {
-        registry = createCheckoutButtonRegistry(createCheckoutStore(), createRequestSender());
+        registry = createCheckoutButtonRegistry(createCheckoutStore(), createRequestSender(), createFormPoster());
     });
 
     it('returns registry with Braintree PayPal registered', () => {
