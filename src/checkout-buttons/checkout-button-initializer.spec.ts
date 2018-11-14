@@ -1,4 +1,5 @@
 import { createAction } from '@bigcommerce/data-store';
+import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
@@ -21,7 +22,7 @@ describe('CheckoutButtonInitializer', () => {
     beforeEach(() => {
         store = createCheckoutStore();
         buttonActionCreator = new CheckoutButtonStrategyActionCreator(
-            createCheckoutButtonRegistry(store, createRequestSender()),
+            createCheckoutButtonRegistry(store, createRequestSender(), createFormPoster()),
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()))
         );
 

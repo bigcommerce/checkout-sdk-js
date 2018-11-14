@@ -1,8 +1,10 @@
+import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import CheckoutButtonInitializer from './checkout-button-initializer';
 import createCheckoutButtonInitializer from './create-checkout-button-initializer';
 
+jest.mock('@bigcommerce/form-poster');
 jest.mock('@bigcommerce/request-sender');
 
 describe('createCheckoutButtonInitializer()', () => {
@@ -21,6 +23,7 @@ describe('createCheckoutButtonInitializer()', () => {
 
         createCheckoutButtonInitializer({ host });
 
+        expect(createFormPoster).toHaveBeenCalledWith({ host });
         expect(createRequestSender).toHaveBeenCalledWith({ host });
     });
 });
