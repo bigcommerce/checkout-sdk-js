@@ -16,7 +16,7 @@ import { getDataCollectorMock, getPaypalCheckoutMock } from '../../../payment/st
 import { PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-import { CheckoutButtonMethodType } from '../checkout-button-method-type';
+import CheckoutButtonMethodType from '../checkout-button-method-type';
 
 import { BraintreePaypalButtonInitializeOptions } from './braintree-paypal-button-options';
 import BraintreePaypalButtonStrategy from './braintree-paypal-button-strategy';

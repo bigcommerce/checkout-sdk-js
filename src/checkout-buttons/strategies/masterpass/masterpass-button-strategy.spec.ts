@@ -18,9 +18,10 @@ import { PaymentMethod } from '../../../payment';
 import { getMasterpass, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { Masterpass, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { getMasterpassScriptMock } from '../../../payment/strategies/masterpass/masterpass.mock';
+import CheckoutButtonMethodType from '../checkout-button-method-type';
+import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-import { CheckoutButtonStrategy, MasterpassButtonStrategy } from '..';
-import { CheckoutButtonMethodType } from '../checkout-button-method-type';
+import MasterpassButtonStrategy from './masterpass-button-strategy';
 
 describe('MasterpassCustomerStrategy', () => {
     let container: HTMLDivElement;
