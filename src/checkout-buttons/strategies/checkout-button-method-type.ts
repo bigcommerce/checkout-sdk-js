@@ -1,4 +1,4 @@
-export enum CheckoutButtonMethodType {
+enum CheckoutButtonMethodType {
     BRAINTREE_PAYPAL = 'braintreepaypal',
     BRAINTREE_PAYPAL_CREDIT = 'braintreepaypalcredit',
     GOOGLEPAY_BRAINTREE = 'googlepaybraintree',
@@ -6,3 +6,5 @@ export enum CheckoutButtonMethodType {
     MASTERPASS = 'masterpass',
     PAYPALEXPRESS = 'paypalexpress',
 }
+
+export default CheckoutButtonMethodType;

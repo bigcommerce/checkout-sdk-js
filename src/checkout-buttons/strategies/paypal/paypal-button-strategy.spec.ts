@@ -3,15 +3,15 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 import { merge } from 'lodash';
 
-import { createCheckoutStore, CheckoutStore } from '../../checkout';
-import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { MissingDataError } from '../../common/error/errors';
-import { getPaypalExpress } from '../../payment/payment-methods.mock';
-import { PaypalActions, PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../payment/strategies/paypal';
-import { getPaypalMock } from '../../payment/strategies/paypal/paypal.mock';
-import { CheckoutButtonInitializeOptions } from '../checkout-button-options';
+import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { MissingDataError } from '../../../common/error/errors';
+import { getPaypalExpress } from '../../../payment/payment-methods.mock';
+import { PaypalActions, PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
+import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
+import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
+import CheckoutButtonMethodType from '../checkout-button-method-type';
 
-import { CheckoutButtonMethodType } from './checkout-button-method-type';
 import { PaypalButtonInitializeOptions } from './paypal-button-options';
 import PaypalButtonStrategy from './paypal-button-strategy';
 

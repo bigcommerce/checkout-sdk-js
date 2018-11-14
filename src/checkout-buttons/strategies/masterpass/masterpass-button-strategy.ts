@@ -1,16 +1,16 @@
-import { CheckoutButtonInitializeOptions } from '../';
-import { CheckoutActionCreator, CheckoutStore } from '../../checkout';
+import { CheckoutButtonInitializeOptions } from '../..';
+import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import {
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType
-} from '../../common/error/errors';
-import { bindDecorator as bind } from '../../common/utility';
-import { Masterpass, MasterpassCheckoutOptions, MasterpassScriptLoader } from '../../payment/strategies/masterpass';
+} from '../../../common/error/errors';
+import { bindDecorator as bind } from '../../../common/utility';
+import { Masterpass, MasterpassCheckoutOptions, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 
-import CheckoutButtonStrategy from './checkout-button-strategy';
+import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
     private _masterpassClient?: Masterpass;

@@ -6,20 +6,20 @@ import { EventEmitter } from 'events';
 import { merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../checkout';
-import { getCheckout, getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { MissingDataError } from '../../common/error/errors';
-import { ConfigActionCreator, ConfigRequestSender } from '../../config';
-import { getBraintreePaypal } from '../../payment/payment-methods.mock';
-import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator } from '../../payment/strategies/braintree';
-import { getDataCollectorMock, getPaypalCheckoutMock } from '../../payment/strategies/braintree/braintree.mock';
-import { PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../payment/strategies/paypal';
-import { getPaypalMock } from '../../payment/strategies/paypal/paypal.mock';
-import { CheckoutButtonInitializeOptions } from '../checkout-button-options';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { MissingDataError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { getBraintreePaypal } from '../../../payment/payment-methods.mock';
+import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
+import { getDataCollectorMock, getPaypalCheckoutMock } from '../../../payment/strategies/braintree/braintree.mock';
+import { PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
+import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
+import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
+import CheckoutButtonMethodType from '../checkout-button-method-type';
 
 import { BraintreePaypalButtonInitializeOptions } from './braintree-paypal-button-options';
 import BraintreePaypalButtonStrategy from './braintree-paypal-button-strategy';
-import { CheckoutButtonMethodType } from './checkout-button-method-type';
 
 describe('BraintreePaypalButtonStrategy', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;

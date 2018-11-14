@@ -2,7 +2,7 @@ import { PaymentMethod } from '../../../payment';
 import { getGooglePay } from '../../../payment/payment-methods.mock';
 import { ButtonType } from '../../../payment/strategies/googlepay';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-import { CheckoutButtonMethodType } from '../checkout-button-method-type';
+import CheckoutButtonMethodType from '../checkout-button-method-type';
 
 export function getPaymentMethod(): PaymentMethod {
     return {
