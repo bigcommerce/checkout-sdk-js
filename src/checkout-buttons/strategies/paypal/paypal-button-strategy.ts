@@ -1,14 +1,14 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { pick } from 'lodash';
 
-import { CheckoutStore } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
-import { PaymentMethod } from '../../payment';
-import { PaypalActions, PaypalAuthorizeData, PaypalClientToken } from '../../payment/strategies/paypal';
-import { PaypalScriptLoader } from '../../payment/strategies/paypal';
-import { CheckoutButtonInitializeOptions } from '../checkout-button-options';
+import { CheckoutStore } from '../../../checkout';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
+import { PaymentMethod } from '../../../payment';
+import { PaypalScriptLoader } from '../../../payment/strategies/paypal';
+import { PaypalActions, PaypalAuthorizeData, PaypalClientToken } from '../../../payment/strategies/paypal';
+import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
-import CheckoutButtonStrategy from './checkout-button-strategy';
+import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalButtonStrategy extends CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;

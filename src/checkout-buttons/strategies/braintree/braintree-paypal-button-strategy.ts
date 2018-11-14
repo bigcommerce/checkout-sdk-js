@@ -1,15 +1,15 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { pick } from 'lodash';
 
-import { Address, LegacyAddress } from '../../address';
-import { CheckoutActionCreator, CheckoutStore } from '../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
-import { PaymentMethod } from '../../payment';
-import { BraintreeAddress, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../payment/strategies/braintree';
-import { PaypalAuthorizeData, PaypalScriptLoader } from '../../payment/strategies/paypal';
-import { CheckoutButtonInitializeOptions } from '../checkout-button-options';
+import { Address, LegacyAddress } from '../../../address';
+import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
+import { PaymentMethod } from '../../../payment';
+import { BraintreeAddress, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../../payment/strategies/braintree';
+import { PaypalAuthorizeData, PaypalScriptLoader } from '../../../payment/strategies/paypal';
+import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
-import CheckoutButtonStrategy from './checkout-button-strategy';
+import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrategy {
     private _paypalCheckout?: BraintreePaypalCheckout;

@@ -1,5 +1,5 @@
-import { StandardError } from '../../common/error/errors';
-import { PaypalButtonStyleOptions } from '../../payment/strategies/paypal';
+import { StandardError } from '../../../common/error/errors';
+import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
 
 export interface PaypalButtonInitializeOptions {
     /**

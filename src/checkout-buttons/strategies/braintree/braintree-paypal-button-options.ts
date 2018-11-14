@@ -1,6 +1,6 @@
-import { StandardError } from '../../common/error/errors';
-import { BraintreeError } from '../../payment/strategies/braintree';
-import { PaypalButtonStyleOptions } from '../../payment/strategies/paypal';
+import { StandardError } from '../../../common/error/errors';
+import { BraintreeError } from '../../../payment/strategies/braintree';
+import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
 
 export interface BraintreePaypalButtonInitializeOptions {
     /**
