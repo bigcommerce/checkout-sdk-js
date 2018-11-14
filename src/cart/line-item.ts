@@ -47,7 +47,7 @@ export interface LineItem {
     name: string;
     url: string;
     quantity: number;
-    brand: string;
+    brand?: string[];
     categoryNames?: string[];
     isTaxable: boolean;
     imageUrl: string;
