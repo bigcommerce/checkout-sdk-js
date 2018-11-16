@@ -43,7 +43,7 @@ export default function createCheckoutButtonInitializer(
     return new CheckoutButtonInitializer(
         store,
         new CheckoutButtonStrategyActionCreator(
-            createCheckoutButtonRegistry(store, requestSender, formPoster),
+            createCheckoutButtonRegistry(store, requestSender, formPoster, host),
             new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender))
         )
     );

@@ -53,7 +53,7 @@ export interface PaypalPaymentActions {
 }
 
 export interface PaypalRequestActions {
-    post(url: string, payload?: object): Promise<{ id: string }>;
+    post(url: string, payload?: object, options?: object): Promise<{ id: string }>;
 }
 
 export interface PaypalTransaction {

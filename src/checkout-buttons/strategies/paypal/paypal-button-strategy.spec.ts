@@ -1,11 +1,15 @@
+import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 import { merge } from 'lodash';
+import { from } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore } from '../../../checkout';
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getPaypalExpress } from '../../../payment/payment-methods.mock';
 import { PaypalActions, PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
@@ -16,6 +20,8 @@ import { PaypalButtonInitializeOptions } from './paypal-button-options';
 import PaypalButtonStrategy from './paypal-button-strategy';
 
 describe('PaypalButtonStrategy', () => {
+    let actionsMock: PaypalActions;
+    let checkoutActionCreator: CheckoutActionCreator;
     let eventEmitter: EventEmitter;
     let formPoster: FormPoster;
     let options: CheckoutButtonInitializeOptions;
@@ -24,10 +30,13 @@ describe('PaypalButtonStrategy', () => {
     let paypalScriptLoader: PaypalScriptLoader;
     let store: CheckoutStore;
     let strategy: PaypalButtonStrategy;
-    let actionsMock: PaypalActions;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
+        checkoutActionCreator = new CheckoutActionCreator(
+            new CheckoutRequestSender(createRequestSender()),
+            new ConfigActionCreator(new ConfigRequestSender(createRequestSender()))
+        );
         formPoster = createFormPoster();
         paypalScriptLoader = new PaypalScriptLoader(getScriptLoader());
 
@@ -63,7 +72,11 @@ describe('PaypalButtonStrategy', () => {
         jest.spyOn(paypal.Button, 'render')
             .mockImplementation((options: PaypalButtonOptions) => {
                 eventEmitter.on('payment', () => {
-                    options.payment().catch(() => {});
+                    options.payment({
+                        payerId: 'PAYER_ID',
+                        paymentID: 'PAYMENT_ID',
+                        payerID: 'PAYER_ID',
+                    }, actionsMock).catch(() => {});
                 });
 
                 eventEmitter.on('authorize', () => {
@@ -75,6 +88,12 @@ describe('PaypalButtonStrategy', () => {
                 });
             });
 
+        jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
+            .mockReturnValue(() => from([
+                createAction(CheckoutActionType.LoadCheckoutRequested),
+                createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
+            ]));
+
         jest.spyOn(paypalScriptLoader, 'loadPaypal')
             .mockReturnValue(Promise.resolve(paypal));
 
@@ -83,6 +102,7 @@ describe('PaypalButtonStrategy', () => {
 
         strategy = new PaypalButtonStrategy(
             store,
+            checkoutActionCreator,
             paypalScriptLoader,
             formPoster
         );
@@ -93,6 +113,7 @@ describe('PaypalButtonStrategy', () => {
             store = createCheckoutStore();
             strategy = new PaypalButtonStrategy(
                 store,
+                checkoutActionCreator,
                 paypalScriptLoader,
                 formPoster
             );
@@ -193,6 +214,7 @@ describe('PaypalButtonStrategy', () => {
 
         strategy = new PaypalButtonStrategy(
             store,
+            checkoutActionCreator,
             paypalScriptLoader,
             formPoster
         );
@@ -249,6 +271,44 @@ describe('PaypalButtonStrategy', () => {
                     disallowed: [],
                 },
             }, 'checkout-button');
+        });
+    });
+
+    it('sends create payment requests to the relative url by default', async () => {
+        await strategy.initialize(options);
+
+        eventEmitter.emit('payment');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        const expectedBody = { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7', merchantId: 'h3hxn44tdd8wxkzd' };
+
+        expect(actionsMock.request.post)
+            .toHaveBeenCalledWith('/api/storefront/payment/paypalexpress', expectedBody, expect.any(Object));
+    });
+
+    describe('with a supplied host', () => {
+        beforeEach(() => {
+            strategy = new PaypalButtonStrategy(
+                store,
+                checkoutActionCreator,
+                paypalScriptLoader,
+                formPoster,
+                'https://example.com'
+            );
+        });
+
+        it('sends create payment requests to the supplied host', async () => {
+            await strategy.initialize(options);
+
+            eventEmitter.emit('payment');
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            const expectedBody = { cartId: 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7', merchantId: 'h3hxn44tdd8wxkzd' };
+
+            expect(actionsMock.request.post)
+                .toHaveBeenCalledWith('https://example.com/api/storefront/payment/paypalexpress', expectedBody, expect.any(Object));
         });
     });
 });
