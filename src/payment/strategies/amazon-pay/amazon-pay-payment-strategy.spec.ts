@@ -302,7 +302,10 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('refreshes wallet when there is provider widget error', async () => {
         jest.spyOn(orderActionCreator, 'submitOrder')
-            .mockReturnValue(createErrorAction(OrderActionType.SubmitOrderFailed, getErrorResponse({ type: 'provider_widget_error' })));
+            .mockReturnValue(createErrorAction(
+                OrderActionType.SubmitOrderFailed,
+                getErrorResponse({ type: 'provider_widget_error', status: '', errors: [] })
+            ));
 
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
 

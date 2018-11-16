@@ -2,6 +2,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
 import { CheckoutActionType } from '../checkout';
 import { getCheckout, getCheckoutWithCoupons } from '../checkout/checkouts.mock';
+import { StorefrontErrorResponseBody } from '../common/error';
 import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { OrderActionType } from '../order';
@@ -47,7 +48,17 @@ describe('couponReducer()', () => {
     });
 
     it('returns an error state if coupon failed to be applied', () => {
-        const action = createErrorAction(CouponActionType.ApplyCouponFailed, new RequestError(getErrorResponse()));
+        const errorResponseBody: StorefrontErrorResponseBody = {
+            title: '',
+            detail: '',
+            type: '',
+            status: 400,
+        };
+
+        const action = createErrorAction(
+            CouponActionType.ApplyCouponFailed,
+            new RequestError(getErrorResponse(errorResponseBody))
+        );
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
             errors: { applyCouponError: action.payload },

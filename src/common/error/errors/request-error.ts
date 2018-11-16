@@ -6,40 +6,29 @@ const DEFAULT_RESPONSE = {
     body: {},
     headers: {},
     status: 0,
-    statusText: '',
 };
 
-export default class RequestError extends StandardError {
-    body: any;
+export default class RequestError<TBody = any> extends StandardError {
+    body: TBody | {};
     headers: { [key: string]: any; };
+    errors: Array<{ code: string, message?: string }>;
     status: number;
-    statusText: string;
 
-    constructor({ body = {}, headers, status, statusText }: Response = DEFAULT_RESPONSE, message?: string) {
-        super(joinErrors(body.errors) || body.detail || body.title || message || 'An unexpected error has occurred.');
+    constructor(
+        response?: Response<TBody | {}>,
+        { message, errors }: {
+            message?: string;
+            errors?: Array<{ code: string, message?: string }>,
+        } = {}
+    ) {
+        const { body, headers, status } = response || DEFAULT_RESPONSE;
+
+        super(message || 'An unexpected error has occurred.');
 
         this.type = 'request';
         this.body = body;
         this.headers = headers;
         this.status = status;
-        this.statusText = statusText;
+        this.errors = errors || [];
     }
-}
-
-function joinErrors(errors: Array<string | { code: string, message: string }>): string | undefined {
-    if (!Array.isArray(errors)) {
-        return;
-    }
-
-    return errors.reduce((result: string[], error) => {
-        if (typeof error === 'string') {
-            return [...result, error];
-        }
-
-        if (error && error.message) {
-            return [...result, error.message];
-        }
-
-        return result;
-    }, []).join(' ');
 }
