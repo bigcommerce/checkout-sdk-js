@@ -1,11 +1,14 @@
+import { createErrorAction, Action } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs';
-import { createErrorAction } from '@bigcommerce/data-store';
+import { Subscribable } from 'rxjs/Observable';
+
 import { createRequestErrorFactory } from '../common/error';
 import { getErrorResponse } from '../common/http-request/responses.mock';
+
 import createActionTransformer from './create-action-transformer';
 
 describe('createActionTransformer()', () => {
-    let transformer;
+    let transformer: (action: Subscribable<Action>) => Observable<Action>;
 
     beforeEach(() => {
         transformer = createActionTransformer(createRequestErrorFactory());
@@ -16,7 +19,7 @@ describe('createActionTransformer()', () => {
         const action$ = Observable.throw(createErrorAction('FOOBAR', payload));
 
         transformer(action$).subscribe({
-            error: (action) => {
+            error: action => {
                 expect(action.payload).toBeInstanceOf(Error);
             },
         });
@@ -27,7 +30,7 @@ describe('createActionTransformer()', () => {
         const action$ = Observable.throw(createErrorAction('FOOBAR', payload));
 
         transformer(action$).subscribe({
-            error: (action) => {
+            error: action => {
                 expect(action.payload).toEqual(payload);
             },
         });
@@ -38,7 +41,7 @@ describe('createActionTransformer()', () => {
         const action$ = Observable.throw(createErrorAction('FOOBAR', payload));
 
         transformer(action$).subscribe({
-            error: (action) => {
+            error: action => {
                 expect(action.payload).toEqual(payload);
             },
         });

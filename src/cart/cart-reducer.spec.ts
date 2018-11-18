@@ -6,15 +6,14 @@ import { GiftCertificateActionType } from '../coupon/gift-certificate-actions';
 import { ConsignmentActionType } from '../shipping';
 
 import cartReducer from './cart-reducer';
-import { getCart } from './carts.mock';
+import CartState from './cart-state';
+import { getCart, getCartState } from './carts.mock';
 
 describe('cartReducer()', () => {
-    let initialState;
+    let initialState: CartState;
 
     beforeEach(() => {
-        initialState = {
-            data: getCart(),
-        };
+        initialState = getCartState();
     });
 
     it('returns new data when checkout is loaded', () => {

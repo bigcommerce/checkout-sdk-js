@@ -1,14 +1,17 @@
-import { createTimeout } from '@bigcommerce/request-sender';
+import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
 
+import { Checkout } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
 import { ContentType } from '../common/http-request';
+import { getResponse } from '../common/http-request/responses.mock';
+
 import BillingAddressRequestSender from './billing-address-request-sender';
-import { getBillingAddress } from './internal-billing-addresses.mock';
+import { getBillingAddress } from './billing-addresses.mock';
 
 describe('BillingAddressRequestSender', () => {
-    let addressRequestSender;
-    let requestSender;
-    let response;
+    let addressRequestSender: BillingAddressRequestSender;
+    let requestSender: RequestSender;
+    let response: Response<Checkout>;
     const include = [
         'cart.lineItems.physicalItems.options',
         'cart.lineItems.digitalItems.options',
@@ -17,18 +20,13 @@ describe('BillingAddressRequestSender', () => {
     ].join(',');
 
     beforeEach(() => {
-        requestSender = {
-            post: jest.fn(() => Promise.resolve()),
-            put: jest.fn(() => Promise.resolve()),
-        };
+        requestSender = createRequestSender();
 
         addressRequestSender = new BillingAddressRequestSender(requestSender);
-        response = {
-            body: getCheckout(),
-        };
+        response = getResponse(getCheckout());
 
-        requestSender.put.mockReturnValue(Promise.resolve(response));
-        requestSender.post.mockReturnValue(Promise.resolve(response));
+        jest.spyOn(requestSender, 'post').mockResolvedValue(response);
+        jest.spyOn(requestSender, 'put').mockResolvedValue(response);
     });
 
     describe('#updateAddress()', () => {

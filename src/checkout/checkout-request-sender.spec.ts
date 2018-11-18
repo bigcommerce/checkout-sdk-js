@@ -1,13 +1,16 @@
-import { createRequestSender } from '@bigcommerce/request-sender';
-import { getCheckout } from './checkouts.mock';
+import { createRequestSender, RequestSender, Response } from '@bigcommerce/request-sender';
+
 import { ContentType } from '../common/http-request';
 import { getResponse } from '../common/http-request/responses.mock';
+
+import { CheckoutIncludes } from './checkout-params';
 import CheckoutRequestSender from './checkout-request-sender';
+import { getCheckout } from './checkouts.mock';
 
 describe('CheckoutRequestSender', () => {
-    let requestSender;
-    let response;
-    let checkoutRequestSender;
+    let requestSender: RequestSender;
+    let response: Response;
+    let checkoutRequestSender: CheckoutRequestSender;
 
     const defaultIncludes = [
         'cart.lineItems.physicalItems.options',
@@ -48,7 +51,7 @@ describe('CheckoutRequestSender', () => {
         it('appends passed params when loading checkout', async () => {
             await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4', {
                 params: {
-                    include: ['foo'],
+                    include: [CheckoutIncludes.AvailableShippingOptions],
                 },
             });
 
@@ -57,7 +60,7 @@ describe('CheckoutRequestSender', () => {
                     Accept: ContentType.JsonV1,
                 },
                 params: {
-                    include: defaultIncludes.concat(',foo'),
+                    include: defaultIncludes.concat(`,${CheckoutIncludes.AvailableShippingOptions}`),
                     timeout: undefined,
                 },
             });
@@ -76,7 +79,7 @@ describe('CheckoutRequestSender', () => {
                 { customerMessage: 'foo' },
                 {
                     params: {
-                        include: ['foo'],
+                        include: [CheckoutIncludes.AvailableShippingOptions],
                     },
                 }
             );
@@ -89,7 +92,7 @@ describe('CheckoutRequestSender', () => {
                     customerMessage: 'foo',
                 },
                 params: {
-                    include: defaultIncludes.concat(',foo'),
+                    include: defaultIncludes.concat(`,${CheckoutIncludes.AvailableShippingOptions}`),
                 },
                 timeout: undefined,
             });

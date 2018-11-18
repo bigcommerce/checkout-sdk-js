@@ -1,5 +1,5 @@
-import { createLogger } from './index';
 import ConsoleLogger from './console-logger';
+import { createLogger } from './index';
 import NoopLogger from './noop-logger';
 
 describe('createLogger()', () => {

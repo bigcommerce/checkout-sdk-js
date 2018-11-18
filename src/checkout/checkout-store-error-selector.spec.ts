@@ -1,12 +1,16 @@
-import { getCheckoutStoreStateWithOrder } from './checkouts.mock';
+import { Response } from '@bigcommerce/request-sender';
+
 import { getErrorResponse } from '../common/http-request/responses.mock';
-import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
+
 import CheckoutStoreErrorSelector from './checkout-store-error-selector';
+import { getCheckoutStoreStateWithOrder } from './checkouts.mock';
+import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
+import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 describe('CheckoutStoreErrorSelector', () => {
-    let errorResponse;
-    let errors;
-    let selectors;
+    let errorResponse: Response;
+    let errors: CheckoutStoreErrorSelector;
+    let selectors: InternalCheckoutSelectors;
 
     beforeEach(() => {
         selectors = createInternalCheckoutSelectors(getCheckoutStoreStateWithOrder());
@@ -21,7 +25,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns the first error that it encounters', () => {
-            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(undefined);
             jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(errorResponse);
 
             expect(errors.getError()).toEqual(errorResponse);
@@ -40,7 +44,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when loading checkout', () => {
-            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.checkout, 'getLoadError').mockReturnValue(undefined);
 
             expect(errors.getLoadCheckoutError()).toEqual(undefined);
             expect(selectors.checkout.getLoadError).toHaveBeenCalled();
@@ -56,7 +60,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when loading checkout', () => {
-            jest.spyOn(selectors.checkout, 'getUpdateError').mockReturnValue();
+            jest.spyOn(selectors.checkout, 'getUpdateError').mockReturnValue(undefined);
 
             expect(errors.getUpdateCheckoutError()).toEqual(undefined);
             expect(selectors.checkout.getUpdateError).toHaveBeenCalled();
@@ -72,7 +76,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when submitting order', () => {
-            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue();
+            jest.spyOn(selectors.paymentStrategies, 'getExecuteError').mockReturnValue(undefined);
 
             expect(errors.getSubmitOrderError()).toEqual(undefined);
             expect(selectors.paymentStrategies.getExecuteError).toHaveBeenCalled();
@@ -88,7 +92,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when finalizing order', () => {
-            jest.spyOn(selectors.paymentStrategies, 'getFinalizeError').mockReturnValue();
+            jest.spyOn(selectors.paymentStrategies, 'getFinalizeError').mockReturnValue(undefined);
 
             expect(errors.getFinalizeOrderError()).toEqual(undefined);
             expect(selectors.paymentStrategies.getFinalizeError).toHaveBeenCalled();
@@ -104,7 +108,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when loading order', () => {
-            jest.spyOn(selectors.order, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.order, 'getLoadError').mockReturnValue(undefined);
 
             expect(errors.getLoadOrderError()).toEqual(undefined);
             expect(selectors.order.getLoadError).toHaveBeenCalled();
@@ -120,7 +124,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when loading cart', () => {
-            jest.spyOn(selectors.cart, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.cart, 'getLoadError').mockReturnValue(undefined);
 
             expect(errors.getLoadCartError()).toEqual(undefined);
             expect(selectors.cart.getLoadError).toHaveBeenCalled();
@@ -136,7 +140,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when loading billing countries', () => {
-            jest.spyOn(selectors.countries, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.countries, 'getLoadError').mockReturnValue(undefined);
 
             expect(errors.getLoadBillingCountriesError()).toEqual(undefined);
             expect(selectors.countries.getLoadError).toHaveBeenCalled();
@@ -152,7 +156,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when loading shipping countries', () => {
-            jest.spyOn(selectors.shippingCountries, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.shippingCountries, 'getLoadError').mockReturnValue(undefined);
 
             expect(errors.getLoadShippingCountriesError()).toEqual(undefined);
             expect(selectors.shippingCountries.getLoadError).toHaveBeenCalled();
@@ -168,7 +172,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when loading payment methods', () => {
-            jest.spyOn(selectors.paymentMethods, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.paymentMethods, 'getLoadError').mockReturnValue(undefined);
 
             expect(errors.getLoadPaymentMethodsError()).toEqual(undefined);
             expect(selectors.paymentMethods.getLoadError).toHaveBeenCalled();
@@ -184,7 +188,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when loading payment method', () => {
-            jest.spyOn(selectors.paymentMethods, 'getLoadMethodError').mockReturnValue();
+            jest.spyOn(selectors.paymentMethods, 'getLoadMethodError').mockReturnValue(undefined);
 
             expect(errors.getLoadPaymentMethodError('braintree')).toEqual(undefined);
             expect(selectors.paymentMethods.getLoadMethodError).toHaveBeenCalledWith('braintree');
@@ -200,7 +204,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if able to initialize payment', () => {
-            jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue();
+            jest.spyOn(selectors.paymentStrategies, 'getInitializeError').mockReturnValue(undefined);
 
             expect(errors.getInitializePaymentError('braintree')).toEqual(undefined);
             expect(selectors.paymentStrategies.getInitializeError).toHaveBeenCalledWith('braintree');
@@ -216,7 +220,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when signing in', () => {
-            jest.spyOn(selectors.customerStrategies, 'getSignInError').mockReturnValue();
+            jest.spyOn(selectors.customerStrategies, 'getSignInError').mockReturnValue(undefined);
 
             expect(errors.getSignInError()).toEqual(undefined);
             expect(selectors.customerStrategies.getSignInError).toHaveBeenCalled();
@@ -232,7 +236,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is no error when signing out', () => {
-            jest.spyOn(selectors.customerStrategies, 'getSignOutError').mockReturnValue();
+            jest.spyOn(selectors.customerStrategies, 'getSignOutError').mockReturnValue(undefined);
 
             expect(errors.getSignOutError()).toEqual(undefined);
             expect(selectors.customerStrategies.getSignOutError).toHaveBeenCalled();
@@ -248,7 +252,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if able to initialize customer', () => {
-            jest.spyOn(selectors.customerStrategies, 'getInitializeError').mockReturnValue();
+            jest.spyOn(selectors.customerStrategies, 'getInitializeError').mockReturnValue(undefined);
 
             expect(errors.getInitializeCustomerError()).toEqual(undefined);
             expect(selectors.customerStrategies.getInitializeError).toHaveBeenCalled();
@@ -264,7 +268,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when loading the shipping options', () => {
-            jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue();
+            jest.spyOn(selectors.consignments, 'getLoadShippingOptionsError').mockReturnValue(undefined);
 
             expect(errors.getLoadShippingOptionsError()).toEqual(undefined);
             expect(selectors.consignments.getLoadShippingOptionsError).toHaveBeenCalled();
@@ -280,7 +284,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when selecting the shipping options', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getSelectOptionError').mockReturnValue();
+            jest.spyOn(selectors.shippingStrategies, 'getSelectOptionError').mockReturnValue(undefined);
 
             expect(errors.getSelectShippingOptionError()).toEqual(undefined);
             expect(selectors.shippingStrategies.getSelectOptionError).toHaveBeenCalled();
@@ -296,7 +300,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when updating the billing address', () => {
-            jest.spyOn(selectors.billingAddress, 'getUpdateError').mockReturnValue();
+            jest.spyOn(selectors.billingAddress, 'getUpdateError').mockReturnValue(undefined);
 
             expect(errors.getUpdateBillingAddressError()).toEqual(undefined);
             expect(selectors.billingAddress.getUpdateError).toHaveBeenCalled();
@@ -312,7 +316,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO errors', () => {
-            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue();
+            jest.spyOn(selectors.billingAddress, 'getContinueAsGuestError').mockReturnValue(undefined);
 
             expect(errors.getContinueAsGuestError()).toEqual(undefined);
             expect(selectors.billingAddress.getContinueAsGuestError).toHaveBeenCalled();
@@ -376,7 +380,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when updating the shipping address', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getUpdateAddressError').mockReturnValue();
+            jest.spyOn(selectors.shippingStrategies, 'getUpdateAddressError').mockReturnValue(undefined);
 
             expect(errors.getUpdateShippingAddressError()).toEqual(undefined);
             expect(selectors.shippingStrategies.getUpdateAddressError).toHaveBeenCalled();
@@ -392,7 +396,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if able to initialize shipping', () => {
-            jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue();
+            jest.spyOn(selectors.shippingStrategies, 'getInitializeError').mockReturnValue(undefined);
 
             expect(errors.getInitializeShippingError('foobar')).toEqual(undefined);
             expect(selectors.shippingStrategies.getInitializeError).toHaveBeenCalledWith('foobar');
@@ -408,7 +412,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when updating the a coupon', () => {
-            jest.spyOn(selectors.coupons, 'getApplyError').mockReturnValue();
+            jest.spyOn(selectors.coupons, 'getApplyError').mockReturnValue(undefined);
 
             expect(errors.getApplyCouponError()).toEqual(undefined);
             expect(selectors.coupons.getApplyError).toHaveBeenCalled();
@@ -424,7 +428,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when updating the a coupon', () => {
-            jest.spyOn(selectors.coupons, 'getRemoveError').mockReturnValue();
+            jest.spyOn(selectors.coupons, 'getRemoveError').mockReturnValue(undefined);
 
             expect(errors.getRemoveCouponError()).toEqual(undefined);
             expect(selectors.coupons.getRemoveError).toHaveBeenCalled();
@@ -440,7 +444,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when applying gift certificate', () => {
-            jest.spyOn(selectors.giftCertificates, 'getApplyError').mockReturnValue();
+            jest.spyOn(selectors.giftCertificates, 'getApplyError').mockReturnValue(undefined);
 
             expect(errors.getApplyGiftCertificateError()).toEqual(undefined);
             expect(selectors.giftCertificates.getApplyError).toHaveBeenCalled();
@@ -456,7 +460,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when removing gift certificate', () => {
-            jest.spyOn(selectors.giftCertificates, 'getRemoveError').mockReturnValue();
+            jest.spyOn(selectors.giftCertificates, 'getRemoveError').mockReturnValue(undefined);
 
             expect(errors.getRemoveGiftCertificateError()).toEqual(undefined);
             expect(selectors.giftCertificates.getRemoveError).toHaveBeenCalled();
@@ -472,7 +476,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when loading instruments', () => {
-            jest.spyOn(selectors.instruments, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.instruments, 'getLoadError').mockReturnValue(undefined);
 
             expect(errors.getLoadInstrumentsError()).toEqual(undefined);
             expect(selectors.instruments.getLoadError).toHaveBeenCalled();
@@ -488,7 +492,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when deleting instruments', () => {
-            jest.spyOn(selectors.instruments, 'getDeleteError').mockReturnValue();
+            jest.spyOn(selectors.instruments, 'getDeleteError').mockReturnValue(undefined);
 
             expect(errors.getDeleteInstrumentError('123')).toEqual(undefined);
             expect(selectors.instruments.getDeleteError).toHaveBeenCalledWith('123');
@@ -504,7 +508,7 @@ describe('CheckoutStoreErrorSelector', () => {
         });
 
         it('returns undefined if there is NO error when loading config', () => {
-            jest.spyOn(selectors.config, 'getLoadError').mockReturnValue();
+            jest.spyOn(selectors.config, 'getLoadError').mockReturnValue(undefined);
 
             expect(errors.getLoadConfigError()).toEqual(undefined);
             expect(selectors.config.getLoadError).toHaveBeenCalled();
