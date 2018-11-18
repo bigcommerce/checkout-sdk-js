@@ -1,5 +1,6 @@
 export { default as bindDecorator } from './bind-decorator';
 export { default as createFreezeProxy, createFreezeProxies } from './create-freeze-proxy';
+export { default as CacheKeyResolver } from './cache-key-resolver';
 export { default as CancellablePromise } from './cancellable-promise';
 export { default as getEnvironment } from './get-environment';
 export { default as isEqual } from './is-equal';

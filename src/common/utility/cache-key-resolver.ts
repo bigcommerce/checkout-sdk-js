@@ -1,3 +1,5 @@
+import isEqual from './is-equal';
+
 export default class CacheKeyResolver {
     private _lastId = 0;
     private _maps: CacheKeyMap[] = [];
@@ -28,7 +30,7 @@ export default class CacheKeyResolver {
             let isMatched = false;
 
             for (const map of parentMaps) {
-                if (map.value !== args[index]) {
+                if (!isEqual(map.value, args[index])) {
                     continue;
                 }
 
