@@ -47,8 +47,7 @@ describe('CheckoutActionCreator', () => {
     describe('#loadCheckout', () => {
         it('emits action to notify loading progress', async () => {
             const { id } = getCheckout();
-
-            const actions = await Observable.from(actionCreator.loadCheckout(id)(store))
+            const actions = await actionCreator.loadCheckout(id)
                 .toArray()
                 .toPromise();
 
@@ -56,9 +55,9 @@ describe('CheckoutActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: CheckoutActionType.LoadCheckoutRequested },
-                { type: CheckoutActionType.LoadCheckoutSucceeded,
-                    payload: getCheckout(),
-                },
+                { type: ConfigActionType.LoadConfigRequested },
+                { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
             ]);
         });
 
@@ -69,7 +68,7 @@ describe('CheckoutActionCreator', () => {
             const { id } = getCheckout();
             const errorHandler = jest.fn(action => Observable.of(action));
 
-            const actions =  await Observable.from(actionCreator.loadCheckout(id)(store))
+            const actions =  await actionCreator.loadCheckout(id)
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -77,6 +76,8 @@ describe('CheckoutActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: ConfigActionType.LoadConfigRequested },
+                { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
                 { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
             ]);
         });
@@ -85,13 +86,13 @@ describe('CheckoutActionCreator', () => {
             const errorResponse = getErrorResponse();
 
             jest.spyOn(configActionCreator, 'loadConfig')
-                .mockReturnValue(() => Observable.concat(
+                .mockReturnValue(Observable.concat(
                     Observable.of(createAction(ConfigActionType.LoadConfigRequested)),
                     Observable.throw(createErrorAction(ConfigActionType.LoadConfigFailed, errorResponse))
                 ));
 
             const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(actionCreator.loadCheckout('b20deef40f9699e48671bbc3fef6ca44dc80e3c7')(store))
+            const actions = await actionCreator.loadCheckout('b20deef40f9699e48671bbc3fef6ca44dc80e3c7')
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -109,9 +110,9 @@ describe('CheckoutActionCreator', () => {
             const { id } = getCheckout();
 
             jest.spyOn(configActionCreator, 'loadConfig')
-                .mockReturnValue(() => new Promise(() => {}));
+                .mockReturnValue(new Promise(() => {}));
 
-            Observable.from(actionCreator.loadCheckout(id)(store))
+            actionCreator.loadCheckout(id)
                 .toPromise();
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
@@ -127,9 +128,9 @@ describe('CheckoutActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: CheckoutActionType.LoadCheckoutRequested },
-                { type: CheckoutActionType.LoadCheckoutSucceeded,
-                    payload: getCheckout(),
-                },
+                { type: ConfigActionType.LoadConfigRequested },
+                { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
+                { type: CheckoutActionType.LoadCheckoutSucceeded, payload: getCheckout() },
             ]);
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
@@ -150,13 +151,15 @@ describe('CheckoutActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: CheckoutActionType.LoadCheckoutRequested },
+                { type: ConfigActionType.LoadConfigRequested },
+                { type: ConfigActionType.LoadConfigSucceeded, payload: getConfig() },
                 { type: CheckoutActionType.LoadCheckoutFailed, error: true, payload: getErrorResponse() },
             ]);
         });
 
         it('does not call loadCheckout until loadConfig resolves', () => {
             jest.spyOn(configActionCreator, 'loadConfig')
-                .mockReturnValue(() => new Promise(() => {}));
+                .mockReturnValue(new Promise(() => {}));
 
             Observable.from(actionCreator.loadDefaultCheckout()(store)).toPromise();
 
@@ -164,8 +167,8 @@ describe('CheckoutActionCreator', () => {
             expect(checkoutRequestSender.loadCheckout).not.toHaveBeenCalled();
         });
 
-        it('calls loadCheckout after loadConfig with the default checkout ID', () => {
-            Observable.from(actionCreator.loadDefaultCheckout()(store)).toPromise();
+        it('calls loadCheckout after loadConfig with the default checkout ID', async () => {
+            await Observable.from(actionCreator.loadDefaultCheckout()(store)).toPromise();
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(

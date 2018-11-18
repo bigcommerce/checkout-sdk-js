@@ -10,4 +10,4 @@ export { mapToInternalLineItem, mapToInternalLineItems } from './cart';
 export { mapToInternalOrder } from './order';
 export { mapToInternalQuote } from './quote';
 export { mapToInternalShippingOption, mapToInternalShippingOptions } from './shipping';
-export { CacheKeyResolver } from './common/selector';
+export { CacheKeyResolver } from './common/utility';

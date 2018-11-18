@@ -1,7 +1,6 @@
-import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { createAction } from '@bigcommerce/data-store';
 import { concat } from 'rxjs/observable/concat';
 import { defer } from 'rxjs/observable/defer';
-import { empty } from 'rxjs/observable/empty';
 import { of } from 'rxjs/observable/of';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
@@ -20,23 +19,17 @@ export default class CheckoutButtonStrategyActionCreator {
         private _paymentMethodActionCreator: PaymentMethodActionCreator
     ) {}
 
-    initialize(options: CheckoutButtonInitializeOptions): ThunkAction<InitializeButtonAction> {
-        return store => {
-            const meta = { methodId: options.methodId };
-            const { paymentMethods } = store.getState();
-            const paymentMethod = paymentMethods.getPaymentMethod(options.methodId);
+    initialize(options: CheckoutButtonInitializeOptions): Observable<InitializeButtonAction> {
+        const meta = { methodId: options.methodId };
 
-            return concat(
-                of(createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, meta)),
-                paymentMethod ?
-                    empty() :
-                    this._paymentMethodActionCreator.loadPaymentMethod(options.methodId, options),
-                defer(() => this._registry.get(options.methodId).initialize(options)
-                    .then(() => createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, meta)))
-            ).pipe(
-                catchError(error => throwErrorAction(CheckoutButtonActionType.InitializeButtonFailed, error, meta))
-            );
-        };
+        return concat(
+            of(createAction(CheckoutButtonActionType.InitializeButtonRequested, undefined, meta)),
+            this._paymentMethodActionCreator.loadPaymentMethod(options.methodId, { timeout: options.timeout, useCache: true }),
+            defer(() => this._registry.get(options.methodId).initialize(options)
+                .then(() => createAction(CheckoutButtonActionType.InitializeButtonSucceeded, undefined, meta)))
+        ).pipe(
+            catchError(error => throwErrorAction(CheckoutButtonActionType.InitializeButtonFailed, error, meta))
+        );
     }
 
     deinitialize(options: CheckoutButtonOptions): Observable<DeinitializeButtonAction> {

@@ -22,14 +22,11 @@ export default class CheckoutActionCreator {
         private _configActionCreator: ConfigActionCreator
     ) {}
 
-    loadCheckout(
-        id: string,
-        options?: RequestOptions
-    ): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
-        return store => concat(
+    loadCheckout(id: string, options?: RequestOptions): Observable<LoadCheckoutAction> {
+        return concat(
             of(createAction(CheckoutActionType.LoadCheckoutRequested)),
             merge(
-                this._configActionCreator.loadConfig()(store),
+                this._configActionCreator.loadConfig({ ...options, useCache: true }),
                 defer(() => this._checkoutRequestSender.loadCheckout(id, options)
                     .then(({ body }) => createAction(CheckoutActionType.LoadCheckoutSucceeded, body)))
             )
@@ -41,7 +38,7 @@ export default class CheckoutActionCreator {
     loadDefaultCheckout(options?: RequestOptions): ThunkAction<LoadCheckoutAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(CheckoutActionType.LoadCheckoutRequested)),
-            this._configActionCreator.loadConfig()(store),
+            this._configActionCreator.loadConfig(),
             defer(() => {
                 const state = store.getState();
                 const context = state.config.getContextConfig();
@@ -92,7 +89,7 @@ export default class CheckoutActionCreator {
                 throw new MissingDataError(MissingDataErrorType.MissingCheckout);
             }
 
-            return this.loadCheckout(checkout.id, options)(store);
+            return this.loadCheckout(checkout.id, options);
         };
     }
 }
