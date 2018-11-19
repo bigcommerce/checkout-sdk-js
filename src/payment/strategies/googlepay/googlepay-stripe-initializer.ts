@@ -1,3 +1,5 @@
+import { round } from 'lodash';
+
 import { Checkout } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';
@@ -79,7 +81,7 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
             transactionInfo: {
                 currencyCode: checkout.cart.currency.code,
                 totalPriceStatus: 'FINAL',
-                totalPrice: checkout.grandTotal.toString(),
+                totalPrice: round(checkout.grandTotal, 2).toFixed(2),
             },
             emailRequired: true,
             shippingAddressRequired: !hasShippingAddress,
