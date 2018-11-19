@@ -1,191 +1,188 @@
 import { createAction } from '@bigcommerce/data-store';
-import { createTimeout } from '@bigcommerce/request-sender';
+import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 import { map, merge } from 'lodash';
 import { Observable } from 'rxjs';
 
-import { BillingAddressActionCreator } from '../billing';
+import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { getResponse } from '../common/http-request/responses.mock';
-import { ConfigActionCreator } from '../config';
+import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
-import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
+import {
+    CouponActionCreator,
+    CouponRequestSender,
+    GiftCertificateActionCreator,
+    GiftCertificateRequestSender,
+} from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { getFormFields } from '../form/form.mocks';
-import { CountryActionCreator } from '../geography';
+import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
-import { OrderActionCreator } from '../order';
+import { OrderActionCreator, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
-import { PaymentMethodActionCreator, PaymentStrategyActionCreator } from '../payment';
+import {
+    createPaymentClient,
+    PaymentMethodActionCreator,
+    PaymentMethodRequestSender,
+    PaymentStrategyActionCreator,
+    PaymentStrategyRegistry,
+} from '../payment';
+import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
+import {
+    deleteInstrumentResponseBody,
+    getLoadInstrumentsResponseBody,
+    getVaultAccessTokenResponseBody,
+} from '../payment/instrument/instrument.mock';
 import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
-import { InstrumentActionCreator } from '../payment/instrument';
-import { deleteInstrumentResponseBody, getVaultAccessTokenResponseBody, getLoadInstrumentsResponseBody } from '../payment/instrument/instrument.mock';
-import { createShippingStrategyRegistry, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingStrategyActionCreator } from '../shipping';
-import { getShippingAddress } from '../shipping/internal-shipping-addresses.mock';
+import { NoPaymentDataRequiredPaymentStrategy, OfflinePaymentStrategy, PaymentStrategy } from '../payment/strategies';
+import {
+    createShippingStrategyRegistry,
+    ConsignmentActionCreator,
+    ConsignmentRequestSender,
+    ShippingCountryActionCreator,
+    ShippingCountryRequestSender,
+    ShippingStrategyActionCreator,
+} from '../shipping';
+import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';
+import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutService from './checkout-service';
+import CheckoutStore from './checkout-store';
+import CheckoutStoreErrorSelector from './checkout-store-error-selector';
+import CheckoutStoreSelector from './checkout-store-selector';
+import CheckoutStoreStatusSelector from './checkout-store-status-selector';
+import CheckoutValidator from './checkout-validator';
 import { getCheckout, getCheckoutStoreState, getCheckoutWithCoupons } from './checkouts.mock';
 import createCheckoutStore from './create-checkout-store';
-import CheckoutStoreSelector from './checkout-store-selector';
-import CheckoutStoreErrorSelector from './checkout-store-error-selector';
-import CheckoutStoreStatusSelector from './checkout-store-status-selector';
-import { getConsignment } from '../shipping/consignments.mock';
 
 describe('CheckoutService', () => {
-    let billingAddressActionCreator;
-    let billingAddressRequestSender;
-    let checkoutActionCreator;
-    let instrumentRequestSender;
-    let countryRequestSender;
-    let consignmentRequestSender;
-    let consignmentActionCreator;
-    let checkoutRequestSender;
-    let checkoutService;
-    let checkoutValidator;
-    let configActionCreator;
-    let configRequestSender;
-    let couponRequestSender;
-    let customerStrategyActionCreator;
-    let giftCertificateRequestSender;
-    let instrumentActionCreator;
-    let orderActionCreator;
-    let orderRequestSender;
-    let paymentMethodRequestSender;
-    let paymentMethodActionCreator;
-    let paymentStrategy;
-    let paymentStrategyRegistry;
-    let shippingStrategyActionCreator;
-    let shippingCountryRequestSender;
-    let store;
+    let billingAddressActionCreator: BillingAddressActionCreator;
+    let billingAddressRequestSender: BillingAddressRequestSender;
+    let checkoutActionCreator: CheckoutActionCreator;
+    let instrumentRequestSender: InstrumentRequestSender;
+    let countryRequestSender: CountryRequestSender;
+    let consignmentRequestSender: ConsignmentRequestSender;
+    let consignmentActionCreator: ConsignmentActionCreator;
+    let checkoutRequestSender: CheckoutRequestSender;
+    let checkoutService: CheckoutService;
+    let checkoutValidator: CheckoutValidator;
+    let configActionCreator: ConfigActionCreator;
+    let configRequestSender: ConfigRequestSender;
+    let couponRequestSender: CouponRequestSender;
+    let customerStrategyActionCreator: CustomerStrategyActionCreator;
+    let giftCertificateRequestSender: GiftCertificateRequestSender;
+    let instrumentActionCreator: InstrumentActionCreator;
+    let orderActionCreator: OrderActionCreator;
+    let orderRequestSender: OrderRequestSender;
+    let paymentMethodRequestSender: PaymentMethodRequestSender;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paymentStrategy: PaymentStrategy;
+    let paymentStrategyRegistry: PaymentStrategyRegistry;
+    let shippingStrategyActionCreator: ShippingStrategyActionCreator;
+    let shippingCountryRequestSender: ShippingCountryRequestSender;
+    let store: CheckoutStore;
 
     beforeEach(() => {
-        instrumentRequestSender = {
-            getVaultAccessToken: jest.fn(() =>
-                Promise.resolve(getResponse(getVaultAccessTokenResponseBody()))
-            ),
-
-            loadInstruments: jest.fn(() =>
-                Promise.resolve(getResponse(getLoadInstrumentsResponseBody()))
-            ),
-
-            deleteInstrument: jest.fn(() =>
-                Promise.resolve(getResponse(deleteInstrumentResponseBody()))
-            ),
-        };
-
         store = createCheckoutStore(getCheckoutStoreState());
 
-        shippingCountryRequestSender = {
-            loadCountries: jest.fn(() =>
-                Promise.resolve(getResponse(getCountriesResponseBody()))
-            ),
-        };
+        const locale = 'en';
+        const requestSender = createRequestSender();
+        const paymentClient = createPaymentClient(store);
 
-        billingAddressRequestSender = {
-            updateAddress: jest.fn(() =>
-                Promise.resolve(getResponse(merge({}, getCheckout(), {
-                    customer: {
-                        email: 'foo@bar.com',
-                    },
-                    billingAddress: {
-                        email: 'foo@bar.com',
-                    },
-                })))
-            ),
-        };
+        instrumentRequestSender = new InstrumentRequestSender(paymentClient, requestSender);
 
-        countryRequestSender = {
-            loadCountries: jest.fn(() =>
-                Promise.resolve(getResponse(getCountriesResponseBody()))
-            ),
-        };
+        jest.spyOn(instrumentRequestSender, 'getVaultAccessToken')
+            .mockResolvedValue(getResponse(getVaultAccessTokenResponseBody()));
+        jest.spyOn(instrumentRequestSender, 'loadInstruments')
+            .mockResolvedValue(getResponse(getLoadInstrumentsResponseBody()));
+        jest.spyOn(instrumentRequestSender, 'deleteInstrument')
+            .mockResolvedValue(getResponse(deleteInstrumentResponseBody()));
 
-        paymentStrategy = {
-            execute: jest.fn(() => Promise.resolve(store.getState())),
-            finalize: jest.fn(() => Promise.resolve(store.getState())),
-            initialize: jest.fn(() => Promise.resolve(store.getState())),
-            deinitialize: jest.fn(() => Promise.resolve(store.getState())),
-        };
+        shippingCountryRequestSender = new ShippingCountryRequestSender(requestSender, { locale });
 
-        paymentStrategyRegistry = {
-            getByMethod: jest.fn(() => paymentStrategy),
-        };
+        jest.spyOn(shippingCountryRequestSender, 'loadCountries')
+            .mockResolvedValue(getResponse(getCountriesResponseBody()));
 
-        orderRequestSender = {
-            loadOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getOrder()))
-            ),
+        billingAddressRequestSender = new BillingAddressRequestSender(requestSender);
 
-            submitOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
-            ),
+        jest.spyOn(billingAddressRequestSender, 'updateAddress')
+            .mockResolvedValue(getResponse(merge({}, getCheckout(), {
+                customer: {
+                    email: 'foo@bar.com',
+                },
+                billingAddress: {
+                    email: 'foo@bar.com',
+                },
+            })));
 
-            finalizeOrder: jest.fn(() =>
-                Promise.resolve(getResponse(getCompleteOrderResponseBody()))
-            ),
-        };
+        countryRequestSender = new CountryRequestSender(requestSender, { locale });
 
-        consignmentRequestSender = {
-            createConsignments: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout())),
-            ),
+        jest.spyOn(countryRequestSender, 'loadCountries')
+            .mockResolvedValue(getResponse(getCountriesResponseBody()));
 
-            updateConsignment: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout())),
-            ),
-        };
+        paymentStrategy = new OfflinePaymentStrategy(store, orderActionCreator);
 
-        giftCertificateRequestSender = {
-            applyGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
-            ),
+        jest.spyOn(paymentStrategy, 'execute')
+            .mockResolvedValue(store.getState());
 
-            removeGiftCertificate: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
-            ),
-        };
+        jest.spyOn(paymentStrategy, 'finalize')
+            .mockResolvedValue(store.getState());
 
-        checkoutRequestSender = {
-            loadCheckout: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout())),
-            ),
+        jest.spyOn(paymentStrategy, 'initialize')
+            .mockResolvedValue(store.getState());
 
-            updateCheckout: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout())),
-            ),
-        };
+        jest.spyOn(paymentStrategy, 'deinitialize')
+            .mockResolvedValue(store.getState());
 
-        couponRequestSender = {
-            applyCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
-            ),
+        paymentStrategyRegistry = new PaymentStrategyRegistry(store);
 
-            removeCoupon: jest.fn(() =>
-                Promise.resolve(getResponse(getCheckout()))
-            ),
-        };
+        jest.spyOn(paymentStrategyRegistry, 'getByMethod').mockReturnValue(paymentStrategy);
 
-        configRequestSender = {
-            loadConfig: jest.fn(() =>
-                Promise.resolve(getResponse(getConfig()))
-            ),
-        };
+        orderRequestSender = new OrderRequestSender(requestSender);
 
-        paymentMethodRequestSender = {
-            loadPaymentMethod: jest.fn(() =>
-                Promise.resolve(getResponse(getPaymentMethod()))
-            ),
+        jest.spyOn(orderRequestSender, 'loadOrder').mockResolvedValue(getResponse(getOrder()));
+        jest.spyOn(orderRequestSender, 'submitOrder').mockResolvedValue(getResponse(getCompleteOrderResponseBody()));
+        jest.spyOn(orderRequestSender, 'finalizeOrder').mockResolvedValue(getResponse(getCompleteOrderResponseBody()));
 
-            loadPaymentMethods: jest.fn(() =>
-                Promise.resolve(getResponse(getPaymentMethods()))
-            ),
-        };
+        consignmentRequestSender = new ConsignmentRequestSender(requestSender);
 
-        checkoutValidator = {
-            validate: jest.fn(() => Promise.resolve()),
-        };
+        jest.spyOn(consignmentRequestSender, 'createConsignments').mockResolvedValue(getResponse(getCheckout()));
+        jest.spyOn(consignmentRequestSender, 'updateConsignment').mockResolvedValue(getResponse(getCheckout()));
+
+        giftCertificateRequestSender = new GiftCertificateRequestSender(requestSender);
+
+        jest.spyOn(giftCertificateRequestSender, 'applyGiftCertificate').mockResolvedValue(getResponse(getCheckout()));
+        jest.spyOn(giftCertificateRequestSender, 'removeGiftCertificate').mockResolvedValue(getResponse(getCheckout()));
+
+        checkoutRequestSender = new CheckoutRequestSender(requestSender);
+
+        jest.spyOn(checkoutRequestSender, 'loadCheckout').mockResolvedValue(getResponse(getCheckout()));
+        jest.spyOn(checkoutRequestSender, 'updateCheckout').mockResolvedValue(getResponse(getCheckout()));
+
+        couponRequestSender = new CouponRequestSender(requestSender);
+
+        jest.spyOn(couponRequestSender, 'applyCoupon').mockResolvedValue(getResponse(getCheckout()));
+        jest.spyOn(couponRequestSender, 'removeCoupon').mockResolvedValue(getResponse(getCheckout()));
+
+        configRequestSender = new ConfigRequestSender(requestSender);
+
+        jest.spyOn(configRequestSender, 'loadConfig').mockResolvedValue(getResponse(getCheckout()));
+
+        paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
+
+        jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod')
+            .mockResolvedValue(getResponse(getPaymentMethod()));
+        jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethods')
+            .mockResolvedValue(getResponse(getPaymentMethods()));
+
+        checkoutValidator = new CheckoutValidator(checkoutRequestSender);
+
+        jest.spyOn(checkoutValidator, 'validate').mockResolvedValue(undefined);
+
+        checkoutValidator = new CheckoutValidator(checkoutRequestSender);
 
         billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender);
 
@@ -199,7 +196,7 @@ describe('CheckoutService', () => {
         consignmentActionCreator = new ConsignmentActionCreator(consignmentRequestSender, checkoutRequestSender);
 
         customerStrategyActionCreator = new CustomerStrategyActionCreator(
-            createCustomerStrategyRegistry(store)
+            createCustomerStrategyRegistry(store, requestSender)
         );
 
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
@@ -209,7 +206,7 @@ describe('CheckoutService', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
-            createShippingStrategyRegistry(store)
+            createShippingStrategyRegistry(store, requestSender)
         );
 
         checkoutService = new CheckoutService(
@@ -344,8 +341,8 @@ describe('CheckoutService', () => {
 
     describe('#loadShippingAddressFields()', () => {
         it('loads config data', async () => {
-            const state = await checkoutService.loadCheckout();
-            const result = state.data.getShippingAddressFields();
+            const state = await checkoutService.loadShippingAddressFields();
+            const result = state.data.getShippingAddressFields('');
             const expected = getFormFields();
 
             expect(map(result, 'id')).toEqual(map(expected, 'id'));
@@ -360,8 +357,8 @@ describe('CheckoutService', () => {
 
     describe('#loadBillingAddressFields()', () => {
         it('loads config data', async () => {
-            const state = await checkoutService.loadCheckout();
-            const result = state.data.getBillingAddressFields();
+            const state = await checkoutService.loadBillingAddressFields();
+            const result = state.data.getBillingAddressFields('');
             const expected = getFormFields();
 
             expect(map(result, 'id')).toEqual(map(expected, 'id'));
@@ -396,14 +393,14 @@ describe('CheckoutService', () => {
     });
 
     describe('#submitOrder()', () => {
-        let noPaymentDataRequiredPaymentStrategy;
+        let noPaymentDataRequiredPaymentStrategy: NoPaymentDataRequiredPaymentStrategy;
 
         beforeEach(async () => {
             await checkoutService.loadCheckout();
 
-            noPaymentDataRequiredPaymentStrategy = {
-                execute: jest.fn(() => Promise.resolve(store.getState())),
-            };
+            noPaymentDataRequiredPaymentStrategy = new NoPaymentDataRequiredPaymentStrategy(store, orderActionCreator);
+
+            jest.spyOn(noPaymentDataRequiredPaymentStrategy, 'execute').mockResolvedValue(store.getState());
 
             paymentStrategyRegistry.get = jest.fn(() => noPaymentDataRequiredPaymentStrategy);
         });
@@ -423,7 +420,8 @@ describe('CheckoutService', () => {
 
             expect(paymentStrategy.execute).toHaveBeenCalledWith(
                 getOrderRequestBody(),
-                { methodId: payload.payment.methodId, gatewayId: payload.payment.gatewayId }
+                // tslint:disable-next-line:no-non-null-assertion
+                { methodId: payload.payment!.methodId, gatewayId: payload.payment!.gatewayId }
             );
         });
 
@@ -436,7 +434,8 @@ describe('CheckoutService', () => {
 
             expect(paymentStrategy.execute).toHaveBeenCalledWith(
                 payload,
-                { ...options, methodId: payload.payment.methodId, gatewayId: payload.payment.gatewayId }
+                // tslint:disable-next-line:no-non-null-assertion
+                { ...options, methodId: payload.payment!.methodId, gatewayId: payload.payment!.gatewayId }
             );
         });
     });
@@ -733,6 +732,7 @@ describe('CheckoutService', () => {
             const payload = {
                 id: 'foo',
                 shippingAddress: address,
+                lineItems: [],
             };
 
             await checkoutService.updateConsignment(payload, options);
@@ -805,7 +805,10 @@ describe('CheckoutService', () => {
 
     describe('#createConsignments()', () => {
         it('dispatches action to create consignments', async () => {
-            const consignments = [getConsignment()];
+            const consignments = [{
+                lineItems: [],
+                shippingAddress: getShippingAddress(),
+            }];
             const options = { timeout: createTimeout() };
             const action = Observable.of(createAction('CREATE_CONSIGNMENTS'));
 

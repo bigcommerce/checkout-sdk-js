@@ -1,10 +1,11 @@
+import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 import { getCheckoutStoreState } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
-import CheckoutStoreStatusSelector from './checkout-store-status-selector';
+import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 describe('CheckoutStoreStatusSelector', () => {
-    let selectors;
-    let statuses;
+    let selectors: InternalCheckoutSelectors;
+    let statuses: CheckoutStoreStatusSelector;
 
     beforeEach(() => {
         selectors = createInternalCheckoutSelectors(getCheckoutStoreState());

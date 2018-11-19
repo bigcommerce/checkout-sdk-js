@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
 import { createErrorAction, DataStore } from '@bigcommerce/data-store';
+import { Observable } from 'rxjs';
 
 import { getErrorResponse } from '../common/http-request/responses.mock';
 

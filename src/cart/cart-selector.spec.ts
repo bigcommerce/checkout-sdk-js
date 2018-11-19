@@ -1,15 +1,14 @@
-import { getCartState } from './internal-carts.mock';
-import { getErrorResponse } from '../common/http-request/responses.mock';
+import { CheckoutStoreState } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+
 import CartSelector from './cart-selector';
 
 describe('CartSelector', () => {
-    let cartSelector;
-    let state;
+    let cartSelector: CartSelector;
+    let state: CheckoutStoreState;
 
     beforeEach(() => {
-        state = {
-            cart: getCartState(),
-        };
+        state = getCheckoutStoreState();
     });
 
     describe('#getCart()', () => {
@@ -22,7 +21,7 @@ describe('CartSelector', () => {
 
     describe('#getLoadError()', () => {
         it('returns error if unable to load', () => {
-            const loadError = getErrorResponse();
+            const loadError = new Error();
 
             cartSelector = new CartSelector({
                 ...state.cart,

@@ -1,19 +1,20 @@
-import { createTimeout } from '@bigcommerce/request-sender';
-import { getCartResponseBody } from './internal-carts.mock';
+import { createRequestSender, createTimeout, RequestSender, Response } from '@bigcommerce/request-sender';
+
 import { getResponse } from '../common/http-request/responses.mock';
+
 import CartRequestSender from './cart-request-sender';
+import { getCartResponseBody } from './internal-carts.mock';
 
 describe('CartRequestSender', () => {
-    let cartRequestSender;
-    let response;
-    let requestSender;
+    let cartRequestSender: CartRequestSender;
+    let response: Response;
+    let requestSender: RequestSender;
 
     beforeEach(() => {
         response = getResponse(getCartResponseBody());
+        requestSender = createRequestSender();
 
-        requestSender = {
-            get: jest.fn(() => Promise.resolve(response)),
-        };
+        jest.spyOn(requestSender, 'get').mockResolvedValue(response);
 
         cartRequestSender = new CartRequestSender(requestSender);
     });

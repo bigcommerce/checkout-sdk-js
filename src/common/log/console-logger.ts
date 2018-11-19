@@ -2,7 +2,7 @@ import Logger from './logger';
 
 export default class ConsoleLogger implements Logger {
     constructor(
-        private _console: Console
+        private _console?: Console
     ) {}
 
     log(...messages: any[]): void {

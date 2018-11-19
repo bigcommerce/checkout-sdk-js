@@ -1,26 +1,23 @@
 import ConsoleLogger from './console-logger';
 
 describe('ConsoleLogger', () => {
-    let logger;
-    let mockConsole;
+    let logger: ConsoleLogger;
 
     beforeEach(() => {
-        mockConsole = {
-            log: jest.fn(),
-            info: jest.fn(),
-            warn: jest.fn(),
-            error: jest.fn(),
-            debug: jest.fn(),
-        };
+        jest.spyOn(console, 'log').mockImplementation();
+        jest.spyOn(console, 'info').mockImplementation();
+        jest.spyOn(console, 'warn').mockImplementation();
+        jest.spyOn(console, 'error').mockImplementation();
+        jest.spyOn(console, 'debug').mockImplementation();
 
-        logger = new ConsoleLogger(mockConsole);
+        logger = new ConsoleLogger(console);
     });
 
     describe('#log()', () => {
         it('logs messages to console', () => {
             logger.log('hello', 'world');
 
-            expect(mockConsole.log).toHaveBeenCalled();
+            expect(console.log).toHaveBeenCalled();
         });
 
         it('does not throw an error if console is unavailable', () => {
@@ -34,7 +31,7 @@ describe('ConsoleLogger', () => {
         it('logs info messages to console', () => {
             logger.info('hello', 'world');
 
-            expect(mockConsole.info).toHaveBeenCalled();
+            expect(console.info).toHaveBeenCalled();
         });
     });
 
@@ -42,7 +39,7 @@ describe('ConsoleLogger', () => {
         it('logs warning messages to console', () => {
             logger.warn('hello', 'world');
 
-            expect(mockConsole.warn).toHaveBeenCalled();
+            expect(console.warn).toHaveBeenCalled();
         });
     });
 
@@ -50,7 +47,7 @@ describe('ConsoleLogger', () => {
         it('logs error messages to console', () => {
             logger.error('hello', 'world');
 
-            expect(mockConsole.error).toHaveBeenCalled();
+            expect(console.error).toHaveBeenCalled();
         });
     });
 
@@ -58,7 +55,7 @@ describe('ConsoleLogger', () => {
         it('logs debug messages to console', () => {
             logger.debug('hello', 'world');
 
-            expect(mockConsole.debug).toHaveBeenCalled();
+            expect(console.debug).toHaveBeenCalled();
         });
     });
 });
