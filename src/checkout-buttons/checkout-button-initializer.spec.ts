@@ -49,7 +49,7 @@ describe('CheckoutButtonInitializer', () => {
         expect(buttonActionCreator.initialize).toHaveBeenCalledWith(options);
         expect(store.dispatch).toHaveBeenCalledWith(
             Observable.of(createAction(CheckoutButtonActionType.InitializeButtonRequested)),
-            { queueId: `${CheckoutButtonMethodType.BRAINTREE_PAYPAL}ButtonStrategy` }
+            { queueId: `checkoutButtonStrategy:${CheckoutButtonMethodType.BRAINTREE_PAYPAL}:${options.containerId}` }
         );
     });
 
@@ -64,7 +64,7 @@ describe('CheckoutButtonInitializer', () => {
         expect(buttonActionCreator.deinitialize).toHaveBeenCalledWith(options);
         expect(store.dispatch).toHaveBeenCalledWith(
             Observable.of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested)),
-            { queueId: `${CheckoutButtonMethodType.BRAINTREE_PAYPAL}ButtonStrategy` }
+            { queueId: `checkoutButtonStrategy:${CheckoutButtonMethodType.BRAINTREE_PAYPAL}` }
         );
     });
 
