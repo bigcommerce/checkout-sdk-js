@@ -108,6 +108,25 @@ describe('PaymentMethodActionCreator', () => {
             ]);
         });
 
+        it('emits actions with cached values if available', async () => {
+            const methodId = 'braintree';
+            const options = { useCache: true };
+            const actions = await Observable.merge(
+                paymentMethodActionCreator.loadPaymentMethod(methodId, options),
+                paymentMethodActionCreator.loadPaymentMethod(methodId, options)
+            )
+                .toArray()
+                .toPromise();
+
+            expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledTimes(1);
+            expect(actions).toEqual([
+                { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                { type: PaymentMethodActionType.LoadPaymentMethodRequested, meta: { methodId } },
+                { type: PaymentMethodActionType.LoadPaymentMethodSucceeded, meta: { methodId }, payload: paymentMethodResponse.body },
+                { type: PaymentMethodActionType.LoadPaymentMethodSucceeded, meta: { methodId }, payload: paymentMethodResponse.body },
+            ]);
+        });
+
         it('emits error actions if unable to load payment method', async () => {
             jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethod')
                 .mockReturnValue(Promise.reject(errorResponse));

@@ -1,34 +1,36 @@
-import { createRequestSender, Response } from '@bigcommerce/request-sender';
+import { createRequestSender, RequestSender, Response } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore } from '../checkout';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
-import { ConfigRequestSender } from '.';
 import Config from './config';
 import ConfigActionCreator from './config-action-creator';
 import { ConfigActionType } from './config-actions';
-import { getConfig, getConfigState } from './configs.mock';
+import ConfigRequestSender from './config-request-sender';
+import { getConfig } from './configs.mock';
 
 describe('ConfigActionCreator', () => {
-    const requestSender = createRequestSender();
-    const configRequestSender = new ConfigRequestSender(requestSender);
-    const configActionCreator = new ConfigActionCreator(configRequestSender);
+    let requestSender: RequestSender;
+    let configRequestSender: ConfigRequestSender;
+    let configActionCreator: ConfigActionCreator;
     let errorResponse: Response<any>;
     let response: Response<Config>;
-    let store: CheckoutStore;
 
     beforeEach(() => {
+        requestSender = createRequestSender();
+        configRequestSender = new ConfigRequestSender(requestSender);
+        configActionCreator = new ConfigActionCreator(configRequestSender);
+
         response = getResponse(getConfig());
         errorResponse = getErrorResponse();
-        store = createCheckoutStore();
 
-        jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(Promise.resolve(response));
+        jest.spyOn(configRequestSender, 'loadConfig')
+            .mockReturnValue(Promise.resolve(response));
     });
 
     describe('#loadConfig()', () => {
         it('emits actions if able to load config', async () => {
-            const actions = await Observable.from(configActionCreator.loadConfig()(store))
+            const actions = await configActionCreator.loadConfig()
                 .toArray()
                 .toPromise();
 
@@ -42,7 +44,7 @@ describe('ConfigActionCreator', () => {
             jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(Promise.reject(errorResponse));
 
             const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(configActionCreator.loadConfig()(store))
+            const actions = await configActionCreator.loadConfig()
                 .catch(errorHandler)
                 .toArray()
                 .toPromise();
@@ -54,14 +56,22 @@ describe('ConfigActionCreator', () => {
             ]);
         });
 
-        it('does not emit actions if config is already loaded', async () => {
-            store = createCheckoutStore({ config: getConfigState() });
-
-            const actions = await Observable.from(configActionCreator.loadConfig()(store))
+        it('dispatches actions using cached responses if available', async () => {
+            const actions = await Observable.merge(
+                configActionCreator.loadConfig({ useCache: true }),
+                configActionCreator.loadConfig({ useCache: true })
+            )
                 .toArray()
                 .toPromise();
 
-            expect(actions).toEqual([]);
+            expect(actions).toEqual([
+                { type: ConfigActionType.LoadConfigRequested },
+                { type: ConfigActionType.LoadConfigRequested },
+                { type: ConfigActionType.LoadConfigSucceeded, payload: response.body },
+                { type: ConfigActionType.LoadConfigSucceeded, payload: response.body },
+            ]);
+
+            expect(configRequestSender.loadConfig).toHaveBeenCalledTimes(1);
         });
     });
 });

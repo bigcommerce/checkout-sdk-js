@@ -2,6 +2,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
+import { cachableAction, ActionOptions } from '../common/action';
 import { RequestOptions } from '../common/http-request';
 
 import { LoadPaymentMethodsAction, LoadPaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
@@ -32,7 +33,8 @@ export default class PaymentMethodActionCreator {
         });
     }
 
-    loadPaymentMethod(methodId: string, options?: RequestOptions): Observable<LoadPaymentMethodAction> {
+    @cachableAction
+    loadPaymentMethod(methodId: string, options?: RequestOptions & ActionOptions): Observable<LoadPaymentMethodAction> {
         return Observable.create((observer: Observer<LoadPaymentMethodAction>) => {
             observer.next(createAction(PaymentMethodActionType.LoadPaymentMethodRequested, undefined, { methodId }));
 

@@ -1,7 +1,8 @@
-import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 
+import { cachableAction, ActionOptions } from '../common/action';
 import { RequestOptions } from '../common/http-request';
 
 import { ConfigRequestSender } from '.';
@@ -12,15 +13,9 @@ export default class ConfigActionCreator {
         private _configRequestSender: ConfigRequestSender
     ) {}
 
-    loadConfig(options?: RequestOptions): ThunkAction<LoadConfigAction> {
-        return store => Observable.create((observer: Observer<LoadConfigAction>) => {
-            const state = store.getState();
-            const config = state.config.getConfig();
-
-            if (config) {
-                return observer.complete();
-            }
-
+    @cachableAction
+    loadConfig(options?: RequestOptions & ActionOptions): Observable<LoadConfigAction> {
+        return Observable.create((observer: Observer<LoadConfigAction>) => {
             observer.next(createAction(ConfigActionType.LoadConfigRequested));
 
             this._configRequestSender.loadConfig(options)

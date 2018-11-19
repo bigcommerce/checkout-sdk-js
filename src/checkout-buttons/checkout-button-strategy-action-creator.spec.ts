@@ -2,8 +2,6 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutStore } from '../checkout';
-import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../payment';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
@@ -19,7 +17,6 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     let options: CheckoutButtonInitializeOptions;
     let strategyActionCreator: CheckoutButtonStrategyActionCreator;
     let strategy: CheckoutButtonStrategy;
-    let store: CheckoutStore;
 
     class MockButtonStrategy extends CheckoutButtonStrategy { }
 
@@ -27,13 +24,6 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         registry = new Registry<CheckoutButtonStrategy>();
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         strategy = new MockButtonStrategy();
-        store = createCheckoutStore({
-            ...getCheckoutStoreState(),
-            paymentMethods: {
-                errors: {},
-                statuses: {},
-            },
-        });
 
         registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () => strategy);
 
@@ -54,30 +44,20 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         );
     });
 
-    it('loads required payment method', async () => {
-        const store = createCheckoutStore(getCheckoutStoreState());
-        await Observable.from(strategyActionCreator.initialize(options)(store))
+    it('loads required payment method and uses cache if available', async () => {
+        await strategyActionCreator.initialize(options)
             .toArray()
             .toPromise();
 
         expect(paymentMethodActionCreator.loadPaymentMethod)
-            .not.toBeCalled();
-    });
-
-    it('does not load payment method if already loaded required payment method', async () => {
-        await Observable.from(strategyActionCreator.initialize(options)(store))
-            .toArray()
-            .toPromise();
-
-        expect(paymentMethodActionCreator.loadPaymentMethod)
-            .toHaveBeenCalledWith(CheckoutButtonMethodType.BRAINTREE_PAYPAL, options);
+            .toHaveBeenCalledWith(CheckoutButtonMethodType.BRAINTREE_PAYPAL, { useCache: true });
     });
 
     it('finds strategy and initializes it', async () => {
         jest.spyOn(registry, 'get');
         jest.spyOn(strategy, 'initialize');
 
-        await Observable.from(strategyActionCreator.initialize(options)(store))
+        await strategyActionCreator.initialize(options)
             .toArray()
             .toPromise();
 
@@ -88,7 +68,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     it('emits actions indicating initialization progress', async () => {
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
         const containerId = 'checkout-button';
-        const actions = await Observable.from(strategyActionCreator.initialize({ methodId, containerId })(store))
+        const actions = await strategyActionCreator.initialize({ methodId, containerId })
             .toArray()
             .toPromise();
 
@@ -109,7 +89,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
             .mockReturnValue(Observable.throw(createErrorAction(PaymentMethodActionType.LoadPaymentMethodFailed, expectedError)));
 
         const errorHandler = jest.fn(action => Observable.of(action));
-        const actions = await Observable.from(strategyActionCreator.initialize({ methodId, containerId })(store))
+        const actions = await strategyActionCreator.initialize({ methodId, containerId })
             .catch(errorHandler)
             .toArray()
             .toPromise();
@@ -131,7 +111,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
             .mockReturnValue(Promise.reject(expectedError));
 
         const errorHandler = jest.fn(action => Observable.of(action));
-        const actions = await Observable.from(strategyActionCreator.initialize({ methodId, containerId })(store))
+        const actions = await strategyActionCreator.initialize({ methodId, containerId })
             .catch(errorHandler)
             .toArray()
             .toPromise();

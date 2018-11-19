@@ -1,8 +1,6 @@
 import { memoize } from 'lodash';
 
-import { bindDecorator, isEqual, isPrivate } from '../utility';
-
-import CacheKeyResolver from './cache-key-resolver';
+import { bindDecorator, isEqual, isPrivate, CacheKeyResolver } from '../utility';
 
 /**
  * Decorates a class by patching all of its methods to cache their return values
