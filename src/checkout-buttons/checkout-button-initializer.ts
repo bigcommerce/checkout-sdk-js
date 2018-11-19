@@ -102,8 +102,9 @@ export default class CheckoutButtonInitializer {
      */
     initializeButton(options: CheckoutButtonInitializeOptions): Promise<CheckoutButtonSelectors> {
         const action = this._buttonStrategyActionCreator.initialize(options);
+        const queueId = `checkoutButtonStrategy:${options.methodId}:${options.containerId}`;
 
-        return this._store.dispatch(action, { queueId: `${options.methodId}ButtonStrategy` })
+        return this._store.dispatch(action, { queueId })
             .then(() => this.getState());
     }
 
@@ -121,8 +122,9 @@ export default class CheckoutButtonInitializer {
      */
     deinitializeButton(options: CheckoutButtonOptions): Promise<CheckoutButtonSelectors> {
         const action = this._buttonStrategyActionCreator.deinitialize(options);
+        const queueId = `checkoutButtonStrategy:${options.methodId}`;
 
-        return this._store.dispatch(action, { queueId: `${options.methodId}ButtonStrategy` })
+        return this._store.dispatch(action, { queueId })
             .then(() => this.getState());
     }
 }
