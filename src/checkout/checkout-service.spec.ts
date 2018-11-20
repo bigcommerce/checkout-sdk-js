@@ -169,7 +169,7 @@ describe('CheckoutService', () => {
 
         configRequestSender = new ConfigRequestSender(requestSender);
 
-        jest.spyOn(configRequestSender, 'loadConfig').mockResolvedValue(getResponse(getCheckout()));
+        jest.spyOn(configRequestSender, 'loadConfig').mockResolvedValue(getResponse(getConfig()));
 
         paymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
 
