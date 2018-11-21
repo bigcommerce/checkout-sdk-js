@@ -56,7 +56,7 @@ export default class GooglePayButtonStrategy extends CheckoutButtonStrategy {
     }
 
     private _createSignInButton(containerId: string): HTMLElement {
-        const container = document.querySelector(`#${containerId}`);
+        const container = document.getElementById(containerId);
 
         if (!container) {
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
