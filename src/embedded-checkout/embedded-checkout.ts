@@ -1,7 +1,11 @@
+import { RequestSender } from '@bigcommerce/request-sender';
 import { IFrameComponent } from 'iframe-resizer';
+
+import { parseUrl } from '../common/url';
 
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
+import { InvalidLoginTokenError } from './errors';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
@@ -20,6 +24,7 @@ export default class EmbeddedCheckout {
         private _messageListener: IframeEventListener<EmbeddedCheckoutEventMap>,
         private _messagePoster: IframeEventPoster<EmbeddedContentEvent>,
         private _loadingIndicator: LoadingIndicator,
+        private _requestSender: RequestSender,
         private _options: EmbeddedCheckoutOptions
     ) {
         this._isAttached = false;
@@ -56,7 +61,8 @@ export default class EmbeddedCheckout {
         this._messageListener.listen();
         this._loadingIndicator.show(this._options.containerId);
 
-        return this._iframeCreator.createFrame(this._options.url, this._options.containerId)
+        return this._attemptLogin()
+            .then(url => this._iframeCreator.createFrame(url, this._options.containerId))
             .then(iframe => {
                 this._iframe = iframe;
 
@@ -104,5 +110,15 @@ export default class EmbeddedCheckout {
             type: EmbeddedContentEventType.StyleConfigured,
             payload: this._options.styles,
         });
+    }
+
+    private _attemptLogin(): Promise<string> {
+        if (!/^\/login\/token/.test(parseUrl(this._options.url).pathname)) {
+            return Promise.resolve(this._options.url);
+        }
+
+        return this._requestSender.post(this._options.url)
+            .then(({ body: { redirectUrl } }) => redirectUrl)
+            .catch(response => Promise.reject(new InvalidLoginTokenError(response)));
     }
 }

@@ -1,8 +1,8 @@
+import { parseUrl } from '../common/url';
 import { bindDecorator as bind } from '../common/utility';
 
 import { IframeEventMap } from './iframe-event';
 import isIframeEvent from './is-iframe-event';
-import parseOrigin from './parse-origin';
 
 export default class IframeEventListener<TEventMap extends IframeEventMap<keyof TEventMap>> {
     private _isListening: boolean;
@@ -12,7 +12,7 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
     constructor(
         sourceOrigin: string
     ) {
-        this._sourceOrigin = parseOrigin(sourceOrigin);
+        this._sourceOrigin = parseUrl(sourceOrigin).origin;
         this._isListening = false;
         this._listeners = {};
     }

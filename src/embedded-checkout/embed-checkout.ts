@@ -1,3 +1,7 @@
+import { createRequestSender } from '@bigcommerce/request-sender';
+
+import { parseUrl } from '../common/url';
+
 import EmbeddedCheckout from './embedded-checkout';
 import { EmbeddedCheckoutEventMap } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
@@ -5,7 +9,6 @@ import { EmbeddedContentEvent } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';
-import parseOrigin from './parse-origin';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 /**
@@ -30,12 +33,13 @@ import ResizableIframeCreator from './resizable-iframe-creator';
  * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
  */
 export default function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout> {
-    const origin = parseOrigin(options.url);
+    const origin = parseUrl(options.url).origin;
     const embeddedCheckout = new EmbeddedCheckout(
         new ResizableIframeCreator(),
         new IframeEventListener<EmbeddedCheckoutEventMap>(origin),
         new IframeEventPoster<EmbeddedContentEvent>(origin),
         new LoadingIndicator({ styles: options.styles && options.styles.loadingIndicator }),
+        createRequestSender(),
         options
     );
 

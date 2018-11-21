@@ -1,3 +1,5 @@
+import { RequestSender } from '@bigcommerce/request-sender';
+
 import embedCheckout from './embed-checkout';
 import EmbeddedCheckout from './embedded-checkout';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
@@ -42,6 +44,7 @@ describe('embedCheckout()', () => {
             expect.any(IframeEventListener),
             expect.any(IframeEventPoster),
             expect.any(LoadingIndicator),
+            expect.any(RequestSender),
             options
         );
     });

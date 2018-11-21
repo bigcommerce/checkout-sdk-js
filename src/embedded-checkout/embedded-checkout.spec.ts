@@ -1,10 +1,13 @@
+import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { iframeResizer, IFrameComponent } from 'iframe-resizer';
+
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import EmbeddedCheckout from './embedded-checkout';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import EmbeddedCheckoutStyles from './embedded-checkout-styles';
-import { NotEmbeddableError } from './errors';
+import { InvalidLoginTokenError, NotEmbeddableError } from './errors';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
@@ -18,6 +21,7 @@ describe('EmbeddedCheckout', () => {
     let loadingIndicator: LoadingIndicator;
     let messageListener: IframeEventListener<EmbeddedCheckoutEventMap>;
     let messagePoster: IframeEventPoster<EmbeddedContentEvent>;
+    let requestSender: RequestSender;
     let options: EmbeddedCheckoutOptions;
     let styles: EmbeddedCheckoutStyles;
 
@@ -38,6 +42,7 @@ describe('EmbeddedCheckout', () => {
         messageListener = new IframeEventListener('https://mybigcommerce.com');
         messagePoster = new IframeEventPoster('https://mybigcommerce.com');
         loadingIndicator = new LoadingIndicator();
+        requestSender = createRequestSender();
 
         jest.spyOn(iframeCreator, 'createFrame')
             .mockReturnValue(Promise.resolve(iframe));
@@ -53,6 +58,7 @@ describe('EmbeddedCheckout', () => {
             messageListener,
             messagePoster,
             loadingIndicator,
+            requestSender,
             options
         );
     });
@@ -157,6 +163,7 @@ describe('EmbeddedCheckout', () => {
             messageListener,
             messagePoster,
             loadingIndicator,
+            requestSender,
             options
         );
 
@@ -183,6 +190,7 @@ describe('EmbeddedCheckout', () => {
             messageListener,
             messagePoster,
             loadingIndicator,
+            requestSender,
             options
         );
 
@@ -203,6 +211,7 @@ describe('EmbeddedCheckout', () => {
             messageListener,
             messagePoster,
             loadingIndicator,
+            requestSender,
             options
         );
 
@@ -228,5 +237,58 @@ describe('EmbeddedCheckout', () => {
 
         expect(loadingIndicator.show).toHaveBeenCalled();
         expect(loadingIndicator.hide).not.toHaveBeenCalled();
+    });
+
+    describe('if login URL is passed', () => {
+        beforeEach(() => {
+            options = {
+                ...options,
+                url: 'https://mybigcommerce.com/login/token/foobar',
+            };
+            embeddedCheckout = new EmbeddedCheckout(
+                iframeCreator,
+                messageListener,
+                messagePoster,
+                loadingIndicator,
+                requestSender,
+                options
+            );
+        });
+
+        it('attempts to login', async () => {
+            const response = getResponse({ redirectUrl: 'https://mybigcommerce.com/checkout' });
+
+            jest.spyOn(requestSender, 'post')
+                .mockReturnValue(Promise.resolve(response));
+
+            await embeddedCheckout.attach();
+
+            expect(requestSender.post)
+                .toHaveBeenCalledWith(options.url);
+
+            expect(iframeCreator.createFrame)
+                .toHaveBeenCalledWith(response.body.redirectUrl, options.containerId);
+        });
+
+        it('triggers error callback if unable to login', async () => {
+            const response = getErrorResponse();
+
+            jest.spyOn(requestSender, 'post')
+                .mockReturnValue(Promise.reject(response));
+
+            jest.spyOn(messageListener, 'trigger');
+
+            try {
+                await embeddedCheckout.attach();
+            } catch (thrown) {
+                expect(messageListener.trigger)
+                    .toHaveBeenCalledWith({
+                        type: EmbeddedCheckoutEventType.FrameError,
+                        payload: thrown,
+                    });
+
+                expect(thrown).toEqual(new InvalidLoginTokenError(response));
+            }
+        });
     });
 });

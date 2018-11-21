@@ -1,9 +1,10 @@
 import { iframeResizer, IFrameComponent } from 'iframe-resizer';
 
+import { parseUrl } from '../common/url';
+
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError } from './errors';
 import isIframeEvent from './is-iframe-event';
-import parseOrigin from './parse-origin';
 
 export default class ResizableIframeCreator {
     constructor(
@@ -45,7 +46,7 @@ export default class ResizableIframeCreator {
             }, timeoutInterval);
 
             const handleMessage = (event: MessageEvent) => {
-                if (event.origin !== parseOrigin(iframe.src)) {
+                if (event.origin !== parseUrl(iframe.src).origin) {
                     return;
                 }
 
