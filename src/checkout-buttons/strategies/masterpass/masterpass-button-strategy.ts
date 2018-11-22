@@ -71,7 +71,7 @@ export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
     }
 
     private _createSignInButton(containerId: string): HTMLElement {
-        const buttonContainer = document.querySelector(`#${containerId}`);
+        const buttonContainer = document.getElementById(containerId);
 
         if (!buttonContainer) {
             throw new Error('Need a container to place the button');
