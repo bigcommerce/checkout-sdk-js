@@ -1,4 +1,4 @@
-import parseOrigin from './parse-origin';
+import { parseUrl } from '../common/url';
 
 export default class IframeEventPoster<TEvent> {
     private _targetOrigin: string;
@@ -7,7 +7,7 @@ export default class IframeEventPoster<TEvent> {
         targetOrigin: string,
         private _targetWindow?: Window
     ) {
-        this._targetOrigin = parseOrigin(targetOrigin);
+        this._targetOrigin = parseUrl(targetOrigin).origin;
     }
 
     post(event: TEvent): void {
