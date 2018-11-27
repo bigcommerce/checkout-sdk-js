@@ -6,7 +6,6 @@ Checkout JS SDK provides you with the tools you need to build your own checkout 
 
 The SDK has a convenient application interface for starting and completing a checkout flow. Behind the interface, it handles all the necessary interactions with our Storefront APIs and other payment SDKs. So you can focus on creating a checkout experience that is unique to your business.
 
-
 ## Table of contents <!-- omit in toc -->
 - [Features](#features)
 - [Installation](#installation)
@@ -40,7 +39,7 @@ The SDK has a convenient application interface for starting and completing a che
 
 ## Features
 
-The Checkout JS SDK is a client-side JavaScript library for our [Storefront Checkout Web API](https://developer.bigcommerce.com/api/v3/storefront.html). It provides all the methods that are required to complete a checkout process, for example:
+The [Checkout JS SDK](https://developer.bigcommerce.com/api-docs/cart-and-checkout/checkout-sdk) is a client-side JavaScript library for our [Storefront Checkout API](https://developer.bigcommerce.com/api-reference/cart-checkout/storefront-checkout-api). It provides all the methods that are required to complete a checkout process, for example:
 * Sign in a customer and begin the checkout process
 * Set shipping, billing and other required information
 * Pay for the order and complete the checkout process
@@ -53,8 +52,13 @@ The library also provides integrations with all the payment methods supported by
 * Klarna
 * AfterPay
 
-Using this library in conjunction with your favorite UI framework, it is possible to build a bespoke checkout UI for a store, that can be augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) written in React to get you started.
+Using this library in conjunction with your favorite UI framework, it is possible to build a bespoke checkout UI for a store, that can be augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) of a custom checkout written in React to get you started.
 
+## Getting started
+
+The Checkout JS SDK is the easiest way to build a bespoke checkout into your store’s theme. We have created the following tutorials to help you get started.
+* [Build with vanilla JS](https://developer.bigcommerce.com/stencil-docs/template-files/customize-stencil-checkout/checkout-js-sdk/getting-started-in-vanilla-js) - This tutorial will walk through the first steps for building a custom checkout directly into the theme files using vanilla JS.
+* [Run example app in Cornerstone](https://developer.bigcommerce.com/stencil-docs/template-files/customize-stencil-checkout/checkout-js-sdk/implement-a-custom-checkout) - This tutorial will take you through the steps to integrate the custom checkout provided by our reference implementation into the Cornerstone theme.
 
 ## Installation
 
