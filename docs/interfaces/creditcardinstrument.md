@@ -75,7 +75,7 @@ ___
 
 ### `<Optional>` shouldSaveInstrument
 
-**● shouldSaveInstrument**: * `undefined` &#124; `true` &#124; `false`
+**● shouldSaveInstrument**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___

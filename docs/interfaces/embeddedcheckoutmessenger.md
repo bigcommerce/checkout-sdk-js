@@ -15,6 +15,7 @@
 * [postFrameError](embeddedcheckoutmessenger.md#postframeerror)
 * [postFrameLoaded](embeddedcheckoutmessenger.md#postframeloaded)
 * [postLoaded](embeddedcheckoutmessenger.md#postloaded)
+* [postSignedOut](embeddedcheckoutmessenger.md#postsignedout)
 * [receiveStyles](embeddedcheckoutmessenger.md#receivestyles)
 
 ---
@@ -64,7 +65,13 @@ ___
 
 ###  postFrameLoaded
 
-▸ **postFrameLoaded**(): `void`
+▸ **postFrameLoaded**(payload?: *[EmbeddedContentOptions](embeddedcontentoptions.md)*): `void`
+
+**Parameters:**
+
+| Param | Type |
+| ------ | ------ |
+| `Optional` payload | [EmbeddedContentOptions](embeddedcontentoptions.md) |
 
 **Returns:** `void`
 
@@ -74,6 +81,15 @@ ___
 ###  postLoaded
 
 ▸ **postLoaded**(): `void`
+
+**Returns:** `void`
+
+___
+<a id="postsignedout"></a>
+
+###  postSignedOut
+
+▸ **postSignedOut**(): `void`
 
 **Returns:** `void`
 

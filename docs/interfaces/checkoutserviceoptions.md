@@ -47,7 +47,7 @@ ___
 
 ### `<Optional>` shouldWarnMutation
 
-**● shouldWarnMutation**: * `undefined` &#124; `true` &#124; `false`
+**● shouldWarnMutation**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___

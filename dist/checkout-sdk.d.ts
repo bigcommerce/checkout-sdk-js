@@ -1,5 +1,5 @@
-import { createTimeout } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
+import { createTimeout } from '@bigcommerce/request-sender';
 
 declare interface Address extends AddressRequestBody {
     country: string;
@@ -2075,13 +2075,13 @@ declare interface ConsignmentLineItem {
     quantity: number;
 }
 
-declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
-
 declare interface ConsignmentUpdateRequestBody {
     id: string;
     shippingAddress?: AddressRequestBody;
     lineItems?: ConsignmentLineItem[];
 }
+
+declare type ConsignmentsRequestBody = ConsignmentCreateRequestBody[];
 
 declare interface Country {
     code: string;
@@ -2097,112 +2097,6 @@ declare interface Coupon {
     couponType: string;
     discountedAmount: number;
 }
-
-/**
- * Creates an instance of `CheckoutButtonInitializer`.
- *
- * ```js
- * const initializer = createCheckoutButtonInitializer();
- *
- * initializer.initializeButton({
- *     methodId: 'braintreepaypal',
- *     braintreepaypal: {
- *         container: '#checkoutButton',
- *     },
- * });
- * ```
- *
- * Please note that `CheckoutButtonInitializer` is currently in an early stage
- * of development. Therefore the API is unstable and not ready for public
- * consumption.
- *
- * @alpha
- * @param options - A set of construction options.
- * @returns an instance of `CheckoutButtonInitializer`.
- */
-export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
-
-/**
- * Creates an instance of `CheckoutService`.
- *
- * ```js
- * const service = createCheckoutService();
- *
- * service.subscribe(state => {
- *     console.log(state);
- * });
- *
- * service.loadCheckout();
- * ```
- *
- * @param options - A set of construction options.
- * @returns an instance of `CheckoutService`.
- */
-export declare function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService;
-
-/**
- * Creates an instance of `CurrencyService`.
- *
- * ```js
- * const { data } = checkoutService.getState();
- * const config = data.getConfig();
- * const checkout = data.getCheckout();
- * const currencyService = createCurrencyService(config);
- *
- * currencyService.toStoreCurrency(checkout.grandTotal);
- * currencyService.toCustomerCurrency(checkout.grandTotal);
- * ```
- *
- * Please note that `CurrencyService` is currently in an early stage
- * of development. Therefore the API is unstable and not ready for public
- * consumption.
- *
- * @alpha
- * @param config - The config object containing the currency configuration
- * @returns an instance of `CurrencyService`.
- */
-export declare function createCurrencyService(config: StoreConfig): CurrencyService;
-
-/**
- * Create an instance of `EmbeddedCheckoutMessenger`.
- *
- * The object is responsible for posting messages to the parent window from the
- * iframe when certain events have occurred. For example, when the checkout
- * form is first loaded, you should notify the parent window about it.
- *
- * The iframe can only be embedded in domains that are allowed by the store.
- *
- * ```ts
- * const messenger = createEmbeddedCheckoutMessenger({
- *     parentOrigin: 'https://some/website',
- * });
- *
- * messenger.postFrameLoaded();
- * ```
- *
- * Please note that this feature is currently in an early stage of development.
- * Therefore the API is unstable and not ready for public consumption.
- *
- * @alpha
- * @param options - Options for creating `EmbeddedCheckoutMessenger`
- * @returns - An instance of `EmbeddedCheckoutMessenger`
- */
-export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger;
-
-/**
- * Creates an instance of `LanguageService`.
- *
- * ```js
- * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
- * const service = createLanguageService(language);
- *
- * console.log(service.translate('address.city_label'));
- * ```
- *
- * @param config - A configuration object.
- * @returns An instance of `LanguageService`.
- */
-export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
 
 declare interface CreditCardInstrument {
     ccExpiry: {
@@ -2233,6 +2127,21 @@ declare class CurrencyService {
     private _storeFormatter;
     toCustomerCurrency(amount: number): string;
     toStoreCurrency(amount: number): string;
+}
+
+declare interface CustomError extends Error {
+    message: string;
+    type: string;
+    subtype?: string;
+}
+
+declare interface CustomItem {
+    id: string;
+    listPrice: number;
+    extendedListPrice: number;
+    name: string;
+    quantity: number;
+    sku: string;
 }
 
 declare interface Customer {
@@ -2305,21 +2214,6 @@ declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
 }
 
-declare interface CustomError extends Error {
-    message: string;
-    type: string;
-    subtype?: string;
-}
-
-declare interface CustomItem {
-    id: string;
-    listPrice: number;
-    extendedListPrice: number;
-    name: string;
-    quantity: number;
-    sku: string;
-}
-
 declare interface DigitalItem extends LineItem {
     downloadFileUrls: string[];
     downloadPageUrl: string;
@@ -2331,40 +2225,19 @@ declare interface Discount {
     discountedAmount: number;
 }
 
-/**
- * Embed the checkout form in an iframe.
- *
- * Once the iframe is embedded, it will automatically resize according to the
- * size of the checkout form. It will also notify the parent window when certain
- * events have occurred. i.e.: when the form is loaded and ready to be used.
- *
- * ```js
- * embedCheckout({
- *     url: 'https://checkout/url',
- *     containerId: 'container-id',
- * });
- * ```
- *
- * Please note that this feature is currently in an early stage of development.
- * Therefore the API is unstable and not ready for public consumption.
- *
- * @alpha
- * @param options - Options for embedding the checkout form.
- * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
- */
-export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;
-
 declare class EmbeddedCheckout {
     private _iframeCreator;
     private _messageListener;
     private _messagePoster;
     private _loadingIndicator;
+    private _requestSender;
     private _options;
     private _iframe?;
     private _isAttached;
     attach(): Promise<this>;
     detach(): void;
     private _configureStyles;
+    private _attemptLogin;
 }
 
 declare interface EmbeddedCheckoutCompleteEvent {
@@ -2387,7 +2260,8 @@ declare enum EmbeddedCheckoutEventType {
     CheckoutError = "CHECKOUT_ERROR",
     CheckoutLoaded = "CHECKOUT_LOADED",
     FrameError = "FRAME_ERROR",
-    FrameLoaded = "FRAME_LOADED"
+    FrameLoaded = "FRAME_LOADED",
+    SignedOut = "SIGNED_OUT"
 }
 
 declare interface EmbeddedCheckoutFrameErrorEvent {
@@ -2397,6 +2271,7 @@ declare interface EmbeddedCheckoutFrameErrorEvent {
 
 declare interface EmbeddedCheckoutFrameLoadedEvent {
     type: EmbeddedCheckoutEventType.FrameLoaded;
+    payload?: EmbeddedContentOptions;
 }
 
 declare interface EmbeddedCheckoutLoadedEvent {
@@ -2407,8 +2282,9 @@ declare interface EmbeddedCheckoutMessenger {
     postComplete(): void;
     postError(payload: Error | CustomError): void;
     postFrameError(payload: Error | CustomError): void;
-    postFrameLoaded(): void;
+    postFrameLoaded(payload?: EmbeddedContentOptions): void;
     postLoaded(): void;
+    postSignedOut(): void;
     receiveStyles(handler: (styles: EmbeddedCheckoutStyles) => void): void;
 }
 
@@ -2426,6 +2302,11 @@ declare interface EmbeddedCheckoutOptions {
     onFrameError?(event: EmbeddedCheckoutFrameErrorEvent): void;
     onFrameLoad?(event: EmbeddedCheckoutFrameLoadedEvent): void;
     onLoad?(event: EmbeddedCheckoutLoadedEvent): void;
+    onSignOut?(event: EmbeddedCheckoutSignedOutEvent): void;
+}
+
+declare interface EmbeddedCheckoutSignedOutEvent {
+    type: EmbeddedCheckoutEventType.SignedOut;
 }
 
 declare interface EmbeddedCheckoutStyles {
@@ -2448,6 +2329,10 @@ declare interface EmbeddedCheckoutStyles {
     loadingIndicator?: LoadingIndicatorStyles;
     orderSummary?: BlockElementStyles;
     step?: StepStyles;
+}
+
+declare interface EmbeddedContentOptions {
+    contentId?: string;
 }
 
 declare interface FormField {
@@ -2592,6 +2477,7 @@ declare interface InputStyles extends BlockElementStyles {
 
 declare interface Instrument {
     bigpayToken: string;
+    defaultInstrument: boolean;
     provider: string;
     iin: string;
     last4: string;
@@ -2901,6 +2787,11 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      */
     masterpass?: MasterpassPaymentInitializeOptions;
     /**
+     * The options that are required to initialize the PayPal Express payment method.
+     * They can be omitted unless you need to support PayPal Express.
+     */
+    paypalexpress?: PaypalExpressPaymentInitializeOptions;
+    /**
      * The options that are required to initialize the Square payment method.
      * They can be omitted unless you need to support Square.
      */
@@ -3006,6 +2897,10 @@ declare interface PaypalButtonStyleOptions {
     shape?: 'pill' | 'rect';
     tagline?: boolean;
     fundingicons?: boolean;
+}
+
+declare interface PaypalExpressPaymentInitializeOptions {
+    useRedirectFlow?: boolean;
 }
 
 declare interface PhysicalItem extends LineItem {
@@ -3225,3 +3120,138 @@ declare interface VaultedInstrument {
     instrumentId: string;
     cvv?: number;
 }
+
+/**
+ * Creates an instance of `CheckoutButtonInitializer`.
+ *
+ * @remarks
+ * ```js
+ * const initializer = createCheckoutButtonInitializer();
+ *
+ * initializer.initializeButton({
+ *     methodId: 'braintreepaypal',
+ *     braintreepaypal: {
+ *         container: '#checkoutButton',
+ *     },
+ * });
+ * ```
+ *
+ * @alpha
+ * Please note that `CheckoutButtonInitializer` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutButtonInitializer`.
+ */
+export declare function createCheckoutButtonInitializer(options?: CheckoutButtonInitializerOptions): CheckoutButtonInitializer;
+
+/**
+ * Creates an instance of `CheckoutService`.
+ *
+ * @remarks
+ * ```js
+ * const service = createCheckoutService();
+ *
+ * service.subscribe(state => {
+ *     console.log(state);
+ * });
+ *
+ * service.loadCheckout();
+ * ```
+ *
+ * @param options - A set of construction options.
+ * @returns an instance of `CheckoutService`.
+ */
+export declare function createCheckoutService(options?: CheckoutServiceOptions): CheckoutService;
+
+/**
+ * Creates an instance of `CurrencyService`.
+ *
+ * @remarks
+ * ```js
+ * const { data } = checkoutService.getState();
+ * const config = data.getConfig();
+ * const checkout = data.getCheckout();
+ * const currencyService = createCurrencyService(config);
+ *
+ * currencyService.toStoreCurrency(checkout.grandTotal);
+ * currencyService.toCustomerCurrency(checkout.grandTotal);
+ * ```
+ *
+ * @alpha
+ * Please note that `CurrencyService` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @param config - The config object containing the currency configuration
+ * @returns an instance of `CurrencyService`.
+ */
+export declare function createCurrencyService(config: StoreConfig): CurrencyService;
+
+/**
+ * Create an instance of `EmbeddedCheckoutMessenger`.
+ *
+ * @remarks
+ * The object is responsible for posting messages to the parent window from the
+ * iframe when certain events have occurred. For example, when the checkout
+ * form is first loaded, you should notify the parent window about it.
+ *
+ * The iframe can only be embedded in domains that are allowed by the store.
+ *
+ * ```ts
+ * const messenger = createEmbeddedCheckoutMessenger({
+ *     parentOrigin: 'https://some/website',
+ * });
+ *
+ * messenger.postFrameLoaded();
+ * ```
+ *
+ * @alpha
+ * Please note that this feature is currently in an early stage of development.
+ * Therefore the API is unstable and not ready for public consumption.
+ *
+ * @param options - Options for creating `EmbeddedCheckoutMessenger`
+ * @returns - An instance of `EmbeddedCheckoutMessenger`
+ */
+export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger;
+
+/**
+ * Creates an instance of `LanguageService`.
+ *
+ * @remarks
+ * ```js
+ * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
+ * const service = createLanguageService(language);
+ *
+ * console.log(service.translate('address.city_label'));
+ * ```
+ *
+ * @param config - A configuration object.
+ * @returns An instance of `LanguageService`.
+ */
+export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
+
+/**
+ * Embed the checkout form in an iframe.
+ *
+ * @remarks
+ * Once the iframe is embedded, it will automatically resize according to the
+ * size of the checkout form. It will also notify the parent window when certain
+ * events have occurred. i.e.: when the form is loaded and ready to be used.
+ *
+ * ```js
+ * embedCheckout({
+ *     url: 'https://checkout/url',
+ *     containerId: 'container-id',
+ * });
+ * ```
+ *
+ * @alpha
+ * Please note that this feature is currently in an early stage of development.
+ * Therefore the API is unstable and not ready for public consumption.
+ *
+ * @param options - Options for embedding the checkout form.
+ * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
+ */
+export declare function embedCheckout(options: EmbeddedCheckoutOptions): Promise<EmbeddedCheckout>;

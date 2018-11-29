@@ -27,7 +27,7 @@
 
 ### `<Optional>` allowCredit
 
-**● allowCredit**: * `undefined` &#124; `true` &#124; `false`
+**● allowCredit**: * `undefined` &#124; `false` &#124; `true`
 *
 
 Whether or not to show a credit button.

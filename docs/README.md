@@ -52,8 +52,7 @@ initializer.initializeButton({
 });
 ```
 
-Please note that `CheckoutButtonInitializer` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
-*__alpha__*: 
+*__alpha__*: Please note that `CheckoutButtonInitializer` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
 
 **Parameters:**
 
@@ -111,8 +110,7 @@ currencyService.toStoreCurrency(checkout.grandTotal);
 currencyService.toCustomerCurrency(checkout.grandTotal);
 ```
 
-Please note that `CurrencyService` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
-*__alpha__*: 
+*__alpha__*: Please note that `CurrencyService` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
 
 **Parameters:**
 
@@ -144,8 +142,7 @@ const messenger = createEmbeddedCheckoutMessenger({
 messenger.postFrameLoaded();
 ```
 
-Please note that this feature is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
-*__alpha__*: 
+*__alpha__*: Please note that this feature is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
 
 **Parameters:**
 
@@ -199,8 +196,7 @@ embedCheckout({
 });
 ```
 
-Please note that this feature is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
-*__alpha__*: 
+*__alpha__*: Please note that this feature is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
 
 **Parameters:**
 

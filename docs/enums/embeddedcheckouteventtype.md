@@ -43,4 +43,11 @@ ___
 **FrameLoaded**:  = "FRAME_LOADED"
 
 ___
+<a id="signedout"></a>
+
+###  SignedOut
+
+**SignedOut**:  = "SIGNED_OUT"
+
+___
 

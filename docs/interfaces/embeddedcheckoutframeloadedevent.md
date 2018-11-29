@@ -10,12 +10,20 @@
 
 ### Properties
 
+* [payload](embeddedcheckoutframeloadedevent.md#payload)
 * [type](embeddedcheckoutframeloadedevent.md#type)
 
 ---
 
 ## Properties
 
+<a id="payload"></a>
+
+### `<Optional>` payload
+
+**● payload**: *[EmbeddedContentOptions](embeddedcontentoptions.md)*
+
+___
 <a id="type"></a>
 
 ###  type

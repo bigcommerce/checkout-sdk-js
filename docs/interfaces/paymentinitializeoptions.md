@@ -28,6 +28,7 @@ A set of options that are required to initialize the payment step of the current
 * [masterpass](paymentinitializeoptions.md#masterpass)
 * [methodId](paymentinitializeoptions.md#methodid)
 * [params](paymentinitializeoptions.md#params)
+* [paypalexpress](paymentinitializeoptions.md#paypalexpress)
 * [square](paymentinitializeoptions.md#square)
 * [timeout](paymentinitializeoptions.md#timeout)
 
@@ -133,6 +134,15 @@ ___
 **● params**: *[TParams]()*
 
 The parameters of the request, if required.
+
+___
+<a id="paypalexpress"></a>
+
+### `<Optional>` paypalexpress
+
+**● paypalexpress**: *[PaypalExpressPaymentInitializeOptions](paypalexpresspaymentinitializeoptions.md)*
+
+The options that are required to initialize the PayPal Express payment method. They can be omitted unless you need to support PayPal Express.
 
 ___
 <a id="square"></a>

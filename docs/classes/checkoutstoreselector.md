@@ -337,7 +337,7 @@ ___
 
 ###  isPaymentDataRequired
 
-▸ **isPaymentDataRequired**(useStoreCredit?: * `undefined` &#124; `true` &#124; `false`*): `boolean`
+▸ **isPaymentDataRequired**(useStoreCredit?: * `undefined` &#124; `false` &#124; `true`*): `boolean`
 
 Checks if payment data is required or not.
 
@@ -355,7 +355,7 @@ if (state.checkout.isPaymentDataRequired()) {
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| `Optional` useStoreCredit |  `undefined` &#124; `true` &#124; `false`|  If true, check whether payment data is required with store credit applied; otherwise, check without store credit. |
+| `Optional` useStoreCredit |  `undefined` &#124; `false` &#124; `true`|  If true, check whether payment data is required with store credit applied; otherwise, check without store credit. |
 
 **Returns:** `boolean`
 True if payment data is required, otherwise false.

@@ -29,7 +29,7 @@
 
 ### `<Optional>` cardCode
 
-**● cardCode**: * `undefined` &#124; `true` &#124; `false`
+**● cardCode**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___
@@ -45,7 +45,7 @@ ___
 
 ### `<Optional>` enablePaypal
 
-**● enablePaypal**: * `undefined` &#124; `true` &#124; `false`
+**● enablePaypal**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___
@@ -61,7 +61,7 @@ ___
 
 ### `<Optional>` is3dsEnabled
 
-**● is3dsEnabled**: * `undefined` &#124; `true` &#124; `false`
+**● is3dsEnabled**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___
@@ -69,7 +69,7 @@ ___
 
 ### `<Optional>` isVisaCheckoutEnabled
 
-**● isVisaCheckoutEnabled**: * `undefined` &#124; `true` &#124; `false`
+**● isVisaCheckoutEnabled**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___
@@ -101,7 +101,7 @@ ___
 
 ### `<Optional>` testMode
 
-**● testMode**: * `undefined` &#124; `true` &#124; `false`
+**● testMode**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___

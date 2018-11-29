@@ -32,7 +32,7 @@ ___
 
 ### `<Optional>` useStoreCredit
 
-**● useStoreCredit**: * `undefined` &#124; `true` &#124; `false`
+**● useStoreCredit**: * `undefined` &#124; `false` &#124; `true`
 *
 
 If true, apply the store credit of the customer to the order. It only works if the customer has previously signed in.

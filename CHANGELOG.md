@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.15.0"></a>
+# [1.15.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.14.0...v1.15.0) (2018-11-29)
+
+
+### Bug Fixes
+
+* **checkout-button:** CHECKOUT-3747 Post form data to host URL ([c7f12e6](https://github.com/bigcommerce/checkout-sdk-js/commit/c7f12e6))
+* **checkout-button:** PAYMENTS-3071 Use the specified host for the paypal payment creation endpoint ([9d2590d](https://github.com/bigcommerce/checkout-sdk-js/commit/9d2590d))
+* **common:** CHECKOUT-3462 Bump `[@bigcommerce](https://github.com/bigcommerce)/data-store` version ([e3ac1c2](https://github.com/bigcommerce/checkout-sdk-js/commit/e3ac1c2))
+* **common:** CHECKOUT-3777 Upgrade dependencies that may have potential security vulnerabilities ([5faf8e5](https://github.com/bigcommerce/checkout-sdk-js/commit/5faf8e5))
+* **embedded-checkout:** CHECKOUT-3481 Allow cross-origin iframe to invoke payment request API ([ed18528](https://github.com/bigcommerce/checkout-sdk-js/commit/ed18528))
+* **payment:** INT-1080 Round totalPrice to 2 decimals ([44e5cbb](https://github.com/bigcommerce/checkout-sdk-js/commit/44e5cbb))
+* **payment:** INT-1119 Modify approach in Checkout Button Strategies to consume unique ids ([1a5e955](https://github.com/bigcommerce/checkout-sdk-js/commit/1a5e955))
+
+
+### Features
+
+* **checkout:** INT-1073 Populate shipping info from Masterpass on Stripe ([9a3c561](https://github.com/bigcommerce/checkout-sdk-js/commit/9a3c561))
+* **common:** CHECKOUT-2934 Return unified RequestError object ([cae7d23](https://github.com/bigcommerce/checkout-sdk-js/commit/cae7d23))
+* **common:** CHECKOUT-3462 Add `cacheAction` decorator for caching asynchronous actions ([f2927fc](https://github.com/bigcommerce/checkout-sdk-js/commit/f2927fc))
+* **embedded-checkout:** CHECKOUT-3677 Notify parent frame when customer signs out ([278be01](https://github.com/bigcommerce/checkout-sdk-js/commit/278be01))
+* **embedded-checkout:** CHECKOUT-3703 Notify client if unable to sign in shopper using token ([f87f2d6](https://github.com/bigcommerce/checkout-sdk-js/commit/f87f2d6))
+* **embedded-checkout:** CHECKOUT-3706 Switch to different height calculation method if `contentId` is provided. ([6fbc88e](https://github.com/bigcommerce/checkout-sdk-js/commit/6fbc88e))
+* **payment:** CHECKOUT-3481 Opt into redirect flow for PayPal Express ([3406112](https://github.com/bigcommerce/checkout-sdk-js/commit/3406112))
+* **payment:** INT-1092 Update map variables of Braintree in GooglePay ([a38edee](https://github.com/bigcommerce/checkout-sdk-js/commit/a38edee))
+* **payment:** PAYMENTS-3663 enable default instrument property ([9a14c2c](https://github.com/bigcommerce/checkout-sdk-js/commit/9a14c2c))
+
+
+### Performance Improvements
+
+* **checkout-button:** CHECKOUT-3462 Allow checkout buttons with different container ID to initialize in parallel ([4be6a94](https://github.com/bigcommerce/checkout-sdk-js/commit/4be6a94))
+* **common:** CHECKOUT-3462 Apply `cacheAction` decorator to certain actions ([3920168](https://github.com/bigcommerce/checkout-sdk-js/commit/3920168))
+
+
+
 <a name="1.14.0"></a>
 # [1.14.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.13.0...v1.14.0) (2018-11-04)
 

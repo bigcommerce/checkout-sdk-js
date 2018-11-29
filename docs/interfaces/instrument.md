@@ -12,6 +12,7 @@
 
 * [bigpayToken](instrument.md#bigpaytoken)
 * [brand](instrument.md#brand)
+* [defaultInstrument](instrument.md#defaultinstrument)
 * [expiryMonth](instrument.md#expirymonth)
 * [expiryYear](instrument.md#expiryyear)
 * [iin](instrument.md#iin)
@@ -35,6 +36,13 @@ ___
 ###  brand
 
 **● brand**: *`string`*
+
+___
+<a id="defaultinstrument"></a>
+
+###  defaultInstrument
+
+**● defaultInstrument**: *`boolean`*
 
 ___
 <a id="expirymonth"></a>

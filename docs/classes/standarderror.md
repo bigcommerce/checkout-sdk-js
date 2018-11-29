@@ -16,11 +16,11 @@
 
 ### Properties
 
-* [type](standarderror.md#type)
-* [Error](standarderror.md#error)
 * [message](standarderror.md#message)
 * [name](standarderror.md#name)
 * [stack](standarderror.md#stack)
+* [type](standarderror.md#type)
+* [Error](standarderror.md#error)
 
 ---
 
@@ -44,6 +44,28 @@ ___
 
 ## Properties
 
+<a id="message"></a>
+
+###  message
+
+**● message**: *`string`*
+
+___
+<a id="name"></a>
+
+###  name
+
+**● name**: *`string`*
+
+___
+<a id="stack"></a>
+
+### `<Optional>` stack
+
+**● stack**: * `undefined` &#124; `string`
+*
+
+___
 <a id="type"></a>
 
 ###  type
@@ -56,28 +78,6 @@ ___
 ### `<Static>` Error
 
 **● Error**: *`ErrorConstructor`*
-
-___
-<a id="message"></a>
-
-### `<Static>` message
-
-**● message**: *`string`*
-
-___
-<a id="name"></a>
-
-### `<Static>` name
-
-**● name**: *`string`*
-
-___
-<a id="stack"></a>
-
-### `<Static>``<Optional>` stack
-
-**● stack**: * `undefined` &#124; `string`
-*
 
 ___
 

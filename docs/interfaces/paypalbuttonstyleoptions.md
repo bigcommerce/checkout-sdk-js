@@ -34,7 +34,7 @@ ___
 
 ### `<Optional>` fundingicons
 
-**● fundingicons**: * `undefined` &#124; `true` &#124; `false`
+**● fundingicons**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___
@@ -74,7 +74,7 @@ ___
 
 ### `<Optional>` tagline
 
-**● tagline**: * `undefined` &#124; `true` &#124; `false`
+**● tagline**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___

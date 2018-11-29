@@ -21,6 +21,7 @@
 * [onFrameError](embeddedcheckoutoptions.md#onframeerror)
 * [onFrameLoad](embeddedcheckoutoptions.md#onframeload)
 * [onLoad](embeddedcheckoutoptions.md#onload)
+* [onSignOut](embeddedcheckoutoptions.md#onsignout)
 
 ---
 
@@ -121,6 +122,21 @@ ___
 | Param | Type |
 | ------ | ------ |
 | event | [EmbeddedCheckoutLoadedEvent](embeddedcheckoutloadedevent.md) |
+
+**Returns:** `void`
+
+___
+<a id="onsignout"></a>
+
+### `<Optional>` onSignOut
+
+▸ **onSignOut**(event: *[EmbeddedCheckoutSignedOutEvent](embeddedcheckoutsignedoutevent.md)*): `void`
+
+**Parameters:**
+
+| Param | Type |
+| ------ | ------ |
+| event | [EmbeddedCheckoutSignedOutEvent](embeddedcheckoutsignedoutevent.md) |
 
 **Returns:** `void`
 
