@@ -12,6 +12,7 @@ import createCheckoutButtonRegistry from './create-checkout-button-registry';
 /**
  * Creates an instance of `CheckoutButtonInitializer`.
  *
+ * @remarks
  * ```js
  * const initializer = createCheckoutButtonInitializer();
  *
@@ -23,11 +24,11 @@ import createCheckoutButtonRegistry from './create-checkout-button-registry';
  * });
  * ```
  *
+ * @alpha
  * Please note that `CheckoutButtonInitializer` is currently in an early stage
  * of development. Therefore the API is unstable and not ready for public
  * consumption.
  *
- * @alpha
  * @param options - A set of construction options.
  * @returns an instance of `CheckoutButtonInitializer`.
  */

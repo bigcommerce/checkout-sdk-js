@@ -6,6 +6,7 @@ import LanguageService from './language-service';
 /**
  * Creates an instance of `LanguageService`.
  *
+ * @remarks
  * ```js
  * const language = {{{langJson 'optimized_checkout'}}}; // `langJson` is a Handlebars helper provided by BigCommerce's Stencil template engine.
  * const service = createLanguageService(language);

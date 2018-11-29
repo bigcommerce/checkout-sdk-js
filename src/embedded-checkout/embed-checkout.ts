@@ -14,6 +14,7 @@ import ResizableIframeCreator from './resizable-iframe-creator';
 /**
  * Embed the checkout form in an iframe.
  *
+ * @remarks
  * Once the iframe is embedded, it will automatically resize according to the
  * size of the checkout form. It will also notify the parent window when certain
  * events have occurred. i.e.: when the form is loaded and ready to be used.
@@ -25,10 +26,10 @@ import ResizableIframeCreator from './resizable-iframe-creator';
  * });
  * ```
  *
+ * @alpha
  * Please note that this feature is currently in an early stage of development.
  * Therefore the API is unstable and not ready for public consumption.
  *
- * @alpha
  * @param options - Options for embedding the checkout form.
  * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
  */

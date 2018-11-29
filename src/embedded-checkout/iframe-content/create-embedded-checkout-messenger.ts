@@ -12,6 +12,7 @@ import NoopEmbeddedCheckoutMessenger from './noop-embedded-checkout-messenger';
 /**
  * Create an instance of `EmbeddedCheckoutMessenger`.
  *
+ * @remarks
  * The object is responsible for posting messages to the parent window from the
  * iframe when certain events have occurred. For example, when the checkout
  * form is first loaded, you should notify the parent window about it.
@@ -26,10 +27,10 @@ import NoopEmbeddedCheckoutMessenger from './noop-embedded-checkout-messenger';
  * messenger.postFrameLoaded();
  * ```
  *
+ * @alpha
  * Please note that this feature is currently in an early stage of development.
  * Therefore the API is unstable and not ready for public consumption.
  *
- * @alpha
  * @param options - Options for creating `EmbeddedCheckoutMessenger`
  * @returns - An instance of `EmbeddedCheckoutMessenger`
  */
