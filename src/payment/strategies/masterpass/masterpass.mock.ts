@@ -5,3 +5,7 @@ export function getMasterpassScriptMock(): Masterpass {
         checkout: jest.fn(),
     };
 }
+
+export function getCallbackUrlMock(): string {
+    return 'http://localhost/checkout.php?action=set_external_checkout&provider=masterpass&gateway=stripe&origin=checkout';
+}

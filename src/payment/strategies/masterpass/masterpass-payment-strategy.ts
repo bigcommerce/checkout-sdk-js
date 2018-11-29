@@ -11,7 +11,7 @@ import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentMethod from '../../payment-method';
 
-import { Masterpass, MasterpassCheckoutOptions } from './masterpass';
+import { getCallbackUrl, Masterpass, MasterpassCheckoutOptions } from './masterpass';
 import MasterpassScriptLoader from './masterpass-script-loader';
 
 export default class MasterpassPaymentStrategy extends PaymentStrategy {
@@ -120,6 +120,7 @@ export default class MasterpassPaymentStrategy extends PaymentStrategy {
             currency: storeConfig.currency.code,
             cartId: checkout.cart.id,
             suppressShippingAddress: false,
+            callbackUrl: getCallbackUrl('checkout'),
         };
     }
 

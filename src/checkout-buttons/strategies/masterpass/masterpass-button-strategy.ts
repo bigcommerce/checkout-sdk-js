@@ -8,7 +8,12 @@ import {
     NotInitializedErrorType
 } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
-import { Masterpass, MasterpassCheckoutOptions, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
+import {
+    getCallbackUrl,
+    Masterpass,
+    MasterpassCheckoutOptions,
+    MasterpassScriptLoader
+} from '../../../payment/strategies/masterpass';
 
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -108,6 +113,7 @@ export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
             currency: checkout.cart.currency.code,
             cartId: checkout.cart.id,
             suppressShippingAddress: false,
+            callbackUrl: getCallbackUrl('cart'),
         };
     }
 

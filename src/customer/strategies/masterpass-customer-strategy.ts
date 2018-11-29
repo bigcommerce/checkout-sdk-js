@@ -6,7 +6,7 @@ import {
     NotImplementedError
 } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { MasterpassScriptLoader } from '../../payment/strategies/masterpass';
+import { getCallbackUrl, MasterpassScriptLoader } from '../../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import CustomerCredentials from '../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
@@ -55,6 +55,7 @@ export default class MasterpassCustomerStrategy extends CustomerStrategy {
                     currency: cart.currency.code,
                     cartId: cart.id,
                     suppressShippingAddress: false,
+                    callbackUrl: getCallbackUrl('checkout'),
                 };
 
                 return this._masterpassScriptLoader.load(this._paymentMethod.config.testMode)
