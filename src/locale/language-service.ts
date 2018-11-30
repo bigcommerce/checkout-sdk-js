@@ -1,4 +1,3 @@
-/// <reference path="./messageformat.d.ts" />
 import { isObject, union } from 'lodash';
 import * as MessageFormat from 'messageformat';
 

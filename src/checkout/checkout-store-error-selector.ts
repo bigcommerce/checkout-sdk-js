@@ -67,6 +67,7 @@ export default class CheckoutStoreErrorSelector {
      * otherwise undefined.
      */
     getError(): Error | undefined {
+        // tslint:disable-next-line:cyclomatic-complexity
         return this.getLoadCheckoutError() ||
             this.getSubmitOrderError() ||
             this.getFinalizeOrderError() ||

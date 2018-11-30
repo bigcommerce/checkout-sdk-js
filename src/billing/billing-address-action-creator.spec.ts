@@ -109,6 +109,7 @@ describe('BillingAddressActionCreator', () => {
                 actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
                     .catch((action: UpdateBillingAddressAction) => {
                         errorHandler();
+
                         return Observable.of(action);
                     })
                     .toArray()
@@ -164,6 +165,7 @@ describe('BillingAddressActionCreator', () => {
                 actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
                     .catch((action: BillingAddressAction) => {
                         errorHandler();
+
                         return Observable.of(action);
                     })
                     .toArray()
@@ -240,6 +242,7 @@ describe('BillingAddressActionCreator', () => {
                 actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
                     .catch((action: UpdateBillingAddressAction) => {
                         errorHandler();
+
                         return Observable.of(action);
                     })
                     .toArray()
@@ -293,6 +296,7 @@ describe('BillingAddressActionCreator', () => {
                 actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
                     .catch((action: UpdateBillingAddressAction) => {
                         errorHandler();
+
                         return Observable.of(action);
                     })
                     .toArray()

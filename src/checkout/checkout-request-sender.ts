@@ -3,7 +3,7 @@ import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { ContentType, RequestOptions } from '../common/http-request';
 
 import Checkout, { CheckoutRequestBody } from './checkout';
-import CheckoutDefaultIncludes from './checkout-default-includes';
+import CHECKOUT_DEFAULT_INCLUDES from './checkout-default-includes';
 import CheckoutParams from './checkout-params';
 
 export default class CheckoutRequestSender {
@@ -17,7 +17,7 @@ export default class CheckoutRequestSender {
 
         return this._requestSender.get(url, {
             params: {
-                include: CheckoutDefaultIncludes.concat(params && params.include || []).join(','),
+                include: CHECKOUT_DEFAULT_INCLUDES.concat(params && params.include || []).join(','),
             },
             headers,
             timeout,
@@ -30,7 +30,7 @@ export default class CheckoutRequestSender {
 
         return this._requestSender.put(url, {
             params: {
-                include: CheckoutDefaultIncludes.concat(params && params.include || []).join(','),
+                include: CHECKOUT_DEFAULT_INCLUDES.concat(params && params.include || []).join(','),
             },
             body,
             headers,

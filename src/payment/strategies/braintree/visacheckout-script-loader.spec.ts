@@ -22,6 +22,7 @@ describe('VisaCheckoutScriptLoader', () => {
             visaCheckoutSDKMock = getVisaCheckoutSDKMock();
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.V = visaCheckoutSDKMock;
+
                 return Promise.resolve();
             });
         });

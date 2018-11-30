@@ -1,3 +1,4 @@
+// tslint:disable-next-line:no-reference
 /// <reference path="../payment/bigpay-client.d.ts" />
 import { createClient as createBigpayClient } from '@bigcommerce/bigpay-client';
 
