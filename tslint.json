@@ -7,7 +7,6 @@
         "no-reference": false,
         "no-shadowed-variable": false,
         "no-unnecessary-type-assertion": true,
-        "no-unused-variable": true,
         "object-literal-sort-keys": false
     }
 }
