@@ -6,7 +6,6 @@
         "no-non-null-assertion": true,
         "no-reference": false,
         "no-shadowed-variable": false,
-        "no-unnecessary-type-assertion": true,
         "object-literal-sort-keys": false
     }
 }
