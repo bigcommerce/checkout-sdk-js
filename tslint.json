@@ -3,7 +3,6 @@
     "rules": {
         "max-line-length": false,
         "no-empty": false,
-        "no-non-null-assertion": true,
         "no-reference": false,
         "no-shadowed-variable": false,
         "object-literal-sort-keys": false
