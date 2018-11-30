@@ -1,4 +1,4 @@
-const DEFAULT_INCLUDES = [
+const CHECKOUT_DEFAULT_INCLUDES = [
     'cart.lineItems.physicalItems.options',
     'cart.lineItems.digitalItems.options',
     'customer',
@@ -6,4 +6,4 @@ const DEFAULT_INCLUDES = [
     'promotions.banners',
 ];
 
-export default DEFAULT_INCLUDES;
+export default CHECKOUT_DEFAULT_INCLUDES;

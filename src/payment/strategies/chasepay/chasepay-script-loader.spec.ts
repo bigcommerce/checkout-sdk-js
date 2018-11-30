@@ -23,6 +23,7 @@ describe('ChasePayScriptLoader', () => {
 
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.JPMC = chasePayScript;
+
                 return Promise.resolve();
             });
         });

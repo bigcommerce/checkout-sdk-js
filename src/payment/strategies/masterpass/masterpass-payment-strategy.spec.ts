@@ -98,6 +98,7 @@ describe('MasterpassPaymentStragegy', () => {
         it('throws an exception if masterpass options is not passed', () => {
             initOptions.masterpass = undefined;
             const error = 'Unable to initialize payment because "options.masterpass" argument is not provided.';
+
             return expect(strategy.initialize(initOptions)).rejects.toThrow(error);
         });
 

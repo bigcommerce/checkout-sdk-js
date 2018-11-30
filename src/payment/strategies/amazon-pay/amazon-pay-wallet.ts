@@ -1,5 +1,5 @@
-import OrderReference from './amazon-pay-order-reference';
-import WidgetError from './amazon-pay-widget-error';
+import AmazonPayOrderReference from './amazon-pay-order-reference';
+import AmazonPayWidgetError from './amazon-pay-widget-error';
 
 export default interface AmazonPayWallet {
     bind(container: string): void;
@@ -16,7 +16,7 @@ export interface AmazonPayWalletOptions {
     scope: string;
     sellerId: string;
     amazonOrderReferenceId?: string;
-    onError(error: WidgetError): void;
-    onReady(orderReference: OrderReference): void;
-    onPaymentSelect(orderReference: OrderReference): void;
+    onError(error: AmazonPayWidgetError): void;
+    onReady(orderReference: AmazonPayOrderReference): void;
+    onPaymentSelect(orderReference: AmazonPayOrderReference): void;
 }

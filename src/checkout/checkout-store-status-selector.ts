@@ -66,6 +66,7 @@ export default class CheckoutStoreStatusSelector {
      * @returns True if there is a pending action, otherwise false.
      */
     isPending(): boolean {
+        // tslint:disable-next-line:cyclomatic-complexity
         return this.isLoadingCheckout() ||
             this.isSubmittingOrder() ||
             this.isFinalizingOrder() ||

@@ -24,6 +24,7 @@ describe('GooglePayScriptLoader', () => {
             googlePaySDKMock = getGooglePaySDKMock();
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.google = googlePaySDKMock;
+
                 return Promise.resolve();
             });
         });
@@ -41,6 +42,7 @@ describe('GooglePayScriptLoader', () => {
         it('throws an error when window is not set', async () => {
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.google = undefined;
+
                 return Promise.resolve();
             });
 

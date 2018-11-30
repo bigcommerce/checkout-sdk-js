@@ -42,6 +42,7 @@ export default class RequestErrorFactory {
 
         if (this._isInternalErrorResponseBody(response.body)) {
             const internalType = last(response.body.type.split('/'));
+
             return internalType && this._factoryMethods[internalType] ?
                 internalType :
                 'internal';

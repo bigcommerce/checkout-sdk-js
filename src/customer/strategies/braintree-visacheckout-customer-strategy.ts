@@ -157,6 +157,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy extends CustomerStrat
         visaCheckoutButton.innerHTML = buttonTemplate;
 
         container.appendChild(visaCheckoutButton);
+
         return visaCheckoutButton;
     }
 }
