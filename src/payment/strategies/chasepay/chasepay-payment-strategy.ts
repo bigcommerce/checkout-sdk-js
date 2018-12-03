@@ -1,5 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
@@ -154,7 +155,8 @@ export default class ChasePayPaymentStrategy extends PaymentStrategy {
 
             // Wait for payment selection
             return new Promise((resolve, reject) => {
-                this._walletEvent$.take(1)
+                this._walletEvent$
+                    .pipe(take(1))
                     .subscribe((event: { type: ChasePayEventType }) => {
                         if (event.type === ChasePayEventType.CancelCheckout) {
                             reject(new PaymentMethodCancelledError());

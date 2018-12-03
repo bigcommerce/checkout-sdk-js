@@ -1,4 +1,5 @@
-import createRequestSender from '../../node_modules/@bigcommerce/request-sender/lib/create-request-sender';
+import { createRequestSender } from '@bigcommerce/request-sender';
+
 import createCheckoutStore from '../checkout/create-checkout-store';
 import Registry from '../common/registry/registry';
 

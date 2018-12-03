@@ -1,5 +1,6 @@
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -26,7 +27,7 @@ describe('RemoteCheckoutActionCreator', () => {
             .mockReturnValue(Promise.resolve(response));
 
         const actions = await actionCreator.initializeBilling('amazon', params, options)
-            .toArray()
+            .pipe(toArray())
             .toPromise();
 
         expect(requestSender.initializeBilling).toHaveBeenCalledWith('amazon', params, options);
@@ -38,14 +39,16 @@ describe('RemoteCheckoutActionCreator', () => {
 
     it('emits error action if unable to initialize billing', async () => {
         const response = getErrorResponse();
-        const errorHandler = jest.fn(action => Observable.of(action));
+        const errorHandler = jest.fn(action => of(action));
 
         jest.spyOn(requestSender, 'initializeBilling')
             .mockReturnValue(Promise.reject(response));
 
-        const actions = await Observable.from(actionCreator.initializeBilling('amazon'))
-            .catch(errorHandler)
-            .toArray()
+        const actions = await from(actionCreator.initializeBilling('amazon'))
+            .pipe(
+                catchError(errorHandler),
+                toArray()
+            )
             .toPromise();
 
         expect(errorHandler).toHaveBeenCalled();
@@ -64,7 +67,7 @@ describe('RemoteCheckoutActionCreator', () => {
             .mockReturnValue(Promise.resolve(response));
 
         const actions = await actionCreator.initializeShipping('amazon', params, options)
-            .toArray()
+            .pipe(toArray())
             .toPromise();
 
         expect(requestSender.initializeShipping).toHaveBeenCalledWith('amazon', params, options);
@@ -76,14 +79,16 @@ describe('RemoteCheckoutActionCreator', () => {
 
     it('emits error action if unable to initialize shipping', async () => {
         const response = getErrorResponse();
-        const errorHandler = jest.fn(action => Observable.of(action));
+        const errorHandler = jest.fn(action => of(action));
 
         jest.spyOn(requestSender, 'initializeShipping')
             .mockReturnValue(Promise.reject(response));
 
         const actions = await actionCreator.initializeShipping('amazon')
-            .catch(errorHandler)
-            .toArray()
+            .pipe(
+                catchError(errorHandler),
+                toArray()
+            )
             .toPromise();
 
         expect(actions).toEqual([
@@ -101,7 +106,7 @@ describe('RemoteCheckoutActionCreator', () => {
             .mockReturnValue(Promise.resolve(response));
 
         const actions = await actionCreator.initializePayment('amazon', params, options)
-            .toArray()
+            .pipe(toArray())
             .toPromise();
 
         expect(requestSender.initializePayment).toHaveBeenCalledWith('amazon', params, options);
@@ -113,14 +118,16 @@ describe('RemoteCheckoutActionCreator', () => {
 
     it('emits error action if unable to initialize payment', async () => {
         const response = getErrorResponse();
-        const errorHandler = jest.fn(action => Observable.of(action));
+        const errorHandler = jest.fn(action => of(action));
 
         jest.spyOn(requestSender, 'initializePayment')
             .mockReturnValue(Promise.reject(response));
 
         const actions = await actionCreator.initializePayment('amazon')
-            .catch(errorHandler)
-            .toArray()
+            .pipe(
+                catchError(errorHandler),
+                toArray()
+            )
             .toPromise();
 
         expect(errorHandler).toHaveBeenCalled();
@@ -138,7 +145,7 @@ describe('RemoteCheckoutActionCreator', () => {
             .mockReturnValue(Promise.resolve(response));
 
         const actions = await actionCreator.signOut('amazon', options)
-            .toArray()
+            .pipe(toArray())
             .toPromise();
 
         expect(requestSender.signOut).toHaveBeenCalledWith('amazon', options);
@@ -150,14 +157,16 @@ describe('RemoteCheckoutActionCreator', () => {
 
     it('emits error action if unable to sign out', async () => {
         const response = getErrorResponse();
-        const errorHandler = jest.fn(action => Observable.of(action));
+        const errorHandler = jest.fn(action => of(action));
 
         jest.spyOn(requestSender, 'signOut')
             .mockReturnValue(Promise.reject(response));
 
         const actions = await actionCreator.signOut('amazon')
-            .catch(errorHandler)
-            .toArray()
+            .pipe(
+                catchError(errorHandler),
+                toArray()
+            )
             .toPromise();
 
         expect(errorHandler).toHaveBeenCalled();

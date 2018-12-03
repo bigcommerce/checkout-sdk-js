@@ -1,5 +1,5 @@
 import { createAction, createDataStore } from '@bigcommerce/data-store';
-import { defer } from 'rxjs/observable/defer';
+import { defer } from 'rxjs';
 
 import cacheAction from './cache-action';
 

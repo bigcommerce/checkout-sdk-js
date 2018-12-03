@@ -2,7 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 import { createCustomerStrategyRegistry, CustomerInitializeOptions, CustomerStrategyActionCreator } from '..';
 import { getBillingAddress } from '../../billing/billing-addresses.mock';
@@ -187,7 +187,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             });
 
             it('triggers a widgetInteraction action', async () => {
-                const widgetInteractionAction = Observable.of(createAction(CustomerStrategyActionType.WidgetInteractionStarted));
+                const widgetInteractionAction = of(createAction(CustomerStrategyActionType.WidgetInteractionStarted));
                 jest.spyOn(customerStrategyActionCreator, 'widgetInteraction').mockImplementation(() => widgetInteractionAction);
 
                 await strategy.initialize(visaCheckoutOptions);

@@ -1,5 +1,6 @@
 import { createRequestSender, RequestSender, Response } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { merge, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -31,7 +32,7 @@ describe('ConfigActionCreator', () => {
     describe('#loadConfig()', () => {
         it('emits actions if able to load config', async () => {
             const actions = await configActionCreator.loadConfig()
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -43,10 +44,12 @@ describe('ConfigActionCreator', () => {
         it('emits error actions if unable to load config', async () => {
             jest.spyOn(configRequestSender, 'loadConfig').mockReturnValue(Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
             const actions = await configActionCreator.loadConfig()
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -57,11 +60,11 @@ describe('ConfigActionCreator', () => {
         });
 
         it('dispatches actions using cached responses if available', async () => {
-            const actions = await Observable.merge(
+            const actions = await merge(
                 configActionCreator.loadConfig({ useCache: true }),
                 configActionCreator.loadConfig({ useCache: true })
             )
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([

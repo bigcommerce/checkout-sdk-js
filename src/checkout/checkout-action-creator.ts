@@ -1,10 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat } from 'rxjs/observable/concat';
-import { defer } from 'rxjs/observable/defer';
-import { merge } from 'rxjs/observable/merge';
-import { of } from 'rxjs/observable/of';
+import { concat, defer, merge, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
 
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType, StandardError } from '../common/error/errors';

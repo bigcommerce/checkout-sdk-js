@@ -1,6 +1,8 @@
+
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { concat, from, of, throwError } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
@@ -48,7 +50,7 @@ describe('CheckoutActionCreator', () => {
         it('emits action to notify loading progress', async () => {
             const { id } = getCheckout();
             const actions = await actionCreator.loadCheckout(id)
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(id, undefined);
@@ -66,11 +68,13 @@ describe('CheckoutActionCreator', () => {
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
             const { id } = getCheckout();
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            const actions =  await actionCreator.loadCheckout(id)
-                .catch(errorHandler)
-                .toArray()
+            const actions = await actionCreator.loadCheckout(id)
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -86,15 +90,17 @@ describe('CheckoutActionCreator', () => {
             const errorResponse = getErrorResponse();
 
             jest.spyOn(configActionCreator, 'loadConfig')
-                .mockReturnValue(Observable.concat(
-                    Observable.of(createAction(ConfigActionType.LoadConfigRequested)),
-                    Observable.throw(createErrorAction(ConfigActionType.LoadConfigFailed, errorResponse))
+                .mockReturnValue(concat(
+                    of(createAction(ConfigActionType.LoadConfigRequested)),
+                    throwError(createErrorAction(ConfigActionType.LoadConfigFailed, errorResponse))
                 ));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
             const actions = await actionCreator.loadCheckout('b20deef40f9699e48671bbc3fef6ca44dc80e3c7')
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -122,8 +128,8 @@ describe('CheckoutActionCreator', () => {
 
     describe('#loadDefaultCheckout', () => {
         it('emits action to notify loading progress', async () => {
-            const actions = await Observable.from(actionCreator.loadDefaultCheckout()(store))
-                .toArray()
+            const actions = await from(actionCreator.loadDefaultCheckout()(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -141,11 +147,13 @@ describe('CheckoutActionCreator', () => {
             jest.spyOn(checkoutRequestSender, 'loadCheckout')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            const actions =  await Observable.from(actionCreator.loadDefaultCheckout()(store))
-                .catch(errorHandler)
-                .toArray()
+            const actions = await from(actionCreator.loadDefaultCheckout()(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -161,14 +169,14 @@ describe('CheckoutActionCreator', () => {
             jest.spyOn(configActionCreator, 'loadConfig')
                 .mockReturnValue(new Promise(() => {}));
 
-            Observable.from(actionCreator.loadDefaultCheckout()(store)).toPromise();
+            from(actionCreator.loadDefaultCheckout()(store)).toPromise();
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
             expect(checkoutRequestSender.loadCheckout).not.toHaveBeenCalled();
         });
 
         it('calls loadCheckout after loadConfig with the default checkout ID', async () => {
-            await Observable.from(actionCreator.loadDefaultCheckout()(store)).toPromise();
+            await from(actionCreator.loadDefaultCheckout()(store)).toPromise();
 
             expect(configActionCreator.loadConfig).toHaveBeenCalled();
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(
@@ -179,8 +187,8 @@ describe('CheckoutActionCreator', () => {
 
     describe('#updateCheckout', () => {
         it('calls checkout request sender', async () => {
-            await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
-                .toArray()
+            await from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(checkoutRequestSender.updateCheckout)
@@ -192,8 +200,8 @@ describe('CheckoutActionCreator', () => {
         });
 
         it('emits action to notify updating progress', async () => {
-            const actions = await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
-                .toArray()
+            const actions = await from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -206,11 +214,13 @@ describe('CheckoutActionCreator', () => {
             jest.spyOn(checkoutRequestSender, 'updateCheckout')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            const actions = await Observable.from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
-                .catch(errorHandler)
-                .toArray()
+            const actions = await from(actionCreator.updateCheckout({ customerMessage: 'foo' })(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -223,7 +233,7 @@ describe('CheckoutActionCreator', () => {
 
     describe('#loadCurrentCheckout()', () => {
         it('loads checkout by using existing id', async () => {
-            await Observable.from(actionCreator.loadCurrentCheckout()(store))
+            await from(actionCreator.loadCurrentCheckout()(store))
                 .toPromise();
 
             expect(checkoutRequestSender.loadCheckout)
@@ -234,7 +244,7 @@ describe('CheckoutActionCreator', () => {
             store = createCheckoutStore();
 
             try {
-                await Observable.from(actionCreator.loadCurrentCheckout()(store))
+                await from(actionCreator.loadCurrentCheckout()(store))
                     .toPromise();
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
@@ -254,7 +264,7 @@ describe('CheckoutActionCreator', () => {
 
     describe('#loadDefaultCheckout()', () => {
         it('loads checkout by using existing id', async () => {
-            await Observable.from(actionCreator.loadDefaultCheckout()(store))
+            await from(actionCreator.loadDefaultCheckout()(store))
                 .toPromise();
 
             expect(checkoutRequestSender.loadCheckout)
@@ -265,7 +275,7 @@ describe('CheckoutActionCreator', () => {
             store = createCheckoutStore();
 
             try {
-                await Observable.from(actionCreator.loadDefaultCheckout()(store))
+                await from(actionCreator.loadDefaultCheckout()(store))
                     .toPromise();
             } catch ({ payload }) {
                 expect(payload).toBeInstanceOf(StandardError);

@@ -1,5 +1,6 @@
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { merge, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { ErrorResponseBody } from '../common/error';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
@@ -44,7 +45,7 @@ describe('PaymentMethodActionCreator', () => {
 
         it('emits actions if able to load payment methods', async () => {
             const actions = await paymentMethodActionCreator.loadPaymentMethods()
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -64,10 +65,12 @@ describe('PaymentMethodActionCreator', () => {
             jest.spyOn(paymentMethodRequestSender, 'loadPaymentMethods')
                 .mockReturnValue(Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
             const actions = await paymentMethodActionCreator.loadPaymentMethods()
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -99,7 +102,7 @@ describe('PaymentMethodActionCreator', () => {
         it('emits actions if able to load payment method', async () => {
             const methodId = 'braintree';
             const actions = await paymentMethodActionCreator.loadPaymentMethod(methodId)
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -111,11 +114,11 @@ describe('PaymentMethodActionCreator', () => {
         it('emits actions with cached values if available', async () => {
             const methodId = 'braintree';
             const options = { useCache: true };
-            const actions = await Observable.merge(
+            const actions = await merge(
                 paymentMethodActionCreator.loadPaymentMethod(methodId, options),
                 paymentMethodActionCreator.loadPaymentMethod(methodId, options)
             )
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(paymentMethodRequestSender.loadPaymentMethod).toHaveBeenCalledTimes(1);
@@ -132,10 +135,12 @@ describe('PaymentMethodActionCreator', () => {
                 .mockReturnValue(Promise.reject(errorResponse));
 
             const methodId = 'braintree';
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
             const actions = await paymentMethodActionCreator.loadPaymentMethod(methodId)
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();

@@ -1,7 +1,7 @@
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import {
     createPaymentClient,
@@ -197,7 +197,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
             });
 
             it('triggers a widgetInteraction action', async () => {
-                const widgetInteractionAction = Observable.of(createAction(PaymentStrategyActionType.WidgetInteractionStarted));
+                const widgetInteractionAction = of(createAction(PaymentStrategyActionType.WidgetInteractionStarted));
                 jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction').mockImplementation(() => widgetInteractionAction);
 
                 await strategy.initialize(visaCheckoutOptions);
@@ -248,8 +248,8 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
 
         beforeEach(() => {
             orderRequestBody = getOrderRequestBody();
-            submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-            submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
+            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+            submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
             paymentMethodMock.initializationData = { nonce: 'payment-nonce-for-visacheckout' };
 
             visaCheckoutOptions = { methodId: 'braintreevisacheckout', braintreevisacheckout: {} };

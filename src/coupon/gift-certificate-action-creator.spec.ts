@@ -1,5 +1,6 @@
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckout, getCheckoutStoreState, getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
@@ -38,8 +39,8 @@ describe('GiftCertificateActionCreator', () => {
 
         it('emits actions if able to apply giftCertificate', async () => {
             const giftCertificate = 'myGiftCertificate1234';
-            const actions = await Observable.from(giftCertificateActionCreator.applyGiftCertificate(giftCertificate)(store))
-                .toArray()
+            const actions = await from(giftCertificateActionCreator.applyGiftCertificate(giftCertificate)(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -53,10 +54,12 @@ describe('GiftCertificateActionCreator', () => {
                 .mockReturnValue(Promise.reject(errorResponse));
 
             const giftCertificate = 'myGiftCertificate1234';
-            const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(giftCertificateActionCreator.applyGiftCertificate(giftCertificate)(store))
-                .catch(errorHandler)
-                .toArray()
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(giftCertificateActionCreator.applyGiftCertificate(giftCertificate)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -79,8 +82,8 @@ describe('GiftCertificateActionCreator', () => {
 
         it('emits actions if able to remove giftCertificate', async () => {
             const giftCertificate = 'myGiftCertificate1234';
-            const actions = await Observable.from(giftCertificateActionCreator.removeGiftCertificate(giftCertificate)(store))
-                .toArray()
+            const actions = await from(giftCertificateActionCreator.removeGiftCertificate(giftCertificate)(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -94,10 +97,12 @@ describe('GiftCertificateActionCreator', () => {
                 .mockReturnValue(Promise.reject(errorResponse));
 
             const giftCertificate = 'myGiftCertificate1234';
-            const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(giftCertificateActionCreator.removeGiftCertificate(giftCertificate)(store))
-                .catch(errorHandler)
-                .toArray()
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(giftCertificateActionCreator.removeGiftCertificate(giftCertificate)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();

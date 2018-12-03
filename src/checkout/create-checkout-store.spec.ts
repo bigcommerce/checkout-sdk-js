@@ -1,5 +1,6 @@
+
 import { createErrorAction, DataStore } from '@bigcommerce/data-store';
-import { Observable } from 'rxjs';
+import { throwError } from 'rxjs';
 
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
@@ -14,7 +15,7 @@ describe('createCheckoutStore()', () => {
 
     it('creates `CheckoutStore` with action transformer', async () => {
         const store = createCheckoutStore();
-        const action$ = Observable.throw(createErrorAction('SUBMIT_ORDER_FAILED', getErrorResponse()));
+        const action$ = throwError(createErrorAction('SUBMIT_ORDER_FAILED', getErrorResponse()));
 
         try {
             await store.dispatch(action$);

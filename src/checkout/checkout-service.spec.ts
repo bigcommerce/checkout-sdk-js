@@ -1,7 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 import { map, merge } from 'lodash';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
@@ -573,7 +573,7 @@ describe('CheckoutService', () => {
     describe('#initializeCustomer()', () => {
         it('dispatches action to initialize customer', async () => {
             const options = { methodId: getPaymentMethod().id };
-            const action = Observable.of(createAction('INITIALIZE_CUSTOMER'));
+            const action = of(createAction('INITIALIZE_CUSTOMER'));
 
             jest.spyOn(customerStrategyActionCreator, 'initialize')
                 .mockReturnValue(action);
@@ -590,7 +590,7 @@ describe('CheckoutService', () => {
     describe('#deinitializeCustomer()', () => {
         it('dispatches action to deinitialize customer', async () => {
             const options = { methodId: getPaymentMethod().id };
-            const action = Observable.of(createAction('DEINITIALIZE_CUSTOMER'));
+            const action = of(createAction('DEINITIALIZE_CUSTOMER'));
 
             jest.spyOn(customerStrategyActionCreator, 'deinitialize')
                 .mockReturnValue(action);
@@ -606,7 +606,7 @@ describe('CheckoutService', () => {
 
     describe('#continueAsGuest()', () => {
         it('dispatches action to continue as guest', async () => {
-            const action = Observable.of(createAction('SIGN_IN_GUEST'));
+            const action = of(createAction('SIGN_IN_GUEST'));
 
             jest.spyOn(billingAddressActionCreator, 'continueAsGuest')
                 .mockReturnValue(action);
@@ -623,7 +623,7 @@ describe('CheckoutService', () => {
     describe('#signInCustomer()', () => {
         it('dispatches action to sign in customer', async () => {
             const options = { methodId: getPaymentMethod().id };
-            const action = Observable.of(createAction('SIGN_IN_CUSTOMER'));
+            const action = of(createAction('SIGN_IN_CUSTOMER'));
 
             jest.spyOn(customerStrategyActionCreator, 'signIn')
                 .mockReturnValue(action);
@@ -640,7 +640,7 @@ describe('CheckoutService', () => {
     describe('#signOutCustomer()', () => {
         it('dispatches action to sign out customer', async () => {
             const options = { methodId: getPaymentMethod().id };
-            const action = Observable.of(createAction('SIGN_OUT_CUSTOMER'));
+            const action = of(createAction('SIGN_OUT_CUSTOMER'));
 
             jest.spyOn(customerStrategyActionCreator, 'signOut')
                 .mockReturnValue(action);
@@ -666,7 +666,7 @@ describe('CheckoutService', () => {
     describe('#initializeShipping()', () => {
         it('dispatches action to initialize shipping', async () => {
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('INITIALIZE_SHIPPING'));
+            const action = of(createAction('INITIALIZE_SHIPPING'));
 
             jest.spyOn(shippingStrategyActionCreator, 'initialize')
                 .mockReturnValue(action);
@@ -683,7 +683,7 @@ describe('CheckoutService', () => {
     describe('#deinitializeShipping()', () => {
         it('dispatches action to deinitialize shipping', async () => {
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('DEINITIALIZE_SHIPPING'));
+            const action = of(createAction('DEINITIALIZE_SHIPPING'));
 
             jest.spyOn(shippingStrategyActionCreator, 'deinitialize')
                 .mockReturnValue(action);
@@ -700,7 +700,7 @@ describe('CheckoutService', () => {
     describe('#selectConsignmentShippingOption()', () => {
         it('dispatches action to update shipping option for a consignment', async () => {
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('UPDATE_CONSIGNMENT'));
+            const action = of(createAction('UPDATE_CONSIGNMENT'));
 
             jest.spyOn(consignmentActionCreator, 'updateShippingOption')
                 .mockReturnValue(action);
@@ -722,7 +722,7 @@ describe('CheckoutService', () => {
         it('dispatches action to update address for a consignment', async () => {
             const address = getShippingAddress();
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('UPDATE_CONSIGNMENT'));
+            const action = of(createAction('UPDATE_CONSIGNMENT'));
 
             jest.spyOn(consignmentActionCreator, 'updateConsignment')
                 .mockReturnValue(action);
@@ -749,7 +749,7 @@ describe('CheckoutService', () => {
         it('dispatches action to update consignment', async () => {
             const address = getShippingAddress();
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('bar'));
+            const action = of(createAction('bar'));
 
             jest.spyOn(consignmentActionCreator, 'assignItemsByAddress')
                 .mockReturnValue(action);
@@ -778,7 +778,7 @@ describe('CheckoutService', () => {
         it('dispatches action to update consignment', async () => {
             const address = getShippingAddress();
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('bar'));
+            const action = of(createAction('bar'));
 
             jest.spyOn(consignmentActionCreator, 'unassignItemsByAddress')
                 .mockReturnValue(action);
@@ -810,7 +810,7 @@ describe('CheckoutService', () => {
                 shippingAddress: getShippingAddress(),
             }];
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('CREATE_CONSIGNMENTS'));
+            const action = of(createAction('CREATE_CONSIGNMENTS'));
 
             jest.spyOn(consignmentActionCreator, 'createConsignments')
                 .mockReturnValue(action);
@@ -829,7 +829,7 @@ describe('CheckoutService', () => {
         it('dispatches action to update shipping address', async () => {
             const address = getShippingAddress();
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('UPDATE_SHIPPING_ADDRESS'));
+            const action = of(createAction('UPDATE_SHIPPING_ADDRESS'));
 
             jest.spyOn(shippingStrategyActionCreator, 'updateAddress')
                 .mockReturnValue(action);
@@ -847,7 +847,7 @@ describe('CheckoutService', () => {
         it('dispatches action to select shipping option', async () => {
             const shippingOptionId = 'shipping-option-id-456';
             const options = { timeout: createTimeout() };
-            const action = Observable.of(createAction('SELECT_SHIPPING_OPTION'));
+            const action = of(createAction('SELECT_SHIPPING_OPTION'));
 
             jest.spyOn(shippingStrategyActionCreator, 'selectOption')
                 .mockReturnValue(action);
@@ -918,7 +918,7 @@ describe('CheckoutService', () => {
 
     describe('#loadInstruments()', () => {
         it('loads instruments', async () => {
-            const action = Observable.of(createAction('LOAD_INSTRUMENTS'));
+            const action = of(createAction('LOAD_INSTRUMENTS'));
 
             jest.spyOn(instrumentActionCreator, 'loadInstruments')
                 .mockReturnValue(action);
@@ -935,7 +935,7 @@ describe('CheckoutService', () => {
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
             const instrumentId = '456';
-            const action = Observable.of(createAction('DELETE_INSTRUMENT'));
+            const action = of(createAction('DELETE_INSTRUMENT'));
 
             jest.spyOn(instrumentActionCreator, 'deleteInstrument')
                 .mockReturnValue(action);

@@ -1,5 +1,6 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutStore, CheckoutValidator } from '../checkout';
 import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
@@ -40,8 +41,8 @@ describe('PaymentActionCreator', () => {
 
     describe('#submitPayment()', () => {
         it('dispatches actions to data store', async () => {
-            const actions = await Observable.from(paymentActionCreator.submitPayment(getPayment())(store))
-                .toArray()
+            const actions = await from(paymentActionCreator.submitPayment(getPayment())(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -67,10 +68,12 @@ describe('PaymentActionCreator', () => {
                 Promise.reject(getResponse(getErrorPaymentResponseBody()))
             );
 
-            const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(paymentActionCreator.submitPayment(getPayment())(store))
-                .catch(errorHandler)
-                .toArray()
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(paymentActionCreator.submitPayment(getPayment())(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -87,8 +90,8 @@ describe('PaymentActionCreator', () => {
         });
 
         it('sends request to submit payment', async () => {
-            await Observable.from(paymentActionCreator.submitPayment(getPayment())(store))
-                .toArray()
+            await from(paymentActionCreator.submitPayment(getPayment())(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(paymentRequestSender.submitPayment)
@@ -98,8 +101,8 @@ describe('PaymentActionCreator', () => {
 
     describe('#initializeOffsitePayment()', () => {
         it('dispatches actions to data store', async () => {
-            const actions = await Observable.from(paymentActionCreator.initializeOffsitePayment(getPayment())(store))
-                .toArray()
+            const actions = await from(paymentActionCreator.initializeOffsitePayment(getPayment())(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -114,10 +117,12 @@ describe('PaymentActionCreator', () => {
                     Promise.reject(new Error())
                 );
 
-            const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(paymentActionCreator.initializeOffsitePayment(getPayment())(store))
-                .catch(errorHandler)
-                .toArray()
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(paymentActionCreator.initializeOffsitePayment(getPayment())(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();

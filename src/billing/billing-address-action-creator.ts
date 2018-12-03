@@ -1,7 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Response } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
+import { Observable, Observer } from 'rxjs';
 
 import { Checkout, InternalCheckoutSelectors } from '../checkout';
 import { MissingDataError, MissingDataErrorType, StandardError } from '../common/error/errors';

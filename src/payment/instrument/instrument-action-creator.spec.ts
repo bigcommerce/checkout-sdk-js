@@ -1,5 +1,6 @@
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { Address } from '../../address';
 import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../../checkout';
@@ -67,7 +68,7 @@ describe('InstrumentActionCreator', () => {
 
     describe('#loadInstruments()', () => {
         it('sends a request to get a list of instruments', async () => {
-            await Observable.from(instrumentActionCreator.loadInstruments()(store))
+            await from(instrumentActionCreator.loadInstruments()(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
@@ -89,7 +90,7 @@ describe('InstrumentActionCreator', () => {
                 },
             });
 
-            await Observable.from(instrumentActionCreator.loadInstruments()(store))
+            await from(instrumentActionCreator.loadInstruments()(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
@@ -100,8 +101,8 @@ describe('InstrumentActionCreator', () => {
         });
 
         it('emits actions if able to load instruments', async () => {
-            const actions = await Observable.from(instrumentActionCreator.loadInstruments()(store))
-                .toArray()
+            const actions = await from(instrumentActionCreator.loadInstruments()(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -119,10 +120,12 @@ describe('InstrumentActionCreator', () => {
         it('emits error actions if unable to load instruments', async () => {
             jest.spyOn(instrumentRequestSender, 'loadInstruments').mockRejectedValue(errorResponse);
 
-            const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(instrumentActionCreator.loadInstruments()(store))
-                .catch(errorHandler)
-                .toArray()
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(instrumentActionCreator.loadInstruments()(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -136,8 +139,8 @@ describe('InstrumentActionCreator', () => {
             store = createCheckoutStore();
 
             try {
-                await Observable.from(instrumentActionCreator.loadInstruments()(store))
-                    .toArray()
+                await from(instrumentActionCreator.loadInstruments()(store))
+                    .pipe(toArray())
                     .toPromise();
             } catch (e) {
                 expect(e.type).toEqual('missing_data');
@@ -147,7 +150,7 @@ describe('InstrumentActionCreator', () => {
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
-            await Observable.from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
@@ -173,7 +176,7 @@ describe('InstrumentActionCreator', () => {
                 },
             });
 
-            await Observable.from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
@@ -188,8 +191,8 @@ describe('InstrumentActionCreator', () => {
         });
 
         it('emits actions if able to delete an instrument', async () => {
-            const actions = await Observable.from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
-                .toArray()
+            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -208,10 +211,12 @@ describe('InstrumentActionCreator', () => {
         it('emits error actions if unable to delete an instrument', async () => {
             jest.spyOn(instrumentRequestSender, 'deleteInstrument').mockRejectedValue(errorResponse);
 
-            const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
-                .catch(errorHandler)
-                .toArray()
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -233,8 +238,8 @@ describe('InstrumentActionCreator', () => {
             store = createCheckoutStore({});
 
             try {
-                await Observable.from(instrumentActionCreator.deleteInstrument('')(store))
-                    .toArray()
+                await from(instrumentActionCreator.deleteInstrument('')(store))
+                    .pipe(toArray())
                     .toPromise();
             } catch (e) {
                 expect(e.type).toEqual('missing_data');

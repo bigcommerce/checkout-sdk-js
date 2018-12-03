@@ -1,7 +1,8 @@
 import { ThunkAction } from '@bigcommerce/data-store';
 import { createRequestSender, createTimeout, Response } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { Address } from '../address';
 import { createCheckoutStore, Checkout, CheckoutRequestSender, CheckoutStore } from '../checkout';
@@ -55,7 +56,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(consignmentActionCreator.loadShippingOptions()(store))
+                    await from(consignmentActionCreator.loadShippingOptions()(store))
                         .toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
@@ -66,8 +67,8 @@ describe('consignmentActionCreator', () => {
 
         it('emits actions and passes right arguments to consignmentRequestSender', async () => {
             const { id } = getCheckout();
-            const actions = await Observable.from(consignmentActionCreator.loadShippingOptions()(store))
-                .toArray()
+            const actions = await from(consignmentActionCreator.loadShippingOptions()(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(checkoutRequestSender.loadCheckout).toHaveBeenCalledWith(id, {
@@ -86,11 +87,13 @@ describe('consignmentActionCreator', () => {
             jest.spyOn(checkoutRequestSender, 'loadCheckout')
                 .mockReturnValue(Promise.reject(getErrorResponse()));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            const actions = await Observable.from(consignmentActionCreator.loadShippingOptions()(store))
-                .catch(errorHandler)
-                .toArray()
+            const actions = await from(consignmentActionCreator.loadShippingOptions()(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -121,7 +124,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(thunkAction(store)).toPromise();
+                    await from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
@@ -138,7 +141,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(thunkAction(store)).toPromise();
+                    await from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(consignmentRequestSender.createConsignments).not.toHaveBeenCalled();
@@ -147,8 +150,8 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits actions if able to create consignment', async () => {
-            const actions = await Observable.from(thunkAction(store))
-                .toArray()
+            const actions = await from(thunkAction(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -161,11 +164,13 @@ describe('consignmentActionCreator', () => {
             jest.spyOn(consignmentRequestSender, 'createConsignments')
                 .mockImplementation(() => Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            await Observable.from(thunkAction(store))
-                .catch(errorHandler)
-                .toArray()
+            await from(thunkAction(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: ConsignmentActionType.CreateConsignmentsRequested },
@@ -177,7 +182,7 @@ describe('consignmentActionCreator', () => {
         it('sends request to create consigments', async () => {
             store = createCheckoutStore(omit(getCheckoutStoreState(), 'consignments'));
 
-            await Observable.from(thunkAction(store)).toPromise();
+            await from(thunkAction(store)).toPromise();
 
             expect(consignmentRequestSender.createConsignments).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -213,7 +218,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(thunkAction(store)).toPromise();
+                    await from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
@@ -249,8 +254,8 @@ describe('consignmentActionCreator', () => {
             });
 
             it('emits actions if able to update consignment', async () => {
-                const actions = await Observable.from(thunkAction(store))
-                    .toArray()
+                const actions = await from(thunkAction(store))
+                    .pipe(toArray())
                     .toPromise();
 
                 expect(actions).toEqual([
@@ -271,11 +276,13 @@ describe('consignmentActionCreator', () => {
                 jest.spyOn(consignmentRequestSender, 'updateConsignment')
                     .mockImplementation(() => Promise.reject(errorResponse));
 
-                const errorHandler = jest.fn(action => Observable.of(action));
+                const errorHandler = jest.fn(action => of(action));
 
-                await Observable.from(consignmentActionCreator.updateConsignment(consignment)(store))
-                    .catch(errorHandler)
-                    .toArray()
+                await from(consignmentActionCreator.updateConsignment(consignment)(store))
+                    .pipe(
+                        catchError(errorHandler),
+                        toArray()
+                    )
                     .subscribe(actions => {
                         expect(actions).toEqual([
                             {
@@ -294,7 +301,7 @@ describe('consignmentActionCreator', () => {
             });
 
             it('sends request to update consignment combining existing items', async () => {
-                await Observable.from(thunkAction(store)).toPromise();
+                await from(thunkAction(store)).toPromise();
 
                 expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                     'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -322,8 +329,8 @@ describe('consignmentActionCreator', () => {
                     lineItems: [],
                 }, options);
 
-                actions = await Observable.from(thunkAction(store))
-                    .toArray()
+                actions = await from(thunkAction(store))
+                    .pipe(toArray())
                     .toPromise();
             });
 
@@ -359,7 +366,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws invalid argument exception', async () => {
                 try {
-                    await Observable.from(thunkAction(store)).toPromise();
+                    await from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(InvalidArgumentError);
                     expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
@@ -395,7 +402,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(thunkAction(store)).toPromise();
+                    await from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
@@ -410,8 +417,8 @@ describe('consignmentActionCreator', () => {
             });
 
             it('emits actions if able to update consignment', async () => {
-                const actions = await Observable.from(thunkAction(store))
-                    .toArray()
+                const actions = await from(thunkAction(store))
+                    .pipe(toArray())
                     .toPromise();
 
                 expect(actions).toEqual([
@@ -432,11 +439,13 @@ describe('consignmentActionCreator', () => {
                 jest.spyOn(consignmentRequestSender, 'updateConsignment')
                     .mockImplementation(() => Promise.reject(errorResponse));
 
-                const errorHandler = jest.fn(action => Observable.of(action));
+                const errorHandler = jest.fn(action => of(action));
 
-                await Observable.from(consignmentActionCreator.updateConsignment(consignment)(store))
-                    .catch(errorHandler)
-                    .toArray()
+                await from(consignmentActionCreator.updateConsignment(consignment)(store))
+                    .pipe(
+                        catchError(errorHandler),
+                        toArray()
+                    )
                     .subscribe(actions => {
                         expect(actions).toEqual([
                             {
@@ -465,7 +474,7 @@ describe('consignmentActionCreator', () => {
                         },
                     ],
                 }, options);
-                await Observable.from(thunkAction(store)).toPromise();
+                await from(thunkAction(store)).toPromise();
 
                 expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                     'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -499,7 +508,7 @@ describe('consignmentActionCreator', () => {
                 ];
                 store = createCheckoutStore(checkoutStoreState);
 
-                await Observable.from(thunkAction(store)).toPromise();
+                await from(thunkAction(store)).toPromise();
 
                 expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                     'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -536,11 +545,13 @@ describe('consignmentActionCreator', () => {
                 jest.spyOn(consignmentRequestSender, 'createConsignments')
                     .mockImplementation(() => Promise.reject(errorResponse));
 
-                const errorHandler = jest.fn(action => Observable.of(action));
+                const errorHandler = jest.fn(action => of(action));
 
-                await Observable.from(consignmentActionCreator.updateConsignment(consignment)(store))
-                    .catch(errorHandler)
-                    .toArray()
+                await from(consignmentActionCreator.updateConsignment(consignment)(store))
+                    .pipe(
+                        catchError(errorHandler),
+                        toArray()
+                    )
                     .subscribe(actions => {
                         expect(actions).toEqual([
                             {
@@ -559,7 +570,7 @@ describe('consignmentActionCreator', () => {
             });
 
             it('sends request to create consignment with provided data', async () => {
-                await Observable.from(thunkAction(store)).toPromise();
+                await from(thunkAction(store)).toPromise();
 
                 expect(consignmentRequestSender.createConsignments).toHaveBeenCalledWith(
                     'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -586,7 +597,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(thunkAction(store)).toPromise();
+                    await from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
@@ -595,8 +606,8 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits actions if able to update consignment', async () => {
-            const actions = await Observable.from(thunkAction(store))
-                .toArray()
+            const actions = await from(thunkAction(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -617,11 +628,13 @@ describe('consignmentActionCreator', () => {
             jest.spyOn(consignmentRequestSender, 'updateConsignment')
                 .mockImplementation(() => Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            await Observable.from(thunkAction(store))
-                .catch(errorHandler)
-                .toArray()
+            await from(thunkAction(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         {
@@ -640,7 +653,7 @@ describe('consignmentActionCreator', () => {
         });
 
         it('sends request to update consignment', async () => {
-            await Observable.from(thunkAction(store)).toPromise();
+            await from(thunkAction(store)).toPromise();
 
             expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -664,7 +677,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(thunkAction(store)).toPromise();
+                    await from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(consignmentRequestSender.deleteConsignment).not.toHaveBeenCalled();
@@ -673,8 +686,8 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits actions if able to delete consignment', async () => {
-            const actions = await Observable.from(thunkAction(store))
-                .toArray()
+            const actions = await from(thunkAction(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -695,11 +708,13 @@ describe('consignmentActionCreator', () => {
             jest.spyOn(consignmentRequestSender, 'deleteConsignment')
                 .mockImplementation(() => Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            await Observable.from(thunkAction(store))
-                .catch(errorHandler)
-                .toArray()
+            await from(thunkAction(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         {
@@ -718,7 +733,7 @@ describe('consignmentActionCreator', () => {
         });
 
         it('sends request to delete consignment', async () => {
-            await Observable.from(thunkAction(store)).toPromise();
+            await from(thunkAction(store)).toPromise();
 
             expect(consignmentRequestSender.deleteConsignment).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -748,7 +763,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(thunkAction(store)).toPromise();
+                    await from(thunkAction(store)).toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
                     expect(consignmentRequestSender.updateConsignment).not.toHaveBeenCalled();
@@ -757,8 +772,8 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits actions if able to update shipping option', async () => {
-            const actions = await Observable.from(thunkAction(store))
-                .toArray()
+            const actions = await from(thunkAction(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -775,11 +790,13 @@ describe('consignmentActionCreator', () => {
             jest.spyOn(consignmentRequestSender, 'updateConsignment')
                 .mockImplementation(() => Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            await Observable.from(thunkAction(store))
-                .catch(errorHandler)
-                .toArray()
+            await from(thunkAction(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: ConsignmentActionType.UpdateShippingOptionRequested, payload: undefined, meta: { id: consignment.id } },
@@ -794,7 +811,7 @@ describe('consignmentActionCreator', () => {
         });
 
         it('sends request to update shipping option', async () => {
-            await Observable.from(thunkAction(store)).toPromise();
+            await from(thunkAction(store)).toPromise();
 
             expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
                 'b20deef40f9699e48671bbc3fef6ca44dc80e3c7',
@@ -812,7 +829,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(consignmentActionCreator.updateAddress(address)(store))
+                    await from(consignmentActionCreator.updateAddress(address)(store))
                         .toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
@@ -830,7 +847,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(consignmentActionCreator.updateAddress(address)(store))
+                    await from(consignmentActionCreator.updateAddress(address)(store))
                         .toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
@@ -840,8 +857,8 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits actions if able to update shipping address', async () => {
-            const actions = await Observable.from(consignmentActionCreator.updateAddress(address)(store))
-                .toArray()
+            const actions = await from(consignmentActionCreator.updateAddress(address)(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -854,11 +871,13 @@ describe('consignmentActionCreator', () => {
             jest.spyOn(consignmentRequestSender, 'createConsignments')
                 .mockImplementation(() => Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            await Observable.from(consignmentActionCreator.updateAddress(address)(store))
-                .catch(errorHandler)
-                .toArray()
+            await from(consignmentActionCreator.updateAddress(address)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: ConsignmentActionType.CreateConsignmentsRequested },
@@ -868,7 +887,7 @@ describe('consignmentActionCreator', () => {
         });
 
         it('sends request to update shipping address in first consigment', async () => {
-            await Observable.from(consignmentActionCreator.updateAddress(address, options)(store))
+            await from(consignmentActionCreator.updateAddress(address, options)(store))
                 .toPromise();
 
             expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(
@@ -890,7 +909,7 @@ describe('consignmentActionCreator', () => {
         it('sends request to create consigments', async () => {
             store = createCheckoutStore(omit(getCheckoutStoreState(), 'consignments'));
 
-            await Observable.from(consignmentActionCreator.updateAddress(address, options)(store))
+            await from(consignmentActionCreator.updateAddress(address, options)(store))
                 .toPromise();
 
             expect(consignmentRequestSender.createConsignments).toHaveBeenCalledWith(
@@ -919,7 +938,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(consignmentActionCreator.selectShippingOption(shippingOptionId)(store))
+                    await from(consignmentActionCreator.selectShippingOption(shippingOptionId)(store))
                         .toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
@@ -937,7 +956,7 @@ describe('consignmentActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    await Observable.from(consignmentActionCreator.selectShippingOption(shippingOptionId)(store))
+                    await from(consignmentActionCreator.selectShippingOption(shippingOptionId)(store))
                         .toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
@@ -947,8 +966,8 @@ describe('consignmentActionCreator', () => {
         });
 
         it('emits actions if able to select shipping option', async () => {
-            const actions = await Observable.from(consignmentActionCreator.selectShippingOption(shippingOptionId)(store))
-                .toArray()
+            const actions = await from(consignmentActionCreator.selectShippingOption(shippingOptionId)(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -961,11 +980,13 @@ describe('consignmentActionCreator', () => {
             jest.spyOn(consignmentRequestSender, 'createConsignments')
                 .mockImplementation(() => Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            await Observable.from(consignmentActionCreator.selectShippingOption(shippingOptionId)(store))
-                .catch(errorHandler)
-                .toArray()
+            await from(consignmentActionCreator.selectShippingOption(shippingOptionId)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: ConsignmentActionType.UpdateShippingOptionRequested },
@@ -975,7 +996,7 @@ describe('consignmentActionCreator', () => {
         });
 
         it('sends request to update consignment', async () => {
-            await Observable.from(consignmentActionCreator.selectShippingOption(shippingOptionId, options)(store))
+            await from(consignmentActionCreator.selectShippingOption(shippingOptionId, options)(store))
                 .toPromise();
 
             expect(consignmentRequestSender.updateConsignment).toHaveBeenCalledWith(

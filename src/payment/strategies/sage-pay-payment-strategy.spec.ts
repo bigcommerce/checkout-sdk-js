@@ -3,7 +3,7 @@ import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
@@ -47,9 +47,9 @@ describe('SagePayPaymentStrategy', () => {
         formPoster = createFormPoster();
         store = createCheckoutStore(getCheckoutStoreState());
 
-        finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
+        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         jest.spyOn(store, 'dispatch');
 
@@ -115,7 +115,7 @@ describe('SagePayPaymentStrategy', () => {
         }));
 
         jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(Observable.of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
+            .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, error)));
 
         strategy.execute(getOrderRequestBody());
 
@@ -132,7 +132,7 @@ describe('SagePayPaymentStrategy', () => {
         const respons = new RequestError(getResponse(getErrorPaymentResponseBody()));
 
         jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(Observable.of(createErrorAction(PaymentActionType.SubmitPaymentFailed, respons)));
+            .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, respons)));
 
         try {
             await strategy.execute(getOrderRequestBody());

@@ -1,11 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat } from 'rxjs/observable/concat';
-import { defer } from 'rxjs/observable/defer';
-import { from } from 'rxjs/observable/from';
-import { of } from 'rxjs/observable/of';
+import { concat, defer, from, of, Observable, Observer } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
 
 import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';

@@ -2,7 +2,7 @@ import { createAction, createErrorAction, Action } from '@bigcommerce/data-store
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
 import { BillingAddressActionType } from '../../../billing/billing-address-actions';
@@ -115,10 +115,10 @@ describe('AmazonPayPaymentStrategy', () => {
         };
 
         paymentMethod = getAmazonPay();
-        initializeBillingAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemoteBillingRequested));
-        initializePaymentAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
-        updateAddressAction = Observable.of(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
+        initializeBillingAction = of(createAction(RemoteCheckoutActionType.InitializeRemoteBillingRequested));
+        initializePaymentAction = of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
+        updateAddressAction = of(createAction(BillingAddressActionType.UpdateBillingAddressRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         container.setAttribute('id', 'wallet');
         document.body.appendChild(container);
@@ -266,7 +266,7 @@ describe('AmazonPayPaymentStrategy', () => {
         await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError } });
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling')
-            .mockReturnValue(Observable.of(createErrorAction(RemoteCheckoutActionType.InitializeRemoteBillingFailed, new Error())));
+            .mockReturnValue(of(createErrorAction(RemoteCheckoutActionType.InitializeRemoteBillingFailed, new Error())));
 
         if (element) {
             element.dispatchEvent(new CustomEvent('paymentSelect'));

@@ -4,7 +4,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { getScriptLoader } from '@bigcommerce/script-loader';
 import { EventEmitter } from 'events';
 import { merge } from 'lodash';
-import { Observable } from 'rxjs';
+import { from } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
@@ -73,7 +73,7 @@ describe('BraintreePaypalButtonStrategy', () => {
             });
 
         jest.spyOn(checkoutActionCreator, 'loadDefaultCheckout')
-            .mockReturnValue(() => Observable.from([
+            .mockReturnValue(() => from([
                 createAction(CheckoutActionType.LoadCheckoutRequested),
                 createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
             ]));
