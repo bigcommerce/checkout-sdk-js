@@ -14,7 +14,9 @@ export default function createActionTransformer(
         }
 
         if (isResponse(action.payload)) {
-            throw { ...action, payload: requestErrorFactory.createError(action.payload) };
+            const message = action.payload.body && action.payload.body.detail;
+
+            throw { ...action, payload: requestErrorFactory.createError(action.payload, message) };
         }
 
         throw action;

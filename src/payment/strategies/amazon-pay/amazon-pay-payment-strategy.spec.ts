@@ -329,7 +329,8 @@ describe('AmazonPayPaymentStrategy', () => {
         try {
             await strategy.execute(getOrderRequestBody());
         } catch (error) {
-            expect(error).toEqual(new RequestError(response));
+            expect(error).toBeInstanceOf(RequestError);
+            expect(error.body).toEqual(response.body);
         }
     });
 
