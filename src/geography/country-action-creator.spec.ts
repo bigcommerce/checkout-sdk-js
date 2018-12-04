@@ -1,5 +1,6 @@
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
@@ -27,7 +28,7 @@ describe('CountryActionCreator', () => {
     describe('#loadCountries()', () => {
         it('emits actions if able to load countries', () => {
             countryActionCreator.loadCountries()
-                .toArray()
+                .pipe(toArray())
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: CountryActionType.LoadCountriesRequested },
@@ -39,11 +40,13 @@ describe('CountryActionCreator', () => {
         it('emits error actions if unable to load countries', () => {
             jest.spyOn(countryRequestSender, 'loadCountries').mockReturnValue(Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             countryActionCreator.loadCountries()
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: CountryActionType.LoadCountriesRequested },

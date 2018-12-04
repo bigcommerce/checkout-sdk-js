@@ -1,5 +1,5 @@
 import { Action, ThunkAction } from '@bigcommerce/data-store';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';

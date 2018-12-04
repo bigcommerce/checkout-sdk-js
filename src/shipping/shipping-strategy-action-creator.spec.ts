@@ -1,5 +1,6 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckoutState, getCheckoutStoreState, getCheckoutWithPayments } from '../checkout/checkouts.mock';
@@ -41,7 +42,7 @@ describe('ShippingStrategyActionCreator', () => {
 
             jest.spyOn(registry, 'get');
 
-            await Observable.from(actionCreator.initialize({ methodId })(store))
+            await from(actionCreator.initialize({ methodId })(store))
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith(methodId);
@@ -58,7 +59,7 @@ describe('ShippingStrategyActionCreator', () => {
 
             jest.spyOn(registry, 'get');
 
-            await Observable.from(actionCreator.initialize()(store))
+            await from(actionCreator.initialize()(store))
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith(methodId);
@@ -68,7 +69,7 @@ describe('ShippingStrategyActionCreator', () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const strategy = registry.get();
 
-            await Observable.from(actionCreator.initialize()(store))
+            await from(actionCreator.initialize()(store))
                 .toPromise();
 
             expect(strategy.initialize).toHaveBeenCalled();
@@ -77,8 +78,8 @@ describe('ShippingStrategyActionCreator', () => {
         it('emits action to notify initialization progress', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const methodId = 'default';
-            const actions = await Observable.from(actionCreator.initialize({ methodId })(store))
-                .toArray()
+            const actions = await from(actionCreator.initialize({ methodId })(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -91,14 +92,16 @@ describe('ShippingStrategyActionCreator', () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const initializeError = new Error();
             const methodId = 'default';
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.reject(initializeError));
 
-            const actions = await Observable.from(actionCreator.initialize({ methodId })(store))
-                .catch(errorHandler)
-                .toArray()
+            const actions = await from(actionCreator.initialize({ methodId })(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -125,7 +128,7 @@ describe('ShippingStrategyActionCreator', () => {
 
             jest.spyOn(registry, 'get');
 
-            await Observable.from(actionCreator.deinitialize({ methodId })(store))
+            await from(actionCreator.deinitialize({ methodId })(store))
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith(methodId);
@@ -134,7 +137,7 @@ describe('ShippingStrategyActionCreator', () => {
         it('deinitializes shipping strategy by default', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
 
-            await Observable.from(actionCreator.deinitialize()(store))
+            await from(actionCreator.deinitialize()(store))
                 .toPromise();
 
             expect(strategy.deinitialize).toHaveBeenCalled();
@@ -143,8 +146,8 @@ describe('ShippingStrategyActionCreator', () => {
         it('emits action to notify initialization progress', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const methodId = 'default';
-            const actions = await Observable.from(actionCreator.deinitialize({ methodId })(store))
-                .toArray()
+            const actions = await from(actionCreator.deinitialize({ methodId })(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -157,14 +160,16 @@ describe('ShippingStrategyActionCreator', () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const deinitializeError = new Error();
             const methodId = 'default';
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.reject(deinitializeError));
 
-            const actions = await Observable.from(actionCreator.deinitialize({ methodId })(store))
-                .catch(errorHandler)
-                .toArray()
+            const actions = await from(actionCreator.deinitialize({ methodId })(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -191,7 +196,7 @@ describe('ShippingStrategyActionCreator', () => {
 
             jest.spyOn(registry, 'get');
 
-            await Observable.from(actionCreator.updateAddress(getShippingAddress(), { methodId })(store))
+            await from(actionCreator.updateAddress(getShippingAddress(), { methodId })(store))
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith('default');
@@ -202,7 +207,7 @@ describe('ShippingStrategyActionCreator', () => {
             const options = { methodId: 'default' };
             const address = getShippingAddress();
 
-            await Observable.from(actionCreator.updateAddress(address, options)(store))
+            await from(actionCreator.updateAddress(address, options)(store))
                 .toPromise();
 
             expect(strategy.updateAddress).toHaveBeenCalledWith(address, options);
@@ -211,8 +216,8 @@ describe('ShippingStrategyActionCreator', () => {
         it('emits action to notify sign-in progress', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const methodId = 'default';
-            const actions = await Observable.from(actionCreator.updateAddress(getShippingAddress(), { methodId })(store))
-                .toArray()
+            const actions = await from(actionCreator.updateAddress(getShippingAddress(), { methodId })(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -224,14 +229,16 @@ describe('ShippingStrategyActionCreator', () => {
         it('emits error action if unable to sign in', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const updateAddressError = new Error();
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             jest.spyOn(strategy, 'updateAddress')
                 .mockReturnValue(Promise.reject(updateAddressError));
 
-            const actions = await Observable.from(actionCreator.updateAddress(getShippingAddress(), { methodId: 'default' })(store))
-                .catch(errorHandler)
-                .toArray()
+            const actions = await from(actionCreator.updateAddress(getShippingAddress(), { methodId: 'default' })(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -260,7 +267,7 @@ describe('ShippingStrategyActionCreator', () => {
 
             jest.spyOn(registry, 'get');
 
-            await Observable.from(actionCreator.selectOption(shippingOptionId, { methodId })(store))
+            await from(actionCreator.selectOption(shippingOptionId, { methodId })(store))
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith(methodId);
@@ -269,7 +276,7 @@ describe('ShippingStrategyActionCreator', () => {
         it('executes shipping strategy by default', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
 
-            await Observable.from(actionCreator.selectOption(shippingOptionId)(store))
+            await from(actionCreator.selectOption(shippingOptionId)(store))
                 .toPromise();
 
             expect(strategy.selectOption).toHaveBeenCalledWith(shippingOptionId, { methodId: undefined });
@@ -277,8 +284,8 @@ describe('ShippingStrategyActionCreator', () => {
 
         it('emits action to notify sign-out progress', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
-            const actions = await Observable.from(actionCreator.selectOption(shippingOptionId, { methodId: 'default' })(store))
-                .toArray()
+            const actions = await from(actionCreator.selectOption(shippingOptionId, { methodId: 'default' })(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -290,14 +297,16 @@ describe('ShippingStrategyActionCreator', () => {
         it('emits error action if unable to sign out', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const selectOptionError = new Error();
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             jest.spyOn(strategy, 'selectOption')
                 .mockReturnValue(Promise.reject(selectOptionError));
 
-            const actions = await Observable.from(actionCreator.selectOption(shippingOptionId, { methodId: 'default' })(store))
-                .catch(errorHandler)
-                .toArray()
+            const actions = await from(actionCreator.selectOption(shippingOptionId, { methodId: 'default' })(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();

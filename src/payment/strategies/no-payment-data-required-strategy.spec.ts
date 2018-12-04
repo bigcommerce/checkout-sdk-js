@@ -1,7 +1,7 @@
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../order';
@@ -21,7 +21,7 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
             new OrderRequestSender(createRequestSender()),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);

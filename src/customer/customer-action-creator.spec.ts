@@ -1,6 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
@@ -36,7 +37,7 @@ describe('CustomerActionCreator', () => {
         );
 
         jest.spyOn(checkoutActionCreator, 'loadCurrentCheckout')
-            .mockReturnValue(() => Observable.from([
+            .mockReturnValue(() => from([
                 createAction(CheckoutActionType.LoadCheckoutRequested),
                 createAction(CheckoutActionType.LoadCheckoutSucceeded, getCheckout()),
             ]));
@@ -50,8 +51,8 @@ describe('CustomerActionCreator', () => {
     describe('#signInCustomer()', () => {
         it('emits actions if able to sign in customer', async () => {
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
-            const actions = await Observable.from(customerActionCreator.signInCustomer(credentials)(store))
-                .toArray()
+            const actions = await from(customerActionCreator.signInCustomer(credentials)(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -66,10 +67,12 @@ describe('CustomerActionCreator', () => {
             jest.spyOn(customerRequestSender, 'signInCustomer').mockReturnValue(Promise.reject(errorResponse));
 
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
-            const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(customerActionCreator.signInCustomer(credentials)(store))
-                .catch(errorHandler)
-                .toArray()
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(customerActionCreator.signInCustomer(credentials)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -82,7 +85,7 @@ describe('CustomerActionCreator', () => {
         it('emits actions to reload current checkout', async () => {
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
 
-            await Observable.from(customerActionCreator.signInCustomer(credentials)(store))
+            await from(customerActionCreator.signInCustomer(credentials)(store))
                 .toPromise();
 
             expect(checkoutActionCreator.loadCurrentCheckout)
@@ -92,8 +95,8 @@ describe('CustomerActionCreator', () => {
 
     describe('#signOutCustomer()', () => {
         it('emits actions if able to sign out customer', async () => {
-            const actions = await Observable.from(customerActionCreator.signOutCustomer()(store))
-                .toArray()
+            const actions = await from(customerActionCreator.signOutCustomer()(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -107,10 +110,12 @@ describe('CustomerActionCreator', () => {
         it('emits error actions if unable to sign out customer', async () => {
             jest.spyOn(customerRequestSender, 'signOutCustomer').mockReturnValue(Promise.reject(errorResponse));
 
-            const errorHandler = jest.fn(action => Observable.of(action));
-            const actions = await Observable.from(customerActionCreator.signOutCustomer()(store))
-                .catch(errorHandler)
-                .toArray()
+            const errorHandler = jest.fn(action => of(action));
+            const actions = await from(customerActionCreator.signOutCustomer()(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -123,7 +128,7 @@ describe('CustomerActionCreator', () => {
         it('emits actions to reload current checkout', async () => {
             const credentials = { email: 'foo@bar.com', password: 'foobar' };
 
-            await Observable.from(customerActionCreator.signInCustomer(credentials)(store))
+            await from(customerActionCreator.signInCustomer(credentials)(store))
                 .toPromise();
 
             expect(checkoutActionCreator.loadCurrentCheckout)

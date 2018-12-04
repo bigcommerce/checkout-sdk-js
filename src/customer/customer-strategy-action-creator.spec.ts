@@ -1,5 +1,6 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
@@ -53,7 +54,7 @@ describe('CustomerStrategyActionCreator', () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
 
             await actionCreator.initialize({ methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith('default');
@@ -64,7 +65,7 @@ describe('CustomerStrategyActionCreator', () => {
             const options = { methodId: 'default' };
 
             await actionCreator.initialize(options)
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(strategy.initialize).toHaveBeenCalledWith(options);
@@ -73,7 +74,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits action to notify initialization progress', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const actions = await actionCreator.initialize({ methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -85,14 +86,16 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if unable to initialize', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const initializeError = new Error();
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.reject(initializeError));
 
             const actions = await actionCreator.initialize({ methodId: 'default' })
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -113,7 +116,7 @@ describe('CustomerStrategyActionCreator', () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
 
             await actionCreator.deinitialize({ methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith('default');
@@ -124,7 +127,7 @@ describe('CustomerStrategyActionCreator', () => {
             const options = { methodId: 'default' };
 
             await actionCreator.deinitialize(options)
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(strategy.deinitialize).toHaveBeenCalledWith(options);
@@ -133,7 +136,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits action to notify initialization progress', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const actions = await actionCreator.deinitialize({ methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -145,14 +148,16 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if unable to deinitialize', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const deinitializeError = new Error();
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.reject(deinitializeError));
 
             const actions = await actionCreator.deinitialize({ methodId: 'default' })
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -173,7 +178,7 @@ describe('CustomerStrategyActionCreator', () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
 
             await actionCreator.signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith('default');
@@ -185,7 +190,7 @@ describe('CustomerStrategyActionCreator', () => {
             const options = { methodId: 'default' };
 
             await actionCreator.signIn(credentials, options)
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(strategy.signIn).toHaveBeenCalledWith(credentials, options);
@@ -194,7 +199,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits action to notify sign-in progress', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const actions = await actionCreator.signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -206,14 +211,16 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if unable to sign in', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const signInError = new Error();
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             jest.spyOn(strategy, 'signIn')
                 .mockReturnValue(Promise.reject(signInError));
 
             const actions = await actionCreator.signIn({ email: 'foo@bar.com', password: 'password1' }, { methodId: 'default' })
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -234,7 +241,7 @@ describe('CustomerStrategyActionCreator', () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
 
             await actionCreator.signOut({ methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(registry.get).toHaveBeenCalledWith('default');
@@ -245,7 +252,7 @@ describe('CustomerStrategyActionCreator', () => {
             const options = { methodId: 'default' };
 
             await actionCreator.signOut(options)
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(strategy.signOut).toHaveBeenCalledWith(options);
@@ -254,7 +261,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits action to notify sign-out progress', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const actions = await actionCreator.signOut({ methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -266,14 +273,16 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if unable to sign out', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const signOutError = new Error();
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             jest.spyOn(strategy, 'signOut')
                 .mockReturnValue(Promise.reject(signOutError));
 
             const actions = await actionCreator.signOut({ methodId: 'default' })
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();
@@ -290,7 +299,7 @@ describe('CustomerStrategyActionCreator', () => {
             const options = { methodId: 'default' };
             const fakeMethod = jest.fn(() => Promise.resolve());
             await actionCreator.widgetInteraction(fakeMethod, options)
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(fakeMethod).toHaveBeenCalled();
@@ -299,7 +308,7 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits action to notify widget interaction in progress', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const actions = await actionCreator.widgetInteraction(jest.fn(() => Promise.resolve()), { methodId: 'default' })
-                .toArray()
+                .pipe(toArray())
                 .toPromise();
 
             expect(actions).toEqual([
@@ -311,11 +320,13 @@ describe('CustomerStrategyActionCreator', () => {
         it('emits error action if widget interaction fails', async () => {
             const actionCreator = new CustomerStrategyActionCreator(registry);
             const signInError = new Error();
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
             const actions = await actionCreator.widgetInteraction(jest.fn(() => Promise.reject(signInError)), { methodId: 'default' })
-                .catch(errorHandler)
-                .toArray()
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .toPromise();
 
             expect(errorHandler).toHaveBeenCalled();

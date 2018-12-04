@@ -1,7 +1,7 @@
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader, ScriptLoader } from '@bigcommerce/script-loader';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
@@ -321,8 +321,8 @@ describe('ChasePayPaymentStrategy', () => {
 
         beforeEach(async () => {
             orderRequestBody = getOrderRequestBody();
-            submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-            submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
+            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+            submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
             chasePayOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
             paymentMethodMock.initializationData = {
                 paymentCryptogram: '11111111111111',
@@ -428,7 +428,7 @@ describe('ChasePayPaymentStrategy', () => {
 
         beforeEach(async () => {
             chasePayOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
-            submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
+            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
             await strategy.initialize(chasePayOptions);

@@ -2,7 +2,7 @@ import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import {
     createCheckoutStore,
@@ -74,9 +74,9 @@ describe('KlarnaPaymentStrategy', () => {
             },
         });
 
-        loadPaymentMethodAction = Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id }));
-        initializePaymentAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
+        loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod, { methodId: paymentMethod.id }));
+        initializePaymentAction = of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(store, 'dispatch');
 

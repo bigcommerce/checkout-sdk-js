@@ -2,7 +2,7 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import {
     createPaymentStrategyRegistry,
@@ -129,8 +129,8 @@ describe('SquarePaymentStrategy', () => {
             requestSender,
             scriptLoader
         );
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);

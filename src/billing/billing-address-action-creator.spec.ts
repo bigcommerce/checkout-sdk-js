@@ -1,6 +1,7 @@
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { AddressRequestBody } from '../address';
 import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from '../checkout';
@@ -47,7 +48,7 @@ describe('BillingAddressActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    actions = await from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
                         .toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(MissingDataError);
@@ -64,7 +65,7 @@ describe('BillingAddressActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    actions = await from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
                         .toPromise();
                 } catch (exception) {
                     expect(exception).toBeInstanceOf(StandardError);
@@ -90,8 +91,8 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('emits actions if able to continue as guest', async () => {
-                actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
-                    .toArray()
+                actions = await from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    .pipe(toArray())
                     .toPromise();
 
                 expect(actions).toEqual([
@@ -106,13 +107,15 @@ describe('BillingAddressActionCreator', () => {
 
                 const errorHandler = jest.fn();
 
-                actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
-                    .catch((action: UpdateBillingAddressAction) => {
-                        errorHandler();
+                actions = await from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    .pipe(
+                        catchError((action: UpdateBillingAddressAction) => {
+                            errorHandler();
 
-                        return Observable.of(action);
-                    })
-                    .toArray()
+                            return of(action);
+                        }),
+                        toArray()
+                    )
                     .toPromise();
 
                 expect(errorHandler).toHaveBeenCalled();
@@ -123,7 +126,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('sends request to create billing address', async () => {
-                await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials, {})(store))
+                await from(billingAddressActionCreator.continueAsGuest(guestCredentials, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.createAddress).toHaveBeenCalledWith(getCheckout().id, guestCredentials, {});
@@ -146,8 +149,8 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('emits actions if able to update billing address', async () => {
-                actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
-                    .toArray()
+                actions = await from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    .pipe(toArray())
                     .toPromise();
 
                 expect(actions).toEqual([
@@ -162,13 +165,15 @@ describe('BillingAddressActionCreator', () => {
 
                 const errorHandler = jest.fn();
 
-                actions = await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
-                    .catch((action: BillingAddressAction) => {
-                        errorHandler();
+                actions = await from(billingAddressActionCreator.continueAsGuest(guestCredentials)(store))
+                    .pipe(
+                        catchError((action: BillingAddressAction) => {
+                            errorHandler();
 
-                        return Observable.of(action);
-                    })
-                    .toArray()
+                            return of(action);
+                        }),
+                        toArray()
+                    )
                     .toPromise();
 
                 expect(errorHandler).toHaveBeenCalled();
@@ -179,7 +184,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('sends request to update billing address, using billing address email if not provided', async () => {
-                await Observable.from(billingAddressActionCreator.continueAsGuest(guestCredentials, {})(store))
+                await from(billingAddressActionCreator.continueAsGuest(guestCredentials, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
@@ -204,7 +209,7 @@ describe('BillingAddressActionCreator', () => {
 
             it('throws an exception, emit no actions and does not send a request', async () => {
                 try {
-                    actions = await Observable.from(
+                    actions = await from(
                             billingAddressActionCreator.updateAddress(address)(createCheckoutStore({}))
                         ).toPromise();
                 } catch (exception) {
@@ -223,8 +228,8 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('emits actions if able to update billing address', async () => {
-                actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
-                    .toArray()
+                actions = await from(billingAddressActionCreator.updateAddress(address)(store))
+                    .pipe(toArray())
                     .toPromise();
 
                 expect(actions).toEqual([
@@ -239,13 +244,15 @@ describe('BillingAddressActionCreator', () => {
 
                 const errorHandler = jest.fn();
 
-                actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
-                    .catch((action: UpdateBillingAddressAction) => {
-                        errorHandler();
+                actions = await from(billingAddressActionCreator.updateAddress(address)(store))
+                    .pipe(
+                        catchError((action: UpdateBillingAddressAction) => {
+                            errorHandler();
 
-                        return Observable.of(action);
-                    })
-                    .toArray()
+                            return of(action);
+                        }),
+                        toArray()
+                    )
                     .toPromise();
 
                 expect(errorHandler).toHaveBeenCalled();
@@ -256,7 +263,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('sends request to create billing address', async () => {
-                await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
+                await from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.createAddress).toHaveBeenCalledWith(getCheckout().id, address, {});
@@ -264,7 +271,7 @@ describe('BillingAddressActionCreator', () => {
 
             it('sends request to update email', async () => {
                 const payload = { email: 'foo' };
-                await Observable.from(billingAddressActionCreator.updateAddress(payload, {})(store))
+                await from(billingAddressActionCreator.updateAddress(payload, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.createAddress).toHaveBeenCalledWith(getCheckout().id, payload, {});
@@ -277,8 +284,8 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('emits actions if able to update billing address', async () => {
-                actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
-                    .toArray()
+                actions = await from(billingAddressActionCreator.updateAddress(address)(store))
+                    .pipe(toArray())
                     .toPromise();
 
                 expect(actions).toEqual([
@@ -293,13 +300,15 @@ describe('BillingAddressActionCreator', () => {
 
                 const errorHandler = jest.fn();
 
-                actions = await Observable.from(billingAddressActionCreator.updateAddress(address)(store))
-                    .catch((action: UpdateBillingAddressAction) => {
-                        errorHandler();
+                actions = await from(billingAddressActionCreator.updateAddress(address)(store))
+                    .pipe(
+                        catchError((action: UpdateBillingAddressAction) => {
+                            errorHandler();
 
-                        return Observable.of(action);
-                    })
-                    .toArray()
+                            return of(action);
+                        }),
+                        toArray()
+                    )
                     .toPromise();
 
                 expect(errorHandler).toHaveBeenCalled();
@@ -310,7 +319,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('sends request to update billing address, using billing address email if not provided', async () => {
-                await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
+                await from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
@@ -326,7 +335,7 @@ describe('BillingAddressActionCreator', () => {
 
             it('sends request to update billing address, using blank email when provided', async () => {
                 const email = '';
-                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                await from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
@@ -342,7 +351,7 @@ describe('BillingAddressActionCreator', () => {
 
             it('sends request to update billing address, using provided email', async () => {
                 const email = 'foo@bar.com';
-                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                await from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
@@ -368,7 +377,7 @@ describe('BillingAddressActionCreator', () => {
             it('sends request to create a billing address, using provided email', async () => {
                 const email = 'foo@bar.com';
 
-                await Observable.from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
+                await from(billingAddressActionCreator.updateAddress({ ...address, email }, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(
@@ -383,7 +392,7 @@ describe('BillingAddressActionCreator', () => {
             });
 
             it('sends request to create a billing address, using previous email', async () => {
-                await Observable.from(billingAddressActionCreator.updateAddress(address, {})(store))
+                await from(billingAddressActionCreator.updateAddress(address, {})(store))
                     .toPromise();
 
                 expect(billingAddressRequestSender.updateAddress).toHaveBeenCalledWith(

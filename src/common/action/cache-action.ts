@@ -1,7 +1,6 @@
 import { Action, ThunkAction } from '@bigcommerce/data-store';
 import { memoize } from 'lodash';
-import { Observable } from 'rxjs';
-import { from } from 'rxjs/observable/from';
+import { from, Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 
 import { CacheKeyResolver } from '../utility';

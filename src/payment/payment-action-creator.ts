@@ -1,11 +1,7 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { pick } from 'lodash';
-import { concat } from 'rxjs/observable/concat';
-import { from } from 'rxjs/observable/from';
-import { of } from 'rxjs/observable/of';
+import { concat, from, of, Observable, Observer } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
 
 import { mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';

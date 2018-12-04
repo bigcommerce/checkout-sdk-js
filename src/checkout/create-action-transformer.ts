@@ -1,7 +1,6 @@
 import { Action } from '@bigcommerce/data-store';
-import { from } from 'rxjs/observable/from';
+import { from, Observable, Subscribable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Observable, Subscribable } from 'rxjs/Observable';
 
 import { RequestErrorFactory } from '../common/error';
 

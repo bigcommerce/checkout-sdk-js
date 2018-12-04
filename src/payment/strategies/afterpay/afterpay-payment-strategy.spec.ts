@@ -3,7 +3,7 @@ import { createAction, createErrorAction, Action } from '@bigcommerce/data-store
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
@@ -81,19 +81,19 @@ describe('AfterpayPaymentStrategy', () => {
             },
         });
 
-        initializePaymentAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
-        loadPaymentMethodAction = Observable.of(createAction(
+        initializePaymentAction = of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
+        loadPaymentMethodAction = of(createAction(
             PaymentMethodActionType.LoadPaymentMethodSucceeded,
             { ...paymentMethod, id: 'afterpay' },
             { methodId: paymentMethod.gateway }
         ));
-        loadRemoteSettingsAction = Observable.of(createAction(
+        loadRemoteSettingsAction = of(createAction(
             RemoteCheckoutActionType.LoadRemoteSettingsSucceeded,
             { useStoreCredit: false },
             { methodId: paymentMethod.gateway }
         ));
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
-        submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
         payload = merge({}, getOrderRequestBody(), {
             payment: {
@@ -168,7 +168,7 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('rejects with error if execution is unsuccessful', async () => {
             jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-                .mockReturnValue(Observable.of(createErrorAction(RemoteCheckoutActionType.InitializeRemotePaymentFailed, new Error())));
+                .mockReturnValue(of(createErrorAction(RemoteCheckoutActionType.InitializeRemotePaymentFailed, new Error())));
 
             const errorHandler = jest.fn();
 

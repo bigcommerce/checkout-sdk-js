@@ -1,7 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 import { ConsignmentRequestSender } from '..';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState } from '../../checkout';
@@ -98,7 +98,7 @@ describe('AmazonPayShippingStrategy', () => {
         });
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, getAmazonPay())));
+            .mockReturnValue(of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, getAmazonPay())));
     });
 
     afterEach(() => {
@@ -134,7 +134,7 @@ describe('AmazonPayShippingStrategy', () => {
         const paymentMethod = { ...getAmazonPay(), config: { merchantId: undefined } };
 
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(Observable.of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod)));
+            .mockReturnValue(of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethod)));
 
         try {
             await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
@@ -157,8 +157,8 @@ describe('AmazonPayShippingStrategy', () => {
     it('synchronizes checkout address when selecting new address', async () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = getAmazonPay();
-        const initializeShippingAction = Observable.of(createAction(RemoteCheckoutActionType.InitializeRemoteShippingRequested));
-        const updateAddressAction = Observable.of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
+        const initializeShippingAction = of(createAction(RemoteCheckoutActionType.InitializeRemoteShippingRequested));
+        const updateAddressAction = of(createAction(ConsignmentActionType.CreateConsignmentsRequested));
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
             .mockReturnValue(initializeShippingAction);
@@ -195,10 +195,10 @@ describe('AmazonPayShippingStrategy', () => {
         const paymentMethod = getAmazonPay();
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeShipping')
-            .mockReturnValue(Observable.of(createAction(RemoteCheckoutActionType.InitializeRemoteShippingRequested)));
+            .mockReturnValue(of(createAction(RemoteCheckoutActionType.InitializeRemoteShippingRequested)));
 
         jest.spyOn(consignmentActionCreator, 'updateAddress')
-            .mockReturnValue(Observable.of(createAction(ConsignmentActionType.CreateConsignmentsRequested)));
+            .mockReturnValue(of(createAction(ConsignmentActionType.CreateConsignmentsRequested)));
 
         jest.spyOn(store, 'dispatch');
 
@@ -277,7 +277,7 @@ describe('AmazonPayShippingStrategy', () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const method = getFlatRateOption();
         const options = {};
-        const action = Observable.of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
+        const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
 
         jest.spyOn(consignmentActionCreator, 'selectShippingOption')
             .mockReturnValue(action);

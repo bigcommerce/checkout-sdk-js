@@ -1,9 +1,6 @@
 import { createAction } from '@bigcommerce/data-store';
-import { concat } from 'rxjs/observable/concat';
-import { defer } from 'rxjs/observable/defer';
-import { of } from 'rxjs/observable/of';
+import { concat, defer, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
 
 import { throwErrorAction } from '../common/error';
 import { Registry } from '../common/registry';

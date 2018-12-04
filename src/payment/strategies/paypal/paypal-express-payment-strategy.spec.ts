@@ -2,7 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
 import { getCheckoutPayment, getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
@@ -73,8 +73,8 @@ describe('PaypalExpressPaymentStrategy', () => {
         } as Window;
 
         paymentMethod = getPaypalExpress();
-        finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderSucceeded, { customer: getCustomer(), order }));
+        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderSucceeded, { customer: getCustomer(), order }));
 
         jest.spyOn(scriptLoader, 'loadPaypal')
             .mockImplementation(() => {

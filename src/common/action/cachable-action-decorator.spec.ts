@@ -1,8 +1,6 @@
 import { createAction, Action } from '@bigcommerce/data-store';
-import { Observable } from 'rxjs';
-import { concat } from 'rxjs/observable/concat';
-import { from } from 'rxjs/observable/from';
-import { map } from 'rxjs/operators';
+import { concat, from, Observable } from 'rxjs';
+import { map, toArray } from 'rxjs/operators';
 
 import ActionOptions from './action-options';
 import { default as cachableAction } from './cachable-action-decorator';
@@ -39,7 +37,7 @@ describe('cachableActionDecorator()', () => {
             foo.loadMessage('Foo', { useCache: true }),
             foo.loadMessage('Foo', { useCache: true })
         )
-            .toArray()
+            .pipe(toArray())
             .toPromise();
 
         expect(fetch).toHaveBeenCalledTimes(1);
@@ -56,7 +54,7 @@ describe('cachableActionDecorator()', () => {
             foo.loadMessage('Foo', { useCache: true }),
             foo.loadMessage('Bar', { useCache: true })
         )
-            .toArray()
+            .pipe(toArray())
             .toPromise();
 
         expect(fetch).toHaveBeenCalledTimes(2);
@@ -75,7 +73,7 @@ describe('cachableActionDecorator()', () => {
             foo.loadUppercaseMessage('Foo', { useCache: true }),
             foo.loadUppercaseMessage('Foo', { useCache: true })
         )
-            .toArray()
+            .pipe(toArray())
             .toPromise();
 
         expect(fetch).toHaveBeenCalledTimes(2);
@@ -92,7 +90,7 @@ describe('cachableActionDecorator()', () => {
             foo.loadMessage('Foo'),
             foo.loadMessage('Foo')
         )
-            .toArray()
+            .pipe(toArray())
             .toPromise();
 
         expect(fetch).toHaveBeenCalledTimes(2);

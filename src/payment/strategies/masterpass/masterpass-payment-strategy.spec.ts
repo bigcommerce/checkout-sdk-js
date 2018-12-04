@@ -2,7 +2,7 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import {
     PaymentActionCreator, PaymentInitializeOptions,
@@ -188,10 +188,10 @@ describe('MasterpassPaymentStragegy', () => {
                     useStoreCredit: true,
                 };
 
-                submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
+                submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
                 orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
-                loadPaymentMethodAction = Observable.of(
+                loadPaymentMethodAction = of(
                     createAction(
                         PaymentMethodActionType.LoadPaymentMethodSucceeded,
                         stripePaymentMethodMock,
@@ -200,7 +200,7 @@ describe('MasterpassPaymentStragegy', () => {
                 );
                 jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(loadPaymentMethodAction);
 
-                submitPaymentAction = Observable.of(createAction(PaymentActionType.SubmitPaymentRequested));
+                submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
                 paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
             }
         );
@@ -256,7 +256,7 @@ describe('MasterpassPaymentStragegy', () => {
                 checkoutId: 'checkout-id',
             };
 
-            const submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
+            const submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
         });
 

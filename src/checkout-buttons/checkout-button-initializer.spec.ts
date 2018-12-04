@@ -1,7 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 import { createCheckoutStore, CheckoutStore } from '../checkout';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
@@ -30,10 +30,10 @@ describe('CheckoutButtonInitializer', () => {
         jest.spyOn(store, 'subscribe');
 
         jest.spyOn(buttonActionCreator, 'initialize')
-            .mockReturnValue(Observable.of(createAction(CheckoutButtonActionType.InitializeButtonRequested)));
+            .mockReturnValue(of(createAction(CheckoutButtonActionType.InitializeButtonRequested)));
 
         jest.spyOn(buttonActionCreator, 'deinitialize')
-            .mockReturnValue(Observable.of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested)));
+            .mockReturnValue(of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested)));
 
         initializer = new CheckoutButtonInitializer(store, buttonActionCreator);
     });
@@ -48,7 +48,7 @@ describe('CheckoutButtonInitializer', () => {
 
         expect(buttonActionCreator.initialize).toHaveBeenCalledWith(options);
         expect(store.dispatch).toHaveBeenCalledWith(
-            Observable.of(createAction(CheckoutButtonActionType.InitializeButtonRequested)),
+            buttonActionCreator.initialize(options),
             { queueId: `checkoutButtonStrategy:${CheckoutButtonMethodType.BRAINTREE_PAYPAL}:${options.containerId}` }
         );
     });
@@ -63,7 +63,7 @@ describe('CheckoutButtonInitializer', () => {
 
         expect(buttonActionCreator.deinitialize).toHaveBeenCalledWith(options);
         expect(store.dispatch).toHaveBeenCalledWith(
-            Observable.of(createAction(CheckoutButtonActionType.DeinitializeButtonRequested)),
+            buttonActionCreator.deinitialize(options),
             { queueId: `checkoutButtonStrategy:${CheckoutButtonMethodType.BRAINTREE_PAYPAL}` }
         );
     });

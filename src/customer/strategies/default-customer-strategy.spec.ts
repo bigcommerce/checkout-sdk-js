@@ -1,6 +1,6 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../../config';
@@ -35,7 +35,7 @@ describe('DefaultCustomerStrategy', () => {
         const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
         const credentials = { email: 'foo@bar.com', password: 'foobar' };
         const options = {};
-        const action = Observable.of(createAction(CustomerActionType.SignInCustomerRequested, getQuote()));
+        const action = of(createAction(CustomerActionType.SignInCustomerRequested, getQuote()));
 
         jest.spyOn(customerActionCreator, 'signInCustomer')
             .mockReturnValue(action);
@@ -52,7 +52,7 @@ describe('DefaultCustomerStrategy', () => {
     it('dispatches action to sign out customer', async () => {
         const strategy = new DefaultCustomerStrategy(store, customerActionCreator);
         const options = {};
-        const action = Observable.of(createAction(CustomerActionType.SignOutCustomerRequested, getQuote()));
+        const action = of(createAction(CustomerActionType.SignOutCustomerRequested, getQuote()));
 
         jest.spyOn(customerActionCreator, 'signOutCustomer')
             .mockReturnValue(action);

@@ -1,5 +1,6 @@
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
-import { Observable } from 'rxjs';
+import { from, of } from 'rxjs';
+import { catchError, toArray } from 'rxjs/operators';
 
 import { createCheckoutStore, Checkout, CheckoutStore, CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState, getCheckoutWithCoupons } from '../checkout/checkouts.mock';
@@ -38,8 +39,8 @@ describe('CouponActionCreator', () => {
         it('emits actions if able to apply coupon', () => {
             const coupon = 'myCouponCode1234';
 
-            Observable.from(couponActionCreator.applyCoupon(coupon)(store))
-                .toArray()
+            from(couponActionCreator.applyCoupon(coupon)(store))
+                .pipe(toArray())
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: CouponActionType.ApplyCouponRequested },
@@ -52,11 +53,13 @@ describe('CouponActionCreator', () => {
             jest.spyOn(requestSender, 'applyCoupon').mockReturnValue(Promise.reject(errorResponse));
 
             const coupon = 'myCouponCode1234';
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            Observable.from(couponActionCreator.applyCoupon(coupon)(store))
-                .catch(errorHandler)
-                .toArray()
+            from(couponActionCreator.applyCoupon(coupon)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([
@@ -75,8 +78,8 @@ describe('CouponActionCreator', () => {
         it('emits actions if able to remove coupon', () => {
             const coupon = 'myCouponCode1234';
 
-            Observable.from(couponActionCreator.removeCoupon(coupon)(store))
-                .toArray()
+            from(couponActionCreator.removeCoupon(coupon)(store))
+                .pipe(toArray())
                 .subscribe(actions => {
                     expect(actions).toEqual([
                         { type: CouponActionType.RemoveCouponRequested },
@@ -89,11 +92,13 @@ describe('CouponActionCreator', () => {
             jest.spyOn(requestSender, 'removeCoupon').mockReturnValue(Promise.reject(errorResponse));
 
             const coupon = 'myCouponCode1234';
-            const errorHandler = jest.fn(action => Observable.of(action));
+            const errorHandler = jest.fn(action => of(action));
 
-            Observable.from(couponActionCreator.removeCoupon(coupon)(store))
-                .catch(errorHandler)
-                .toArray()
+            from(couponActionCreator.removeCoupon(coupon)(store))
+                .pipe(
+                    catchError(errorHandler),
+                    toArray()
+                )
                 .subscribe(actions => {
                     expect(errorHandler).toHaveBeenCalled();
                     expect(actions).toEqual([

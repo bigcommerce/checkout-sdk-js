@@ -1,6 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
+import { Observable, Observer } from 'rxjs';
 
 import { Address } from '../../address';
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../../checkout';

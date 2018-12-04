@@ -2,7 +2,7 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge, omit } from 'lodash';
-import { Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
@@ -36,9 +36,9 @@ describe('OffsitePaymentStrategy', () => {
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator
         );
-        finalizeOrderAction = Observable.of(createAction(OrderActionType.FinalizeOrderRequested));
-        initializeOffsitePaymentAction = Observable.of(createAction(PaymentActionType.InitializeOffsitePaymentRequested));
-        submitOrderAction = Observable.of(createAction(OrderActionType.SubmitOrderRequested));
+        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
+        initializeOffsitePaymentAction = of(createAction(PaymentActionType.InitializeOffsitePaymentRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 
         jest.spyOn(store, 'dispatch');
 
