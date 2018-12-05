@@ -114,21 +114,6 @@ describe('AmazonPayShippingStrategy', () => {
         expect(scriptLoader.loadWidget).not.toHaveBeenCalledWith(paymentMethod);
     });
 
-    it('only initializes widget once until deinitialization', async () => {
-        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
-        const paymentMethod = getAmazonPay();
-
-        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
-        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
-
-        expect(addressBookSpy).toHaveBeenCalledTimes(1);
-
-        await strategy.deinitialize();
-        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'addressBook' } });
-
-        expect(addressBookSpy).toHaveBeenCalledTimes(2);
-    });
-
     it('rejects with error if initialization fails', async () => {
         const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
         const paymentMethod = { ...getAmazonPay(), config: { merchantId: undefined } };

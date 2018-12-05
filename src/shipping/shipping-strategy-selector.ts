@@ -55,4 +55,11 @@ export default class ShippingStrategySelector {
 
         return !!this._shippingStrategies.statuses.isInitializing;
     }
+
+    isInitialized(methodId: string): boolean {
+        return !!(
+            this._shippingStrategies.data[methodId] &&
+            this._shippingStrategies.data[methodId].isInitialized
+        );
+    }
 }

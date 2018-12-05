@@ -9,6 +9,7 @@ describe('shippingStrategyReducer()', () => {
 
     beforeEach(() => {
         initialState = {
+            data: {},
             errors: {},
             statuses: {},
         };
@@ -37,6 +38,18 @@ describe('shippingStrategyReducer()', () => {
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             initializeMethodId: undefined,
             isInitializing: false,
+        });
+    });
+
+    it('returns initialization flag as true if customer has initialized successfully', () => {
+        const action = createAction(
+            ShippingStrategyActionType.InitializeSucceeded,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(shippingStrategyReducer(initialState, action).data).toEqual({
+            foobar: { isInitialized: true },
         });
     });
 
@@ -80,6 +93,18 @@ describe('shippingStrategyReducer()', () => {
         expect(shippingStrategyReducer(initialState, action).statuses).toEqual({
             deinitializeMethodId: undefined,
             isDeinitializing: false,
+        });
+    });
+
+    it('returns initialization flag as false if customer has deinitialized successfully', () => {
+        const action = createAction(
+            ShippingStrategyActionType.DeinitializeSucceeded,
+            undefined,
+            { methodId: 'foobar' }
+        );
+
+        expect(shippingStrategyReducer(initialState, action).data).toEqual({
+            foobar: { isInitialized: false },
         });
     });
 

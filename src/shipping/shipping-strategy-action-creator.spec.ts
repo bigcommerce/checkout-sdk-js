@@ -1,4 +1,5 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
@@ -31,6 +32,9 @@ describe('ShippingStrategyActionCreator', () => {
 
         beforeEach(() => {
             strategy = registry.get();
+            store = createCheckoutStore(merge({}, state, {
+                shippingStrategies: { data: { amazon: { isInitialized: true } } },
+            }));
 
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.resolve(store.getState()));
@@ -75,6 +79,19 @@ describe('ShippingStrategyActionCreator', () => {
             expect(strategy.initialize).toHaveBeenCalled();
         });
 
+        it('does not initialize if strategy is already initialized', async () => {
+            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const strategy = registry.get('amazon');
+
+            jest.spyOn(strategy, 'initialize')
+                .mockReturnValue(Promise.resolve(store.getState()));
+
+            await from(actionCreator.initialize({ methodId: 'amazon' })(store))
+                .toPromise();
+
+            expect(strategy.initialize).not.toHaveBeenCalled();
+        });
+
         it('emits action to notify initialization progress', async () => {
             const actionCreator = new ShippingStrategyActionCreator(registry);
             const methodId = 'default';
@@ -117,6 +134,9 @@ describe('ShippingStrategyActionCreator', () => {
 
         beforeEach(() => {
             strategy = registry.get();
+            store = createCheckoutStore(merge({}, state, {
+                shippingStrategies: { data: { default: { isInitialized: true } } },
+            }));
 
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.resolve(store.getState()));
@@ -141,6 +161,19 @@ describe('ShippingStrategyActionCreator', () => {
                 .toPromise();
 
             expect(strategy.deinitialize).toHaveBeenCalled();
+        });
+
+        it('does not deinitialize if strategy is not initialized', async () => {
+            const actionCreator = new ShippingStrategyActionCreator(registry);
+            const strategy = registry.get('amazon');
+
+            jest.spyOn(strategy, 'deinitialize')
+                .mockReturnValue(Promise.resolve(store.getState()));
+
+            await from(actionCreator.deinitialize({ methodId: 'amazon' })(store))
+                .toPromise();
+
+            expect(strategy.deinitialize).not.toHaveBeenCalled();
         });
 
         it('emits action to notify initialization progress', async () => {

@@ -60,9 +60,14 @@ export default class ShippingStrategyActionCreator {
 
     initialize(options?: ShippingInitializeOptions): ThunkAction<ShippingStrategyInitializeAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<ShippingStrategyInitializeAction>) => {
-            const payment = store.getState().payment.getPaymentId();
+            const state = store.getState();
+            const payment = state.payment.getPaymentId();
             const methodId = options && options.methodId || payment && payment.providerId;
             const mergedOptions = { ...options, methodId };
+
+            if (methodId && state.shippingStrategies.isInitialized(methodId)) {
+                return observer.complete();
+            }
 
             observer.next(createAction(ShippingStrategyActionType.InitializeRequested, undefined, { methodId }));
 
@@ -80,8 +85,13 @@ export default class ShippingStrategyActionCreator {
 
     deinitialize(options?: ShippingRequestOptions): ThunkAction<ShippingStrategyDeinitializeAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<ShippingStrategyDeinitializeAction>) => {
-            const payment = store.getState().payment.getPaymentId();
+            const state = store.getState();
+            const payment = state.payment.getPaymentId();
             const methodId = options && options.methodId || payment && payment.providerId;
+
+            if (methodId && !state.shippingStrategies.isInitialized(methodId)) {
+                return observer.complete();
+            }
 
             observer.next(createAction(ShippingStrategyActionType.DeinitializeRequested, undefined, { methodId }));
 
