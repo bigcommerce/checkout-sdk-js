@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.15.1"></a>
+## [1.15.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.15.0...v1.15.1) (2018-12-05)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3135 Upgrade Rx to version 6 to bring in various performance improvements and bug fixes ([56132a9](https://github.com/bigcommerce/checkout-sdk-js/commit/56132a9))
+* **common:** CHECKOUT-3768 Surface the error details for RequestErrors ([58361e1](https://github.com/bigcommerce/checkout-sdk-js/commit/58361e1))
+
+
+
 <a name="1.15.0"></a>
 # [1.15.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.14.0...v1.15.0) (2018-11-29)
 
