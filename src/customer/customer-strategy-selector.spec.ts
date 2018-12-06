@@ -175,6 +175,27 @@ describe('CustomerStrategySelector', () => {
         });
     });
 
+    describe('#isInitialized()', () => {
+        it('returns true if method is initialized', () => {
+            selector = new CustomerStrategySelector({
+                ...state.customerStrategy,
+                data: { foobar: { isInitialized: true } },
+            });
+
+            expect(selector.isInitialized('foobar')).toEqual(true);
+        });
+
+        it('returns false if method is not initialized', () => {
+            selector = new CustomerStrategySelector({
+                ...state.customerStrategy,
+                data: { foobar: { isInitialized: false } },
+            });
+
+            expect(selector.isInitialized('foobar')).toEqual(false);
+            expect(selector.isInitialized('bar')).toEqual(false);
+        });
+    });
+
     describe('#isWidgetInteracting()', () => {
         it('returns true if any method is interacting with a widget', () => {
             selector = new CustomerStrategySelector({

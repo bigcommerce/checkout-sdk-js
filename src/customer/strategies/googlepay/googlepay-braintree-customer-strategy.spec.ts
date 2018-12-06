@@ -110,20 +110,6 @@ describe('GooglePayCustomerStrategy', () => {
                 expect(paymentProcessor.createButton).toHaveBeenCalled();
             });
 
-            it('Validates if strategy is been initialized', async () => {
-                customerInitializeOptions = getBraintreeCustomerInitializeOptions();
-
-                await strategy.initialize(customerInitializeOptions);
-
-                setTimeout(() => {
-                    strategy.initialize(customerInitializeOptions);
-                }, 0);
-
-                strategy.initialize(customerInitializeOptions);
-
-                expect(paymentProcessor.initialize).toHaveBeenCalledTimes(1);
-            });
-
             it('fails to initialize the strategy if no GooglePayCustomerInitializeOptions is provided ', async () => {
                 customerInitializeOptions = getBraintreeCustomerInitializeOptions(Mode.Incomplete);
 

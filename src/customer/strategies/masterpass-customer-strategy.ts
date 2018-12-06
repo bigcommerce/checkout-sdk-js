@@ -13,18 +13,16 @@ import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-r
 
 import CustomerStrategy from './customer-strategy';
 
-export default class MasterpassCustomerStrategy extends CustomerStrategy {
+export default class MasterpassCustomerStrategy implements CustomerStrategy {
     private _signInButton?: HTMLElement;
     private _paymentMethod?: PaymentMethod;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _masterpassScriptLoader: MasterpassScriptLoader
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { masterpass: masterpassOptions, methodId } = options;
@@ -66,21 +64,18 @@ export default class MasterpassCustomerStrategy extends CustomerStrategy {
                         });
                     });
             })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (!this._isInitialized) {
-            return super.deinitialize(options);
-        }
-
         this._paymentMethod = undefined;
+
         if (this._signInButton && this._signInButton.parentNode) {
             this._signInButton.parentNode.removeChild(this._signInButton);
             this._signInButton = undefined;
         }
 
-        return super.deinitialize(options);
+        return Promise.resolve(this._store.getState());
     }
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {

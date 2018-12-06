@@ -61,6 +61,13 @@ export default class CustomerStrategySelector {
         return !!this._customerStrategies.statuses.isInitializing;
     }
 
+    isInitialized(methodId: string): boolean {
+        return !!(
+            this._customerStrategies.data[methodId] &&
+            this._customerStrategies.data[methodId].isInitialized
+        );
+    }
+
     isWidgetInteracting(methodId?: string): boolean {
         if (methodId && this._customerStrategies.statuses.widgetInteractionMethodId !== methodId) {
             return false;

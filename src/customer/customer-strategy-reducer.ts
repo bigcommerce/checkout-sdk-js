@@ -1,18 +1,44 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { CustomerStrategyAction, CustomerStrategyActionType } from './customer-strategy-actions';
-import CustomerStrategyState, { CustomerStrategyErrorsState, CustomerStrategyStatusesState, DEFAULT_STATE } from './customer-strategy-state';
+import CustomerStrategyState, { CustomerStrategyDataState, CustomerStrategyErrorsState, CustomerStrategyStatusesState, DEFAULT_STATE } from './customer-strategy-state';
 
 export default function customerStrategyReducer(
     state: CustomerStrategyState = DEFAULT_STATE,
     action: CustomerStrategyAction
 ): CustomerStrategyState {
     const reducer = combineReducers<CustomerStrategyState, CustomerStrategyAction>({
+        data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
     });
 
     return reducer(state, action);
+}
+
+function dataReducer(
+    data: CustomerStrategyDataState = DEFAULT_STATE.data,
+    action: CustomerStrategyAction
+): CustomerStrategyDataState {
+    switch (action.type) {
+    case CustomerStrategyActionType.InitializeSucceeded:
+        return {
+            ...data,
+            [action.meta && action.meta.methodId]: {
+                isInitialized: true,
+            },
+        };
+
+    case CustomerStrategyActionType.DeinitializeSucceeded:
+        return {
+            ...data,
+            [action.meta && action.meta.methodId]: {
+                isInitialized: false,
+            },
+        };
+    }
+
+    return data;
 }
 
 function errorsReducer(
