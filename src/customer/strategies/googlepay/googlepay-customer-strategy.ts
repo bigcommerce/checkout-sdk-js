@@ -123,7 +123,11 @@ export default class GooglePayCustomerStrategy extends CustomerStrategy {
 
         return this._googlePayPaymentProcessor.displayWallet()
             .then(paymentData => this._googlePayPaymentProcessor.handleSuccess(paymentData)
-                .then(() => this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress)))
+            .then(() => {
+                if (paymentData.shippingAddress) {
+                    this._googlePayPaymentProcessor.updateShippingAddress(paymentData.shippingAddress);
+                }
+            }))
             .then(() => this._onPaymentSelectComplete())
             .catch(error => this._onError(error));
     }
