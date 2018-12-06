@@ -3,6 +3,11 @@ import { Checkout } from '../checkout';
 
 import InternalQuote from './internal-quote';
 
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
 export default function mapToInternalQuote(checkout: Checkout, shippingAddress?: Address): InternalQuote {
     const consignment = checkout.consignments && checkout.consignments[0];
 

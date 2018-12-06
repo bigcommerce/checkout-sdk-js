@@ -1,8 +1,12 @@
+import AmountTransformer from './amount-transformer';
 import InternalLineItem from './internal-line-item';
 import { DigitalItem, LineItem } from './line-item';
 
-import { AmountTransformer } from '.';
-
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
 export default function mapToInternalLineItem(
     item: LineItem,
     type: string,
