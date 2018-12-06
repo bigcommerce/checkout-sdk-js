@@ -31,15 +31,19 @@ export interface CheckoutButtonActionMeta {
     methodId: CheckoutButtonMethodType;
 }
 
-export interface InitializeButtonRequestedAction extends Action<undefined, CheckoutButtonActionMeta> {
+export interface InitializeButtonActionMeta extends CheckoutButtonActionMeta {
+    containerId: string;
+}
+
+export interface InitializeButtonRequestedAction extends Action<undefined, InitializeButtonActionMeta> {
     type: CheckoutButtonActionType.InitializeButtonRequested;
 }
 
-export interface InitializeButtonSucceededAction extends Action<undefined, CheckoutButtonActionMeta> {
+export interface InitializeButtonSucceededAction extends Action<undefined, InitializeButtonActionMeta> {
     type: CheckoutButtonActionType.InitializeButtonSucceeded;
 }
 
-export interface InitializeButtonFailedAction extends Action<Error, CheckoutButtonActionMeta> {
+export interface InitializeButtonFailedAction extends Action<Error, InitializeButtonActionMeta> {
     type: CheckoutButtonActionType.InitializeButtonFailed;
 }
 

@@ -1,13 +1,15 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { CheckoutButtonAction, CheckoutButtonActionType } from './checkout-button-actions';
-import CheckoutButtonState, { CheckoutButtonErrorsState, CheckoutButtonStatusesState } from './checkout-button-state';
+import CheckoutButtonState, { CheckoutButtonDataState, CheckoutButtonErrorsState, CheckoutButtonStatusesState } from './checkout-button-state';
 
 const DEFAULT_STATE: CheckoutButtonState = {
+    data: {},
     errors: {},
     statuses: {},
 };
 
+const DEFAULT_DATA_STATE: CheckoutButtonDataState = { initializedContainers: {} };
 const DEFAULT_ERROR_STATE: CheckoutButtonErrorsState = {};
 const DEFAULT_STATUS_STATE: CheckoutButtonStatusesState = {};
 
@@ -20,6 +22,9 @@ export default function checkoutButtonReducer(
     }
 
     const reducer = combineReducers<CheckoutButtonState>({
+        data: combineReducers({
+            [action.meta.methodId]: dataReducer,
+        }),
         errors: combineReducers({
             [action.meta.methodId]: errorsReducer,
         }),
@@ -29,6 +34,34 @@ export default function checkoutButtonReducer(
     });
 
     return reducer(state, action);
+}
+
+function dataReducer(
+    data: CheckoutButtonDataState = DEFAULT_DATA_STATE,
+    action: CheckoutButtonAction
+): CheckoutButtonDataState {
+    switch (action.type) {
+    case CheckoutButtonActionType.InitializeButtonSucceeded:
+        if (!action.meta || !action.meta.containerId) {
+            return data;
+        }
+
+        return {
+            ...data,
+            initializedContainers: {
+                ...data.initializedContainers,
+                [action.meta.containerId]: true,
+            },
+        };
+
+    case CheckoutButtonActionType.DeinitializeButtonSucceeded:
+        return {
+            ...data,
+            initializedContainers: {},
+        };
+    }
+
+    return data;
 }
 
 function errorsReducer(

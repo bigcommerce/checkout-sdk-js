@@ -7,7 +7,7 @@ import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-export default class GooglePayButtonStrategy extends CheckoutButtonStrategy {
+export default class GooglePayButtonStrategy implements CheckoutButtonStrategy {
     private _methodId?: string;
     private _walletButton?: HTMLElement;
 
@@ -16,9 +16,7 @@ export default class GooglePayButtonStrategy extends CheckoutButtonStrategy {
         private _formPoster: FormPoster,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _googlePayPaymentProcessor: GooglePayPaymentProcessor
-    ) {
-        super();
-    }
+    ) {}
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { containerId, methodId } = options;
@@ -27,32 +25,22 @@ export default class GooglePayButtonStrategy extends CheckoutButtonStrategy {
             throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
         }
 
-        if (this._isInitialized[containerId]) {
-            return super.initialize(options);
-        }
-
         this._methodId = methodId;
 
         return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
-            .then(() => this._googlePayPaymentProcessor.initialize(this._getMethodId())
-                .then(() => {
-                    this._walletButton = this._createSignInButton(containerId);
-                })
-            ).then(() => super.initialize(options));
+            .then(() => this._googlePayPaymentProcessor.initialize(this._getMethodId()))
+            .then(() => {
+                this._walletButton = this._createSignInButton(containerId);
+            });
     }
 
     deinitialize(): Promise<void> {
-        if (!this._isInitialized) {
-            return super.deinitialize();
-        }
-
         if (this._walletButton && this._walletButton.parentNode) {
             this._walletButton.parentNode.removeChild(this._walletButton);
             this._walletButton = undefined;
         }
 
-        return this._googlePayPaymentProcessor.deinitialize()
-            .then(() => super.deinitialize());
+        return this._googlePayPaymentProcessor.deinitialize();
     }
 
     private _createSignInButton(containerId: string): HTMLElement {

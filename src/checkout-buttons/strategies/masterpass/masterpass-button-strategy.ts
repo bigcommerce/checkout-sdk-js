@@ -1,4 +1,3 @@
-import { CheckoutButtonInitializeOptions } from '../..';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -8,16 +7,12 @@ import {
     NotInitializedErrorType
 } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
-import {
-    getCallbackUrl,
-    Masterpass,
-    MasterpassCheckoutOptions,
-    MasterpassScriptLoader
-} from '../../../payment/strategies/masterpass';
+import { getCallbackUrl, Masterpass, MasterpassCheckoutOptions, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
+import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
+export default class MasterpassButtonStrategy implements CheckoutButtonStrategy {
     private _masterpassClient?: Masterpass;
     private _methodId?: string;
     private _signInButton?: HTMLElement;
@@ -26,19 +21,13 @@ export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
         private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _masterpassScriptLoader: MasterpassScriptLoader
-    ) {
-        super();
-    }
+    ) {}
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { containerId, methodId } = options;
 
         if (!containerId || !methodId) {
             throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
-        }
-
-        if (this._isInitialized[containerId]) {
-            return super.initialize(options);
         }
 
         this._methodId = methodId;
@@ -56,23 +45,17 @@ export default class MasterpassButtonStrategy extends CheckoutButtonStrategy {
             .then(masterpass => {
                 this._masterpassClient = masterpass;
                 this._signInButton = this._createSignInButton(containerId);
-
-                return super.initialize(options);
             });
     }
 
     deinitialize(): Promise<void> {
-        if (!this._isInitialized) {
-            return super.deinitialize();
-        }
-
         if (this._signInButton && this._signInButton.parentNode) {
             this._signInButton.removeEventListener('click', this._handleWalletButtonClick);
             this._signInButton.parentNode.removeChild(this._signInButton);
             this._signInButton = undefined;
         }
 
-        return super.deinitialize();
+        return Promise.resolve();
     }
 
     private _createSignInButton(containerId: string): HTMLElement {

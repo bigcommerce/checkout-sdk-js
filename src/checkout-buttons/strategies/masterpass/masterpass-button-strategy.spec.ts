@@ -95,10 +95,6 @@ describe('MasterpassCustomerStrategy', () => {
         document.body.removeChild(containerFoo);
     });
 
-    it('creates an instance of MasterpassCustomerStrategy', () => {
-        expect(strategy).toBeInstanceOf(CheckoutButtonStrategy);
-    });
-
     describe('#initialize()', () => {
         let masterpassOptions: CheckoutButtonInitializeOptions;
         const methodId = CheckoutButtonMethodType.MASTERPASS;
@@ -123,34 +119,12 @@ describe('MasterpassCustomerStrategy', () => {
             expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false);
         });
 
-        it('loads masterpass once per container', async () => {
-            paymentMethodMock.config.testMode = false;
-
-            await strategy.initialize(masterpassOptions);
-            await strategy.initialize({ ...masterpassOptions, containerId: 'foo' });
-            await strategy.initialize(masterpassOptions);
-            await strategy.initialize({ ...masterpassOptions, containerId: 'foo' });
-
-            expect(masterpassScriptLoader.load).toHaveBeenCalledTimes(2);
-        });
-
         it('fails to initialize the strategy if no container is supplied', async () => {
             masterpassOptions = { methodId, containerId: '' };
             try {
                 await strategy.initialize(masterpassOptions);
             } catch (e) {
                 expect(e).toBeInstanceOf(InvalidArgumentError);
-            }
-        });
-
-        it('fails to initialize the strategy if no cart is supplied', async () => {
-            jest.spyOn(store.getState().checkout, 'getCheckout')
-                .mockReturnValue(undefined);
-            try {
-                await strategy.initialize(masterpassOptions);
-                expect(strategy).toBeInstanceOf(CheckoutButtonStrategy);
-            } catch (e) {
-                expect(e).toBeInstanceOf(MissingDataError);
             }
         });
 
