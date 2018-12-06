@@ -10,6 +10,11 @@ import InternalOrder, { InternalGiftCertificateList, InternalIncompleteOrder, In
 import Order, { GatewayOrderPayment, GiftCertificateOrderPayment, OrderPayment, OrderPayments } from './order';
 import { OrderMetaState } from './order-state';
 
+/**
+ * @deprecated This mapper is only for internal use only. It is required during
+ * the transition period as we are moving to adopt the new storefront API object
+ * schema.
+ */
 export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaState = {}): InternalOrder {
     const decimalPlaces = order.currency.decimalPlaces;
     const amountTransformer = new AmountTransformer(decimalPlaces);

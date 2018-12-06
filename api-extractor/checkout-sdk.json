@@ -16,6 +16,7 @@
         "enabled": false
     },
     "dtsRollup": {
-        "enabled": true
+        "enabled": true,
+        "mainDtsRollupPath": "checkout-sdk.d.ts"
     }
 }

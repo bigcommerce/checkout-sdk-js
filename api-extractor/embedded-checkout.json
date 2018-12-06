@@ -1,0 +1,9 @@
+{
+    "extends": "./checkout-sdk.json",
+    "project": {
+        "entryPointSourceFile": "temp/bundles/embedded-checkout.d.ts"
+    },
+    "dtsRollup": {
+        "mainDtsRollupPath": "embedded-checkout.d.ts"
+    }
+}
