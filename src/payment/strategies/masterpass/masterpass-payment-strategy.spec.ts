@@ -22,7 +22,7 @@ import { getMasterpass, getPaymentMethodsState, getStripe } from '../../payment-
 
 import { MasterpassCheckoutOptions, MasterpassPaymentStrategy, MasterpassScriptLoader } from './';
 import { Masterpass } from './masterpass';
-import { getMasterpassScriptMock } from './masterpass.mock';
+import { getCallbackUrlMock, getMasterpassScriptMock } from './masterpass.mock';
 
 describe('MasterpassPaymentStragegy', () => {
     let strategy: MasterpassPaymentStrategy;
@@ -123,6 +123,7 @@ describe('MasterpassPaymentStragegy', () => {
                     checkoutId: 'checkout-id',
                     currency: 'USD',
                     suppressShippingAddress: false,
+                    callbackUrl: getCallbackUrlMock(),
                 };
 
                 walletButton = document.createElement('a');
