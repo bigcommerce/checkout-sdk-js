@@ -4,6 +4,7 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../order';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 
 import LegacyPaymentStrategy from './legacy-payment-strategy';
@@ -41,5 +42,13 @@ describe('LegacyPaymentStrategy', () => {
         const output = await strategy.execute(getOrderRequestBody());
 
         expect(output).toEqual(store.getState());
+    });
+
+    it('throws error to inform that order finalization is not required', async () => {
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+        }
     });
 });

@@ -12,26 +12,20 @@ import PaymentStrategy from '../payment-strategy';
 import AfterpayScriptLoader from './afterpay-script-loader';
 import AfterpaySdk from './afterpay-sdk';
 
-export default class AfterpayPaymentStrategy extends PaymentStrategy {
+export default class AfterpayPaymentStrategy implements PaymentStrategy {
     private _afterpaySdk?: AfterpaySdk;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _checkoutValidator: CheckoutValidator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (this._isInitialized) {
-            return super.initialize(options);
-        }
-
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId, options.gatewayId);
         const config = state.config.getStoreConfig();
@@ -45,19 +39,15 @@ export default class AfterpayPaymentStrategy extends PaymentStrategy {
             .then(afterpaySdk => {
                 this._afterpaySdk = afterpaySdk;
             })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (!this._isInitialized) {
-            return super.deinitialize(options);
-        }
-
         if (this._afterpaySdk) {
             this._afterpaySdk = undefined;
         }
 
-        return super.deinitialize(options);
+        return Promise.resolve(this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

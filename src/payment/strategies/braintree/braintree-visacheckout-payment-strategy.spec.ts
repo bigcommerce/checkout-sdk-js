@@ -3,36 +3,33 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
-import {
-    createPaymentClient,
-    createPaymentStrategyRegistry,
-    PaymentActionCreator,
-    PaymentInitializeOptions,
-    PaymentMethod,
-    PaymentMethodActionCreator,
-    PaymentRequestSender,
-    PaymentStrategyActionCreator,
-} from '../..';
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
+import createPaymentClient from '../../create-payment-client';
+import createPaymentStrategyRegistry from '../../create-payment-strategy-registry';
+import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
+import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getBraintreeVisaCheckout } from '../../payment-methods.mock';
+import { PaymentInitializeOptions } from '../../payment-request-options';
+import PaymentRequestSender from '../../payment-request-sender';
+import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 
-import {
-    createBraintreeVisaCheckoutPaymentProcessor,
-    BraintreeVisaCheckoutPaymentProcessor,
-    BraintreeVisaCheckoutPaymentStrategy,
-    VisaCheckoutScriptLoader,
-} from '.';
+import BraintreeVisaCheckoutPaymentProcessor from './braintree-visacheckout-payment-processor';
+import BraintreeVisaCheckoutPaymentStrategy from './braintree-visacheckout-payment-strategy';
+import createBraintreeVisaCheckoutPaymentProcessor from './create-braintree-visacheckout-payment-processor';
 import { VisaCheckoutSDK } from './visacheckout';
+import VisaCheckoutScriptLoader from './visacheckout-script-loader';
 
 describe('BraintreeVisaCheckoutPaymentStrategy', () => {
     let braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor;
@@ -311,6 +308,16 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         it('deinitializes BraintreeVisaCheckoutPaymentProcessor', async () => {
             await strategy.deinitialize();
             expect(braintreeVisaCheckoutPaymentProcessor.deinitialize).toHaveBeenCalled();
+        });
+    });
+
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await strategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });

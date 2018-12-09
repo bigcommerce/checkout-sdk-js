@@ -12,6 +12,7 @@ import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
@@ -452,7 +453,15 @@ describe('ChasePayPaymentStrategy', () => {
             await strategy.deinitialize();
             expect(await strategy.deinitialize()).toEqual(store.getState());
         });
-
     });
 
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await strategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
+        });
+    });
 });

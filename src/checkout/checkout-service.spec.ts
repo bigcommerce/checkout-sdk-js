@@ -34,7 +34,7 @@ import {
     getLoadInstrumentsResponseBody,
     getVaultAccessTokenResponseBody,
 } from '../payment/instrument/instrument.mock';
-import { getAuthorizenet, getBraintree, getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
+import { getAuthorizenet, getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
 import { NoPaymentDataRequiredPaymentStrategy, OfflinePaymentStrategy, PaymentStrategy } from '../payment/strategies';
 import {
     createShippingStrategyRegistry,
@@ -80,6 +80,7 @@ describe('CheckoutService', () => {
     let paymentMethodRequestSender: PaymentMethodRequestSender;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentStrategy: PaymentStrategy;
+    let paymentStrategyActionCreator: PaymentStrategyActionCreator;
     let paymentStrategyRegistry: PaymentStrategyRegistry;
     let shippingStrategyActionCreator: ShippingStrategyActionCreator;
     let shippingCountryRequestSender: ShippingCountryRequestSender;
@@ -205,6 +206,11 @@ describe('CheckoutService', () => {
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
 
+        paymentStrategyActionCreator = new PaymentStrategyActionCreator(
+            paymentStrategyRegistry,
+            new OrderActionCreator(orderRequestSender, checkoutValidator)
+        );
+
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
             createShippingStrategyRegistry(store, requestSender)
         );
@@ -222,10 +228,7 @@ describe('CheckoutService', () => {
             instrumentActionCreator,
             orderActionCreator,
             paymentMethodActionCreator,
-            new PaymentStrategyActionCreator(
-                paymentStrategyRegistry,
-                new OrderActionCreator(orderRequestSender, checkoutValidator)
-            ),
+            paymentStrategyActionCreator,
             new ShippingCountryActionCreator(shippingCountryRequestSender),
             shippingStrategyActionCreator
         );
@@ -504,37 +507,36 @@ describe('CheckoutService', () => {
     });
 
     describe('#initializePayment()', () => {
-        it('finds payment strategy', async () => {
-            await checkoutService.loadPaymentMethods();
-            await checkoutService.initializePayment({ methodId: 'braintree' });
+        it('dispatches action to initialize payment', async () => {
+            const options = { methodId: getPaymentMethod().id };
+            const action = of(createAction('INITIALIZE_PAYMENT'));
 
-            expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getBraintree());
-        });
+            jest.spyOn(paymentStrategyActionCreator, 'initialize')
+                .mockReturnValue(action);
 
-        it('initializes payment strategy', async () => {
-            await checkoutService.loadPaymentMethods();
-            await checkoutService.initializePayment({ methodId: 'braintree' });
+            jest.spyOn(store, 'dispatch');
 
-            expect(paymentStrategy.initialize).toHaveBeenCalledWith({
-                methodId: getBraintree().id,
-                gatewayId: undefined,
-            });
+            await checkoutService.initializePayment(options);
+
+            expect(paymentStrategyActionCreator.initialize).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'paymentStrategy' });
         });
     });
 
     describe('#deinitializePayment()', () => {
-        it('finds payment strategy', async () => {
-            await checkoutService.loadPaymentMethods();
-            await checkoutService.deinitializePayment({ methodId: 'braintree' });
+        it('dispatches action to deinitialize payment', async () => {
+            const options = { methodId: getPaymentMethod().id };
+            const action = of(createAction('DEINITIALIZE_PAYMENT'));
 
-            expect(paymentStrategyRegistry.getByMethod).toHaveBeenCalledWith(getBraintree());
-        });
+            jest.spyOn(paymentStrategyActionCreator, 'deinitialize')
+                .mockReturnValue(action);
 
-        it('deinitializes payment strategy', async () => {
-            await checkoutService.loadPaymentMethods();
-            await checkoutService.deinitializePayment({ methodId: 'braintree' });
+            jest.spyOn(store, 'dispatch');
 
-            expect(paymentStrategy.deinitialize).toHaveBeenCalled();
+            await checkoutService.deinitializePayment(options);
+
+            expect(paymentStrategyActionCreator.deinitialize).toHaveBeenCalledWith(options);
+            expect(store.dispatch).toHaveBeenCalledWith(action, { queueId: 'paymentStrategy' });
         });
     });
 

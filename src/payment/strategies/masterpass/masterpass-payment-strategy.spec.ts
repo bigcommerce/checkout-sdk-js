@@ -17,6 +17,7 @@ import { MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentActionType } from '../../payment-actions';
 import { getMasterpass, getPaymentMethodsState, getStripe } from '../../payment-methods.mock';
 
@@ -26,16 +27,13 @@ import { getCallbackUrlMock, getMasterpassScriptMock } from './masterpass.mock';
 
 describe('MasterpassPaymentStragegy', () => {
     let strategy: MasterpassPaymentStrategy;
-
     let orderRequestSender: OrderRequestSender;
     let requestSender: RequestSender;
-
     let store: CheckoutStore;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let scriptLoader: MasterpassScriptLoader;
-
     let initOptions: PaymentInitializeOptions;
     let paymentMethodMock: PaymentMethod;
     let stripePaymentMethodMock: PaymentMethod;
@@ -179,32 +177,31 @@ describe('MasterpassPaymentStragegy', () => {
         let loadPaymentMethodAction: Observable<Action>;
 
         beforeEach(() => {
-                paymentMethodMock.initializationData = {
-                    cardData: { expMonth: '10', expYear: '20', accountMask: '4444', cardType: 'MasterCard' },
-                    gateway: 'stripe',
-                    paymentData: { nonce: 'src_foobar1234567' },
-                };
+            paymentMethodMock.initializationData = {
+                cardData: { expMonth: '10', expYear: '20', accountMask: '4444', cardType: 'MasterCard' },
+                gateway: 'stripe',
+                paymentData: { nonce: 'src_foobar1234567' },
+            };
 
-                payload = {
-                    useStoreCredit: true,
-                };
+            payload = {
+                useStoreCredit: true,
+            };
 
-                submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
-                orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
+            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+            orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
-                loadPaymentMethodAction = of(
-                    createAction(
-                        PaymentMethodActionType.LoadPaymentMethodSucceeded,
-                        stripePaymentMethodMock,
-                        { methodId: stripePaymentMethodMock.id }
-                    )
-                );
-                jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(loadPaymentMethodAction);
+            loadPaymentMethodAction = of(
+                createAction(
+                    PaymentMethodActionType.LoadPaymentMethodSucceeded,
+                    stripePaymentMethodMock,
+                    { methodId: stripePaymentMethodMock.id }
+                )
+            );
+            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(loadPaymentMethodAction);
 
-                submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-                paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
-            }
-        );
+            submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+            paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
+        });
 
         it('fails to submit order when payment is not provided', async () => {
             expect(() => strategy.execute(payload)).toThrowError(MissingDataError);
@@ -272,6 +269,16 @@ describe('MasterpassPaymentStragegy', () => {
             await strategy.initialize(initOptions);
             await strategy.deinitialize();
             expect(walletButton.removeEventListener).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await strategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });

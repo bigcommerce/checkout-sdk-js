@@ -5,6 +5,7 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../order';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 
 import { NoPaymentDataRequiredPaymentStrategy } from '.';
@@ -44,6 +45,16 @@ describe('NoPaymentDataRequiredPaymentStrategy', () => {
             await noPaymentDataRequiredPaymentStrategy.execute(getOrderRequestBody(), options);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), options);
+        });
+    });
+
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await noPaymentDataRequiredPaymentStrategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });

@@ -1,19 +1,18 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { PaymentArgumentInvalidError } from '../errors';
 import PaymentActionCreator from '../payment-action-creator';
-import { PaymentRequestOptions } from '../payment-request-options';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 
 import PaymentStrategy from './payment-strategy';
 
-export default class CreditCardPaymentStrategy extends PaymentStrategy {
+export default class CreditCardPaymentStrategy implements PaymentStrategy {
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator
-    ) {
-        super(store);
-    }
+    ) {}
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
@@ -27,5 +26,17 @@ export default class CreditCardPaymentStrategy extends PaymentStrategy {
             .then(() =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
             );
+    }
+
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
+    }
+
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
     }
 }

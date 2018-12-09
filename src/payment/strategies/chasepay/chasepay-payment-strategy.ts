@@ -7,6 +7,7 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitia
 import { toFormUrlEncoded } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentMethodCancelledError } from '../../errors';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -20,14 +21,14 @@ import { ChasePay, ChasePayEventType, ChasePaySuccessPayload } from './chasepay'
 import ChasePayInitializeOptions from './chasepay-initialize-options';
 import ChasePayScriptLoader from './chasepay-script-loader';
 
-export default class ChasePayPaymentStrategy extends PaymentStrategy {
+export default class ChasePayPaymentStrategy implements PaymentStrategy {
     private _chasePayClient?: ChasePay;
     private _methodId!: string;
     private _walletButton?: HTMLElement;
     private _walletEvent$: Subject<{ type: ChasePayEventType }>;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
@@ -37,8 +38,6 @@ export default class ChasePayPaymentStrategy extends PaymentStrategy {
         private _chasePayScriptLoader: ChasePayScriptLoader,
         private _wepayRiskClient: WepayRiskClient
     ) {
-        super(store);
-
         this._walletEvent$ = new Subject();
     }
 
@@ -57,7 +56,7 @@ export default class ChasePayPaymentStrategy extends PaymentStrategy {
         }
 
         return this._configureWallet(options.chasepay)
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -68,7 +67,7 @@ export default class ChasePayPaymentStrategy extends PaymentStrategy {
         this._walletButton = undefined;
         this._chasePayClient = undefined;
 
-        return super.deinitialize(options);
+        return Promise.resolve(this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -84,6 +83,10 @@ export default class ChasePayPaymentStrategy extends PaymentStrategy {
             .then(payment =>
                 this._createOrder(payment, payload.useStoreCredit, options)
             );
+    }
+
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     private _configureWallet(options: ChasePayInitializeOptions): Promise<void> {

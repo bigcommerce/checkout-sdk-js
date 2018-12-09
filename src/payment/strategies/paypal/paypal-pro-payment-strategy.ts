@@ -2,19 +2,18 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import { PaymentRequestOptions } from '../../payment-request-options';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
 
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentStrategy from '../payment-strategy';
 
-export default class PaypalProPaymentStrategy extends PaymentStrategy {
+export default class PaypalProPaymentStrategy implements PaymentStrategy {
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator
-    ) {
-        super(store);
-    }
+    ) {}
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (this._isPaymentAcknowledged()) {
@@ -37,6 +36,18 @@ export default class PaypalProPaymentStrategy extends PaymentStrategy {
             .then(() =>
                 this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
             );
+    }
+
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
+    }
+
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
     }
 
     private _isPaymentAcknowledged(): boolean {

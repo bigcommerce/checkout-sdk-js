@@ -13,6 +13,7 @@ import { InvalidArgumentError, MissingDataError, RequestError } from '../../../c
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
@@ -425,5 +426,13 @@ describe('AmazonPayPaymentStrategy', () => {
 
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);
         expect(store.dispatch).not.toHaveBeenCalledWith(updateAddressAction);
+    });
+
+    it('throws error to inform that order finalization is not required', async () => {
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+        }
     });
 });

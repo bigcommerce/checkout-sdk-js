@@ -14,6 +14,7 @@ import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import {
     createPaymentClient,
     createPaymentStrategyRegistry,
@@ -25,7 +26,6 @@ import {
     PaymentRequestSender,
     PaymentStrategyActionCreator
 } from '../../../payment';
-
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
 
 import createGooglePayPaymentProcessor from './create-googlepay-payment-processor';
@@ -346,6 +346,16 @@ describe('GooglePayPaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(error).toEqual(new MissingDataError(MissingDataErrorType.MissingPayment));
+            }
+        });
+    });
+
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await strategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
             }
         });
     });
