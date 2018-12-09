@@ -11,23 +11,17 @@ import CustomerStrategy from '../customer-strategy';
 
 import GooglePayCustomerInitializeOptions from './googlepay-customer-initialize-options';
 
-export default class GooglePayCustomerStrategy extends CustomerStrategy {
+export default class GooglePayCustomerStrategy implements CustomerStrategy {
     private _walletButton?: HTMLElement;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _googlePayPaymentProcessor: GooglePayPaymentProcessor,
         private _formPoster: FormPoster
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (this._isInitialized) {
-            return super.initialize(options);
-        }
-
         const { methodId }  = options;
 
         const googlePayOptions = this._getGooglePayOptions(options);
@@ -40,21 +34,17 @@ export default class GooglePayCustomerStrategy extends CustomerStrategy {
             .then(() => {
                 this._walletButton = this._createSignInButton(googlePayOptions.container);
             })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (!this._isInitialized) {
-            return super.deinitialize(options);
-        }
-
         if (this._walletButton && this._walletButton.parentNode) {
             this._walletButton.parentNode.removeChild(this._walletButton);
             this._walletButton = undefined;
         }
 
         return this._googlePayPaymentProcessor.deinitialize()
-            .then(() => super.deinitialize(options));
+            .then(() => this._store.getState());
     }
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {

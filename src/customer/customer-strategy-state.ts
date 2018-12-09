@@ -1,6 +1,13 @@
 export default interface CustomerStrategyState {
+    data: CustomerStrategyDataState;
     errors: CustomerStrategyErrorsState;
     statuses: CustomerStrategyStatusesState;
+}
+
+export interface CustomerStrategyDataState {
+    [key: string]: {
+        isInitialized: boolean,
+    };
 }
 
 export interface CustomerStrategyErrorsState {
@@ -30,6 +37,7 @@ export interface CustomerStrategyStatusesState {
 }
 
 export const DEFAULT_STATE: CustomerStrategyState = {
+    data: {},
     errors: {},
     statuses: {},
 };

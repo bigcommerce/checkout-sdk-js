@@ -1,6 +1,7 @@
-import { createAction, createErrorAction } from '@bigcommerce/data-store';
+import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
+import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
 
 import CustomerCredentials from './customer-credentials';
@@ -58,10 +59,15 @@ export default class CustomerStrategyActionCreator {
         });
     }
 
-    initialize(options?: CustomerInitializeOptions): Observable<CustomerStrategyInitializeAction> {
-        return Observable.create((observer: Observer<CustomerStrategyInitializeAction>) => {
+    initialize(options?: CustomerInitializeOptions): ThunkAction<CustomerStrategyInitializeAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<CustomerStrategyInitializeAction>) => {
+            const state = store.getState();
             const methodId = options && options.methodId;
             const meta = { methodId };
+
+            if (methodId && state.customerStrategies.isInitialized(methodId)) {
+                return observer.complete();
+            }
 
             observer.next(createAction(CustomerStrategyActionType.InitializeRequested, undefined, meta));
 
@@ -77,10 +83,15 @@ export default class CustomerStrategyActionCreator {
         });
     }
 
-    deinitialize(options?: CustomerRequestOptions): Observable<CustomerStrategyDeinitializeAction> {
-        return Observable.create((observer: Observer<CustomerStrategyDeinitializeAction>) => {
+    deinitialize(options?: CustomerRequestOptions): ThunkAction<CustomerStrategyDeinitializeAction, InternalCheckoutSelectors> {
+        return store => Observable.create((observer: Observer<CustomerStrategyDeinitializeAction>) => {
+            const state = store.getState();
             const methodId = options && options.methodId;
             const meta = { methodId };
+
+            if (methodId && !state.customerStrategies.isInitialized(methodId)) {
+                return observer.complete();
+            }
 
             observer.next(createAction(CustomerStrategyActionType.DeinitializeRequested, undefined, meta));
 

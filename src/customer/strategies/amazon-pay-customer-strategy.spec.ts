@@ -169,18 +169,6 @@ describe('AmazonPayCustomerStrategy', () => {
         }
     });
 
-    it('only initializes widget once until deinitialization', async () => {
-        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
-        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
-
-        expect(buttonConstructorSpy).toHaveBeenCalledTimes(1);
-
-        await strategy.deinitialize();
-        await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
-
-        expect(buttonConstructorSpy).toHaveBeenCalledTimes(2);
-    });
-
     it('generates request token', async () => {
         await strategy.initialize({ methodId: 'amazon', amazon: { container: 'login' } });
 

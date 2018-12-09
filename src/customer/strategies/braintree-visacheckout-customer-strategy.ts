@@ -1,31 +1,29 @@
-import { CustomerStrategyActionCreator } from '..';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { BraintreeVisaCheckoutPaymentProcessor } from '../../payment/strategies/braintree';
+import { VisaCheckoutScriptLoader } from '../../payment/strategies/braintree';
 import { VisaCheckoutPaymentSuccessPayload } from '../../payment/strategies/braintree/visacheckout';
-import VisaCheckoutScriptLoader from '../../payment/strategies/braintree/visacheckout-script-loader';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import CustomerCredentials from '../customer-credentials';
-import { CustomerInitializeOptions } from '../customer-request-options';
+import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
+import CustomerStrategyActionCreator from '../customer-strategy-action-creator';
 
 import CustomerStrategy from './customer-strategy';
 
-export default class BraintreeVisaCheckoutCustomerStrategy extends CustomerStrategy {
+export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
     private _buttonClassName: string = 'visa-checkout-wrapper';
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
         private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreevisacheckout: visaCheckoutOptions, methodId } = options;
@@ -83,30 +81,26 @@ export default class BraintreeVisaCheckoutCustomerStrategy extends CustomerStrat
                 })
                 .then(signInButton => { signInButton.style.visibility = 'visible'; });
             })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
-    signIn(credentials: CustomerCredentials, options?: any): Promise<InternalCheckoutSelectors> {
+    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
             'In order to sign in via VisaCheckout, the shopper must click on "Visa Checkout" button.'
         );
     }
 
-    signOut(options?: any): Promise<InternalCheckoutSelectors> {
+    signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut('braintreevisacheckout', options)
         );
     }
 
-    deinitialize(options?: any): Promise<InternalCheckoutSelectors> {
-        if (!this._isInitialized) {
-            return super.deinitialize(options);
-        }
-
+    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = undefined;
 
         return this._braintreeVisaCheckoutPaymentProcessor.deinitialize()
-            .then(() => super.deinitialize(options));
+            .then(() => this._store.getState());
     }
 
     private _paymentInstrumentSelected(paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) {

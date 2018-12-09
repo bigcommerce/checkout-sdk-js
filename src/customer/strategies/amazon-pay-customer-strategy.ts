@@ -8,27 +8,21 @@ import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-r
 
 import CustomerStrategy from './customer-strategy';
 
-export default class AmazonPayCustomerStrategy extends CustomerStrategy {
+export default class AmazonPayCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
     private _window: AmazonPayWindow;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _remoteCheckoutRequestSender: RemoteCheckoutRequestSender,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
-        super(store);
-
         this._window = window;
     }
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (this._isInitialized) {
-            return super.initialize(options);
-        }
-
         const { amazon: amazonOptions, methodId } = options;
 
         if (!amazonOptions || !methodId) {
@@ -59,17 +53,13 @@ export default class AmazonPayCustomerStrategy extends CustomerStrategy {
                 this._scriptLoader.loadWidget(this._paymentMethod, onReady)
                     .catch(reject);
             }))
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (!this._isInitialized) {
-            return super.deinitialize(options);
-        }
-
         this._paymentMethod = undefined;
 
-        return super.deinitialize(options);
+        return Promise.resolve(this._store.getState());
     }
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {

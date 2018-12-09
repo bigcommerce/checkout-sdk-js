@@ -6,26 +6,24 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { toFormUrlEncoded } from '../../common/http-request';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
 import { ChasePayScriptLoader } from '../../payment/strategies/chasepay';
-import { ChasePaySuccessPayload } from '../../payment/strategies/chasepay/chasepay';
+import { ChasePaySuccessPayload } from '../../payment/strategies/chasepay';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import CustomerCredentials from '../customer-credentials';
-import {CustomerInitializeOptions, CustomerRequestOptions} from '../customer-request-options';
+import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
 
 import CustomerStrategy from './customer-strategy';
 
-export default class ChasePayCustomerStrategy extends CustomerStrategy {
+export default class ChasePayCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _chasePayScriptLoader: ChasePayScriptLoader,
         private _requestSender: RequestSender,
         private _formPoster: FormPoster
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { chasepay: chasePayOptions, methodId } = options;
@@ -96,7 +94,11 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
                         });
                     });
             })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
+    }
+
+    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
     }
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -105,7 +107,7 @@ export default class ChasePayCustomerStrategy extends CustomerStrategy {
         );
     }
 
-    signOut(options?: any): Promise<InternalCheckoutSelectors> {
+    signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const payment = state.payment.getPaymentId();
 

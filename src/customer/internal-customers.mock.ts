@@ -60,6 +60,7 @@ export function getCustomerResponseBody(): InternalCustomerResponseBody {
 
 export function getCustomerStrategyState(): CustomerStrategyState {
     return {
+        data: {},
         errors: {},
         statuses: {},
     };

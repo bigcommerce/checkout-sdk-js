@@ -2,18 +2,16 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { NotImplementedError} from '../../common/error/errors';
 import { RemoteCheckoutActionCreator } from '../../remote-checkout';
 import CustomerCredentials from '../customer-credentials';
-import { CustomerRequestOptions } from '../customer-request-options';
+import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
 
 import CustomerStrategy from './customer-strategy';
 
-export default class SquareCustomerStrategy extends CustomerStrategy {
+export default class SquareCustomerStrategy implements CustomerStrategy {
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator
-    ) {
-        super(store);
-    }
+    ) {}
 
     signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
@@ -21,7 +19,7 @@ export default class SquareCustomerStrategy extends CustomerStrategy {
         );
     }
 
-    signOut(options?: any): Promise<InternalCheckoutSelectors> {
+    signOut(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const payment = state.payment.getPaymentId();
 
@@ -32,5 +30,13 @@ export default class SquareCustomerStrategy extends CustomerStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.signOut(payment.providerId, options)
         );
+    }
+
+    initialize(options?: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
+    }
+
+    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
     }
 }
