@@ -5,13 +5,11 @@ import { ShippingRequestOptions } from '../shipping-request-options';
 
 import ShippingStrategy from './shipping-strategy';
 
-export default class DefaultShippingStrategy extends ShippingStrategy {
+export default class DefaultShippingStrategy implements ShippingStrategy {
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _consignmentActionCreator: ConsignmentActionCreator
-    ) {
-        super(store);
-    }
+    ) {}
 
     updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
@@ -23,5 +21,13 @@ export default class DefaultShippingStrategy extends ShippingStrategy {
         return this._store.dispatch(
             this._consignmentActionCreator.selectShippingOption(optionId, options)
         );
+    }
+
+    initialize(options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
+    }
+
+    deinitialize(options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
     }
 }

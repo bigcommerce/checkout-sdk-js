@@ -144,4 +144,25 @@ describe('ShippingStrategySelector', () => {
             expect(selector.isInitializing()).toEqual(false);
         });
     });
+
+    describe('#isInitialized()', () => {
+        it('returns true if method is initialized', () => {
+            selector = new ShippingStrategySelector({
+                ...state.shippingStrategy,
+                data: { foobar: { isInitialized: true } },
+            });
+
+            expect(selector.isInitialized('foobar')).toEqual(true);
+        });
+
+        it('returns false if method is not initialized', () => {
+            selector = new ShippingStrategySelector({
+                ...state.shippingStrategy,
+                data: { foobar: { isInitialized: false } },
+            });
+
+            expect(selector.isInitialized('foobar')).toEqual(false);
+            expect(selector.isInitialized('bar')).toEqual(false);
+        });
+    });
 });

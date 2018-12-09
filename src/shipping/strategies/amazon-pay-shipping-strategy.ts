@@ -13,27 +13,21 @@ import { ShippingStrategyActionType } from '../shipping-strategy-actions';
 
 import ShippingStrategy from './shipping-strategy';
 
-export default class AmazonPayShippingStrategy extends ShippingStrategy {
+export default class AmazonPayShippingStrategy implements ShippingStrategy {
     private _paymentMethod?: PaymentMethod;
     private _window: AmazonPayWindow;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _consignmentActionCreator: ConsignmentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
-        super(store);
-
         this._window = window;
     }
 
     initialize(options: ShippingInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (this._isInitialized) {
-            return super.initialize(options);
-        }
-
         const { amazon: amazonOptions, methodId } = options;
 
         if (!amazonOptions || !methodId) {
@@ -57,24 +51,20 @@ export default class AmazonPayShippingStrategy extends ShippingStrategy {
                 this._scriptLoader.loadWidget(this._paymentMethod, onReady)
                     .catch(reject);
             }))
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (!this._isInitialized) {
-            return super.deinitialize(options);
-        }
-
         this._paymentMethod = undefined;
 
-        return super.deinitialize(options);
+        return Promise.resolve(this._store.getState());
     }
 
     updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    selectOption(optionId: string, options?: any): Promise<InternalCheckoutSelectors> {
+    selectOption(optionId: string, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(
             this._consignmentActionCreator.selectShippingOption(optionId, options)
         );

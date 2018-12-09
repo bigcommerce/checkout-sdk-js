@@ -1,18 +1,44 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { ShippingStrategyAction, ShippingStrategyActionType } from './shipping-strategy-actions';
-import ShippingStrategyState, { DEFAULT_STATE, ShippingStrategyErrorsState, ShippingStrategyStatusesState } from './shipping-strategy-state';
+import ShippingStrategyState, { DEFAULT_STATE, ShippingStrategyDataState, ShippingStrategyErrorsState, ShippingStrategyStatusesState } from './shipping-strategy-state';
 
 export default function shippingStrategyReducer(
     state: ShippingStrategyState = DEFAULT_STATE,
     action: ShippingStrategyAction
 ): ShippingStrategyState {
     const reducer = combineReducers<ShippingStrategyState, ShippingStrategyAction>({
+        data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
     });
 
     return reducer(state, action);
+}
+
+function dataReducer(
+    data: ShippingStrategyDataState = DEFAULT_STATE.data,
+    action: ShippingStrategyAction
+): ShippingStrategyDataState {
+    switch (action.type) {
+    case ShippingStrategyActionType.InitializeSucceeded:
+        return {
+            ...data,
+            [action.meta && action.meta.methodId]: {
+                isInitialized: true,
+            },
+        };
+
+    case ShippingStrategyActionType.DeinitializeSucceeded:
+        return {
+            ...data,
+            [action.meta && action.meta.methodId]: {
+                isInitialized: false,
+            },
+        };
+    }
+
+    return data;
 }
 
 function errorsReducer(

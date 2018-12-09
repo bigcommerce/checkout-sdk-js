@@ -1,6 +1,13 @@
 export default interface ShippingStrategyState {
+    data: ShippingStrategyDataState;
     errors: ShippingStrategyErrorsState;
     statuses: ShippingStrategyStatusesState;
+}
+
+export interface ShippingStrategyDataState {
+    [key: string]: {
+        isInitialized: boolean,
+    };
 }
 
 export interface ShippingStrategyErrorsState {
@@ -26,6 +33,7 @@ export interface ShippingStrategyStatusesState {
 }
 
 export const DEFAULT_STATE: ShippingStrategyState = {
+    data: {},
     errors: {},
     statuses: {},
 };
