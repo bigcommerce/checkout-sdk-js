@@ -30,3 +30,8 @@ function joinErrors(errors: Array<{ code: string, message?: string }>): string |
         return result;
     }, []).join(' ');
 }
+
+export const PAYMENT_ERROR_CODES = [
+    'payment',
+    'transaction_declined',
+];
