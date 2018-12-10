@@ -86,6 +86,23 @@ describe('PaymentStrategyActionCreator', () => {
             expect(strategy.initialize).toHaveBeenCalledWith({ methodId: method.id, gatewayId: method.gateway });
         });
 
+        it('does not initialize if strategy is already initialized', async () => {
+            store = createCheckoutStore(merge({}, state, {
+                customerStrategies: { data: { amazon: { isInitialized: true } } },
+            }));
+
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+            const strategy = registry.get('amazon');
+
+            jest.spyOn(strategy, 'initialize')
+                .mockReturnValue(Promise.resolve(store.getState()));
+
+            await from(actionCreator.initialize({ methodId: 'amazon' })(store))
+                .toPromise();
+
+            expect(strategy.initialize).not.toHaveBeenCalled();
+        });
+
         it('emits action to notify initialization progress', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
@@ -134,14 +151,19 @@ describe('PaymentStrategyActionCreator', () => {
     });
 
     describe('#deinitialize()', () => {
+        const method = getPaymentMethod();
+
         beforeEach(() => {
+            store = createCheckoutStore(merge({}, state, {
+                paymentStrategies: { data: { [method.id]: { isInitialized: true } } },
+            }));
+
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.resolve(store.getState()));
         });
 
         it('finds payment strategy by method', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const method = getPaymentMethod();
 
             await from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toPromise();
@@ -151,7 +173,6 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('deinitializes payment strategy', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const method = getPaymentMethod();
 
             await from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toPromise();
@@ -159,9 +180,21 @@ describe('PaymentStrategyActionCreator', () => {
             expect(strategy.deinitialize).toHaveBeenCalled();
         });
 
+        it('does not deinitialize if strategy is not initialized', async () => {
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+            const strategy = registry.get('amazon');
+
+            jest.spyOn(strategy, 'deinitialize')
+                .mockReturnValue(Promise.resolve(store.getState()));
+
+            await from(actionCreator.deinitialize({ methodId: 'amazon' })(store))
+                .toPromise();
+
+            expect(strategy.deinitialize).not.toHaveBeenCalled();
+        });
+
         it('emits action to notify deinitialization progress', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const method = getPaymentMethod();
             const actions = await from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .pipe(toArray())
                 .toPromise();
@@ -174,7 +207,6 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('emits error action if unable to deinitialize', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const method = getPaymentMethod();
             const deinitializeError = new Error();
             const errorHandler = jest.fn(action => of(action));
 

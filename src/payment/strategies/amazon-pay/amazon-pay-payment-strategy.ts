@@ -5,6 +5,7 @@ import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
 import PaymentMethod from '../../payment-method';
@@ -17,28 +18,22 @@ import AmazonPayWallet, { AmazonPayWalletOptions } from './amazon-pay-wallet';
 import AmazonPayWidgetError from './amazon-pay-widget-error';
 import AmazonPayWindow from './amazon-pay-window';
 
-export default class AmazonPayPaymentStrategy extends PaymentStrategy {
+export default class AmazonPayPaymentStrategy implements PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
     private _walletOptions?: AmazonPayPaymentInitializeOptions;
     private _window: AmazonPayWindow;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _billingAddressActionCreator: BillingAddressActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _scriptLoader: AmazonPayScriptLoader
     ) {
-        super(store);
-
         this._window = window;
     }
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (this._isInitialized) {
-            return super.initialize(options);
-        }
-
         const { amazon: amazonOptions, methodId } = options;
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
@@ -64,17 +59,13 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
             this._scriptLoader.loadWidget(paymentMethod, onReady)
                 .catch(reject);
         })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (!this._isInitialized) {
-            return super.deinitialize(options);
-        }
-
         this._walletOptions = undefined;
 
-        return super.deinitialize(options);
+        return Promise.resolve(this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -107,6 +98,10 @@ export default class AmazonPayPaymentStrategy extends PaymentStrategy {
 
                 return Promise.reject(error);
             });
+    }
+
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     private _getMerchantId(): string | undefined {

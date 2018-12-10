@@ -9,6 +9,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutVali
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
@@ -220,6 +221,16 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             await braintreeCreditCardPaymentStrategy.deinitialize();
 
             expect(braintreePaymentProcessorMock.deinitialize).toHaveBeenCalled();
+        });
+    });
+
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await braintreeCreditCardPaymentStrategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });

@@ -1,34 +1,30 @@
-import { PaymentStrategy } from '../';
-import {
-    PaymentActionCreator,
-    PaymentInitializeOptions,
-    PaymentMethodActionCreator,
-    PaymentRequestOptions
-} from '../../';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategy from '../payment-strategy';
 
 import getCallbackUrl from './get-callback-url';
 import { Masterpass, MasterpassCheckoutOptions } from './masterpass';
 import MasterpassScriptLoader from './masterpass-script-loader';
 
-export default class MasterpassPaymentStrategy extends PaymentStrategy {
+export default class MasterpassPaymentStrategy implements PaymentStrategy {
     private _masterpassClient?: Masterpass;
     private _paymentMethod?: PaymentMethod;
     private _walletButton?: HTMLElement;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _masterpassScriptLoader: MasterpassScriptLoader
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
@@ -54,7 +50,7 @@ export default class MasterpassPaymentStrategy extends PaymentStrategy {
                     this._walletButton.addEventListener('click', this._handleWalletButtonClick);
                 }
 
-                return super.initialize(options);
+                return this._store.getState();
             });
     }
 
@@ -68,7 +64,7 @@ export default class MasterpassPaymentStrategy extends PaymentStrategy {
         this._walletButton = undefined;
         this._masterpassClient = undefined;
 
-        return super.deinitialize(options);
+        return Promise.resolve(this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -95,6 +91,10 @@ export default class MasterpassPaymentStrategy extends PaymentStrategy {
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() => this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(gateway)))
             .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId: gateway, paymentData })));
+    }
+
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     private _createMasterpassPayload(): MasterpassCheckoutOptions {

@@ -1,18 +1,44 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { PaymentStrategyAction, PaymentStrategyActionType } from './payment-strategy-actions';
-import PaymentStrategyState, { DEFAULT_STATE, PaymentStrategyErrorsState, PaymentStrategyStatusesState } from './payment-strategy-state';
+import PaymentStrategyState, { DEFAULT_STATE, PaymentStrategyDataState, PaymentStrategyErrorsState, PaymentStrategyStatusesState } from './payment-strategy-state';
 
 export default function paymentStrategyReducer(
     state: PaymentStrategyState = DEFAULT_STATE,
     action: PaymentStrategyAction
 ): PaymentStrategyState {
     const reducer = combineReducers<PaymentStrategyState, PaymentStrategyAction>({
+        data: dataReducer,
         errors: errorsReducer,
         statuses: statusesReducer,
     });
 
     return reducer(state, action);
+}
+
+function dataReducer(
+    data: PaymentStrategyDataState = DEFAULT_STATE.data,
+    action: PaymentStrategyAction
+): PaymentStrategyDataState {
+    switch (action.type) {
+    case PaymentStrategyActionType.InitializeSucceeded:
+        return {
+            ...data,
+            [action.meta && action.meta.methodId]: {
+                isInitialized: true,
+            },
+        };
+
+    case PaymentStrategyActionType.DeinitializeSucceeded:
+        return {
+            ...data,
+            [action.meta && action.meta.methodId]: {
+                isInitialized: false,
+            },
+        };
+    }
+
+    return data;
 }
 
 function errorsReducer(

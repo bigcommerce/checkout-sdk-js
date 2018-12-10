@@ -6,6 +6,7 @@ import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -236,6 +237,16 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.deinitialize({ methodId: paymentMethodMock.id });
 
             expect(braintreePaymentProcessorMock.deinitialize).toHaveBeenCalled();
+        });
+    });
+
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await braintreePaypalPaymentStrategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });

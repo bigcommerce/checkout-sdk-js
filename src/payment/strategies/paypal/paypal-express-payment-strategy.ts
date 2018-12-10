@@ -1,6 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
@@ -9,19 +10,17 @@ import PaymentStrategy from '../payment-strategy';
 import PaypalScriptLoader from './paypal-script-loader';
 import { PaypalHostWindow, PaypalSDK } from './paypal-sdk';
 
-export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
+export default class PaypalExpressPaymentStrategy implements PaymentStrategy {
     private _paypalSdk?: PaypalSDK;
     private _paymentMethod?: PaymentMethod;
     private _useRedirectFlow: boolean = false;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _scriptLoader: PaypalScriptLoader,
         private _window: PaypalHostWindow = window
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
@@ -29,8 +28,8 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
         this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
         this._useRedirectFlow = (options.paypalexpress && options.paypalexpress.useRedirectFlow) === true;
 
-        if (!this._isInContextEnabled() || this._isInitialized) {
-            return super.initialize(options);
+        if (!this._isInContextEnabled()) {
+            return Promise.resolve(this._store.getState());
         }
 
         return this._scriptLoader.loadPaypal()
@@ -46,20 +45,16 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
                     environment: this._paymentMethod.config.testMode ? 'sandbox' : 'production',
                 });
             })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        if (!this._isInitialized) {
-            return super.deinitialize();
-        }
-
         if (this._isInContextEnabled() && this._paypalSdk) {
             this._paypalSdk.checkout.closeFlow();
             this._paypalSdk = undefined;
         }
 
-        return super.deinitialize();
+        return Promise.resolve(this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -115,7 +110,7 @@ export default class PaypalExpressPaymentStrategy extends PaymentStrategy {
             return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
         }
 
-        return super.finalize();
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     private _isAcknowledgedOrFinalized(): boolean {

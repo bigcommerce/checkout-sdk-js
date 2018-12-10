@@ -7,6 +7,7 @@ import {
     NotInitializedErrorType
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { PaymentMethodCancelledError } from '../../errors';
 import PaymentMethodInvalidError from '../../errors/payment-method-invalid-error';
@@ -17,30 +18,28 @@ import PaymentStrategy from '../payment-strategy';
 import KlarnaCredit, { KlarnaLoadResponse } from './klarna-credit';
 import KlarnaScriptLoader from './klarna-script-loader';
 
-export default class KlarnaPaymentStrategy extends PaymentStrategy {
+export default class KlarnaPaymentStrategy implements PaymentStrategy {
     private _klarnaCredit?: KlarnaCredit;
     private _unsubscribe?: (() => void);
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _klarnaScriptLoader: KlarnaScriptLoader
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        if (this._isInitialized) {
-            return super.initialize(options);
-        }
-
         return this._klarnaScriptLoader.load()
             .then(klarnaCredit => { this._klarnaCredit = klarnaCredit; })
             .then(() => {
                 this._unsubscribe = this._store.subscribe(
-                    () => this._isInitialized && this._loadWidget(options),
+                    state => {
+                        if (state.paymentStrategies.isInitialized(options.methodId)) {
+                            this._loadWidget(options);
+                        }
+                    },
                     state => {
                         const checkout = state.checkout.getCheckout();
 
@@ -50,7 +49,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
 
                 return this._loadWidget(options);
             })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -58,7 +57,7 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
             this._unsubscribe();
         }
 
-        return super.deinitialize(options);
+        return Promise.resolve(this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -81,6 +80,10 @@ export default class KlarnaPaymentStrategy extends PaymentStrategy {
                     useStoreCredit: false,
                 }, options)
             ));
+    }
+
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     private _loadWidget(options: PaymentInitializeOptions): Promise<KlarnaLoadResponse> {

@@ -1,7 +1,10 @@
-import { createCheckoutStore, CheckoutStore } from '../checkout';
+import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { getConfigState } from '../config/configs.mock';
+import { OrderRequestBody } from '../order';
+import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import { getAdyenAmex, getAuthorizenet, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
+import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import { PaymentStrategy } from './strategies';
 
@@ -9,39 +12,42 @@ describe('PaymentStrategyRegistry', () => {
     let registry: PaymentStrategyRegistry;
     let store: CheckoutStore;
 
-    class CreditCardPaymentStrategy extends PaymentStrategy {
-        execute() {
+    class BasePaymentStrategy implements PaymentStrategy {
+        constructor(
+            private _store: CheckoutStore
+        ) {}
+
+        execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+            return Promise.resolve(this._store.getState());
+        }
+
+        finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+            return Promise.reject(new OrderFinalizationNotRequiredError());
+        }
+
+        initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+            return Promise.resolve(this._store.getState());
+        }
+
+        deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
             return Promise.resolve(this._store.getState());
         }
     }
 
     // tslint:disable-next-line:max-classes-per-file
-    class LegacyPaymentStrategy extends PaymentStrategy {
-        execute() {
-            return Promise.resolve(this._store.getState());
-        }
-    }
+    class CreditCardPaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
-    class OfflinePaymentStrategy extends PaymentStrategy {
-        execute() {
-            return Promise.resolve(this._store.getState());
-        }
-    }
+    class LegacyPaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
-    class OffsitePaymentStrategy extends PaymentStrategy {
-        execute() {
-            return Promise.resolve(this._store.getState());
-        }
-    }
+    class OfflinePaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
-    class AuthorizenetPaymentStrategy extends PaymentStrategy {
-        execute() {
-            return Promise.resolve(this._store.getState());
-        }
-    }
+    class OffsitePaymentStrategy extends BasePaymentStrategy {}
+
+    // tslint:disable-next-line:max-classes-per-file
+    class AuthorizenetPaymentStrategy extends BasePaymentStrategy {}
 
     beforeEach(() => {
         store = createCheckoutStore({

@@ -1,15 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 
-import { PaymentStrategy } from '../';
-import {
-    NonceInstrument,
-    PaymentActionCreator,
-    PaymentInitializeOptions,
-    PaymentMethodActionCreator,
-    PaymentRequestOptions,
-    PaymentStrategyActionCreator
-} from '../../';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -23,10 +14,16 @@ import {
 } from '../../../common/error/errors';
 import { toFormUrlEncoded } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { NonceInstrument } from '../../payment';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
+import PaymentStrategy from '../payment-strategy';
 
-import { SquarePaymentForm, SquareScriptLoader } from '.';
-import {
+import SquarePaymentForm, {
     CardData,
     Contact,
     DigitalWalletType,
@@ -36,15 +33,16 @@ import {
     SquarePaymentRequest
 } from './square-form';
 import SquarePaymentInitializeOptions from './square-payment-initialize-options';
+import SquareScriptLoader from './square-script-loader';
 
-export default class SquarePaymentStrategy extends PaymentStrategy {
+export default class SquarePaymentStrategy implements PaymentStrategy {
     private _deferredRequestNonce?: DeferredPromise;
     private _paymentForm?: SquarePaymentForm;
     private _paymentMethod?: PaymentMethod;
     private _squareOptions?: SquarePaymentInitializeOptions;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
@@ -52,12 +50,11 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _requestSender: RequestSender,
         private _scriptLoader: SquareScriptLoader
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
+
         this._syncPaymentMethod(methodId);
 
         return this._scriptLoader.load()
@@ -68,7 +65,7 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                     );
                     this._paymentForm.build();
                 }))
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -86,6 +83,14 @@ export default class SquarePaymentStrategy extends PaymentStrategy {
                 .then(() =>
                     this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
                 ));
+    }
+
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
     }
 
     private _syncPaymentMethod(methodId: string): void {

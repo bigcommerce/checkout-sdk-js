@@ -8,6 +8,7 @@ import { of, Observable } from 'rxjs';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState, getCheckoutWithPayments } from '../../../checkout/checkouts.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -74,6 +75,14 @@ describe('PaypalProPaymentStrategy', () => {
         const output = await strategy.execute(getOrderRequestBody());
 
         expect(output).toEqual(store.getState());
+    });
+
+    it('throws error to inform that order finalization is not required', async () => {
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+        }
     });
 
     describe('if payment is acknowledged', () => {

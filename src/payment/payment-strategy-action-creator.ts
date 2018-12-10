@@ -104,6 +104,10 @@ export default class PaymentStrategyActionCreator {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
+            if (methodId && state.paymentStrategies.isInitialized(methodId)) {
+                return observer.complete();
+            }
+
             observer.next(createAction(PaymentStrategyActionType.InitializeRequested, undefined, { methodId }));
 
             this._strategyRegistry.getByMethod(method)
@@ -126,6 +130,10 @@ export default class PaymentStrategyActionCreator {
 
             if (!method) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            if (methodId && !state.paymentStrategies.isInitialized(methodId)) {
+                return observer.complete();
             }
 
             observer.next(createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, { methodId }));

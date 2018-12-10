@@ -1,6 +1,13 @@
 export default interface PaymentStrategyState {
+    data: PaymentStrategyDataState;
     errors: PaymentStrategyErrorsState;
     statuses: PaymentStrategyStatusesState;
+}
+
+export interface PaymentStrategyDataState {
+    [key: string]: {
+        isInitialized: boolean,
+    };
 }
 
 export interface PaymentStrategyErrorsState {
@@ -30,6 +37,7 @@ export interface PaymentStrategyStatusesState {
 }
 
 export const DEFAULT_STATE: PaymentStrategyState = {
+    data: {},
     errors: {},
     statuses: {},
 };

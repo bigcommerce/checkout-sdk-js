@@ -1,29 +1,28 @@
-import { Payment, PaymentMethodActionCreator } from '../..';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
 import isCreditCardLike from '../../is-credit-card-like';
 import isVaultedInstrument from '../../is-vaulted-instrument';
-import { PaymentInstrument } from '../../payment';
+import Payment, { PaymentInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import BraintreePaymentProcessor from './braintree-payment-processor';
 
-export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy {
+export default class BraintreeCreditCardPaymentStrategy implements PaymentStrategy {
     private _is3dsEnabled?: boolean;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(options.methodId))
@@ -37,7 +36,7 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
                 this._braintreePaymentProcessor.initialize(paymentMethod.clientToken, options.braintree);
                 this._is3dsEnabled = paymentMethod.config.is3dsEnabled;
 
-                return super.initialize(options);
+                return this._store.getState();
             })
             .catch((error: Error) => this._handleError(error));
     }
@@ -63,9 +62,13 @@ export default class BraintreeCreditCardPaymentStrategy extends PaymentStrategy 
             .catch((error: Error) => this._handleError(error));
     }
 
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._braintreePaymentProcessor.deinitialize()
-            .then(() => super.deinitialize(options));
+            .then(() => this._store.getState());
     }
 
     private _handleError(error: Error): never {

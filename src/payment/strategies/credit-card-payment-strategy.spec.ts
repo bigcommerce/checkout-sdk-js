@@ -6,6 +6,7 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../order';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { getOrderRequestBody } from '../../order/internal-orders.mock';
 import PaymentActionCreator from '../payment-action-creator';
 import { PaymentActionType } from '../payment-actions';
@@ -70,5 +71,13 @@ describe('CreditCardPaymentStrategy', () => {
         const output = await strategy.execute(getOrderRequestBody());
 
         expect(output).toEqual(store.getState());
+    });
+
+    it('throws error to inform that order finalization is not required', async () => {
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+        }
     });
 });

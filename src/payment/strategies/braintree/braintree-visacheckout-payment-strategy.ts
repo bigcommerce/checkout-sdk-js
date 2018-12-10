@@ -1,24 +1,23 @@
-import {
-    PaymentActionCreator,
-    PaymentInitializeOptions,
-    PaymentMethod,
-    PaymentMethodActionCreator,
-    PaymentRequestOptions,
-    PaymentStrategyActionCreator,
-} from '../..';
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
-import { BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '.';
+import BraintreeVisaCheckoutPaymentProcessor from './braintree-visacheckout-payment-processor';
 import { VisaCheckoutPaymentSuccessPayload } from './visacheckout';
+import VisaCheckoutScriptLoader from './visacheckout-script-loader';
 
-export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrategy {
+export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
@@ -26,9 +25,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
         private _orderActionCreator: OrderActionCreator,
         private _braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor,
         private _visaCheckoutScriptLoader: VisaCheckoutScriptLoader
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintreevisacheckout: visaCheckoutOptions, methodId } = options;
@@ -82,7 +79,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
                     visaCheckout.on('payment.error', (payment, error) => onError(error));
                 });
             })
-            .then(() => super.initialize(options));
+            .then(() => this._store.getState());
     }
 
     execute(orderRequest: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -105,9 +102,13 @@ export default class BraintreeVisaCheckoutPaymentStrategy extends PaymentStrateg
             .catch((error: Error) => this._handleError(error));
     }
 
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._braintreeVisaCheckoutPaymentProcessor.deinitialize()
-            .then(() => super.deinitialize(options));
+            .then(() => this._store.getState());
     }
 
     private _paymentInstrumentSelected(paymentSuccessPayload: VisaCheckoutPaymentSuccessPayload) {

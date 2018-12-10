@@ -9,6 +9,7 @@ import {
 } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -19,22 +20,20 @@ import { GooglePaymentData, PaymentMethodData } from './googlepay';
 import GooglePayPaymentInitializeOptions from './googlepay-initialize-options';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
 
-export default class GooglePayPaymentStrategy extends PaymentStrategy {
+export default class GooglePayPaymentStrategy implements PaymentStrategy {
     private _googlePayOptions?: GooglePayPaymentInitializeOptions;
     private _methodId?: string;
     private _walletButton?: HTMLElement;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
         private _googlePayPaymentProcessor: GooglePayPaymentProcessor
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         this._methodId = options.methodId;
@@ -54,7 +53,7 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
                     this._walletButton.addEventListener('click', this._handleWalletButtonClick);
                 }
 
-                return super.initialize(options);
+                return this._store.getState();
             });
     }
 
@@ -66,7 +65,7 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
         this._walletButton = undefined;
 
         return this._googlePayPaymentProcessor.deinitialize()
-            .then(() => super.deinitialize(options));
+            .then(() => this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -100,6 +99,10 @@ export default class GooglePayPaymentStrategy extends PaymentStrategy {
                 this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit: payload.useStoreCredit }, options))
                     .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(this._getPayment())))
             );
+    }
+
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     private _paymentInstrumentSelected(paymentData: GooglePaymentData) {

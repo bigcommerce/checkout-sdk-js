@@ -48,6 +48,13 @@ export default class PaymentStrategySelector {
         return !!this._paymentStrategies.statuses.isInitializing;
     }
 
+    isInitialized(methodId: string): boolean {
+        return !!(
+            this._paymentStrategies.data[methodId] &&
+            this._paymentStrategies.data[methodId].isInitialized
+        );
+    }
+
     isExecuting(methodId?: string): boolean {
         if (methodId && this._paymentStrategies.statuses.executeMethodId !== methodId) {
             return false;

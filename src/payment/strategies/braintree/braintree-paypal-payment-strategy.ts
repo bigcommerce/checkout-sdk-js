@@ -1,6 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -11,19 +12,17 @@ import PaymentStrategy from '../payment-strategy';
 
 import BraintreePaymentProcessor from './braintree-payment-processor';
 
-export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
+export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
 
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _braintreePaymentProcessor: BraintreePaymentProcessor,
         private _credit: boolean = false
-    ) {
-        super(store);
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { braintree: braintreeOptions, methodId } = options;
@@ -31,7 +30,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
         this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
 
         if (this._paymentMethod && this._paymentMethod.nonce) {
-            return super.initialize(options);
+            return Promise.resolve(this._store.getState());
         }
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
@@ -46,7 +45,7 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
 
                 return this._braintreePaymentProcessor.preloadPaypal();
             })
-            .then(() => super.initialize(options))
+            .then(() => this._store.getState())
             .catch((error: Error) => this._handleError(error));
     }
 
@@ -63,9 +62,13 @@ export default class BraintreePaypalPaymentStrategy extends PaymentStrategy {
             .catch((error: Error) => this._handleError(error));
     }
 
+    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
     deinitialize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return this._braintreePaymentProcessor.deinitialize()
-            .then(() => super.deinitialize(options));
+            .then(() => this._store.getState());
     }
 
     private _handleError(error: Error): never {

@@ -11,6 +11,7 @@ import {
     CheckoutValidator
 } from '../../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getKlarna, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
@@ -123,20 +124,6 @@ describe('KlarnaPaymentStrategy', () => {
         it('triggers callback with response', () => {
             expect(onLoad).toHaveBeenCalledWith({ show_form: true });
         });
-
-        describe('on subsequent calls', () => {
-            beforeEach(async () => {
-                await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container', onLoad } });
-                await strategy.initialize({ methodId: paymentMethod.id, klarna: { container: '#container', onLoad } });
-            });
-
-            it('does not call anything again', async () => {
-                expect(store.subscribe).toHaveBeenCalledTimes(1);
-                expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledTimes(1);
-                expect(klarnaCredit.init).toHaveBeenCalledTimes(1);
-                expect(klarnaCredit.load).toHaveBeenCalledTimes(1);
-            });
-        });
     });
 
     describe('#execute()', () => {
@@ -200,6 +187,16 @@ describe('KlarnaPaymentStrategy', () => {
                 expect(remoteCheckoutActionCreator.initializePayment)
                     .not.toHaveBeenCalled();
             });
+        });
+    });
+
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await strategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });

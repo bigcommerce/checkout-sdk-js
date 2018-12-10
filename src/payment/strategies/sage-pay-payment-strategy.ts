@@ -3,22 +3,21 @@ import { some } from 'lodash';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
 import { RequestError } from '../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../order';
+import { OrderFinalizationNotRequiredError } from '../../order/errors';
 import { PaymentArgumentInvalidError } from '../errors';
 import PaymentActionCreator from '../payment-action-creator';
-import { PaymentRequestOptions } from '../payment-request-options';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
 import * as paymentStatusTypes from '../payment-status-types';
 
 import PaymentStrategy from './payment-strategy';
 
-export default class SagePayPaymentStrategy extends PaymentStrategy {
+export default class SagePayPaymentStrategy implements PaymentStrategy {
     constructor(
-        store: CheckoutStore,
+        private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _formPoster: any
-    ) {
-        super(store);
-    }
+    ) {}
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
@@ -55,6 +54,14 @@ export default class SagePayPaymentStrategy extends PaymentStrategy {
             return this._store.dispatch(this._orderActionCreator.finalizeOrder(order.orderId, options));
         }
 
-        return super.finalize();
+        return Promise.reject(new OrderFinalizationNotRequiredError());
+    }
+
+    initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
+    }
+
+    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return Promise.resolve(this._store.getState());
     }
 }

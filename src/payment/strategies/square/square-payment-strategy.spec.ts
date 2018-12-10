@@ -34,12 +34,12 @@ import ConfigActionCreator from '../../../config/config-action-creator';
 import ConfigRequestSender from '../../../config/config-request-sender';
 import { getConfigState } from '../../../config/configs.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 
 import { SquarePaymentForm, SquarePaymentStrategy, SquareScriptLoader } from './';
-
 import { DigitalWalletType, SquareFormCallbacks, SquareFormOptions } from './square-form';
 import {
     getCardData,
@@ -390,6 +390,16 @@ describe('SquarePaymentStrategy', () => {
                     });
                 });
             });
+        });
+    });
+
+    describe('#finalize()', () => {
+        it('throws error to inform that order finalization is not required', async () => {
+            try {
+                await strategy.finalize();
+            } catch (error) {
+                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
         });
     });
 });
