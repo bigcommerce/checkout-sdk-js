@@ -10,22 +10,16 @@ import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-export default class PaypalButtonStrategy extends CheckoutButtonStrategy {
+export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
     private _paymentMethod?: PaymentMethod;
 
     constructor(
         private _store: CheckoutStore,
         private _paypalScriptLoader: PaypalScriptLoader,
         private _formPoster: FormPoster
-    ) {
-        super();
-    }
+    ) {}
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        if (this._isInitialized[options.containerId]) {
-            return super.initialize(options);
-        }
-
         const paypalOptions = options.paypal;
         const state = this._store.getState();
         const paymentMethod = this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
@@ -68,18 +62,13 @@ export default class PaypalButtonStrategy extends CheckoutButtonStrategy {
                     payment: (data, actions) => this._setupPayment(merchantId, actions, paypalOptions.onPaymentError),
                     onAuthorize: (data, actions) => this._tokenizePayment(data, actions, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
                 }, options.containerId);
-            })
-            .then(() => super.initialize(options));
+            });
     }
 
     deinitialize(): Promise<void> {
-        if (!Object.keys(this._isInitialized).length) {
-            return super.deinitialize();
-        }
-
         this._paymentMethod = undefined;
 
-        return super.deinitialize();
+        return Promise.resolve();
     }
 
     private _setupPayment(merchantId: string, actions?: PaypalActions, onError?: (error: StandardError) => void): Promise<string> {

@@ -25,6 +25,20 @@ export default class CheckoutButtonSelector {
         return some(this._checkoutButton.statuses, { isInitializing: true });
     }
 
+    isInitialized(methodId: CheckoutButtonMethodType, containerId?: string): boolean {
+        const method = this._checkoutButton.data[methodId];
+
+        if (!method) {
+            return false;
+        }
+
+        if (!containerId) {
+            return some(method.initializedContainers, isInitialized => isInitialized === true);
+        }
+
+        return method.initializedContainers[containerId] === true;
+    }
+
     isDeinitializing(methodId?: CheckoutButtonMethodType): boolean {
         if (methodId) {
             const method = this._checkoutButton.statuses[methodId];

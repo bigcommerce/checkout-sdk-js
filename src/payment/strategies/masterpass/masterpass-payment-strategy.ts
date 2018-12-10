@@ -11,7 +11,8 @@ import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentMethod from '../../payment-method';
 
-import { getCallbackUrl, Masterpass, MasterpassCheckoutOptions } from './masterpass';
+import getCallbackUrl from './get-callback-url';
+import { Masterpass, MasterpassCheckoutOptions } from './masterpass';
 import MasterpassScriptLoader from './masterpass-script-loader';
 
 export default class MasterpassPaymentStrategy extends PaymentStrategy {

@@ -155,22 +155,6 @@ describe('BraintreePaypalButtonStrategy', () => {
         }, 'checkout-button');
     });
 
-    it('renders PayPal checkout button once when same containerId is passed', async () => {
-        await strategy.initialize(options);
-        await strategy.initialize(options);
-
-        expect(paypal.Button.render).toHaveBeenCalledTimes(1);
-    });
-
-    it('renders PayPal checkout button once per containerId', async () => {
-        await strategy.initialize(options);
-        await strategy.initialize({ ...options, containerId: 'foo' });
-        await strategy.initialize(options);
-        await strategy.initialize({ ...options, containerId: 'foo' });
-
-        expect(paypal.Button.render).toHaveBeenCalledTimes(2);
-    });
-
     it('customizes style of PayPal checkout button', async () => {
         options = {
             ...options,

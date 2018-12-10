@@ -1,9 +1,13 @@
 
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { merge } from 'lodash';
 import { from, of, throwError } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
+import { CheckoutStore } from '../checkout';
+import { getCheckoutStoreState } from '../checkout/checkouts.mock';
+import createCheckoutStore from '../checkout/create-checkout-store';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../payment';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
@@ -19,13 +23,23 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     let options: CheckoutButtonInitializeOptions;
     let strategyActionCreator: CheckoutButtonStrategyActionCreator;
     let strategy: CheckoutButtonStrategy;
+    let store: CheckoutStore;
 
-    class MockButtonStrategy extends CheckoutButtonStrategy { }
+    class MockButtonStrategy implements CheckoutButtonStrategy {
+        initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
+            return Promise.resolve();
+        }
+
+        deinitialize(): Promise<void> {
+            return Promise.resolve();
+        }
+    }
 
     beforeEach(() => {
         registry = new Registry<CheckoutButtonStrategy>();
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         strategy = new MockButtonStrategy();
+        store = createCheckoutStore();
 
         registry.register(CheckoutButtonMethodType.BRAINTREE_PAYPAL, () => strategy);
 
@@ -47,7 +61,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     });
 
     it('loads required payment method and uses cache if available', async () => {
-        await strategyActionCreator.initialize(options)
+        await from(strategyActionCreator.initialize(options)(store))
             .pipe(toArray())
             .toPromise();
 
@@ -59,7 +73,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         jest.spyOn(registry, 'get');
         jest.spyOn(strategy, 'initialize');
 
-        await strategyActionCreator.initialize(options)
+        await from(strategyActionCreator.initialize(options)(store))
             .pipe(toArray())
             .toPromise();
 
@@ -67,18 +81,42 @@ describe('CheckoutButtonStrategyActionCreator', () => {
         expect(strategy.initialize).toHaveBeenCalledWith(options);
     });
 
+    it('does not initialize if strategy is already initialized', async () => {
+        store = createCheckoutStore(merge(getCheckoutStoreState(), {
+            checkoutButton: {
+                data: {
+                    [options.methodId]: {
+                        initializedContainers: {
+                            [options.containerId]: true,
+                        },
+                    },
+                },
+            },
+        }));
+
+        jest.spyOn(registry, 'get');
+        jest.spyOn(strategy, 'initialize');
+
+        await from(strategyActionCreator.initialize(options)(store))
+            .pipe(toArray())
+            .toPromise();
+
+        expect(registry.get).not.toHaveBeenCalledWith(CheckoutButtonMethodType.BRAINTREE_PAYPAL);
+        expect(strategy.initialize).not.toHaveBeenCalledWith(options);
+    });
+
     it('emits actions indicating initialization progress', async () => {
         const methodId = CheckoutButtonMethodType.BRAINTREE_PAYPAL;
         const containerId = 'checkout-button';
-        const actions = await strategyActionCreator.initialize({ methodId, containerId })
+        const actions = await from(strategyActionCreator.initialize({ methodId, containerId })(store))
             .pipe(toArray())
             .toPromise();
 
         expect(actions).toEqual([
-            { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId } },
+            { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId, containerId } },
             { type: PaymentMethodActionType.LoadPaymentMethodRequested },
             { type: PaymentMethodActionType.LoadPaymentMethodSucceeded, payload: { paymentMethod: getPaymentMethod() } },
-            { type: CheckoutButtonActionType.InitializeButtonSucceeded, meta: { methodId } },
+            { type: CheckoutButtonActionType.InitializeButtonSucceeded, meta: { methodId, containerId } },
         ]);
     });
 
@@ -91,7 +129,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
             .mockReturnValue(throwError(createErrorAction(PaymentMethodActionType.LoadPaymentMethodFailed, expectedError)));
 
         const errorHandler = jest.fn(action => of(action));
-        const actions = await strategyActionCreator.initialize({ methodId, containerId })
+        const actions = await from(strategyActionCreator.initialize({ methodId, containerId })(store))
             .pipe(
                 catchError(errorHandler),
                 toArray()
@@ -100,9 +138,9 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
         expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
-            { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId } },
+            { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId, containerId} },
             { type: PaymentMethodActionType.LoadPaymentMethodFailed, error: true, payload: expectedError },
-            { type: CheckoutButtonActionType.InitializeButtonFailed, error: true, payload: expectedError, meta: { methodId } },
+            { type: CheckoutButtonActionType.InitializeButtonFailed, error: true, payload: expectedError, meta: { methodId, containerId } },
         ]);
     });
 
@@ -115,7 +153,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
             .mockReturnValue(Promise.reject(expectedError));
 
         const errorHandler = jest.fn(action => of(action));
-        const actions = await strategyActionCreator.initialize({ methodId, containerId })
+        const actions = await from(strategyActionCreator.initialize({ methodId, containerId })(store))
             .pipe(
                 catchError(errorHandler),
                 toArray()
@@ -124,10 +162,46 @@ describe('CheckoutButtonStrategyActionCreator', () => {
 
         expect(errorHandler).toHaveBeenCalled();
         expect(actions).toEqual([
-            { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId } },
+            { type: CheckoutButtonActionType.InitializeButtonRequested, meta: { methodId, containerId } },
             { type: PaymentMethodActionType.LoadPaymentMethodRequested },
             { type: PaymentMethodActionType.LoadPaymentMethodSucceeded, payload: expect.any(Object) },
-            { type: CheckoutButtonActionType.InitializeButtonFailed, error: true, payload: expectedError, meta: { methodId } },
+            { type: CheckoutButtonActionType.InitializeButtonFailed, error: true, payload: expectedError, meta: { methodId, containerId } },
         ]);
+    });
+
+    it('finds strategy and deinitializes it', async () => {
+        store = createCheckoutStore(merge(getCheckoutStoreState(), {
+            checkoutButton: {
+                data: {
+                    [options.methodId]: {
+                        initializedContainers: {
+                            [options.containerId]: true,
+                        },
+                    },
+                },
+            },
+        }));
+
+        jest.spyOn(registry, 'get');
+        jest.spyOn(strategy, 'deinitialize');
+
+        await from(strategyActionCreator.deinitialize(options)(store))
+            .pipe(toArray())
+            .toPromise();
+
+        expect(registry.get).toHaveBeenCalledWith(CheckoutButtonMethodType.BRAINTREE_PAYPAL);
+        expect(strategy.deinitialize).toHaveBeenCalled();
+    });
+
+    it('does not deinitialize if strategy is not initialized', async () => {
+        jest.spyOn(registry, 'get');
+        jest.spyOn(strategy, 'deinitialize');
+
+        await from(strategyActionCreator.deinitialize(options)(store))
+            .pipe(toArray())
+            .toPromise();
+
+        expect(registry.get).not.toHaveBeenCalledWith(options.methodId);
+        expect(strategy.deinitialize).not.toHaveBeenCalled();
     });
 });

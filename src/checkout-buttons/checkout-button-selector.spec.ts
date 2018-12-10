@@ -45,6 +45,35 @@ describe('CheckoutButtonSelector', () => {
         });
     });
 
+    describe('#isInitialized()', () => {
+        it('returns true if method is initialized', () => {
+            const selector = new CheckoutButtonSelector({
+                ...state,
+                data: {
+                    [CheckoutButtonMethodType.BRAINTREE_PAYPAL]: {
+                        initializedContainers: { isInitialized: true },
+                    },
+                },
+            });
+
+            expect(selector.isInitialized(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(true);
+        });
+
+        it('returns false if method is not initialized', () => {
+            const selector = new CheckoutButtonSelector({
+                ...state,
+                data: {
+                    [CheckoutButtonMethodType.BRAINTREE_PAYPAL]: {
+                        initializedContainers: { isInitialized: false },
+                    },
+                },
+            });
+
+            expect(selector.isInitialized(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(false);
+            expect(selector.isInitialized(CheckoutButtonMethodType.PAYPALEXPRESS)).toEqual(false);
+        });
+    });
+
     describe('#isDeinitializing()', () => {
         beforeEach(() => {
             state = {

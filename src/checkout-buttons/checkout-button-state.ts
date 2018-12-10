@@ -1,11 +1,20 @@
 import { CheckoutButtonMethodType } from './strategies';
 
 export default interface CheckoutButtonState {
+    data: {
+        [key in CheckoutButtonMethodType]?: CheckoutButtonDataState | undefined
+    };
     errors: {
         [key in CheckoutButtonMethodType]?: CheckoutButtonErrorsState | undefined
     };
     statuses: {
         [key in CheckoutButtonMethodType]?: CheckoutButtonStatusesState | undefined
+    };
+}
+
+export interface CheckoutButtonDataState {
+    initializedContainers: {
+        [key: string]: boolean;
     };
 }
 

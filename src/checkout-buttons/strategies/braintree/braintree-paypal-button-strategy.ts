@@ -11,7 +11,7 @@ import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
-export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrategy {
+export default class BraintreePaypalButtonStrategy implements CheckoutButtonStrategy {
     private _paypalCheckout?: BraintreePaypalCheckout;
     private _paymentMethod?: PaymentMethod;
 
@@ -22,15 +22,9 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
         private _paypalScriptLoader: PaypalScriptLoader,
         private _formPoster: FormPoster,
         private _offerCredit: boolean = false
-    ) {
-        super();
-    }
+    ) {}
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
-        if (this._isInitialized[options.containerId]) {
-            return super.initialize(options);
-        }
-
         const paypalOptions = (this._offerCredit ? options.braintreepaypalcredit : options.braintreepaypal) || {};
         const state = this._store.getState();
         const paymentMethod = this._paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
@@ -72,21 +66,16 @@ export default class BraintreePaypalButtonStrategy extends CheckoutButtonStrateg
                     payment: () => this._setupPayment(paypalOptions.onPaymentError),
                     onAuthorize: data => this._tokenizePayment(data, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
                 }, options.containerId);
-            })
-            .then(() => super.initialize(options));
+            });
     }
 
     deinitialize(): Promise<void> {
-        if (!Object.keys(this._isInitialized).length) {
-            return super.deinitialize();
-        }
-
         this._paypalCheckout = undefined;
         this._paymentMethod = undefined;
 
         this._braintreeSDKCreator.teardown();
 
-        return super.deinitialize();
+        return Promise.resolve();
     }
 
     private _setupPayment(onError?: (error: BraintreeError | StandardError) => void): Promise<string> {
