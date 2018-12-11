@@ -1,11 +1,9 @@
 import { RequestOptions } from '../common/http-request';
 
-import {
-    BraintreePaypalButtonInitializeOptions,
-    CheckoutButtonMethodType,
-    GooglePayButtonInitializeOptions,
-    PaypalButtonInitializeOptions
-} from './strategies';
+import { CheckoutButtonMethodType } from './strategies';
+import { BraintreePaypalButtonInitializeOptions } from './strategies/braintree';
+import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
+import { PaypalButtonInitializeOptions } from './strategies/paypal';
 
 /**
  * The set of options for configuring the checkout button.

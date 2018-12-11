@@ -5,7 +5,8 @@ import { createCheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 
 import createCheckoutButtonRegistry from './create-checkout-button-registry';
-import { BraintreePaypalButtonStrategy, CheckoutButtonStrategy } from './strategies';
+import { CheckoutButtonStrategy } from './strategies';
+import { BraintreePaypalButtonStrategy } from './strategies/braintree';
 
 describe('createCheckoutButtonRegistry', () => {
     let registry: Registry<CheckoutButtonStrategy>;
