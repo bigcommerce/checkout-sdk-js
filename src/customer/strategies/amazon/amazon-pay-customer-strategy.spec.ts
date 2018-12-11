@@ -3,12 +3,12 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../checkout';
-import { getCheckoutStoreState, getCheckoutWithPayments } from '../../checkout/checkouts.mock';
-import { MissingDataError } from '../../common/error/errors';
-import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
-import { HOSTED, INITIALIZE, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../payment';
-import { getAmazonPay } from '../../payment/payment-methods.mock';
+import { createCheckoutStore, CheckoutState, CheckoutStore, CheckoutStoreState } from '../../../checkout';
+import { getCheckoutStoreState, getCheckoutWithPayments } from '../../../checkout/checkouts.mock';
+import { MissingDataError } from '../../../common/error/errors';
+import { getErrorResponse, getResponse } from '../../../common/http-request/responses.mock';
+import { HOSTED, INITIALIZE, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../../payment';
+import { getAmazonPay } from '../../../payment/payment-methods.mock';
 import {
     AmazonPayLogin,
     AmazonPayLoginButton,
@@ -16,9 +16,9 @@ import {
     AmazonPayLoginOptions,
     AmazonPayScriptLoader,
     AmazonPayWindow,
-} from '../../payment/strategies/amazon-pay';
-import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { getRemoteTokenResponseBody } from '../../remote-checkout/remote-checkout.mock';
+} from '../../../payment/strategies/amazon-pay';
+import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { getRemoteTokenResponseBody } from '../../../remote-checkout/remote-checkout.mock';
 
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
 

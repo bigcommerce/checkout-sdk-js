@@ -4,21 +4,23 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { of } from 'rxjs';
 
-import { createCustomerStrategyRegistry, CustomerInitializeOptions, CustomerStrategyActionCreator } from '..';
-import { getBillingAddress } from '../../billing/billing-addresses.mock';
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../checkout';
-import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { ConfigActionCreator, ConfigRequestSender } from '../../config';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../payment';
-import { getBraintreeVisaCheckout } from '../../payment/payment-methods.mock';
-import { VisaCheckoutScriptLoader, VisaCheckoutSDK } from '../../payment/strategies/braintree';
-import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPaymentProcessor } from '../../payment/strategies/braintree';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
-import { CustomerStrategyActionType } from '../customer-strategy-actions';
-import { getRemoteCustomer } from '../internal-customers.mock';
+import { getBillingAddress } from '../../../billing/billing-addresses.mock';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
+import { getBraintreeVisaCheckout } from '../../../payment/payment-methods.mock';
+import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader, VisaCheckoutSDK } from '../../../payment/strategies/braintree';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
+import createCustomerStrategyRegistry from '../../create-customer-strategy-registry';
+import { CustomerInitializeOptions } from '../../customer-request-options';
+import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
+import { CustomerStrategyActionType } from '../../customer-strategy-actions';
+import { getRemoteCustomer } from '../../internal-customers.mock';
+import CustomerStrategy from '../customer-strategy';
 
-import { BraintreeVisaCheckoutCustomerStrategy, CustomerStrategy } from './';
+import BraintreeVisaCheckoutCustomerStrategy from './braintree-visacheckout-customer-strategy';
 
 describe('BraintreeVisaCheckoutCustomerStrategy', () => {
     let braintreeVisaCheckoutPaymentProcessor: BraintreeVisaCheckoutPaymentProcessor;

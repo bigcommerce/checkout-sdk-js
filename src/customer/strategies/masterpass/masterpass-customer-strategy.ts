@@ -1,17 +1,17 @@
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
     NotImplementedError
-} from '../../common/error/errors';
-import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { getCallbackUrl, MasterpassScriptLoader } from '../../payment/strategies/masterpass';
-import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import CustomerCredentials from '../customer-credentials';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
+} from '../../../common/error/errors';
+import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import { getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import CustomerCredentials from '../../customer-credentials';
+import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 
-import CustomerStrategy from './customer-strategy';
+import CustomerStrategy from '../customer-strategy';
 
 export default class MasterpassCustomerStrategy implements CustomerStrategy {
     private _signInButton?: HTMLElement;

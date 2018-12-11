@@ -2,21 +2,21 @@ import { createFormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { getCartState } from '../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../checkout';
-import { getCheckoutState } from '../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../common/error/errors';
-import { getConfigState } from '../../config/configs.mock';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../payment';
-import { getChasePay, getPaymentMethodsState } from '../../payment/payment-methods.mock';
-import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../payment/strategies/chasepay';
-import { getChasePayScriptMock } from '../../payment/strategies/chasepay/chasepay.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { CustomerInitializeOptions } from '../customer-request-options';
-import { getCustomerState } from '../customers.mock';
+import { getCartState } from '../../../cart/carts.mock';
+import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { InvalidArgumentError, MissingDataError, NotInitializedError } from '../../../common/error/errors';
+import { getConfigState } from '../../../config/configs.mock';
+import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
+import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
+import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../../payment/strategies/chasepay';
+import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { CustomerInitializeOptions } from '../../customer-request-options';
+import { getCustomerState } from '../../customers.mock';
+import CustomerStrategy from '../customer-strategy';
 
 import ChasePayCustomerStrategy from './chasepay-customer-strategy';
-import CustomerStrategy from './customer-strategy';
 
 describe('ChasePayCustomerStrategy', () => {
     let container: HTMLDivElement;

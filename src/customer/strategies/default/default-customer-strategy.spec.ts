@@ -2,12 +2,12 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../checkout';
-import { ConfigActionCreator, ConfigRequestSender } from '../../config';
-import { getQuote } from '../../quote/internal-quotes.mock';
-import CustomerActionCreator from '../customer-action-creator';
-import { CustomerActionType } from '../customer-actions';
-import CustomerRequestSender from '../customer-request-sender';
+import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
+import { getQuote } from '../../../quote/internal-quotes.mock';
+import CustomerActionCreator from '../../customer-action-creator';
+import { CustomerActionType } from '../../customer-actions';
+import CustomerRequestSender from '../../customer-request-sender';
 
 import DefaultCustomerStrategy from './default-customer-strategy';
 

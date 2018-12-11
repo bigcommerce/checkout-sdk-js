@@ -1,20 +1,21 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { getCartState } from '../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../checkout';
-import { getCheckoutState } from '../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError } from '../../common/error/errors';
-import { getConfigState } from '../../config/configs.mock';
-import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../payment';
-import { getMasterpass, getPaymentMethodsState } from '../../payment/payment-methods.mock';
-import { Masterpass, MasterpassScriptLoader } from '../../payment/strategies/masterpass';
-import { getMasterpassScriptMock } from '../../payment/strategies/masterpass/masterpass.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { CustomerInitializeOptions } from '../customer-request-options';
-import { getCustomerState } from '../customers.mock';
+import { getCartState } from '../../../cart/carts.mock';
+import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
+import { getConfigState } from '../../../config/configs.mock';
+import { PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender } from '../../../payment';
+import { getMasterpass, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
+import { Masterpass, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
+import { getMasterpassScriptMock } from '../../../payment/strategies/masterpass/masterpass.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { CustomerInitializeOptions } from '../../customer-request-options';
+import { getCustomerState } from '../../customers.mock';
+import CustomerStrategy from '../customer-strategy';
 
-import { CustomerStrategy, MasterpassCustomerStrategy } from './';
+import MasterpassCustomerStrategy from './masterpass-customer-strategy';
 
 describe('MasterpassCustomerStrategy', () => {
     let container: HTMLDivElement;

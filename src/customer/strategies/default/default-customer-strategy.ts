@@ -1,9 +1,9 @@
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import CustomerActionCreator from '../customer-action-creator';
-import CustomerCredentials from '../customer-credentials';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import CustomerActionCreator from '../../customer-action-creator';
+import CustomerCredentials from '../../customer-credentials';
+import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 
-import CustomerStrategy from './customer-strategy';
+import CustomerStrategy from '../customer-strategy';
 
 export default class DefaultCustomerStrategy implements CustomerStrategy {
     constructor(

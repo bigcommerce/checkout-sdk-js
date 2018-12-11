@@ -1,17 +1,16 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
-import { toFormUrlEncoded } from '../../common/http-request';
-import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { ChasePayScriptLoader } from '../../payment/strategies/chasepay';
-import { ChasePaySuccessPayload } from '../../payment/strategies/chasepay';
-import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import CustomerCredentials from '../customer-credentials';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../customer-request-options';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { toFormUrlEncoded } from '../../../common/http-request';
+import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import { ChasePayScriptLoader, ChasePaySuccessPayload } from '../../../payment/strategies/chasepay';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import CustomerCredentials from '../../customer-credentials';
+import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 
-import CustomerStrategy from './customer-strategy';
+import CustomerStrategy from '../customer-strategy';
 
 export default class ChasePayCustomerStrategy implements CustomerStrategy {
     private _paymentMethod?: PaymentMethod;
@@ -148,8 +147,4 @@ export default class ChasePayCustomerStrategy implements CustomerStrategy {
             },
         });
     }
-}
-
-export interface ChasePayCustomerInitializeOptions {
-    container: string;
 }

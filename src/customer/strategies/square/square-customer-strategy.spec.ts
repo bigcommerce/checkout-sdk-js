@@ -1,15 +1,15 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
-import { getCartState } from '../../cart/carts.mock';
-import { createCheckoutStore, CheckoutStore } from '../../checkout';
-import { getCheckoutState } from '../../checkout/checkouts.mock';
-import { getConfigState } from '../../config/configs.mock';
-import { PaymentMethod } from '../../payment';
-import { getPaymentMethodsState, getSquare } from '../../payment/payment-methods.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../remote-checkout';
-import { getCustomerState } from '../customers.mock';
+import { getCartState } from '../../../cart/carts.mock';
+import { createCheckoutStore, CheckoutStore } from '../../../checkout';
+import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { getConfigState } from '../../../config/configs.mock';
+import { PaymentMethod } from '../../../payment';
+import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { getCustomerState } from '../../customers.mock';
+import CustomerStrategy from '../customer-strategy';
 
-import CustomerStrategy from './customer-strategy';
 import SquareCustomerStrategy from './square-customer-strategy';
 
 describe('SquareCustomerStrategy', () => {
