@@ -1,17 +1,18 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
-import { isInternalAddressEqual, mapFromInternalAddress, AddressRequestBody } from '../../address';
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../common/error/errors';
-import { PaymentMethod, PaymentMethodActionCreator } from '../../payment';
-import { AmazonPayAddressBook, AmazonPayOrderReference, AmazonPayScriptLoader, AmazonPayWidgetError, AmazonPayWindow } from '../../payment/strategies/amazon-pay';
-import { RemoteCheckoutActionCreator } from '../../remote-checkout';
-import { RemoteCheckoutSynchronizationError } from '../../remote-checkout/errors';
-import ConsignmentActionCreator from '../consignment-action-creator';
-import { ShippingInitializeOptions, ShippingRequestOptions } from '../shipping-request-options';
-import { ShippingStrategyActionType } from '../shipping-strategy-actions';
+import { isInternalAddressEqual, mapFromInternalAddress, AddressRequestBody } from '../../../address';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import { AmazonPayAddressBook, AmazonPayOrderReference, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
+import ConsignmentActionCreator from '../../consignment-action-creator';
+import { ShippingInitializeOptions, ShippingRequestOptions } from '../../shipping-request-options';
+import { ShippingStrategyActionType } from '../../shipping-strategy-actions';
+import ShippingStrategy from '../shipping-strategy';
 
-import ShippingStrategy from './shipping-strategy';
+import AmazonPayShippingInitializeOptions from './amazon-pay-shipping-initialize-options';
 
 export default class AmazonPayShippingStrategy implements ShippingStrategy {
     private _paymentMethod?: PaymentMethod;
@@ -165,41 +166,4 @@ export default class AmazonPayShippingStrategy implements ShippingStrategy {
             })
         );
     }
-}
-
-/**
- * A set of options that are required to initialize the shipping step of
- * checkout in order to support Amazon Pay.
- *
- * When Amazon Pay is initialized, a widget will be inserted into the DOM. The
- * widget has a list of shipping addresses for the customer to choose from.
- */
-export interface AmazonPayShippingInitializeOptions {
-    /**
-     * The ID of a container which the address widget should insert into.
-     */
-    container: string;
-
-    /**
-     * A callback that gets called when the customer selects an address option.
-     *
-     * @param reference - The order reference provided by Amazon.
-     */
-    onAddressSelect?(reference: AmazonPayOrderReference): void;
-
-    /**
-     * A callback that gets called if unable to initialize the widget or select
-     * one of the address options provided by the widget.
-     *
-     * @param error - The error object describing the failure of the initialization.
-     */
-    onError?(error: AmazonPayWidgetError | StandardError): void;
-
-    /**
-     * A callback that gets called when the widget is loaded and ready to be
-     * interacted with.
-     *
-     * @param reference - The order reference provided by Amazon.
-     */
-    onReady?(reference: AmazonPayOrderReference): void;
 }

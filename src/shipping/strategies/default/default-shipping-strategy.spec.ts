@@ -2,12 +2,12 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { of } from 'rxjs';
 
-import { ConsignmentRequestSender } from '..';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore } from '../../checkout';
-import ConsignmentActionCreator from '../consignment-action-creator';
-import { ConsignmentActionType } from '../consignment-actions';
-import { getFlatRateOption } from '../internal-shipping-options.mock';
-import { getShippingAddress } from '../shipping-addresses.mock';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
+import ConsignmentActionCreator from '../../consignment-action-creator';
+import { ConsignmentActionType } from '../../consignment-actions';
+import ConsignmentRequestSender from '../../consignment-request-sender';
+import { getFlatRateOption } from '../../internal-shipping-options.mock';
+import { getShippingAddress } from '../../shipping-addresses.mock';
 
 import DefaultShippingStrategy from './default-shipping-strategy';
 
