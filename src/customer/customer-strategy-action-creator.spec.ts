@@ -13,7 +13,8 @@ import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategyActionType } from './customer-strategy-actions';
-import { CustomerStrategy, DefaultCustomerStrategy } from './strategies';
+import { CustomerStrategy } from './strategies';
+import { DefaultCustomerStrategy } from './strategies/default';
 
 describe('CustomerStrategyActionCreator', () => {
     let registry: Registry<CustomerStrategy>;

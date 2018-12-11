@@ -35,7 +35,9 @@ import {
     getVaultAccessTokenResponseBody,
 } from '../payment/instrument/instrument.mock';
 import { getAuthorizenet, getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
-import { NoPaymentDataRequiredPaymentStrategy, OfflinePaymentStrategy, PaymentStrategy } from '../payment/strategies';
+import { PaymentStrategy } from '../payment/strategies';
+import { NoPaymentDataRequiredPaymentStrategy } from '../payment/strategies/no-payment';
+import { OfflinePaymentStrategy } from '../payment/strategies/offline';
 import {
     createShippingStrategyRegistry,
     ConsignmentActionCreator,

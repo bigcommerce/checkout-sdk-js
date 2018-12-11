@@ -5,21 +5,18 @@ import { createCheckoutStore } from '../checkout';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
-import {
-    AfterpayPaymentStrategy,
-    AmazonPayPaymentStrategy,
-    CreditCardPaymentStrategy,
-    GooglePayPaymentStrategy,
-    KlarnaPaymentStrategy,
-    LegacyPaymentStrategy,
-    NoPaymentDataRequiredPaymentStrategy,
-    OfflinePaymentStrategy,
-    OffsitePaymentStrategy,
-    PaypalExpressPaymentStrategy,
-    PaypalProPaymentStrategy,
-    SagePayPaymentStrategy,
-    SquarePaymentStrategy,
-} from './strategies';
+import { AfterpayPaymentStrategy } from './strategies/afterpay';
+import { AmazonPayPaymentStrategy } from './strategies/amazon-pay';
+import { CreditCardPaymentStrategy } from './strategies/credit-card';
+import { GooglePayPaymentStrategy } from './strategies/googlepay';
+import { KlarnaPaymentStrategy } from './strategies/klarna';
+import { LegacyPaymentStrategy } from './strategies/legacy';
+import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
+import { OfflinePaymentStrategy } from './strategies/offline';
+import { OffsitePaymentStrategy } from './strategies/offsite';
+import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
+import { SagePayPaymentStrategy } from './strategies/sage-pay';
+import { SquarePaymentStrategy } from './strategies/square';
 
 describe('CreatePaymentStrategyRegistry', () => {
     let registry: PaymentStrategyRegistry;

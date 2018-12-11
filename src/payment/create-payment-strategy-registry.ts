@@ -14,41 +14,31 @@ import PaymentMethodRequestSender from './payment-method-request-sender';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
-import {
-    AfterpayPaymentStrategy,
-    AmazonPayPaymentStrategy,
-    BraintreeCreditCardPaymentStrategy,
-    BraintreePaypalPaymentStrategy,
-    BraintreeVisaCheckoutPaymentStrategy,
-    CreditCardPaymentStrategy,
-    GooglePayPaymentStrategy,
-    KlarnaPaymentStrategy,
-    LegacyPaymentStrategy,
-    NoPaymentDataRequiredPaymentStrategy,
-    OfflinePaymentStrategy,
-    OffsitePaymentStrategy,
-    PaypalExpressPaymentStrategy,
-    PaypalProPaymentStrategy,
-    SagePayPaymentStrategy,
-    SquarePaymentStrategy,
-    WepayPaymentStrategy,
-} from './strategies';
-import { AfterpayScriptLoader } from './strategies/afterpay';
-import { AmazonPayScriptLoader } from './strategies/amazon-pay';
+import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
+import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import {
     createBraintreePaymentProcessor,
     createBraintreeVisaCheckoutPaymentProcessor,
+    BraintreeCreditCardPaymentStrategy,
+    BraintreePaypalPaymentStrategy,
     BraintreeScriptLoader,
     BraintreeSDKCreator,
+    BraintreeVisaCheckoutPaymentStrategy,
     VisaCheckoutScriptLoader
 } from './strategies/braintree';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from './strategies/googlepay';
-import { KlarnaScriptLoader } from './strategies/klarna';
+import { CreditCardPaymentStrategy } from './strategies/credit-card';
+import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
+import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
+import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
-import { PaypalScriptLoader } from './strategies/paypal';
-import { SquareScriptLoader } from './strategies/square';
-import { WepayRiskClient } from './strategies/wepay';
+import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
+import { OfflinePaymentStrategy } from './strategies/offline';
+import { OffsitePaymentStrategy } from './strategies/offsite';
+import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
+import { SagePayPaymentStrategy } from './strategies/sage-pay';
+import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
+import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
@@ -59,24 +49,13 @@ export default function createPaymentStrategyRegistry(
     const scriptLoader = getScriptLoader();
     const billingAddressActionCreator = new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender));
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
-
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const orderActionCreator = new OrderActionCreator(
-        new OrderRequestSender(requestSender),
-        checkoutValidator
-    );
-    const paymentActionCreator = new PaymentActionCreator(
-        new PaymentRequestSender(paymentClient),
-        orderActionCreator
-    );
-
+    const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
+    const paymentActionCreator = new PaymentActionCreator(new PaymentRequestSender(paymentClient), orderActionCreator);
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
-    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-        new RemoteCheckoutRequestSender(requestSender)
-    );
-    const configRequestSender = new ConfigRequestSender(requestSender);
-    const configActionCreator = new ConfigActionCreator(configRequestSender);
+    const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(requestSender));
+    const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 

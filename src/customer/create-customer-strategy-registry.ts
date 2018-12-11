@@ -21,16 +21,14 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../rem
 import CustomerActionCreator from './customer-action-creator';
 import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
-import {
-    AmazonPayCustomerStrategy,
-    BraintreeVisaCheckoutCustomerStrategy,
-    ChasePayCustomerStrategy,
-    CustomerStrategy,
-    DefaultCustomerStrategy,
-    GooglePayCustomerStrategy,
-    MasterpassCustomerStrategy,
-    SquareCustomerStrategy
-} from './strategies';
+import { CustomerStrategy } from './strategies';
+import { AmazonPayCustomerStrategy } from './strategies/amazon';
+import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
+import { ChasePayCustomerStrategy } from './strategies/chasepay';
+import { DefaultCustomerStrategy } from './strategies/default';
+import { GooglePayCustomerStrategy } from './strategies/googlepay';
+import { MasterpassCustomerStrategy } from './strategies/masterpass';
+import { SquareCustomerStrategy } from './strategies/square';
 
 export default function createCustomerStrategyRegistry(
     store: CheckoutStore,

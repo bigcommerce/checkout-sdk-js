@@ -1,6 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
-import { AmazonPayShippingInitializeOptions } from './strategies';
+import { AmazonPayShippingInitializeOptions } from './strategies/amazon';
 
 /**
  * A set of options for configuring any requests related to the shipping step of

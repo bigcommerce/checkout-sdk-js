@@ -4,7 +4,7 @@ import createCheckoutStore from '../checkout/create-checkout-store';
 import Registry from '../common/registry/registry';
 
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
-import AmazonPayShippingStrategy from './strategies/amazon-pay-shipping-strategy';
+import AmazonPayShippingStrategy from './strategies/amazon/amazon-pay-shipping-strategy';
 import ShippingStrategy from './strategies/shipping-strategy';
 
 describe('CreateShippingStrategyRegistry', () => {

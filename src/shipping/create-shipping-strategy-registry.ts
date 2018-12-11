@@ -9,7 +9,9 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../rem
 
 import ConsignmentActionCreator from './consignment-action-creator';
 import ConsignmentRequestSender from './consignment-request-sender';
-import { AmazonPayShippingStrategy, DefaultShippingStrategy, ShippingStrategy } from './strategies';
+import { ShippingStrategy } from './strategies';
+import { AmazonPayShippingStrategy } from './strategies/amazon';
+import { DefaultShippingStrategy } from './strategies/default';
 
 export default function createShippingStrategyRegistry(
     store: CheckoutStore,

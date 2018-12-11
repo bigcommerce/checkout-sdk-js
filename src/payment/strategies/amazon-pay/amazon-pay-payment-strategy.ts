@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 import { isInternalAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError, StandardError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
@@ -13,9 +13,9 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 import AmazonPayOrderReference from './amazon-pay-order-reference';
+import AmazonPayPaymentInitializeOptions from './amazon-pay-payment-initialize-options';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
 import AmazonPayWallet, { AmazonPayWalletOptions } from './amazon-pay-wallet';
-import AmazonPayWidgetError from './amazon-pay-widget-error';
 import AmazonPayWindow from './amazon-pay-window';
 
 export default class AmazonPayPaymentStrategy implements PaymentStrategy {
@@ -210,42 +210,4 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
             })
         );
     }
-}
-
-/**
- * A set of options that are required to initialize the Amazon Pay payment
- * method.
- *
- * When AmazonPay is initialized, a widget will be inserted into the DOM. The
- * widget has a list of payment options for the customer to choose from.
- */
-export interface AmazonPayPaymentInitializeOptions {
-    /**
-     * The ID of a container which the payment widget should insert into.
-     */
-    container: string;
-
-    /**
-     * A callback that gets called if unable to initialize the widget or select
-     * one of the payment options.
-     *
-     * @param error - The error object describing the failure.
-     */
-    onError?(error: AmazonPayWidgetError | StandardError): void;
-
-    /**
-     * A callback that gets called when the customer selects one of the payment
-     * options provided by the widget.
-     *
-     * @param reference - The order reference provided by Amazon.
-     */
-    onPaymentSelect?(reference: AmazonPayOrderReference): void;
-
-    /**
-     * A callback that gets called when the widget is loaded and ready to be
-     * interacted with.
-     *
-     * @param reference - The order reference provided by Amazon.
-     */
-    onReady?(reference: AmazonPayOrderReference): void;
 }
