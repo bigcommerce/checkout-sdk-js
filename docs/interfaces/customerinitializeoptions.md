@@ -84,6 +84,8 @@ ___
 
 **● masterpass**: *[MasterpassCustomerInitializeOptions](masterpasscustomerinitializeoptions.md)*
 
+The options that are required to initialize the Masterpass payment method. They can be omitted unless you need to support Masterpass.
+
 ___
 <a id="methodid"></a>
 

@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.16.0"></a>
+# [1.16.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.15.1...v1.16.0) (2018-12-11)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-3787 Generate TS definition files for submodules ([b6ff269](https://github.com/bigcommerce/checkout-sdk-js/commit/b6ff269))
+* **payment:** CHECKOUT-3797 Surface transaction_declined error message ([0530ada](https://github.com/bigcommerce/checkout-sdk-js/commit/0530ada))
+
+
+### Features
+
+* **payment:** INT-1051 Masterpass callback url post launch ([5f42772](https://github.com/bigcommerce/checkout-sdk-js/commit/5f42772))
+* **payment:** INT-1138 Fix shipping address bug in google pay ([a0924c4](https://github.com/bigcommerce/checkout-sdk-js/commit/a0924c4))
+
+
+
 <a name="1.15.1"></a>
 ## [1.15.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.15.0...v1.15.1) (2018-12-05)
 

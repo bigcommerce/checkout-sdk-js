@@ -2189,6 +2189,10 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
      * They can be omitted unless you need to support Chasepay.
      */
     chasepay?: ChasePayCustomerInitializeOptions;
+    /**
+     * The options that are required to initialize the Masterpass payment method.
+     * They can be omitted unless you need to support Masterpass.
+     */
     masterpass?: MasterpassCustomerInitializeOptions;
     /**
      * The options that are required to initialize the GooglePay payment method.
