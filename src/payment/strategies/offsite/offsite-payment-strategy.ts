@@ -1,12 +1,12 @@
-import { CheckoutStore, InternalCheckoutSelectors } from '../../checkout';
-import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../order';
-import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import { PaymentArgumentInvalidError } from '../errors';
-import PaymentActionCreator from '../payment-action-creator';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../payment-request-options';
-import * as paymentStatusTypes from '../payment-status-types';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { PaymentArgumentInvalidError } from '../../errors';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import * as paymentStatusTypes from '../../payment-status-types';
 
-import PaymentStrategy from './payment-strategy';
+import PaymentStrategy from '../payment-strategy';
 
 export default class OffsitePaymentStrategy implements PaymentStrategy {
     constructor(

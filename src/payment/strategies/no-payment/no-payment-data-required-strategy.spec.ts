@@ -3,12 +3,12 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../order';
-import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
-import { NoPaymentDataRequiredPaymentStrategy } from '.';
+import NoPaymentDataRequiredPaymentStrategy from './no-payment-data-required-strategy';
 
 describe('NoPaymentDataRequiredPaymentStrategy', () => {
     let store: CheckoutStore;

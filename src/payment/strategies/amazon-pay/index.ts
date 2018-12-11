@@ -1,4 +1,5 @@
-export { default as AmazonPayPaymentStrategy, AmazonPayPaymentInitializeOptions } from './amazon-pay-payment-strategy';
+export { default as AmazonPayPaymentStrategy } from './amazon-pay-payment-strategy';
+export { default as AmazonPayPaymentInitializeOptions } from './amazon-pay-payment-initialize-options';
 export { default as AmazonPayScriptLoader } from './amazon-pay-script-loader';
 export { default as AmazonPayAddressBook, AmazonPayAddressBookOptions } from './amazon-pay-address-book';
 export { default as AmazonPayLoginButton, AmazonPayLoginButtonOptions } from './amazon-pay-login-button';

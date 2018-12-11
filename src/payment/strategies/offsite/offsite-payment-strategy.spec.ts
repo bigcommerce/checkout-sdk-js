@@ -4,16 +4,16 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../order';
-import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../order/internal-orders.mock';
-import { getOrder } from '../../order/orders.mock';
-import PaymentActionCreator from '../payment-action-creator';
-import { InitializeOffsitePaymentAction, PaymentActionType } from '../payment-actions';
-import PaymentRequestSender from '../payment-request-sender';
-import * as paymentStatusTypes from '../payment-status-types';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
+import { getOrder } from '../../../order/orders.mock';
+import PaymentActionCreator from '../../payment-action-creator';
+import { InitializeOffsitePaymentAction, PaymentActionType } from '../../payment-actions';
+import PaymentRequestSender from '../../payment-request-sender';
+import * as paymentStatusTypes from '../../payment-status-types';
 
 import OffsitePaymentStrategy from './offsite-payment-strategy';
 

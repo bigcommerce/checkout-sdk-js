@@ -21,7 +21,9 @@ import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
-import { CreditCardPaymentStrategy, NoPaymentDataRequiredPaymentStrategy, PaymentStrategy } from './strategies';
+import { PaymentStrategy } from './strategies';
+import { CreditCardPaymentStrategy } from './strategies/credit-card';
+import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 
 describe('PaymentStrategyActionCreator', () => {
     let orderActionCreator: OrderActionCreator;

@@ -1,16 +1,13 @@
 import { RequestOptions } from '../common/http-request';
 
-import {
-    AmazonPayPaymentInitializeOptions,
-    BraintreePaymentInitializeOptions,
-    BraintreeVisaCheckoutPaymentInitializeOptions,
-    ChasePayInitializeOptions,
-    GooglePayPaymentInitializeOptions,
-    KlarnaPaymentInitializeOptions,
-    MasterpassPaymentInitializeOptions,
-    PaypalExpressPaymentInitializeOptions,
-    SquarePaymentInitializeOptions,
-} from './strategies';
+import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
+import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
+import { ChasePayInitializeOptions } from './strategies/chasepay';
+import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
+import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
+import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
+import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
+import { SquarePaymentInitializeOptions } from './strategies/square';
 
 /**
  * The set of options for configuring any requests related to the payment step of

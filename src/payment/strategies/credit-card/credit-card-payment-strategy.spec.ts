@@ -4,13 +4,13 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../order';
-import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import PaymentActionCreator from '../payment-action-creator';
-import { PaymentActionType } from '../payment-actions';
-import PaymentRequestSender from '../payment-request-sender';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType } from '../../payment-actions';
+import PaymentRequestSender from '../../payment-request-sender';
 
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 

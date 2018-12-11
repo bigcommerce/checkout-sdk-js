@@ -5,19 +5,19 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
-import { RequestError } from '../../common/error/errors';
-import { getResponse } from '../../common/http-request/responses.mock';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../order';
-import { OrderFinalizationNotRequiredError } from '../../order/errors';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
-import { getOrder } from '../../order/orders.mock';
-import PaymentActionCreator from '../payment-action-creator';
-import { PaymentActionType, SubmitPaymentAction } from '../payment-actions';
-import PaymentRequestSender from '../payment-request-sender';
-import * as paymentStatusTypes from '../payment-status-types';
-import { getErrorPaymentResponseBody } from '../payments.mock';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { RequestError } from '../../../common/error/errors';
+import { getResponse } from '../../../common/http-request/responses.mock';
+import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { getOrder } from '../../../order/orders.mock';
+import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
+import PaymentRequestSender from '../../payment-request-sender';
+import * as paymentStatusTypes from '../../payment-status-types';
+import { getErrorPaymentResponseBody } from '../../payments.mock';
 
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
 

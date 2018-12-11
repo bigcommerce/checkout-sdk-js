@@ -2,16 +2,17 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { of, Observable } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../order';
-import { getOrderRequestBody } from '../../order/internal-orders.mock';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
-import OfflinePaymentStrategy from './offline-payment-strategy';
+import LegacyPaymentStrategy from './legacy-payment-strategy';
 
-describe('OfflinePaymentStrategy', () => {
+describe('LegacyPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let store: CheckoutStore;
-    let strategy: OfflinePaymentStrategy;
+    let strategy: LegacyPaymentStrategy;
     let submitOrderAction: Observable<SubmitOrderAction>;
 
     beforeEach(() => {
@@ -27,19 +28,13 @@ describe('OfflinePaymentStrategy', () => {
 
         jest.spyOn(store, 'dispatch');
 
-        strategy = new OfflinePaymentStrategy(store, orderActionCreator);
+        strategy = new LegacyPaymentStrategy(store, orderActionCreator);
     });
 
-    it('submits order without payment data', async () => {
+    it('submits order with payment data', async () => {
         await strategy.execute(getOrderRequestBody());
 
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({
-            ...getOrderRequestBody(),
-            payment: {
-                methodId: 'authorizenet',
-            },
-        }, undefined);
-
+        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(getOrderRequestBody(), undefined);
         expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
     });
 
@@ -47,5 +42,13 @@ describe('OfflinePaymentStrategy', () => {
         const output = await strategy.execute(getOrderRequestBody());
 
         expect(output).toEqual(store.getState());
+    });
+
+    it('throws error to inform that order finalization is not required', async () => {
+        try {
+            await strategy.finalize();
+        } catch (error) {
+            expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
+        }
     });
 });
