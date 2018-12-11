@@ -14,6 +14,7 @@ import PaymentMethodRequestSender from './payment-method-request-sender';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import PaymentStrategyType from './payment-strategy-type';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import {
@@ -28,7 +29,12 @@ import {
 } from './strategies/braintree';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
-import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
+import {
+    createGooglePayPaymentProcessor,
+    GooglePayBraintreeInitializer,
+    GooglePayPaymentStrategy,
+    GooglePayStripeInitializer
+} from './strategies/googlepay';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
@@ -45,7 +51,7 @@ export default function createPaymentStrategyRegistry(
     paymentClient: any,
     requestSender: RequestSender
 ) {
-    const registry = new PaymentStrategyRegistry(store, { defaultToken: 'creditcard' });
+    const registry = new PaymentStrategyRegistry(store, { defaultToken: PaymentStrategyType.CREDIT_CARD });
     const scriptLoader = getScriptLoader();
     const billingAddressActionCreator = new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender));
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
@@ -59,7 +65,7 @@ export default function createPaymentStrategyRegistry(
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
-    registry.register('afterpay', () =>
+    registry.register(PaymentStrategyType.AFTERPAY, () =>
         new AfterpayPaymentStrategy(
             store,
             checkoutValidator,
@@ -71,7 +77,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('amazon', () =>
+    registry.register(PaymentStrategyType.AMAZON, () =>
         new AmazonPayPaymentStrategy(
             store,
             orderActionCreator,
@@ -81,7 +87,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('creditcard', () =>
+    registry.register(PaymentStrategyType.CREDIT_CARD, () =>
         new CreditCardPaymentStrategy(
             store,
             orderActionCreator,
@@ -89,7 +95,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('klarna', () =>
+    registry.register(PaymentStrategyType.KLARNA, () =>
         new KlarnaPaymentStrategy(
             store,
             orderActionCreator,
@@ -99,21 +105,21 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('legacy', () =>
+    registry.register(PaymentStrategyType.LEGACY, () =>
         new LegacyPaymentStrategy(
             store,
             orderActionCreator
         )
     );
 
-    registry.register('offline', () =>
+    registry.register(PaymentStrategyType.OFFLINE, () =>
         new OfflinePaymentStrategy(
             store,
             orderActionCreator
         )
     );
 
-    registry.register('offsite', () =>
+    registry.register(PaymentStrategyType.OFFSITE, () =>
         new OffsitePaymentStrategy(
             store,
             orderActionCreator,
@@ -121,7 +127,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('paypal', () =>
+    registry.register(PaymentStrategyType.PAYPAL, () =>
         new PaypalProPaymentStrategy(
             store,
             orderActionCreator,
@@ -129,7 +135,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('paypalexpress', () =>
+    registry.register(PaymentStrategyType.PAYPAL_EXPRESS, () =>
         new PaypalExpressPaymentStrategy(
             store,
             orderActionCreator,
@@ -137,7 +143,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('paypalexpresscredit', () =>
+    registry.register(PaymentStrategyType.PAYPAL_EXPRESS_CREDIT, () =>
         new PaypalExpressPaymentStrategy(
             store,
             orderActionCreator,
@@ -145,7 +151,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('sagepay', () =>
+    registry.register(PaymentStrategyType.SAGE_PAY, () =>
         new SagePayPaymentStrategy(
             store,
             orderActionCreator,
@@ -154,7 +160,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('squarev2', () =>
+    registry.register(PaymentStrategyType.SQUARE, () =>
         new SquarePaymentStrategy(
             store,
             checkoutActionCreator,
@@ -167,14 +173,14 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('nopaymentdatarequired', () =>
+    registry.register(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED, () =>
         new NoPaymentDataRequiredPaymentStrategy(
             store,
             orderActionCreator
         )
     );
 
-    registry.register('braintree', () =>
+    registry.register(PaymentStrategyType.BRAINTREE, () =>
         new BraintreeCreditCardPaymentStrategy(
             store,
             orderActionCreator,
@@ -184,7 +190,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('braintreepaypal', () =>
+    registry.register(PaymentStrategyType.BRAINTREE_PAYPAL, () =>
         new BraintreePaypalPaymentStrategy(
             store,
             orderActionCreator,
@@ -194,7 +200,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('braintreepaypalcredit', () =>
+    registry.register(PaymentStrategyType.BRAINTREE_PAYPAL_CREDIT, () =>
         new BraintreePaypalPaymentStrategy(
             store,
             orderActionCreator,
@@ -205,7 +211,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('braintreevisacheckout', () =>
+    registry.register(PaymentStrategyType.BRAINTREE_VISA_CHECKOUT, () =>
         new BraintreeVisaCheckoutPaymentStrategy(
             store,
             checkoutActionCreator,
@@ -218,7 +224,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('chasepay', () =>
+    registry.register(PaymentStrategyType.CHASE_PAY, () =>
         new ChasePayPaymentStrategy(
             store,
             checkoutActionCreator,
@@ -232,7 +238,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('googlepaybraintree', () =>
+    registry.register(PaymentStrategyType.BRAINTREE_GOOGLE_PAY, () =>
         new GooglePayPaymentStrategy(
             store,
             checkoutActionCreator,
@@ -251,7 +257,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('wepay', () =>
+    registry.register(PaymentStrategyType.WE_PAY, () =>
         new WepayPaymentStrategy(
             store,
             orderActionCreator,
@@ -260,7 +266,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('masterpass', () =>
+    registry.register(PaymentStrategyType.MASTERPASS, () =>
         new MasterpassPaymentStrategy(
             store,
             orderActionCreator,
@@ -270,7 +276,7 @@ export default function createPaymentStrategyRegistry(
         )
     );
 
-    registry.register('googlepaystripe', () =>
+    registry.register(PaymentStrategyType.STRIPE_GOOGLE_PAY, () =>
         new GooglePayPaymentStrategy(
             store,
             checkoutActionCreator,

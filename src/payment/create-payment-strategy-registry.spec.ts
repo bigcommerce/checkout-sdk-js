@@ -5,6 +5,7 @@ import { createCheckoutStore } from '../checkout';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import PaymentStrategyType from './payment-strategy-type';
 import { AfterpayPaymentStrategy } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy } from './strategies/amazon-pay';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
@@ -33,72 +34,72 @@ describe('CreatePaymentStrategyRegistry', () => {
     });
 
     it('can instantiate amazon', () => {
-        const paymentStrategy = registry.get('amazon');
+        const paymentStrategy = registry.get(PaymentStrategyType.AMAZON);
         expect(paymentStrategy).toBeInstanceOf(AmazonPayPaymentStrategy);
     });
 
     it('can instantiate afterpay', () => {
-        const paymentStrategy = registry.get('afterpay');
+        const paymentStrategy = registry.get(PaymentStrategyType.AFTERPAY);
         expect(paymentStrategy).toBeInstanceOf(AfterpayPaymentStrategy);
     });
 
     it('can instantiate creditcard', () => {
-        const paymentStrategy = registry.get('creditcard');
+        const paymentStrategy = registry.get(PaymentStrategyType.CREDIT_CARD);
         expect(paymentStrategy).toBeInstanceOf(CreditCardPaymentStrategy);
     });
 
     it('can instantiate klarna', () => {
-        const paymentStrategy = registry.get('klarna');
+        const paymentStrategy = registry.get(PaymentStrategyType.KLARNA);
         expect(paymentStrategy).toBeInstanceOf(KlarnaPaymentStrategy);
     });
 
     it('can instantiate legacy', () => {
-        const paymentStrategy = registry.get('legacy');
+        const paymentStrategy = registry.get(PaymentStrategyType.LEGACY);
         expect(paymentStrategy).toBeInstanceOf(LegacyPaymentStrategy);
     });
 
     it('can instantiate offline', () => {
-        const paymentStrategy = registry.get('offline');
+        const paymentStrategy = registry.get(PaymentStrategyType.OFFLINE);
         expect(paymentStrategy).toBeInstanceOf(OfflinePaymentStrategy);
     });
 
     it('can instantiate offsite', () => {
-        const paymentStrategy = registry.get('offsite');
+        const paymentStrategy = registry.get(PaymentStrategyType.OFFSITE);
         expect(paymentStrategy).toBeInstanceOf(OffsitePaymentStrategy);
     });
 
     it('can instantiate paypal', () => {
-        const paymentStrategy = registry.get('paypal');
+        const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL);
         expect(paymentStrategy).toBeInstanceOf(PaypalProPaymentStrategy);
     });
 
     it('can instantiate paypalexpress', () => {
-        const paymentStrategy = registry.get('paypalexpress');
+        const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL_EXPRESS);
         expect(paymentStrategy).toBeInstanceOf(PaypalExpressPaymentStrategy);
     });
 
     it('can instantiate paypalexpresscredit', () => {
-        const paymentStrategy = registry.get('paypalexpresscredit');
+        const paymentStrategy = registry.get(PaymentStrategyType.PAYPAL_EXPRESS_CREDIT);
         expect(paymentStrategy).toBeInstanceOf(PaypalExpressPaymentStrategy);
     });
 
     it('can instantiate sagepay', () => {
-        const paymentStrategy = registry.get('sagepay');
+        const paymentStrategy = registry.get(PaymentStrategyType.SAGE_PAY);
         expect(paymentStrategy).toBeInstanceOf(SagePayPaymentStrategy);
     });
 
     it('can instantiate square', () => {
-        const paymentStrategy = registry.get('squarev2');
+        const paymentStrategy = registry.get(PaymentStrategyType.SQUARE);
         expect(paymentStrategy).toBeInstanceOf(SquarePaymentStrategy);
     });
 
     it('can instantiate nopaymentdatarequired', () => {
-        const paymentStrategy = registry.get('nopaymentdatarequired');
+        const paymentStrategy = registry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
         expect(paymentStrategy).toBeInstanceOf(NoPaymentDataRequiredPaymentStrategy);
     });
 
     it('can instantiate googlepaybraintree', () => {
-        const paymentStrategy = registry.get('googlepaybraintree');
+        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_GOOGLE_PAY);
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
     });
 });

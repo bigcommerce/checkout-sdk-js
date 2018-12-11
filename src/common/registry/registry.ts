@@ -11,7 +11,7 @@ export default class Registry<T, K extends string = string> {
         this._options = { defaultToken: 'default', ...options };
     }
 
-    get(token?: K, cacheToken?: K): T {
+    get(token?: K, cacheToken?: string): T {
         try {
             return this._getInstance(
                 token || this._options.defaultToken,

@@ -20,6 +20,7 @@ import {
     PaymentStrategyWidgetAction,
 } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
 
 export default class PaymentStrategyActionCreator {
@@ -45,7 +46,7 @@ export default class PaymentStrategyActionCreator {
 
                 strategy = this._strategyRegistry.getByMethod(method);
             } else {
-                strategy = this._strategyRegistry.get('nopaymentdatarequired');
+                strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
             }
 
             observer.next(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta));

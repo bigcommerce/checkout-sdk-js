@@ -8,9 +8,10 @@ import { RegistryOptions } from '../common/registry/registry';
 
 import PaymentMethod from './payment-method';
 import * as paymentMethodTypes from './payment-method-types';
+import PaymentStrategyType from './payment-strategy-type';
 import PaymentStrategy from './strategies/payment-strategy';
 
-export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
+export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, PaymentStrategyType> {
     constructor(
         private _store: ReadableDataStore<InternalCheckoutSelectors>,
         options?: PaymentStrategyRegistryOptions
@@ -29,26 +30,32 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy> {
         return this.get(token, cacheToken);
     }
 
-    private _getToken(paymentMethod: PaymentMethod): string {
+    private _getToken(paymentMethod: PaymentMethod): PaymentStrategyType {
         const methodId = paymentMethod.gateway || paymentMethod.id;
 
-        if (this._hasFactory(methodId)) {
+        if (this._hasFactoryForMethod(methodId)) {
             return methodId;
         }
 
         if (paymentMethod.type === paymentMethodTypes.OFFLINE) {
-            return 'offline';
+            return PaymentStrategyType.OFFLINE;
         }
 
         if (this._isLegacyMethod(paymentMethod)) {
-            return 'legacy';
+            return PaymentStrategyType.LEGACY;
         }
 
         if (paymentMethod.type === paymentMethodTypes.HOSTED) {
-            return 'offsite';
+            return PaymentStrategyType.OFFSITE;
         }
 
-        return 'creditcard';
+        return PaymentStrategyType.CREDIT_CARD;
+    }
+
+    private _hasFactoryForMethod(
+        methodId: string
+    ): methodId is PaymentStrategyType {
+        return this._hasFactory(methodId);
     }
 
     private _isLegacyMethod(paymentMethod: PaymentMethod): boolean {
