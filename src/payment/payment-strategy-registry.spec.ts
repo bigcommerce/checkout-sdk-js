@@ -3,9 +3,11 @@ import { getConfigState } from '../config/configs.mock';
 import { OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
-import { getAdyenAmex, getAuthorizenet, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
+import { getAdyenAmex, getAmazonPay, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
+
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
 
 describe('PaymentStrategyRegistry', () => {
@@ -47,7 +49,7 @@ describe('PaymentStrategyRegistry', () => {
     class OffsitePaymentStrategy extends BasePaymentStrategy {}
 
     // tslint:disable-next-line:max-classes-per-file
-    class AuthorizenetPaymentStrategy extends BasePaymentStrategy {}
+    class AmazonPayPaymentStrategy extends BasePaymentStrategy {}
 
     beforeEach(() => {
         store = createCheckoutStore({
@@ -59,15 +61,15 @@ describe('PaymentStrategyRegistry', () => {
 
     describe('#getByMethod()', () => {
         beforeEach(() => {
-            registry.register('authorizenet', () => new AuthorizenetPaymentStrategy(store));
-            registry.register('creditcard', () => new CreditCardPaymentStrategy(store));
-            registry.register('legacy', () => new LegacyPaymentStrategy(store));
-            registry.register('offline', () => new OfflinePaymentStrategy(store));
-            registry.register('offsite', () => new OffsitePaymentStrategy(store));
+            registry.register(PaymentStrategyType.AMAZON, () => new AmazonPayPaymentStrategy(store));
+            registry.register(PaymentStrategyType.CREDIT_CARD, () => new CreditCardPaymentStrategy(store));
+            registry.register(PaymentStrategyType.LEGACY, () => new LegacyPaymentStrategy(store));
+            registry.register(PaymentStrategyType.OFFLINE, () => new OfflinePaymentStrategy(store));
+            registry.register(PaymentStrategyType.OFFSITE, () => new OffsitePaymentStrategy(store));
         });
 
         it('returns strategy if registered with method name', () => {
-            expect(registry.getByMethod(getAuthorizenet())).toBeInstanceOf(AuthorizenetPaymentStrategy);
+            expect(registry.getByMethod(getAmazonPay())).toBeInstanceOf(AmazonPayPaymentStrategy);
         });
 
         it('returns credit card strategy if none is registered with method name', () => {

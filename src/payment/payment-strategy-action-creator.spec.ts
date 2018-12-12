@@ -21,6 +21,7 @@ import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
+import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
@@ -94,7 +95,7 @@ describe('PaymentStrategyActionCreator', () => {
             }));
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const strategy = registry.get('amazon');
+            const strategy = registry.get(PaymentStrategyType.AMAZON);
 
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.resolve(store.getState()));
@@ -184,7 +185,7 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('does not deinitialize if strategy is not initialized', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const strategy = registry.get('amazon');
+            const strategy = registry.get(PaymentStrategyType.AMAZON);
 
             jest.spyOn(strategy, 'deinitialize')
                 .mockReturnValue(Promise.resolve(store.getState()));
