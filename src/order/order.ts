@@ -26,6 +26,7 @@ export default interface Order {
     shippingCostBeforeDiscount: number;
     handlingCostTotal: number;
     taxes: Tax[];
+    taxTotal: number;
     payments?: OrderPayments;
     status: string;
 }

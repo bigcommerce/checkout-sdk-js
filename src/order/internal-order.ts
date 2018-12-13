@@ -33,6 +33,10 @@ export default interface InternalOrder {
         amount: number;
     };
     taxes: Array<{ name: string, amount: number }>;
+    taxTotal: {
+        amount: number;
+        integerAmount: number;
+    };
     handling: {
         amount: number;
         integerAmount: number;
