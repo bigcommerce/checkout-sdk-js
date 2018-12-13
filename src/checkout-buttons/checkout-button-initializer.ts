@@ -1,4 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../checkout';
+import { isElementId, setUniqueElementId } from '../common/dom';
 
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
 import CheckoutButtonSelectors from './checkout-button-selectors';
@@ -101,10 +102,18 @@ export default class CheckoutButtonInitializer {
      * @returns A promise that resolves to the current state.
      */
     initializeButton(options: CheckoutButtonInitializeOptions): Promise<CheckoutButtonSelectors> {
-        const action = this._buttonStrategyActionCreator.initialize(options);
-        const queueId = `checkoutButtonStrategy:${options.methodId}:${options.containerId}`;
+        const containerIds = isElementId(options.containerId) ?
+            [options.containerId] :
+            setUniqueElementId(options.containerId, `${options.methodId}-container`);
 
-        return this._store.dispatch(action, { queueId })
+        return Promise.all(
+            containerIds.map(containerId => {
+                const action = this._buttonStrategyActionCreator.initialize({ ...options, containerId });
+                const queueId = `checkoutButtonStrategy:${options.methodId}:${containerId}`;
+
+                return this._store.dispatch(action, { queueId });
+            })
+        )
             .then(() => this.getState());
     }
 
