@@ -53,6 +53,38 @@ describe('CheckoutButtonInitializer', () => {
         );
     });
 
+    it('dispatches multiple actions to initialize button strategy if multiple containers can be found', async () => {
+        const container = document.createElement('div');
+        container.className = 'checkout-button';
+
+        const containers: HTMLElement[] = [];
+        containers.push(container);
+        containers.push(container.cloneNode() as HTMLElement);
+        containers.push(container.cloneNode() as HTMLElement);
+        containers.forEach(container => document.body.appendChild(container));
+
+        const options = {
+            methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
+            containerId: '.checkout-button',
+        };
+
+        await initializer.initializeButton(options);
+
+        expect(buttonActionCreator.initialize).toHaveBeenCalledTimes(3);
+        expect(buttonActionCreator.initialize).toHaveBeenCalledWith({
+            ...options,
+            containerId: expect.stringMatching(new RegExp(`${options.methodId}-container.+`)),
+        });
+
+        expect(store.dispatch).toHaveBeenCalledTimes(3);
+        expect(store.dispatch).toHaveBeenCalledWith(
+            buttonActionCreator.initialize(options),
+            { queueId: expect.stringMatching(new RegExp(`checkoutButtonStrategy:${options.methodId}:${options.methodId}-container.+`)) }
+        );
+
+        containers.forEach(container => container.remove());
+    });
+
     it('dispatches action to deinitialize button strategy', async () => {
         const options = {
             methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
