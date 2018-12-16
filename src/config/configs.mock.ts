@@ -49,8 +49,10 @@ export function getConfig(): Config {
             },
             links: {
                 cartLink: 'https://store-k1drp8k8.bcapp.dev/cart.php',
-                checkoutLink: '/checkout',
-                orderConfirmationLink: '/checkout/order-confirmation',
+                checkoutLink: 'https://store-k1drp8k8.bcapp.dev/checkout',
+                createAccountLink: 'https://store-k1drp8k8.bcapp.dev/login.php?action=create_account',
+                forgotPasswordLink: 'https://store-k1drp8k8.bcapp.dev/login.php?action=reset_password',
+                orderConfirmationLink: 'https://store-k1drp8k8.bcapp.dev/checkout/order-confirmation',
             },
             paymentSettings: {
                 bigpayBaseUrl: 'https://bigpay.integration.zone',
