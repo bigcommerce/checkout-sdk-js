@@ -56,6 +56,8 @@ export interface PaymentSettings {
 export interface StoreLinks {
     cartLink: string;
     checkoutLink: string;
+    createAccountLink: string;
+    forgotPasswordLink: string;
     orderConfirmationLink: string;
 }
 
