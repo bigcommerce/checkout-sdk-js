@@ -12,6 +12,8 @@
 
 * [cartLink](storelinks.md#cartlink)
 * [checkoutLink](storelinks.md#checkoutlink)
+* [createAccountLink](storelinks.md#createaccountlink)
+* [forgotPasswordLink](storelinks.md#forgotpasswordlink)
 * [orderConfirmationLink](storelinks.md#orderconfirmationlink)
 
 ---
@@ -30,6 +32,20 @@ ___
 ###  checkoutLink
 
 **● checkoutLink**: *`string`*
+
+___
+<a id="createaccountlink"></a>
+
+###  createAccountLink
+
+**● createAccountLink**: *`string`*
+
+___
+<a id="forgotpasswordlink"></a>
+
+###  forgotPasswordLink
+
+**● forgotPasswordLink**: *`string`*
 
 ___
 <a id="orderconfirmationlink"></a>

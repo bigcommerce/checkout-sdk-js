@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.16.1"></a>
+## [1.16.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.16.0...v1.16.1) (2018-12-17)
+
+
+### Bug Fixes
+
+* **checkout-button:** CHECKOUT-3804 Set unique container ID if not provided by client ([4ce80d8](https://github.com/bigcommerce/checkout-sdk-js/commit/4ce80d8))
+* **common:** CHECKOUT-3790 Add missing properties to `StoreLinks` object ([dfacf03](https://github.com/bigcommerce/checkout-sdk-js/commit/dfacf03))
+
+
+
 <a name="1.16.0"></a>
 # [1.16.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.15.1...v1.16.0) (2018-12-11)
 

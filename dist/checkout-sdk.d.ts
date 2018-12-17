@@ -3089,6 +3089,8 @@ declare interface StoreCurrency {
 declare interface StoreLinks {
     cartLink: string;
     checkoutLink: string;
+    createAccountLink: string;
+    forgotPasswordLink: string;
     orderConfirmationLink: string;
 }
 
