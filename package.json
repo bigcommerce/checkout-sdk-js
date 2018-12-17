@@ -55,7 +55,7 @@
     "tslib": "^1.8.0"
   },
   "devDependencies": {
-    "@bigcommerce/tslint-config": "^3.0.0",
+    "@bigcommerce/tslint-config": "^3.0.1",
     "@bigcommerce/typedoc-plugin-markdown": "^1.3.0",
     "@bigcommerce/validate-commits": "^2.0.3",
     "@microsoft/api-extractor": "^6.3.0",
