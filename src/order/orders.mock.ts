@@ -43,7 +43,7 @@ export function getOrder(): Order {
                 amount: 3,
             },
         ],
-        taxTotal: 0,
+        taxTotal: 3,
         shippingCostTotal: 15,
         shippingCostBeforeDiscount: 20,
         handlingCostTotal: 8,
