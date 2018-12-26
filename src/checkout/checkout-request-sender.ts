@@ -5,6 +5,7 @@ import { ContentType, RequestOptions } from '../common/http-request';
 import Checkout, { CheckoutRequestBody } from './checkout';
 import CHECKOUT_DEFAULT_INCLUDES from './checkout-default-includes';
 import CheckoutParams from './checkout-params';
+import { CheckoutNotAvailableError } from './errors';
 
 export default class CheckoutRequestSender {
     constructor(
@@ -21,6 +22,12 @@ export default class CheckoutRequestSender {
             },
             headers,
             timeout,
+        }).catch(error => {
+            if (error.status >= 400 && error.status < 500) {
+                throw new CheckoutNotAvailableError(error);
+            }
+
+            throw error;
         });
     }
 
