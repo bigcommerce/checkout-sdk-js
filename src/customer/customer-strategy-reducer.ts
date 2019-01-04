@@ -1,15 +1,17 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+
+import { clearErrorReducer } from '../common/error';
 
 import { CustomerStrategyAction, CustomerStrategyActionType } from './customer-strategy-actions';
 import CustomerStrategyState, { CustomerStrategyDataState, CustomerStrategyErrorsState, CustomerStrategyStatusesState, DEFAULT_STATE } from './customer-strategy-state';
 
 export default function customerStrategyReducer(
     state: CustomerStrategyState = DEFAULT_STATE,
-    action: CustomerStrategyAction
+    action: Action
 ): CustomerStrategyState {
     const reducer = combineReducers<CustomerStrategyState, CustomerStrategyAction>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

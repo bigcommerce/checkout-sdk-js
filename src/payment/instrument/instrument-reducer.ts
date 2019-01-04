@@ -1,4 +1,6 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+
+import { clearErrorReducer } from '../../common/error';
 
 import Instrument from './instrument';
 import { InstrumentAction, InstrumentActionType } from './instrument-actions';
@@ -12,11 +14,11 @@ const DEFAULT_STATE = {
 
 export default function instrumentReducer(
     state: InstrumentState = DEFAULT_STATE,
-    action: InstrumentAction
+    action: Action
 ): InstrumentState {
     const reducer = combineReducers<InstrumentState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         meta: metaReducer,
         statuses: statusesReducer,
     });

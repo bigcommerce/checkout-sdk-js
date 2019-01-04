@@ -1,4 +1,6 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+
+import { clearErrorReducer } from '../common/error';
 
 import Country from './country';
 import { CountryActionType, LoadCountriesAction } from './country-actions';
@@ -11,11 +13,11 @@ const DEFAULT_STATE: CountryState = {
 
 export default function countryReducer(
     state: CountryState = DEFAULT_STATE,
-    action: LoadCountriesAction
+    action: Action
 ): CountryState {
     const reducer = combineReducers<CountryState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

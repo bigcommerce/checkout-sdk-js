@@ -1,5 +1,6 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
+import { clearErrorReducer } from '../common/error';
 import { mergeOrPush } from '../common/utility';
 
 import PaymentMethod from './payment-method';
@@ -18,7 +19,7 @@ export default function paymentMethodReducer(
 ): PaymentMethodState {
     const reducer = combineReducers<PaymentMethodState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         meta: metaReducer,
         statuses: statusesReducer,
     });

@@ -1,4 +1,6 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+
+import { clearErrorReducer } from '../common/error';
 
 import Config from './config';
 import { ConfigActionType, LoadConfigAction } from './config-actions';
@@ -12,11 +14,11 @@ const DEFAULT_STATE: ConfigState = {
 
 export default function configReducer(
     state: ConfigState = DEFAULT_STATE,
-    action: LoadConfigAction
+    action: Action
 ): ConfigState {
-    const reducer = combineReducers<ConfigState, LoadConfigAction>({
+    const reducer = combineReducers<ConfigState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

@@ -5,6 +5,7 @@ import { of, Observable } from 'rxjs';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
+import { ErrorActionCreator } from '../common/error';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
@@ -75,6 +76,7 @@ describe('CheckoutService', () => {
     let configRequestSender: ConfigRequestSender;
     let couponRequestSender: CouponRequestSender;
     let customerStrategyActionCreator: CustomerStrategyActionCreator;
+    let errorActionCreator: ErrorActionCreator;
     let giftCertificateRequestSender: GiftCertificateRequestSender;
     let instrumentActionCreator: InstrumentActionCreator;
     let orderActionCreator: OrderActionCreator;
@@ -217,6 +219,8 @@ describe('CheckoutService', () => {
             createShippingStrategyRegistry(store, requestSender)
         );
 
+        errorActionCreator = new ErrorActionCreator();
+
         checkoutService = new CheckoutService(
             store,
             billingAddressActionCreator,
@@ -226,6 +230,7 @@ describe('CheckoutService', () => {
             new CountryActionCreator(countryRequestSender),
             new CouponActionCreator(couponRequestSender),
             customerStrategyActionCreator,
+            errorActionCreator,
             new GiftCertificateActionCreator(giftCertificateRequestSender),
             instrumentActionCreator,
             orderActionCreator,
@@ -950,6 +955,19 @@ describe('CheckoutService', () => {
 
             expect(instrumentActionCreator.deleteInstrument).toHaveBeenCalledWith(instrumentId);
             expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
+        });
+    });
+
+    describe('#clearError()', () => {
+        it('dispatches "clear error" action', () => {
+            jest.spyOn(errorActionCreator, 'clearError');
+
+            const error = new Error('Unexpected error');
+
+            checkoutService.clearError(error);
+
+            expect(errorActionCreator.clearError)
+                .toHaveBeenCalledWith(error);
         });
     });
 });

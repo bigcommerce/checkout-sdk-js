@@ -1,6 +1,7 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { clearErrorReducer } from '../common/error';
 import { OrderAction, OrderActionType } from '../order';
 
 import BillingAddress from './billing-address';
@@ -14,11 +15,11 @@ const DEFAULT_STATE: BillingAddressState = {
 
 export default function billingAddressReducer(
     state: BillingAddressState = DEFAULT_STATE,
-    action: CheckoutAction | BillingAddressAction | OrderAction
+    action: Action
 ): BillingAddressState {
-    const reducer = combineReducers<BillingAddressState, CheckoutAction | BillingAddressAction | OrderAction>({
+    const reducer = combineReducers<BillingAddressState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

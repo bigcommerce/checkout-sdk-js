@@ -1,5 +1,7 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
+
+import { clearErrorReducer } from '../common/error';
 
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { OrderDataState, OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
@@ -12,11 +14,11 @@ const DEFAULT_STATE: OrderState = {
 
 export default function orderReducer(
     state: OrderState = DEFAULT_STATE,
-    action: OrderAction
+    action: Action
 ): OrderState {
     const reducer = combineReducers<OrderState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         meta: metaReducer,
         statuses: statusesReducer,
     });
