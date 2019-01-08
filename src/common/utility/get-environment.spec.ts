@@ -11,8 +11,8 @@ describe('getEnvironment', () => {
     });
 
     afterEach(() => {
-        process.env = savedEnvironment;
         global.process = savedProcess;
+        process.env = savedEnvironment;
     });
 
     it('returns the value set in process.env.NODE_ENV', () => {
