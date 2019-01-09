@@ -58,6 +58,7 @@ export interface StoreLinks {
     checkoutLink: string;
     createAccountLink: string;
     forgotPasswordLink: string;
+    loginLink: string;
     orderConfirmationLink: string;
 }
 

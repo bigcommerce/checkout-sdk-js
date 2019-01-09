@@ -1,11 +1,12 @@
 import { createRequestSender, RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { ContentType } from '../common/http-request';
-import { getResponse } from '../common/http-request/responses.mock';
+import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
 
 import { CheckoutIncludes } from './checkout-params';
 import CheckoutRequestSender from './checkout-request-sender';
 import { getCheckout } from './checkouts.mock';
+import { CheckoutNotAvailableError } from './errors';
 
 describe('CheckoutRequestSender', () => {
     let requestSender: RequestSender;
@@ -24,8 +25,8 @@ describe('CheckoutRequestSender', () => {
         requestSender = createRequestSender();
         response = getResponse(getCheckout());
 
-        jest.spyOn(requestSender, 'get').mockReturnValue(response);
-        jest.spyOn(requestSender, 'put').mockReturnValue(response);
+        jest.spyOn(requestSender, 'get').mockResolvedValue(response);
+        jest.spyOn(requestSender, 'put').mockResolvedValue(response);
         checkoutRequestSender = new CheckoutRequestSender(requestSender);
     });
 
@@ -64,6 +65,26 @@ describe('CheckoutRequestSender', () => {
                     timeout: undefined,
                 },
             });
+        });
+
+        it('throws CheckoutNotAvailable if the request status is in the 400 range', async () => {
+            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 404));
+
+            try {
+                await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4');
+            } catch (error) {
+                expect(error).toBeInstanceOf(CheckoutNotAvailableError);
+            }
+        });
+
+        it('throws a generic request error if status in the 500 range', async () => {
+            jest.spyOn(requestSender, 'get').mockRejectedValue(getErrorResponse(undefined, undefined, 500));
+
+            try {
+                await checkoutRequestSender.loadCheckout('6cb62bfc-c92d-45f5-869b-d3d9681a58d4');
+            } catch (error) {
+                expect(error).not.toBeInstanceOf(CheckoutNotAvailableError);
+            }
         });
     });
 
