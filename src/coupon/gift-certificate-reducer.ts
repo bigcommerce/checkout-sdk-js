@@ -1,6 +1,7 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { clearErrorReducer } from '../common/error';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
 
 import { CouponAction, CouponActionType } from './coupon-actions';
@@ -15,11 +16,11 @@ const DEFAULT_STATE: GiftCertificateState = {
 
 export default function giftCertificateReducer(
     state: GiftCertificateState = DEFAULT_STATE,
-    action: CheckoutAction | GiftCertificateAction | ConsignmentAction | CouponAction
+    action: Action
 ): GiftCertificateState {
     const reducer = combineReducers<GiftCertificateState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

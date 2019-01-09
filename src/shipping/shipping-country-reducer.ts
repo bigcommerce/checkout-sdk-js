@@ -1,5 +1,6 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
+import { clearErrorReducer } from '../common/error';
 import { Country } from '../geography';
 
 import { LoadShippingCountriesAction, ShippingCountryActionType } from './shipping-country-actions';
@@ -12,11 +13,11 @@ const DEFAULT_STATE: ShippingCountryState = {
 
 export default function shippingCountryReducer(
     state: ShippingCountryState = DEFAULT_STATE,
-    action: LoadShippingCountriesAction
+    action: Action
 ): ShippingCountryState {
     const reducer = combineReducers<ShippingCountryState>({
-        errors: errorsReducer,
         data: dataReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

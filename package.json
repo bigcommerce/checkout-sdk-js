@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@bigcommerce/bigpay-client": "^3.2.3",
-    "@bigcommerce/data-store": "^0.2.5",
+    "@bigcommerce/data-store": "^0.2.6",
     "@bigcommerce/form-poster": "^1.3.0",
     "@bigcommerce/request-sender": "^0.2.1",
     "@bigcommerce/script-loader": "^0.1.6",

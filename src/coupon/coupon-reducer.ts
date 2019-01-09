@@ -1,6 +1,7 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { clearErrorReducer } from '../common/error';
 import { OrderAction, OrderActionType } from '../order';
 
 import Coupon from './coupon';
@@ -14,11 +15,11 @@ const DEFAULT_STATE: CouponState = {
 
 export default function couponReducer(
     state: CouponState = DEFAULT_STATE,
-    action: CouponAction | CheckoutAction | OrderAction
+    action: Action
 ): CouponState {
     const reducer = combineReducers<CouponState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

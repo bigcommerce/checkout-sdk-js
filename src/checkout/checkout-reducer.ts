@@ -1,7 +1,8 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 import { omit } from 'lodash';
 
 import { BillingAddressAction, BillingAddressActionType } from '../billing';
+import { clearErrorReducer } from '../common/error';
 import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateActionType } from '../coupon';
 import { OrderAction, OrderActionType } from '../order';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
@@ -20,7 +21,7 @@ export default function checkoutReducer(
 ): CheckoutState {
     const reducer = combineReducers<CheckoutState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

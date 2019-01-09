@@ -1,6 +1,7 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
+import { ErrorActionCreator } from '../common/error';
 import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState } from '../config';
@@ -69,6 +70,7 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new CountryActionCreator(new CountryRequestSender(requestSender, { locale })),
         new CouponActionCreator(new CouponRequestSender(requestSender)),
         new CustomerStrategyActionCreator(createCustomerStrategyRegistry(store, requestSender)),
+        new ErrorActionCreator(),
         new GiftCertificateActionCreator(new GiftCertificateRequestSender(requestSender)),
         new InstrumentActionCreator(new InstrumentRequestSender(paymentClient, requestSender)),
         orderActionCreator,

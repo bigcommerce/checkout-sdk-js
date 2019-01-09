@@ -1,7 +1,8 @@
-import { combineReducers, Action } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { BillingAddressAction, BillingAddressActionType } from '../billing/billing-address-actions';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { clearErrorReducer } from '../common/error';
 import { CouponAction, CouponActionType } from '../coupon/coupon-actions';
 import { GiftCertificateAction, GiftCertificateActionType } from '../coupon/gift-certificate-actions';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
@@ -20,7 +21,7 @@ export default function cartReducer(
 ): CartState {
     const reducer = combineReducers<CartState>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

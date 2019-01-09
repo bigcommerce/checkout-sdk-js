@@ -1,15 +1,17 @@
-import { combineReducers } from '@bigcommerce/data-store';
+import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
+
+import { clearErrorReducer } from '../common/error';
 
 import { PaymentStrategyAction, PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyState, { DEFAULT_STATE, PaymentStrategyDataState, PaymentStrategyErrorsState, PaymentStrategyStatusesState } from './payment-strategy-state';
 
 export default function paymentStrategyReducer(
     state: PaymentStrategyState = DEFAULT_STATE,
-    action: PaymentStrategyAction
+    action: Action
 ): PaymentStrategyState {
     const reducer = combineReducers<PaymentStrategyState, PaymentStrategyAction>({
         data: dataReducer,
-        errors: errorsReducer,
+        errors: composeReducers(errorsReducer, clearErrorReducer),
         statuses: statusesReducer,
     });
 

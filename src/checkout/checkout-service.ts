@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
-import { ErrorMessageTransformer } from '../common/error';
+import { ErrorActionCreator, ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
@@ -47,6 +47,7 @@ export default class CheckoutService {
         private _countryActionCreator: CountryActionCreator,
         private _couponActionCreator: CouponActionCreator,
         private _customerStrategyActionCreator: CustomerStrategyActionCreator,
+        private _errorActionCreator: ErrorActionCreator,
         private _giftCertificateActionCreator: GiftCertificateActionCreator,
         private _instrumentActionCreator: InstrumentActionCreator,
         private _orderActionCreator: OrderActionCreator,
@@ -1035,13 +1036,31 @@ export default class CheckoutService {
     }
 
     /**
+     * Clear errors that have been collected from previous calls.
+     *
+     * ```js
+     * const state = await service.clearError(error);
+     *
+     * console.log(state.errors.getError());
+     * ```
+     *
+     * @param error - Specific error object to clear
+     * @returns A promise that resolves to the current state.
+     */
+    clearError(error: Error): Promise<CheckoutSelectors> {
+        const action = this._errorActionCreator.clearError(error);
+
+        return this._dispatch(action);
+    }
+
+    /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
      *
      * @param action - The action to dispatch.
      * @returns A promise that resolves to the current state.
      */
-    private _dispatch(action: Observable<Action> | ThunkAction<Action>, options?: { queueId?: string }): Promise<CheckoutSelectors> {
+    private _dispatch(action: Action | Observable<Action> | ThunkAction<Action>, options?: { queueId?: string }): Promise<CheckoutSelectors> {
         return this._store.dispatch(action, options)
             .then(() => this.getState())
             .catch(error => {
