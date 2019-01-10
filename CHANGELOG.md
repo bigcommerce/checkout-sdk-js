@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.17.0"></a>
+# [1.17.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.16.1...v1.17.0) (2019-01-10)
+
+
+### Features
+
+* **checkout:** CHECKOUT-3798 Add loginLink to the configuration endpoint type definition ([a4c9e33](https://github.com/bigcommerce/checkout-sdk-js/commit/a4c9e33))
+* **common:** CHECKOUT-3790 Add ability to clear error state ([6429e56](https://github.com/bigcommerce/checkout-sdk-js/commit/6429e56))
+* **common:** CHECKOUT-3798 Throw CheckoutNotAvailable if the response is in the 400 range ([c2d296e](https://github.com/bigcommerce/checkout-sdk-js/commit/c2d296e))
+
+
+
 <a name="1.16.1"></a>
 ## [1.16.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.16.0...v1.16.1) (2018-12-17)
 

@@ -17,6 +17,7 @@ This object can be used to collect all information that is required for checkout
 * [applyCoupon](checkoutservice.md#applycoupon)
 * [applyGiftCertificate](checkoutservice.md#applygiftcertificate)
 * [assignItemsToAddress](checkoutservice.md#assignitemstoaddress)
+* [clearError](checkoutservice.md#clearerror)
 * [continueAsGuest](checkoutservice.md#continueasguest)
 * [createConsignments](checkoutservice.md#createconsignments)
 * [deinitializeCustomer](checkoutservice.md#deinitializecustomer)
@@ -123,6 +124,30 @@ Note: this method finds an existing consignment that matches the provided addres
 | ------ | ------ | ------ |
 | consignment | [ConsignmentAssignmentRequestBody](../interfaces/consignmentassignmentrequestbody.md) |  The consignment data that will be used. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for the request |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="clearerror"></a>
+
+###  clearError
+
+▸ **clearError**(error: *`Error`*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Clear errors that have been collected from previous calls.
+
+```js
+const state = await service.clearError(error);
+
+console.log(state.errors.getError());
+```
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| error | `Error` |  Specific error object to clear |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.

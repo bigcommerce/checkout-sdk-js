@@ -558,6 +558,7 @@ declare class CheckoutService {
     private _countryActionCreator;
     private _couponActionCreator;
     private _customerStrategyActionCreator;
+    private _errorActionCreator;
     private _giftCertificateActionCreator;
     private _instrumentActionCreator;
     private _orderActionCreator;
@@ -1306,6 +1307,19 @@ declare class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     deleteInstrument(instrumentId: string): Promise<CheckoutSelectors>;
+    /**
+     * Clear errors that have been collected from previous calls.
+     *
+     * ```js
+     * const state = await service.clearError(error);
+     *
+     * console.log(state.errors.getError());
+     * ```
+     *
+     * @param error - Specific error object to clear
+     * @returns A promise that resolves to the current state.
+     */
+    clearError(error: Error): Promise<CheckoutSelectors>;
     /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
@@ -3091,6 +3105,7 @@ declare interface StoreLinks {
     checkoutLink: string;
     createAccountLink: string;
     forgotPasswordLink: string;
+    loginLink: string;
     orderConfirmationLink: string;
 }
 
@@ -3252,10 +3267,6 @@ export declare function createLanguageService(config?: Partial<LanguageConfig>):
  *     containerId: 'container-id',
  * });
  * ```
- *
- * @alpha
- * Please note that this feature is currently in an early stage of development.
- * Therefore the API is unstable and not ready for public consumption.
  *
  * @param options - Options for embedding the checkout form.
  * @returns A promise that resolves to an instance of `EmbeddedCheckout`.

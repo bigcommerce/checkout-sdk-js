@@ -196,8 +196,6 @@ embedCheckout({
 });
 ```
 
-*__alpha__*: Please note that this feature is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
-
 **Parameters:**
 
 | Param | Type | Description |

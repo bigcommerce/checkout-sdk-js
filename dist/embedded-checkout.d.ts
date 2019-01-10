@@ -177,10 +177,6 @@ declare interface TextInputStyles extends InputStyles {
  * });
  * ```
  *
- * @alpha
- * Please note that this feature is currently in an early stage of development.
- * Therefore the API is unstable and not ready for public consumption.
- *
  * @param options - Options for embedding the checkout form.
  * @returns A promise that resolves to an instance of `EmbeddedCheckout`.
  */
