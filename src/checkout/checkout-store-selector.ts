@@ -1,5 +1,5 @@
 import { Address } from '../address';
-import { BillingAddressSelector } from '../billing';
+import { BillingAddress, BillingAddressSelector } from '../billing';
 import { Cart, CartSelector } from '../cart';
 import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
@@ -195,7 +195,7 @@ export default class CheckoutStoreSelector {
      *
      * @returns The billing address object if it is loaded, otherwise undefined.
      */
-    getBillingAddress(): Address | undefined {
+    getBillingAddress(): BillingAddress | undefined {
         return this._billingAddress.getBillingAddress();
     }
 
