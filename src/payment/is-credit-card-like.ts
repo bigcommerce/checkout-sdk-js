@@ -7,7 +7,6 @@ export default function isCreditCardLike(instrument: PaymentInstrument): instrum
     return !isVaultedInstrument(card) &&
         typeof card.ccName === 'string' &&
         typeof card.ccNumber === 'string' &&
-        typeof card.ccType === 'string' &&
         typeof card.ccExpiry === 'object' &&
         typeof card.ccExpiry.month === 'string' &&
         typeof card.ccExpiry.year === 'string';
