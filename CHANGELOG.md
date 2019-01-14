@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.17.1"></a>
+## [1.17.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.17.0...v1.17.1) (2019-01-14)
+
+
+### Bug Fixes
+
+* **billing:** CHECKOUT-3790 Return correct type for billing addresses ([e4818db](https://github.com/bigcommerce/checkout-sdk-js/commit/e4818db))
+
+
+
 <a name="1.17.0"></a>
 # [1.17.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.16.1...v1.17.0) (2019-01-10)
 

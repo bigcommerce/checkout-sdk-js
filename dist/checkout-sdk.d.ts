@@ -1672,7 +1672,7 @@ declare class CheckoutStoreSelector {
      *
      * @returns The billing address object if it is loaded, otherwise undefined.
      */
-    getBillingAddress(): Address | undefined;
+    getBillingAddress(): BillingAddress | undefined;
     /**
      * Gets a list of countries available for billing.
      *

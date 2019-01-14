@@ -45,11 +45,11 @@ This object has a set of methods that allow you to get a specific piece of check
 
 ###  getBillingAddress
 
-▸ **getBillingAddress**():  [Address](../interfaces/address.md) &#124; `undefined`
+▸ **getBillingAddress**():  [BillingAddress](../interfaces/billingaddress.md) &#124; `undefined`
 
 Gets the billing address of an order.
 
-**Returns:**  [Address](../interfaces/address.md) &#124; `undefined`
+**Returns:**  [BillingAddress](../interfaces/billingaddress.md) &#124; `undefined`
 
 The billing address object if it is loaded, otherwise undefined.
 
