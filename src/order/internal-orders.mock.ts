@@ -170,6 +170,10 @@ export function getCompleteOrder(): InternalOrder {
                 amount: 3,
             },
         ],
+        taxTotal: {
+            amount: 3,
+            integerAmount: 300,
+        },
         handling: {
             amount: 8,
             integerAmount: 800,

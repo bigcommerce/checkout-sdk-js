@@ -59,6 +59,10 @@ export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaSta
             amount: mapToStoreCredit(order.payments),
         },
         taxes: order.taxes,
+        taxTotal: {
+            amount: order.taxTotal,
+            integerAmount: amountTransformer.toInteger(order.taxTotal),
+        },
         handling: {
             amount: order.handlingCostTotal,
             integerAmount: amountTransformer.toInteger(order.handlingCostTotal),
