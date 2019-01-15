@@ -222,7 +222,6 @@ export default class CheckoutService {
      *             ccExpiry: { month: 10, year: 20 },
      *             ccName: 'BigCommerce',
      *             ccNumber: '4111111111111111',
-     *             ccType: 'visa',
      *             ccCvv: 123,
      *         },
      *     },

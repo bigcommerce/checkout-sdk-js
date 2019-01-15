@@ -17,7 +17,6 @@ export interface CreditCardInstrument {
     };
     ccName: string;
     ccNumber: string;
-    ccType: string;
     ccCvv?: string;
     shouldSaveInstrument?: boolean;
     extraData?: any;

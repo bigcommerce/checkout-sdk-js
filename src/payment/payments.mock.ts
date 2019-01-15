@@ -26,7 +26,6 @@ export function getPayment(): Payment {
             },
             ccName: 'BigCommerce',
             ccNumber: '4111111111111111',
-            ccType: 'visa',
             ccCvv: '123',
         },
     };
