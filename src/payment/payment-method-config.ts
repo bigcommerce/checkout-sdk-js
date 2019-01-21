@@ -7,6 +7,7 @@ export default interface PaymentMethodConfig {
     isVisaCheckoutEnabled?: boolean;
     merchantId?: string;
     redirectUrl?: string;
+    requireCustomerCode?: boolean;
     returnUrl?: string;
     testMode?: boolean;
 }
