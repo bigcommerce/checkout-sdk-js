@@ -385,6 +385,10 @@ declare interface InternalOrder {
         name: string;
         amount: number;
     }>;
+    taxTotal: {
+        amount: number;
+        integerAmount: number;
+    };
     handling: {
         amount: number;
         integerAmount: number;
@@ -524,6 +528,7 @@ declare interface Order {
     shippingCostBeforeDiscount: number;
     handlingCostTotal: number;
     taxes: Tax[];
+    taxTotal: number;
     payments?: OrderPayments;
     status: string;
 }

@@ -690,7 +690,6 @@ declare class CheckoutService {
      *             ccExpiry: { month: 10, year: 20 },
      *             ccName: 'BigCommerce',
      *             ccNumber: '4111111111111111',
-     *             ccType: 'visa',
      *             ccCvv: 123,
      *         },
      *     },
@@ -2119,7 +2118,6 @@ declare interface CreditCardInstrument {
     };
     ccName: string;
     ccNumber: string;
-    ccType: string;
     ccCvv?: string;
     shouldSaveInstrument?: boolean;
     extraData?: any;
@@ -2714,6 +2712,7 @@ declare interface Order {
     shippingCostBeforeDiscount: number;
     handlingCostTotal: number;
     taxes: Tax[];
+    taxTotal: number;
     payments?: OrderPayments;
     status: string;
 }
@@ -2854,6 +2853,7 @@ declare interface PaymentMethodConfig {
     isVisaCheckoutEnabled?: boolean;
     merchantId?: string;
     redirectUrl?: string;
+    requireCustomerCode?: boolean;
     returnUrl?: string;
     testMode?: boolean;
 }

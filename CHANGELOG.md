@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.17.2"></a>
+## [1.17.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.17.1...v1.17.2) (2019-01-22)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-3842 Add missing field in `PaymentMethodConfig` interface ([e08a813](https://github.com/bigcommerce/checkout-sdk-js/commit/e08a813))
+* **payment:** CHECKOUT-3842 Remove `ccType` from order submission payload ([a3832ef](https://github.com/bigcommerce/checkout-sdk-js/commit/a3832ef))
+* **payment:** INT-1079 Transaction rbits are no longer being sent to WePay in the /checkout/create call ([836f4d6](https://github.com/bigcommerce/checkout-sdk-js/commit/836f4d6))
+* **payment:** INT-1079 Update unit testing and mocks ([f8b74ee](https://github.com/bigcommerce/checkout-sdk-js/commit/f8b74ee))
+
+
+
 <a name="1.17.1"></a>
 ## [1.17.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.17.0...v1.17.1) (2019-01-14)
 

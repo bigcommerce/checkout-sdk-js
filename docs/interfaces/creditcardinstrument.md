@@ -14,7 +14,6 @@
 * [ccExpiry](creditcardinstrument.md#ccexpiry)
 * [ccName](creditcardinstrument.md#ccname)
 * [ccNumber](creditcardinstrument.md#ccnumber)
-* [ccType](creditcardinstrument.md#cctype)
 * [extraData](creditcardinstrument.md#extradata)
 * [shouldSaveInstrument](creditcardinstrument.md#shouldsaveinstrument)
 
@@ -55,13 +54,6 @@ ___
 ###  ccNumber
 
 **● ccNumber**: *`string`*
-
-___
-<a id="cctype"></a>
-
-###  ccType
-
-**● ccType**: *`string`*
 
 ___
 <a id="extradata"></a>

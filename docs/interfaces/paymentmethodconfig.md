@@ -18,6 +18,7 @@
 * [isVisaCheckoutEnabled](paymentmethodconfig.md#isvisacheckoutenabled)
 * [merchantId](paymentmethodconfig.md#merchantid)
 * [redirectUrl](paymentmethodconfig.md#redirecturl)
+* [requireCustomerCode](paymentmethodconfig.md#requirecustomercode)
 * [returnUrl](paymentmethodconfig.md#returnurl)
 * [testMode](paymentmethodconfig.md#testmode)
 
@@ -86,6 +87,14 @@ ___
 ### `<Optional>` redirectUrl
 
 **● redirectUrl**: * `undefined` &#124; `string`
+*
+
+___
+<a id="requirecustomercode"></a>
+
+### `<Optional>` requireCustomerCode
+
+**● requireCustomerCode**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___

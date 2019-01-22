@@ -32,6 +32,7 @@
 * [shippingCostBeforeDiscount](order.md#shippingcostbeforediscount)
 * [shippingCostTotal](order.md#shippingcosttotal)
 * [status](order.md#status)
+* [taxTotal](order.md#taxtotal)
 * [taxes](order.md#taxes)
 
 ---
@@ -190,6 +191,13 @@ ___
 ###  status
 
 **● status**: *`string`*
+
+___
+<a id="taxtotal"></a>
+
+###  taxTotal
+
+**● taxTotal**: *`number`*
 
 ___
 <a id="taxes"></a>
