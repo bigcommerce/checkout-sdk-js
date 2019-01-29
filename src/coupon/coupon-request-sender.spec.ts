@@ -15,6 +15,7 @@ describe('Coupon Request Sender', () => {
         'customer',
         'payments',
         'promotions.banners',
+        'consignments.availableShippingOptions',
     ].join(',');
 
     beforeEach(() => {

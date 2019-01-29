@@ -2,6 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
+import { CouponActionType } from '../coupon';
 
 import { ConsignmentState } from '.';
 import { ConsignmentActionType } from './consignment-actions';
@@ -232,6 +233,22 @@ describe('consignmentReducer', () => {
                     foo: false,
                 },
             },
+        });
+    });
+
+    it('returns new data when coupon is applied', () => {
+        const action = createAction(CouponActionType.ApplyCouponSucceeded, getCheckout());
+
+        expect(consignmentReducer(initialState, action)).toMatchObject({
+            data: action.payload && action.payload.consignments,
+        });
+    });
+
+    it('returns new data when coupon is removed', () => {
+        const action = createAction(CouponActionType.RemoveCouponSucceeded, getCheckout());
+
+        expect(consignmentReducer(initialState, action)).toMatchObject({
+            data: action.payload && action.payload.consignments,
         });
     });
 });

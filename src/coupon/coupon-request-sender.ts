@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { Checkout, CheckoutDefaultIncludes } from '../checkout';
-import { ContentType, RequestOptions } from '../common/http-request';
+import { Checkout, CheckoutIncludes, CHECKOUT_DEFAULT_INCLUDES } from '../checkout';
+import { joinIncludes, ContentType, RequestOptions } from '../common/http-request';
 
 export default class CouponRequestSender {
     constructor(
@@ -16,7 +16,10 @@ export default class CouponRequestSender {
             headers,
             timeout,
             params: {
-                include: CheckoutDefaultIncludes.join(','),
+                include: joinIncludes([
+                    ...CHECKOUT_DEFAULT_INCLUDES,
+                    CheckoutIncludes.AvailableShippingOptions,
+                ]),
             },
             body: { couponCode },
         });
@@ -30,7 +33,10 @@ export default class CouponRequestSender {
             headers,
             timeout,
             params: {
-                include: CheckoutDefaultIncludes.join(','),
+                include: joinIncludes([
+                    ...CHECKOUT_DEFAULT_INCLUDES,
+                    CheckoutIncludes.AvailableShippingOptions,
+                ]),
             },
         });
     }
