@@ -2,6 +2,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
+import { CouponAction, CouponActionType } from '../coupon';
 import { CustomerAction, CustomerActionType } from '../customer';
 
 import Consignment from './consignment';
@@ -36,7 +37,7 @@ export default function consignmentReducer(
 
 function dataReducer(
     data: Consignment[] | undefined,
-    action: ConsignmentAction | CheckoutAction | CustomerAction
+    action: ConsignmentAction | CheckoutAction | CouponAction | CustomerAction
 ): Consignment[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
@@ -45,6 +46,8 @@ function dataReducer(
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
+    case CouponActionType.ApplyCouponSucceeded:
+    case CouponActionType.RemoveCouponSucceeded:
         return action.payload ? action.payload.consignments : data;
 
     case CustomerActionType.SignOutCustomerSucceeded:

@@ -1,7 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { Checkout, CheckoutDefaultIncludes } from '../checkout';
-import { ContentType, RequestOptions } from '../common/http-request';
+import { Checkout, CHECKOUT_DEFAULT_INCLUDES } from '../checkout';
+import { joinIncludes, ContentType, RequestOptions } from '../common/http-request';
 
 export default class GiftCertificateRequestSender {
     constructor(
@@ -16,7 +16,7 @@ export default class GiftCertificateRequestSender {
             headers,
             timeout,
             params: {
-                include: CheckoutDefaultIncludes.join(','),
+                include: joinIncludes(CHECKOUT_DEFAULT_INCLUDES),
             },
             body: { giftCertificateCode },
         });
@@ -30,7 +30,7 @@ export default class GiftCertificateRequestSender {
             headers,
             timeout,
             params: {
-                include: CheckoutDefaultIncludes.join(','),
+                include: joinIncludes(CHECKOUT_DEFAULT_INCLUDES),
             },
         });
     }
