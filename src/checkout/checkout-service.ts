@@ -216,8 +216,8 @@ export default class CheckoutService {
      * ```js
      * await service.initializePayment({ methodId: 'braintree' });
      * await service.submitOrder({
-     *     methodId: 'braintree',
      *     payment: {
+     *         methodId: 'braintree',
      *         paymentData: {
      *             ccExpiry: { month: 10, year: 20 },
      *             ccName: 'BigCommerce',
