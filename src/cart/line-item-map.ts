@@ -3,6 +3,6 @@ import { CustomItem, DigitalItem, GiftCertificateItem, PhysicalItem } from './li
 export default interface LineItemMap {
     physicalItems: PhysicalItem[];
     digitalItems: DigitalItem[];
-    customItems: CustomItem[];
+    customItems?: CustomItem[];
     giftCertificates: GiftCertificateItem[];
 }
