@@ -4,6 +4,8 @@ export default interface PaymentMethodConfig {
     enablePaypal?: boolean;
     helpText?: string;
     is3dsEnabled?: boolean;
+    isVaultingCvvEnabled?: boolean;
+    isVaultingEnabled?: boolean;
     isVisaCheckoutEnabled?: boolean;
     merchantId?: string;
     redirectUrl?: string;
