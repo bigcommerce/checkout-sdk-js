@@ -29,7 +29,8 @@ export interface NonceInstrument {
 
 export interface VaultedInstrument {
     instrumentId: string;
-    cvv?: number;
+    ccCvv?: number;
+    ccNumber?: number;
 }
 
 export interface CryptogramInstrument {
