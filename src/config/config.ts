@@ -21,7 +21,7 @@ export interface StoreConfig {
 }
 
 export interface ShopperCurrency extends StoreCurrency {
-    exchangeRate: string;
+    exchangeRate: number;
 }
 
 export interface StoreProfile {
@@ -80,6 +80,7 @@ export interface CheckoutSettings {
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     guestCheckoutEnabled: boolean;
+    isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
     isPaymentRequestEnabled: boolean;

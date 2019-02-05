@@ -20,7 +20,7 @@ export default class CurrencyService {
     }
 
     toCustomerCurrency(amount: number): string {
-        const exchangeRate = parseFloat(this._storeConfig.shopperCurrency.exchangeRate);
+        const exchangeRate = this._storeConfig.shopperCurrency.exchangeRate;
 
         return this._customerFormatter.format(amount * exchangeRate);
     }

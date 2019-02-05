@@ -20,6 +20,7 @@ export function getConfig(): Config {
                 enableOrderComments: true,
                 enableTermsAndConditions: false,
                 guestCheckoutEnabled: true,
+                isAnalyticsEnabled: false,
                 isCardVaultingEnabled: true,
                 isPaymentRequestEnabled: false,
                 isPaymentRequestCanMakePaymentEnabled: false,
@@ -108,7 +109,7 @@ export function getConfig(): Config {
                 decimalPlaces: '2',
                 decimalSeparator: '.',
                 thousandsSeparator: ',',
-                exchangeRate: '1.0000000000',
+                exchangeRate: 1,
             },
         },
     };
