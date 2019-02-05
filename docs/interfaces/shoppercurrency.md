@@ -49,7 +49,7 @@ ___
 
 ###  exchangeRate
 
-**● exchangeRate**: *`string`*
+**● exchangeRate**: *`number`*
 
 ___
 <a id="symbol"></a>

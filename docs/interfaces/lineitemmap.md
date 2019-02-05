@@ -21,7 +21,7 @@
 
 <a id="customitems"></a>
 
-###  customItems
+### `<Optional>` customItems
 
 **● customItems**: *[CustomItem](customitem.md)[]*
 

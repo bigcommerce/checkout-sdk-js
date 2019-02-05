@@ -488,7 +488,7 @@ declare interface LineItem {
 declare interface LineItemMap {
     physicalItems: PhysicalItem[];
     digitalItems: DigitalItem[];
-    customItems: CustomItem[];
+    customItems?: CustomItem[];
     giftCertificates: GiftCertificateItem[];
 }
 

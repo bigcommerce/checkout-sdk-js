@@ -10,18 +10,27 @@
 
 ### Properties
 
-* [cvv](vaultedinstrument.md#cvv)
+* [ccCvv](vaultedinstrument.md#cccvv)
+* [ccNumber](vaultedinstrument.md#ccnumber)
 * [instrumentId](vaultedinstrument.md#instrumentid)
 
 ---
 
 ## Properties
 
-<a id="cvv"></a>
+<a id="cccvv"></a>
 
-### `<Optional>` cvv
+### `<Optional>` ccCvv
 
-**● cvv**: * `undefined` &#124; `number`
+**● ccCvv**: * `undefined` &#124; `number`
+*
+
+___
+<a id="ccnumber"></a>
+
+### `<Optional>` ccNumber
+
+**● ccNumber**: * `undefined` &#124; `number`
 *
 
 ___

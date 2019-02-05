@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.0"></a>
+# [1.18.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.17.3...v1.18.0) (2019-02-05)
+
+
+### Bug Fixes
+
+* **order:** CHECKOUT-3850 make customItems optional ([bc79317](https://github.com/bigcommerce/checkout-sdk-js/commit/bc79317))
+* **payment:** CHECKOUT-3843 Add missing properties to `PaymentMethodConfig` ([f0e96d7](https://github.com/bigcommerce/checkout-sdk-js/commit/f0e96d7))
+* **payment:** CHECKOUT-3843 Fix type definition for `VaultedInstrument` ([7f81d37](https://github.com/bigcommerce/checkout-sdk-js/commit/7f81d37))
+
+
+### Features
+
+* **common:** CHECKOUT-3914 Add isAnalyticsEnabled to checkout settings ([7b597c1](https://github.com/bigcommerce/checkout-sdk-js/commit/7b597c1))
+
+
+
 <a name="1.17.3"></a>
 ## [1.17.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.17.2...v1.17.3) (2019-01-30)
 

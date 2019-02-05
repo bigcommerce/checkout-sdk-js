@@ -902,8 +902,8 @@ Before you can submit an order, you must initialize the payment method chosen by
 ```js
 await service.initializePayment({ methodId: 'braintree' });
 await service.submitOrder({
-    methodId: 'braintree',
     payment: {
+        methodId: 'braintree',
         paymentData: {
             ccExpiry: { month: 10, year: 20 },
             ccName: 'BigCommerce',

@@ -13,6 +13,7 @@
 * [enableOrderComments](checkoutsettings.md#enableordercomments)
 * [enableTermsAndConditions](checkoutsettings.md#enabletermsandconditions)
 * [guestCheckoutEnabled](checkoutsettings.md#guestcheckoutenabled)
+* [isAnalyticsEnabled](checkoutsettings.md#isanalyticsenabled)
 * [isCardVaultingEnabled](checkoutsettings.md#iscardvaultingenabled)
 * [isCouponCodeCollapsed](checkoutsettings.md#iscouponcodecollapsed)
 * [isPaymentRequestCanMakePaymentEnabled](checkoutsettings.md#ispaymentrequestcanmakepaymentenabled)
@@ -47,6 +48,13 @@ ___
 ###  guestCheckoutEnabled
 
 **● guestCheckoutEnabled**: *`boolean`*
+
+___
+<a id="isanalyticsenabled"></a>
+
+###  isAnalyticsEnabled
+
+**● isAnalyticsEnabled**: *`boolean`*
 
 ___
 <a id="iscardvaultingenabled"></a>

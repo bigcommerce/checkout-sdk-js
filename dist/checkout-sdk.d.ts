@@ -684,8 +684,8 @@ declare class CheckoutService {
      * ```js
      * await service.initializePayment({ methodId: 'braintree' });
      * await service.submitOrder({
-     *     methodId: 'braintree',
      *     payment: {
+     *         methodId: 'braintree',
      *         paymentData: {
      *             ccExpiry: { month: 10, year: 20 },
      *             ccName: 'BigCommerce',
@@ -1340,6 +1340,7 @@ declare interface CheckoutSettings {
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     guestCheckoutEnabled: boolean;
+    isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
     isPaymentRequestEnabled: boolean;
@@ -2634,7 +2635,7 @@ declare interface LineItem {
 declare interface LineItemMap {
     physicalItems: PhysicalItem[];
     digitalItems: DigitalItem[];
-    customItems: CustomItem[];
+    customItems?: CustomItem[];
     giftCertificates: GiftCertificateItem[];
 }
 
@@ -2850,6 +2851,8 @@ declare interface PaymentMethodConfig {
     enablePaypal?: boolean;
     helpText?: string;
     is3dsEnabled?: boolean;
+    isVaultingCvvEnabled?: boolean;
+    isVaultingEnabled?: boolean;
     isVisaCheckoutEnabled?: boolean;
     merchantId?: string;
     redirectUrl?: string;
@@ -3003,7 +3006,7 @@ declare interface ShopperConfig {
 }
 
 declare interface ShopperCurrency extends StoreCurrency {
-    exchangeRate: string;
+    exchangeRate: number;
 }
 
 /**
@@ -3139,7 +3142,8 @@ declare interface Translations {
 
 declare interface VaultedInstrument {
     instrumentId: string;
-    cvv?: number;
+    ccCvv?: number;
+    ccNumber?: number;
 }
 
 /**

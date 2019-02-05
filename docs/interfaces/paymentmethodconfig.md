@@ -15,6 +15,8 @@
 * [enablePaypal](paymentmethodconfig.md#enablepaypal)
 * [helpText](paymentmethodconfig.md#helptext)
 * [is3dsEnabled](paymentmethodconfig.md#is3dsenabled)
+* [isVaultingCvvEnabled](paymentmethodconfig.md#isvaultingcvvenabled)
+* [isVaultingEnabled](paymentmethodconfig.md#isvaultingenabled)
 * [isVisaCheckoutEnabled](paymentmethodconfig.md#isvisacheckoutenabled)
 * [merchantId](paymentmethodconfig.md#merchantid)
 * [redirectUrl](paymentmethodconfig.md#redirecturl)
@@ -63,6 +65,22 @@ ___
 ### `<Optional>` is3dsEnabled
 
 **● is3dsEnabled**: * `undefined` &#124; `false` &#124; `true`
+*
+
+___
+<a id="isvaultingcvvenabled"></a>
+
+### `<Optional>` isVaultingCvvEnabled
+
+**● isVaultingCvvEnabled**: * `undefined` &#124; `false` &#124; `true`
+*
+
+___
+<a id="isvaultingenabled"></a>
+
+### `<Optional>` isVaultingEnabled
+
+**● isVaultingEnabled**: * `undefined` &#124; `false` &#124; `true`
 *
 
 ___
