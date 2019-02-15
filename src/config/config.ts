@@ -85,6 +85,7 @@ export interface CheckoutSettings {
     isCouponCodeCollapsed: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
+    isTrustedShippingAddressEnabled: boolean;
     orderTermsAndConditions: string;
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
