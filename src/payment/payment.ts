@@ -11,6 +11,7 @@ export interface PaymentInstrumentMeta {
 }
 
 export interface CreditCardInstrument {
+    ccCustomerCode?: string;
     ccExpiry: {
         month: string,
         year: string,

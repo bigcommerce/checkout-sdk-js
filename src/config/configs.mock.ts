@@ -25,6 +25,7 @@ export function getConfig(): Config {
                 isPaymentRequestEnabled: false,
                 isPaymentRequestCanMakePaymentEnabled: false,
                 isCouponCodeCollapsed: true,
+                isTrustedShippingAddressEnabled: false,
                 orderTermsAndConditions: '',
                 orderTermsAndConditionsLink: '',
                 orderTermsAndConditionsType: '',
