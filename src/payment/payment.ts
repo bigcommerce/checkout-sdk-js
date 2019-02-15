@@ -30,8 +30,8 @@ export interface NonceInstrument {
 
 export interface VaultedInstrument {
     instrumentId: string;
-    ccCvv?: number;
-    ccNumber?: number;
+    ccCvv?: string;
+    ccNumber?: string;
 }
 
 export interface CryptogramInstrument {
