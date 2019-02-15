@@ -3144,8 +3144,8 @@ declare interface Translations {
 
 declare interface VaultedInstrument {
     instrumentId: string;
-    ccCvv?: number;
-    ccNumber?: number;
+    ccCvv?: string;
+    ccNumber?: string;
 }
 
 /**

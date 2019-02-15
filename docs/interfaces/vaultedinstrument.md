@@ -22,7 +22,7 @@
 
 ### `<Optional>` ccCvv
 
-**● ccCvv**: * `undefined` &#124; `number`
+**● ccCvv**: * `undefined` &#124; `string`
 *
 
 ___
@@ -30,7 +30,7 @@ ___
 
 ### `<Optional>` ccNumber
 
-**● ccNumber**: * `undefined` &#124; `number`
+**● ccNumber**: * `undefined` &#124; `string`
 *
 
 ___

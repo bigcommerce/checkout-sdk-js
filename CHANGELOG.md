@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.2"></a>
+## [1.18.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.1...v1.18.2) (2019-02-15)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-3843 `ccNumber` and `ccCvv` should be string instead of number ([625aff9](https://github.com/bigcommerce/checkout-sdk-js/commit/625aff9))
+
+
+
 <a name="1.18.1"></a>
 ## [1.18.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.0...v1.18.1) (2019-02-15)
 
