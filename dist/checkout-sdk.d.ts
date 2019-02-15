@@ -1345,6 +1345,7 @@ declare interface CheckoutSettings {
     isCouponCodeCollapsed: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
+    isTrustedShippingAddressEnabled: boolean;
     orderTermsAndConditions: string;
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
@@ -2113,6 +2114,7 @@ declare interface Coupon {
 }
 
 declare interface CreditCardInstrument {
+    ccCustomerCode?: string;
     ccExpiry: {
         month: string;
         year: string;

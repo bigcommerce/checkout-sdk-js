@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.1"></a>
+## [1.18.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.0...v1.18.1) (2019-02-15)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-3843 Add missing `isTrustedShippingAddressEnabled` field ([b102359](https://github.com/bigcommerce/checkout-sdk-js/commit/b102359))
+* **payment:** CHECKOUT-3843 Add missing `ccCustomerCode` field ([72d24c0](https://github.com/bigcommerce/checkout-sdk-js/commit/72d24c0))
+
+
+
 <a name="1.18.0"></a>
 # [1.18.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.17.3...v1.18.0) (2019-02-05)
 

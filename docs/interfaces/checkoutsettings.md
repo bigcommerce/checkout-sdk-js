@@ -18,6 +18,7 @@
 * [isCouponCodeCollapsed](checkoutsettings.md#iscouponcodecollapsed)
 * [isPaymentRequestCanMakePaymentEnabled](checkoutsettings.md#ispaymentrequestcanmakepaymentenabled)
 * [isPaymentRequestEnabled](checkoutsettings.md#ispaymentrequestenabled)
+* [isTrustedShippingAddressEnabled](checkoutsettings.md#istrustedshippingaddressenabled)
 * [orderTermsAndConditions](checkoutsettings.md#ordertermsandconditions)
 * [orderTermsAndConditionsLink](checkoutsettings.md#ordertermsandconditionslink)
 * [orderTermsAndConditionsType](checkoutsettings.md#ordertermsandconditionstype)
@@ -83,6 +84,13 @@ ___
 ###  isPaymentRequestEnabled
 
 **● isPaymentRequestEnabled**: *`boolean`*
+
+___
+<a id="istrustedshippingaddressenabled"></a>
+
+###  isTrustedShippingAddressEnabled
+
+**● isTrustedShippingAddressEnabled**: *`boolean`*
 
 ___
 <a id="ordertermsandconditions"></a>

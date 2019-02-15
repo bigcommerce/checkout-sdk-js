@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [ccCustomerCode](creditcardinstrument.md#cccustomercode)
 * [ccCvv](creditcardinstrument.md#cccvv)
 * [ccExpiry](creditcardinstrument.md#ccexpiry)
 * [ccName](creditcardinstrument.md#ccname)
@@ -21,6 +22,14 @@
 
 ## Properties
 
+<a id="cccustomercode"></a>
+
+### `<Optional>` ccCustomerCode
+
+**● ccCustomerCode**: * `undefined` &#124; `string`
+*
+
+___
 <a id="cccvv"></a>
 
 ### `<Optional>` ccCvv
