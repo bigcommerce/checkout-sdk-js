@@ -352,6 +352,21 @@ export function getGooglePay(): PaymentMethod {
     };
 }
 
+export function getZip(): PaymentMethod {
+    return {
+        id: 'zip',
+        logoUrl: '',
+        method: 'zip',
+        supportedCards: [],
+        config: {
+            displayName: 'Zip',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: '{"id":"checkout_id"}',
+    };
+}
+
 export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
