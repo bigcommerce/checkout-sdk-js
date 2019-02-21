@@ -19,7 +19,8 @@ import { PaypalButtonStrategy } from './strategies/paypal';
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,
     requestSender: RequestSender,
-    formPoster: FormPoster
+    formPoster: FormPoster,
+    host?: string
 ): Registry<CheckoutButtonStrategy, CheckoutButtonMethodType> {
     const registry = new Registry<CheckoutButtonStrategy, CheckoutButtonMethodType>();
     const scriptLoader = getScriptLoader();
@@ -87,8 +88,10 @@ export default function createCheckoutButtonRegistry(
     registry.register(CheckoutButtonMethodType.PAYPALEXPRESS, () =>
         new PaypalButtonStrategy(
             store,
+            checkoutActionCreator,
             new PaypalScriptLoader(scriptLoader),
-            formPoster
+            formPoster,
+            host
         )
     );
 

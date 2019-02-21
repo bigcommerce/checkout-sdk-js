@@ -1,13 +1,13 @@
 import { FormPoster } from '@bigcommerce/form-poster';
 import { pick } from 'lodash';
 
-import { CheckoutStore } from '../../../checkout';
+import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
+import { INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { PaymentMethod } from '../../../payment';
-import { PaypalScriptLoader } from '../../../payment/strategies/paypal';
 import { PaypalActions, PaypalAuthorizeData, PaypalClientToken } from '../../../payment/strategies/paypal';
+import { PaypalScriptLoader } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
@@ -15,8 +15,10 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
 
     constructor(
         private _store: CheckoutStore,
+        private _checkoutActionCreator: CheckoutActionCreator,
         private _paypalScriptLoader: PaypalScriptLoader,
-        private _formPoster: FormPoster
+        private _formPoster: FormPoster,
+        private _host: string = ''
     ) {}
 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
@@ -76,7 +78,17 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
             throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
         }
 
-        return actions.request.post('/api/storefront/paypal-payment/', { merchantId })
+        return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
+            .then(state => {
+                const cart = state.cart.getCart();
+                const cartId = cart ? cart.id : '';
+
+                return actions.request.post(`${this._host}/api/storefront/payment/paypalexpress`, { merchantId, cartId }, {
+                    headers: {
+                        'X-API-INTERNAL': INTERNAL_USE_ONLY,
+                    },
+                });
+            })
             .then(res => res.id)
             .catch(error => {
                 if (onError) {
