@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.3"></a>
+## [1.18.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.2...v1.18.3) (2019-02-21)
+
+
+### Bug Fixes
+
+* **checkout-button:** PAYMENTS-3071 Use the specified endpoint for paypal payment creation ([cffc8be](https://github.com/bigcommerce/checkout-sdk-js/commit/cffc8be))
+
+
+
 <a name="1.18.2"></a>
 ## [1.18.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.1...v1.18.2) (2019-02-15)
 
