@@ -72,6 +72,7 @@ export function getSquarePaymentInitializeOptions(): PaymentInitializeOptions {
             postalCode: {
                 elementId: 'postalCode',
             },
+            onError: jest.fn(),
             onPaymentSelect: () => { },
             masterpass: {
                 elementId: 'sq-masterpass',

@@ -26,7 +26,6 @@ import {
     InvalidArgumentError,
     MissingDataError,
     NotInitializedError,
-    StandardError,
     TimeoutError,
     UnsupportedBrowserError
 } from '../../../common/error/errors';
@@ -329,7 +328,6 @@ describe('SquarePaymentStrategy', () => {
             });
 
             describe('when a failure happens receiving the nonce', () => {
-
                 beforeEach(() => {
                     if (callbacks.cardNonceResponseReceived) {
                         callbacks.cardNonceResponseReceived(undefined, 'nonce', cardData, undefined, undefined);
@@ -346,21 +344,51 @@ describe('SquarePaymentStrategy', () => {
                 });
             });
 
-            describe('when cardNonceResponseReceived returns errors', async () => {
+            describe('when cardNonceResponseReceived returns errors and callback is passed', async () => {
+                const catchSpy = jest.fn();
 
                 beforeEach(async () => {
                     await strategy.initialize(initOptions);
+
+                    strategy.execute(payload).catch(catchSpy);
+
+                    if (callbacks.cardNonceResponseReceived) {
+                        callbacks.cardNonceResponseReceived(getNonceGenerationErrors(), undefined, undefined, undefined, undefined);
+                    }
                 });
 
-                it('no deferred promise', () => {
-                    try {
-                        if (callbacks.cardNonceResponseReceived) {
-                            callbacks.cardNonceResponseReceived(getNonceGenerationErrors(), undefined, undefined, undefined, undefined);
-                        }
-                    } catch (e) {
-                        expect(e).toBeTruthy();
-                        expect(e).toBeInstanceOf(StandardError);
+                it('calls onError callback', () => {
+                    // tslint:disable-next-line:no-non-null-assertion
+                    expect(initOptions.square!.onError).toHaveBeenCalled();
+                });
+
+                it('rejects the promise', () => {
+                    expect(catchSpy).toHaveBeenCalled();
+                });
+            });
+
+            describe('when cardNonceResponseReceived returns errors and no callback is passed', async () => {
+                const catchSpy = jest.fn();
+
+                beforeEach(async () => {
+                    await strategy.initialize({
+                        ...initOptions,
+                        square: {
+                            // tslint:disable-next-line:no-non-null-assertion
+                            ...initOptions.square!,
+                            onError: undefined,
+                        },
+                    });
+
+                    strategy.execute(payload).catch(catchSpy);
+
+                    if (callbacks.cardNonceResponseReceived) {
+                        callbacks.cardNonceResponseReceived(getNonceGenerationErrors(), undefined, undefined, undefined, undefined);
                     }
+                });
+
+                it('rejects the promise', () => {
+                    expect(catchSpy).toHaveBeenCalled();
                 });
             });
 
