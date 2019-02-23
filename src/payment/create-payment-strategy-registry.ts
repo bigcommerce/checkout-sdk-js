@@ -71,10 +71,10 @@ export default function createPaymentStrategyRegistry(
             store,
             /* checkoutValidator,*/
             orderActionCreator,
-            /*paymentActionCreator,
-            paymentMethodActionCreator, 
-            remoteCheckoutActionCreator,
-            new AffirmScriptLoader(scriptLoader)*/
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            remoteCheckoutActionCreator
+            //new AffirmScriptLoader(scriptLoader)*/
         )
     );
 

@@ -1,10 +1,10 @@
 import { CheckoutStore, /* CheckoutValidator ,*/ InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
-import {  OrderActionCreator, OrderRequestBody } from '../../../order';
+import { MissingDataError, MissingDataErrorType, NotInitializedError } from '../../../common/error/errors';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { PaymentArgumentInvalidError } from '../../errors';
-// import PaymentActionCreator from '../../payment-action-creator';
+import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -15,7 +15,7 @@ import { AffirmItem, AffirmRequestData, SCRIPTS_DEFAULT } from './affirm';
 import AffirmWindow from './affirm-window';
 //import AffirmScriptLoader from './affirm-script-loader';
 import AffirmSdk from './affirm-sdk';
-import  getReturnURL from './get-return-url';
+import getReturnURL from './get-return-url';
 declare let affirm: any;
 
 export default class AffirmPaymentStrategy implements PaymentStrategy {
@@ -27,10 +27,11 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         /* private _checkoutValidator: CheckoutValidator,*/
         private _orderActionCreator: OrderActionCreator,
-        /*private _paymentActionCreator: PaymentActionCreator,
+        private _paymentActionCreator: PaymentActionCreator,
+
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
-        private _affirmScriptLoader: AffirmScriptLoader*/
+        //private _affirmScriptLoader: AffirmScriptLoader*/
     ) {
 
     }
@@ -70,8 +71,8 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         }
         this._affirmRequest = {
             merchant: {
-                user_confirmation_url: 'https://my-dev-store-723723656.store.bcdev/checkout.php?action=set_external_checkout&provider=affirm',
-                user_cancel_url: 'https://my-dev-store-723723656.store.bcdev/checkout.php?action=set_external_checkout&provider=affirm',
+                user_confirmation_url: 'https://my-dev-store-723723656.store.bcdev/checkout.php?action=set_external_checkout&provider=affirm&status=success',
+                user_cancel_url: 'https://my-dev-store-723723656.store.bcdev/checkout.php?action=set_external_checkout&provider=affirm&status=cancelled',
                 user_confirmation_url_action: "POST"
             },
             shipping: {
@@ -117,11 +118,9 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             tax_amount: checkout!.taxTotal * 100,
             total: checkout!.grandTotal * 100
         };
-        console.log(this._affirmRequest.merchant);
-        affirm.checkout(this._affirmRequest);
-        debugger;
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+        return Promise.resolve(affirm.checkout(this._affirmRequest))
             .then(affirm.checkout.open())
+            .then(() => new Promise<never>(() => {}));
 
     }
 
@@ -133,11 +132,67 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
     }
 
     finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        console.log(options);
-        return Promise.reject(new OrderFinalizationNotRequiredError());
 
-    }    
-    
+        const state = this._store.getState();
+        const payment = state.payment.getPaymentId();
+        const config = state.config.getContextConfig();
+        (<any>window).state = state;
+
+        if (!payment) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        if (!config || !config.payment.token) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        const paymentPayload = {
+            methodId: payment.providerId,
+            paymentData: { nonce: config.payment.token },
+        };
+        console.log('before submit');
+        return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit: false }))
+            .then(() => this._store.dispatch(
+                this._paymentMethodActionCreator.loadPaymentMethod('affirm', options)
+            ))
+            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload)))
+
+        /*
+        return this._store.dispatch(this._remoteCheckoutActionCreator.loadSettings(options.methodId))
+            .then(state => {
+                console.log(state);
+                (<any>window).state = state;
+                const payment = state.payment.getPaymentId();
+                const config = state.config.getContextConfig();
+                const affirm = state.remoteCheckout.getCheckout('affirm');
+
+                if (!payment) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                }
+
+                if (!config || !config.payment.token) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
+
+                if (!affirm || !affirm.settings) {
+                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+                }
+
+                const orderPayload = {
+                    useStoreCredit: affirm.settings.useStoreCredit,
+                };
+
+                const paymentPayload = {
+                    methodId: payment.providerId,
+                    paymentData: { nonce: config.payment.token },
+                };
+
+                return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
+                    .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload)));
+            });*/
+
+    }
+
     private _getScriptURI(testMode: boolean): string {
         return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
     }
