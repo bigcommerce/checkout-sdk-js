@@ -46,6 +46,7 @@ import { OffsitePaymentStrategy } from './strategies/offsite';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
+import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 import { ZipPaymentStrategy, ZipScriptLoader } from './strategies/zip';
 
@@ -322,6 +323,16 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             formPoster
+            )
+    );
+
+    registry.register(PaymentStrategyType.STRIPEV3, () =>
+        new StripeV3PaymentStrategy(
+            store,
+            paymentMethodActionCreator,
+            paymentActionCreator,
+            orderActionCreator,
+            new StripeScriptLoader(scriptLoader)
         )
     );
 
