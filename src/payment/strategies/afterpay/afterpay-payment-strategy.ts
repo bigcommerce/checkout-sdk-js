@@ -23,9 +23,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
-    ) {
-        this._store.subscribe(state => {console.log('new', state)});
-    }
+    ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
@@ -67,11 +65,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit })
         )
-            .then(state => {
-                console.log(options);
-                console.log(state); 
-                (<any>window).state = state; 
-                return this._checkoutValidator.validate(state.checkout.getCheckout(), options)})
+            .then(state => this._checkoutValidator.validate(state.checkout.getCheckout(), options))
             .then(() => this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
             ))
@@ -86,8 +80,6 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
                 const payment = state.payment.getPaymentId();
                 const config = state.config.getContextConfig();
                 const afterpay = state.remoteCheckout.getCheckout('afterpay');
-                console.log('state', state);
-                (<any>window).state = state;
 
                 if (!payment) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
