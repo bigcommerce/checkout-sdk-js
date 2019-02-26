@@ -5,40 +5,8 @@ export interface AffirmRequestData {
         user_confirmation_url_action?: string,
         name?: string,
     };
-    shipping: {
-        name: {
-            first: string,
-            last: string,
-            full?: string,
-        },
-        address: {
-            line1: string,
-            line2?: string,
-            city: string,
-            state: string,
-            zipcode: string,
-            country?: string,
-        },
-        phone_number?: string,
-        email?: string,
-    };
-    billing?: {
-        name: {
-            first: string,
-            last: string,
-            full?: string,
-        },
-        address: {
-            line1: string,
-            line2?: string,
-            city: string,
-            state: string,
-            zipcode: string,
-            country?: string,
-        },
-        phone_number?: string,
-        email?: string,
-    };
+    shipping: AffirmAddress;
+    billing?: AffirmAddress;
     items: Array<AffirmItem>;
     metadata: {
         shipping_type: string,
@@ -61,6 +29,24 @@ export interface AffirmItem {
     item_image_url: string,
     item_url: string,
     categories?: Array<[string]>,
+}
+
+export interface AffirmAddress {
+    name: {
+        first: string,
+        last: string,
+        full?: string,
+    },
+    address: {
+        line1: string,
+        line2?: string,
+        city: string,
+        state: string,
+        zipcode: string,
+        country?: string,
+    },
+    phone_number?: string,
+    email?: string,
 }
 
 interface AffirmScripts {
