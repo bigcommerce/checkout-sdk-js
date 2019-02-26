@@ -1,5 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { CustomError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType} from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -46,9 +46,9 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         }
 
         return this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit }))
-            .then(affirm.checkout(this._initiliazeCheckout()))
+            .then(affirm.checkout(this._initializeCheckout()))
             .then(affirm.checkout.open())
-            .then(() => new Promise<never>(() => {}));
+            .then(() => new Promise<never>(() => { }));
 
     }
 
@@ -60,42 +60,43 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
     }
 
     finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return this._store.dispatch(this._remoteCheckoutActionCreator.loadSettings(options.methodId))
+            .then(state => {
+                const payment = state.payment.getPaymentId();
+                const config = state.config.getContextConfig();
+                const affirm = state.remoteCheckout.getCheckout('affirm');
 
-        const state = this._store.getState();
-        const payment = state.payment.getPaymentId();
-        const config = state.config.getContextConfig();
-        const affirm = state.remoteCheckout.getCheckout('affirm');
+                if (!payment) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+                }
 
-        if (!payment) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-        }
+                if (!config || !config.payment.token) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
 
-        if (!config || !config.payment.token) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
+                if (!affirm || !affirm.settings) {
+                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+                }
 
-        if (!affirm || !affirm.settings) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
+                const orderPayload = {
+                    useStoreCredit: affirm.settings.useStoreCredit,
+                };
 
-        const orderPayload = {
-            useStoreCredit: affirm.settings.useStoreCredit,
-        };
+                const paymentPayload = {
+                    methodId: payment.providerId,
+                    paymentData: { nonce: config.payment.token },
+                };
 
-        const paymentPayload = {
-            methodId: payment.providerId,
-            paymentData: { nonce: config.payment.token },
-        };
-
-        return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
-            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload)))
+                return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
+                    .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload)));
+            });
     }
 
     private _getScriptURI(testMode: boolean): string {
         return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
     }
 
-    private _initiliazeCheckout(): AffirmRequestData {
+    private _initializeCheckout(): AffirmRequestData {
         const state = this._store.getState();
         const checkout = state.checkout.getCheckout();
         const config = state.config.getStoreConfig();
@@ -169,7 +170,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         if (!billingAddress) {
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
-        
+
         let shippingInformation = {
             name: {
                 first: shippingAddress.firstName,
