@@ -1,5 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 import { omit } from 'lodash';
+import { noop } from 'rxjs';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
@@ -175,13 +176,28 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private _handleWalletNonceResponse(errors?: NonceGenerationError[], nonce?: string, cardData?: CardData, billingContact?: Contact, shippingContact?: Contact): void {
-        if (errors && this._squareOptions && this._squareOptions.onError) {
-            this._squareOptions.onError(errors);
+    private _handleWalletNonceResponse(
+        errors?: NonceGenerationError[],
+        nonce?: string,
+        cardData?: CardData,
+        billingContact?: Contact,
+        shippingContact?: Contact
+    ): void {
+        const onError = this._squareOptions && this._squareOptions.onError || noop;
+        const onPaymentSelect = this._squareOptions && this._squareOptions.onPaymentSelect || noop;
+
+        if (errors) {
+            onError(errors);
         } else if (nonce && this._paymentMethod) {
-            this._paymentInstrumentSelected(this._paymentMethod.id, nonce, cardData, billingContact, shippingContact)
-                .then(() => this._squareOptions && this._squareOptions.onPaymentSelect && this._squareOptions.onPaymentSelect())
-                .catch(error => this._squareOptions && this._squareOptions.onError && this._squareOptions.onError(error));
+            this._paymentInstrumentSelected(
+                this._paymentMethod.id,
+                nonce,
+                cardData,
+                billingContact,
+                shippingContact
+            )
+                .then(onPaymentSelect)
+                .catch(onError);
         }
     }
 
@@ -190,12 +206,17 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
             throw new StandardError();
         }
 
-        if (errors && this._squareOptions && this._squareOptions.onError) {
-            this._squareOptions.onError(errors);
-            this._deferredRequestNonce.reject(errors);
-        } else if (nonce) {
+        if (nonce && !errors) {
             this._deferredRequestNonce.resolve({ nonce });
+
+            return;
         }
+
+        const onError = this._squareOptions && this._squareOptions.onError || noop;
+
+        onError(errors);
+
+        this._deferredRequestNonce.reject(errors);
     }
 
     private _paymentInstrumentSelected(
