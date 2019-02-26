@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.4"></a>
+## [1.18.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.3...v1.18.4) (2019-02-26)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-4034 catch error when nonce return 400, squarev2 ([8211bb7](https://github.com/bigcommerce/checkout-sdk-js/commit/8211bb7))
+
+
+
 <a name="1.18.3"></a>
 ## [1.18.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.2...v1.18.3) (2019-02-21)
 
