@@ -7,7 +7,7 @@ export interface AffirmRequestData {
     };
     shipping: AffirmAddress;
     billing?: AffirmAddress;
-    items: Array<AffirmItem>;
+    items: AffirmItem[];
     metadata: {
         shipping_type: string,
         entity_name?: string,
@@ -22,13 +22,13 @@ export interface AffirmRequestData {
 }
 
 export interface AffirmItem {
-    display_name: string,
-    sku: string,
-    unit_price: number,
-    qty: number,
-    item_image_url: string,
-    item_url: string,
-    categories?: Array<[string]>,
+    display_name: string;
+    sku: string;
+    unit_price: number;
+    qty: number;
+    item_image_url: string;
+    item_url: string;
+    categories?: Array<[string]>;
 }
 
 export interface AffirmAddress {
@@ -36,7 +36,7 @@ export interface AffirmAddress {
         first: string,
         last: string,
         full?: string,
-    },
+    };
     address: {
         line1: string,
         line2?: string,
@@ -44,9 +44,9 @@ export interface AffirmAddress {
         state: string,
         zipcode: string,
         country?: string,
-    },
-    phone_number?: string,
-    email?: string,
+    };
+    phone_number?: string;
+    email?: string;
 }
 
 interface AffirmScripts {

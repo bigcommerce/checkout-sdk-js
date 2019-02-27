@@ -7,8 +7,8 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import affirmJs from './affirmJs';
 import { AffirmAddress, AffirmItem, AffirmRequestData, SCRIPTS_DEFAULT } from './affirm';
+import affirmJs from './affirmJs';
 declare let affirm: any;
 
 export default class AffirmPaymentStrategy implements PaymentStrategy {
@@ -17,7 +17,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator
     ) {
 
     }
@@ -30,10 +30,11 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const testMode = paymentMethod.config.testMode;
+        const testMode = paymentMethod.config.testMode || false;
         const publicApiKey = paymentMethod.initializationData.publicKey;
 
-        affirmJs(publicApiKey, this._getScriptURI(testMode!));
+        affirmJs(publicApiKey, this._getScriptURI(testMode));
+
         return Promise.resolve(this._store.getState());
     }
 
@@ -56,6 +57,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         if (affirm) {
             affirm = undefined;
         }
+
         return Promise.resolve(this._store.getState());
     }
 
@@ -100,6 +102,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const state = this._store.getState();
         const checkout = state.checkout.getCheckout();
         const config = state.config.getStoreConfig();
+        const consigments = state.consignments.getConsignments();
 
         if (!config) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
@@ -109,23 +112,34 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
-        let affirmRequestObject: AffirmRequestData = {
+        if (!consigments) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        const consigment = consigments[0];
+
+        if (!consigment || !consigment.selectedShippingOption) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        const affirmRequestObject: AffirmRequestData = {
             merchant: {
                 user_confirmation_url: `${config.links.checkoutLink}.php?action=set_external_checkout&provider=affirm&status=success`,
                 user_cancel_url: `${config.links.checkoutLink}.php?action=set_external_checkout&provider=affirm&status=cancelled`,
-                user_confirmation_url_action: "POST"
+                user_confirmation_url_action: 'POST',
             },
             shipping: this._setShippingAddress(),
             billing: this._setBillingAddress(),
             items: this._buildItems(),
             metadata: {
-                shipping_type: checkout.consignments[0].selectedShippingOption!.type
+                shipping_type: consigment.selectedShippingOption.type,
             },
             order_id: checkout.orderId ? checkout.orderId.toString() : '',
             shipping_ammount: checkout.shippingCostTotal * 100,
             tax_amount: checkout.taxTotal * 100,
-            total: checkout.grandTotal * 100
+            total: checkout.grandTotal * 100,
         };
+
         return affirmRequestObject;
     }
 
@@ -137,7 +151,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
-        let billingInformation = {
+        const billingInformation = {
             name: {
                 first: billingAddress.firstName,
                 last: billingAddress.lastName,
@@ -171,7 +185,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
-        let shippingInformation = {
+        const shippingInformation = {
             name: {
                 first: shippingAddress.firstName,
                 last: shippingAddress.lastName,
@@ -192,28 +206,31 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return shippingInformation;
     }
 
-    private _buildItems(): Array<AffirmItem> {
+    private _buildItems(): AffirmItem[] {
         const state = this._store.getState();
         const cart = state.cart.getCart();
 
         if (!cart) {
             throw new MissingDataError(MissingDataErrorType.MissingCart);
         }
-        let items: Array<AffirmItem> = [];
+        const items: AffirmItem[] = [];
 
         for (const key in cart.lineItems) {
-            let itemType = (cart.lineItems as any)[key];
-            for (let i = 0; i < itemType.length; i++) {
-                items.push({
-                    display_name: itemType[i].name,
-                    sku: itemType[i].sku,
-                    unit_price: itemType[i].salePrice,
-                    qty: itemType[i].quantity,
-                    item_image_url: itemType[i].imageUrl,
-                    item_url: itemType[i].url
-                });
+            if (key) {
+                const itemType = (cart.lineItems as any)[key];
+                for (const line of itemType) {
+                    items.push({
+                        display_name: line.name,
+                        sku: line.sku,
+                        unit_price: line.salePrice,
+                        qty: line.quantity,
+                        item_image_url: line.imageUrl,
+                        item_url: line.url,
+                    });
+                }
             }
         }
+
         return items;
     }
 }
