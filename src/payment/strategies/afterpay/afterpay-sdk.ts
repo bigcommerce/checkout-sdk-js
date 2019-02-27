@@ -1,6 +1,6 @@
 export default interface AfterpaySdk {
     initialize(options: AfterpayInitializeOptions): void;
-    display(options: AfterpayDisplayOptions): void;
+    redirect(options: AfterpayDisplayOptions): void;
 }
 
 export interface AfterpayDisplayOptions {

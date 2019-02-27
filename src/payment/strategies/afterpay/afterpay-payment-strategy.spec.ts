@@ -44,7 +44,7 @@ describe('AfterpayPaymentStrategy', () => {
 
     const afterpaySdk = {
         initialize: () => {},
-        display: () => {},
+        redirect: () => {},
     };
 
     beforeEach(() => {
@@ -126,7 +126,7 @@ describe('AfterpayPaymentStrategy', () => {
             .mockReturnValue(Promise.resolve(afterpaySdk));
 
         jest.spyOn(afterpaySdk, 'initialize').mockImplementation(() => {});
-        jest.spyOn(afterpaySdk, 'display').mockImplementation(() => {});
+        jest.spyOn(afterpaySdk, 'redirect').mockImplementation(() => {});
     });
 
     describe('#initialize()', () => {
@@ -150,7 +150,7 @@ describe('AfterpayPaymentStrategy', () => {
 
         it('displays the afterpay modal', () => {
             expect(afterpaySdk.initialize).toHaveBeenCalledWith({ countryCode: 'US' });
-            expect(afterpaySdk.display).toHaveBeenCalledWith({ token: paymentMethod.clientToken });
+            expect(afterpaySdk.redirect).toHaveBeenCalledWith({ token: paymentMethod.clientToken });
         });
 
         it('notifies store credit usage to remote checkout service', () => {

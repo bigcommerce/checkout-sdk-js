@@ -113,7 +113,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         }
 
         this._afterpaySdk.initialize({ countryCode: this._mapCountryToISO2(countryName)});
-        this._afterpaySdk.display({ token: paymentMethod.clientToken });
+        this._afterpaySdk.redirect({ token: paymentMethod.clientToken });
     }
 
     private _mapCountryToISO2(countryName: string): string {
