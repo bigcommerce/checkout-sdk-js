@@ -1,6 +1,7 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 import { IFrameComponent } from 'iframe-resizer';
 
+import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
 
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
@@ -25,6 +26,8 @@ export default class EmbeddedCheckout {
         private _messagePoster: IframeEventPoster<EmbeddedContentEvent>,
         private _loadingIndicator: LoadingIndicator,
         private _requestSender: RequestSender,
+        private _storage: BrowserStorage,
+        private _location: Location,
         private _options: EmbeddedCheckoutOptions
     ) {
         this._isAttached = false;
@@ -61,7 +64,8 @@ export default class EmbeddedCheckout {
         this._messageListener.listen();
         this._loadingIndicator.show(this._options.containerId);
 
-        return this._attemptLogin()
+        return this._allowCookie()
+            .then(() => this._attemptLogin())
             .then(url => this._iframeCreator.createFrame(url, this._options.containerId))
             .then(iframe => {
                 this._iframe = iframe;
@@ -120,5 +124,28 @@ export default class EmbeddedCheckout {
         return this._requestSender.post(this._options.url)
             .then(({ body: { redirectUrl } }) => redirectUrl)
             .catch(response => Promise.reject(new InvalidLoginTokenError(response)));
+    }
+
+    /**
+     * This workaround is required for certain browsers (namely Safari) that
+     * prevent session cookies to be set for a third party website unless the
+     * user has recently visited such website. Therefore, before we attempt to
+     * login or set an active cart in the session, we need to first redirect the
+     * user to the domain of Embedded Checkout.
+     */
+    private _allowCookie(): Promise<void> {
+        const storageKey = 'isCookieAllowed';
+
+        if (this._storage.getItemOnce(storageKey)) {
+            return Promise.resolve();
+        }
+
+        const { origin } = parseUrl(this._options.url);
+        const redirectUrl = `${origin}/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(this._location.href)}`;
+
+        this._storage.setItem(storageKey, true);
+        this._location.replace(redirectUrl);
+
+        return new Promise<never>(() => {});
     }
 }

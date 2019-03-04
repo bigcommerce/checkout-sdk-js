@@ -1,5 +1,6 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
+import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
 
 import EmbeddedCheckout from './embedded-checkout';
@@ -10,6 +11,8 @@ import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
+
+const STORAGE_PREFIX = 'BigCommerce.EmbeddedCheckout';
 
 /**
  * Embed the checkout form in an iframe.
@@ -37,6 +40,8 @@ export default function embedCheckout(options: EmbeddedCheckoutOptions): Promise
         new IframeEventPoster<EmbeddedContentEvent>(origin),
         new LoadingIndicator({ styles: options.styles && options.styles.loadingIndicator }),
         createRequestSender(),
+        new BrowserStorage(STORAGE_PREFIX),
+        window.location,
         options
     );
 
