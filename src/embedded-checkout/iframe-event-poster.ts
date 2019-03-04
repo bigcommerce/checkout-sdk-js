@@ -7,7 +7,7 @@ export default class IframeEventPoster<TEvent> {
         targetOrigin: string,
         private _targetWindow?: Window
     ) {
-        this._targetOrigin = parseUrl(targetOrigin).origin;
+        this._targetOrigin = targetOrigin === '*' ? '*' : parseUrl(targetOrigin).origin;
     }
 
     post(event: TEvent): void {

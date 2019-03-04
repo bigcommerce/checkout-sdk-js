@@ -45,6 +45,7 @@ export default function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
     return new IframeEmbeddedCheckoutMessenger(
         new IframeEventListener<EmbeddedContentEventMap>(options.parentOrigin),
         new IframeEventPoster<EmbeddedCheckoutEvent>(options.parentOrigin, parentWindow),
+        new IframeEventPoster<EmbeddedCheckoutEvent>('*', parentWindow),
         { [EmbeddedCheckoutEventType.FrameLoaded]: handleFrameLoadedEvent }
     );
 }

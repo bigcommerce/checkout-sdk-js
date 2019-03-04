@@ -11,6 +11,7 @@ describe('EmbeddedCheckoutMessenger', () => {
     let messenger: IframeEmbeddedCheckoutMessenger;
     let messageListener: IframeEventListener<EmbeddedContentEventMap>;
     let messagePoster: IframeEventPoster<EmbeddedCheckoutEvent>;
+    let untargetedMessagePoster: IframeEventPoster<EmbeddedCheckoutEvent>;
     let parentWindow: Window;
 
     beforeEach(() => {
@@ -19,11 +20,17 @@ describe('EmbeddedCheckoutMessenger', () => {
         parentWindow = Object.create(window);
         messageListener = new IframeEventListener<EmbeddedContentEventMap>(parentOrigin);
         messagePoster = new IframeEventPoster<EmbeddedCheckoutEvent>(parentOrigin, parentWindow);
+        untargetedMessagePoster = new IframeEventPoster<EmbeddedCheckoutEvent>('*', parentWindow);
 
         jest.spyOn(messagePoster, 'post');
+        jest.spyOn(untargetedMessagePoster, 'post');
         jest.spyOn(messageListener, 'addListener');
 
-        messenger = new IframeEmbeddedCheckoutMessenger(messageListener, messagePoster);
+        messenger = new IframeEmbeddedCheckoutMessenger(
+            messageListener,
+            messagePoster,
+            untargetedMessagePoster
+        );
     });
 
     it('posts `complete` event to parent window', () => {
@@ -64,12 +71,12 @@ describe('EmbeddedCheckoutMessenger', () => {
         });
     });
 
-    it('posts `frame_error` event to parent window', () => {
+    it('posts `frame_error` event to parent window without target origin', () => {
         const error = new StandardError();
 
         messenger.postFrameError(error);
 
-        expect(messagePoster.post).toHaveBeenCalledWith({
+        expect(untargetedMessagePoster.post).toHaveBeenCalledWith({
             type: EmbeddedCheckoutEventType.FrameError,
             payload: {
                 message: error.message,
@@ -108,6 +115,7 @@ describe('EmbeddedCheckoutMessenger', () => {
         messenger = new IframeEmbeddedCheckoutMessenger(
             messageListener,
             messagePoster,
+            untargetedMessagePoster,
             { [EmbeddedCheckoutEventType.FrameLoaded]: handler }
         );
 
