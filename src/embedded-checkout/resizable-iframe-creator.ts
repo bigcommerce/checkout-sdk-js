@@ -3,7 +3,7 @@ import { iframeResizer, IFrameComponent } from 'iframe-resizer';
 import { parseUrl } from '../common/url';
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
-import { NotEmbeddableError } from './errors';
+import { NotEmbeddableError, NotEmbeddableErrorType } from './errors';
 import isIframeEvent from './is-iframe-event';
 
 export default class ResizableIframeCreator {
@@ -16,7 +16,10 @@ export default class ResizableIframeCreator {
         const { timeout = 60000 } = this._options || {};
 
         if (!container) {
-            throw new NotEmbeddableError('Unable to embed the iframe because the container element could not be found.');
+            throw new NotEmbeddableError(
+                'Unable to embed the iframe because the container element could not be found.',
+                NotEmbeddableErrorType.MissingContainer
+            );
         }
 
         const iframe = document.createElement('iframe');
@@ -52,7 +55,7 @@ export default class ResizableIframeCreator {
 
                 if (isIframeEvent(event.data, EmbeddedCheckoutEventType.FrameError)) {
                     teardown();
-                    reject(new NotEmbeddableError(event.data.payload.message));
+                    reject(new NotEmbeddableError(event.data.payload.message, NotEmbeddableErrorType.MissingContent));
                 }
 
                 if (isIframeEvent(event.data, EmbeddedCheckoutEventType.FrameLoaded)) {

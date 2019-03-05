@@ -4,14 +4,18 @@ import { IFrameComponent } from 'iframe-resizer';
 import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
 
+import EmbeddedCheckoutError from './embedded-checkout-error';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
-import { InvalidLoginTokenError } from './errors';
+import { InvalidLoginTokenError, NotEmbeddableError, NotEmbeddableErrorType } from './errors';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
+
+const CAN_RETRY_ALLOW_COOKIE = 'canRetryAllowCookie';
+const IS_COOKIE_ALLOWED_KEY = 'isCookieAllowed';
 
 export default class EmbeddedCheckout {
     private _iframe?: IFrameComponent;
@@ -72,21 +76,23 @@ export default class EmbeddedCheckout {
 
                 this._configureStyles();
                 this._loadingIndicator.hide();
-
-                return this;
             })
             .catch(error => {
                 this._isAttached = false;
 
-                this._messageListener.trigger({
-                    type: EmbeddedCheckoutEventType.FrameError,
-                    payload: error,
-                });
+                return this._retryAllowCookie(error)
+                    .catch(() => {
+                        this._messageListener.trigger({
+                            type: EmbeddedCheckoutEventType.FrameError,
+                            payload: error,
+                        });
 
-                this._loadingIndicator.hide();
+                        this._loadingIndicator.hide();
 
-                throw error;
-            });
+                        throw error;
+                    });
+            })
+            .then(() => this);
     }
 
     detach(): void {
@@ -134,18 +140,40 @@ export default class EmbeddedCheckout {
      * user to the domain of Embedded Checkout.
      */
     private _allowCookie(): Promise<void> {
-        const storageKey = 'isCookieAllowed';
+        if (this._storage.getItem(IS_COOKIE_ALLOWED_KEY)) {
+            // It could be possible that the flag is set to true but the browser
+            // has already removed the permission to store cookie. In that case,
+            // we should try to redirect the user again.
+            this._storage.setItem(CAN_RETRY_ALLOW_COOKIE, true);
 
-        if (this._storage.getItemOnce(storageKey)) {
             return Promise.resolve();
         }
+
+        this._storage.removeItem(CAN_RETRY_ALLOW_COOKIE);
+        this._storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
 
         const { origin } = parseUrl(this._options.url);
         const redirectUrl = `${origin}/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(this._location.href)}`;
 
-        this._storage.setItem(storageKey, true);
         this._location.replace(redirectUrl);
 
         return new Promise<never>(() => {});
+    }
+
+    private _retryAllowCookie(error: EmbeddedCheckoutError): Promise<void> {
+        const canRetry = (
+            this._storage.getItem(CAN_RETRY_ALLOW_COOKIE) &&
+            error instanceof NotEmbeddableError &&
+            error.subtype === NotEmbeddableErrorType.MissingContent
+        );
+
+        if (!canRetry) {
+            return Promise.reject();
+        }
+
+        this._storage.removeItem(CAN_RETRY_ALLOW_COOKIE);
+        this._storage.removeItem(IS_COOKIE_ALLOWED_KEY);
+
+        return this._allowCookie();
     }
 }
