@@ -2,12 +2,13 @@ import { createRequestSender, RequestSender } from '@bigcommerce/request-sender'
 import { iframeResizer, IFrameComponent } from 'iframe-resizer';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { BrowserStorage } from '../common/storage';
 
 import EmbeddedCheckout from './embedded-checkout';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import EmbeddedCheckoutStyles from './embedded-checkout-styles';
-import { InvalidLoginTokenError, NotEmbeddableError } from './errors';
+import { InvalidLoginTokenError, NotEmbeddableError, NotEmbeddableErrorType } from './errors';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
@@ -19,10 +20,12 @@ describe('EmbeddedCheckout', () => {
     let iframe: IFrameComponent;
     let iframeCreator: ResizableIframeCreator;
     let loadingIndicator: LoadingIndicator;
+    let location: Location;
     let messageListener: IframeEventListener<EmbeddedCheckoutEventMap>;
     let messagePoster: IframeEventPoster<EmbeddedContentEvent>;
     let requestSender: RequestSender;
     let options: EmbeddedCheckoutOptions;
+    let storage: BrowserStorage;
     let styles: EmbeddedCheckoutStyles;
 
     beforeEach(() => {
@@ -42,7 +45,9 @@ describe('EmbeddedCheckout', () => {
         messageListener = new IframeEventListener('https://mybigcommerce.com');
         messagePoster = new IframeEventPoster('https://mybigcommerce.com');
         loadingIndicator = new LoadingIndicator();
+        location = window.location;
         requestSender = createRequestSender();
+        storage = new BrowserStorage('EmbeddedCheckout');
 
         jest.spyOn(iframeCreator, 'createFrame')
             .mockReturnValue(Promise.resolve(iframe));
@@ -53,14 +58,26 @@ describe('EmbeddedCheckout', () => {
         jest.spyOn(loadingIndicator, 'hide')
             .mockImplementation(() => {});
 
+        jest.spyOn(location, 'replace')
+            .mockImplementation(() => {});
+
+        jest.spyOn(storage, 'getItem')
+            .mockImplementation(key => key === 'isCookieAllowed' ? true : null);
+
         embeddedCheckout = new EmbeddedCheckout(
             iframeCreator,
             messageListener,
             messagePoster,
             loadingIndicator,
             requestSender,
+            storage,
+            location,
             options
         );
+    });
+
+    afterEach(() => {
+        (location.replace as jest.Mock).mockRestore();
     });
 
     it('creates iframe element', async () => {
@@ -164,6 +181,8 @@ describe('EmbeddedCheckout', () => {
             messagePoster,
             loadingIndicator,
             requestSender,
+            storage,
+            location,
             options
         );
 
@@ -191,6 +210,8 @@ describe('EmbeddedCheckout', () => {
             messagePoster,
             loadingIndicator,
             requestSender,
+            storage,
+            location,
             options
         );
 
@@ -212,6 +233,8 @@ describe('EmbeddedCheckout', () => {
             messagePoster,
             loadingIndicator,
             requestSender,
+            storage,
+            location,
             options
         );
 
@@ -239,6 +262,53 @@ describe('EmbeddedCheckout', () => {
         expect(loadingIndicator.hide).not.toHaveBeenCalled();
     });
 
+    it('redirects user to allow third party cookie to be set', () => {
+        jest.spyOn(storage, 'getItem')
+            .mockImplementation(key => key === 'isCookieAllowed' ? null : true);
+
+        embeddedCheckout.attach();
+
+        expect(location.replace)
+            .toHaveBeenCalledWith(`https://mybigcommerce.com/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(location.href)}`);
+    });
+
+    it('does not redirect user if cookie is already allowed', () => {
+        embeddedCheckout.attach();
+
+        expect(location.replace)
+            .not.toHaveBeenCalled();
+    });
+
+    it('retries once if cookie is flagged as allowed yet unable to load frame', async () => {
+        (storage.getItem as jest.Mock).mockRestore();
+        storage.setItem('isCookieAllowed', true);
+
+        jest.spyOn(iframeCreator, 'createFrame')
+            .mockRejectedValue(new NotEmbeddableError('Empty cart', NotEmbeddableErrorType.MissingContent));
+
+        embeddedCheckout.attach();
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(location.replace)
+            .toHaveBeenCalledWith(`https://mybigcommerce.com/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(location.href)}`);
+    });
+
+    it('does not retry to renew cookie allowance if error is due to other issues', async () => {
+        (storage.getItem as jest.Mock).mockRestore();
+        storage.setItem('isCookieAllowed', true);
+
+        jest.spyOn(iframeCreator, 'createFrame')
+            .mockRejectedValue(new NotEmbeddableError('Invalid container', NotEmbeddableErrorType.MissingContainer));
+
+        try {
+            await embeddedCheckout.attach();
+        } catch (thrown) {
+            expect(location.replace)
+                .not.toBeCalled();
+        }
+    });
+
     describe('if login URL is passed', () => {
         beforeEach(() => {
             options = {
@@ -251,6 +321,8 @@ describe('EmbeddedCheckout', () => {
                 messagePoster,
                 loadingIndicator,
                 requestSender,
+                storage,
+                location,
                 options
             );
         });
