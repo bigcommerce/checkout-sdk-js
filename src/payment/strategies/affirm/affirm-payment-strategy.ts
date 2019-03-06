@@ -47,9 +47,10 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         }
 
         return this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit }))
-            .then(affirm.checkout(this._initializeCheckout()))
+            .then(affirm.checkout(this._initializeCheckout(useStoreCredit)))
             .then(affirm.checkout.open())
-            .then(() => new Promise<never>(() => { }));
+            .then(() => new Promise<never>(() => { }))
+            .catch((error: Error) => { throw error; });
 
     }
 
@@ -98,7 +99,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
     }
 
-    private _initializeCheckout(): AffirmRequestData {
+    private _initializeCheckout(useStoreCredit: boolean): AffirmRequestData {
         const state = this._store.getState();
         const checkout = state.checkout.getCheckout();
         const config = state.config.getStoreConfig();
@@ -121,7 +122,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         if (!consigment || !consigment.selectedShippingOption) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
-
+        const grandTotal = useStoreCredit ? checkout.grandTotal -  checkout.customer.storeCredit : checkout.grandTotal;
         const affirmRequestObject: AffirmRequestData = {
             merchant: {
                 user_confirmation_url: `${config.links.checkoutLink}.php?action=set_external_checkout&provider=affirm&status=success`,
@@ -137,7 +138,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             order_id: checkout.orderId ? checkout.orderId.toString() : '',
             shipping_ammount: checkout.shippingCostTotal * 100,
             tax_amount: checkout.taxTotal * 100,
-            total: checkout.grandTotal * 100,
+            total: (grandTotal > 0 ? grandTotal : 0) * 100,
         };
 
         return affirmRequestObject;
