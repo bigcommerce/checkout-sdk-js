@@ -155,6 +155,7 @@ export default class EmbeddedCheckout {
         const { origin } = parseUrl(this._options.url);
         const redirectUrl = `${origin}/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(this._location.href)}`;
 
+        document.body.style.visibility = 'hidden';
         this._location.replace(redirectUrl);
 
         return new Promise<never>(() => {});
