@@ -187,6 +187,23 @@ export function getAfterpay(): PaymentMethod {
     };
 }
 
+export function getAffirm(): PaymentMethod {
+    return {
+        id: 'affirm',
+        logoUrl: '',
+        method: 'affirm',
+        supportedCards: [],
+        config: {
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
+        initializationData: {
+            publicKey: 'BZXX1Q1YF6Y59QNH',
+        },
+    };
+}
+
 export function getAmazonPay(): PaymentMethod {
     return {
         id: 'amazon',
