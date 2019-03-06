@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.5"></a>
+## [1.18.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.4...v1.18.5) (2019-03-06)
+
+
+### Bug Fixes
+
+* **embedded-checkout:** CHECKOUT-3941 Post `frame_error` without target origin so that parent window can receive it in case the error is due to issue with current cart ([3354334](https://github.com/bigcommerce/checkout-sdk-js/commit/3354334))
+* **embedded-checkout:** CHECKOUT-3941 Redirect user to allow third party cookie to be set ([b7137f6](https://github.com/bigcommerce/checkout-sdk-js/commit/b7137f6))
+
+
+
 <a name="1.18.4"></a>
 ## [1.18.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.3...v1.18.4) (2019-02-26)
 

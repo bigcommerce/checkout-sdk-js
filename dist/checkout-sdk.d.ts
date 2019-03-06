@@ -2250,6 +2250,8 @@ declare class EmbeddedCheckout {
     private _messagePoster;
     private _loadingIndicator;
     private _requestSender;
+    private _storage;
+    private _location;
     private _options;
     private _iframe?;
     private _isAttached;
@@ -2257,6 +2259,15 @@ declare class EmbeddedCheckout {
     detach(): void;
     private _configureStyles;
     private _attemptLogin;
+    /**
+     * This workaround is required for certain browsers (namely Safari) that
+     * prevent session cookies to be set for a third party website unless the
+     * user has recently visited such website. Therefore, before we attempt to
+     * login or set an active cart in the session, we need to first redirect the
+     * user to the domain of Embedded Checkout.
+     */
+    private _allowCookie;
+    private _retryAllowCookie;
 }
 
 declare interface EmbeddedCheckoutCompleteEvent {
