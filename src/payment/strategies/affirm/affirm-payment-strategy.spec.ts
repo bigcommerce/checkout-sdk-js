@@ -155,6 +155,34 @@ describe('AffirmPaymentStrategy', () => {
         it('call affirm methods', () => {
             expect(window.affirm.checkout).toHaveBeenCalled();
             expect(window.affirm.checkout.open).toHaveBeenCalled();
+            expect(window.affirm.ui.ready).toHaveBeenCalled();
+        });
+
+        it('does not load affirm if config does not exist', async () => {
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
+            try {
+                await strategy.execute(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('does not load affirm if billingAddress does not exist', async () => {
+            jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(undefined);
+            try {
+                await strategy.execute(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('does not load affirm if cart does not exist', async () => {
+            jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(undefined);
+            try {
+                await strategy.execute(payload);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
     });
 
@@ -211,6 +239,24 @@ describe('AffirmPaymentStrategy', () => {
         });
 
         it('throws error if unable to finalize order due to missing data', async () => {
+            try {
+                await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('throws error if unable to finalize order due to missing payment information', async () => {
+            jest.spyOn(store.getState().payment, 'getPaymentId').mockReturnValue(undefined);
+            try {
+                await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
+        });
+
+        it('throws error if unable to finalize order due to missing configuration information', async () => {
+            jest.spyOn(store.getState().config, 'getContextConfig').mockReturnValue(undefined);
             try {
                 await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
             } catch (error) {

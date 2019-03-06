@@ -41,16 +41,28 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const paymentId = payload.payment && payload.payment.methodId;
         const useStoreCredit = !!payload.useStoreCredit;
+        const state = this._store.getState();
+        const config = state.config.getStoreConfig();
 
         if (!paymentId) {
             throw new PaymentArgumentInvalidError(['payment.methodId']);
         }
 
+        if (!config) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
         return this._store.dispatch(this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit }))
             .then(affirm.checkout(this._initializeCheckout(useStoreCredit)))
             .then(affirm.checkout.open())
-            .then(() => new Promise<never>(() => { }))
-            .catch((error: Error) => { throw error; });
+            .then(affirm.ui.ready(
+                () => {
+                    affirm.ui.error.on('close', () => {
+                        window.location.href = `${config.links.checkoutLink}.php?action=set_external_checkout&provider=affirm&status=cancelled`;
+                    });
+                }
+            ))
+            .then(() => new Promise<never>(() => {  }));
 
     }
 
