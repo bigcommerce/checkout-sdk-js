@@ -1,3 +1,6 @@
+import { StorefrontErrorResponseBody } from '../common/error';
+import { RequestError } from '../common/error/errors';
+
 import Coupon from './coupon';
 
 export default interface CouponState {
@@ -7,8 +10,8 @@ export default interface CouponState {
 }
 
 export interface CouponErrorsState {
-    applyCouponError?: Error;
-    removeCouponError?: Error;
+    applyCouponError?: RequestError<StorefrontErrorResponseBody>;
+    removeCouponError?: RequestError<StorefrontErrorResponseBody>;
 }
 
 export interface CouponStatusesState {

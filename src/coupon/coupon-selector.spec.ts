@@ -1,3 +1,5 @@
+import { RequestError } from '../common/error/errors';
+
 import CouponSelector from './coupon-selector';
 import CouponState from './coupon-state';
 
@@ -14,7 +16,7 @@ describe('CouponSelector', () => {
 
     describe('#getApplyError()', () => {
         it('returns error if unable to apply', () => {
-            const applyCouponError = new Error();
+            const applyCouponError = new RequestError();
 
             couponSelector = new CouponSelector({
                 ...state,
@@ -50,7 +52,7 @@ describe('CouponSelector', () => {
 
     describe('#getRemoveError()', () => {
         it('returns error if unable to remove', () => {
-            const removeCouponError = new Error();
+            const removeCouponError = new RequestError();
 
             couponSelector = new CouponSelector({
                 ...state,

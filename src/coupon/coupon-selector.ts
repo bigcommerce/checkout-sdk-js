@@ -1,3 +1,4 @@
+import { RequestError } from '../common/error/errors';
 import { selector } from '../common/selector';
 
 import Coupon from './coupon';
@@ -13,11 +14,11 @@ export default class CouponSelector {
         return this._coupon.data;
     }
 
-    getRemoveError(): Error | undefined {
+    getRemoveError(): RequestError | undefined {
         return this._coupon.errors.removeCouponError;
     }
 
-    getApplyError(): Error | undefined {
+    getApplyError(): RequestError | undefined {
         return this._coupon.errors.applyCouponError;
     }
 

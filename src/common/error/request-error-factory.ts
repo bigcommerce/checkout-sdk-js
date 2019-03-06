@@ -25,7 +25,7 @@ export default class RequestErrorFactory {
         this._factoryMethods[type] = factoryMethod;
     }
 
-    createError(response: Response, message?: string): Error {
+    createError(response: Response, message?: string): RequestError {
         const factoryMethod = this._factoryMethods[this._getType(response)] || this._factoryMethods.default;
 
         return factoryMethod(response, message);

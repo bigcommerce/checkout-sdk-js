@@ -1,3 +1,6 @@
+import { StorefrontErrorResponseBody } from '../common/error';
+import { RequestError } from '../common/error/errors';
+
 import GiftCertificate from './gift-certificate';
 
 export default interface GiftCertificateState {
@@ -7,8 +10,8 @@ export default interface GiftCertificateState {
 }
 
 export interface GiftCertificateErrorsState {
-    applyGiftCertificateError?: Error;
-    removeGiftCertificateError?: Error;
+    applyGiftCertificateError?: RequestError<StorefrontErrorResponseBody>;
+    removeGiftCertificateError?: RequestError<StorefrontErrorResponseBody>;
 }
 
 export interface GiftCertificateStatusesState {
