@@ -26,6 +26,7 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
     constructor(
         private _messageListener: IframeEventListener<EmbeddedContentEventMap>,
         private _messagePoster: IframeEventPoster<EmbeddedCheckoutEvent>,
+        private _untargetedMessagePoster: IframeEventPoster<EmbeddedCheckoutEvent>,
         private _messageHandlers: EventCallbacks<EmbeddedCheckoutEventMap> = {}
     ) {
         this._messageListener.listen();
@@ -54,7 +55,13 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
             payload: this._transformError(payload),
         };
 
-        this._postMessage(message);
+        // Ideally, all messages should be targeted at a specific origin.
+        // However, for `FrameError` message, we have to post it in an
+        // untargeted fashion. This is because the error could be caused by a
+        // missing cart. That makes it not possible to determine of site origin
+        // of the parent window. Nevertheless, we still want to notify the
+        // parent window about the error.
+        this._postMessage(message, { untargeted: true });
     }
 
     postFrameLoaded(payload?: EmbeddedContentOptions): void {
@@ -88,7 +95,17 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
         });
     }
 
-    private _postMessage(message: EmbeddedCheckoutEvent): void {
+    private _postMessage(message: EmbeddedCheckoutEvent, options?: { untargeted?: boolean }): void {
+        this._notifyMessageHandlers(message);
+
+        if (options && options.untargeted) {
+            return this._untargetedMessagePoster.post(message);
+        }
+
+        this._messagePoster.post(message);
+    }
+
+    private _notifyMessageHandlers(message: EmbeddedCheckoutEvent): void {
         Object.keys(this._messageHandlers)
             .forEach(key => {
                 const handler = this._messageHandlers[key as keyof EmbeddedCheckoutEventMap];
@@ -97,8 +114,6 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
                     handler.call(null, message);
                 }
             });
-
-        this._messagePoster.post(message);
     }
 
     private _transformError(error: Error | CustomError): EmbeddedCheckoutError {
