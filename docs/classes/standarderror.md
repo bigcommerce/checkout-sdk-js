@@ -8,6 +8,8 @@
 
 **↳ StandardError**
 
+↳  [RequestError](requesterror.md)
+
 ## Implements
 
 * [CustomError](../interfaces/customerror.md)

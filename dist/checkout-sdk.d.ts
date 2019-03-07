@@ -1,3 +1,4 @@
+import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
 
@@ -1546,25 +1547,25 @@ declare class CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to apply, otherwise undefined.
      */
-    getApplyCouponError(): Error | undefined;
+    getApplyCouponError(): RequestError | undefined;
     /**
      * Returns an error if unable to remove a coupon code.
      *
      * @returns The error object if unable to remove, otherwise undefined.
      */
-    getRemoveCouponError(): Error | undefined;
+    getRemoveCouponError(): RequestError | undefined;
     /**
      * Returns an error if unable to apply a gift certificate.
      *
      * @returns The error object if unable to apply, otherwise undefined.
      */
-    getApplyGiftCertificateError(): Error | undefined;
+    getApplyGiftCertificateError(): RequestError | undefined;
     /**
      * Returns an error if unable to remove a gift certificate.
      *
      * @returns The error object if unable to remove, otherwise undefined.
      */
-    getRemoveGiftCertificateError(): Error | undefined;
+    getRemoveGiftCertificateError(): RequestError | undefined;
     /**
      * Returns an error if unable to load payment instruments.
      *
@@ -2953,6 +2954,25 @@ declare interface Promotion {
 declare interface Region {
     code: string;
     name: string;
+}
+
+declare class RequestError<TBody = any> extends StandardError {
+    body: TBody | {};
+    headers: {
+        [key: string]: any;
+    };
+    errors: Array<{
+        code: string;
+        message?: string;
+    }>;
+    status: number;
+    constructor(response?: Response<TBody | {}>, { message, errors }?: {
+        message?: string;
+        errors?: Array<{
+            code: string;
+            message?: string;
+        }>;
+    });
 }
 
 /**

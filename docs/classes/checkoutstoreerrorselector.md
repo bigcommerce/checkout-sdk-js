@@ -54,11 +54,11 @@ This object has a set of getters that would return an error if an action is not 
 
 ###  getApplyCouponError
 
-▸ **getApplyCouponError**():  `Error` &#124; `undefined`
+▸ **getApplyCouponError**():  [RequestError](requesterror.md) &#124; `undefined`
 
 Returns an error if unable to apply a coupon code.
 
-**Returns:**  `Error` &#124; `undefined`
+**Returns:**  [RequestError](requesterror.md) &#124; `undefined`
 
 The error object if unable to apply, otherwise undefined.
 
@@ -67,11 +67,11 @@ ___
 
 ###  getApplyGiftCertificateError
 
-▸ **getApplyGiftCertificateError**():  `Error` &#124; `undefined`
+▸ **getApplyGiftCertificateError**():  [RequestError](requesterror.md) &#124; `undefined`
 
 Returns an error if unable to apply a gift certificate.
 
-**Returns:**  `Error` &#124; `undefined`
+**Returns:**  [RequestError](requesterror.md) &#124; `undefined`
 
 The error object if unable to apply, otherwise undefined.
 
@@ -366,11 +366,11 @@ ___
 
 ###  getRemoveCouponError
 
-▸ **getRemoveCouponError**():  `Error` &#124; `undefined`
+▸ **getRemoveCouponError**():  [RequestError](requesterror.md) &#124; `undefined`
 
 Returns an error if unable to remove a coupon code.
 
-**Returns:**  `Error` &#124; `undefined`
+**Returns:**  [RequestError](requesterror.md) &#124; `undefined`
 
 The error object if unable to remove, otherwise undefined.
 
@@ -379,11 +379,11 @@ ___
 
 ###  getRemoveGiftCertificateError
 
-▸ **getRemoveGiftCertificateError**():  `Error` &#124; `undefined`
+▸ **getRemoveGiftCertificateError**():  [RequestError](requesterror.md) &#124; `undefined`
 
 Returns an error if unable to remove a gift certificate.
 
-**Returns:**  `Error` &#124; `undefined`
+**Returns:**  [RequestError](requesterror.md) &#124; `undefined`
 
 The error object if unable to remove, otherwise undefined.
 

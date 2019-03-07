@@ -10,6 +10,7 @@
 
 ## Implemented by
 
+* [RequestError](../classes/requesterror.md)
 * [StandardError](../classes/standarderror.md)
 
 ## Index

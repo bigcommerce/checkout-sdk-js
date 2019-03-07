@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.6"></a>
+## [1.18.6](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.5...v1.18.6) (2019-03-07)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-3852 Expose proper error type for Coupon/Gift Certificates ([2dd5713](https://github.com/bigcommerce/checkout-sdk-js/commit/2dd5713))
+
+
+
 <a name="1.18.5"></a>
 ## [1.18.5](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.4...v1.18.5) (2019-03-06)
 
