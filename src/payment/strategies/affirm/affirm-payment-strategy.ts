@@ -7,7 +7,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { AffirmAddress, AffirmItem, AffirmRequestData, SCRIPTS_DEFAULT } from './affirm';
+import { AffirmAddress, AffirmDiscount, AffirmItem, AffirmRequestData, SCRIPTS_DEFAULT } from './affirm';
 import affirmJs from './affirmJs';
 declare let affirm: any;
 
@@ -18,9 +18,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator
-    ) {
-
-    }
+    ) { }
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
@@ -40,7 +38,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const paymentId = payload.payment && payload.payment.methodId;
-        const useStoreCredit = !!payload.useStoreCredit;
+        const useStoreCredit = payload.useStoreCredit || false;
         const state = this._store.getState();
         const config = state.config.getStoreConfig();
 
@@ -144,6 +142,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             shipping: this._setShippingAddress(),
             billing: this._setBillingAddress(),
             items: this._buildItems(),
+            discounts: this._setDiscounts(),
             metadata: {
                 shipping_type: consigment.selectedShippingOption.type,
             },
@@ -245,5 +244,30 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         }
 
         return items;
+    }
+
+    private _setDiscounts(): AffirmDiscount {
+        const state = this._store.getState();
+        const cart = state.cart.getCart();
+
+        if (!cart) {
+            throw new MissingDataError(MissingDataErrorType.MissingCart);
+        }
+
+        const discounts: AffirmDiscount = {};
+        for (const line of cart.coupons) {
+            discounts[line.code] = {
+                discount_amount: line.discountedAmount,
+                discount_display_name: line.displayName,
+            };
+        }
+        for (const line of cart.discounts) {
+            discounts[line.id] = {
+                discount_amount: line.discountedAmount,
+                discount_display_name: line.id,
+            };
+        }
+
+        return discounts;
     }
 }

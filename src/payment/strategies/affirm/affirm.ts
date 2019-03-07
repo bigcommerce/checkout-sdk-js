@@ -8,6 +8,7 @@ export interface AffirmRequestData {
     shipping: AffirmAddress;
     billing?: AffirmAddress;
     items: AffirmItem[];
+    discounts: AffirmDiscount;
     metadata: {
         shipping_type: string,
         entity_name?: string,
@@ -29,6 +30,13 @@ export interface AffirmItem {
     item_image_url: string;
     item_url: string;
     categories?: Array<[string]>;
+}
+
+export interface AffirmDiscount {
+    [key: string]: {
+        discount_amount: number,
+        discount_display_name: string,
+    };
 }
 
 export interface AffirmAddress {

@@ -7,8 +7,7 @@ import { of, Observable } from 'rxjs';
 import { getBillingAddressState } from '../../../billing/billing-addresses.mock';
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckoutState } from '../../../checkout/checkouts.mock';
-import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { getCheckout, getCheckoutPayment, getCheckoutState, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
@@ -47,6 +46,7 @@ describe('AffirmPaymentStrategy', () => {
     let strategy: AffirmPaymentStrategy;
 
     beforeEach(() => {
+        const requestSender = createRequestSender();
         affirmJS.mockImplementation(() => {
             return {
                 default: jest.fn().mockReturnValue(true),
@@ -54,7 +54,7 @@ describe('AffirmPaymentStrategy', () => {
         });
         window.affirm = getAffirmScriptMock();
         window.affirm.checkout.open = jest.fn();
-        orderRequestSender = new OrderRequestSender(createRequestSender());
+        orderRequestSender = new OrderRequestSender(requestSender);
         store = createCheckoutStore({
             checkout: getCheckoutState(),
             customer: getCustomerState(),
@@ -64,7 +64,7 @@ describe('AffirmPaymentStrategy', () => {
             consignments: getConsignmentsState(),
             billingAddress: getBillingAddressState(),
         });
-        checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
+        checkoutRequestSender = new CheckoutRequestSender(requestSender);
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
         paymentActionCreator = new PaymentActionCreator(
@@ -72,7 +72,7 @@ describe('AffirmPaymentStrategy', () => {
             orderActionCreator
         );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(createRequestSender())
+            new RemoteCheckoutRequestSender(requestSender)
         );
         strategy = new AffirmPaymentStrategy(
             store,
