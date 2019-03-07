@@ -1,6 +1,8 @@
 import { Action } from '@bigcommerce/data-store';
 
 import { Checkout } from '../checkout';
+import { StorefrontErrorResponseBody } from '../common/error';
+import { RequestError } from '../common/error/errors';
 
 export enum GiftCertificateActionType {
     ApplyGiftCertificateRequested = 'APPLY_GIFT_CERTIFICATE_REQUESTED',
@@ -34,7 +36,7 @@ export interface ApplyGiftCertificateSucceededAction extends Action<Checkout> {
     type: GiftCertificateActionType.ApplyGiftCertificateSucceeded;
 }
 
-export interface ApplyGiftCertificateFailedAction extends Action<Error> {
+export interface ApplyGiftCertificateFailedAction extends Action<RequestError<StorefrontErrorResponseBody>> {
     type: GiftCertificateActionType.ApplyGiftCertificateFailed;
 }
 
@@ -46,6 +48,6 @@ export interface RemoveGiftCertificateSucceededAction extends Action<Checkout> {
     type: GiftCertificateActionType.RemoveGiftCertificateSucceeded;
 }
 
-export interface RemoveGiftCertificateFailedAction extends Action<Error> {
+export interface RemoveGiftCertificateFailedAction extends Action<RequestError<StorefrontErrorResponseBody>> {
     type: GiftCertificateActionType.RemoveGiftCertificateFailed;
 }

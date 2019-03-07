@@ -1,3 +1,5 @@
+import { StorefrontErrorResponseBody } from '../common/error';
+import { RequestError } from '../common/error/errors';
 import { selector } from '../common/selector';
 
 import GiftCertificate from './gift-certificate';
@@ -13,11 +15,11 @@ export default class GiftCertificateSelector {
         return this._giftCertificate.data;
     }
 
-    getRemoveError(): Error | undefined {
+    getRemoveError(): RequestError<StorefrontErrorResponseBody> | undefined {
         return this._giftCertificate.errors.removeGiftCertificateError;
     }
 
-    getApplyError(): Error | undefined {
+    getApplyError(): RequestError<StorefrontErrorResponseBody> | undefined {
         return this._giftCertificate.errors.applyGiftCertificateError;
     }
 

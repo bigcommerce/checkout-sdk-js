@@ -7,7 +7,7 @@ import RequestError from './request-error';
 export default function mapFromStorefrontErrorResponse(
     response: Response<StorefrontErrorResponseBody>,
     message?: string
-): RequestError {
+): RequestError<StorefrontErrorResponseBody> {
     const { body } = response;
 
     return new RequestError(response, {

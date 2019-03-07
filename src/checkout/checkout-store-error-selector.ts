@@ -1,5 +1,6 @@
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
+import { RequestError } from '../common/error/errors';
 import { selector } from '../common/selector';
 import { ConfigSelector } from '../config';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
@@ -330,7 +331,7 @@ export default class CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to apply, otherwise undefined.
      */
-    getApplyCouponError(): Error | undefined {
+    getApplyCouponError(): RequestError | undefined {
         return this._coupons.getApplyError();
     }
 
@@ -339,7 +340,7 @@ export default class CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to remove, otherwise undefined.
      */
-    getRemoveCouponError(): Error | undefined {
+    getRemoveCouponError(): RequestError | undefined {
         return this._coupons.getRemoveError();
     }
 
@@ -348,7 +349,7 @@ export default class CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to apply, otherwise undefined.
      */
-    getApplyGiftCertificateError(): Error | undefined {
+    getApplyGiftCertificateError(): RequestError | undefined {
         return this._giftCertificates.getApplyError();
     }
 
@@ -357,7 +358,7 @@ export default class CheckoutStoreErrorSelector {
      *
      * @returns The error object if unable to remove, otherwise undefined.
      */
-    getRemoveGiftCertificateError(): Error | undefined {
+    getRemoveGiftCertificateError(): RequestError | undefined {
         return this._giftCertificates.getRemoveError();
     }
 
