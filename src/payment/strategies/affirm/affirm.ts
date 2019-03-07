@@ -17,7 +17,7 @@ export interface AffirmRequestData {
         mode?: string,
     };
     order_id?: string;
-    shipping_ammount: number;
+    shipping_amount: number;
     tax_amount: number;
     total: number;
 }

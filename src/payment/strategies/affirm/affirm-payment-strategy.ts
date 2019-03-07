@@ -147,7 +147,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
                 shipping_type: consigment.selectedShippingOption.type,
             },
             order_id: checkout.orderId ? checkout.orderId.toString() : '',
-            shipping_ammount: checkout.shippingCostTotal * 100,
+            shipping_amount: checkout.shippingCostTotal * 100,
             tax_amount: checkout.taxTotal * 100,
             total: (grandTotal > 0 ? grandTotal : 0) * 100,
         };
