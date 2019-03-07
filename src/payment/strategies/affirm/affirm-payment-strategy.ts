@@ -24,21 +24,21 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId, options.gatewayId);
 
-        if (!paymentMethod) {
+        if (!paymentMethod ) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const testMode = paymentMethod.config.testMode || false;
-        const publicApiKey = paymentMethod.initializationData.publicKey;
+        const { testMode } = paymentMethod.config;
+        const { publicKey } = paymentMethod.initializationData;
 
-        affirmJs(publicApiKey, this._getScriptURI(testMode));
+        affirmJs(publicKey, this._getScriptURI(testMode));
 
         return Promise.resolve(this._store.getState());
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const paymentId = payload.payment && payload.payment.methodId;
-        const useStoreCredit = payload.useStoreCredit || false;
+        const { useStoreCredit } = payload;
         const state = this._store.getState();
         const config = state.config.getStoreConfig();
 
@@ -105,11 +105,11 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    private _getScriptURI(testMode: boolean): string {
+    private _getScriptURI(testMode: boolean = false): string {
         return testMode ? SCRIPTS_DEFAULT.SANDBOX : SCRIPTS_DEFAULT.PROD;
     }
 
-    private _initializeCheckout(useStoreCredit: boolean): AffirmRequestData {
+    private _initializeCheckout(useStoreCredit: boolean = false): AffirmRequestData {
         const state = this._store.getState();
         const checkout = state.checkout.getCheckout();
         const config = state.config.getStoreConfig();
