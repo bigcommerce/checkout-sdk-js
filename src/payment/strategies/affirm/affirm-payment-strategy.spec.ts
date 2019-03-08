@@ -187,15 +187,9 @@ describe('AffirmPaymentStrategy', () => {
     });
 
     describe('#finalize()', () => {
-        const nonce = 'bar';
 
         it('submits the order and the payment', async () => {
             store = createCheckoutStore(merge({}, getCheckoutStoreState(), {
-                config: {
-                    data: {
-                        context: { payment: { token: nonce } },
-                    },
-                },
                 checkout: {
                     data: {
                         ...getCheckout(),
@@ -234,7 +228,7 @@ describe('AffirmPaymentStrategy', () => {
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
                 methodId: paymentMethod.id,
-                paymentData: { nonce },
+                paymentData: {nonce: paymentMethod.initializationData.token},
             });
         });
 
@@ -255,14 +249,6 @@ describe('AffirmPaymentStrategy', () => {
             }
         });
 
-        it('throws error if unable to finalize order due to missing configuration information', async () => {
-            jest.spyOn(store.getState().config, 'getContextConfig').mockReturnValue(undefined);
-            try {
-                await strategy.finalize({ methodId: paymentMethod.id, gatewayId: paymentMethod.gateway });
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
     });
 
 });

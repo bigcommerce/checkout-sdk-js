@@ -200,6 +200,7 @@ export function getAffirm(): PaymentMethod {
         clientToken: 'foo',
         initializationData: {
             publicKey: 'BZXX1Q1YF6Y59QNH',
+            token: '9O56RF6E0TJYUFTT',
         },
     };
 }
@@ -375,6 +376,7 @@ export function getPaymentMethod(): PaymentMethod {
 
 export function getPaymentMethods(): PaymentMethod[] {
     return [
+        getAffirm(),
         getBraintree(),
         getBraintreePaypal(),
         getBraintreePaypalCredit(),

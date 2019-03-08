@@ -76,15 +76,15 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(this._remoteCheckoutActionCreator.loadSettings(options.methodId))
             .then(state => {
                 const payment = state.payment.getPaymentId();
-                const config = state.config.getContextConfig();
+                const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId, options.gatewayId);
                 const affirm = state.remoteCheckout.getCheckout('affirm');
 
                 if (!payment) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
 
-                if (!config || !config.payment.token) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                if (!paymentMethod) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
                 if (!affirm || !affirm.settings) {
@@ -97,7 +97,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
                 const paymentPayload = {
                     methodId: payment.providerId,
-                    paymentData: { nonce: config.payment.token },
+                    paymentData: { nonce: paymentMethod.initializationData.token },
                 };
 
                 return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
