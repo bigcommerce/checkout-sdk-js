@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.8"></a>
+## [1.18.8](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.7...v1.18.8) (2019-03-18)
+
+
+### Bug Fixes
+
+* **payment:** INT-1360 Bump BigPay client. ([ea7849d](https://github.com/bigcommerce/checkout-sdk-js/commit/ea7849d))
+
+
+
 <a name="1.18.7"></a>
 ## [1.18.7](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.6...v1.18.7) (2019-03-11)
 
