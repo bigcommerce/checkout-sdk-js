@@ -145,5 +145,18 @@ describe('CartComparator', () => {
 
             expect(comparator.isEqual(cartA, cartB)).toEqual(false);
         });
+
+        it('returns true if two carts have same items but only differ in their order', () => {
+            const cartA = getCart();
+            const cartB = {
+                ...cartA,
+                lineItems: {
+                    ...cartA.lineItems,
+                    physicalItems: cartA.lineItems.physicalItems.slice().reverse(),
+                },
+            };
+
+            expect(comparator.isEqual(cartA, cartB)).toEqual(true);
+        });
     });
 });
