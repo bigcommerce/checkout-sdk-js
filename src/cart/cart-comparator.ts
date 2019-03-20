@@ -18,23 +18,32 @@ export default class CartComparator {
             currency: cart.currency,
             id: cart.id,
             lineItems: {
-                digitalItems: cart.lineItems.digitalItems.map(item => ({
-                    extendedSalePrice: item.extendedSalePrice,
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    variantId: item.variantId,
-                })),
-                giftCertificates: cart.lineItems.giftCertificates.map(item => ({
-                    amount: item.amount,
-                    recipient: item.recipient,
-                })),
-                physicalItems: cart.lineItems.physicalItems.map(item => ({
-                    extendedSalePrice: item.extendedSalePrice,
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    variantId: item.variantId,
-                    giftWrapping: item.giftWrapping,
-                })),
+                digitalItems: cart.lineItems.digitalItems
+                    .slice()
+                    .sort((itemA, itemB) => `${itemA.id}`.localeCompare(`${itemB.id}`))
+                    .map(item => ({
+                        extendedSalePrice: item.extendedSalePrice,
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        variantId: item.variantId,
+                    })),
+                giftCertificates: cart.lineItems.giftCertificates
+                    .slice()
+                    .sort((itemA, itemB) => `${itemA.id}`.localeCompare(`${itemB.id}`))
+                    .map(item => ({
+                        amount: item.amount,
+                        recipient: item.recipient,
+                    })),
+                physicalItems: cart.lineItems.physicalItems
+                    .slice()
+                    .sort((itemA, itemB) => `${itemA.id}`.localeCompare(`${itemB.id}`))
+                    .map(item => ({
+                        extendedSalePrice: item.extendedSalePrice,
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        variantId: item.variantId,
+                        giftWrapping: item.giftWrapping,
+                    })),
             },
         };
     }
