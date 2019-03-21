@@ -1,5 +1,5 @@
 import isNonceLike from './is-nonce-like';
-import { getPayment } from './payments.mock';
+import { getCreditCardInstrument } from './payments.mock';
 
 describe('isNonceLike', () => {
     it('returns true if a Tokenized Credit Card', () => {
@@ -8,7 +8,7 @@ describe('isNonceLike', () => {
     });
 
     it('returns false if the object looks like a credit creditcard', () => {
-        const { paymentData } = getPayment();
+        const paymentData = getCreditCardInstrument();
         expect(isNonceLike(paymentData)).toBeFalsy();
     });
 

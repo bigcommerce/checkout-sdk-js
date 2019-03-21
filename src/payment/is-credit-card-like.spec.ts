@@ -1,10 +1,10 @@
 import isCreditCardLike from './is-credit-card-like';
-import { getPayment } from './payments.mock';
+import { getCreditCardInstrument } from './payments.mock';
 
 describe('isCreditCardLike', () => {
     it('returns true if the object looks like a credit creditcard', () => {
-        const { paymentData } = getPayment();
-        expect(isCreditCardLike(paymentData)).toBeTruthy();
+        const paymentData = getCreditCardInstrument();
+        expect(paymentData && isCreditCardLike(paymentData)).toBeTruthy();
     });
 
     it('returns false if a Vaulted Instrument', () => {
