@@ -6,10 +6,9 @@ import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { LoadOrderPaymentsAction, OrderActionCreator, OrderRequestBody } from '../order';
+import { LoadOrderPaymentsAction, OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
-import Payment from './payment';
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import {
     PaymentStrategyActionType,
@@ -32,7 +31,7 @@ export default class PaymentStrategyActionCreator {
     execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction, InternalCheckoutSelectors> {
         return store => new Observable((observer: Observer<PaymentStrategyExecuteAction>) => {
             const state = store.getState();
-            const { payment = {} as Payment, useStoreCredit } = payload;
+            const { payment = {} as OrderPaymentRequestBody, useStoreCredit } = payload;
             const meta = { methodId: payment.methodId };
 
             let strategy: PaymentStrategy;

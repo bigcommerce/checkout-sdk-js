@@ -6,12 +6,13 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
+import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
 import PaymentActionCreator from '../../payment-action-creator';
 import { InitializeOffsitePaymentAction, PaymentActionType } from '../../payment-actions';
+import { PaymentRequestOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import * as paymentStatusTypes from '../../payment-status-types';
 
@@ -22,6 +23,8 @@ describe('OffsitePaymentStrategy', () => {
     let initializeOffsitePaymentAction: Observable<InitializeOffsitePaymentAction>;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
+    let options: PaymentRequestOptions;
+    let payload: OrderRequestBody;
     let store: CheckoutStore;
     let strategy: OffsitePaymentStrategy;
     let submitOrderAction: Observable<SubmitOrderAction>;
@@ -39,6 +42,13 @@ describe('OffsitePaymentStrategy', () => {
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
         initializeOffsitePaymentAction = of(createAction(PaymentActionType.InitializeOffsitePaymentRequested));
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        options = { methodId: 'foobar' };
+        payload = merge(getOrderRequestBody(), {
+            payment: {
+                methodId: options.methodId,
+                paymentData: null,
+            },
+        });
 
         jest.spyOn(store, 'dispatch');
 
@@ -55,9 +65,6 @@ describe('OffsitePaymentStrategy', () => {
     });
 
     it('submits order without payment data', async () => {
-        const payload = getOrderRequestBody();
-        const options = { methodId: 'amex', gatewayId: 'adyen' };
-
         await strategy.execute(payload, options);
 
         expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
@@ -65,10 +72,11 @@ describe('OffsitePaymentStrategy', () => {
     });
 
     it('submits order with payment data if payment gateway is "adyen"', async () => {
-        const payload = merge({}, getOrderRequestBody(), {
-            payment: { methodId: 'amex', gatewayId: 'adyen' },
-        });
-        const options = { methodId: 'amex', gatewayId: 'adyen' };
+        options = { methodId: 'amex', gatewayId: 'adyen' };
+        payload = {
+            ...payload,
+            payment: { methodId: options.methodId, gatewayId: options.gatewayId },
+        };
 
         await strategy.execute(payload, options);
 
@@ -77,10 +85,11 @@ describe('OffsitePaymentStrategy', () => {
     });
 
     it('submits order with payment data if payment method is "ccavenuemars"', async () => {
-        const payload = merge({}, getOrderRequestBody(), {
-            payment: { methodId: 'ccavenuemars' },
-        });
-        const options = { methodId: 'ccavenuemars', gatewayId: '' };
+        options = { methodId: 'ccavenuemars' };
+        payload = {
+            ...payload,
+            payment: { methodId: options.methodId, gatewayId: options.gatewayId },
+        };
 
         await strategy.execute(payload, options);
 
@@ -89,18 +98,14 @@ describe('OffsitePaymentStrategy', () => {
     });
 
     it('initializes offsite payment flow', async () => {
-        const payload = getOrderRequestBody();
-        const options = { methodId: 'amex', gatewayId: 'adyen' };
-
         await strategy.execute(payload, options);
 
-        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(payload.payment);
+        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(options.methodId, options.gatewayId);
         expect(store.dispatch).toHaveBeenCalledWith(initializeOffsitePaymentAction);
     });
 
     it('finalizes order if order is created and payment is acknowledged', async () => {
         const state = store.getState();
-        const options = { methodId: 'amex', gatewayId: 'adyen' };
 
         jest.spyOn(state.order, 'getOrder')
             .mockReturnValue(getOrder());
@@ -116,7 +121,6 @@ describe('OffsitePaymentStrategy', () => {
 
     it('finalizes order if order is created and payment is finalized', async () => {
         const state = store.getState();
-        const options = { methodId: 'amex', gatewayId: 'adyen' };
 
         jest.spyOn(state.order, 'getOrder')
             .mockReturnValue(getOrder());

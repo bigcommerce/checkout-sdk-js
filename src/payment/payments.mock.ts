@@ -19,15 +19,19 @@ import PaymentState from './payment-state';
 export function getPayment(): Payment {
     return {
         methodId: 'authorizenet',
-        paymentData: {
-            ccExpiry: {
-                month: '10',
-                year: '20',
-            },
-            ccName: 'BigCommerce',
-            ccNumber: '4111111111111111',
-            ccCvv: '123',
+        paymentData: getCreditCardInstrument(),
+    };
+}
+
+export function getCreditCardInstrument(): CreditCardInstrument {
+    return {
+        ccExpiry: {
+            month: '10',
+            year: '20',
         },
+        ccName: 'BigCommerce',
+        ccNumber: '4111111111111111',
+        ccCvv: '123',
     };
 }
 

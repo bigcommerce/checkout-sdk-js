@@ -1,7 +1,7 @@
 export default interface Payment {
     methodId: string;
     gatewayId?: string;
-    paymentData: PaymentInstrument & PaymentInstrumentMeta;
+    paymentData?: PaymentInstrument & PaymentInstrumentMeta;
 }
 
 export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument | CryptogramInstrument;

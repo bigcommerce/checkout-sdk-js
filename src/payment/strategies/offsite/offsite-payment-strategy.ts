@@ -17,16 +17,15 @@ export default class OffsitePaymentStrategy implements PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
-        const paymentData = payment && payment.paymentData;
         const orderPayload = this._shouldSubmitFullPayload(payment) ? payload : order;
 
-        if (!payment || !paymentData) {
-            throw new PaymentArgumentInvalidError(['payment.paymentData']);
+        if (!payment) {
+            throw new PaymentArgumentInvalidError(['payment']);
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
             .then(() =>
-                this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment({ ...payment, paymentData }))
+                this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId))
             );
     }
 

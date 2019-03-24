@@ -1,13 +1,13 @@
-import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { createAction, ThunkAction } from '@bigcommerce/data-store';
 import { pick } from 'lodash';
-import { concat, from, of, Observable, Observer } from 'rxjs';
+import { concat, from, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';
 import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
-import { InvalidArgumentError, StandardError } from '../common/error/errors';
+import { StandardError } from '../common/error/errors';
 import { mapToInternalCustomer } from '../customer';
 import { mapToInternalOrder, OrderActionCreator } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
@@ -43,34 +43,29 @@ export default class PaymentActionCreator {
         );
     }
 
-    initializeOffsitePayment(payment: Payment): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
-        return store =>
-            Observable.create((observer: Observer<InitializeOffsitePaymentAction>) => {
-                observer.next(createAction(PaymentActionType.InitializeOffsitePaymentRequested));
+    initializeOffsitePayment(
+        methodId: string,
+        gatewayId?: string
+    ): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
+        return store => {
+            const payload = this._getPaymentRequestBody({ gatewayId, methodId }, store.getState());
 
-                return this._paymentRequestSender.initializeOffsitePayment(
-                    this._getPaymentRequestBody(payment, store.getState())
-                )
-                    .then(() => {
-                        observer.next(createAction(PaymentActionType.InitializeOffsitePaymentSucceeded));
-                        observer.complete();
-                    })
-                    .catch(() => {
-                        observer.error(createErrorAction(PaymentActionType.InitializeOffsitePaymentFailed));
-                    });
-            });
+            return concat(
+                of(createAction(PaymentActionType.InitializeOffsitePaymentRequested)),
+                this._paymentRequestSender.initializeOffsitePayment(payload)
+                    .then(() => createAction(PaymentActionType.InitializeOffsitePaymentSucceeded))
+            ).pipe(
+                catchError(error => throwErrorAction(PaymentActionType.InitializeOffsitePaymentFailed, error))
+            );
+        };
     }
 
     private _getPaymentRequestBody(payment: Payment, state: InternalCheckoutSelectors): PaymentRequestBody {
-        if (!payment.paymentData) {
-            throw new InvalidArgumentError('Unable to construct payment request because `payment.paymentData` is not provided.');
-        }
-
         const billingAddress = state.billingAddress.getBillingAddress();
         const checkout = state.checkout.getCheckout();
         const customer = state.customer.getCustomer();
         const order = state.order.getOrder();
-        const paymentMethod = this._getPaymentMethod(payment, state.paymentMethods);
+        const paymentMethod = this._getPaymentMethod(state.paymentMethods, payment.methodId, payment.gatewayId);
         const shippingAddress = state.shippingAddress.getShippingAddress();
         const consignments = state.consignments.getConsignments();
         const shippingOption = state.consignments.getShippingOption();
@@ -81,7 +76,7 @@ export default class PaymentActionCreator {
         const orderMeta = state.order.getOrderMeta();
         const internalCustomer = customer && billingAddress && mapToInternalCustomer(customer, billingAddress);
 
-        const authToken = instrumentMeta && isVaultedInstrument(payment.paymentData) ?
+        const authToken = instrumentMeta && payment.paymentData && isVaultedInstrument(payment.paymentData) ?
             `${state.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}` :
             state.payment.getPaymentToken();
 
@@ -116,8 +111,12 @@ export default class PaymentActionCreator {
         };
     }
 
-    private _getPaymentMethod(payment: Payment, paymentMethodSelector: PaymentMethodSelector): PaymentMethod | undefined {
-        const paymentMethod = paymentMethodSelector.getPaymentMethod(payment.methodId, payment.gatewayId);
+    private _getPaymentMethod(
+        paymentMethodSelector: PaymentMethodSelector,
+        methodId: string,
+        gatewayId?: string
+    ): PaymentMethod | undefined {
+        const paymentMethod = paymentMethodSelector.getPaymentMethod(methodId, gatewayId);
 
         if (!paymentMethod) {
             return;

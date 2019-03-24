@@ -9,7 +9,7 @@ import PaymentMethod from './payment-method';
 
 export default interface PaymentRequestBody {
     authToken: string;
-    payment: PaymentInstrument;
+    payment?: PaymentInstrument;
     billingAddress?: InternalAddress;
     cart?: InternalCart;
     customer?: InternalCustomer;

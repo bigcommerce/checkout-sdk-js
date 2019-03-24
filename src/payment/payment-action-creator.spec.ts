@@ -101,7 +101,8 @@ describe('PaymentActionCreator', () => {
 
     describe('#initializeOffsitePayment()', () => {
         it('dispatches actions to data store', async () => {
-            const actions = await from(paymentActionCreator.initializeOffsitePayment(getPayment())(store))
+            const payment = getPayment();
+            const actions = await from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId)(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -112,13 +113,14 @@ describe('PaymentActionCreator', () => {
         });
 
         it('dispatches error actions to data store if unsuccessful', async () => {
+            const error = new Error();
+
             jest.spyOn(paymentRequestSender, 'initializeOffsitePayment')
-                .mockReturnValue(
-                    Promise.reject(new Error())
-                );
+                .mockRejectedValue(error);
 
             const errorHandler = jest.fn(action => of(action));
-            const actions = await from(paymentActionCreator.initializeOffsitePayment(getPayment())(store))
+            const payment = getPayment();
+            const actions = await from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId)(store))
                 .pipe(
                     catchError(errorHandler),
                     toArray()
@@ -132,6 +134,7 @@ describe('PaymentActionCreator', () => {
                 },
                 {
                     type: PaymentActionType.InitializeOffsitePaymentFailed,
+                    payload: error,
                     error: true,
                 },
             ]);
