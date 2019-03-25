@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.9"></a>
+## [1.18.9](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.8...v1.18.9) (2019-03-25)
+
+
+### Bug Fixes
+
+* **cart:** CHECKOUT-3844 Ignore order of line items when comparing cart content ([51e4c6e](https://github.com/bigcommerce/checkout-sdk-js/commit/51e4c6e))
+* **payment:** CHECKOUT-3844 Don't throw error if no payment data is passed for offsite payment methods ([b0615cb](https://github.com/bigcommerce/checkout-sdk-js/commit/b0615cb))
+
+
+
 <a name="1.18.8"></a>
 ## [1.18.8](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.7...v1.18.8) (2019-03-18)
 
