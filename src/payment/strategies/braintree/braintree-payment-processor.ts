@@ -1,5 +1,6 @@
 import { Address } from '../../../address';
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { Overlay } from '../../../common/overlay';
 import { CancellablePromise } from '../../../common/utility';
 import { OrderPaymentRequestBody } from '../../../order';
 import { PaymentMethodCancelledError } from '../../errors';
@@ -13,7 +14,8 @@ export default class BraintreePaymentProcessor {
     private _threeDSecureOptions?: BraintreeThreeDSecureOptions;
 
     constructor(
-        private _braintreeSDKCreator: BraintreeSDKCreator
+        private _braintreeSDKCreator: BraintreeSDKCreator,
+        private _overlay: Overlay
     ) {}
 
     initialize(clientToken: string, options?: BraintreePaymentInitializeOptions): void {
@@ -38,15 +40,31 @@ export default class BraintreePaymentProcessor {
 
     paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<NonceInstrument> {
         return this._braintreeSDKCreator.getPaypal()
-            .then(paypal => paypal.tokenize({
-                amount,
-                currency,
-                enableShippingAddress: true,
-                flow: 'checkout',
-                locale: storeLanguage,
-                offerCredit,
-                useraction: 'commit',
-            }));
+            .then(paypal => {
+                this._overlay.show({
+                    onClick: () => paypal.focusWindow(),
+                });
+
+                return paypal.tokenize({
+                    amount,
+                    currency,
+                    enableShippingAddress: true,
+                    flow: 'checkout',
+                    locale: storeLanguage,
+                    offerCredit,
+                    useraction: 'commit',
+                });
+            })
+            .then(response => {
+                this._overlay.remove();
+
+                return response;
+            })
+            .catch(error => {
+                this._overlay.remove();
+
+                throw error;
+            });
     }
 
     verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<NonceInstrument> {
