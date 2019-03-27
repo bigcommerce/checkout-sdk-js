@@ -2,7 +2,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -10,7 +10,9 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
+import { BraintreeError } from './braintree';
 import BraintreePaymentProcessor from './braintree-payment-processor';
+import isBraintreeError from './is-braintree-error';
 
 export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
@@ -71,12 +73,16 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.getState());
     }
 
-    private _handleError(error: Error): never {
-        if (error.name === 'BraintreeError') {
-            throw new StandardError(error.message);
+    private _handleError(error: BraintreeError | Error): never {
+        if (!isBraintreeError(error)) {
+            throw error;
         }
 
-        throw error;
+        if (error.code === 'PAYPAL_POPUP_CLOSED') {
+            throw new PaymentMethodCancelledError(error.message);
+        }
+
+        throw new StandardError(error.message);
     }
 
     private _preparePaymentData(payment: OrderPaymentRequestBody): Promise<Payment> {
