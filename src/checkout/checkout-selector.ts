@@ -44,6 +44,19 @@ export default class CheckoutSelector {
         };
     }
 
+    getGrandTotal(useStoreCredit?: boolean): number | undefined {
+        const checkout = this.getCheckout();
+
+        if (!checkout) {
+            return;
+        }
+
+        const grandTotal = checkout.grandTotal || 0;
+        const storeCredit = checkout.customer.storeCredit || 0;
+
+        return useStoreCredit ? Math.max(grandTotal - storeCredit, 0) : grandTotal;
+    }
+
     getLoadError(): Error | undefined {
         return this._checkout.errors.loadError;
     }
