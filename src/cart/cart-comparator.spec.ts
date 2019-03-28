@@ -1,3 +1,5 @@
+import { getPhysicalItem } from '../order/line-items.mock';
+
 import CartComparator from './cart-comparator';
 import { getCart } from './carts.mock';
 
@@ -147,12 +149,67 @@ describe('CartComparator', () => {
         });
 
         it('returns true if two carts have same items but only differ in their order', () => {
-            const cartA = getCart();
+            const baseCart = getCart();
+            const baseItem = getPhysicalItem();
+            const cartA = {
+                ...baseCart,
+                lineItems: {
+                    ...baseCart.lineItems,
+                    physicalItems: [
+                        baseItem,
+                        {
+                            ...baseItem,
+                            id: '833b1d4d-a407-4c3d-97d6-3ce079467bc5',
+                            productId: 30,
+                            variantId: 49,
+                        },
+                    ],
+                },
+            };
+            // Same set of items as `cartA` but in a different order
             const cartB = {
                 ...cartA,
                 lineItems: {
                     ...cartA.lineItems,
                     physicalItems: cartA.lineItems.physicalItems.slice().reverse(),
+                },
+            };
+
+            expect(comparator.isEqual(cartA, cartB)).toEqual(true);
+        });
+
+        it('returns true if two carts have same items but only differ in their id', () => {
+            const baseCart = getCart();
+            const baseItem = getPhysicalItem();
+            const cartA = {
+                ...baseCart,
+                lineItems: {
+                    ...baseCart.lineItems,
+                    physicalItems: [
+                        baseItem,
+                        {
+                            ...baseItem,
+                            id: '833b1d4d-a407-4c3d-97d6-3ce079467bc5',
+                            productId: 30,
+                            variantId: 49,
+                        },
+                    ],
+                },
+            };
+            // Same set of items as `cartA` but have different product IDs
+            const cartB = {
+                ...cartA,
+                lineItems: {
+                    ...cartA.lineItems,
+                    physicalItems: [
+                        getPhysicalItem(),
+                        {
+                            ...getPhysicalItem(),
+                            id: '12a3c145-f1b3-4cca-8456-4c25daf9fa7a',
+                            productId: 30,
+                            variantId: 49,
+                        },
+                    ],
                 },
             };
 
