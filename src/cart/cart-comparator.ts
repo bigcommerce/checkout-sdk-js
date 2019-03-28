@@ -20,7 +20,9 @@ export default class CartComparator {
             lineItems: {
                 digitalItems: cart.lineItems.digitalItems
                     .slice()
-                    .sort((itemA, itemB) => `${itemA.id}`.localeCompare(`${itemB.id}`))
+                    .sort((itemA, itemB) =>
+                        `${itemA.productId}${itemA.variantId}`.localeCompare(`${itemB.productId}${itemB.variantId}`)
+                    )
                     .map(item => ({
                         extendedSalePrice: item.extendedSalePrice,
                         productId: item.productId,
@@ -36,7 +38,9 @@ export default class CartComparator {
                     })),
                 physicalItems: cart.lineItems.physicalItems
                     .slice()
-                    .sort((itemA, itemB) => `${itemA.id}`.localeCompare(`${itemB.id}`))
+                    .sort((itemA, itemB) =>
+                        `${itemA.productId}${itemA.variantId}`.localeCompare(`${itemB.productId}${itemB.variantId}`)
+                    )
                     .map(item => ({
                         extendedSalePrice: item.extendedSalePrice,
                         productId: item.productId,
