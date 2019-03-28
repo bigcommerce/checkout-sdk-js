@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.10"></a>
+## [1.18.10](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.9...v1.18.10) (2019-03-28)
+
+
+### Bug Fixes
+
+* **cart:** CHECKOUT-4012 Use `productId` and `variantId` to sort items in cart ([4e2ab5b](https://github.com/bigcommerce/checkout-sdk-js/commit/4e2ab5b))
+
+
+
 <a name="1.18.9"></a>
 ## [1.18.9](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.8...v1.18.9) (2019-03-25)
 
