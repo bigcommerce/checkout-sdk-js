@@ -56,7 +56,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment']);
         }
 
-        return (payment ? this._preparePaymentData(payment) : Promise.resolve(payment))
+        return (payment ? this._preparePaymentData(payment, order.useStoreCredit) : Promise.resolve(payment))
             .then(payment => Promise.all([payment, this._store.dispatch(this._orderActionCreator.submitOrder(order, options))]))
             .then(([payment]) => this._store.dispatch(this._paymentActionCreator.submitPayment(payment)))
             .catch((error: Error) => this._handleError(error));
@@ -79,12 +79,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         throw error;
     }
 
-    private _preparePaymentData(payment: OrderPaymentRequestBody): Promise<Payment> {
+    private _preparePaymentData(payment: OrderPaymentRequestBody, useStoreCredit?: boolean): Promise<Payment> {
         const state = this._store.getState();
-        const checkout = state.checkout.getCheckout();
+        const grandTotal = state.checkout.getGrandTotal(useStoreCredit);
         const config = state.config.getStoreConfig();
 
-        if (!checkout) {
+        if (!grandTotal) {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
@@ -104,7 +104,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         const tokenizedCard = this._braintreePaymentProcessor
-            .paypal(checkout.grandTotal, storeLanguage, currency.code, this._credit);
+            .paypal(grandTotal, storeLanguage, currency.code, this._credit);
 
         return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
             .then(paymentData => ({ ...payment, paymentData: { ...paymentData, method } }));

@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+
 import CheckoutSelector from './checkout-selector';
 import CheckoutStoreState from './checkout-store-state';
 import { getCheckout, getCheckoutState, getCheckoutStoreState } from './checkouts.mock';
@@ -61,5 +63,28 @@ describe('CheckoutSelector', () => {
         }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
 
         expect(selector.isUpdating()).toEqual(true);
+    });
+
+    it('returns grand total with store credit if flag is passed', () => {
+        state = merge(getCheckoutStoreState(), {
+            customer: { data: { storeCredit: 50 } },
+        });
+        selectors = createInternalCheckoutSelectors(state);
+
+        const selector = new CheckoutSelector(
+            state.checkout,
+            selectors.billingAddress,
+            selectors.cart,
+            selectors.consignments,
+            selectors.coupons,
+            selectors.customer,
+            selectors.giftCertificates
+        );
+
+        expect(selector.getGrandTotal(true))
+            .toEqual(140);
+
+        expect(selector.getGrandTotal())
+            .toEqual(190);
     });
 });

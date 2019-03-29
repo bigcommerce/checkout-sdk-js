@@ -162,6 +162,25 @@ describe('BraintreePaypalPaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
+        it('passes grand total with store credit to PayPal if it is applied', async () => {
+            await braintreePaypalPaymentStrategy.initialize(options);
+
+            const { checkout } = store.getState();
+
+            jest.spyOn(checkout, 'getGrandTotal')
+                .mockImplementation(useStoreCredit => useStoreCredit ? 150 : 190);
+
+            await braintreePaypalPaymentStrategy.execute({ ...orderRequestBody, useStoreCredit: true }, options);
+
+            expect(checkout.getGrandTotal).toHaveBeenCalledWith(true);
+            expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(150, 'en_US', 'USD', false);
+
+            await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+
+            expect(checkout.getGrandTotal).toHaveBeenCalledWith(false);
+            expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', false);
+        });
+
         it('does not call paypal if a nonce is present', async () => {
             paymentMethodMock.nonce = 'some-nonce';
 

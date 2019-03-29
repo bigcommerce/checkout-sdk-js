@@ -62,16 +62,9 @@ export default class PaymentSelector {
     }
 
     isPaymentDataRequired(useStoreCredit: boolean = false): boolean {
-        const checkout = this._checkout.getCheckout();
+        const grandTotal = this._checkout.getGrandTotal(useStoreCredit);
 
-        if (!checkout) {
-            return false;
-        }
-
-        const grandTotal = checkout.grandTotal || 0;
-        const storeCredit = checkout.customer.storeCredit || 0;
-
-        return (useStoreCredit ? grandTotal - storeCredit : grandTotal) > 0;
+        return grandTotal ? grandTotal > 0 : false;
     }
 
     isPaymentDataSubmitted(paymentMethod?: PaymentMethod): boolean {
