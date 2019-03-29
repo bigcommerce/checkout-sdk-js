@@ -95,19 +95,19 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
             return Promise.resolve(payment as Payment);
         }
 
-        const checkout = state.checkout.getCheckout();
+        const order = state.order.getOrder();
         const billingAddress = state.billingAddress.getBillingAddress();
 
-        if (!checkout) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        if (!order) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrder);
         }
 
         if (!billingAddress) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+            throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
         }
 
         const tokenizedCard = this._is3dsEnabled ?
-            this._braintreePaymentProcessor.verifyCard(payment, billingAddress, checkout.grandTotal) :
+            this._braintreePaymentProcessor.verifyCard(payment, billingAddress, order.orderAmount) :
             this._braintreePaymentProcessor.tokenizeCard(payment, billingAddress);
 
         return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
