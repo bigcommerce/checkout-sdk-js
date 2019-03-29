@@ -1,8 +1,9 @@
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
+import { Overlay } from '../../../common/overlay';
 import { PaymentMethodCancelledError } from '../../errors';
 import { NonceInstrument } from '../../payment';
 
-import { BraintreeClient, BraintreeThreeDSecure } from './braintree';
+import { BraintreeClient, BraintreePaypal, BraintreeThreeDSecure } from './braintree';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 import {
@@ -17,20 +18,22 @@ import {
 
 describe('BraintreePaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;
+    let overlay: Overlay;
 
     beforeEach(() => {
         braintreeSDKCreator = {} as BraintreeSDKCreator;
+        overlay = new Overlay();
     });
 
     it('creates a instance of the payment processor', () => {
-        const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
+        const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
         expect(braintreePaymentProcessor).toBeInstanceOf(BraintreePaymentProcessor);
     });
 
     describe('#initialize()', () => {
         it('initializes the sdk creator with the client token', () => {
             braintreeSDKCreator.initialize = jest.fn();
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
             braintreePaymentProcessor.initialize('clientToken');
             expect(braintreeSDKCreator.initialize).toHaveBeenCalledWith('clientToken');
         });
@@ -45,7 +48,7 @@ describe('BraintreePaymentProcessor', () => {
             jest.spyOn(clientMock, 'request')
                 .mockReturnValue(Promise.resolve(getTokenizeResponseBody()));
             braintreeSDKCreator.getClient = jest.fn().mockReturnValue(Promise.resolve(clientMock));
-            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
+            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
         });
 
         it('tokenizes a card', async () => {
@@ -70,7 +73,7 @@ describe('BraintreePaymentProcessor', () => {
             braintreeSDKCreator.initialize = jest.fn();
             braintreeSDKCreator.get3DS = jest.fn().mockReturnValue(Promise.resolve(threeDSecureMock));
 
-            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
+            braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
 
             braintreePaymentProcessor.initialize('clientToken', {
                 threeDSecure: {
@@ -86,7 +89,7 @@ describe('BraintreePaymentProcessor', () => {
         });
 
         it('throws if no modal handler was supplied on initialization', async () => {
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
             expect(() => braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122))
                 .toThrow();
         });
@@ -172,7 +175,7 @@ describe('BraintreePaymentProcessor', () => {
         });
 
         it('appends data to a processed payment', async () => {
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
             const expected = await braintreePaymentProcessor.appendSessionId(Promise.resolve(processedPayment));
             expect(expected).toEqual({
                 ...processedPayment,
@@ -184,9 +187,85 @@ describe('BraintreePaymentProcessor', () => {
     describe('#deinitialize()', () => {
         it('calls teardown in the braintre sdk creator', async () => {
             braintreeSDKCreator.teardown = jest.fn();
-            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator);
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
             await braintreePaymentProcessor.deinitialize();
             expect(braintreeSDKCreator.teardown).toHaveBeenCalled();
+        });
+    });
+
+    describe('#paypal()', () => {
+        let paypal: BraintreePaypal;
+
+        beforeEach(() => {
+            paypal = {
+                closeWindow: jest.fn(),
+                focusWindow: jest.fn(),
+                tokenize: jest.fn(),
+            };
+
+            braintreeSDKCreator.getPaypal = () => Promise.resolve(paypal);
+
+            jest.spyOn(overlay, 'show')
+                .mockImplementation();
+
+            jest.spyOn(overlay, 'remove')
+                .mockImplementation();
+        });
+
+        it('shows Paypal modal for tokenization', async () => {
+            const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
+
+            await processor.paypal(200, 'en', 'USD', false);
+
+            expect(paypal.tokenize)
+                .toHaveBeenCalledWith({
+                    amount: 200,
+                    currency: 'USD',
+                    enableShippingAddress: true,
+                    flow: 'checkout',
+                    locale: 'en',
+                    offerCredit: false,
+                    useraction: 'commit',
+                });
+        });
+
+        it('toggles overlay', async () => {
+            const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
+
+            await processor.paypal(200, 'en', 'USD', false);
+
+            expect(overlay.show)
+                .toHaveBeenCalled();
+
+            expect(overlay.remove)
+                .toHaveBeenCalled();
+        });
+
+        it('removes overlay if tokenization fails', async () => {
+            jest.spyOn(paypal, 'tokenize')
+                .mockRejectedValue(new Error());
+
+            const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
+
+            try {
+                await processor.paypal(200, 'en', 'USD', false);
+            } catch (error) {
+                expect(overlay.remove)
+                    .toHaveBeenCalled();
+            }
+        });
+
+        it('focus PayPal window when overlay is clicked', async () => {
+            const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
+
+            await processor.paypal(200, 'en', 'USD', false);
+
+            const { onClick } = (overlay.show as jest.Mock).mock.calls[0][0];
+
+            onClick();
+
+            expect(paypal.focusWindow)
+                .toHaveBeenCalled();
         });
     });
 });
