@@ -8,6 +8,7 @@ import { MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { PaymentMethodCancelledError } from '../../errors';
 import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
@@ -213,7 +214,25 @@ describe('BraintreePaypalPaymentStrategy', () => {
             try {
                 await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
             } catch (error) {
-                await expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+                expect(error).toBeInstanceOf(StandardError);
+                expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+            }
+        });
+
+        it('throws cancellation error if shopper dismisses PayPal modal before completing authorization flow', async () => {
+            jest.spyOn(braintreePaymentProcessorMock, 'paypal')
+                .mockRejectedValue({
+                    code: 'PAYPAL_POPUP_CLOSED',
+                    message: 'Customer closed PayPal popup before authorizing.',
+                    name: 'BraintreeError',
+                });
+
+            await braintreePaypalPaymentStrategy.initialize(options);
+
+            try {
+                await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodCancelledError);
             }
         });
 
