@@ -2,15 +2,16 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge, omit } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { from, of, Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import { Order, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { getOrder } from '../../../order/orders.mock';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -25,6 +26,7 @@ import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-
 import BraintreePaymentProcessor from './braintree-payment-processor';
 
 describe('BraintreeCreditCardPaymentStrategy', () => {
+    let order: Order;
     let orderActionCreator: OrderActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
@@ -58,7 +60,11 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
 
-        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        order = getOrder();
+        submitOrderAction = from([
+            createAction(OrderActionType.SubmitOrderRequested),
+            createAction(OrderActionType.LoadOrderSucceeded, order), // Currently we load the order after a successful submission
+        ]);
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
         loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: paymentMethodMock.id }));
 
@@ -188,15 +194,25 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
 
+        it('passes the order amount to 3ds client', async () => {
+            order.orderAmount = 123;
+            paymentMethodMock.config.is3dsEnabled = true;
+
+            await braintreeCreditCardPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
+            await braintreeCreditCardPaymentStrategy.execute(orderRequestBody, options);
+
+            expect(braintreePaymentProcessorMock.verifyCard).toHaveBeenCalledWith(
+                orderRequestBody.payment,
+                order.billingAddress,
+                order.orderAmount
+            );
+        });
+
         it('throws error if unable to submit payment due to missing data', async () => {
-            store = createCheckoutStore(
-                merge({},
-                    getCheckoutStoreState(),
-                    {
-                        quote: { data: null },
-                        billingAddress: { data: null },
-                    }
-                ));
+            submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+
+            jest.spyOn(orderActionCreator, 'submitOrder')
+                .mockReturnValue(submitOrderAction);
 
             braintreeCreditCardPaymentStrategy = new BraintreeCreditCardPaymentStrategy(
                 store,
