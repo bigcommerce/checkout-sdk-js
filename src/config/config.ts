@@ -59,6 +59,7 @@ export interface StoreLinks {
     createAccountLink: string;
     forgotPasswordLink: string;
     loginLink: string;
+    siteLink: string;
     orderConfirmationLink: string;
 }
 
@@ -77,6 +78,7 @@ export interface StoreCurrency {
 }
 
 export interface CheckoutSettings {
+    features: { [featureName: string]: boolean };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     guestCheckoutEnabled: boolean;
