@@ -12,6 +12,7 @@
 
 * [enableOrderComments](checkoutsettings.md#enableordercomments)
 * [enableTermsAndConditions](checkoutsettings.md#enabletermsandconditions)
+* [features](checkoutsettings.md#features)
 * [guestCheckoutEnabled](checkoutsettings.md#guestcheckoutenabled)
 * [isAnalyticsEnabled](checkoutsettings.md#isanalyticsenabled)
 * [isCardVaultingEnabled](checkoutsettings.md#iscardvaultingenabled)
@@ -42,6 +43,17 @@ ___
 ###  enableTermsAndConditions
 
 **● enableTermsAndConditions**: *`boolean`*
+
+___
+<a id="features"></a>
+
+###  features
+
+**● features**: *`object`*
+
+#### Type declaration
+
+[featureName: `string`]: `boolean`
 
 ___
 <a id="guestcheckoutenabled"></a>

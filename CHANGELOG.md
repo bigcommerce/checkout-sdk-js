@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.11"></a>
+## [1.18.11](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.10...v1.18.11) (2019-04-01)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-1289 Fix config and checkout types ([135a239](https://github.com/bigcommerce/checkout-sdk-js/commit/135a239))
+* **payment:** PAYMENTS-1253 Pass order amount to Braintree client when going through 3DS flow ([07909fe](https://github.com/bigcommerce/checkout-sdk-js/commit/07909fe))
+* **payment:** PAYMENTS-1253 Pass store credit amount to PayPal ([112cda9](https://github.com/bigcommerce/checkout-sdk-js/commit/112cda9))
+* **payment:** PAYMENTS-1253 Show overlay when Braintree PayPal modal is open ([9756fdb](https://github.com/bigcommerce/checkout-sdk-js/commit/9756fdb))
+* **payment:** PAYMENTS-1253 Throw cancellation error when shopper closes PayPal popup ([6859fd6](https://github.com/bigcommerce/checkout-sdk-js/commit/6859fd6))
+
+
+
 <a name="1.18.10"></a>
 ## [1.18.10](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.9...v1.18.10) (2019-03-28)
 

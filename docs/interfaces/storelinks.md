@@ -16,6 +16,7 @@
 * [forgotPasswordLink](storelinks.md#forgotpasswordlink)
 * [loginLink](storelinks.md#loginlink)
 * [orderConfirmationLink](storelinks.md#orderconfirmationlink)
+* [siteLink](storelinks.md#sitelink)
 
 ---
 
@@ -61,6 +62,13 @@ ___
 ###  orderConfirmationLink
 
 **● orderConfirmationLink**: *`string`*
+
+___
+<a id="sitelink"></a>
+
+###  siteLink
+
+**● siteLink**: *`string`*
 
 ___
 

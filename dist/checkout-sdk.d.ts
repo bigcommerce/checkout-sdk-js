@@ -157,7 +157,7 @@ declare interface BodyStyles {
     backgroundColor?: string;
 }
 
-declare interface BraintreeError {
+declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
     details: object;
@@ -1338,6 +1338,9 @@ declare interface CheckoutServiceOptions {
 }
 
 declare interface CheckoutSettings {
+    features: {
+        [featureName: string]: boolean;
+    };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
     guestCheckoutEnabled: boolean;
@@ -3142,6 +3145,7 @@ declare interface StoreLinks {
     createAccountLink: string;
     forgotPasswordLink: string;
     loginLink: string;
+    siteLink: string;
     orderConfirmationLink: string;
 }
 
