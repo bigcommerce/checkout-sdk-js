@@ -76,6 +76,8 @@ describe('ZipPaymentStrategy', () => {
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
             .mockReturnValue(submitOrderAction);
+        jest.spyOn(requestSender, 'sendRequest')
+            .mockReturnValue(Promise.resolve());
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
         jest.spyOn(paymentActionCreator, 'submitPayment')
@@ -96,7 +98,8 @@ describe('ZipPaymentStrategy', () => {
             paymentActionCreator,
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
-            zipScriptLoader
+            zipScriptLoader,
+            requestSender
         );
     });
 
@@ -228,6 +231,17 @@ describe('ZipPaymentStrategy', () => {
                 expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
                 expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
             }
+        });
+
+        it('continues to order confirmation if the registration is referred', async () => {
+            const referredZipClient = getZipScriptMock('referred');
+            const requestUrl = '/api/storefront/payment/zip/save-external-id';
+            jest.spyOn(zipScriptLoader, 'load')
+                .mockResolvedValue(referredZipClient);
+            await strategy.initialize(zipOptions);
+
+            await strategy.execute(orderRequestBody, zipOptions);
+            expect(requestSender.sendRequest).toHaveBeenCalledWith(requestUrl, expect.any(Object));
         });
     });
 

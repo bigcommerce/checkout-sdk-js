@@ -28,6 +28,7 @@ export const enum ZipModalEvent {
     CancelCheckout = 'cancelled',
     CheckoutApproved = 'approved',
     CheckoutDeclined = 'declined',
+    CheckoutReferred = 'referred',
 }
 
 /**
