@@ -1,25 +1,23 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
-import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
+import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import {
     PaymentActionCreator, PaymentInitializeOptions,
     PaymentMethod,
-    PaymentMethodActionCreator, PaymentMethodActionType,
-    PaymentMethodRequestSender, PaymentRequestSender
+    PaymentRequestSender
 } from '../../';
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
-import { MissingDataError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentActionType } from '../../payment-actions';
-import { getMasterpass, getPaymentMethodsState, getStripe } from '../../payment-methods.mock';
+import { getMasterpass, getPaymentMethodsState } from '../../payment-methods.mock';
 
 import { MasterpassCheckoutOptions, MasterpassPaymentStrategy, MasterpassScriptLoader } from './';
 import { Masterpass } from './masterpass';
@@ -28,15 +26,12 @@ import { getCallbackUrlMock, getMasterpassScriptMock } from './masterpass.mock';
 describe('MasterpassPaymentStragegy', () => {
     let strategy: MasterpassPaymentStrategy;
     let orderRequestSender: OrderRequestSender;
-    let requestSender: RequestSender;
     let store: CheckoutStore;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let scriptLoader: MasterpassScriptLoader;
     let initOptions: PaymentInitializeOptions;
     let paymentMethodMock: PaymentMethod;
-    let stripePaymentMethodMock: PaymentMethod;
     let masterpassScript: Masterpass;
 
     beforeEach(() => {
@@ -47,7 +42,6 @@ describe('MasterpassPaymentStragegy', () => {
             },
         };
 
-        requestSender = createRequestSender();
         orderRequestSender = new OrderRequestSender(createRequestSender());
 
         store = createCheckoutStore({
@@ -61,7 +55,6 @@ describe('MasterpassPaymentStragegy', () => {
         jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
 
         paymentMethodMock = getMasterpass();
-        stripePaymentMethodMock = getStripe();
 
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);
 
@@ -69,7 +62,6 @@ describe('MasterpassPaymentStragegy', () => {
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
         const paymentRequestSender = new PaymentRequestSender(createPaymentClient());
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
 
         scriptLoader = new MasterpassScriptLoader(createScriptLoader());
         masterpassScript = getMasterpassScriptMock();
@@ -81,7 +73,6 @@ describe('MasterpassPaymentStragegy', () => {
             store,
             orderActionCreator,
             paymentActionCreator,
-            paymentMethodActionCreator,
             scriptLoader
         );
     });
@@ -174,7 +165,6 @@ describe('MasterpassPaymentStragegy', () => {
         let payload: OrderRequestBody;
         let submitOrderAction: Observable<Action>;
         let submitPaymentAction: Observable<Action>;
-        let loadPaymentMethodAction: Observable<Action>;
 
         beforeEach(() => {
             paymentMethodMock.initializationData = {
@@ -184,27 +174,23 @@ describe('MasterpassPaymentStragegy', () => {
             };
 
             payload = {
+                payment: {
+                    methodId: 'masterpass',
+                },
                 useStoreCredit: true,
             };
 
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
-            loadPaymentMethodAction = of(
-                createAction(
-                    PaymentMethodActionType.LoadPaymentMethodSucceeded,
-                    stripePaymentMethodMock,
-                    { methodId: stripePaymentMethodMock.id }
-                )
-            );
-            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(loadPaymentMethodAction);
-
             submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
             paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
         });
 
         it('fails to submit order when payment is not provided', async () => {
-            expect(() => strategy.execute(payload)).toThrowError(MissingDataError);
+            delete payload.payment;
+            const error = 'Unable to submit payment because "payload.payment" argument is not provided.';
+            expect(() => strategy.execute(payload)).toThrowError(error);
         });
 
         it('throws an exception if payment data is missing', () => {
@@ -215,7 +201,7 @@ describe('MasterpassPaymentStragegy', () => {
 
         it('throws an exception when the gateway is not provided', async () => {
             paymentMethodMock.initializationData.gateway = undefined;
-            const error = 'Unable to proceed because "paymentMethod.initializationData.gateway" argument is not provided.';
+            const error = 'Unable to proceed because payment method data is unavailable or not properly configured.';
             await strategy.initialize(initOptions);
             expect(() => strategy.execute(payload)).toThrowError(error);
         });
@@ -231,11 +217,10 @@ describe('MasterpassPaymentStragegy', () => {
             await strategy.initialize(initOptions);
             await strategy.execute(payload);
 
-            const submitPaymentArgs = { methodId: 'stripe', paymentData: { nonce: 'src_foobar1234567' } };
+            const submitPaymentArgs = { methodId: 'masterpass', paymentData: { nonce: 'src_foobar1234567' } };
             const order = { useStoreCredit: payload.useStoreCredit };
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, undefined);
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith('stripe');
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(submitPaymentArgs);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });

@@ -5,7 +5,6 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
@@ -22,7 +21,6 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _masterpassScriptLoader: MasterpassScriptLoader
     ) {}
 
@@ -68,20 +66,19 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const { payment } = payload;
         const order = { useStoreCredit: payload.useStoreCredit };
 
-        if (!this._paymentMethod) {
+        if (!payment) {
+            throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
+        }
+
+        if (!this._paymentMethod || !this._paymentMethod.initializationData || !this._paymentMethod.initializationData.gateway) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        const gateway = this._paymentMethod.initializationData.gateway;
-
         // TODO: Refactor the API endpoint to return nonce in the right place.
         const paymentData = this._paymentMethod.initializationData.paymentData;
-
-        if (!gateway) {
-            throw new InvalidArgumentError('Unable to proceed because "paymentMethod.initializationData.gateway" argument is not provided.');
-        }
 
         // TODO: Redirect to Masterpass if nonce has not been generated yet. And then finalise the order when the shopper is redirected back to the checkout page.
         if (!paymentData) {
@@ -89,8 +86,7 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
         }
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-            .then(() => this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(gateway)))
-            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment({ methodId: gateway, paymentData })));
+            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData })));
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
