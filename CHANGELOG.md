@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.18.12"></a>
+## [1.18.12](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.11...v1.18.12) (2019-04-04)
+
+
+### Bug Fixes
+
+* **payment:** INT-1412 Fix masterpass submitPayment payload to allow analytics tracking ([04ec083](https://github.com/bigcommerce/checkout-sdk-js/commit/04ec083))
+
+
+
 <a name="1.18.11"></a>
 ## [1.18.11](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.10...v1.18.11) (2019-04-01)
 
