@@ -1,11 +1,3 @@
-export interface StripeSDK {
-    source: {
-        create(stripeCardSource: StripeCardSource, Function: any): Promise<void>;
-        poll(id: string, secret: string, Function: any): Promise<void>;
-    };
-    setPublishableKey(publishableKey: string): void;
-}
-
 export interface StripeCardSource {
     type: string;
     card?: {
@@ -23,5 +15,5 @@ export interface StripeCardSource {
 }
 
 export interface StripeHostWindow extends Window {
-    Stripe?: StripeSDK;
+    Stripe?: any;
 }

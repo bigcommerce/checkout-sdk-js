@@ -1,32 +1,27 @@
-import { pick } from 'lodash';
-
-import {mapToInternalAddress} from '../../../address';
-import {mapToInternalCart} from '../../../cart';
-import {CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors} from '../../../checkout';
+import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
     StandardError
 } from '../../../common/error/errors';
-import {mapToInternalCustomer} from '../../../customer';
-import {mapToInternalOrder, OrderActionCreator, OrderRequestBody} from '../../../order';
-import {OrderFinalizationNotRequiredError} from '../../../order/errors';
-import {mapToInternalShippingOption} from '../../../shipping';
-import {PaymentArgumentInvalidError} from '../../errors';
-import isVaultedInstrument from '../../is-vaulted-instrument';
-import Payment from '../../payment';
+import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import PaymentMethodSelector from '../../payment-method-selector';
-import PaymentRequestBody from '../../payment-request-body';
-import {PaymentInitializeOptions, PaymentRequestOptions} from '../../payment-request-options';
+import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
-import ThreeDSecureProcessor from '../3dsecure/threedsecure-processor';
 import PaymentStrategy from '../payment-strategy';
 
+import { StripeScriptLoader } from './index';
+
 export default class StripePaymentStrategy implements PaymentStrategy {
+    private stripeJs: any;
+    private cardElement: any;
+    private ccNumber: any;
+    private ccExpiry: any;
+    private ccCvv: any;
 
     constructor(
         private _store: CheckoutStore,
@@ -35,16 +30,50 @@ export default class StripePaymentStrategy implements PaymentStrategy {
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
-        private _threeDSecureProcessor: ThreeDSecureProcessor
+        private _stripeScriptLoader: StripeScriptLoader
     ) {}
 
     initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        // return this._threeDSecureProcessor.doPayment({})
-        //     .then(() => {
-        //         return Promise.resolve(this._store.getState());
-        //     });
+        return this._stripeScriptLoader.load('pk_test_OiGqP4ZezFBTJErOWeMFumjE') // options.initializationData.stripePublishableKey
+            .then(stripeJs => {
+                this.stripeJs = stripeJs;
+                const elements = this.stripeJs.elements();
+                this.cardElement = elements.create('card', {
+                    style: {
+                        base: {
+                            color: '#32325D',
+                            fontWeight: 500,
+                            fontFamily: 'Inter UI, Open Sans, Segoe UI, sans-serif',
+                            fontSize: '16px',
+                            fontSmoothing: 'antialiased',
 
-        return Promise.resolve(this._store.getState());
+                            '::placeholder': {
+                                color: '#CFD7DF',
+                            },
+                        },
+                        invalid: {
+                            color: '#E25950',
+                        },
+                    },
+                });
+                this.cardElement.mount('#stripe-card-element');
+
+                // this.ccNumber = elements.create('cardNumber', {
+                //     placeholder: '',
+                // });
+                // this.ccNumber.mount('#ccNumber');
+                //
+                // this.ccExpiry = elements.create('cardExpiry');
+                // this.ccExpiry.mount('#ccExpiry');
+                //
+                // this.ccCvv = elements.create('cardCvc', {
+                //     placeholder: '',
+                // });
+                // this.ccCvv.mount('#ccCvv');
+                // TODO: Create card with Stripe JS and handlePayment()
+
+                return Promise.resolve(this._store.getState());
+            });
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -67,12 +96,30 @@ export default class StripePaymentStrategy implements PaymentStrategy {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
                 }
 
-                return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-                    .then(() =>
-                        this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }))
-                    ).catch((error: Error) => this._handleError(error));
+                return this.stripeJs.handleCardPayment(
+                    paymentMethod.clientToken, this.cardElement, {
+                        source_data: {
+                            owner: { name: 'Carlos L' },
+                        },
+                    }
+                ).then((stripeResponse: any) => {
+                    if (stripeResponse.error) {
+                        console.log(stripeResponse);
+                    } else {
+                        console.log('Success', stripeResponse);
+                        // TODO: Remove this and finalize after stripe
+
+                        const paymentPayload = {
+                            methodId: payment.methodId,
+                            paymentData: { nonce: stripeResponse.paymentIntent.id },
+                        };
+
+                        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+                            .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload)));
+                    }
+                });
             })
-            .catch((error: Error) => this._handleError(error));
+            .catch((error: Error) => { throw new StandardError(error.message); });
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -81,13 +128,5 @@ export default class StripePaymentStrategy implements PaymentStrategy {
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
-    }
-
-    private _handleError(error: Error): never {
-        if (error.name === 'StripeError') {
-            throw new StandardError(error.message);
-        }
-
-        throw error;
     }
 }
