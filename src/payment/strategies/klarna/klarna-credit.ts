@@ -1,7 +1,8 @@
 export default interface KlarnaCredit {
     authorize(params: any, callback: (res: KlarnaAuthorizationResponse) => void): void;
     init(params: KlarnaInitParams): void;
-    load(params: KlarnaLoadParams, callback?: (res: KlarnaLoadResponse) => void): void;
+    load(params: KlarnaLoadParams, callback: (res: KlarnaLoadResponse) => void): void;
+    load(params: KlarnaLoadParams, data: KlarnaUpdateSessionParams, callback: (res: KlarnaLoadResponse) => void): void;
 }
 
 export interface KlarnaInitParams {
@@ -10,6 +11,10 @@ export interface KlarnaInitParams {
 
 export interface KlarnaLoadParams {
     container: string;
+    payment_method_category?: string;
+    payment_method_categories?: string;
+    instance_id?: string;
+    preferred_payment_method?: string;
 }
 
 export interface KlarnaLoadResponse {
@@ -26,4 +31,20 @@ export interface KlarnaAuthorizationResponse {
     error?: {
         invalid_fields: string[];
     };
+}
+
+export type KlarnaUpdateSessionParams = Partial<{
+    billing_address: KlarnaAddress;
+    shipping_address: KlarnaAddress;
+}>;
+
+export interface KlarnaAddress {
+    street_address: string;
+    city: string;
+    country: string;
+    given_name: string;
+    family_name: string;
+    postal_code: string;
+    region: string;
+    email?: string;
 }
