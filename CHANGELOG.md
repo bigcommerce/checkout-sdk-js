@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.19.0"></a>
+# [1.19.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.12...v1.19.0) (2019-04-11)
+
+
+### Features
+
+* **checkout:** INT-1245 Checkout Using Zip ([c13ba54](https://github.com/bigcommerce/checkout-sdk-js/commit/c13ba54))
+* **payment:** INT-1293 integrate affirm strategy ([858ad16](https://github.com/bigcommerce/checkout-sdk-js/commit/858ad16))
+
+
+
 <a name="1.18.12"></a>
 ## [1.18.12](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.11...v1.18.12) (2019-04-04)
 
