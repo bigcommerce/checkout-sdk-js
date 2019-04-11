@@ -187,6 +187,20 @@ export function getAfterpay(): PaymentMethod {
     };
 }
 
+export function getAffirm(): PaymentMethod {
+    return {
+        id: 'affirm',
+        logoUrl: '',
+        method: 'affirm',
+        supportedCards: [],
+        config: {
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'foo',
+    };
+}
+
 export function getAmazonPay(): PaymentMethod {
     return {
         id: 'amazon',
@@ -358,6 +372,7 @@ export function getPaymentMethod(): PaymentMethod {
 
 export function getPaymentMethods(): PaymentMethod[] {
     return [
+        getAffirm(),
         getBraintree(),
         getBraintreePaypal(),
         getBraintreePaypalCredit(),

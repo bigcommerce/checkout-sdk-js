@@ -15,6 +15,7 @@ import PaymentRequestSender from './payment-request-sender';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
+import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import {
@@ -64,6 +65,16 @@ export default function createPaymentStrategyRegistry(
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+
+    registry.register(PaymentStrategyType.AFFIRM, () =>
+        new AffirmPaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            new AffirmScriptLoader()
+        )
+    );
 
     registry.register(PaymentStrategyType.AFTERPAY, () =>
         new AfterpayPaymentStrategy(
