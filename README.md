@@ -133,7 +133,7 @@ console.log(state.data.getConfig());
 Before you can collect other checkout information from the customer, you should first ask them to sign in. Once they are signed in, the checkout state will be populated with their personal details, such as their addresses.
 
 ```js
-const state = await service.signInCustomer('foo@bar.com', 'password123');
+const state = await service.signInCustomer({email: 'foo@bar.com', password: 'password123'});
 
 console.log(state.data.getCustomer());
 ```
@@ -141,7 +141,7 @@ console.log(state.data.getCustomer());
 Alternatively, you can ask the customer to continue as a guest.
 
 ```js
-const state = await service.signInCustomer('foo@bar.com');
+const state = await service.signInCustomer({email: 'foo@bar.com'});
 
 console.log(state.data.getCustomer());
 ```
