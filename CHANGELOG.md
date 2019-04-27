@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.20.0"></a>
+# [1.20.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.19.0...v1.20.0) (2019-04-27)
+
+
+### Features
+
+* **payment:** INT-1398 Add shipping and billing address before Klarna authorization ([577601e](https://github.com/bigcommerce/checkout-sdk-js/commit/577601e))
+
+
+
 <a name="1.19.0"></a>
 # [1.19.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.18.12...v1.19.0) (2019-04-11)
 
