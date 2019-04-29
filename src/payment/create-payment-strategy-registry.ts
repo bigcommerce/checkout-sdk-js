@@ -32,6 +32,11 @@ import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chas
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import {
+    CardinalClient,
+    CardinalScriptLoader,
+    CyberSourcePaymentStrategy
+} from './strategies/cybersource';
+import {
     createGooglePayPaymentProcessor,
     GooglePayBraintreeInitializer,
     GooglePayPaymentStrategy,
@@ -107,6 +112,16 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.CYBERSOURCE, () =>
+        new CyberSourcePaymentStrategy(
+            store,
+            paymentMethodActionCreator,
+            orderActionCreator,
+            paymentActionCreator,
+            new CardinalClient(new CardinalScriptLoader(scriptLoader))
         )
     );
 
