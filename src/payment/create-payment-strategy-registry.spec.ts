@@ -8,6 +8,7 @@ import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { AfterpayPaymentStrategy } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy } from './strategies/amazon-pay';
+import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
 import { KlarnaPaymentStrategy } from './strategies/klarna';
@@ -101,5 +102,10 @@ describe('CreatePaymentStrategyRegistry', () => {
     it('can instantiate googlepaybraintree', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_GOOGLE_PAY);
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
+
+    it('can instantiate converge', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
+        expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
     });
 });

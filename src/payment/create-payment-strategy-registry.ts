@@ -29,6 +29,7 @@ import {
     VisaCheckoutScriptLoader
 } from './strategies/braintree';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
+import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import {
     createGooglePayPaymentProcessor,
@@ -66,6 +67,7 @@ export default function createPaymentStrategyRegistry(
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+    const formPoster = createFormPoster();
 
     registry.register(PaymentStrategyType.AFFIRM, () =>
         new AffirmPaymentStrategy(
@@ -168,7 +170,7 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
-            createFormPoster()
+            formPoster
         )
     );
 
@@ -309,6 +311,15 @@ export default function createPaymentStrategyRegistry(
             paymentActionCreator,
             paymentMethodActionCreator,
             new ZipScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.CONVERGE, () =>
+        new ConvergePaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            formPoster
         )
     );
 
