@@ -7,7 +7,7 @@ import ErrorResponseBody, {
 } from './error-response-body';
 import { RequestError, TimeoutError } from './errors';
 import mapFromInternalErrorResponse from './errors/map-from-internal-error-response';
-import mapFromPaymentErrorResponse, { PAYMENT_ERROR_CODES } from './errors/map-from-payment-error-response';
+import mapFromPaymentErrorResponse from './errors/map-from-payment-error-response';
 import mapFromStorefrontErrorResponse from './errors/map-from-storefront-error-response';
 
 export default class RequestErrorFactory {
@@ -50,11 +50,11 @@ export default class RequestErrorFactory {
 
         const error = last(response.body && response.body.errors);
 
-        if (error && PAYMENT_ERROR_CODES.indexOf(error.code) !== -1) {
-            return 'payment';
+        if (error && error.code && this._factoryMethods[error.code]) {
+            return error.code;
         }
 
-        return error && error.code ? error.code : 'payment';
+        return 'payment';
     }
 
     private _isStorefrontErrorResponseBody(
