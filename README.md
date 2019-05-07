@@ -133,7 +133,7 @@ console.log(state.data.getConfig());
 Before you can collect other checkout information from the customer, you should first ask them to sign in. Once they are signed in, the checkout state will be populated with their personal details, such as their addresses.
 
 ```js
-const state = await service.signInCustomer('foo@bar.com', 'password123');
+const state = await service.signInCustomer({ email: 'foo@bar.com', password: 'password123' });
 
 console.log(state.data.getCustomer());
 ```
@@ -141,7 +141,7 @@ console.log(state.data.getCustomer());
 Alternatively, you can ask the customer to continue as a guest.
 
 ```js
-const state = await service.signInCustomer('foo@bar.com');
+const state = await service.continueAsGuest({ email: 'foo@bar.com' });
 
 console.log(state.data.getCustomer());
 ```
@@ -189,7 +189,7 @@ Then, you can ask the customer to select a shipping option from the list.
 ```js
 const address = state.data.getShippingAddress();
 const options = state.data.getShippingOptions();
-const newState = await service.selectShippingOption(address.id, options[address.id].id);
+const newState = await service.selectShippingOption(options[address.id].id);
 
 console.log(newState.checkout.getSelectedShippingOption());
 ```
