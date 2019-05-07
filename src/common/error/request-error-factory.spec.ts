@@ -1,9 +1,9 @@
-import { first, merge, without } from 'lodash';
+import { merge } from 'lodash';
 
+import { PaymentMethodInvalidError } from '../../payment/errors';
 import { getErrorResponse, getErrorResponseBody, getTimeoutResponse } from '../http-request/responses.mock';
 
 import { RequestError, TimeoutError, UnrecoverableError } from './errors';
-import { PAYMENT_ERROR_CODES } from './errors/map-from-payment-error-response';
 import RequestErrorFactory from './request-error-factory';
 
 describe('RequestErrorFactory', () => {
@@ -48,18 +48,36 @@ describe('RequestErrorFactory', () => {
         expect((error as TimeoutError).status).toEqual(0);
     });
 
-    it('creates `RequestError` for alternative payment error codes and maps the message correctly', () => {
+    it('exposes first error code if it has an array of errors', () => {
         const factory = new RequestErrorFactory();
         const errorResponse = getErrorResponseBody({
             errors: [{
-                code: first(without(PAYMENT_ERROR_CODES, 'payment')),
-                message: 'foo bar',
+                code: 'foo',
+                message: 'bar',
             }],
         });
 
         const error = factory.createError(getErrorResponse(errorResponse));
 
         expect(error).toBeInstanceOf(RequestError);
-        expect(error.message).toBe('foo bar');
+        expect(error.message).toBe('bar');
+    });
+
+    it('overrides with registered error when error code matches registered key', () => {
+        const factory = new RequestErrorFactory();
+
+        factory.register('payment_config_not_found', data => new PaymentMethodInvalidError(data));
+
+        const errorResponse = getErrorResponseBody({
+            errors: [{
+                code: 'payment_config_not_found',
+                message: 'bar',
+            }],
+        });
+
+        const error = factory.createError(getErrorResponse(errorResponse));
+
+        expect(error.type).toBe('payment_method_invalid');
+        expect(error.message).toBe('There is a problem processing your payment. Please try again later.');
     });
 });
