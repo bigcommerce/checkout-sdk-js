@@ -23,6 +23,7 @@ enum PaymentStrategyType {
     MASTERPASS = 'masterpass',
     STRIPE_GOOGLE_PAY = 'googlepaystripe',
     ZIP = 'zip',
+    CONVERGE = 'converge',
 }
 
 export default PaymentStrategyType;
