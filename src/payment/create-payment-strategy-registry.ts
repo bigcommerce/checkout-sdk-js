@@ -49,6 +49,8 @@ import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
 import { WepayPaymentStrategy, WepayRiskClient } from './strategies/wepay';
 import { ZipPaymentStrategy, ZipScriptLoader } from './strategies/zip';
+import CyberSourcePaymentStrategy from "./strategies/cybersource/cybersource-payment-strategy";
+import CyberSourceScriptLoader from "./strategies/cybersource/cybersource-script-loader";
 
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
@@ -107,6 +109,16 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator
+        )
+    );
+
+    registry.register(PaymentStrategyType.CYBERSOURCE, () =>
+        new CyberSourcePaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            paymentMethodActionCreator,
+            new CyberSourceScriptLoader(scriptLoader)
         )
     );
 

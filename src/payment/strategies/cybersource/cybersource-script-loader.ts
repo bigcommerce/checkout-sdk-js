@@ -4,8 +4,8 @@ import StandardError from '../../../common/error/errors/standard-error';
 
 import {CardinalWindow, CyberSourceCardinal} from './cybersource';
 
-const SDK_TEST_URL = '';
-const SDK_PROD_URL = '';
+const SDK_TEST_URL = 'https://includestest.ccdc02.com/cardinalcruise/v1/songbird.js';
+const SDK_PROD_URL = 'https://songbird.cardinalcommerce.com/edge/v1/songbird.js';
 
 export default class CyberSourceScriptLoader {
     constructor(
