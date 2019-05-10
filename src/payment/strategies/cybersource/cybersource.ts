@@ -73,12 +73,27 @@ export enum CardinalValidatedAction {
     ERROR = 'ERROR',
 }
 
-export type CardinalValidatedData = Partial<{
-    ActionCode: CardinalValidatedAction;
+export interface CardinalValidatedData {
+    ActionCode?: CardinalValidatedAction;
     ErrorDescription: string;
     ErrorNumber: number;
-    Validated: boolean;
-}>;
+    Validated?: boolean;
+    Payment?: Payment;
+}
+
+export interface Payment {
+    ProcessorTransactionId: string;
+    Type: PaymentType;
+}
+
+export enum PaymentType {
+    CCA = 'CCA',
+    Paypal = 'Paypal',
+    Wallet = 'Wallet',
+    VisaCheckout = 'VisaCheckout',
+    ApplePay = 'ApplePay',
+    DiscoverWallet = 'DiscoverWallet',
+}
 
 export enum CardinalTriggerEvents {
     ACCOUNT_NUMBER_UPDATE = 'accountNumber.update',
@@ -116,4 +131,12 @@ export interface CardinalEventResponse {
     eventType: CardinalEventType;
     jwt?: string;
     data?: CardinalValidatedData;
+    status: boolean;
+}
+
+export enum SignatureValidationErrors {
+    JWT_MALFORMED = 100004,
+    INVALID_SIGNATURE = 1010,
+    JWT_EXPIRED = 1011,
+    INVALID_JWT = 1020,
 }
