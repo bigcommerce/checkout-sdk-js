@@ -1,3 +1,6 @@
+const SignatureValidationErrors = [100004, 1010, 1011, 1020];
+export default SignatureValidationErrors;
+
 export interface CyberSourceCardinal {
     configure(params: CardinalConfiguration): void;
     on(params: CardinalEventType, callback: CardinalEventMap[CardinalEventType]): void;
@@ -25,7 +28,7 @@ export type CardinalConfiguration = Partial<{
         level: string,
     };
     payment?: {
-        view: string,
+        view?: string,
         framework?: string,
         displayLoading?: boolean,
     };
@@ -127,16 +130,14 @@ export interface Orderdetails {
     TransactionId: string;
 }
 
+export enum CardinalPaymentStep {
+    SETUP = 'setup',
+    AUTHORIZATION = 'authorization',
+}
+
 export interface CardinalEventResponse {
-    eventType: CardinalEventType;
+    type: CardinalPaymentStep;
     jwt?: string;
     data?: CardinalValidatedData;
     status: boolean;
-}
-
-export enum SignatureValidationErrors {
-    JWT_MALFORMED = 100004,
-    INVALID_SIGNATURE = 1010,
-    JWT_EXPIRED = 1011,
-    INVALID_JWT = 1020,
 }

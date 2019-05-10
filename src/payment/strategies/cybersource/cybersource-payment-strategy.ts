@@ -7,23 +7,24 @@ import {
     MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType,
     RequestError
 } from '../../../common/error/errors';
+import StandardError from '../../../common/error/errors/standard-error';
 import { OrderActionCreator } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import OrderRequestBody from '../../../order/order-request-body';
+import PaymentMethodCancelledError from '../../errors/payment-method-cancelled-error';
+import { CreditCardInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { CreditCardInstrument } from '../../payment';
-
 import {
-    CardinalEventResponse,
-    CardinalEventType, CardinalInitializationType, CardinalPaymentBrand, CardinalTriggerEvents, CardinalValidatedAction,
-    CardinalValidatedData,
-    CyberSourceCardinal,
-    SetupCompleteData, SignatureValidationErrors
+    default as SignatureValidationErrors,
+    CardinalEventResponse, CardinalEventType, CardinalInitializationType, CardinalPaymentBrand, CardinalPaymentStep,
+    CardinalTriggerEvents,
+    CardinalValidatedAction,
+    CardinalValidatedData, CyberSourceCardinal, SetupCompleteData
 } from './cybersource';
 import CyberSourceScriptLoader from './cybersource-script-loader';
 
@@ -74,21 +75,25 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                         this._Cardinal.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
                             switch (data.ActionCode) {
                                 case CardinalValidatedAction.SUCCCESS:
-                                    this._cardinalEvent$.next({
-                                        eventType: CardinalEventType.Validated,
-                                        jwt,
-                                        status: true,
-                                    });
+                                    this._resolveAuthorizationPromise(jwt);
                                     break;
                                 case CardinalValidatedAction.NOACTION:
-                                    break;
-                                case CardinalValidatedAction.FAILURE:
-                                    break;
-                                case CardinalValidatedAction.ERROR:
-                                    if (includes(SignatureValidationErrors, data.ErrorNumber.toString())) {
-                                        throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                                    if (data.ErrorNumber > 0) {
+                                    } else {
+                                        this._resolveAuthorizationPromise(jwt);
                                     }
                                     break;
+                                case CardinalValidatedAction.FAILURE:
+                                    if (data.ErrorNumber > 0) {
+                                    } else {
+                                        this._rejectAuthorizationPromise(data);
+                                    }
+                                    break;
+                                case CardinalValidatedAction.ERROR:
+                                    if (includes(SignatureValidationErrors, data.ErrorNumber)) {
+                                        this._rejectSetupEvent();
+                                    } else {
+                                    }
                             }
                         });
 
@@ -97,6 +102,16 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                         });
 
                         this._isSetupCompleted = true;
+
+                        this._cardinalEvent$
+                            .pipe(take(1))
+                            .subscribe((event: CardinalEventResponse) => {
+                                if (event.type === CardinalPaymentStep.SETUP) {
+                                    if (!event.status) {
+                                        throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                                    }
+                                }
+                            });
                     }
                 });
         }).then(() => this._store.getState());
@@ -151,11 +166,11 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                                 this._cardinalEvent$
                                     .pipe(take(1))
                                     .subscribe((event: CardinalEventResponse) => {
-                                        if (event.eventType === CardinalEventType.Validated) {
+                                        if (event.type === CardinalPaymentStep.AUTHORIZATION) {
                                             if (event.status) {
                                                 resolve(event.jwt);
                                             } else {
-                                                reject();
+                                                reject(new PaymentMethodCancelledError());
                                             }
                                         }
                                     });
@@ -182,6 +197,29 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
+    }
+
+    private _resolveAuthorizationPromise(jwt: string): void {
+        this._cardinalEvent$.next({
+            type: CardinalPaymentStep.AUTHORIZATION,
+            jwt,
+            status: true,
+        });
+    }
+
+    private _rejectSetupEvent(): void {
+        this._cardinalEvent$.next({
+            type: CardinalPaymentStep.SETUP,
+            status: false,
+        });
+    }
+
+    private _rejectAuthorizationPromise(data: CardinalValidatedData): void {
+        this._cardinalEvent$.next({
+            type: CardinalPaymentStep.AUTHORIZATION,
+            data,
+            status: true,
+        });
     }
 
     private _addExtraData(payment: CreditCardInstrument, extraData: any): CreditCardInstrument {
