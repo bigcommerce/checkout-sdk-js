@@ -16,7 +16,7 @@ const assetConfig = {
 
     output: {
         filename: '[name].js',
-        library: "checkoutKit",
+        library: 'checkoutKit',
         libraryTarget: 'commonjs2',
         path: path.resolve(__dirname, 'dist'),
     },
@@ -34,7 +34,7 @@ const assetConfig = {
             },
             {
                 test: /\.(js|ts)$/,
-                exclude: /node_modules/,
+                include: path.resolve(__dirname, 'src'),
                 loader: 'ts-loader',
             },
         ],
