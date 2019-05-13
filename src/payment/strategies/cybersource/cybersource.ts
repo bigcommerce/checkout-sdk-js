@@ -19,7 +19,7 @@ export enum CardinalEventType {
 }
 
 export interface CardinalEventMap {
-    [CardinalEventType.SetupCompleted](setupCompleteData: SetupCompleteData): void;
+    [CardinalEventType.SetupCompleted](setupCompleteData: SetupCompletedData): void;
     [CardinalEventType.Validated](data: CardinalValidatedData, jwt?: string): void;
 }
 
@@ -34,7 +34,7 @@ export type CardinalConfiguration = Partial<{
     };
 }>;
 
-export interface SetupCompleteData {
+export interface SetupCompletedData {
     sessionId: string;
     modules: ModuleState[];
 }
@@ -135,9 +135,18 @@ export enum CardinalPaymentStep {
     AUTHORIZATION = 'authorization',
 }
 
+export enum CardinalEventAction {
+    CANCELLED = 'cancelled',
+    ERROR = 'error',
+    OK = 'ok',
+}
+
 export interface CardinalEventResponse {
-    type: CardinalPaymentStep;
+    type: {
+        step: CardinalPaymentStep;
+        action: CardinalEventAction;
+    };
     jwt?: string;
-    data?: CardinalValidatedData;
+    data?: CardinalValidatedData | string;
     status: boolean;
 }
