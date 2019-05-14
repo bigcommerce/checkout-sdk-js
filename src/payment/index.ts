@@ -7,7 +7,7 @@ export { default as createPaymentClient } from './create-payment-client';
 export { default as createPaymentStrategyRegistry } from './create-payment-strategy-registry';
 export { default as isNonceLike } from './is-nonce-like';
 export { default as PaymentActionCreator } from './payment-action-creator';
-export { default as Payment, CreditCardInstrument, VaultedInstrument, PaymentInstrument, NonceInstrument } from './payment';
+export { default as Payment, CreditCardInstrument, VaultedInstrument, PaymentInstrument, NonceInstrument, ThreeDSecure } from './payment';
 export { default as PaymentMethod } from './payment-method';
 export { default as PaymentMethodMeta } from './payment-method-meta';
 export { default as PaymentMethodConfig } from './payment-method-config';

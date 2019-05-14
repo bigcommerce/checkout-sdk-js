@@ -136,7 +136,6 @@ export enum CardinalPaymentStep {
 }
 
 export enum CardinalEventAction {
-    CANCELLED = 'cancelled',
     ERROR = 'error',
     OK = 'ok',
 }
@@ -147,6 +146,6 @@ export interface CardinalEventResponse {
         action: CardinalEventAction;
     };
     jwt?: string;
-    data?: CardinalValidatedData | string;
+    data?: CardinalValidatedData;
     status: boolean;
 }

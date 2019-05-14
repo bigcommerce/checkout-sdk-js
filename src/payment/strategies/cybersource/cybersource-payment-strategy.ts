@@ -7,12 +7,11 @@ import {
     MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType,
     RequestError
 } from '../../../common/error/errors';
-import InvalidArgumentError from '../../../common/error/errors/invalid-argument-error';
+import StandardError from '../../../common/error/errors/standard-error';
 import { OrderActionCreator } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import OrderRequestBody from '../../../order/order-request-body';
-import PaymentMethodCancelledError from '../../errors/payment-method-cancelled-error';
-import { CreditCardInstrument } from '../../payment';
+import {CreditCardInstrument, ThreeDSecure} from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -72,7 +71,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                     });
 
                     this._Cardinal.on(CardinalEventType.SetupCompleted, (setupCompletedData: SetupCompletedData) => {
-                        this._resolveSetupEvent(setupCompletedData.sessionId);
+                        this._resolveSetupEvent();
                     });
 
                     this._Cardinal.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
@@ -88,11 +87,8 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                                 }
                                 break;
                             case CardinalValidatedAction.FAILURE:
-                                if (data.ErrorNumber > 0) {
-                                    this._rejectAuthorizationPromise(data, CardinalEventAction.ERROR);
-                                } else {
-                                    this._rejectAuthorizationPromise(data, CardinalEventAction.CANCELLED);
-                                }
+                                data.ErrorDescription = 'User failed authentication or an error was encountered while processing the transaction';
+                                this._rejectAuthorizationPromise(data, CardinalEventAction.ERROR);
                                 break;
                             case CardinalValidatedAction.ERROR:
                                 if (includes(SignatureValidationErrors, data.ErrorNumber)) {
@@ -115,15 +111,12 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                             .subscribe((event: CardinalEventResponse) => {
                                 if (event.type.step === CardinalPaymentStep.SETUP) {
                                     if (!event.status) {
-                                        reject();
+                                        reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
                                     }
-                                    resolve(event.data);
+                                    resolve();
                                 }
                             });
-                    }).then(
-                        data => this._cardinalSessionId = data as string,
-                        () => new MissingDataError(MissingDataErrorType.MissingPaymentMethod)
-                    );
+                    });
                 });
         }).then(() => this._store.getState());
     }
@@ -133,11 +126,11 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         const paymentData = payment && payment.paymentData as CreditCardInstrument;
 
         if (!payment || !paymentData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            return Promise.reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
         }
 
         if (!this._Cardinal) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            return Promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
         }
 
         return this._Cardinal.trigger(CardinalTriggerEvents.BIN_PROCCESS, paymentData.ccNumber).then(result => {
@@ -147,7 +140,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                         this._store.dispatch(
                             this._paymentActionCreator.submitPayment({
                                 ...payment,
-                                paymentData: this._addExtraData(paymentData, { session_id: this._cardinalSessionId }),
+                                paymentData: this._addThreeDSecureData(paymentData, { session: this._cardinalSessionId }),
                             })
                         )
                     ).catch(error => {
@@ -173,7 +166,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                         this._Cardinal.continue(CardinalPaymentBrand.CCA, continueObject, partialOrder);
 
                         // If credit card is enrolled in 3DS Cybersource will handle the rest of the flow
-                        return new Promise((resolve, reject) => {
+                        return new Promise<string>((resolve, reject) => {
                                 this._cardinalEvent$
                                     .pipe(take(1))
                                     .subscribe((event: CardinalEventResponse) => {
@@ -181,10 +174,8 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                                             if (event.status) {
                                                 resolve(event.jwt);
                                             } else {
-                                                reject(event.type.action === CardinalEventAction.CANCELLED ?
-                                                    new PaymentMethodCancelledError() :
-                                                    new InvalidArgumentError()
-                                                );
+                                                const message = event.data ? event.data.ErrorDescription : '';
+                                                reject(new StandardError(message));
                                             }
                                         }
                                     });
@@ -192,7 +183,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
                                 this._store.dispatch(
                                     this._paymentActionCreator.submitPayment({
                                         ...payment,
-                                        paymentData: this._addExtraData(paymentData, { session_id: this._cardinalSessionId, token: jwt }),
+                                        paymentData: this._addThreeDSecureData(paymentData, { session: this._cardinalSessionId, token: jwt }),
                                     })
                                 )
                             );
@@ -200,8 +191,6 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             } else {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
-        }).catch(error => {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         });
     }
 
@@ -224,13 +213,12 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private _resolveSetupEvent(data: string): void {
+    private _resolveSetupEvent(): void {
         this._cardinalEvent$.next({
             type: {
                 step: CardinalPaymentStep.SETUP,
                 action: CardinalEventAction.OK,
             },
-            data,
             status: true,
         });
     }
@@ -256,10 +244,8 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         });
     }
 
-    private _addExtraData(payment: CreditCardInstrument, extraData: any): CreditCardInstrument {
-        payment.extraData = {
-            three_d_secure: extraData,
-        };
+    private _addThreeDSecureData(payment: CreditCardInstrument, threeDSecure: ThreeDSecure): CreditCardInstrument {
+        payment.threeDSecure = threeDSecure;
 
         return payment;
     }
