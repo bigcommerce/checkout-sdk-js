@@ -1014,22 +1014,23 @@ export default class CheckoutService {
     }
 
     /**
-     * Deletes a payment instrument by an id.
+     * Deletes a payment instrument by an id and currency.
      *
      * Once an instrument gets removed, it can no longer be retrieved using
      * `CheckoutStoreSelector#getInstruments`.
      *
      * ```js
-     * const state = service.deleteInstrument('123');
+     * const state = service.deleteInstrument('123', 'USD');
      *
      * console.log(state.data.getInstruments());
      * ```
      *
      * @param instrumentId - The identifier of the payment instrument to delete.
+     * @param currencyCode - The currency code as selected by the shopper.
      * @returns A promise that resolves to the current state.
      */
-    deleteInstrument(instrumentId: string): Promise<CheckoutSelectors> {
-        const action = this._instrumentActionCreator.deleteInstrument(instrumentId);
+    deleteInstrument(instrumentId: string, currencyCode: string): Promise<CheckoutSelectors> {
+        const action = this._instrumentActionCreator.deleteInstrument(instrumentId, currencyCode);
 
         return this._dispatch(action);
     }

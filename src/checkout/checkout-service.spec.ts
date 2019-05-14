@@ -944,6 +944,7 @@ describe('CheckoutService', () => {
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
             const instrumentId = '456';
+            const currencyCode = 'USD';
             const action = of(createAction('DELETE_INSTRUMENT'));
 
             jest.spyOn(instrumentActionCreator, 'deleteInstrument')
@@ -951,9 +952,9 @@ describe('CheckoutService', () => {
 
             jest.spyOn(store, 'dispatch');
 
-            await checkoutService.deleteInstrument(instrumentId);
+            await checkoutService.deleteInstrument(instrumentId, currencyCode);
 
-            expect(instrumentActionCreator.deleteInstrument).toHaveBeenCalledWith(instrumentId);
+            expect(instrumentActionCreator.deleteInstrument).toHaveBeenCalledWith(instrumentId, currencyCode);
             expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
         });
     });

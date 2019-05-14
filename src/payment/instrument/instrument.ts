@@ -18,6 +18,7 @@ export interface VaultAccessToken {
 export interface SessionContext {
     customerId: number;
     storeId: string;
+    currencyCode: string;
 }
 
 export interface InstrumentRequestContext extends SessionContext {

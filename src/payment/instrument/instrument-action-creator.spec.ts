@@ -34,6 +34,7 @@ describe('InstrumentActionCreator', () => {
     let storeId: string;
     let customerId: number;
     let instrumentId: string;
+    let currencyCode: string;
     let shippingAddress: Address;
     let vaultAccessExpiry: number;
     let vaultAccessToken: string;
@@ -60,6 +61,7 @@ describe('InstrumentActionCreator', () => {
         customerId = state.cart.data!.customerId;
         shippingAddress = getShippingAddress();
         instrumentId = '123';
+        currencyCode = 'USD';
 
         const instrumentsMeta = getInstrumentsMeta();
         vaultAccessToken = instrumentsMeta.vaultAccessToken;
@@ -73,7 +75,7 @@ describe('InstrumentActionCreator', () => {
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
-                { storeId, customerId, authToken: vaultAccessToken },
+                { storeId, customerId, currencyCode, authToken: vaultAccessToken },
                 shippingAddress
             );
         });
@@ -95,7 +97,7 @@ describe('InstrumentActionCreator', () => {
 
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
-                { storeId, customerId, authToken: vaultAccessToken },
+                { storeId, customerId, currencyCode, authToken: vaultAccessToken },
                 shippingAddress
             );
         });
@@ -150,7 +152,7 @@ describe('InstrumentActionCreator', () => {
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
-            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+            await from(instrumentActionCreator.deleteInstrument(instrumentId, currencyCode)(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
@@ -158,9 +160,11 @@ describe('InstrumentActionCreator', () => {
                 {
                     storeId,
                     customerId,
+                    currencyCode,
                     authToken: vaultAccessToken,
                 },
-                instrumentId
+                instrumentId,
+                currencyCode
             );
         });
 
@@ -176,7 +180,7 @@ describe('InstrumentActionCreator', () => {
                 },
             });
 
-            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+            await from(instrumentActionCreator.deleteInstrument(instrumentId, currencyCode)(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
@@ -184,14 +188,16 @@ describe('InstrumentActionCreator', () => {
                 {
                     storeId,
                     customerId,
+                    currencyCode,
                     authToken: vaultAccessToken,
                 },
-                instrumentId
+                instrumentId,
+                currencyCode
             );
         });
 
         it('emits actions if able to delete an instrument', async () => {
-            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId, currencyCode)(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -212,7 +218,7 @@ describe('InstrumentActionCreator', () => {
             jest.spyOn(instrumentRequestSender, 'deleteInstrument').mockRejectedValue(errorResponse);
 
             const errorHandler = jest.fn(action => of(action));
-            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
+            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId, currencyCode)(store))
                 .pipe(
                     catchError(errorHandler),
                     toArray()
@@ -238,7 +244,15 @@ describe('InstrumentActionCreator', () => {
             store = createCheckoutStore({});
 
             try {
-                await from(instrumentActionCreator.deleteInstrument('')(store))
+                await from(instrumentActionCreator.deleteInstrument('', 'USD')(store))
+                    .pipe(toArray())
+                    .toPromise();
+            } catch (e) {
+                expect(e.type).toEqual('missing_data');
+            }
+
+            try {
+                await from(instrumentActionCreator.deleteInstrument('instrument543id', '')(store))
                     .pipe(toArray())
                     .toPromise();
             } catch (e) {

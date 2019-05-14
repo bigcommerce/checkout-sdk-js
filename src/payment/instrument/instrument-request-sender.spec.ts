@@ -148,12 +148,14 @@ describe('InstrumentRequestSender', () => {
             ));
 
             const instrumentId = '123';
-            const response = await instrumentRequestSender.deleteInstrument(requestContext, instrumentId);
+            const currencyCode = 'USD';
+            const response = await instrumentRequestSender.deleteInstrument(requestContext, instrumentId, currencyCode);
 
             expect(response).toEqual(getResponse(deleteInstrumentResponseBody()));
             expect(client.deleteShopperInstrument).toHaveBeenCalledWith({
                 ...requestContext,
                 instrumentId,
+                currencyCode,
             }, expect.any(Function));
         });
 
@@ -163,7 +165,7 @@ describe('InstrumentRequestSender', () => {
             ));
 
             try {
-                await instrumentRequestSender.deleteInstrument(requestContext, '');
+                await instrumentRequestSender.deleteInstrument(requestContext, '', '');
             } catch (error) {
                 expect(error)
                     .toEqual(getResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request'));

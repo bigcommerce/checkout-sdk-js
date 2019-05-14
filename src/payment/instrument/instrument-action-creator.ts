@@ -46,7 +46,7 @@ export default class InstrumentActionCreator {
         });
     }
 
-    deleteInstrument(instrumentId: string): ThunkAction<DeleteInstrumentAction, InternalCheckoutSelectors> {
+    deleteInstrument(instrumentId: string, currencyCode: string): ThunkAction<DeleteInstrumentAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<DeleteInstrumentAction>) => {
             observer.next(createAction(InstrumentActionType.DeleteInstrumentRequested, undefined, { instrumentId }));
 
@@ -58,7 +58,7 @@ export default class InstrumentActionCreator {
                     this._instrumentRequestSender.deleteInstrument({
                         ...session,
                         authToken: currentToken.vaultAccessToken,
-                    }, instrumentId)
+                    }, instrumentId, currencyCode)
                         .then(({ body }) => {
                             observer.next(createAction(InstrumentActionType.DeleteInstrumentSucceeded, body, {
                                 instrumentId,
@@ -125,10 +125,12 @@ export default class InstrumentActionCreator {
 
         const { customerId } = cart;
         const { storeId } = config.storeProfile;
+        const { code } = config.shopperCurrency;
 
         return {
             customerId,
             storeId,
+            currencyCode: code,
         };
     }
 }
