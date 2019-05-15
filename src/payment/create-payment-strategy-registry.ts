@@ -31,7 +31,7 @@ import {
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
-import CybersourcePaymentProcessor from './strategies/cybersource/cybersource-payment-processor';
+import CyberSourcePaymentProcessor from './strategies/cybersource/cybersource-payment-processor';
 import CyberSourcePaymentStrategy from './strategies/cybersource/cybersource-payment-strategy';
 import CyberSourceScriptLoader from './strategies/cybersource/cybersource-script-loader';
 import CyberSourceThreeDSecurePaymentProcessor from './strategies/cybersource/cybersource-threedsecure-payment-processor';
@@ -122,10 +122,9 @@ export default function createPaymentStrategyRegistry(
                 store,
                 orderActionCreator,
                 paymentActionCreator,
-                paymentMethodActionCreator,
                 new CyberSourceScriptLoader(scriptLoader)
             ),
-            new CybersourcePaymentProcessor(
+            new CyberSourcePaymentProcessor(
                 store,
                 orderActionCreator,
                 paymentActionCreator

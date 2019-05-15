@@ -7,7 +7,7 @@ import { PaymentRequestOptions } from '../../payment-request-options';
 import {CreditCardInstrument} from '../../payment';
 import PaymentMethod from '../../payment-method';
 
-export default class CybersourcePaymentProcessor {
+export default class CyberSourcePaymentProcessor {
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,

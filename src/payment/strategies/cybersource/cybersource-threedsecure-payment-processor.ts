@@ -14,7 +14,6 @@ import OrderRequestBody from '../../../order/order-request-body';
 import {CreditCardInstrument, ThreeDSecure} from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
 
 import {
@@ -37,7 +36,6 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _cyberSourceScriptLoader: CyberSourceScriptLoader
     ) {
         this._cardinalEvent$ = new Subject();

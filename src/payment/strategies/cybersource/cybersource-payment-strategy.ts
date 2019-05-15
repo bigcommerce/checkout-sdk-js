@@ -9,24 +9,24 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import CybersourcePaymentProcessor from './cybersource-payment-processor';
+import CyberSourcePaymentProcessor from './cybersource-payment-processor';
 import CyberSourceThreeDSecurePaymentProcessor from './cybersource-threedsecure-payment-processor';
 
-export default class CybersourcePaymentStrategy implements PaymentStrategy {
-    private _processor?: CybersourcePaymentProcessor | CyberSourceThreeDSecurePaymentProcessor;
+export default class CyberSourcePaymentStrategy implements PaymentStrategy {
+    private _processor?: CyberSourcePaymentProcessor | CyberSourceThreeDSecurePaymentProcessor;
     private _paymentMethod?: PaymentMethod;
 
     constructor(
         private _store: CheckoutStore,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _threeDSecurePaymentProcessor: CyberSourceThreeDSecurePaymentProcessor,
-        private _paymentProcessor: CybersourcePaymentProcessor
+        private _paymentProcessor: CyberSourcePaymentProcessor
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod('cybersourcedirect')).then( state => {
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)).then( state => {
             this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
             if (!this._paymentMethod || !this._paymentMethod.config) {
