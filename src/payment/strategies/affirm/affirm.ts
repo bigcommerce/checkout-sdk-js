@@ -65,7 +65,7 @@ export interface AffirmItem {
     qty: number;
     item_image_url: string;
     item_url: string;
-    categories?: Array<[string]>;
+    categories?: string[][];
 }
 
 export interface AffirmDiscount {

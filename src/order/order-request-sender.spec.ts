@@ -6,6 +6,7 @@ import { getResponse } from '../common/http-request/responses.mock';
 import { InternalOrderResponseBody } from './internal-order-responses';
 import { getCompleteOrderResponseBody } from './internal-orders.mock';
 import Order from './order';
+import { OrderIncludes } from './order-params';
 import OrderRequestSender from './order-request-sender';
 import { getOrder } from './orders.mock';
 
@@ -61,13 +62,29 @@ describe('OrderRequestSender', () => {
         });
 
         it('loads order including payment data', async () => {
-            await orderRequestSender.loadOrder(295, { params: { include: ['payments'] } });
+            await orderRequestSender.loadOrder(295);
 
             expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
                 headers: {
                     Accept: ContentType.JsonV1,
                 },
                 params: { include },
+                timeout: undefined,
+            });
+        });
+
+        it('loads order including item categories', async () => {
+            const categoryIncludes = [OrderIncludes.PhysicalItemsCategories,
+                OrderIncludes.DigitalItemsCategories].join(',');
+            await orderRequestSender.loadOrder(295, { params: { include: [OrderIncludes.PhysicalItemsCategories,
+                        OrderIncludes.DigitalItemsCategories]} });
+            const expectedInclude = include + ',' + categoryIncludes;
+
+            expect(requestSender.get).toHaveBeenCalledWith('/api/storefront/orders/295', {
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: { include: expectedInclude },
                 timeout: undefined,
             });
         });
