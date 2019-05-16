@@ -46,9 +46,11 @@ export interface AffirmRequestData {
     metadata: {
         shipping_type: string,
         entity_name?: string,
-        platform_type?: string,
         webhook_session_id?: string,
         mode?: string,
+        platform_type: string,
+        platform_version: string,
+        platform_affirm: string,
     };
     order_id?: string;
     shipping_amount: number;
