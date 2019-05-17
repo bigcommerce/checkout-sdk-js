@@ -40,10 +40,12 @@ export type KlarnaUpdateSessionParams = Partial<{
 
 export interface KlarnaAddress {
     street_address: string;
+    street_address2?: string;
     city: string;
     country: string;
     given_name: string;
     family_name: string;
+    phone?: string;
     postal_code: string;
     region: string;
     email?: string;
