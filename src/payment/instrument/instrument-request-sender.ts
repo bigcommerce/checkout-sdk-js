@@ -47,13 +47,11 @@ export default class InstrumentRequestSender {
 
     deleteInstrument(
         requestContext: InstrumentRequestContext,
-        instrumentId: string,
-        currencyCode: string
+        instrumentId: string
     ): Promise<Response<InstrumentsResponseBody>> {
         const payload = {
             ...requestContext,
             instrumentId,
-            currencyCode,
         };
 
         return new Promise((resolve, reject) => {

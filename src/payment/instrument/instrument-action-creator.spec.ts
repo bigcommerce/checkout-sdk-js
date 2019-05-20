@@ -152,7 +152,7 @@ describe('InstrumentActionCreator', () => {
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
-            await from(instrumentActionCreator.deleteInstrument(instrumentId, currencyCode)(store))
+            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
@@ -163,8 +163,7 @@ describe('InstrumentActionCreator', () => {
                     currencyCode,
                     authToken: vaultAccessToken,
                 },
-                instrumentId,
-                currencyCode
+                instrumentId
             );
         });
 
@@ -180,7 +179,7 @@ describe('InstrumentActionCreator', () => {
                 },
             });
 
-            await from(instrumentActionCreator.deleteInstrument(instrumentId, currencyCode)(store))
+            await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
@@ -191,13 +190,12 @@ describe('InstrumentActionCreator', () => {
                     currencyCode,
                     authToken: vaultAccessToken,
                 },
-                instrumentId,
-                currencyCode
+                instrumentId
             );
         });
 
         it('emits actions if able to delete an instrument', async () => {
-            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId, currencyCode)(store))
+            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -218,7 +216,7 @@ describe('InstrumentActionCreator', () => {
             jest.spyOn(instrumentRequestSender, 'deleteInstrument').mockRejectedValue(errorResponse);
 
             const errorHandler = jest.fn(action => of(action));
-            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId, currencyCode)(store))
+            const actions = await from(instrumentActionCreator.deleteInstrument(instrumentId)(store))
                 .pipe(
                     catchError(errorHandler),
                     toArray()
@@ -244,15 +242,7 @@ describe('InstrumentActionCreator', () => {
             store = createCheckoutStore({});
 
             try {
-                await from(instrumentActionCreator.deleteInstrument('', 'USD')(store))
-                    .pipe(toArray())
-                    .toPromise();
-            } catch (e) {
-                expect(e.type).toEqual('missing_data');
-            }
-
-            try {
-                await from(instrumentActionCreator.deleteInstrument('instrument543id', '')(store))
+                await from(instrumentActionCreator.deleteInstrument('')(store))
                     .pipe(toArray())
                     .toPromise();
             } catch (e) {

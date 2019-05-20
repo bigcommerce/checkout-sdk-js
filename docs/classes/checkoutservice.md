@@ -321,7 +321,7 @@ Deletes a payment instrument by an id.
 Once an instrument gets removed, it can no longer be retrieved using `CheckoutStoreSelector#getInstruments`.
 
 ```js
-const state = service.deleteInstrument('123', 'USD');
+const state = service.deleteInstrument('123');
 
 console.log(state.data.getInstruments());
 ```
@@ -331,7 +331,6 @@ console.log(state.data.getInstruments());
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | instrumentId | `string` |  The identifier of the payment instrument to delete. |
-| currencyCode | `string` |  The currency code as selected by the shopper. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.
