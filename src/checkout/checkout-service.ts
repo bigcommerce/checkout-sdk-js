@@ -1020,7 +1020,7 @@ export default class CheckoutService {
      * `CheckoutStoreSelector#getInstruments`.
      *
      * ```js
-     * const state = service.deleteInstrument('123', 'USD');
+     * const state = service.deleteInstrument('123');
      *
      * console.log(state.data.getInstruments());
      * ```
