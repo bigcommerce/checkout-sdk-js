@@ -30,7 +30,6 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
     private _paymentMethod?: PaymentMethod;
     private _cardinalEvent$: Subject<CardinalEventResponse>;
     private _isSetupCompleted = false;
-    private _cardinalSessionId?: string;
 
     constructor(
         private _store: CheckoutStore,
@@ -43,7 +42,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
     initialize(paymentMethod: PaymentMethod): Promise<InternalCheckoutSelectors> {
         if (this._isSetupCompleted) {
-            Promise.resolve(this._store.getState());
+            return Promise.resolve(this._store.getState());
         }
 
         this._paymentMethod = paymentMethod;
@@ -97,8 +96,6 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                     jwt: clientToken,
                 });
 
-                this._isSetupCompleted = true;
-
                 return new Promise((resolve, reject) => {
                     this._cardinalEvent$
                         .pipe(take(1))
@@ -107,6 +104,8 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                                 if (!event.status) {
                                     reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
                                 }
+
+                                this._isSetupCompleted = true;
                                 resolve();
                             }
                         });
@@ -124,10 +123,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                 return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
                     .then(() =>
                         this._store.dispatch(
-                            this._paymentActionCreator.submitPayment({
-                                ...payment,
-                                paymentData: this._addThreeDSecureData(paymentData, { session: this._cardinalSessionId }),
-                            })
+                            this._paymentActionCreator.submitPayment({ ...payment, paymentData })
                         )
                     ).catch(error => {
                         if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
@@ -169,7 +165,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                             this._store.dispatch(
                                 this._paymentActionCreator.submitPayment({
                                     ...payment,
-                                    paymentData: this._addThreeDSecureData(paymentData, { session: this._cardinalSessionId, token: jwt }),
+                                    paymentData: this._addThreeDSecureData(paymentData, { token: jwt }),
                                 })
                             )
                         );

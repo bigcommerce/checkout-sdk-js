@@ -99,14 +99,11 @@ export enum PaymentType {
 }
 
 export enum CardinalTriggerEvents {
-    ACCOUNT_NUMBER_UPDATE = 'accountNumber.update',
     BIN_PROCCESS = 'bin.process',
-    JWT_UPDATE = 'jwt.update',
-    ORDER_UPDATE = 'order.update',
 }
 
 export interface CardinalBinProccessResponse {
-    Status: string;
+    Status: boolean;
 }
 
 export enum CardinalPaymentBrand {
