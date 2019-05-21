@@ -151,7 +151,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
     }
 
     private _mapToKlarnaAddress(address: Address, email?: string): KlarnaAddress {
-        return {
+        const klarnaAddress: KlarnaAddress = {
             street_address: address.address1,
             city: address.city,
             country: address.countryCode,
@@ -161,6 +161,16 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
             region: address.stateOrProvince,
             email,
         };
+
+        if (address.address2) {
+            klarnaAddress.street_address2 = address.address2;
+        }
+
+        if (address.phone) {
+            klarnaAddress.phone = address.phone;
+        }
+
+        return klarnaAddress;
     }
 
     private _authorize(): Promise<any> {
