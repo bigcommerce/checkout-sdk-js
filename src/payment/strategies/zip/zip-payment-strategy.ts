@@ -9,8 +9,7 @@ import {
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { PaymentMethodCancelledError } from '../../errors';
-import PaymentMethodInvalidError from '../../errors/payment-method-invalid-error';
+import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -84,6 +83,10 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
 
                                 if (state === ZipModalEvent.CheckoutApproved && checkoutId) {
                                     return resolve(checkoutId);
+                                }
+
+                                if (state === ZipModalEvent.CheckoutDeclined) {
+                                    return reject(new PaymentMethodDeclinedError('Unfortunately your application was declined. Please select another payment method.'));
                                 }
 
                                 reject(new PaymentMethodInvalidError());
