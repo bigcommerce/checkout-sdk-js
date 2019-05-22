@@ -1,10 +1,10 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import {OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody} from '../../../order';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
 
-import {CreditCardInstrument} from '../../payment';
+import { CreditCardInstrument } from '../../payment';
 import PaymentMethod from '../../payment-method';
 
 export default class CyberSourcePaymentProcessor {

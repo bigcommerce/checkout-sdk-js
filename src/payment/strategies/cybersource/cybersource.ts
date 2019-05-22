@@ -1,5 +1,4 @@
-const SignatureValidationErrors = [100004, 1010, 1011, 1020];
-export default SignatureValidationErrors;
+export const SignatureValidationErrors = [100004, 1010, 1011, 1020];
 
 export interface CyberSourceCardinal {
     configure(params: CardinalConfiguration): void;

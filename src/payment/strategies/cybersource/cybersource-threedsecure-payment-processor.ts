@@ -1,29 +1,39 @@
 import { includes, some } from 'lodash';
 import { Subject } from 'rxjs/index';
+import { filter } from 'rxjs/internal/operators';
 import { take } from 'rxjs/operators';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
-    MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType,
-    RequestError
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+    RequestError,
+    StandardError
 } from '../../../common/error/errors';
-import StandardError from '../../../common/error/errors/standard-error';
-import {OrderActionCreator, OrderPaymentRequestBody} from '../../../order';
+import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import OrderRequestBody from '../../../order/order-request-body';
-import {CreditCardInstrument, ThreeDSecure} from '../../payment';
+import { CreditCardInstrument, ThreeDSecure } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import { PaymentRequestOptions } from '../../payment-request-options';
 
 import {
-    default as SignatureValidationErrors,
-    CardinalEventAction, CardinalEventResponse, CardinalEventType, CardinalInitializationType, CardinalPaymentBrand,
+    CardinalEventAction,
+    CardinalEventResponse,
+    CardinalEventType,
+    CardinalInitializationType,
+    CardinalPaymentBrand,
     CardinalPaymentStep,
     CardinalTriggerEvents,
-    CardinalValidatedAction, CardinalValidatedData, CyberSourceCardinal, SetupCompletedData,
-} from './cybersource';
-import CyberSourceScriptLoader from './cybersource-script-loader';
+    CardinalValidatedAction,
+    CardinalValidatedData,
+    CyberSourceCardinal,
+    CyberSourceScriptLoader,
+    SetupCompletedData,
+    SignatureValidationErrors,
+} from './index';
 
 export default class CyberSourceThreeDSecurePaymentProcessor {
     private _Cardinal?: CyberSourceCardinal;
@@ -98,19 +108,16 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
                 return new Promise((resolve, reject) => {
                     this._cardinalEvent$
-                        .pipe(take(1))
+                        .pipe(take(1), filter(event => event.type.step === CardinalPaymentStep.SETUP))
                         .subscribe((event: CardinalEventResponse) => {
-                            if (event.type.step === CardinalPaymentStep.SETUP) {
-                                if (!event.status) {
-                                    reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
-                                }
-
-                                this._isSetupCompleted = true;
-                                resolve();
-                            }
+                            event.status ? resolve() : reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
                         });
                 });
-            }).then(() => this._store.getState());
+            }).then(() => {
+                this._isSetupCompleted = true;
+
+                return this._store.getState();
+            });
     }
 
     execute(payment: OrderPaymentRequestBody, order: OrderRequestBody, paymentData: CreditCardInstrument, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -150,16 +157,13 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                         // If credit card is enrolled in 3DS Cybersource will handle the rest of the flow
                         return new Promise<string>((resolve, reject) => {
                             this._cardinalEvent$
-                                .pipe(take(1))
+                                .pipe(take(1), filter(event => event.type.step === CardinalPaymentStep.AUTHORIZATION))
                                 .subscribe((event: CardinalEventResponse) => {
-                                    if (event.type.step === CardinalPaymentStep.AUTHORIZATION) {
-                                        if (event.status) {
-                                            resolve(event.jwt);
-                                        } else {
-                                            const message = event.data ? event.data.ErrorDescription : '';
-                                            reject(new StandardError(message));
-                                        }
+                                    if (!event.status) {
+                                        const message = event.data ? event.data.ErrorDescription : '';
+                                        reject(new StandardError(message));
                                     }
+                                    resolve(event.jwt);
                                 });
                         }).then(jwt =>
                             this._store.dispatch(

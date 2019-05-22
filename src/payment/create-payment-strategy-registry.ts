@@ -31,10 +31,12 @@ import {
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
-import CyberSourcePaymentProcessor from './strategies/cybersource/cybersource-payment-processor';
-import CyberSourcePaymentStrategy from './strategies/cybersource/cybersource-payment-strategy';
-import CyberSourceScriptLoader from './strategies/cybersource/cybersource-script-loader';
-import CyberSourceThreeDSecurePaymentProcessor from './strategies/cybersource/cybersource-threedsecure-payment-processor';
+import {
+    CyberSourcePaymentProcessor,
+    CyberSourcePaymentStrategy,
+    CyberSourceScriptLoader,
+    CyberSourceThreeDSecurePaymentProcessor,
+} from './strategies/cybersource';
 import {
     createGooglePayPaymentProcessor,
     GooglePayBraintreeInitializer,

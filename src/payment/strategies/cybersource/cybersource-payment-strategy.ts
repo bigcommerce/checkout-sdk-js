@@ -9,8 +9,10 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import CyberSourcePaymentProcessor from './cybersource-payment-processor';
-import CyberSourceThreeDSecurePaymentProcessor from './cybersource-threedsecure-payment-processor';
+import {
+    CyberSourcePaymentProcessor,
+    CyberSourceThreeDSecurePaymentProcessor,
+} from './index';
 
 export default class CyberSourcePaymentStrategy implements PaymentStrategy {
     private _processor?: CyberSourcePaymentProcessor | CyberSourceThreeDSecurePaymentProcessor;
