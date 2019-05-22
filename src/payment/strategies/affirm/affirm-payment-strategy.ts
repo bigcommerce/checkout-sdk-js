@@ -1,7 +1,9 @@
+import { AmountTransformer } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { Order, OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { Consignment } from '../../../shipping';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -57,7 +59,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
         return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, options))
             .then<AffirmSuccessResponse>(() => {
-                _affirm.checkout(this._getCheckoutInformation(useStoreCredit));
+                _affirm.checkout(this._getCheckoutInformation());
 
                 return new Promise((resolve, reject) => {
                     _affirm.checkout.open({
@@ -93,7 +95,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    private _getCheckoutInformation(useStoreCredit: boolean = false): AffirmRequestData {
+    private _getCheckoutInformation(): AffirmRequestData {
         const state = this._store.getState();
         const config = state.config.getStoreConfig();
         const consignments = state.consignments.getConsignments();
@@ -107,15 +109,8 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
-        if (!consignments) {
-            throw new MissingDataError(MissingDataErrorType.MissingConsignments);
-        }
-
-        const consignment = consignments[0];
-
-        if (!consignment || !consignment.selectedShippingOption) {
-            throw new MissingDataError(MissingDataErrorType.MissingConsignments);
-        }
+        const amountTransformer = new AmountTransformer(order.currency.decimalPlaces);
+        const billingAddress = this._getBillingAddress();
 
         return {
             merchant: {
@@ -123,20 +118,33 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
                 user_cancel_url: config.links.checkoutLink,
                 user_confirmation_url_action: 'POST',
             },
-            shipping: this._getShippingAddress(),
-            billing: this._getBillingAddress(),
-            items: this._getItems(),
-            discounts: this._getDiscounts(),
+            shipping: this._getShippingAddress() || billingAddress,
+            billing: billingAddress,
+            items: this._getItems(amountTransformer, order),
             metadata: {
-                shipping_type: consignment.selectedShippingOption.type,
+                shipping_type: this._getShippingType(consignments),
                 mode: 'modal',
+                platform_type: 'BigCommerce',
+                platform_version: '',
+                platform_affirm: '',
             },
+            discounts: this._getDiscounts(amountTransformer, order),
             order_id: order.orderId ? order.orderId.toString() : '',
-            shipping_amount: order.shippingCostTotal * 100,
-            tax_amount: order.taxTotal * 100,
-            total: order.orderAmount * 100,
+            shipping_amount: amountTransformer.toInteger(order.shippingCostTotal),
+            tax_amount: amountTransformer.toInteger(order.taxTotal),
+            total: amountTransformer.toInteger(order.orderAmount),
         };
+    }
 
+    private _getShippingType(consignments?: Consignment[]): string {
+        if (!consignments) {
+            return '';
+        }
+
+        const consignment = consignments[0];
+
+        return consignment && consignment.selectedShippingOption ?
+            consignment.selectedShippingOption.type : '';
     }
 
     private _getBillingAddress(): AffirmAddress {
@@ -168,12 +176,12 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return billingInformation;
     }
 
-    private _getShippingAddress(): AffirmAddress {
+    private _getShippingAddress(): AffirmAddress | undefined {
         const state = this._store.getState();
         const shippingAddress = state.shippingAddress.getShippingAddress();
 
         if (!shippingAddress) {
-            throw new MissingDataError(MissingDataErrorType.MissingShippingAddress);
+            return;
         }
 
         const shippingInformation = {
@@ -196,43 +204,48 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return shippingInformation;
     }
 
-    private _getItems(): AffirmItem[] {
-        const state = this._store.getState();
-        const cart = state.cart.getCart();
-
-        if (!cart) {
-            throw new MissingDataError(MissingDataErrorType.MissingCart);
-        }
+    private _getItems(amountTransformer: AmountTransformer, order: Order): AffirmItem[] {
         const items: AffirmItem[] = [];
 
-        for (const item of cart.lineItems.physicalItems) {
+        for (const item of order.lineItems.physicalItems) {
             items.push({
                 display_name: item.name,
                 sku: item.sku,
-                unit_price: item.salePrice,
+                unit_price: amountTransformer.toInteger(item.salePrice),
                 qty: item.quantity,
                 item_image_url: item.imageUrl,
                 item_url: item.url,
             });
         }
 
-        for (const item of cart.lineItems.digitalItems) {
+        for (const item of order.lineItems.digitalItems) {
             items.push({
                 display_name: item.name,
                 sku: item.sku,
-                unit_price: item.salePrice,
+                unit_price: amountTransformer.toInteger(item.salePrice),
                 qty: item.quantity,
                 item_image_url: item.imageUrl,
                 item_url: item.url,
             });
         }
 
-        if (cart.lineItems.customItems) {
-            for (const item of cart.lineItems.customItems) {
+        for (const item of order.lineItems.giftCertificates) {
+            items.push({
+                display_name: item.name,
+                sku: '',
+                unit_price: amountTransformer.toInteger(item.amount),
+                qty: 1,
+                item_image_url: '',
+                item_url: '',
+            });
+        }
+
+        if (order.lineItems.customItems) {
+            for (const item of order.lineItems.customItems) {
                 items.push({
                     display_name: item.name,
                     sku: item.sku,
-                    unit_price: item.listPrice,
+                    unit_price: amountTransformer.toInteger(item.listPrice),
                     qty: item.quantity,
                     item_image_url: '',
                     item_url: '',
@@ -240,43 +253,28 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             }
         }
 
-        for (const item of cart.lineItems.giftCertificates) {
-            items.push({
-                display_name: item.name,
-                sku: '',
-                unit_price: item.amount,
-                qty: 1,
-                item_image_url: '',
-                item_url: '',
-            });
-        }
-
         return items;
     }
 
-    private _getDiscounts(): AffirmDiscount {
-        const state = this._store.getState();
-        const cart = state.cart.getCart();
-
-        if (!cart) {
-            throw new MissingDataError(MissingDataErrorType.MissingCart);
-        }
-
+    private _getDiscounts(amountTransformer: AmountTransformer, order: Order): AffirmDiscount {
         const discounts: AffirmDiscount = {};
-        for (const line of cart.coupons) {
-            discounts[line.code] = {
-                discount_amount: line.discountedAmount,
-                discount_display_name: line.displayName,
-            };
+
+        for (const line of order.coupons) {
+            if (line.discountedAmount > 0) {
+                discounts[line.code] = {
+                    discount_amount: amountTransformer.toInteger(line.discountedAmount),
+                    discount_display_name: line.displayName,
+                };
+            }
         }
-        for (const line of cart.discounts) {
-            discounts[line.id] = {
-                discount_amount: line.discountedAmount,
-                discount_display_name: line.id,
+
+        if (order.discountAmount > 0) {
+            discounts.DISCOUNTED_AMOUNT = {
+                discount_amount: amountTransformer.toInteger(order.discountAmount),
+                discount_display_name: 'discount',
             };
         }
 
         return discounts;
     }
-
 }

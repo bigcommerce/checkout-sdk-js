@@ -159,6 +159,89 @@ describe('AffirmPaymentStrategy', () => {
             });
         });
 
+        it('initializes the Affirm checkout call with the correct payload', async () => {
+            const checkoutPayload = {
+                billing: {
+                    address: {
+                        city: 'Some City',
+                        country: 'US',
+                        line1: '12345 Testing Way',
+                        line2: '',
+                        state: 'CA',
+                        zipcode: '95555',
+                    },
+                    email: 'test@bigcommerce.com',
+                    name: {
+                        first: 'Test',
+                        full: 'Test Tester',
+                        last: 'Tester',
+                    },
+                    phone_number: '555-555-5555',
+                },
+                discounts: {
+                    DISCOUNTED_AMOUNT: {
+                        discount_amount: 1000,
+                        discount_display_name: 'discount',
+                    },
+                },
+                items: [
+                    {
+                        display_name: 'Canvas Laundry Cart',
+                        item_image_url: '/images/canvas-laundry-cart.jpg',
+                        item_url: '/canvas-laundry-cart/',
+                        qty: 1,
+                        sku: 'CLC',
+                        unit_price: 20000,
+                    },
+                    {
+                        display_name: '$100 Gift Certificate',
+                        item_image_url: '',
+                        item_url: '',
+                        qty: 1,
+                        sku: '',
+                        unit_price: 10000,
+                    },
+                ],
+                merchant: {
+                    user_cancel_url: 'https://store-k1drp8k8.bcapp.dev/checkout',
+                    user_confirmation_url: 'https://store-k1drp8k8.bcapp.dev/checkout',
+                    user_confirmation_url_action: 'POST',
+                },
+                metadata: {
+                    mode: 'modal',
+                    platform_affirm: '',
+                    platform_type: 'BigCommerce',
+                    platform_version: '',
+                    shipping_type: 'shipping_flatrate',
+                },
+                order_id: '295',
+                shipping: {
+                    address: {
+                        city: 'Some City',
+                        country: 'US',
+                        line1: '12345 Testing Way',
+                        line2: '',
+                        state: 'CA',
+                        zipcode: '95555',
+                    },
+                    name: {
+                        first: 'Test',
+                        full: 'Test Tester',
+                        last: 'Tester',
+                    },
+                    phone_number: '555-555-5555',
+                },
+                shipping_amount: 1500,
+                tax_amount: 300,
+                total: 19000,
+            };
+
+            const options = { methodId: 'affirm', gatewayId: undefined };
+            await strategy.execute(payload, options);
+
+            expect(affirm.checkout).toHaveBeenCalledWith(checkoutPayload);
+        });
+
         it('returns cancel error on affirm if users cancel flow', () => {
             jest.spyOn(affirm.checkout, 'open').mockImplementation(({ onFail }) => {
                 onFail({
@@ -198,12 +281,6 @@ describe('AffirmPaymentStrategy', () => {
 
         it('does not create affirm object if billingAddress does not exist', () => {
             jest.spyOn(store.getState().billingAddress, 'getBillingAddress').mockReturnValue(undefined);
-
-            return expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
-        });
-
-        it('does not create affirm object if cart does not exist', () => {
-            jest.spyOn(store.getState().cart, 'getCart').mockReturnValue(undefined);
 
             return expect(strategy.execute(payload)).rejects.toThrow(MissingDataError);
         });
