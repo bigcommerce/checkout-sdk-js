@@ -48,6 +48,31 @@ module.exports = [
             libraryTarget: 'umd',
             filename: '[name].umd.js',
         }),
+        module: Object.assign({}, assetConfig.module, {
+            rules: [
+                {
+                    test: /\.(js|ts)$/,
+                    include: path.resolve(__dirname, 'src'),
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            [
+                                '@babel/preset-env',
+                                {
+                                    corejs: 3,
+                                    targets: [
+                                        'defaults',
+                                        'ie 11',
+                                    ],
+                                    useBuiltIns: 'usage',
+                                },
+                            ]
+                        ],
+                    },
+                },
+                ...assetConfig.module.rules,
+            ],
+        }),
     }),
 
     Object.assign({}, assetConfig, {
