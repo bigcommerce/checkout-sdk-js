@@ -101,26 +101,18 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
             .then(state => new Promise<KlarnaLoadResponse>((resolve, reject) => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-                const billingAddress = state.billingAddress.getBillingAddress();
-                const shippingAddress = state.shippingAddress.getShippingAddress();
 
                 if (!paymentMethod) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
-                if (!billingAddress) {
-                    throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
                 }
 
                 if (!this._klarnaCredit || !paymentMethod.clientToken) {
                     throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                 }
 
-                const updateSessionData = this._getUpdateSessionData(billingAddress, shippingAddress);
-
                 this._klarnaCredit.init({ client_token: paymentMethod.clientToken });
 
-                this._klarnaCredit.load({ container }, updateSessionData, response => {
+                this._klarnaCredit.load({ container }, response => {
                     if (onLoad) {
                         onLoad(response);
                     }
@@ -175,11 +167,20 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
 
     private _authorize(): Promise<any> {
         return new Promise((resolve, reject) => {
+            const billingAddress = this._store.getState().billingAddress.getBillingAddress();
+            const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
+
+            if (!billingAddress) {
+                throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+            }
+
             if (!this._klarnaCredit) {
                 throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
             }
 
-            this._klarnaCredit.authorize({}, res => {
+            const updateSessionData = this._getUpdateSessionData(billingAddress, shippingAddress);
+
+            this._klarnaCredit.authorize(updateSessionData, res => {
                 if (res.approved) {
                     return resolve(res);
                 }
