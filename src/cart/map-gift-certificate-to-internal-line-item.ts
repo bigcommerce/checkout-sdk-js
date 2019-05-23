@@ -1,7 +1,7 @@
+import { AmountTransformer } from '../common/utility';
+
 import InternalLineItem from './internal-line-item';
 import { GiftCertificateItem } from './line-item';
-
-import { AmountTransformer } from '.';
 
 export default function mapGiftCertificateToInternalLineItem(
     item: GiftCertificateItem,

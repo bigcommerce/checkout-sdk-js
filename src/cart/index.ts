@@ -1,4 +1,3 @@
-export { default as AmountTransformer } from './amount-transformer';
 export { default as Cart } from './cart';
 export { default as InternalCart } from './internal-cart';
 export { default as InternalLineItem } from './internal-line-item';
