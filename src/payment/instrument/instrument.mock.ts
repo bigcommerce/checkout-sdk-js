@@ -53,6 +53,7 @@ export function instrumentRequestContext(): InstrumentRequestContext {
     return {
         storeId: '1504098821',
         customerId: 0,
+        currencyCode: 'USD',
         authToken: getInstrumentsMeta().vaultAccessToken,
     };
 }

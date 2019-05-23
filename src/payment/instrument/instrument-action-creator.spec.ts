@@ -1,4 +1,5 @@
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
+import { merge } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
@@ -6,6 +7,7 @@ import { Address } from '../../address';
 import { createCheckoutStore, CheckoutStore, CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { getErrorResponse, getResponse } from '../../common/http-request/responses.mock';
+import { getConfig, getConfigState } from '../../config/configs.mock';
 import { getShippingAddress } from '../../shipping/shipping-addresses.mock';
 
 import { VaultAccessToken } from './instrument';
@@ -34,6 +36,7 @@ describe('InstrumentActionCreator', () => {
     let storeId: string;
     let customerId: number;
     let instrumentId: string;
+    let currencyCode: string;
     let shippingAddress: Address;
     let vaultAccessExpiry: number;
     let vaultAccessToken: string;
@@ -60,6 +63,7 @@ describe('InstrumentActionCreator', () => {
         customerId = state.cart.data!.customerId;
         shippingAddress = getShippingAddress();
         instrumentId = '123';
+        currencyCode = 'USD';
 
         const instrumentsMeta = getInstrumentsMeta();
         vaultAccessToken = instrumentsMeta.vaultAccessToken;
@@ -67,13 +71,29 @@ describe('InstrumentActionCreator', () => {
     });
 
     describe('#loadInstruments()', () => {
-        it('sends a request to get a list of instruments', async () => {
+        it('sends a request to get a list of instruments using shopper currency', async () => {
             await from(instrumentActionCreator.loadInstruments()(store))
                 .toPromise();
 
             expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
-                { storeId, customerId, authToken: vaultAccessToken },
+                { storeId, customerId, currencyCode, authToken: vaultAccessToken },
+                shippingAddress
+            );
+        });
+
+        it('sends a request to get a list of instruments using default currency when shopper currency is not transactional', async () => {
+            store = createCheckoutStore({
+                ...state,
+                config: merge({}, getConfigState(), { data: { ...getConfig(), storeConfig: { shopperCurrency: { code: 'AUD', isTransactional: false } } } }),
+            });
+
+            await from(instrumentActionCreator.loadInstruments()(store))
+                .toPromise();
+
+            expect(instrumentRequestSender.getVaultAccessToken).toHaveBeenCalled();
+            expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
+                { storeId, customerId, currencyCode, authToken: vaultAccessToken },
                 shippingAddress
             );
         });
@@ -95,7 +115,7 @@ describe('InstrumentActionCreator', () => {
 
             expect(instrumentRequestSender.getVaultAccessToken).not.toHaveBeenCalled();
             expect(instrumentRequestSender.loadInstruments).toHaveBeenCalledWith(
-                { storeId, customerId, authToken: vaultAccessToken },
+                { storeId, customerId, currencyCode, authToken: vaultAccessToken },
                 shippingAddress
             );
         });
@@ -158,6 +178,7 @@ describe('InstrumentActionCreator', () => {
                 {
                     storeId,
                     customerId,
+                    currencyCode,
                     authToken: vaultAccessToken,
                 },
                 instrumentId
@@ -184,6 +205,7 @@ describe('InstrumentActionCreator', () => {
                 {
                     storeId,
                     customerId,
+                    currencyCode,
                     authToken: vaultAccessToken,
                 },
                 instrumentId

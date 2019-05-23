@@ -22,6 +22,7 @@ export interface StoreConfig {
 
 export interface ShopperCurrency extends StoreCurrency {
     exchangeRate: number;
+    isTransactional: boolean;
 }
 
 export interface StoreProfile {

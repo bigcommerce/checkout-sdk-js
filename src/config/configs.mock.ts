@@ -113,6 +113,7 @@ export function getConfig(): Config {
                 decimalSeparator: '.',
                 thousandsSeparator: ',',
                 exchangeRate: 1,
+                isTransactional: true,
             },
         },
     };

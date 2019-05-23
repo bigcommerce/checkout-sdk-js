@@ -125,10 +125,12 @@ export default class InstrumentActionCreator {
 
         const { customerId } = cart;
         const { storeId } = config.storeProfile;
+        const { code } = config.shopperCurrency.isTransactional ? config.shopperCurrency : config.currency;
 
         return {
             customerId,
             storeId,
+            currencyCode: code,
         };
     }
 }
