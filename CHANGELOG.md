@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.21.0"></a>
+# [1.21.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.20.2...v1.21.0) (2019-05-23)
+
+
+### Bug Fixes
+
+* **checkout-button:** CHECKOUT-4137 Include Babel polyfills to UMD bundles so they work in older browsers ([fa5604a](https://github.com/bigcommerce/checkout-sdk-js/commit/fa5604a))
+* **common:** CHECKOUT-4137 Bump data-store version to fix issue with object freeze ([3f0245d](https://github.com/bigcommerce/checkout-sdk-js/commit/3f0245d))
+* **common:** INT-1500 Fix integer conversion rounding error ([aa3b18b](https://github.com/bigcommerce/checkout-sdk-js/commit/aa3b18b))
+* **payment:** INT-1500 Pass all amounts in cents for Affirm and add platform metadata information ([2c5622b](https://github.com/bigcommerce/checkout-sdk-js/commit/2c5622b))
+
+
+### Features
+
+* **checkout:** INT-1552 Sending klarna the phone number ([804652f](https://github.com/bigcommerce/checkout-sdk-js/commit/804652f))
+* **payment:** INT-1464 Port Elavon ng-checkout only implementation to checkout-sdk-js + ng-checkout ([b7ebba5](https://github.com/bigcommerce/checkout-sdk-js/commit/b7ebba5))
+
+
+
 <a name="1.20.2"></a>
 ## [1.20.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.20.1...v1.20.2) (2019-05-08)
 
