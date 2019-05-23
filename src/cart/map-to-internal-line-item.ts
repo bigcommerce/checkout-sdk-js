@@ -1,4 +1,5 @@
-import AmountTransformer from './amount-transformer';
+import { AmountTransformer } from '../common/utility';
+
 import InternalLineItem from './internal-line-item';
 import { DigitalItem, LineItem } from './line-item';
 

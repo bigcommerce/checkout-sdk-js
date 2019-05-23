@@ -1,10 +1,10 @@
 import { keyBy, reduce, some } from 'lodash';
 
 import { Checkout } from '../checkout';
+import { AmountTransformer } from '../common/utility';
 import { mapToInternalCoupon, mapToInternalGiftCertificate } from '../coupon';
 import { mapToDiscountNotifications } from '../promotion';
 
-import { AmountTransformer } from '.';
 import InternalCart from './internal-cart';
 import mapToInternalLineItems from './map-to-internal-line-items';
 
