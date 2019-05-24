@@ -133,6 +133,7 @@ export function getCybersource(): PaymentMethod {
         supportedCards: [],
         config: {
             displayName: 'Cybersource',
+            is3dsEnabled: true,
             testMode: false,
         },
         type: 'PAYMENT_TYPE_API',
