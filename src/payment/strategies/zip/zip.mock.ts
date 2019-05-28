@@ -19,6 +19,14 @@ export function getZipScriptMock(status: string): Zip {
         };
         break;
 
+    case 'declined':
+        mockZipResponse = {
+            checkoutId: '',
+            customerId: '',
+            state: 'declined',
+        };
+        break;
+
     case 'noCheckoutId':
         mockZipResponse = {
             checkoutId: '',
