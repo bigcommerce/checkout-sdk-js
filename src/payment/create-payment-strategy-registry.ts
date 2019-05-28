@@ -310,6 +310,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
+            remoteCheckoutActionCreator,
             new ZipScriptLoader(scriptLoader)
         )
     );
