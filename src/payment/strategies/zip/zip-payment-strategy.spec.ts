@@ -16,7 +16,8 @@ import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { getPaymentMethodsState, getZip } from '../../../payment/payment-methods.mock';
 import { getZipScriptMock } from '../../../payment/strategies/zip/zip.mock';
-import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
+import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
 import { PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
@@ -34,6 +35,7 @@ describe('ZipPaymentStrategy', () => {
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
+    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let requestSender: RequestSender;
     let store: CheckoutStore;
     let scriptLoader: ScriptLoader;
@@ -65,10 +67,15 @@ describe('ZipPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(paymentClient, new CheckoutValidator(new CheckoutRequestSender(createRequestSender())));
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
+        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
+            new RemoteCheckoutRequestSender(createRequestSender())
+        );
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
+        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
+            .mockReturnValue(submitOrderAction);
         jest.spyOn(orderActionCreator, 'submitOrder')
             .mockReturnValue(submitOrderAction);
         jest.spyOn(paymentActionCreator, 'submitPayment')
@@ -88,6 +95,7 @@ describe('ZipPaymentStrategy', () => {
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
+            remoteCheckoutActionCreator,
             zipScriptLoader
         );
     });
@@ -136,6 +144,7 @@ describe('ZipPaymentStrategy', () => {
             };
             await strategy.execute(orderRequestBody, zipOptions);
 
+            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: false });
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, zipOptions);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
@@ -152,6 +161,7 @@ describe('ZipPaymentStrategy', () => {
                 await strategy.execute(orderRequestBody, zipOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(NotInitializedError);
+                expect(remoteCheckoutActionCreator.initializePayment).not.toHaveBeenCalled();
                 expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
                 expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
                 expect(store.dispatch).not.toHaveBeenCalledWith(submitOrderAction);
@@ -200,6 +210,21 @@ describe('ZipPaymentStrategy', () => {
                 await strategy.execute(orderRequestBody, zipOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodInvalidError);
+                expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+                expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
+            }
+        });
+
+        it('throws an error if the registration is declined', async () => {
+            const declinedZipClient = getZipScriptMock('declined');
+            jest.spyOn(zipScriptLoader, 'load')
+                .mockResolvedValue(declinedZipClient);
+            await strategy.initialize(zipOptions);
+
+            try {
+                await strategy.execute(orderRequestBody, zipOptions);
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentMethodDeclinedError);
                 expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
                 expect(store.dispatch).not.toHaveBeenCalledWith(submitPaymentAction);
             }

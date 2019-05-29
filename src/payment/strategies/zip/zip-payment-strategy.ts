@@ -8,8 +8,8 @@ import {
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentMethodCancelledError } from '../../errors';
-import PaymentMethodInvalidError from '../../errors/payment-method-invalid-error';
+import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -28,6 +28,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
+        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
         private _zipScriptLoader: ZipScriptLoader
     ) { }
 
@@ -50,6 +51,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const { _zipClient: zipClient } = this;
+        const useStoreCredit = !!payload.useStoreCredit;
 
         if (!payment) {
             throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
@@ -59,16 +61,19 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId))
-            .then(state => {
-                this._paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
-
-                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-            })
+        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+            .then(() => this._store.dispatch(
+                this._remoteCheckoutActionCreator.initializePayment(payment.methodId, { useStoreCredit })
+            ))
             .then(()  => {
-                return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+                return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options))
+                    .then(state => {
+                        this._paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
+
+                        if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                        }
+                    })
                     .then(() => new Promise<string>((resolve, reject) => {
                         zipClient.Checkout.init({
                             onComplete: ({ checkoutId, state }) => {
@@ -78,6 +83,10 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
 
                                 if (state === ZipModalEvent.CheckoutApproved && checkoutId) {
                                     return resolve(checkoutId);
+                                }
+
+                                if (state === ZipModalEvent.CheckoutDeclined) {
+                                    return reject(new PaymentMethodDeclinedError('Unfortunately your application was declined. Please select another payment method.'));
                                 }
 
                                 reject(new PaymentMethodInvalidError());
