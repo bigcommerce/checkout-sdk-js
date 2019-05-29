@@ -145,3 +145,7 @@ export interface CardinalEventResponse {
     data?: CardinalValidatedData;
     status: boolean;
 }
+
+export interface JPMC {
+    CyberSourceCardinal: CyberSourceCardinal;
+}
