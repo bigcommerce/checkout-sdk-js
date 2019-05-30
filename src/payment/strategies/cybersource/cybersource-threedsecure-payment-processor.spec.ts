@@ -5,6 +5,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import MissingDataError from '../../../common/error/errors/missing-data-error';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
@@ -92,6 +93,14 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
 
             expect(cardinal.on).toHaveBeenCalledWith(CardinalEventType.SetupCompleted, expect.any(Function));
             expect(promise).toBe(store.getState());
+        });
+
+        it('throws when initialize options are undefined', () => {
+            const paymentMethod = paymentMethodMock;
+            paymentMethod.clientToken = undefined;
+
+            expect(() => processor.initialize(paymentMethod))
+                .toThrow(MissingDataError);
         });
     });
 });
