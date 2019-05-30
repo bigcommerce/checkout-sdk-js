@@ -71,6 +71,15 @@ export function getCardinalValidatedData(): CardinalValidatedData {
     };
 }
 
+export function getCardinalValidatedDataWithSetupError(): CardinalValidatedData {
+    return {
+        ActionCode: CardinalValidatedAction.ERROR,
+        ErrorDescription: 'error',
+        ErrorNumber: 1020,
+        Validated: false,
+    };
+}
+
 export function getRejectAuthorizationPromise(): CardinalEventResponse {
     return {
         type: {

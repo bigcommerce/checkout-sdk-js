@@ -14,10 +14,10 @@ import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import { getCybersource, getPaymentMethodsState } from '../../payment-methods.mock';
 
-import { CyberSourceCardinal } from './cybersource';
+import {CardinalValidatedAction, CardinalValidatedData, CyberSourceCardinal, Payment} from './cybersource';
 import CyberSourceScriptLoader from './cybersource-script-loader';
 import CyberSourceThreeDSecurePaymentProcessor from './cybersource-threedsecure-payment-processor';
-import { getCybersourceCardinal } from './cybersource.mock';
+import {getCardinalValidatedDataWithSetupError, getCybersourceCardinal} from './cybersource.mock';
 import { CardinalEventType } from './index';
 
 describe('CyberSourceThreeDSecurePaymentProcessor', () => {
@@ -78,7 +78,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
             let call: () => {};
 
             cardinal.on = jest.fn((type, callback) => {
-                if (type.toString() === 'payments.setupComplete') {
+                if (type.toString() === CardinalEventType.SetupCompleted) {
                     call = callback;
                 } else {
                     jest.fn();
@@ -93,6 +93,28 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
 
             expect(cardinal.on).toHaveBeenCalledWith(CardinalEventType.SetupCompleted, expect.any(Function));
             expect(promise).toBe(store.getState());
+        });
+
+        it('initializes incorrectly', async () => {
+            let call: (data: CardinalValidatedData, jwt: string) => {};
+
+            cardinal.on = jest.fn((type, callback) => {
+                if (type.toString() === CardinalEventType.Validated) {
+                    call = callback;
+                } else {
+                    jest.fn();
+                }
+            });
+
+            jest.spyOn(cardinal, 'setup').mockImplementation(() => {
+                call(getCardinalValidatedDataWithSetupError(), '');
+            });
+
+            try {
+                await processor.initialize(paymentMethodMock);
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
 
         it('throws when initialize options are undefined', () => {
