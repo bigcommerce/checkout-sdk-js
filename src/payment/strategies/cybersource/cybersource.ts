@@ -76,10 +76,10 @@ export enum CardinalValidatedAction {
 }
 
 export interface CardinalValidatedData {
-    ActionCode?: CardinalValidatedAction;
+    ActionCode: CardinalValidatedAction;
     ErrorDescription: string;
     ErrorNumber: number;
-    Validated?: boolean;
+    Validated: boolean;
     Payment?: Payment;
 }
 

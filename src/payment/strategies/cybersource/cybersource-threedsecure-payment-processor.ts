@@ -102,16 +102,20 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                     }
                 });
 
-                this._Cardinal.setup(CardinalInitializationType.Init, {
-                    jwt: clientToken,
-                });
-
                 return new Promise((resolve, reject) => {
                     this._cardinalEvent$
                         .pipe(take(1), filter(event => event.type.step === CardinalPaymentStep.SETUP))
                         .subscribe((event: CardinalEventResponse) => {
                             event.status ? resolve() : reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
                         });
+
+                    if (!this._Cardinal) {
+                        throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+                    }
+
+                    this._Cardinal.setup(CardinalInitializationType.Init, {
+                        jwt: clientToken,
+                    });
                 });
             }).then(() => {
                 this._isSetupCompleted = true;
