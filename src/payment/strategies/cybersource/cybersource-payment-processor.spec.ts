@@ -28,7 +28,7 @@ import { getCybersource, getPaymentMethodsState } from '../../payment-methods.mo
 import { getCreditCardInstrument } from '../../payments.mock';
 
 import CyberSourcePaymentProcessor from './cybersource-payment-processor';
-import { getCybersourcePaymentData, getCybersourcePaymentRequestOptions } from './cybersource.mock';
+import { getCybersourcePaymentRequestBody, getCybersourcePaymentRequestOptions } from './cybersource.mock';
 
 describe('CyberSourcePaymentProcessor', () => {
     let processor: CyberSourcePaymentProcessor;
@@ -113,7 +113,7 @@ describe('CyberSourcePaymentProcessor', () => {
 
     describe('#execute', () => {
         it('executes the processor successfully', async () => {
-            await processor.execute(getCybersourcePaymentData(), payload, getCreditCardInstrument(), getCybersourcePaymentRequestOptions());
+            await processor.execute(getCybersourcePaymentRequestBody(), payload, getCreditCardInstrument(), getCybersourcePaymentRequestOptions());
 
             expect(_orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, getCybersourcePaymentRequestOptions());
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);

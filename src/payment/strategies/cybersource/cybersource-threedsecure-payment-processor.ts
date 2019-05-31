@@ -127,59 +127,57 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
             return Promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
         }
 
-        return this._Cardinal.trigger(CardinalTriggerEvents.BIN_PROCCESS, paymentData.ccNumber).then(result => {
-            if (result && result.Status) {
-                return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-                    .then(() =>
-                        this._store.dispatch(
-                            this._paymentActionCreator.submitPayment({ ...payment, paymentData })
-                        )
-                    ).catch(error => {
-                        if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
-                            return Promise.reject(error);
-                        }
-
-                        if (!this._Cardinal) {
-                            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-                        }
-
-                        const continueObject = {
-                            AcsUrl: error.body.three_ds_result.acs_url,
-                            Payload: error.body.three_ds_result.merchant_data,
-                        };
-
-                        const partialOrder = {
-                            OrderDetails: {
-                                TransactionId: error.body.three_ds_result.payer_auth_request,
-                            },
-                        };
-
-                        this._Cardinal.continue(CardinalPaymentBrand.CCA, continueObject, partialOrder);
-
-                        // If credit card is enrolled in 3DS Cybersource will handle the rest of the flow
-                        return new Promise<string>((resolve, reject) => {
-                            this._cardinalEvent$
-                                .pipe(take(1), filter(event => event.type.step === CardinalPaymentStep.AUTHORIZATION))
-                                .subscribe((event: CardinalEventResponse) => {
-                                    if (!event.status) {
-                                        const message = event.data ? event.data.ErrorDescription : '';
-                                        reject(new StandardError(message));
-                                    }
-                                    resolve(event.jwt);
-                                });
-                        }).then(jwt =>
+        return ((cardinal: CyberSourceCardinal): Promise<InternalCheckoutSelectors> => {
+            return cardinal.trigger(CardinalTriggerEvents.BIN_PROCCESS, paymentData.ccNumber).then(result => {
+                if (result && result.Status) {
+                    return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+                        .then(() =>
                             this._store.dispatch(
-                                this._paymentActionCreator.submitPayment({
-                                    ...payment,
-                                    paymentData: this._addThreeDSecureData(paymentData, { token: jwt }),
-                                })
+                                this._paymentActionCreator.submitPayment({ ...payment, paymentData })
                             )
-                        );
-                    });
-            } else {
-                throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-            }
-        });
+                        ).catch(error => {
+                            if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
+                                return Promise.reject(error);
+                            }
+
+                            const continueObject = {
+                                AcsUrl: error.body.three_ds_result.acs_url,
+                                Payload: error.body.three_ds_result.merchant_data,
+                            };
+
+                            const partialOrder = {
+                                OrderDetails: {
+                                    TransactionId: error.body.three_ds_result.payer_auth_request,
+                                },
+                            };
+
+                            // If credit card is enrolled in 3DS Cybersource will handle the rest of the flow
+                            return new Promise<string>((resolve, reject) => {
+                                this._cardinalEvent$
+                                    .pipe(take(1), filter(event => event.type.step === CardinalPaymentStep.AUTHORIZATION))
+                                    .subscribe((event: CardinalEventResponse) => {
+                                        if (!event.status) {
+                                            const message = event.data ? event.data.ErrorDescription : '';
+                                            reject(new StandardError(message));
+                                        }
+                                        resolve(event.jwt);
+                                    });
+
+                                cardinal.continue(CardinalPaymentBrand.CCA, continueObject, partialOrder);
+                            }).then(jwt =>
+                                this._store.dispatch(
+                                    this._paymentActionCreator.submitPayment({
+                                        ...payment,
+                                        paymentData: this._addThreeDSecureData(paymentData, { token: jwt }),
+                                    })
+                                )
+                            );
+                        });
+                } else {
+                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+                }
+            });
+        })(this._Cardinal);
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

@@ -50,7 +50,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         }
 
         if (!payment || !paymentData) {
-            return Promise.reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
+            return Promise.reject(new MissingDataError(MissingDataErrorType.MissingCheckout));
         }
 
         return this._processor.execute(payment, order, paymentData, options);

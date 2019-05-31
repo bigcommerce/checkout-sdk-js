@@ -13,6 +13,8 @@ import {
     CyberSourceCardinal,
     PaymentType,
 } from './cybersource';
+import OrderRequestBody from "../../../order/order-request-body";
+import {CreditCardInstrument} from "../../payment";
 
 const CardinalWindowMock: CardinalWindow = window;
 
@@ -39,10 +41,17 @@ export function getCybersourceCardinal(): CyberSourceCardinal {
     };
 }
 
-export function getCybersourcePaymentData(): OrderPaymentRequestBody {
+export function getCybersourcePaymentRequestBody(): OrderPaymentRequestBody {
     return {
         ...getOrderRequestBody().payment,
         methodId: 'cybersource',
+    };
+}
+
+export function getCybersourceOrderRequestBody(): OrderRequestBody {
+    return {
+        ...getOrderRequestBody(),
+        payment: getCybersourcePaymentRequestBody(),
     };
 }
 
@@ -52,31 +61,22 @@ export function getCybersourcePaymentRequestOptions(): PaymentRequestOptions {
     };
 }
 
-export function getCardinalBinProccessResponse(): CardinalBinProccessResponse {
+export function getCardinalBinProccessResponse(status: boolean): CardinalBinProccessResponse {
     return {
-        Status: true,
+        Status: status,
     };
 }
 
-export function getCardinalValidatedData(): CardinalValidatedData {
+export function getCardinalValidatedData(actionCode: CardinalValidatedAction, status: boolean, errorNumber?: number): CardinalValidatedData {
     return {
-        ActionCode: CardinalValidatedAction.NOACTION,
-        ErrorDescription: 'error',
-        ErrorNumber: 12,
-        Validated: true,
+        ActionCode: actionCode,
+        ErrorDescription: '',
+        ErrorNumber: errorNumber ? errorNumber : 0,
+        Validated: status,
         Payment: {
             ProcessorTransactionId: '',
             Type: PaymentType.CCA,
         },
-    };
-}
-
-export function getCardinalValidatedDataWithSetupError(): CardinalValidatedData {
-    return {
-        ActionCode: CardinalValidatedAction.ERROR,
-        ErrorDescription: 'error',
-        ErrorNumber: 1020,
-        Validated: false,
     };
 }
 
