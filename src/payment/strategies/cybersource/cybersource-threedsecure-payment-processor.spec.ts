@@ -15,12 +15,10 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import {OrderActionCreator, OrderActionType, OrderRequestSender} from '../../../order';
 import OrderFinalizationNotRequiredError from '../../../order/errors/order-finalization-not-required-error';
-import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
 import {PaymentActionType, SubmitPaymentAction} from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
-import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getCybersource, getPaymentMethodsState } from '../../payment-methods.mock';
 import { getCreditCardInstrument, getErrorPaymentResponseBody } from '../../payments.mock';
 
@@ -93,7 +91,6 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
     });
 
     describe('#initialize', () => {
-
         it('initializes successfully', async () => {
             let call: () => {};
 
@@ -130,7 +127,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
                 call();
             });
 
-            const promise = await processor.initialize(paymentMethodMock);
+            await processor.initialize(paymentMethodMock);
             processor.initialize(paymentMethodMock);
 
             expect(cardinal.on).toHaveBeenCalledTimes(2);
@@ -245,11 +242,11 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
                 }));
 
                 jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProccessResponse(true)));
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
             });
 
             it('purchase finalizes correctly', async () => {
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
                 jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(submitPaymentAction);
 
@@ -266,8 +263,6 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
 
             it('3DS authorization returns a no action code and completes the purchase correctly', async () => {
                 jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-                jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(submitPaymentAction);
 
                 jest.spyOn(cardinal, 'continue').mockImplementation(() => {
@@ -282,9 +277,6 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
             });
 
             it('3DS authorization returns a no action code and does not complete the purchase', async () => {
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-
                 jest.spyOn(cardinal, 'continue').mockImplementation(() => {
                     validatedCall(getCardinalValidatedData(CardinalValidatedAction.NOACTION, false, 3002), '');
                 });
@@ -299,9 +291,6 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
             });
 
             it('3DS authorization returns an error code and does not complete the purchase', async () => {
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-
                 jest.spyOn(cardinal, 'continue').mockImplementation(() => {
                     validatedCall(getCardinalValidatedData(CardinalValidatedAction.ERROR, false, 3004), '');
                 });
@@ -316,9 +305,6 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
             });
 
             it('3DS authorization returns a failure code and does not complete the purchase', async () => {
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-
                 jest.spyOn(cardinal, 'continue').mockImplementation(() => {
                     validatedCall(getCardinalValidatedData(CardinalValidatedAction.FAILURE, false, 3004), '');
                 });

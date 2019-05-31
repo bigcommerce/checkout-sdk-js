@@ -1,5 +1,7 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import OrderRequestBody from '../../../order/order-request-body';
+
 import { PaymentRequestOptions } from '../../payment-request-options';
 
 import {
@@ -13,8 +15,6 @@ import {
     CyberSourceCardinal,
     PaymentType,
 } from './cybersource';
-import OrderRequestBody from "../../../order/order-request-body";
-import {CreditCardInstrument} from "../../payment";
 
 const CardinalWindowMock: CardinalWindow = window;
 
