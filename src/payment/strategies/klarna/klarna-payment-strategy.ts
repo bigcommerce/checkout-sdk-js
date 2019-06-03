@@ -116,12 +116,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
                     if (onLoad) {
                         onLoad(response);
                     }
-
-                    if (!response.show_form) {
-                        reject(new PaymentMethodInvalidError());
-                    } else {
-                        resolve(response);
-                    }
+                    resolve(response);
                 });
             }));
     }
