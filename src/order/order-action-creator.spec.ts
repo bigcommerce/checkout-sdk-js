@@ -35,7 +35,15 @@ describe('OrderActionCreator', () => {
     let store: CheckoutStore;
 
     beforeEach(() => {
-        state = getCheckoutStoreState();
+        state = { ...getCheckoutStoreState(),
+            order: {
+                errors: {},
+                meta: {
+                    spamProtectionToken: 'spamProtectionToken',
+                },
+                statuses: {},
+            },
+        };
         store = createCheckoutStore(state);
 
         jest.spyOn(store, 'dispatch');
@@ -269,6 +277,24 @@ describe('OrderActionCreator', () => {
                 .toPromise();
 
             expect(checkoutValidator.validate).toHaveBeenCalled();
+        });
+
+        it('throws error if spam protection is enabled but no token is provided', async () => {
+            state = { ...getCheckoutStoreState(),
+                order: {
+                    errors: {},
+                    meta: {},
+                    statuses: {},
+                },
+            };
+            store = createCheckoutStore(state);
+
+            try {
+                await from(orderActionCreator.submitOrder(getOrderRequestBody())(store))
+                    .toPromise();
+            } catch (error) {
+                expect(error.payload).toBeInstanceOf(MissingDataError);
+            }
         });
 
         it('submits order payload with payment data', async () => {

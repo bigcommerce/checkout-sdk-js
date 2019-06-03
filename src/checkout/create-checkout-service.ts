@@ -1,4 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { ErrorActionCreator } from '../common/error';
@@ -9,6 +10,7 @@ import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator,
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
+import { createSpamProtection, SpamProtectionActionCreator } from '../order/spam-protection';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
@@ -80,7 +82,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
             orderActionCreator
         ),
         new ShippingCountryActionCreator(new ShippingCountryRequestSender(requestSender, { locale })),
-        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender))
+        new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),
+        new SpamProtectionActionCreator(createSpamProtection(new ScriptLoader()))
     );
 }
 

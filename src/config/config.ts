@@ -82,12 +82,14 @@ export interface CheckoutSettings {
     features: { [featureName: string]: boolean };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
+    googleRecaptchaSitekey: string;
     guestCheckoutEnabled: boolean;
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
+    isSpamProtectionEnabled: boolean;
     isTrustedShippingAddressEnabled: boolean;
     orderTermsAndConditions: string;
     orderTermsAndConditionsLink: string;

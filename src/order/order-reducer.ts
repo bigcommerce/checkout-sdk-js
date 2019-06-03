@@ -5,6 +5,7 @@ import { clearErrorReducer } from '../common/error';
 
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { OrderDataState, OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
+import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection/spam-protection-actions';
 
 const DEFAULT_STATE: OrderState = {
     errors: {},
@@ -44,7 +45,7 @@ function dataReducer(
 
 function metaReducer(
     meta: OrderMetaState | undefined,
-    action: OrderAction
+    action: OrderAction | SpamProtectionAction
 ): OrderMetaState | undefined {
     switch (action.type) {
     case OrderActionType.FinalizeOrderSucceeded:
@@ -56,7 +57,16 @@ function metaReducer(
             orderToken: action.payload.order.token,
             payment: action.payload.order && action.payload.order.payment,
         } : meta;
-
+    case SpamProtectionActionType.TokenExpired:
+        return {
+            ...meta,
+            spamProtectionToken: undefined,
+        };
+    case SpamProtectionActionType.Completed:
+        return action.payload ? {
+            ...meta,
+            spamProtectionToken: action.payload,
+        } : meta;
     default:
         return meta;
     }
