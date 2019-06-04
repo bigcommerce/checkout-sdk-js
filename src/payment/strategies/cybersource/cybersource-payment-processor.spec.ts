@@ -5,7 +5,12 @@ import { merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    createCheckoutStore,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
@@ -32,16 +37,16 @@ import { getCybersourcePaymentRequestBody, getCybersourcePaymentRequestOptions }
 
 describe('CyberSourcePaymentProcessor', () => {
     let processor: CyberSourcePaymentProcessor;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
     let store: CheckoutStore;
-    let requestSender: RequestSender;
-    let _paymentActionCreator: PaymentActionCreator;
-    let _orderActionCreator: OrderActionCreator;
-    let paymentMethodMock: PaymentMethod;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
+    let _orderActionCreator: OrderActionCreator;
     let _orderRequestSender: OrderRequestSender;
     let payload: OrderRequestBody;
+    let requestSender: RequestSender;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let _paymentActionCreator: PaymentActionCreator;
+    let paymentMethodMock: PaymentMethod;
 
     beforeEach(() => {
         paymentMethodMock = getCybersource();
@@ -128,11 +133,9 @@ describe('CyberSourcePaymentProcessor', () => {
 
     describe('#finalize()', () => {
         it('throws error to inform that order finalization is not required', async () => {
-            try {
-                await processor.finalize();
-            } catch (error) {
-                expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
-            }
+            const promise = processor.finalize();
+
+            expect(promise).rejects.toThrow(OrderFinalizationNotRequiredError);
         });
     });
 });

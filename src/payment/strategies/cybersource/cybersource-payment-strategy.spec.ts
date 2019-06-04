@@ -129,10 +129,12 @@ describe('CyberSourcePaymentStrategy', () => {
         });
 
         it('initializes strategy successfully with is3dsEnabled value is false', async () => {
-            jest.spyOn(cyberSourcePaymentProcessor, 'initialize').mockReturnValue(store.getState());
             paymentMethod = { ...getCybersource() };
             paymentMethod.config.is3dsEnabled = false;
+
+            jest.spyOn(cyberSourcePaymentProcessor, 'initialize').mockReturnValue(store.getState());
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethod);
+
             await strategy.initialize({ methodId: paymentMethodMock.id });
 
             expect(cyberSourcePaymentProcessor.initialize).toHaveBeenCalledTimes(1);

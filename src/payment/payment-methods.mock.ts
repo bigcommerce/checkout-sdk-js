@@ -138,7 +138,6 @@ export function getCybersource(): PaymentMethod {
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'cyberToken',
-        ccNumber: '4111111111111111',
     };
 }
 

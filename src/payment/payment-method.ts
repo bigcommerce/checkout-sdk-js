@@ -12,5 +12,4 @@ export default interface PaymentMethod {
     nonce?: string;
     initializationData?: any;
     returnUrl?: string;
-    ccNumber?: string;
 }

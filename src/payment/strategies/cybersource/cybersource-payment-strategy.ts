@@ -49,11 +49,11 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         const paymentData = payment && payment.paymentData as CreditCardInstrument;
 
         if (!this._processor) {
-            return Promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         if (!payment || !paymentData) {
-            return Promise.reject(new MissingDataError(MissingDataErrorType.MissingCheckout));
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
         }
 
         return this._processor.execute(payment, order, paymentData, options);
@@ -61,7 +61,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (!this._processor) {
-            return Promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         return this._processor.finalize(options);
@@ -69,7 +69,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (!this._processor) {
-            return Promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         return this._processor.deinitialize(options);

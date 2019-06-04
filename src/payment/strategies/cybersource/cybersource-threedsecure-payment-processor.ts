@@ -151,7 +151,6 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                                 },
                             };
 
-                            // If credit card is enrolled in 3DS Cybersource will handle the rest of the flow
                             return new Promise<string>((resolve, reject) => {
                                 this._cardinalEvent$
                                     .pipe(take(1), filter(event => event.type.step === CardinalPaymentStep.AUTHORIZATION))
@@ -181,7 +180,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return Promise.reject(new OrderFinalizationNotRequiredError());
+        throw new OrderFinalizationNotRequiredError();
     }
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -231,7 +230,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
     }
 
     private _addThreeDSecureData(payment: CreditCardInstrument, threeDSecure: ThreeDSecure): CreditCardInstrument {
-        payment.threeDSecure = threeDSecure;
+        payment.extraData = threeDSecure;
 
         return payment;
     }

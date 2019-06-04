@@ -21,7 +21,6 @@ export interface CreditCardInstrument {
     ccCvv?: string;
     shouldSaveInstrument?: boolean;
     extraData?: any;
-    threeDSecure?: ThreeDSecure;
 }
 
 export interface NonceInstrument {
