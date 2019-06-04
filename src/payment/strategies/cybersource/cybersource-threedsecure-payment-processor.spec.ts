@@ -1,8 +1,8 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import {createAction, createErrorAction, Action} from '@bigcommerce/data-store';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import {of, Observable} from 'rxjs/index';
+import { of, Observable } from 'rxjs/index';
 
 import { getCartState } from '../../../cart/carts.mock';
 import {
@@ -18,7 +18,11 @@ import NotInitializedError from '../../../common/error/errors/not-initialized-er
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
-import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestSender,
+} from '../../../order';
 import OrderFinalizationNotRequiredError from '../../../order/errors/order-finalization-not-required-error';
 import { PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';

@@ -11,7 +11,12 @@ import {
     CheckoutStore,
     CheckoutValidator,
 } from '../../../checkout';
-import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestBody,
+    OrderRequestSender,
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import {
