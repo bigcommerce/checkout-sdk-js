@@ -230,7 +230,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
     }
 
     private _addThreeDSecureData(payment: CreditCardInstrument, threeDSecure: ThreeDSecure): CreditCardInstrument {
-        payment.extraData = threeDSecure;
+        payment.threeDSecure = threeDSecure;
 
         return payment;
     }
