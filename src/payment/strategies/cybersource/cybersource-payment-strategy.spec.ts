@@ -14,7 +14,11 @@ import {
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import {
+    RemoteCheckoutActionCreator,
+    RemoteCheckoutActionType,
+    RemoteCheckoutRequestSender
+} from '../../../remote-checkout';
 import { PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -134,7 +138,7 @@ describe('CyberSourcePaymentStrategy', () => {
             expect(cyberSourcePaymentProcessor.initialize).toHaveBeenCalledTimes(1);
         });
 
-        it('throws data missing error', async () => {
+        it('throws data missing error when initializing', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
 
             try {
@@ -154,7 +158,7 @@ describe('CyberSourcePaymentStrategy', () => {
             }
         });
 
-        it('throws data missing error', async () => {
+        it('throws data missing error when executing', async () => {
             payload.payment = undefined;
 
             await strategy.initialize({ methodId: paymentMethodMock.id });

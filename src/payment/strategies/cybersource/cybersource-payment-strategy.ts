@@ -1,6 +1,9 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
-    MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
 } from '../../../common/error/errors';
 import OrderRequestBody from '../../../order/order-request-body';
 import { CreditCardInstrument } from '../../payment';

@@ -5,24 +5,33 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import {of, Observable} from 'rxjs/index';
 
 import { getCartState } from '../../../cart/carts.mock';
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import {
+    createCheckoutStore,
+    CheckoutRequestSender,
+    CheckoutStore,
+    CheckoutValidator
+} from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
-import {RequestError, StandardError} from '../../../common/error/errors';
+import { RequestError, StandardError } from '../../../common/error/errors';
 import MissingDataError from '../../../common/error/errors/missing-data-error';
 import NotInitializedError from '../../../common/error/errors/not-initialized-error';
-import {getResponse} from '../../../common/http-request/responses.mock';
+import { getResponse } from '../../../common/http-request/responses.mock';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
-import {OrderActionCreator, OrderActionType, OrderRequestSender} from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import OrderFinalizationNotRequiredError from '../../../order/errors/order-finalization-not-required-error';
 import { PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
-import {PaymentActionType, SubmitPaymentAction} from '../../payment-actions';
+import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import { getCybersource, getPaymentMethodsState } from '../../payment-methods.mock';
 import { getCreditCardInstrument, getErrorPaymentResponseBody } from '../../payments.mock';
 
-import {CardinalValidatedAction, CardinalValidatedData, CyberSourceCardinal} from './cybersource';
+import {
+    CardinalValidatedAction,
+    CardinalValidatedData,
+    CyberSourceCardinal
+} from './cybersource';
 import CyberSourceScriptLoader from './cybersource-script-loader';
 import CyberSourceThreeDSecurePaymentProcessor from './cybersource-threedsecure-payment-processor';
 import {
