@@ -68,14 +68,32 @@ export default class OrderActionCreator {
                 const state = store.getState();
                 const externalSource = state.config.getExternalSource();
                 const checkout = state.checkout.getCheckout();
+                const orderMeta = state.order.getOrderMeta();
+                const storeConfig = state.config.getStoreConfig();
+                const spamProtectionToken = orderMeta && orderMeta.spamProtectionToken;
+
+                if (!storeConfig) {
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+                }
 
                 if (!checkout) {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckout);
                 }
 
+                const { isSpamProtectionEnabled } = storeConfig.checkoutSettings;
+
+                if (isSpamProtectionEnabled && !spamProtectionToken) {
+                    throw new MissingDataError(MissingDataErrorType.MissingSpamProtectionToken);
+                }
+
                 return from(
                     this._checkoutValidator.validate(checkout, options)
-                        .then(() => this._orderRequestSender.submitOrder(this._mapToOrderRequestBody(payload, checkout.customerMessage, externalSource), options))
+                        .then(() => this._orderRequestSender.submitOrder(this._mapToOrderRequestBody(
+                            payload,
+                            checkout.customerMessage,
+                            externalSource,
+                            spamProtectionToken
+                        ), options))
                 ).pipe(
                     switchMap(response => concat(
                         // TODO: Remove once we can submit orders using storefront API
@@ -111,7 +129,12 @@ export default class OrderActionCreator {
         return (order && order.orderId) || (checkout && checkout.orderId);
     }
 
-    private _mapToOrderRequestBody(payload: OrderRequestBody, customerMessage: string, externalSource?: string): InternalOrderRequestBody {
+    private _mapToOrderRequestBody(
+        payload: OrderRequestBody,
+        customerMessage: string,
+        externalSource?: string,
+        spamProtectionToken?: string
+    ): InternalOrderRequestBody {
         const { payment, ...order } = payload;
 
         if (!payment) {
@@ -119,6 +142,7 @@ export default class OrderActionCreator {
                 ...order,
                 customerMessage,
                 externalSource,
+                spamProtectionToken,
             };
         }
 
@@ -126,6 +150,7 @@ export default class OrderActionCreator {
             ...order,
             customerMessage,
             externalSource,
+            spamProtectionToken,
             payment: {
                 paymentData: payment.paymentData,
                 name: payment.methodId,

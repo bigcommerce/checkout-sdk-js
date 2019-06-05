@@ -12,6 +12,7 @@ export enum MissingDataErrorType {
     MissingPayment,
     MissingPaymentMethod,
     MissingShippingAddress,
+    MissingSpamProtectionToken,
 }
 
 export default class MissingDataError extends StandardError {
@@ -56,6 +57,9 @@ function getErrorMessage(type: MissingDataErrorType): string {
 
     case MissingDataErrorType.MissingShippingAddress:
         return 'Unable to proceed because shipping address data is unavailable.';
+
+    case MissingDataErrorType.MissingSpamProtectionToken:
+        return 'Unable to proceed because spam protection token is not provided.';
 
     default:
         return 'Unable to proceed because the required data is unavailable.';

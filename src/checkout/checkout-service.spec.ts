@@ -1,5 +1,6 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
+import { ScriptLoader } from '@bigcommerce/script-loader';
 import { map, merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -22,6 +23,8 @@ import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionOptions } from '../order/spam-protection';
+import { SpamProtectionActionType } from '../order/spam-protection/spam-protection-actions';
 import {
     createPaymentClient,
     PaymentMethodActionCreator,
@@ -88,6 +91,7 @@ describe('CheckoutService', () => {
     let paymentStrategyRegistry: PaymentStrategyRegistry;
     let shippingStrategyActionCreator: ShippingStrategyActionCreator;
     let shippingCountryRequestSender: ShippingCountryRequestSender;
+    let spamProtectionActionCreator: SpamProtectionActionCreator;
     let store: CheckoutStore;
 
     beforeEach(() => {
@@ -219,6 +223,10 @@ describe('CheckoutService', () => {
             createShippingStrategyRegistry(store, requestSender)
         );
 
+        spamProtectionActionCreator = new SpamProtectionActionCreator(
+            createSpamProtection(new ScriptLoader())
+        );
+
         errorActionCreator = new ErrorActionCreator();
 
         checkoutService = new CheckoutService(
@@ -237,7 +245,8 @@ describe('CheckoutService', () => {
             paymentMethodActionCreator,
             paymentStrategyActionCreator,
             new ShippingCountryActionCreator(shippingCountryRequestSender),
-            shippingStrategyActionCreator
+            shippingStrategyActionCreator,
+            spamProtectionActionCreator
         );
     });
     describe('#getState()', () => {
@@ -968,6 +977,51 @@ describe('CheckoutService', () => {
 
             expect(errorActionCreator.clearError)
                 .toHaveBeenCalledWith(error);
+        });
+    });
+
+    describe('#initializeSpamProtection()', () => {
+        let options: SpamProtectionOptions;
+
+        beforeEach(async () => {
+            options = { containerId: 'spamProtectionContainer' };
+            const action = of(createAction(SpamProtectionActionType.InitializeSucceeded));
+
+            jest.spyOn(spamProtectionActionCreator, 'initialize')
+                .mockReturnValue(action);
+
+            jest.spyOn(store, 'dispatch');
+        });
+
+        it('initialize spam protection', async () => {
+            await checkoutService.initializeSpamProtection(options);
+
+            expect(spamProtectionActionCreator.initialize)
+                .toHaveBeenCalledWith(options, {
+                    onComplete: expect.any(Function),
+                    onExpire: expect.any(Function),
+                });
+        });
+
+        it('dispatch the completed action when spam protection is completed', async () => {
+            await checkoutService.initializeSpamProtection(options);
+
+            (spamProtectionActionCreator.initialize as jest.Mock).mock.calls[0][1].onComplete('fake_token');
+
+            expect(store.dispatch).toHaveBeenCalledWith({
+                type: SpamProtectionActionType.Completed,
+                payload: 'fake_token',
+            }, { queueId: 'spamProtection' });
+        });
+
+        it('dispatch the expired action when spam protection is expired', async () => {
+            await checkoutService.initializeSpamProtection(options);
+
+            (spamProtectionActionCreator.initialize as jest.Mock).mock.calls[0][1].onExpire();
+
+            expect(store.dispatch).toHaveBeenCalledWith({
+                type: SpamProtectionActionType.TokenExpired,
+            }, { queueId: 'spamProtection' });
         });
     });
 });

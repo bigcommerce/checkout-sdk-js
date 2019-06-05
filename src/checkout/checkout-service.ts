@@ -10,6 +10,7 @@ import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
+import { SpamProtectionActionCreator, SpamProtectionOptions } from '../order/spam-protection';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { ConsignmentsRequestBody, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
@@ -54,7 +55,8 @@ export default class CheckoutService {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
-        private _shippingStrategyActionCreator: ShippingStrategyActionCreator
+        private _shippingStrategyActionCreator: ShippingStrategyActionCreator,
+        private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {
         this._state = createCheckoutSelectors(this._store.getState());
         this._errorTransformer = createCheckoutServiceErrorTransformer();
@@ -1050,6 +1052,31 @@ export default class CheckoutService {
         const action = this._errorActionCreator.clearError(error);
 
         return this._dispatch(action);
+    }
+
+    /**
+     * Initializes the spam protection for order creation.
+     *
+     * With spam protection enabled, the customer has to be verified as
+     * a human. The order creation will fail if spam protection
+     * is enabled but verification fails.
+     *
+     * ```js
+     * await service.initializeSpamProtection({
+     *     containerId: 'spamProtectionContainer',
+     * });
+     * ```
+     *
+     * @param options - Options for initializing spam protection.
+     * @returns A promise that resolves to the current state.
+     */
+    initializeSpamProtection(options: SpamProtectionOptions): Promise<CheckoutSelectors> {
+        const action = this._spamProtectionActionCreator.initialize(options, {
+            onComplete: token => this._dispatch(this._spamProtectionActionCreator.complete(token), { queueId: 'spamProtection' }),
+            onExpire: () => this._dispatch(this._spamProtectionActionCreator.expire(), { queueId: 'spamProtection' }),
+        });
+
+        return this._dispatch(action, { queueId: 'spamProtection' });
     }
 
     /**
