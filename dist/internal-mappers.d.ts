@@ -538,6 +538,7 @@ declare interface OrderMetaState extends InternalOrderMeta {
     orderToken?: string;
     callbackUrl?: string;
     payment?: InternalOrderPayment;
+    spamProtectionToken?: string;
 }
 
 declare interface OrderPayment {

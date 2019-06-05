@@ -16,6 +16,7 @@
 * [decimalPlaces](shoppercurrency.md#decimalplaces)
 * [decimalSeparator](shoppercurrency.md#decimalseparator)
 * [exchangeRate](shoppercurrency.md#exchangerate)
+* [isTransactional](shoppercurrency.md#istransactional)
 * [symbol](shoppercurrency.md#symbol)
 * [symbolLocation](shoppercurrency.md#symbollocation)
 * [thousandsSeparator](shoppercurrency.md#thousandsseparator)
@@ -50,6 +51,13 @@ ___
 ###  exchangeRate
 
 **● exchangeRate**: *`number`*
+
+___
+<a id="istransactional"></a>
+
+###  isTransactional
+
+**● isTransactional**: *`boolean`*
 
 ___
 <a id="symbol"></a>

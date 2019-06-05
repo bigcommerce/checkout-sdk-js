@@ -30,6 +30,7 @@ This object can be used to collect all information that is required for checkout
 * [initializeCustomer](checkoutservice.md#initializecustomer)
 * [initializePayment](checkoutservice.md#initializepayment)
 * [initializeShipping](checkoutservice.md#initializeshipping)
+* [initializeSpamProtection](checkoutservice.md#initializespamprotection)
 * [loadBillingAddressFields](checkoutservice.md#loadbillingaddressfields)
 * [loadBillingCountries](checkoutservice.md#loadbillingcountries)
 * [loadCheckout](checkoutservice.md#loadcheckout)
@@ -475,6 +476,32 @@ await service.initializeShipping({
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | `Optional` options | [ShippingInitializeOptions](../interfaces/shippinginitializeoptions.md) |  Options for initializing the shipping step of checkout. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="initializespamprotection"></a>
+
+###  initializeSpamProtection
+
+▸ **initializeSpamProtection**(options: *[SpamProtectionOptions](../interfaces/spamprotectionoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Initializes the spam protection for order creation.
+
+With spam protection enabled, the customer has to be verified as a human. The order creation will fail if spam protection is enabled but verification fails.
+
+```js
+await service.initializeSpamProtection({
+    containerId: 'spamProtectionContainer',
+});
+```
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| options | [SpamProtectionOptions](../interfaces/spamprotectionoptions.md) |  Options for initializing spam protection. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.

@@ -13,12 +13,14 @@
 * [enableOrderComments](checkoutsettings.md#enableordercomments)
 * [enableTermsAndConditions](checkoutsettings.md#enabletermsandconditions)
 * [features](checkoutsettings.md#features)
+* [googleRecaptchaSitekey](checkoutsettings.md#googlerecaptchasitekey)
 * [guestCheckoutEnabled](checkoutsettings.md#guestcheckoutenabled)
 * [isAnalyticsEnabled](checkoutsettings.md#isanalyticsenabled)
 * [isCardVaultingEnabled](checkoutsettings.md#iscardvaultingenabled)
 * [isCouponCodeCollapsed](checkoutsettings.md#iscouponcodecollapsed)
 * [isPaymentRequestCanMakePaymentEnabled](checkoutsettings.md#ispaymentrequestcanmakepaymentenabled)
 * [isPaymentRequestEnabled](checkoutsettings.md#ispaymentrequestenabled)
+* [isSpamProtectionEnabled](checkoutsettings.md#isspamprotectionenabled)
 * [isTrustedShippingAddressEnabled](checkoutsettings.md#istrustedshippingaddressenabled)
 * [orderTermsAndConditions](checkoutsettings.md#ordertermsandconditions)
 * [orderTermsAndConditionsLink](checkoutsettings.md#ordertermsandconditionslink)
@@ -54,6 +56,13 @@ ___
 #### Type declaration
 
 [featureName: `string`]: `boolean`
+
+___
+<a id="googlerecaptchasitekey"></a>
+
+###  googleRecaptchaSitekey
+
+**● googleRecaptchaSitekey**: *`string`*
 
 ___
 <a id="guestcheckoutenabled"></a>
@@ -96,6 +105,13 @@ ___
 ###  isPaymentRequestEnabled
 
 **● isPaymentRequestEnabled**: *`boolean`*
+
+___
+<a id="isspamprotectionenabled"></a>
+
+###  isSpamProtectionEnabled
+
+**● isSpamProtectionEnabled**: *`boolean`*
 
 ___
 <a id="istrustedshippingaddressenabled"></a>

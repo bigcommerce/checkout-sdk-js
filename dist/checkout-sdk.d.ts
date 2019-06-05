@@ -1,3 +1,4 @@
+import { RequestOptions as RequestOptions_2 } from '@bigcommerce/request-sender';
 import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
@@ -567,6 +568,7 @@ declare class CheckoutService {
     private _paymentStrategyActionCreator;
     private _shippingCountryActionCreator;
     private _shippingStrategyActionCreator;
+    private _spamProtectionActionCreator;
     private _state;
     private _errorTransformer;
     /**
@@ -1321,6 +1323,23 @@ declare class CheckoutService {
      */
     clearError(error: Error): Promise<CheckoutSelectors>;
     /**
+     * Initializes the spam protection for order creation.
+     *
+     * With spam protection enabled, the customer has to be verified as
+     * a human. The order creation will fail if spam protection
+     * is enabled but verification fails.
+     *
+     * ```js
+     * await service.initializeSpamProtection({
+     *     containerId: 'spamProtectionContainer',
+     * });
+     * ```
+     *
+     * @param options - Options for initializing spam protection.
+     * @returns A promise that resolves to the current state.
+     */
+    initializeSpamProtection(options: SpamProtectionOptions): Promise<CheckoutSelectors>;
+    /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
      *
@@ -1343,12 +1362,14 @@ declare interface CheckoutSettings {
     };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
+    googleRecaptchaSitekey: string;
     guestCheckoutEnabled: boolean;
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
+    isSpamProtectionEnabled: boolean;
     isTrustedShippingAddressEnabled: boolean;
     orderTermsAndConditions: string;
     orderTermsAndConditionsLink: string;
@@ -3043,6 +3064,17 @@ declare interface ShopperConfig {
 
 declare interface ShopperCurrency extends StoreCurrency {
     exchangeRate: number;
+    isTransactional: boolean;
+}
+
+/**
+ * The set of options for configuring any requests related to spam protection.
+ */
+declare interface SpamProtectionOptions extends RequestOptions_2 {
+    /**
+     * The container ID where the spam protection should be rendered.
+     */
+    containerId: string;
 }
 
 /**

@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.22.0"></a>
+# [1.22.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.21.0...v1.22.0) (2019-06-05)
+
+
+### Bug Fixes
+
+* **payment:** INT-1573 [Klarna feedback] Checkout load error ([1c3b5d8](https://github.com/bigcommerce/checkout-sdk-js/commit/1c3b5d8))
+* **payment:** PAYMENTS-4228 implement separate session with currency and default to store currency if shopper currency is non-transactional ([bacafee](https://github.com/bigcommerce/checkout-sdk-js/commit/bacafee))
+* **payment:** PAYMENTS-4228 removing unused cases of currency code and allowing code to be optional ([6cf0785](https://github.com/bigcommerce/checkout-sdk-js/commit/6cf0785))
+
+
+### Features
+
+* **checkout:** INT-1520 Pass useStoreCredit flag when initialize payment ([979c59e](https://github.com/bigcommerce/checkout-sdk-js/commit/979c59e))
+* **order:** CHECKOUT-2530 Add spam protection for order creation ([69efabc](https://github.com/bigcommerce/checkout-sdk-js/commit/69efabc))
+* **payment:** INT-1247 Checkout using Zip, Registration referred ([f9a1da4](https://github.com/bigcommerce/checkout-sdk-js/commit/f9a1da4))
+* **payment:** INT-1540 Zip Feedback, declined Handler ([d140b85](https://github.com/bigcommerce/checkout-sdk-js/commit/d140b85))
+* **payment:** INT-1562 Add billing and shipping data in auth instead of load call ([967cb12](https://github.com/bigcommerce/checkout-sdk-js/commit/967cb12))
+* **payment:** PAYMENTS-4228 include currency code in vaulted instrument functionality ([2438db5](https://github.com/bigcommerce/checkout-sdk-js/commit/2438db5))
+
+
+
 <a name="1.21.0"></a>
 # [1.21.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.20.2...v1.21.0) (2019-05-23)
 
