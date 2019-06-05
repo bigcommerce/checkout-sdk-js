@@ -27,39 +27,54 @@ export interface StripeElements {
     create(type: string, options: StripeElementsOptions): StripeCardElement;
 }
 
-export interface StripeHandleCardPaymentOptions {
-    payment_method_data?: {
-        billing_details: {
-            address?: {
-                city?: string;
-                country?: string;
-                line1?: string;
-                line2?: string;
-                postal_code?: string;
-                state?: string;
-            };
-            email?: string;
-            name?: string;
-            phone?: string;
-        };
-    };
-    shipping?: {
-        address: {
-            city: string;
-            country: string;
-            line1: string;
-            line2: string;
-            postal_code: string;
-            state: string;
-        };
-        name: string;
-        carrier?: string;
-        phone?: string;
-        tracking_number?: string;
-    };
-    receipt_email?: string;
-    save_payment_method?: string;
+export interface StripeAddress {
+    city?: string;
+    country?: string;
+    line1?: string;
+    line2?: string;
+    postal_code?: string;
+    state?: string;
+}
 
+export interface StripeBillingDetails {
+    address?: StripeAddress;
+    email?: string;
+    name?: string;
+    phone?: string;
+}
+export interface PaymentMethodData {
+    billing_details: StripeBillingDetails;
+}
+
+export interface StripeShippingDetails {
+    address: StripeAddress;
+    name: string;
+    carrier?: string;
+    phone?: string;
+    tracking_number?: string;
+}
+
+export interface StripeHandleCardPaymentOptions {
+    /*
+     * Use this parameter to supply additional data relevant to the payment method, such as billing details.
+     */
+    payment_method_data?: PaymentMethodData;
+
+    /*
+     * The shipping details for the payment, if collected.
+     */
+    shipping?: StripeShippingDetails;
+
+    /*
+     * Email address that the receipt for the resulting payment will be sent to.
+     */
+    receipt_email?: string;
+
+    /*
+     * If the PaymentIntent is associated with a customer and this parameter is set to true,
+     * the provided payment method will be attached to the customer. Default is false.
+     */
+    save_payment_method?: string;
 }
 
 export interface StripeElementsOptions {
