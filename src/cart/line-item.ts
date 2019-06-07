@@ -49,6 +49,7 @@ export interface LineItem {
     quantity: number;
     brand: string;
     categoryNames?: string[];
+    categories?: LineItemCategory[][];
     isTaxable: boolean;
     imageUrl: string;
     discounts: Array<{ name: string, discountedAmount: number }>;
@@ -75,4 +76,8 @@ export interface LineItemSocialData {
     code: string;
     text: string;
     link: string;
+}
+
+export interface LineItemCategory {
+    name: string;
 }

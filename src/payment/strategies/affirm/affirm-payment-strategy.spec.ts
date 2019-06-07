@@ -142,7 +142,13 @@ describe('AffirmPaymentStrategy', () => {
 
         it('creates order, checkout and payment', async () => {
             jest.spyOn(store, 'dispatch');
-            const options = { methodId: 'affirm', gatewayId: undefined };
+            const options = { methodId: 'affirm', gatewayId: undefined,  timeout: undefined,
+                params: {
+                    include: [
+                        'lineItems.physicalItems.categories',
+                        'lineItems.digitalItems.categories',
+                    ],
+                }};
 
             await strategy.execute(payload, options);
 
@@ -186,6 +192,7 @@ describe('AffirmPaymentStrategy', () => {
                 },
                 items: [
                     {
+                        categories: [['Cat 1'], ['Furniture', 'Bed']],
                         display_name: 'Canvas Laundry Cart',
                         item_image_url: '/images/canvas-laundry-cart.jpg',
                         item_url: '/canvas-laundry-cart/',

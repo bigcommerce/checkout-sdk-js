@@ -1,8 +1,10 @@
+import { LineItemCategory } from '../../../cart/line-item';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { AmountTransformer } from '../../../common/utility';
 import { Order, OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { OrderIncludes } from '../../../order/order-params';
 import { Consignment } from '../../../shipping';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -57,7 +59,17 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment.methodId']);
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, options))
+        const requestOptions = {
+            ...options,
+            params: {
+                include: [
+                    OrderIncludes.PhysicalItemsCategories,
+                    OrderIncludes.DigitalItemsCategories,
+                ],
+            },
+        };
+
+        return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, requestOptions))
             .then<AffirmSuccessResponse>(() => {
                 _affirm.checkout(this._getCheckoutInformation());
 
@@ -215,6 +227,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
                 qty: item.quantity,
                 item_image_url: item.imageUrl,
                 item_url: item.url,
+                categories: this._getCategories(item.categories),
             });
         }
 
@@ -226,6 +239,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
                 qty: item.quantity,
                 item_image_url: item.imageUrl,
                 item_url: item.url,
+                categories: this._getCategories(item.categories),
             });
         }
 
@@ -276,5 +290,13 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         }
 
         return discounts;
+    }
+
+    private _getCategories(categories?: LineItemCategory[][]): string[][] {
+        if (!categories) {
+            return[[]];
+        }
+
+        return categories.map(categoryTree => categoryTree.map(category => category.name));
     }
 }
