@@ -9,7 +9,6 @@ import {
     NotInitializedError,
     NotInitializedErrorType,
 } from '../../../common/error/errors';
-import { toFormUrlEncoded } from '../../../common/http-request/';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
 import { ConsignmentActionCreator } from '../../../shipping';
 import PaymentMethodInvalidError from '../../errors/payment-method-invalid-error';
@@ -215,13 +214,13 @@ export default class GooglePayPaymentProcessor {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: toFormUrlEncoded({
+            body: {
                 payment_type: postPaymentData.type,
                 nonce: postPaymentData.nonce,
                 provider: this._getMethodId(),
                 action: 'set_external_checkout',
                 card_information: this._getCardInformation(cardInformation),
-            }),
+            },
         });
     }
 

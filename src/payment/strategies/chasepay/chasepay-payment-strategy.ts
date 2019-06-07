@@ -4,7 +4,6 @@ import { take } from 'rxjs/operators';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
-import { toFormUrlEncoded } from '../../../common/http-request';
 import { bindDecorator as bind } from '../../../common/utility';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -181,12 +180,12 @@ export default class ChasePayPaymentStrategy implements PaymentStrategy {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             },
-            body: toFormUrlEncoded({
+            body: {
                 action: 'set_external_checkout',
                 provider: this._methodId,
                 sessionToken,
                 merchantRequestId,
-            }),
+            },
         })
             // Re-hydrate checkout data
             .then(() => Promise.all([
