@@ -56,6 +56,8 @@ The library also provides integrations with all the payment methods supported by
 
 Using this library in conjunction with your favorite UI framework, it is possible to build a bespoke checkout UI for a store, that can be augmented with additional features. We provide a basic [reference implementation](https://github.com/bigcommerce/checkout-sdk-js-example) of a custom checkout written in React to get you started.
 
+## Limitations
+* It is not possible to execute custom jscript when paying on hosted payment pages such as Adyen, therefore Google Enhenced eCommerce Analytics can not be fully used as payment confirmation is handled by payments.bigcommerce.com and not by the checkout.
 
 ## Getting started
 
