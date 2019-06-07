@@ -143,7 +143,7 @@ Alternatively, you can ask the customer to continue as a guest.
 ```js
 const state = await service.continueAsGuest({ email: 'foo@bar.com' });
 
-console.log(state.data.getCustomer());
+console.log(state.data.getCart());
 ```
 
 ### Set shipping details
