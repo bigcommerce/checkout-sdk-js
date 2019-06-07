@@ -111,7 +111,13 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
 
             expect(requestSender.post).toHaveBeenCalledWith('/checkout.php', {
                 ...requestBody,
-                body: expect.stringContaining(`shipping_address=${encodeURIComponent('{"email":"test@example.com","first_name":"Test","last_name":"Tester"')}`),
+                body: expect.objectContaining({
+                    shipping_address: expect.objectContaining({
+                        email: 'test@example.com',
+                        first_name: 'Test',
+                        last_name: 'Tester',
+                    }),
+                }),
             });
         });
 
@@ -123,7 +129,13 @@ describe('BraintreeVisaCheckoutPaymentProcessor', () => {
 
             expect(requestSender.post).toHaveBeenCalledWith('/checkout.php', {
                 ...requestBody,
-                body: expect.stringContaining(`billing_address=${encodeURIComponent('{"email":"test@example.com","first_name":"Test","last_name":"Tester"')}`),
+                body: expect.objectContaining({
+                    billing_address: expect.objectContaining({
+                        email: 'test@example.com',
+                        first_name: 'Test',
+                        last_name: 'Tester',
+                    }),
+                }),
             });
         });
     });

@@ -1,7 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
 import { Address, LegacyAddress } from '../../../address';
-import { toFormUrlEncoded } from '../../../common/http-request';
 
 import { BraintreeDataCollector } from './braintree';
 import BraintreeSDKCreator from './braintree-sdk-creator';
@@ -75,7 +74,7 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: toFormUrlEncoded({
+            body: {
                 payment_type: paymentData.type,
                 nonce: paymentData.nonce,
                 provider: 'braintreevisacheckout',
@@ -84,7 +83,7 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
                 card_information: this._getCardInformation(cardInformation),
                 billing_address: this._getAddress(userEmail, billingAddress),
                 shipping_address: this._getAddress(userEmail, shippingAddress),
-            }),
+            },
         });
     }
 

@@ -83,7 +83,41 @@ export function getVisaCheckoutUserData(): VisaCheckoutUserData {
 
 export function getVisaCheckoutRequestBody() {
     return {
-        body: 'payment_type=type1&nonce=my-nonce&provider=braintreevisacheckout&action=set_external_checkout&device_data=my_device_session_id&card_information=%7B%22type%22%3A%22Visa%22%2C%22number%22%3A%2211%22%7D&billing_address=%7B%22email%22%3A%22test%40example.com%22%2C%22first_name%22%3A%22John%22%2C%22last_name%22%3A%22Doe%22%2C%22phone_number%22%3A%2204877789875%22%2C%22address_line_1%22%3A%2251%20Main%20St.%22%2C%22address_line_2%22%3A%22Ultimo%22%2C%22city%22%3A%22Sydney%22%2C%22state%22%3A%22NSW%22%2C%22country_code%22%3A%22ES%22%2C%22postal_code%22%3A%222008%22%7D&shipping_address=%7B%22email%22%3A%22test%40example.com%22%2C%22first_name%22%3A%22John%22%2C%22last_name%22%3A%22Doe%22%2C%22phone_number%22%3A%2204877789875%22%2C%22address_line_1%22%3A%2251%20Main%20St.%22%2C%22address_line_2%22%3A%22Ultimo%22%2C%22city%22%3A%22Sydney%22%2C%22state%22%3A%22NSW%22%2C%22country_code%22%3A%22ES%22%2C%22postal_code%22%3A%222008%22%7D',
+        body: {
+            action: 'set_external_checkout',
+            billing_address: {
+                address_line_1: '51 Main St.',
+                address_line_2: 'Ultimo',
+                city: 'Sydney',
+                country_code: 'ES',
+                email: 'test@example.com',
+                first_name: 'John',
+                last_name: 'Doe',
+                phone_number: '04877789875',
+                postal_code: '2008',
+                state: 'NSW',
+            },
+            card_information: {
+                number: '11',
+                type: 'Visa',
+            },
+            device_data: 'my_device_session_id',
+            nonce: 'my-nonce',
+            payment_type: 'type1',
+            provider: 'braintreevisacheckout',
+            shipping_address: {
+                address_line_1: '51 Main St.',
+                address_line_2: 'Ultimo',
+                city: 'Sydney',
+                country_code: 'ES',
+                email: 'test@example.com',
+                first_name: 'John',
+                last_name: 'Doe',
+                phone_number: '04877789875',
+                postal_code: '2008',
+                state: 'NSW',
+            },
+        },
         headers: {
             Accept: 'text/html',
             'Content-Type': 'application/x-www-form-urlencoded',

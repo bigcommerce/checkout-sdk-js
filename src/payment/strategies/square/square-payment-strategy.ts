@@ -13,7 +13,6 @@ import {
     TimeoutError,
     UnsupportedBrowserError,
 } from '../../../common/error/errors';
-import { toFormUrlEncoded } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { NonceInstrument } from '../../payment';
@@ -268,14 +267,14 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
                 Accept: 'text/html',
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: toFormUrlEncoded({
+            body: {
                 nonce,
                 provider: 'squarev2',
                 action: 'set_external_checkout',
                 cardData: JSON.stringify(cardData),
                 billingContact: JSON.stringify(billingContact),
                 shippingContact: JSON.stringify(shippingContact),
-            }),
+            },
         });
     }
 
