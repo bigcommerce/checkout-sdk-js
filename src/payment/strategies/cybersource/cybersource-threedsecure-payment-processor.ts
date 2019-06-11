@@ -52,8 +52,6 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
     initialize(paymentMethod: PaymentMethod): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = paymentMethod;
 
-        // lengen.....dary!!!!   Brrrrp
-
         if (!this._paymentMethod || !this._paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
