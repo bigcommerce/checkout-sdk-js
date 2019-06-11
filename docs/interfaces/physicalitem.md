@@ -14,6 +14,7 @@
 
 * [addedByPromotion](physicalitem.md#addedbypromotion)
 * [brand](physicalitem.md#brand)
+* [categories](physicalitem.md#categories)
 * [categoryNames](physicalitem.md#categorynames)
 * [couponAmount](physicalitem.md#couponamount)
 * [discountAmount](physicalitem.md#discountamount)
@@ -52,6 +53,13 @@ ___
 ###  brand
 
 **● brand**: *`string`*
+
+___
+<a id="categories"></a>
+
+### `<Optional>` categories
+
+**● categories**: *[LineItemCategory](lineitemcategory.md)[][]*
 
 ___
 <a id="categorynames"></a>

@@ -14,6 +14,7 @@
 
 * [addedByPromotion](digitalitem.md#addedbypromotion)
 * [brand](digitalitem.md#brand)
+* [categories](digitalitem.md#categories)
 * [categoryNames](digitalitem.md#categorynames)
 * [couponAmount](digitalitem.md#couponamount)
 * [discountAmount](digitalitem.md#discountamount)
@@ -53,6 +54,13 @@ ___
 ###  brand
 
 **● brand**: *`string`*
+
+___
+<a id="categories"></a>
+
+### `<Optional>` categories
+
+**● categories**: *[LineItemCategory](lineitemcategory.md)[][]*
 
 ___
 <a id="categorynames"></a>

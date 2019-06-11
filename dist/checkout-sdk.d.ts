@@ -2653,6 +2653,7 @@ declare interface LineItem {
     quantity: number;
     brand: string;
     categoryNames?: string[];
+    categories?: LineItemCategory[][];
     isTaxable: boolean;
     imageUrl: string;
     discounts: Array<{
@@ -2668,6 +2669,10 @@ declare interface LineItem {
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
     addedByPromotion: boolean;
+}
+
+declare interface LineItemCategory {
+    name: string;
 }
 
 declare interface LineItemMap {

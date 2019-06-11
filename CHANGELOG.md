@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.23.0"></a>
+# [1.23.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.22.0...v1.23.0) (2019-06-11)
+
+
+### Features
+
+* **checkout:** INT-1503 Add categories to items for Affirm strategy ([3387459](https://github.com/bigcommerce/checkout-sdk-js/commit/3387459))
+
+
+
 <a name="1.22.0"></a>
 # [1.22.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.21.0...v1.22.0) (2019-06-05)
 
