@@ -39,7 +39,6 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
     private _Cardinal?: CyberSourceCardinal;
     private _paymentMethod?: PaymentMethod;
     private _cardinalEvent$: Subject<CardinalEventResponse>;
-    private _isSetupCompleted = false;
 
     constructor(
         private _store: CheckoutStore,
@@ -51,11 +50,9 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
     }
 
     initialize(paymentMethod: PaymentMethod): Promise<InternalCheckoutSelectors> {
-        if (this._isSetupCompleted) {
-            return Promise.resolve(this._store.getState());
-        }
-
         this._paymentMethod = paymentMethod;
+
+        // lengen.....dary!!!!   Brrrrp
 
         if (!this._paymentMethod || !this._paymentMethod.clientToken) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -116,8 +113,6 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                     });
                 })(this._Cardinal);
             }).then(() => {
-                this._isSetupCompleted = true;
-
                 return this._store.getState();
             });
     }
