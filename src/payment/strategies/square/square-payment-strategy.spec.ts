@@ -38,6 +38,7 @@ import { createSpamProtection, SpamProtectionActionCreator } from '../../../orde
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import { SquarePaymentForm, SquarePaymentStrategy, SquareScriptLoader } from './';
 import { DigitalWalletType, SquareFormCallbacks, SquareFormOptions } from './square-form';
@@ -113,7 +114,8 @@ describe('SquarePaymentStrategy', () => {
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
         initOptions = getSquarePaymentInitializeOptions();
         paymentMethodActionCreator = new PaymentMethodActionCreator(

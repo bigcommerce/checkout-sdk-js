@@ -23,6 +23,7 @@ import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getBraintree } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import BraintreeCreditCardPaymentStrategy from './braintree-credit-card-payment-strategy';
 import BraintreePaymentProcessor from './braintree-payment-processor';
@@ -59,7 +60,8 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
 

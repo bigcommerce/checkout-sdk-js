@@ -26,6 +26,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getAffirm } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import { Affirm } from './affirm';
 import AffirmPaymentStrategy from './affirm-payment-strategy';
@@ -72,7 +73,8 @@ describe('AffirmPaymentStrategy', () => {
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
         affirmScriptLoader = new AffirmScriptLoader();

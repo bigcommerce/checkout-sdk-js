@@ -13,6 +13,7 @@ import createPaymentClient from './create-payment-client';
 import PaymentActionCreator from './payment-action-creator';
 import { PaymentActionType } from './payment-actions';
 import PaymentRequestSender from './payment-request-sender';
+import PaymentRequestTransformer from './payment-request-transformer';
 import { getErrorPaymentResponseBody, getPayment, getPaymentRequestBody, getPaymentResponseBody } from './payments.mock';
 
 describe('PaymentActionCreator', () => {
@@ -20,12 +21,14 @@ describe('PaymentActionCreator', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentRequestSender: PaymentRequestSender;
+    let paymentRequestTransformer: PaymentRequestTransformer;
     let store: CheckoutStore;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreStateWithOrder());
         orderRequestSender = new OrderRequestSender(createRequestSender());
         paymentRequestSender = new PaymentRequestSender(createPaymentClient(store));
+        paymentRequestTransformer = new PaymentRequestTransformer();
 
         jest.spyOn(orderRequestSender, 'loadOrder')
             .mockReturnValue(Promise.resolve(getResponse(getOrder())));
@@ -37,7 +40,7 @@ describe('PaymentActionCreator', () => {
             .mockReturnValue(Promise.resolve(getResponse(getPaymentResponseBody())));
 
         orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator, {} as SpamProtectionActionCreator);
-        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
+        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
     });
 
     describe('#submitPayment()', () => {

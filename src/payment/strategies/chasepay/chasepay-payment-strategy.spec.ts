@@ -23,6 +23,7 @@ import { PaymentActionType } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 import WepayRiskClient from '../wepay/wepay-risk-client';
@@ -102,7 +103,11 @@ describe('ChasePayPaymentStrategy', () => {
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
             new SpamProtectionActionCreator(spamProtection)
         );
-        paymentActionCreator = new PaymentActionCreator(new PaymentRequestSender(paymentClient), orderActionCreator);
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(paymentClient),
+            orderActionCreator,
+            new PaymentRequestTransformer()
+        );
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 

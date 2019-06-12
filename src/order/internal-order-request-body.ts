@@ -6,6 +6,7 @@ export default interface InternalOrderRequestBody {
     customerMessage?: string;
     externalSource?: string;
     spamProtectionToken?: string;
+    shouldSaveInstrument?: boolean;
 }
 
 export interface InternalOrderPaymentRequestBody {

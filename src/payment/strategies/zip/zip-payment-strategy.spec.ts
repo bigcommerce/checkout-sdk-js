@@ -24,6 +24,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { PaymentInitializeOptions } from '../../payment-request-options';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 import PaymentStrategy from '../payment-strategy';
 
 import { Zip } from './zip';
@@ -71,7 +72,11 @@ describe('ZipPaymentStrategy', () => {
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
             new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
         );
-        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
+        paymentActionCreator = new PaymentActionCreator(
+            paymentRequestSender,
+            orderActionCreator,
+            new PaymentRequestTransformer()
+        );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );

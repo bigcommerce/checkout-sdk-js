@@ -13,9 +13,13 @@ export interface StripeV3Client {
     elements(): StripeElements;
     handleCardPayment(
         clientToken: string,
-        cardElement: StripeCardElement,
         options: StripeHandleCardPaymentOptions
-    ): Promise<StripeResponse>;
+    ): Promise<StripePaymentIntentResponse>;
+    createPaymentMethod(
+        type: string,
+        cardElement: StripeCardElement,
+        options: StripePaymentMethodData
+    ): Promise<StripePaymentMethodResponse>;
 }
 
 export interface StripeCardElement {
@@ -42,7 +46,7 @@ export interface StripeBillingDetails {
     name?: string;
     phone?: string;
 }
-export interface PaymentMethodData {
+export interface StripePaymentMethodData {
     billing_details: StripeBillingDetails;
 }
 
@@ -74,7 +78,7 @@ export interface StripeHandleCardPaymentOptions {
      * If the PaymentIntent is associated with a customer and this parameter is set to true,
      * the provided payment method will be attached to the customer. Default is false.
      */
-    save_payment_method?: string;
+    save_payment_method?: boolean;
 }
 
 export interface StripeElementsOptions {
@@ -127,6 +131,13 @@ export interface PaymentIntent {
     id?: string;
 }
 
+export interface PaymentMethod {
+    /*
+     * Unique identifier for the object.
+     */
+    id?: string;
+}
+
 export interface Error {
     type: string;
     code: string;
@@ -151,8 +162,13 @@ export interface Properties {
     textTransform?: string;
 }
 
-export interface StripeResponse {
+export interface StripePaymentIntentResponse {
     paymentIntent: PaymentIntent;
+    error?: Error;
+}
+
+export interface StripePaymentMethodResponse {
+    paymentMethod: PaymentMethod;
     error?: Error;
 }
 

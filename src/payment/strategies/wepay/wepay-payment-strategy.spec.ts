@@ -14,6 +14,7 @@ import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import { getWepay } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import WepayPaymentStrategy from './wepay-payment-strategy';
 import WepayRiskClient from './wepay-risk-client';
@@ -46,7 +47,8 @@ describe('WepayPaymentStrategy', () => {
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
 
         strategy = new WepayPaymentStrategy(
