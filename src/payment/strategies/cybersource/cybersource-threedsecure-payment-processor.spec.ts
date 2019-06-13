@@ -39,7 +39,7 @@ import {
 import CyberSourceScriptLoader from './cybersource-script-loader';
 import CyberSourceThreeDSecurePaymentProcessor from './cybersource-threedsecure-payment-processor';
 import {
-    getCardinalBinProccessResponse,
+    getCardinalBinProcessResponse,
     getCardinalValidatedData,
     getCybersourceCardinal,
     getCybersourceOrderRequestBody,
@@ -202,7 +202,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValue(submitPaymentAction);
 
-            jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProccessResponse(true)));
+            jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProcessResponse(true)));
 
             await processor.initialize(paymentMethodMock);
             processor.execute(getCybersourcePaymentRequestBody(), getCybersourceOrderRequestBody(), getCreditCardInstrument());
@@ -214,7 +214,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, new StandardError('Custom Error'))));
 
-            jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProccessResponse(true)));
+            jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProcessResponse(true)));
 
             await processor.initialize(paymentMethodMock);
 
@@ -227,7 +227,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
         });
 
         it('bin process returns false', async () => {
-            jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProccessResponse(false)));
+            jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProcessResponse(false)));
 
             await processor.initialize(paymentMethodMock);
 
@@ -254,7 +254,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
                     status: 'error',
                 }));
 
-                jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProccessResponse(true)));
+                jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProcessResponse(true)));
                 jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
             });
@@ -264,7 +264,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
                     .mockReturnValueOnce(submitPaymentAction);
 
                 jest.spyOn(cardinal, 'continue').mockImplementation(() => {
-                    validatedCall(getCardinalValidatedData(CardinalValidatedAction.SUCCCESS, true), 'token');
+                    validatedCall(getCardinalValidatedData(CardinalValidatedAction.SUCCESS, true), 'token');
                 });
 
                 await processor.initialize(paymentMethodMock);

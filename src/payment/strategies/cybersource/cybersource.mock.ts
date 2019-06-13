@@ -5,7 +5,7 @@ import OrderRequestBody from '../../../order/order-request-body';
 import { PaymentRequestOptions } from '../../payment-request-options';
 
 import {
-    CardinalBinProccessResponse,
+    CardinalBinProcessResponse,
     CardinalEventAction,
     CardinalEventResponse,
     CardinalPaymentStep,
@@ -61,7 +61,7 @@ export function getCybersourcePaymentRequestOptions(): PaymentRequestOptions {
     };
 }
 
-export function getCardinalBinProccessResponse(status: boolean): CardinalBinProccessResponse {
+export function getCardinalBinProcessResponse(status: boolean): CardinalBinProcessResponse {
     return {
         Status: status,
     };
@@ -88,7 +88,7 @@ export function getRejectAuthorizationPromise(): CardinalEventResponse {
         },
         jwt: '',
         data: {
-            ActionCode: CardinalValidatedAction.SUCCCESS,
+            ActionCode: CardinalValidatedAction.SUCCESS,
             ErrorDescription: 'error',
             ErrorNumber: 200,
             Validated: true,

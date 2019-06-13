@@ -74,7 +74,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
                 this._Cardinal.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
                     switch (data.ActionCode) {
-                        case CardinalValidatedAction.SUCCCESS:
+                        case CardinalValidatedAction.SUCCESS:
                             this._resolveAuthorizationPromise(jwt);
                             break;
                         case CardinalValidatedAction.NOACTION:
@@ -121,7 +121,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
         }
 
         return ((cardinal: CyberSourceCardinal): Promise<InternalCheckoutSelectors> => {
-            return cardinal.trigger(CardinalTriggerEvents.BIN_PROCCESS, paymentData.ccNumber).then(result => {
+            return cardinal.trigger(CardinalTriggerEvents.BIN_PROCESS, paymentData.ccNumber).then(result => {
                 if (result && result.Status) {
                     return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
                         .then(() =>

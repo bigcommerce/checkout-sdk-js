@@ -3,8 +3,8 @@ export const SignatureValidationErrors = [100004, 1010, 1011, 1020];
 export interface CyberSourceCardinal {
     configure(params: CardinalConfiguration): void;
     on(params: CardinalEventType, callback: CardinalEventMap[CardinalEventType]): void;
-    setup(initializationType: CardinalInitializationType, initializationData: CardinalInitializatinDataMap[CardinalInitializationType]): void;
-    trigger(event: CardinalTriggerEvents, data?: string): Promise<CardinalBinProccessResponse | void>;
+    setup(initializationType: CardinalInitializationType, initializationData: CardinalInitializationDataMap[CardinalInitializationType]): void;
+    trigger(event: CardinalTriggerEvents, data?: string): Promise<CardinalBinProcessResponse | void>;
     continue(paymentBrand: CardinalPaymentBrand, continueObject: ContinueObject, order: PartialOrder): void;
 }
 
@@ -49,7 +49,7 @@ export enum CardinalInitializationType {
     Confirm = 'confirm',
 }
 
-export interface CardinalInitializatinDataMap {
+export interface CardinalInitializationDataMap {
     [CardinalInitializationType.Init]: InitTypeData;
     [CardinalInitializationType.Complete]: CompleteTypeData;
     [CardinalInitializationType.Confirm]: ConfirmTypeData;
@@ -69,7 +69,7 @@ export interface ConfirmTypeData {
 }
 
 export enum CardinalValidatedAction {
-    SUCCCESS = 'SUCCESS',
+    SUCCESS = 'SUCCESS',
     NOACTION = 'NOACTION',
     FAILURE = 'FAILURE',
     ERROR = 'ERROR',
@@ -98,10 +98,10 @@ export enum PaymentType {
 }
 
 export enum CardinalTriggerEvents {
-    BIN_PROCCESS = 'bin.process',
+    BIN_PROCESS = 'bin.process',
 }
 
-export interface CardinalBinProccessResponse {
+export interface CardinalBinProcessResponse {
     Status: boolean;
 }
 
@@ -115,10 +115,10 @@ export interface ContinueObject {
 }
 
 export interface PartialOrder {
-    OrderDetails: Orderdetails;
+    OrderDetails: OrderDetails;
 }
 
-export interface Orderdetails {
+export interface OrderDetails {
     OrderNumber?: string;
     Amount?: number;
     CurrencyCode?: string;
