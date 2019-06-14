@@ -27,6 +27,7 @@ export function getCyberSourceScriptMock(): CardinalWindow {
             setup: jest.fn(),
             trigger: jest.fn(),
             continue: jest.fn(),
+            off: jest.fn(),
         },
     };
 }
@@ -38,6 +39,7 @@ export function getCybersourceCardinal(): CyberSourceCardinal {
         setup: jest.fn(),
         trigger: jest.fn(),
         continue: jest.fn(),
+        off: jest.fn(),
     };
 }
 

@@ -105,75 +105,9 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
 
     describe('#initialize', () => {
         it('initializes successfully', async () => {
-            let call: () => {};
-
-            cardinal.on = jest.fn((type, callback) => {
-                if (type.toString() === CardinalEventType.SetupCompleted) {
-                    call = callback;
-                } else {
-                    jest.fn();
-                }
-            });
-
-            jest.spyOn(cardinal, 'setup').mockImplementation(() => {
-                call();
-            });
-
-            const promise = await processor.initialize(paymentMethodMock);
-
-            expect(cardinal.on).toHaveBeenCalledWith(CardinalEventType.SetupCompleted, expect.any(Function));
-            expect(promise).toBe(store.getState());
-        });
-
-        it('initializes does not configure cardinal if it was previously', async () => {
-            let call: () => {};
-
-            cardinal.on = jest.fn((type, callback) => {
-                if (type.toString() === CardinalEventType.SetupCompleted) {
-                    call = callback;
-                } else {
-                    jest.fn();
-                }
-            });
-
-            jest.spyOn(cardinal, 'setup').mockImplementation(() => {
-                call();
-            });
-
             await processor.initialize(paymentMethodMock);
-            processor.initialize(paymentMethodMock);
 
-            expect(cardinal.on).toHaveBeenCalledTimes(2);
-        });
-
-        it('initializes incorrectly', async () => {
-            let call: (data: CardinalValidatedData, jwt: string) => {};
-
-            cardinal.on = jest.fn((type, callback) => {
-                if (type.toString() === CardinalEventType.Validated) {
-                    call = callback;
-                } else {
-                    jest.fn();
-                }
-            });
-
-            jest.spyOn(cardinal, 'setup').mockImplementation(() => {
-                call(getCardinalValidatedData(CardinalValidatedAction.ERROR, false, 1020), '');
-            });
-
-            try {
-                await processor.initialize(paymentMethodMock);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throws when initialize options are undefined', () => {
-            const paymentMethod = paymentMethodMock;
-            paymentMethod.clientToken = undefined;
-
-            expect(() => processor.initialize(paymentMethod))
-                .toThrow(MissingDataError);
+            expect(cybersourceScriptLoader.load).toHaveBeenCalled();
         });
     });
 
@@ -196,6 +130,68 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
             jest.spyOn(cardinal, 'setup').mockImplementation(() => {
                 setupCall();
             });
+        });
+
+        it('throws an error when execution options are undefined', async () => {
+            const paymentMethod = paymentMethodMock;
+            paymentMethod.clientToken = undefined;
+
+            await processor.initialize(paymentMethod);
+
+            expect(() => processor.execute(getCybersourcePaymentRequestBody(), getCybersourceOrderRequestBody(), getCreditCardInstrument()))
+                .toThrow(MissingDataError);
+        });
+
+        it('completes the setup process successfully', async () => {
+            let call: () => {};
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(submitPaymentAction);
+
+            jest.spyOn(cardinal, 'trigger').mockReturnValue(Promise.resolve(getCardinalBinProcessResponse(true)));
+
+            cardinal.on = jest.fn((type, callback) => {
+                if (type.toString() === CardinalEventType.SetupCompleted) {
+                    call = callback;
+                } else {
+                    jest.fn();
+                }
+            });
+
+            jest.spyOn(cardinal, 'setup').mockImplementation(() => {
+                call();
+            });
+
+            await processor.initialize(paymentMethodMock);
+
+            const promise = await processor.execute(getCybersourcePaymentRequestBody(), getCybersourceOrderRequestBody(), getCreditCardInstrument());
+
+            expect(cardinal.on).toHaveBeenCalledWith(CardinalEventType.SetupCompleted, expect.any(Function));
+            expect(promise).toBe(store.getState());
+        });
+
+        it('completes the setup process incorrectly', async () => {
+            let call: (data: CardinalValidatedData, jwt: string) => {};
+
+            cardinal.on = jest.fn((type, callback) => {
+                if (type.toString() === CardinalEventType.Validated) {
+                    call = callback;
+                } else {
+                    jest.fn();
+                }
+            });
+
+            jest.spyOn(cardinal, 'setup').mockImplementation(() => {
+                call(getCardinalValidatedData(CardinalValidatedAction.ERROR, false, 1020), '');
+            });
+
+            await processor.initialize(paymentMethodMock);
+
+            try {
+                await processor.execute(getCybersourcePaymentRequestBody(), getCybersourceOrderRequestBody(), getCreditCardInstrument());
+            } catch (error) {
+                expect(error).toBeInstanceOf(MissingDataError);
+            }
         });
 
         it('purchase finalizes correctly when 3DS is disabled', async () => {
@@ -313,6 +309,8 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
                 try {
                     await processor.execute(getCybersourcePaymentRequestBody(), getCybersourceOrderRequestBody(), getCreditCardInstrument());
                 } catch (error) {
+                    expect(cardinal.off).toBeCalledWith(CardinalEventType.SetupCompleted);
+                    expect(cardinal.off).toBeCalledWith(CardinalEventType.Validated);
                     expect(error).toBeInstanceOf(StandardError);
                 }
             });

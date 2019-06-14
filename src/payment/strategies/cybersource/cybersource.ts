@@ -3,6 +3,7 @@ export const SignatureValidationErrors = [100004, 1010, 1011, 1020];
 export interface CyberSourceCardinal {
     configure(params: CardinalConfiguration): void;
     on(params: CardinalEventType, callback: CardinalEventMap[CardinalEventType]): void;
+    off(params: CardinalEventType): void;
     setup(initializationType: CardinalInitializationType, initializationData: CardinalInitializationDataMap[CardinalInitializationType]): void;
     trigger(event: CardinalTriggerEvents, data?: string): Promise<CardinalBinProcessResponse | void>;
     continue(paymentBrand: CardinalPaymentBrand, continueObject: ContinueObject, order: PartialOrder): void;
