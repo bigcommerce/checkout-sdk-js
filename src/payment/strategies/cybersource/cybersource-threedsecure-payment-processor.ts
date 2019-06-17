@@ -20,23 +20,22 @@ import PaymentMethod from '../../payment-method';
 import { PaymentRequestOptions } from '../../payment-request-options';
 
 import {
-    CardinalEventAction,
     CardinalEventResponse,
     CardinalEventType,
     CardinalInitializationType,
     CardinalPaymentBrand,
     CardinalPaymentStep,
+    CardinalScriptLoader,
+    CardinalSetupCompletedData,
+    CardinalSignatureValidationErrors,
+    CardinalSDK,
     CardinalTriggerEvents,
     CardinalValidatedAction,
     CardinalValidatedData,
-    CyberSourceCardinal,
-    CyberSourceScriptLoader,
-    SetupCompletedData,
-    SignatureValidationErrors,
 } from './index';
 
 export default class CyberSourceThreeDSecurePaymentProcessor {
-    private _Cardinal?: CyberSourceCardinal;
+    private _Cardinal?: CardinalSDK;
     private _paymentMethod?: PaymentMethod;
     private _cardinalEvent$: Subject<CardinalEventResponse>;
 
@@ -44,7 +43,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
-        private _cyberSourceScriptLoader: CyberSourceScriptLoader
+        private _cardinalScriptLoader: CardinalScriptLoader
     ) {
         this._cardinalEvent$ = new Subject();
     }
@@ -52,9 +51,9 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
     initialize(paymentMethod: PaymentMethod): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = paymentMethod;
 
-        return this._cyberSourceScriptLoader.load(this._paymentMethod.config.testMode)
-            .then(Cardinal => {
-                this._Cardinal = Cardinal;
+        return this._cardinalScriptLoader.load(this._paymentMethod.config.testMode)
+            .then(CardinalSDK => {
+                this._Cardinal = CardinalSDK;
 
                 return this._store.getState();
             });
@@ -69,7 +68,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return ((cardinal: CyberSourceCardinal): Promise<InternalCheckoutSelectors> => {
+        return ((cardinal: CardinalSDK): Promise<InternalCheckoutSelectors> => {
             return this._configureCardinalSDK(this._paymentMethod.clientToken, cardinal).then(() => {
                 return cardinal.trigger(CardinalTriggerEvents.BIN_PROCESS, paymentData.ccNumber).then(result => {
                     if (result && result.Status) {
@@ -96,7 +95,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
                                 return new Promise<string>((resolve, reject) => {
                                     this._cardinalEvent$
-                                        .pipe(take(1), filter(event => event.type.step === CardinalPaymentStep.AUTHORIZATION))
+                                        .pipe(take(1), filter(event => event.step === CardinalPaymentStep.AUTHORIZATION))
                                         .subscribe((event: CardinalEventResponse) => {
                                             if (!event.status) {
                                                 const message = event.data ? event.data.ErrorDescription : '';
@@ -136,8 +135,8 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
         return Promise.resolve(this._store.getState());
     }
 
-    private _configureCardinalSDK(clientToken: string, cardinal: CyberSourceCardinal): Promise<void> {
-        cardinal.on(CardinalEventType.SetupCompleted, (setupCompletedData: SetupCompletedData) => {
+    private _configureCardinalSDK(clientToken: string, cardinal: CardinalSDK): Promise<void> {
+        cardinal.on(CardinalEventType.SetupCompleted, (setupCompletedData: CardinalSetupCompletedData) => {
             this._resolveSetupEvent();
         });
 
@@ -148,27 +147,27 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                     break;
                 case CardinalValidatedAction.NOACTION:
                     if (data.ErrorNumber > 0) {
-                        this._rejectAuthorizationPromise(data, CardinalEventAction.ERROR);
+                        this._rejectAuthorizationPromise(data);
                     } else {
                         this._resolveAuthorizationPromise(jwt);
                     }
                     break;
                 case CardinalValidatedAction.FAILURE:
                     data.ErrorDescription = 'User failed authentication or an error was encountered while processing the transaction';
-                    this._rejectAuthorizationPromise(data, CardinalEventAction.ERROR);
+                    this._rejectAuthorizationPromise(data);
                     break;
                 case CardinalValidatedAction.ERROR:
-                    if (includes(SignatureValidationErrors, data.ErrorNumber)) {
+                    if (includes(CardinalSignatureValidationErrors, data.ErrorNumber)) {
                         this._rejectSetupEvent();
                     } else {
-                        this._rejectAuthorizationPromise(data, CardinalEventAction.ERROR);
+                        this._rejectAuthorizationPromise(data);
                     }
             }
         });
 
         return new Promise((resolve, reject) => {
             this._cardinalEvent$
-                .pipe(take(1), filter(event => event.type.step === CardinalPaymentStep.SETUP))
+                .pipe(take(1), filter(event => event.step === CardinalPaymentStep.SETUP))
                 .subscribe((event: CardinalEventResponse) => {
                     event.status ? resolve() : reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
                 });
@@ -181,10 +180,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
     private _resolveAuthorizationPromise(jwt: string): void {
         this._cardinalEvent$.next({
-            type: {
-                step: CardinalPaymentStep.AUTHORIZATION,
-                action: CardinalEventAction.OK,
-            },
+            step: CardinalPaymentStep.AUTHORIZATION,
             jwt,
             status: true,
         });
@@ -192,30 +188,21 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
     private _resolveSetupEvent(): void {
         this._cardinalEvent$.next({
-            type: {
-                step: CardinalPaymentStep.SETUP,
-                action: CardinalEventAction.OK,
-            },
+            step: CardinalPaymentStep.SETUP,
             status: true,
         });
     }
 
     private _rejectSetupEvent(): void {
         this._cardinalEvent$.next({
-            type: {
-                step: CardinalPaymentStep.SETUP,
-                action: CardinalEventAction.ERROR,
-            },
+            step: CardinalPaymentStep.SETUP,
             status: false,
         });
     }
 
-    private _rejectAuthorizationPromise(data: CardinalValidatedData, action: CardinalEventAction): void {
+    private _rejectAuthorizationPromise(data: CardinalValidatedData): void {
         this._cardinalEvent$.next({
-            type: {
-                step: CardinalPaymentStep.AUTHORIZATION,
-                action,
-            },
+            step: CardinalPaymentStep.AUTHORIZATION,
             data,
             status: false,
         });

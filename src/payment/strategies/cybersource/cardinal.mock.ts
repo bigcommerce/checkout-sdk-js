@@ -6,33 +6,25 @@ import { PaymentRequestOptions } from '../../payment-request-options';
 
 import {
     CardinalBinProcessResponse,
-    CardinalEventAction,
     CardinalEventResponse,
     CardinalPaymentStep,
+    CardinalPaymentType,
+    CardinalSDK,
     CardinalValidatedAction,
     CardinalValidatedData,
     CardinalWindow,
-    CyberSourceCardinal,
-    PaymentType,
-} from './cybersource';
+} from './cardinal';
 
 const CardinalWindowMock: CardinalWindow = window;
 
-export function getCyberSourceScriptMock(): CardinalWindow {
+export function getCardinalScriptMock(): CardinalWindow {
     return {
         ... CardinalWindowMock,
-        Cardinal: {
-            configure: jest.fn(),
-            on: jest.fn(),
-            setup: jest.fn(),
-            trigger: jest.fn(),
-            continue: jest.fn(),
-            off: jest.fn(),
-        },
+        Cardinal: getCardinalSDK(),
     };
 }
 
-export function getCybersourceCardinal(): CyberSourceCardinal {
+export function getCardinalSDK(): CardinalSDK {
     return {
         configure: jest.fn(),
         on: jest.fn(),
@@ -40,6 +32,7 @@ export function getCybersourceCardinal(): CyberSourceCardinal {
         trigger: jest.fn(),
         continue: jest.fn(),
         off: jest.fn(),
+        start: jest.fn(),
     };
 }
 
@@ -77,17 +70,14 @@ export function getCardinalValidatedData(actionCode: CardinalValidatedAction, st
         Validated: status,
         Payment: {
             ProcessorTransactionId: '',
-            Type: PaymentType.CCA,
+            Type: CardinalPaymentType.CCA,
         },
     };
 }
 
 export function getRejectAuthorizationPromise(): CardinalEventResponse {
     return {
-        type: {
-            step: CardinalPaymentStep.AUTHORIZATION,
-            action: CardinalEventAction.OK,
-        },
+        step: CardinalPaymentStep.AUTHORIZATION,
         jwt: '',
         data: {
             ActionCode: CardinalValidatedAction.SUCCESS,
@@ -96,7 +86,7 @@ export function getRejectAuthorizationPromise(): CardinalEventResponse {
             Validated: true,
             Payment: {
                 ProcessorTransactionId: '',
-                Type: PaymentType.CCA,
+                Type: CardinalPaymentType.CCA,
             },
         },
         status: true,

@@ -32,8 +32,8 @@ import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getCybersource, getPaymentMethodsState } from '../../payment-methods.mock';
 import { getCreditCardInstrument } from '../../payments.mock';
 
+import { getCybersourcePaymentRequestBody, getCybersourcePaymentRequestOptions } from './cardinal.mock';
 import CyberSourcePaymentProcessor from './cybersource-payment-processor';
-import { getCybersourcePaymentRequestBody, getCybersourcePaymentRequestOptions } from './cybersource.mock';
 
 describe('CyberSourcePaymentProcessor', () => {
     let processor: CyberSourcePaymentProcessor;

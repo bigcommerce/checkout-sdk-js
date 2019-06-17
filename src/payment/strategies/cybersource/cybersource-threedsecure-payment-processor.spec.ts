@@ -32,27 +32,28 @@ import { getCybersource, getPaymentMethodsState } from '../../payment-methods.mo
 import { getCreditCardInstrument, getErrorPaymentResponseBody } from '../../payments.mock';
 
 import {
+    CardinalEventType,
+    CardinalScriptLoader,
+    CardinalSDK,
     CardinalValidatedAction,
     CardinalValidatedData,
-    CyberSourceCardinal
-} from './cybersource';
-import CyberSourceScriptLoader from './cybersource-script-loader';
-import CyberSourceThreeDSecurePaymentProcessor from './cybersource-threedsecure-payment-processor';
+    CyberSourceThreeDSecurePaymentProcessor
+} from './index';
+
 import {
     getCardinalBinProcessResponse,
+    getCardinalSDK,
     getCardinalValidatedData,
-    getCybersourceCardinal,
     getCybersourceOrderRequestBody,
     getCybersourcePaymentRequestBody
-} from './cybersource.mock';
-import { CardinalEventType } from './index';
+} from './cardinal.mock';
 
 describe('CyberSourceThreeDSecurePaymentProcessor', () => {
     let processor: CyberSourceThreeDSecurePaymentProcessor;
-    let cybersourceScriptLoader: CyberSourceScriptLoader;
+    let cybersourceScriptLoader: CardinalScriptLoader;
     let store: CheckoutStore;
     let paymentMethodMock: PaymentMethod;
-    let cardinal: CyberSourceCardinal;
+    let cardinal: CardinalSDK;
 
     let orderActionCreator: OrderActionCreator;
     let submitOrderAction: Observable<Action>;
@@ -84,7 +85,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
             orderActionCreator
         );
 
-        cybersourceScriptLoader = new CyberSourceScriptLoader(createScriptLoader());
+        cybersourceScriptLoader = new CardinalScriptLoader(createScriptLoader());
 
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
             .mockReturnValue(paymentMethodMock);
@@ -97,7 +98,7 @@ describe('CyberSourceThreeDSecurePaymentProcessor', () => {
         );
 
         paymentMethodMock = getCybersource();
-        cardinal = getCybersourceCardinal();
+        cardinal = getCardinalSDK();
 
         jest.spyOn(cybersourceScriptLoader, 'load')
             .mockReturnValue(Promise.resolve(cardinal));
