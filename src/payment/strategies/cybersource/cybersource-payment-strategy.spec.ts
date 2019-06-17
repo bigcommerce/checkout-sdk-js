@@ -35,9 +35,9 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { getCybersource } from '../../payment-methods.mock';
 
+import CardinalScriptLoader from './cardinal-script-loader';
 import CyberSourcePaymentProcessor from './cybersource-payment-processor';
 import CyberSourcePaymentStrategy from './cybersource-payment-strategy';
-import CyberSourceScriptLoader from './cybersource-script-loader';
 import CyberSourceThreeDSecurePaymentProcessor from './cybersource-threedsecure-payment-processor';
 
 describe('CyberSourcePaymentStrategy', () => {
@@ -48,7 +48,7 @@ describe('CyberSourcePaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
-    let scriptLoader: CyberSourceScriptLoader;
+    let scriptLoader: CardinalScriptLoader;
     let submitOrderAction: Observable<Action>;
     let store: CheckoutStore;
     let strategy: CyberSourcePaymentStrategy;
@@ -68,7 +68,7 @@ describe('CyberSourcePaymentStrategy', () => {
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())
         );
-        scriptLoader = new CyberSourceScriptLoader(createScriptLoader());
+        scriptLoader = new CardinalScriptLoader(createScriptLoader());
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),

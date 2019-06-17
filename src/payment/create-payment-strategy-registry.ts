@@ -32,9 +32,9 @@ import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chas
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import {
+    CardinalScriptLoader,
     CyberSourcePaymentProcessor,
     CyberSourcePaymentStrategy,
-    CyberSourceScriptLoader,
     CyberSourceThreeDSecurePaymentProcessor,
 } from './strategies/cybersource';
 import {
@@ -124,7 +124,7 @@ export default function createPaymentStrategyRegistry(
                 store,
                 orderActionCreator,
                 paymentActionCreator,
-                new CyberSourceScriptLoader(scriptLoader)
+                new CardinalScriptLoader(scriptLoader)
             ),
             new CyberSourcePaymentProcessor(
                 store,
