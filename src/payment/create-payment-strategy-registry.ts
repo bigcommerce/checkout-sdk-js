@@ -33,9 +33,7 @@ import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import {
     CardinalScriptLoader,
-    CyberSourcePaymentProcessor,
     CyberSourcePaymentStrategy,
-    CyberSourceThreeDSecurePaymentProcessor,
 } from './strategies/cybersource';
 import {
     createGooglePayPaymentProcessor,
@@ -120,17 +118,9 @@ export default function createPaymentStrategyRegistry(
         new CyberSourcePaymentStrategy(
             store,
             paymentMethodActionCreator,
-            new CyberSourceThreeDSecurePaymentProcessor(
-                store,
-                orderActionCreator,
-                paymentActionCreator,
-                new CardinalScriptLoader(scriptLoader)
-            ),
-            new CyberSourcePaymentProcessor(
-                store,
-                orderActionCreator,
-                paymentActionCreator
-            )
+            orderActionCreator,
+            paymentActionCreator,
+            new CardinalScriptLoader(scriptLoader)
         )
     );
 

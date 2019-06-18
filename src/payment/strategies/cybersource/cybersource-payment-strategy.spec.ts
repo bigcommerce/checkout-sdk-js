@@ -36,12 +36,10 @@ import { MissingDataError, NotInitializedError } from '../../../common/error/err
 import { getCybersource } from '../../payment-methods.mock';
 
 import CardinalScriptLoader from './cardinal-script-loader';
-import CyberSourcePaymentProcessor from './cybersource-payment-processor';
 import CyberSourcePaymentStrategy from './cybersource-payment-strategy';
-import CyberSourceThreeDSecurePaymentProcessor from './cybersource-threedsecure-payment-processor';
 
 describe('CyberSourcePaymentStrategy', () => {
-    let initializePaymentAction: Observable<Action>;
+    /*let initializePaymentAction: Observable<Action>;
     let loadPaymentMethodAction: Observable<Action>;
     let payload: OrderRequestBody;
     let paymentMethod: PaymentMethod;
@@ -219,5 +217,5 @@ describe('CyberSourcePaymentStrategy', () => {
                 expect(error).toBeInstanceOf(NotInitializedError);
             }
         });
-    });
+    });*/
 });
