@@ -21,7 +21,7 @@ export interface CreditCardInstrument {
     ccCvv?: string;
     shouldSaveInstrument?: boolean;
     extraData?: any;
-    threeDSecure?: ThreeDSecure;
+    threeDSecure?: ThreeDSecure | ThreeDSecureToken;
 }
 
 export interface NonceInstrument {
@@ -48,13 +48,16 @@ export interface CryptogramInstrument {
     extraData?: any;
 }
 
-export type ThreeDSecure = Partial<{
+export interface ThreeDSecure {
     version: string;
     status: string;
     vendor: string;
     cavv: string;
     eci: string;
     xid: string;
+}
+
+export interface ThreeDSecureToken {
     token: string;
-    session: string;
-}>;
+    session?: string;
+}

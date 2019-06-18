@@ -15,7 +15,7 @@ import {
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { CreditCardInstrument, ThreeDSecure } from '../../payment';
+import {CreditCardInstrument, ThreeDSecure, ThreeDSecureToken} from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import { PaymentRequestOptions } from '../../payment-request-options';
@@ -210,7 +210,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
         });
     }
 
-    private _addThreeDSecureData(payment: CreditCardInstrument, threeDSecure: ThreeDSecure): CreditCardInstrument {
+    private _addThreeDSecureData(payment: CreditCardInstrument, threeDSecure: ThreeDSecureToken): CreditCardInstrument {
         payment.threeDSecure = threeDSecure;
 
         return payment;
