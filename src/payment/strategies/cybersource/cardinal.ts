@@ -4,7 +4,7 @@ export interface CardinalSDK {
     configure(params: CardinalConfiguration): void;
     on(params: CardinalEventType, callback: CardinalEventMap[CardinalEventType]): void;
     off(params: CardinalEventType): void;
-    setup(initializationType: CardinalInitializationType, initializationData: CardinalInitializationDataMap[CardinalInitializationType]): void;
+    setup<K extends keyof CardinalInitializationDataMap>(initializationType: K, initializationData: CardinalInitializationDataMap[K]): void;
     trigger(event: CardinalTriggerEvents, data?: string): Promise<CardinalBinProcessResponse | void>;
     continue(paymentBrand: CardinalPaymentBrand, continueObject: CardinalContinue, order: CardinalPartialOrder): void;
     start(paymentBrand: CardinalPaymentBrand, order: CardinalPartialOrder, jwt?: string): void;
@@ -20,13 +20,13 @@ export interface CardinalEventMap {
 }
 
 export type CardinalConfiguration = Partial<{
-    logging?: {
+    logging: {
         level: string,
     };
-    payment?: {
-        view?: string,
-        framework?: string,
-        displayLoading?: boolean,
+    payment: {
+        view: string,
+        framework: string,
+        displayLoading: boolean,
     };
 }>;
 
@@ -124,13 +124,14 @@ export interface CardinalAddress {
     Phone2?: string;
 }
 
-export type CardinalOrderDetails = Partial <{
+export interface CardinalOrderDetails {
     OrderNumber: string;
     Amount: number;
     CurrencyCode: string;
+    OrderDescription?: string;
     OrderChannel: string;
-    TransactionId: string;
-}>;
+    TransactionId?: string;
+}
 
 export interface CardinalEventResponse {
     step: CardinalPaymentStep;
@@ -145,10 +146,10 @@ export enum CardinalEventType {
 }
 
 export enum CardinalValidatedAction {
-    SUCCESS = 'SUCCESS',
-    NOACTION = 'NOACTION',
-    FAILURE = 'FAILURE',
-    ERROR = 'ERROR',
+    Success = 'SUCCESS',
+    NoAction = 'NOACTION',
+    Failure = 'FAILURE',
+    Error = 'ERROR',
 }
 
 export enum CardinalPaymentType {
@@ -161,12 +162,12 @@ export enum CardinalPaymentType {
 }
 
 export enum CardinalPaymentStep {
-    SETUP = 'setup',
-    AUTHORIZATION = 'authorization',
+    Setup = 'setup',
+    Authorization = 'authorization',
 }
 
 export enum CardinalTriggerEvents {
-    BIN_PROCESS = 'bin.process',
+    BinProcess = 'bin.process',
 }
 
 export enum CardinalPaymentBrand {

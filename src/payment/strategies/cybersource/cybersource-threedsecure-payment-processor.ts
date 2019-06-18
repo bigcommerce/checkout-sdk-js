@@ -3,6 +3,7 @@ import { Subject } from 'rxjs/index';
 import { filter } from 'rxjs/internal/operators';
 import { take } from 'rxjs/operators';
 
+import Address from '../../../address/address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     MissingDataError,
@@ -20,9 +21,13 @@ import PaymentMethod from '../../payment-method';
 import { PaymentRequestOptions } from '../../payment-request-options';
 
 import {
+    CardinalAccount,
+    CardinalAddress,
+    CardinalConsumer,
     CardinalEventResponse,
     CardinalEventType,
     CardinalInitializationType,
+    CardinalPartialOrder,
     CardinalPaymentBrand,
     CardinalPaymentStep,
     CardinalScriptLoader,
@@ -31,7 +36,7 @@ import {
     CardinalSDK,
     CardinalTriggerEvents,
     CardinalValidatedAction,
-    CardinalValidatedData,
+    CardinalValidatedData
 } from './index';
 
 export default class CyberSourceThreeDSecurePaymentProcessor {
@@ -70,7 +75,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
         return ((cardinal: CardinalSDK): Promise<InternalCheckoutSelectors> => {
             return this._configureCardinalSDK(this._paymentMethod.clientToken, cardinal).then(() => {
-                return cardinal.trigger(CardinalTriggerEvents.BIN_PROCESS, paymentData.ccNumber).then(result => {
+                return cardinal.trigger(CardinalTriggerEvents.BinProcess, paymentData.ccNumber).then(result => {
                     if (result && result.Status) {
                         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
                             .then(() =>
@@ -87,15 +92,12 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
                                     Payload: error.body.three_ds_result.merchant_data,
                                 };
 
-                                const partialOrder = {
-                                    OrderDetails: {
-                                        TransactionId: error.body.three_ds_result.payer_auth_request,
-                                    },
-                                };
+                                const partialOrder = this._mapToPartialOrder(paymentData);
+                                partialOrder.OrderDetails.TransactionId = error.body.three_ds_result.payer_auth_request;
 
                                 return new Promise<string>((resolve, reject) => {
                                     this._cardinalEvent$
-                                        .pipe(take(1), filter(event => event.step === CardinalPaymentStep.AUTHORIZATION))
+                                        .pipe(take(1), filter(event => event.step === CardinalPaymentStep.Authorization))
                                         .subscribe((event: CardinalEventResponse) => {
                                             if (!event.status) {
                                                 const message = event.data ? event.data.ErrorDescription : '';
@@ -142,21 +144,21 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
         cardinal.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
             switch (data.ActionCode) {
-                case CardinalValidatedAction.SUCCESS:
+                case CardinalValidatedAction.Success:
                     this._resolveAuthorizationPromise(jwt);
                     break;
-                case CardinalValidatedAction.NOACTION:
+                case CardinalValidatedAction.NoAction:
                     if (data.ErrorNumber > 0) {
                         this._rejectAuthorizationPromise(data);
                     } else {
                         this._resolveAuthorizationPromise(jwt);
                     }
                     break;
-                case CardinalValidatedAction.FAILURE:
+                case CardinalValidatedAction.Failure:
                     data.ErrorDescription = 'User failed authentication or an error was encountered while processing the transaction';
                     this._rejectAuthorizationPromise(data);
                     break;
-                case CardinalValidatedAction.ERROR:
+                case CardinalValidatedAction.Error:
                     if (includes(CardinalSignatureValidationErrors, data.ErrorNumber)) {
                         this._rejectSetupEvent();
                     } else {
@@ -167,7 +169,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
         return new Promise((resolve, reject) => {
             this._cardinalEvent$
-                .pipe(take(1), filter(event => event.step === CardinalPaymentStep.SETUP))
+                .pipe(take(1), filter(event => event.step === CardinalPaymentStep.Setup))
                 .subscribe((event: CardinalEventResponse) => {
                     event.status ? resolve() : reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
                 });
@@ -180,7 +182,7 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
     private _resolveAuthorizationPromise(jwt: string): void {
         this._cardinalEvent$.next({
-            step: CardinalPaymentStep.AUTHORIZATION,
+            step: CardinalPaymentStep.Authorization,
             jwt,
             status: true,
         });
@@ -188,21 +190,21 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
 
     private _resolveSetupEvent(): void {
         this._cardinalEvent$.next({
-            step: CardinalPaymentStep.SETUP,
+            step: CardinalPaymentStep.Setup,
             status: true,
         });
     }
 
     private _rejectSetupEvent(): void {
         this._cardinalEvent$.next({
-            step: CardinalPaymentStep.SETUP,
+            step: CardinalPaymentStep.Setup,
             status: false,
         });
     }
 
     private _rejectAuthorizationPromise(data: CardinalValidatedData): void {
         this._cardinalEvent$.next({
-            step: CardinalPaymentStep.AUTHORIZATION,
+            step: CardinalPaymentStep.Authorization,
             data,
             status: false,
         });
@@ -212,5 +214,76 @@ export default class CyberSourceThreeDSecurePaymentProcessor {
         payment.threeDSecure = threeDSecure;
 
         return payment;
+    }
+
+    private _mapToPartialOrder(paymentData: CreditCardInstrument): CardinalPartialOrder {
+        const billingAddress = this._store.getState().billingAddress.getBillingAddress();
+        const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
+        const checkout = this._store.getState().checkout.getCheckout();
+        const order = this._store.getState().order.getOrder();
+
+        if (!billingAddress || !billingAddress.email) {
+            throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
+        }
+
+        if (!checkout) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
+
+        if (!order) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrder);
+        }
+
+        const consumer: CardinalConsumer = {
+            Email1: billingAddress.email,
+            BillingAddress: this._mapToCardinalAddress(billingAddress),
+            Account: this._mapToCardinalAccount(paymentData),
+        };
+
+        if (shippingAddress) {
+            consumer.ShippingAddress = this._mapToCardinalAddress(shippingAddress);
+        }
+
+        return  {
+            Consumer: consumer,
+            OrderDetails: {
+                OrderNumber: order.orderId.toString(),
+                Amount: checkout.cart.cartAmount,
+                CurrencyCode: checkout.cart.currency.code,
+                OrderChannel: 'S',
+            },
+        };
+    }
+
+    private _mapToCardinalAccount(paymentData: CreditCardInstrument): CardinalAccount {
+        return {
+            AccountNumber: Number(paymentData.ccNumber),
+            ExpirationMonth: Number(paymentData.ccExpiry.month),
+            ExpirationYear: Number(paymentData.ccExpiry.year),
+            NameOnAccount: paymentData.ccName,
+            CardCode: Number(paymentData.ccCvv),
+        };
+    }
+
+    private _mapToCardinalAddress(address: Address): CardinalAddress {
+        const cardinalAddress: CardinalAddress = {
+            FirstName: address.firstName,
+            LastName: address.lastName,
+            Address1: address.address1,
+            City: address.city,
+            State: address.stateOrProvince,
+            PostalCode: address.postalCode,
+            CountryCode: address.countryCode,
+        };
+
+        if (address.address2) {
+            cardinalAddress.Address2 = address.address2;
+        }
+
+        if (address.phone) {
+            cardinalAddress.Phone1 = address.phone;
+        }
+
+        return cardinalAddress;
     }
 }

@@ -77,10 +77,10 @@ export function getCardinalValidatedData(actionCode: CardinalValidatedAction, st
 
 export function getRejectAuthorizationPromise(): CardinalEventResponse {
     return {
-        step: CardinalPaymentStep.AUTHORIZATION,
+        step: CardinalPaymentStep.Authorization,
         jwt: '',
         data: {
-            ActionCode: CardinalValidatedAction.SUCCESS,
+            ActionCode: CardinalValidatedAction.Success,
             ErrorDescription: 'error',
             ErrorNumber: 200,
             Validated: true,
