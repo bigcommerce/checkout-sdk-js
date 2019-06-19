@@ -381,6 +381,25 @@ export function getZip(): PaymentMethod {
     };
 }
 
+export function getStripeV3(): PaymentMethod {
+    return {
+        id: 'stripev3',
+        logoUrl: '',
+        method: 'stripev3',
+        supportedCards: [],
+        config: {
+            displayName: 'Stripe',
+            merchantId: '',
+            testMode: true,
+        },
+        initializationData: {
+            stripePublishableKey: 'key',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+    };
+}
+
 export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
@@ -400,6 +419,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getKlarna(),
         getSquare(),
         getGooglePay(),
+        getStripeV3(),
     ];
 }
 

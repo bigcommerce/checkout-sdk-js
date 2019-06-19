@@ -8,6 +8,7 @@ import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { SquarePaymentInitializeOptions } from './strategies/square';
+import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
 
 /**
  * The set of options for configuring any requests related to the payment step of
@@ -92,4 +93,10 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support GooglePay.
      */
     googlepaystripe?: GooglePayPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the Stripe payment method.
+     * They can be omitted unless you need to support StripeV3.
+     */
+    stripev3?: StripeV3PaymentInitializeOptions;
 }
