@@ -30,6 +30,7 @@ A set of options that are required to initialize the payment step of the current
 * [params](paymentinitializeoptions.md#params)
 * [paypalexpress](paymentinitializeoptions.md#paypalexpress)
 * [square](paymentinitializeoptions.md#square)
+* [stripev3](paymentinitializeoptions.md#stripev3)
 * [timeout](paymentinitializeoptions.md#timeout)
 
 ---
@@ -152,6 +153,15 @@ ___
 **● square**: *[SquarePaymentInitializeOptions](squarepaymentinitializeoptions.md)*
 
 The options that are required to initialize the Square payment method. They can be omitted unless you need to support Square.
+
+___
+<a id="stripev3"></a>
+
+### `<Optional>` stripev3
+
+**● stripev3**: *[StripeV3PaymentInitializeOptions](stripev3paymentinitializeoptions.md)*
+
+The options that are required to initialize the Stripe payment method. They can be omitted unless you need to support StripeV3.
 
 ___
 <a id="timeout"></a>
