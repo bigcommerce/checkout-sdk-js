@@ -62,6 +62,7 @@ export interface LineItem {
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
     addedByPromotion: boolean;
+    parentId?: string | null;
 }
 
 export interface LineItemOption {
