@@ -30,6 +30,7 @@
 * [listPrice](digitalitem.md#listprice)
 * [name](digitalitem.md#name)
 * [options](digitalitem.md#options)
+* [parentId](digitalitem.md#parentid)
 * [productId](digitalitem.md#productid)
 * [quantity](digitalitem.md#quantity)
 * [salePrice](digitalitem.md#saleprice)
@@ -167,6 +168,14 @@ ___
 ### `<Optional>` options
 
 **● options**: *[LineItemOption](lineitemoption.md)[]*
+
+___
+<a id="parentid"></a>
+
+### `<Optional>` parentId
+
+**● parentId**: * `string` &#124; `null`
+*
 
 ___
 <a id="productid"></a>

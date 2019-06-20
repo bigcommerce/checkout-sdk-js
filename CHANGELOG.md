@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.25.0"></a>
+# [1.25.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.23.0...v1.25.0) (2019-06-20)
+
+
+### Features
+
+* **checkout:** CHECKOUT-3670 adding parentId to LineItem interface ([dfa639e](https://github.com/bigcommerce/checkout-sdk-js/commit/dfa639e))
+* **payment:** INT-1450 Add support for Stripe V3 + 3DS using Payment Intents ([#570](https://github.com/bigcommerce/checkout-sdk-js/issues/570)) ([cc9b242](https://github.com/bigcommerce/checkout-sdk-js/commit/cc9b242))
+
+
+
 <a name="1.24.0"></a>
 # [1.24.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.23.1...v1.24.0) (2019-06-19)
 

@@ -2687,6 +2687,7 @@ declare interface LineItem {
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
     addedByPromotion: boolean;
+    parentId?: string | null;
 }
 
 declare interface LineItemCategory {

@@ -29,6 +29,7 @@
 * [listPrice](lineitem.md#listprice)
 * [name](lineitem.md#name)
 * [options](lineitem.md#options)
+* [parentId](lineitem.md#parentid)
 * [productId](lineitem.md#productid)
 * [quantity](lineitem.md#quantity)
 * [salePrice](lineitem.md#saleprice)
@@ -145,6 +146,14 @@ ___
 ### `<Optional>` options
 
 **● options**: *[LineItemOption](lineitemoption.md)[]*
+
+___
+<a id="parentid"></a>
+
+### `<Optional>` parentId
+
+**● parentId**: * `string` &#124; `null`
+*
 
 ___
 <a id="productid"></a>

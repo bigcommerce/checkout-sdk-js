@@ -29,6 +29,7 @@
 * [listPrice](physicalitem.md#listprice)
 * [name](physicalitem.md#name)
 * [options](physicalitem.md#options)
+* [parentId](physicalitem.md#parentid)
 * [productId](physicalitem.md#productid)
 * [quantity](physicalitem.md#quantity)
 * [salePrice](physicalitem.md#saleprice)
@@ -160,6 +161,14 @@ ___
 ### `<Optional>` options
 
 **● options**: *[LineItemOption](lineitemoption.md)[]*
+
+___
+<a id="parentid"></a>
+
+### `<Optional>` parentId
+
+**● parentId**: * `string` &#124; `null`
+*
 
 ___
 <a id="productid"></a>
