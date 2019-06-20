@@ -83,14 +83,26 @@ function errorsReducer(
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentRequested:
         if (action.meta) {
-            errors.updateError[action.meta.id] = undefined;
+            errors = {
+                ...errors,
+                updateError: {
+                    ...errors.updateError,
+                    [action.meta.id]: undefined,
+                },
+            };
         }
 
         return errors;
 
     case ConsignmentActionType.UpdateConsignmentFailed:
         if (action.meta) {
-            errors.updateError[action.meta.id] = action.payload;
+            errors = {
+                ...errors,
+                updateError: {
+                    ...errors.updateError,
+                    [action.meta.id]: action.payload,
+                },
+            };
         }
 
         return errors;
@@ -98,14 +110,26 @@ function errorsReducer(
     case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.DeleteConsignmentRequested:
         if (action.meta) {
-            errors.deleteError[action.meta.id] = undefined;
+            errors = {
+                ...errors,
+                deleteError: {
+                    ...errors.deleteError,
+                    [action.meta.id]: undefined,
+                },
+            };
         }
 
         return errors;
 
     case ConsignmentActionType.DeleteConsignmentFailed:
         if (action.meta) {
-            errors.deleteError[action.meta.id] = action.payload;
+            errors = {
+                ...errors,
+                deleteError: {
+                    ...errors.deleteError,
+                    [action.meta.id]: action.payload,
+                },
+            };
         }
 
         return errors;
@@ -113,14 +137,26 @@ function errorsReducer(
     case ConsignmentActionType.UpdateShippingOptionRequested:
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
         if (action.meta) {
-            errors.updateShippingOptionError[action.meta.id] = undefined;
+            errors = {
+                ...errors,
+                updateShippingOptionError: {
+                    ...errors.updateShippingOptionError,
+                    [action.meta.id]: undefined,
+                },
+            };
         }
 
         return errors;
 
     case ConsignmentActionType.UpdateShippingOptionFailed:
         if (action.meta) {
-            errors.updateShippingOptionError[action.meta.id] = action.payload;
+            errors = {
+                ...errors,
+                updateShippingOptionError: {
+                    ...errors.updateShippingOptionError,
+                    [action.meta.id]: action.payload,
+                },
+            };
         }
 
         return errors;
@@ -158,7 +194,13 @@ function statusesReducer(
 
     case ConsignmentActionType.UpdateConsignmentRequested:
         if (action.meta) {
-            statuses.isUpdating[action.meta.id] = true;
+            statuses = {
+                ...statuses,
+                isUpdating: {
+                    ...statuses.isUpdating,
+                    [action.meta.id]: true,
+                },
+            };
         }
 
         return statuses;
@@ -166,14 +208,26 @@ function statusesReducer(
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentFailed:
         if (action.meta) {
-            statuses.isUpdating[action.meta.id] = false;
+            statuses = {
+                ...statuses,
+                isUpdating: {
+                    ...statuses.isUpdating,
+                    [action.meta.id]: false,
+                },
+            };
         }
 
         return statuses;
 
     case ConsignmentActionType.DeleteConsignmentRequested:
         if (action.meta) {
-            statuses.isDeleting[action.meta.id] = true;
+            statuses = {
+                ...statuses,
+                isDeleting: {
+                    ...statuses.isDeleting,
+                    [action.meta.id]: true,
+                },
+            };
         }
 
         return statuses;
@@ -181,14 +235,26 @@ function statusesReducer(
     case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.DeleteConsignmentFailed:
         if (action.meta) {
-            statuses.isDeleting[action.meta.id] = false;
+            statuses = {
+                ...statuses,
+                isDeleting: {
+                    ...statuses.isDeleting,
+                    [action.meta.id]: false,
+                },
+            };
         }
 
         return statuses;
 
     case ConsignmentActionType.UpdateShippingOptionRequested:
         if (action.meta) {
-            statuses.isUpdatingShippingOption[action.meta.id] = true;
+            statuses = {
+                ...statuses,
+                isUpdatingShippingOption: {
+                    ...statuses.isUpdatingShippingOption,
+                    [action.meta.id]: true,
+                },
+            };
         }
 
         return statuses;
@@ -196,7 +262,13 @@ function statusesReducer(
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
     case ConsignmentActionType.UpdateShippingOptionFailed:
         if (action.meta) {
-            statuses.isUpdatingShippingOption[action.meta.id] = false;
+            statuses = {
+                ...statuses,
+                isUpdatingShippingOption: {
+                    ...statuses.isUpdatingShippingOption,
+                    [action.meta.id]: false,
+                },
+            };
         }
 
         return statuses;
