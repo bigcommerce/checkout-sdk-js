@@ -134,7 +134,7 @@ export function getCybersource(): PaymentMethod {
         config: {
             displayName: 'Cybersource',
             is3dsEnabled: true,
-            testMode: false,
+            testMode: true,
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'cyberToken',

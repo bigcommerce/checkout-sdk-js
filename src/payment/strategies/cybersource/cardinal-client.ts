@@ -42,7 +42,7 @@ export default class CardinalClient {
         this._cardinalEvent$ = new Subject<CardinalEventResponse>();
     }
 
-    initalize(testMode: boolean): Promise<void> {
+    initialize(testMode: boolean): Promise<void> {
         this._testMode = testMode;
 
         return this._getClientSDK().then(() => Promise.resolve());
@@ -93,7 +93,7 @@ export default class CardinalClient {
         });
     }
 
-    bind(ccNumber: string): Promise<void> {
+    runBindProcess(ccNumber: string): Promise<void> {
         return this._getClientSDK().then(client => {
             return new Promise<void>((resolve, reject) => {
                 client.trigger(CardinalTriggerEvents.BinProcess, ccNumber).then(result => {
@@ -133,8 +133,8 @@ export default class CardinalClient {
         });
     }
 
-    reset() {
-        this._getClientSDK().then(client => {
+    reset(): Promise<void> {
+        return this._getClientSDK().then(client => {
             client.off(CardinalEventType.SetupCompleted);
             client.off(CardinalEventType.Validated);
         });

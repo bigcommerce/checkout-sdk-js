@@ -34,11 +34,11 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)).then( state => {
             this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
-            if (!this._paymentMethod || !this._paymentMethod.config || !this._paymentMethod.config.testMode) {
+            if (!this._paymentMethod || !this._paymentMethod.config || this._paymentMethod.config.testMode === undefined) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
             }
 
-            return this._cardinalClient.initalize(this._paymentMethod.config.testMode).then(() => this._store.getState());
+            return this._cardinalClient.initialize(this._paymentMethod.config.testMode).then(() => this._store.getState());
         });
     }
 
@@ -71,7 +71,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         }
 
         return this._cardinalClient.configure(clientToken).then(() => {
-            return this._cardinalClient.bind(paymentData.ccNumber).then(() => {
+            return this._cardinalClient.runBindProcess(paymentData.ccNumber).then(() => {
                 return this._placeOrder(order, payment, paymentData, options).catch(error => {
                     if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
                         return Promise.reject(error);
@@ -87,7 +87,6 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             });
         }).catch(async error => {
             await this._cardinalClient.reset();
-
             throw error;
         });
     }
