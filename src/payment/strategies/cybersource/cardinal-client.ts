@@ -1,4 +1,4 @@
-import { includes, some } from 'lodash';
+import { includes } from 'lodash';
 import { Subject } from 'rxjs/index';
 import { filter } from 'rxjs/internal/operators';
 import { take } from 'rxjs/operators';
@@ -100,7 +100,7 @@ export default class CardinalClient {
                     if (result && result.Status) {
                         resolve();
                     } else {
-                        throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+                        reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
                     }
                 });
             });
@@ -228,7 +228,7 @@ export default class CardinalClient {
     }
 
     private _getClientSDK(): Promise<CardinalSDK> {
-        if (!this._testMode) {
+        if (this._testMode === undefined) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 

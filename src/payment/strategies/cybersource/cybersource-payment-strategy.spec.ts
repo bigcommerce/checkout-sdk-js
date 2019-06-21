@@ -1,5 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
+import createErrorAction from '@bigcommerce/data-store/lib/create-error-action';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
@@ -11,12 +12,18 @@ import {
     CheckoutStore,
     CheckoutValidator,
 } from '../../../checkout';
+import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
+import { MissingDataError } from '../../../common/error/errors';
+import RequestError from '../../../common/error/errors/request-error';
+import StandardError from '../../../common/error/errors/standard-error';
+import { getResponse } from '../../../common/http-request/responses.mock';
 import {
     OrderActionCreator,
     OrderActionType,
     OrderRequestBody,
     OrderRequestSender,
 } from '../../../order';
+import OrderFinalizationNotRequiredError from '../../../order/errors/order-finalization-not-required-error';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import {
     RemoteCheckoutActionCreator,
@@ -25,27 +32,19 @@ import {
 } from '../../../remote-checkout';
 import { PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentMethodActionType } from '../../payment-method-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
-
-import {getCheckoutStoreState, getCheckoutStoreStateWithOrder} from '../../../checkout/checkouts.mock';
-import { MissingDataError } from '../../../common/error/errors';
 import { getCybersource } from '../../payment-methods.mock';
+import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import CardinalClient from './cardinal-client';
-import CardinalScriptLoader from './cardinal-script-loader';
-import CyberSourcePaymentStrategy from './cybersource-payment-strategy';
-import NotInitializedError from "../../../common/error/errors/not-initialized-error";
-import {PaymentActionType, SubmitPaymentAction} from "../../payment-actions";
-import {getResponse} from "../../../common/http-request/responses.mock";
-import {getErrorPaymentResponseBody} from "../../payments.mock";
-import createErrorAction from "@bigcommerce/data-store/lib/create-error-action";
-import RequestError from "../../../common/error/errors/request-error";
-import StandardError from "../../../common/error/errors/standard-error";
-import OrderFinalizationNotRequiredError from "../../../order/errors/order-finalization-not-required-error";
-import {getEUBillingAddress} from "../klarna/klarna.mock";
+import {
+    CardinalClient,
+    CardinalScriptLoader,
+    CyberSourcePaymentStrategy
+} from './index';
 
 describe('CyberSourcePaymentStrategy', () => {
     let initializePaymentAction: Observable<Action>;

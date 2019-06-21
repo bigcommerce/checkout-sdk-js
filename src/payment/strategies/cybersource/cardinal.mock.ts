@@ -6,7 +6,7 @@ import { PaymentRequestOptions } from '../../payment-request-options';
 
 import {
     CardinalBinProcessResponse,
-    CardinalEventResponse,
+    CardinalEventResponse, CardinalOrderData,
     CardinalPaymentStep,
     CardinalPaymentType,
     CardinalSDK,
@@ -14,6 +14,15 @@ import {
     CardinalValidatedData,
     CardinalWindow,
 } from './cardinal';
+import {ThreeDsResult} from "../../payment-response-body";
+import {CreditCardInstrument} from "../../payment";
+import Address from "../../../address/address";
+import BillingAddress from "../../../billing/billing-address";
+import {getCheckoutStoreState, getCheckoutStoreStateWithOrder} from "../../../checkout/checkouts.mock";
+import {createCheckoutStore} from "../../../checkout";
+import {getBillingAddress} from "../../../billing/billing-addresses.mock";
+import {getShippingAddress} from "../../../shipping/shipping-addresses.mock";
+import {getCreditCardInstrument} from "../../payments.mock";
 
 const CardinalWindowMock: CardinalWindow = window;
 
@@ -90,5 +99,28 @@ export function getRejectAuthorizationPromise(): CardinalEventResponse {
             },
         },
         status: true,
+    };
+}
+
+export function getCardinalThreeDSResult(): ThreeDsResult {
+    return {
+        acs_url: 'https://',
+        payer_auth_request: 'auth_request',
+        merchant_data: 'merchant_data',
+        callback_url: '',
+    };
+}
+
+export function getCardinalOrderData(): CardinalOrderData {
+    const billingAddress = getBillingAddress();
+    billingAddress.address2 = 'Address 2';
+
+    return {
+        billingAddress,
+        shippingAddress: getShippingAddress(),
+        currencyCode: 'USD',
+        id: '123-abc',
+        amount: 12000,
+        paymentData: getCreditCardInstrument(),
     };
 }
