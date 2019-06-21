@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.25.1"></a>
+## [1.25.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.25.0...v1.25.1) (2019-06-21)
+
+
+### Bug Fixes
+
+* **shipping:** CHECKOUT-4160 Return new object in reducer ([bac88c1](https://github.com/bigcommerce/checkout-sdk-js/commit/bac88c1))
+
+
+
 <a name="1.25.0"></a>
 # [1.25.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.23.0...v1.25.0) (2019-06-20)
 
