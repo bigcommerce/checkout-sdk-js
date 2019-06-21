@@ -1,8 +1,11 @@
+import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import OrderRequestBody from '../../../order/order-request-body';
-
+import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentRequestOptions } from '../../payment-request-options';
+import { ThreeDsResult } from '../../payment-response-body';
+import { getCreditCardInstrument } from '../../payments.mock';
 
 import {
     CardinalBinProcessResponse,
@@ -14,15 +17,6 @@ import {
     CardinalValidatedData,
     CardinalWindow,
 } from './cardinal';
-import {ThreeDsResult} from "../../payment-response-body";
-import {CreditCardInstrument} from "../../payment";
-import Address from "../../../address/address";
-import BillingAddress from "../../../billing/billing-address";
-import {getCheckoutStoreState, getCheckoutStoreStateWithOrder} from "../../../checkout/checkouts.mock";
-import {createCheckoutStore} from "../../../checkout";
-import {getBillingAddress} from "../../../billing/billing-addresses.mock";
-import {getShippingAddress} from "../../../shipping/shipping-addresses.mock";
-import {getCreditCardInstrument} from "../../payments.mock";
 
 const CardinalWindowMock: CardinalWindow = window;
 
