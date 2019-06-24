@@ -58,7 +58,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        throw new OrderFinalizationNotRequiredError();
+        return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
