@@ -1,16 +1,11 @@
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { OrderPaymentRequestBody } from '../../../order';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import OrderRequestBody from '../../../order/order-request-body';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
-import { PaymentRequestOptions } from '../../payment-request-options';
 import { ThreeDsResult } from '../../payment-response-body';
 import { getCreditCardInstrument } from '../../payments.mock';
 
 import {
     CardinalBinProcessResponse,
-    CardinalEventResponse, CardinalOrderData,
-    CardinalPaymentStep,
+    CardinalOrderData,
     CardinalPaymentType,
     CardinalSDK,
     CardinalValidatedAction,
@@ -39,26 +34,6 @@ export function getCardinalSDK(): CardinalSDK {
     };
 }
 
-export function getCybersourcePaymentRequestBody(): OrderPaymentRequestBody {
-    return {
-        ...getOrderRequestBody().payment,
-        methodId: 'cybersource',
-    };
-}
-
-export function getCybersourceOrderRequestBody(): OrderRequestBody {
-    return {
-        ...getOrderRequestBody(),
-        payment: getCybersourcePaymentRequestBody(),
-    };
-}
-
-export function getCybersourcePaymentRequestOptions(): PaymentRequestOptions {
-    return {
-        methodId: 'cybersource',
-    };
-}
-
 export function getCardinalBinProcessResponse(status: boolean): CardinalBinProcessResponse {
     return {
         Status: status,
@@ -75,24 +50,6 @@ export function getCardinalValidatedData(actionCode: CardinalValidatedAction, st
             ProcessorTransactionId: '',
             Type: CardinalPaymentType.CCA,
         },
-    };
-}
-
-export function getRejectAuthorizationPromise(): CardinalEventResponse {
-    return {
-        step: CardinalPaymentStep.Authorization,
-        jwt: '',
-        data: {
-            ActionCode: CardinalValidatedAction.Success,
-            ErrorDescription: 'error',
-            ErrorNumber: 200,
-            Validated: true,
-            Payment: {
-                ProcessorTransactionId: '',
-                Type: CardinalPaymentType.CCA,
-            },
-        },
-        status: true,
     };
 }
 
