@@ -8,7 +8,7 @@ import {
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import Payment, {CreditCardInstrument, PaymentInstrument, ThreeDSecureToken} from '../../payment';
+import Payment, { CreditCardInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -31,15 +31,17 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const { methodId } = options;
 
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId)).then( state => {
-            this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
+        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
+            .then( state => {
+                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
-            if (!this._paymentMethod || !this._paymentMethod.config || this._paymentMethod.config.testMode === undefined) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
+                if (!this._paymentMethod || !this._paymentMethod.config || this._paymentMethod.config.testMode === undefined) {
+                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                }
 
-            return this._cardinalClient.initialize(this._paymentMethod.config.testMode).then(() => this._store.getState());
-        });
+                return this._cardinalClient.initialize(this._paymentMethod.config.testMode)
+                    .then(() => this._store.getState());
+            });
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -76,24 +78,27 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
 
         const paymentData = payment.paymentData as CreditCardInstrument;
 
-        return this._cardinalClient.configure(clientToken).then(() => {
-            return this._cardinalClient.runBindProcess(paymentData.ccNumber).then(() => {
-                return this._placeOrder(order, payment, options).catch(error => {
-                    if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
-                        return Promise.reject(error);
-                    }
+        return this._cardinalClient.configure(clientToken)
+            .then(() => {
+                return this._cardinalClient.runBindProcess(paymentData.ccNumber)
+                    .then(() => {
+                        return this._placeOrder(order, payment, options).catch(error => {
+                            if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
+                                return Promise.reject(error);
+                            }
 
-                    return this._cardinalClient.getThreeDSecureData(error.body.three_ds_result, this._getOrderData(paymentData)).then(threeDSecure =>
-                        this._executePayment({
-                            ...payment,
-                            paymentData: {
-                                ...paymentData,
-                                threeDSecure,
-                            },
-                        })
-                    );
+                            return this._cardinalClient.getThreeDSecureData(error.body.three_ds_result, this._getOrderData(paymentData))
+                                .then(threeDSecure =>
+                                    this._executePayment({
+                                        ...payment,
+                                        paymentData: {
+                                            ...paymentData,
+                                            threeDSecure,
+                                        },
+                                    })
+                            );
+                        });
                 });
-            });
         });
     }
 

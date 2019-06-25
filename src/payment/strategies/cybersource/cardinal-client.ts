@@ -5,7 +5,7 @@ import {
     MissingDataError, MissingDataErrorType, NotInitializedError,
     NotInitializedErrorType, StandardError
 } from '../../../common/error/errors';
-import {CreditCardInstrument, ThreeDSecureToken} from '../../payment';
+import { CreditCardInstrument, ThreeDSecureToken } from '../../payment';
 import { ThreeDsResult } from '../../payment-response-body';
 
 import {
@@ -41,76 +41,80 @@ export default class CardinalClient {
     }
 
     configure(clientToken: string): Promise<void> {
-        return this._getClientSDK().then(client => new Promise<void>((resolve, reject) => {
-            client.on(CardinalEventType.SetupCompleted, () => {
-                client.off(CardinalEventType.SetupCompleted);
-                resolve();
-            });
+        return this._getClientSDK()
+            .then(client => new Promise<void>((resolve, reject) => {
+                client.on(CardinalEventType.SetupCompleted, () => {
+                    client.off(CardinalEventType.SetupCompleted);
+                    resolve();
+                });
 
-            client.on(CardinalEventType.Validated, (data: CardinalValidatedData) => {
-                client.off(CardinalEventType.Validated);
-                switch (data.ActionCode) {
-                    case CardinalValidatedAction.Error:
-                        if (includes(CardinalSignatureValidationErrors, data.ErrorNumber)) {
-                            reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
-                        }
-                        break;
-                }
-            });
+                client.on(CardinalEventType.Validated, (data: CardinalValidatedData) => {
+                    client.off(CardinalEventType.Validated);
+                    switch (data.ActionCode) {
+                        case CardinalValidatedAction.Error:
+                            if (includes(CardinalSignatureValidationErrors, data.ErrorNumber)) {
+                                reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
+                            }
+                            break;
+                    }
+                });
 
-            client.setup(CardinalInitializationType.Init, {
-                jwt: clientToken,
-            });
+                client.setup(CardinalInitializationType.Init, {
+                    jwt: clientToken,
+                });
         }));
     }
 
     runBindProcess(ccNumber: string): Promise<void> {
-        return this._getClientSDK().then(client => {
-            return new Promise<void>((resolve, reject) => {
-                client.trigger(CardinalTriggerEvents.BinProcess, ccNumber).then(result => {
-                    if (result && result.Status) {
-                        resolve();
-                    } else {
-                        reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
-                    }
+        return this._getClientSDK()
+            .then(client => {
+                return new Promise<void>((resolve, reject) => {
+                    client.trigger(CardinalTriggerEvents.BinProcess, ccNumber)
+                        .then(result => {
+                            if (result && result.Status) {
+                                resolve();
+                            } else {
+                                reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+                            }
+                    });
                 });
-            });
         });
     }
 
     getThreeDSecureData(threeDSecureData: ThreeDsResult, orderData: CardinalOrderData): Promise<ThreeDSecureToken> {
-        return this._getClientSDK().then(client => {
-            return new Promise<ThreeDSecureToken>((resolve, reject) => {
-                client.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
-                    client.off(CardinalEventType.Validated);
-                    switch (data.ActionCode) {
-                        case CardinalValidatedAction.Success:
-                            resolve({ token: jwt });
-                            break;
-                        case CardinalValidatedAction.NoAction:
-                            if (data.ErrorNumber > 0) {
-                                reject(new StandardError(data.ErrorDescription));
-                            } else {
+        return this._getClientSDK()
+            .then(client => {
+                return new Promise<ThreeDSecureToken>((resolve, reject) => {
+                    client.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
+                        client.off(CardinalEventType.Validated);
+                        switch (data.ActionCode) {
+                            case CardinalValidatedAction.Success:
                                 resolve({ token: jwt });
-                            }
-                            break;
-                        case CardinalValidatedAction.Failure:
-                            reject(new StandardError('User failed authentication or an error was encountered while processing the transaction'));
-                            break;
-                        case CardinalValidatedAction.Error:
-                            reject(new StandardError(data.ErrorDescription));
-                    }
+                                break;
+                            case CardinalValidatedAction.NoAction:
+                                if (data.ErrorNumber > 0) {
+                                    reject(new StandardError(data.ErrorDescription));
+                                } else {
+                                    resolve({ token: jwt });
+                                }
+                                break;
+                            case CardinalValidatedAction.Failure:
+                                reject(new StandardError('User failed authentication or an error was encountered while processing the transaction'));
+                                break;
+                            case CardinalValidatedAction.Error:
+                                reject(new StandardError(data.ErrorDescription));
+                        }
+                    });
+
+                    const continueObject = {
+                        AcsUrl: threeDSecureData.acs_url,
+                        Payload: threeDSecureData.merchant_data,
+                    };
+
+                    const partialOrder = this._mapToPartialOrder(orderData, threeDSecureData.payer_auth_request);
+
+                    client.continue(CardinalPaymentBrand.CCA, continueObject, partialOrder);
                 });
-
-                const continueObject = {
-                    AcsUrl: threeDSecureData.acs_url,
-                    Payload: threeDSecureData.merchant_data,
-                };
-
-                const partialOrder = this._mapToPartialOrder(orderData, threeDSecureData.payer_auth_request);
-
-                client.continue(CardinalPaymentBrand.CCA, continueObject, partialOrder);
-            });
         });
     }
 
