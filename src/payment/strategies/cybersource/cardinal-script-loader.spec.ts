@@ -34,7 +34,7 @@ describe('CardinalScriptLoader', () => {
         );
     });
 
-    it('returns script to the window', async () => {
+    it('returns script from the window', async () => {
         scriptLoader.loadScript = jest.fn(() => {
             cardinalWindow.Cardinal = scriptMock.Cardinal;
 

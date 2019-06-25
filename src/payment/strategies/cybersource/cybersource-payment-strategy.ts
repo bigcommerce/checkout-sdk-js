@@ -45,7 +45,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
 
-        if (!payment || !payment.paymentData) {
+        if (!payment) {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
 
@@ -53,8 +53,8 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return !this._paymentMethod.config.is3dsEnabled || !payment.paymentData.ccNumber ? this._placeOrder(order, payment, payment.paymentData, options) :
-                this._placeOrderUsing3DS(order, payment, payment.paymentData as CreditCardInstrument, options, this._paymentMethod.clientToken);
+        return this._paymentMethod.config.is3dsEnabled ? this._placeOrderUsing3DS(order, payment, options, this._paymentMethod.clientToken) :
+            this._placeOrder(order, payment, options);
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -65,36 +65,46 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    private _placeOrderUsing3DS(order: OrderRequestBody, payment: OrderPaymentRequestBody, paymentData: CreditCardInstrument, options?: PaymentRequestOptions, clientToken?: string): Promise<InternalCheckoutSelectors> {
+    private _placeOrderUsing3DS(order: OrderRequestBody, payment: OrderPaymentRequestBody, options?: PaymentRequestOptions, clientToken?: string): Promise<InternalCheckoutSelectors> {
         if (!clientToken) {
             return Promise.reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
         }
 
+        if (!payment.paymentData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
+        const paymentData = payment.paymentData as CreditCardInstrument;
+
         return this._cardinalClient.configure(clientToken).then(() => {
             return this._cardinalClient.runBindProcess(paymentData.ccNumber).then(() => {
-                return this._placeOrder(order, payment, paymentData, options).catch(error => {
+                return this._placeOrder(order, payment, options).catch(error => {
                     if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
                         return Promise.reject(error);
                     }
 
-                    return this._cardinalClient.getThreeDSecureData(error.body.three_ds_result, this._getOrderData(paymentData)).then(jwt =>
+                    return this._cardinalClient.getThreeDSecureData(error.body.three_ds_result, this._getOrderData(paymentData)).then(threeDSecure =>
                         this._executePayment({
                             ...payment,
-                            paymentData: this._addThreeDSecureData(paymentData, { token: jwt }),
+                            paymentData: {
+                                ...paymentData,
+                                threeDSecure,
+                            },
                         })
                     );
                 });
             });
-        }).catch(async error => {
-            await this._cardinalClient.reset();
-            throw error;
         });
     }
 
-    private _placeOrder(order: OrderRequestBody, payment: OrderPaymentRequestBody, paymentData: PaymentInstrument, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    private _placeOrder(order: OrderRequestBody, payment: OrderPaymentRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        if (!payment.paymentData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() =>
-                this._executePayment({ ...payment, paymentData })
+                this._executePayment({ ...payment, paymentData: payment.paymentData })
             );
     }
 
@@ -102,12 +112,6 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         return this._store.dispatch(
             this._paymentActionCreator.submitPayment(payment)
         );
-    }
-
-    private _addThreeDSecureData(payment: CreditCardInstrument, threeDSecure: ThreeDSecureToken): CreditCardInstrument {
-        payment.threeDSecure = threeDSecure;
-
-        return payment;
     }
 
     private _getOrderData(paymentData: CreditCardInstrument): CardinalOrderData {

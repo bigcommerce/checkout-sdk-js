@@ -59,5 +59,4 @@ export interface ThreeDSecure {
 
 export interface ThreeDSecureToken {
     token: string;
-    session?: string;
 }

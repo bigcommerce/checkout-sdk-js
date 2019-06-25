@@ -148,7 +148,7 @@ describe('CyberSourcePaymentStrategy', () => {
             }
         });
 
-        it('throws data missing error when executing', async () => {
+        it('throws data missing error when payment is undefined', async () => {
             payload.payment = undefined;
 
             await strategy.initialize({ methodId: paymentMethodMock.id });
@@ -159,28 +159,48 @@ describe('CyberSourcePaymentStrategy', () => {
             }
         });
 
-        it('completes the purchase successfully when 3DS is disabled', async () => {
-            const paymentMethod = paymentMethodMock;
-            paymentMethod.config.is3dsEnabled = false;
+        describe('when 3DS is disabled', () => {
+            beforeEach(async () => {
+                const paymentMethod = paymentMethodMock;
+                paymentMethod.config.is3dsEnabled = false;
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethod);
+                jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethod);
 
-            strategy = new CyberSourcePaymentStrategy(
-                store,
-                paymentMethodActionCreator,
-                orderActionCreator,
-                paymentActionCreator,
-                cardinalClient
-            );
+                strategy = new CyberSourcePaymentStrategy(
+                    store,
+                    paymentMethodActionCreator,
+                    orderActionCreator,
+                    paymentActionCreator,
+                    cardinalClient
+                );
 
-            await strategy.initialize({ methodId: paymentMethod.id });
+                await strategy.initialize({ methodId: paymentMethod.id });
+            });
 
-            await strategy.execute(payload);
+            it('completes the purchase successfully', async () => {
+                await strategy.execute(payload);
 
-            const { payment, ...order } = payload;
+                const { payment, ...order } = payload;
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, undefined);
-            expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(payment);
+                expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, undefined);
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(payment);
+            });
+
+            it('throws data missing error when payment data is undefined', async () => {
+                payload = {
+                    payment: {
+                        methodId: paymentMethodMock.id,
+                        gatewayId: paymentMethodMock.gateway,
+                    },
+                };
+
+                await strategy.initialize({ methodId: paymentMethodMock.id });
+                try {
+                    await strategy.execute(payload);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(MissingDataError);
+                }
+            });
         });
 
         describe('when 3DS is enabled', () => {
@@ -226,13 +246,28 @@ describe('CyberSourcePaymentStrategy', () => {
             it('does not complete the purchase if there was an error', async () => {
                 jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, new StandardError('Custom Error'))));
-                jest.spyOn(cardinalClient, 'reset').mockReturnValue(Promise.resolve());
 
                 try {
                     await strategy.execute(payload);
                 } catch (error) {
                     expect(error).toBeInstanceOf(StandardError);
                     expect(error.message).toBe('Custom Error');
+                }
+            });
+
+            it('throws data missing error when payment data is undefined', async () => {
+                payload = {
+                    payment: {
+                        methodId: paymentMethodMock.id,
+                        gatewayId: paymentMethodMock.gateway,
+                    },
+                };
+
+                await strategy.initialize({ methodId: paymentMethodMock.id });
+                try {
+                    await strategy.execute(payload);
+                } catch (error) {
+                    expect(error).toBeInstanceOf(MissingDataError);
                 }
             });
 
@@ -262,7 +297,6 @@ describe('CyberSourcePaymentStrategy', () => {
             it('throws an error if order data is undefined', async () => {
                 jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-                jest.spyOn(cardinalClient, 'reset').mockReturnValue(Promise.resolve());
 
                 store = createCheckoutStore(getCheckoutStoreState());
 
@@ -286,7 +320,6 @@ describe('CyberSourcePaymentStrategy', () => {
             it('throws an error if billing data is undefined', async () => {
                 jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-                jest.spyOn(cardinalClient, 'reset').mockReturnValue(Promise.resolve());
 
                 store = createCheckoutStore({
                     ...getCheckoutStoreState(),
@@ -313,7 +346,6 @@ describe('CyberSourcePaymentStrategy', () => {
             it('throws an error if checkout data is undefined', async () => {
                 jest.spyOn(paymentActionCreator, 'submitPayment')
                     .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-                jest.spyOn(cardinalClient, 'reset').mockReturnValue(Promise.resolve());
 
                 store = createCheckoutStore({
                     ...getCheckoutStoreState(),

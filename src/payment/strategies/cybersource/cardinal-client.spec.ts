@@ -161,7 +161,7 @@ describe('CardinalClient', () => {
             const promise = await client.getThreeDSecureData(getCardinalThreeDSResult(), getCardinalOrderData());
 
             expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.Validated, expect.any(Function));
-            expect(promise).toBe('token');
+            expect(promise).toEqual({ token: 'token' });
         });
 
         it('returns a no action code', async () => {
@@ -172,7 +172,7 @@ describe('CardinalClient', () => {
             const promise = await client.getThreeDSecureData(getCardinalThreeDSResult(), getCardinalOrderData());
 
             expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.Validated, expect.any(Function));
-            expect(promise).toBe('token');
+            expect(promise).toEqual({ token: 'token' });
         });
 
         it('returns an error and a no action code', async () => {
@@ -210,16 +210,6 @@ describe('CardinalClient', () => {
                 expect(error).toBeInstanceOf(StandardError);
                 expect(error.message).toBe('User failed authentication or an error was encountered while processing the transaction');
             }
-        });
-    });
-
-    describe('#reset', () => {
-        it('resets the events correctly', async () => {
-            await client.initialize(true);
-            await client.reset();
-
-            expect(sdk.off).toHaveBeenCalledWith(CardinalEventType.SetupCompleted);
-            expect(sdk.off).toHaveBeenCalledWith(CardinalEventType.Validated);
         });
     });
 });
