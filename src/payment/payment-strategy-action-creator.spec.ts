@@ -455,6 +455,26 @@ describe('PaymentStrategyActionCreator', () => {
                 expect(action.payload).toBeInstanceOf(OrderFinalizationNotRequiredError);
             }
         });
+
+        it('returns rejected promise if payment method referenced in order object no longer exists', async () => {
+            store = createCheckoutStore({
+                ...state,
+                order: getOrderState(),
+                paymentMethods: {
+                    ...state.paymentMethods,
+                    data: [],
+                },
+            });
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
+
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+
+            try {
+                await from(actionCreator.finalize()(store)).toPromise();
+            } catch (action) {
+                expect(action.payload).toBeInstanceOf(OrderFinalizationNotRequiredError);
+            }
+        });
     });
 
     describe('#widgetInteraction()', () => {
