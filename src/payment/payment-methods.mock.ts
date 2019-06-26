@@ -90,6 +90,7 @@ export function getPaypal(): PaymentMethod {
         supportedCards: [],
         config: {
             testMode: false,
+            is3dsEnabled: true,
         },
         type: 'PAYMENT_TYPE_API',
         clientToken: 'foo',
