@@ -45,11 +45,15 @@ export default class CardinalClient {
             .then(client => new Promise<void>((resolve, reject) => {
                 client.on(CardinalEventType.SetupCompleted, () => {
                     client.off(CardinalEventType.SetupCompleted);
+                    client.off(CardinalEventType.Validated);
+
                     resolve();
                 });
 
                 client.on(CardinalEventType.Validated, (data: CardinalValidatedData) => {
+                    client.off(CardinalEventType.SetupCompleted);
                     client.off(CardinalEventType.Validated);
+
                     switch (data.ActionCode) {
                         case CardinalValidatedAction.Error:
                             if (includes(CardinalSignatureValidationErrors, data.ErrorNumber)) {
@@ -76,7 +80,7 @@ export default class CardinalClient {
                             } else {
                                 reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
                             }
-                    });
+                        });
                 });
         });
     }
