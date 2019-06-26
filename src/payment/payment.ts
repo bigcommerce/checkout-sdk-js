@@ -32,6 +32,7 @@ export interface VaultedInstrument {
     instrumentId: string;
     ccCvv?: string;
     ccNumber?: string;
+    iin: string;
 }
 
 export interface CryptogramInstrument {
