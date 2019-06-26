@@ -40,7 +40,7 @@ import { PaymentMethodActionType } from '../../payment-method-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getCybersource } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
-import { getErrorPaymentResponseBody } from '../../payments.mock';
+import { getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
 
 import {
     CardinalClient,
@@ -226,7 +226,7 @@ describe('CyberSourcePaymentStrategy', () => {
                 }));
 
                 jest.spyOn(cardinalClient, 'configure').mockReturnValue(Promise.resolve());
-                jest.spyOn(cardinalClient, 'runBindProcess').mockReturnValue(Promise.resolve());
+                jest.spyOn(cardinalClient, 'runBinProcess').mockReturnValue(Promise.resolve());
 
                 await strategy.initialize({ methodId: paymentMethodMock.id });
             });
@@ -373,6 +373,24 @@ describe('CyberSourcePaymentStrategy', () => {
                 } catch (error) {
                     expect(error).toBeInstanceOf(MissingDataError);
                 }
+            });
+
+            it('uses vaulted instrument as payment Data', async () => {
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
+                jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
+
+                payload = merge({}, getOrderRequestBody(), {
+                    payment: {
+                        methodId: paymentMethodMock.id,
+                        gatewayId: paymentMethodMock.gateway,
+                        paymentData: getVaultedInstrument(),
+                    },
+                });
+
+                await strategy.execute(payload);
+
+                expect(cardinalClient.getThreeDSecureData).toHaveBeenCalled();
             });
         });
     });
