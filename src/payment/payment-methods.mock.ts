@@ -211,6 +211,7 @@ export function getAmazonPay(): PaymentMethod {
         supportedCards: [],
         config: {
             displayName: 'AmazonPay',
+            is3dsEnabled: false,
             merchantId: '0c173620-beb6-4421-99ef-03dc71a60685',
             testMode: false,
         },
@@ -433,9 +434,25 @@ export function getPaymentMethodsMeta() {
     };
 }
 
+export function getPaymentMethodsWith3ds(): PaymentMethod[] {
+    const amazon3ds = getAmazonPay();
+    amazon3ds.config.is3dsEnabled = true;
+
+    return [ amazon3ds ];
+}
+
 export function getPaymentMethodsState(): PaymentMethodState {
     return {
         data: getPaymentMethods(),
+        meta: getPaymentMethodsMeta(),
+        errors: {},
+        statuses: {},
+    };
+}
+
+export function getPaymentMethodsStateWith3ds(): PaymentMethodState {
+    return {
+        data: getPaymentMethodsWith3ds(),
         meta: getPaymentMethodsMeta(),
         errors: {},
         statuses: {},

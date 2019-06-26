@@ -70,10 +70,14 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const referenceId = String(this._getOrderReferenceId());
-        const sellerId = String(this._getMerchantId());
+        const referenceId = this._getOrderReferenceId();
+        const sellerId = this._getMerchantId();
 
         if (!referenceId) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        if (!sellerId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -217,31 +221,37 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
         );
     }
 
-    private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean, options: PaymentRequestOptions) {
-        if (this._window.OffAmazonPayments) {
-            this._window.OffAmazonPayments.initConfirmationFlow(
-                sellerId,
-                referenceId,
-                (confirmationFlow: AmazonPayConfirmationFlow) => {
-                    return this._store.dispatch(
-                        this._orderActionCreator.submitOrder({useStoreCredit}, options)
-                    )
-                        .then(() => this._store.dispatch(
-                            this._remoteCheckoutActionCreator.initializePayment(methodId, {
-                                referenceId,
-                                useStoreCredit,
-                            })
-                        ))
-                        .then(() => confirmationFlow.success())
-                        .catch(error => {
-                            confirmationFlow.failure();
+    private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean, options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        return new Promise((resolve, reject) => {
+            if (!this._window.OffAmazonPayments) {
+                return Promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+            }
 
-                            return Promise.reject(error);
-                        });
+            return this._window.OffAmazonPayments.initConfirmationFlow(
+            sellerId,
+            referenceId,
+            (confirmationFlow: AmazonPayConfirmationFlow) => {
+                return this._store.dispatch(
+                    this._orderActionCreator.submitOrder({useStoreCredit}, options)
+                )
+                    .then(() => this._store.dispatch(
+                        this._remoteCheckoutActionCreator.initializePayment(methodId, {
+                            referenceId,
+                            useStoreCredit,
+                        }))
+                    )
+                    .then(() => {
+                        confirmationFlow.success();
+
+                        resolve(this._store.getState());
+                    })
+                    .catch(error => {
+                        confirmationFlow.error();
+
+                        reject(error);
+                    });
                 }
             );
-        }
-
-        return new Promise<never>( () => {} );
+        });
     }
 }
