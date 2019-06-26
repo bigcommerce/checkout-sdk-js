@@ -243,7 +243,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
                     .then(() => {
                         confirmationFlow.success();
 
-                        resolve(this._store.getState());
+                        // resolve(this._store.getState());
                     })
                     .catch(error => {
                         confirmationFlow.error();
