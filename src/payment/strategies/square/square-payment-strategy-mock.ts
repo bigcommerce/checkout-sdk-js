@@ -42,6 +42,7 @@ export function getPayloadVaulted(): OrderRequestBody {
         payment:  {
             paymentData: {
                 instrumentId: 'string',
+                iin: 'string'
             },
             methodId,
         },

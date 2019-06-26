@@ -152,6 +152,7 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
                     methodId: 'braintree',
                     paymentData: {
                         instrumentId: 'my_instrument_id',
+                        iin: '123123'
                     },
                 },
             };
