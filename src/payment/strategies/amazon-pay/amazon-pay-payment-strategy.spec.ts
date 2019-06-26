@@ -476,18 +476,19 @@ describe('AmazonPayPaymentStrategy', () => {
             await strategy3ds.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
         });
 
-        // it('redirect to confirmation flow when support 3ds', async () => {
-        //     // tslint:disable-next-line:no-non-null-assertion
-        //     hostWindow.OffAmazonPayments!.initConfirmationFlow = jest.fn((sellerId, referenceId, callback) => {
-        //         callback(amazonConfirmationFlow).then(() => {
-        //             expect(amazonConfirmationFlow.success).toBeCalled();
-        //             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-        //             expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalled();
-        //         });
-        //     });
-        //
-        //     await strategy3ds.execute(payload, options);
-        // });
+        it('redirect to confirmation flow when support 3ds', async () => {
+            // tslint:disable-next-line:no-non-null-assertion
+            hostWindow.OffAmazonPayments!.initConfirmationFlow = jest.fn((sellerId, referenceId, callback) => {
+                callback(amazonConfirmationFlow);
+            });
+
+            strategy3ds.execute(payload, options);
+
+            await new Promise(resolve => process.nextTick(resolve));
+            // tslint:disable-next-line:no-non-null-assertion
+            expect(hostWindow.OffAmazonPayments!.initConfirmationFlow).toHaveBeenCalled();
+
+        });
 
         it('redirect to confirmation flow  error when initializePayment fails', async () => {
             jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
