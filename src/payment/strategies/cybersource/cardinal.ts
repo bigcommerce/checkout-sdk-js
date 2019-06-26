@@ -1,8 +1,10 @@
 import Address from '../../../address/address';
 import BillingAddress from '../../../billing/billing-address';
-import { CreditCardInstrument } from '../../payment';
+import {CreditCardInstrument, CryptogramInstrument, VaultedInstrument} from '../../payment';
 
 export const CardinalSignatureValidationErrors = [100004, 1010, 1011, 1020];
+
+export type CardinalSupportedPaymentInstrument = CreditCardInstrument | VaultedInstrument | CryptogramInstrument;
 
 export interface CardinalSDK {
     configure(params: CardinalConfiguration): void;
@@ -50,7 +52,7 @@ export interface CardinalOrderData {
     currencyCode: string;
     id: string;
     amount: number;
-    paymentData: CreditCardInstrument;
+    paymentData?: CreditCardInstrument;
 }
 
 export enum CardinalInitializationType {
@@ -110,7 +112,7 @@ export interface CardinalConsumer {
     Email2?: string;
     ShippingAddress?: CardinalAddress;
     BillingAddress: CardinalAddress;
-    Account: CardinalAccount;
+    Account?: CardinalAccount;
 }
 
 export interface CardinalAccount {
@@ -146,13 +148,6 @@ export interface CardinalOrderDetails {
     TransactionId?: string;
 }
 
-export interface CardinalEventResponse {
-    step: CardinalPaymentStep;
-    jwt?: string;
-    data?: CardinalValidatedData;
-    status: boolean;
-}
-
 export enum CardinalEventType {
     SetupCompleted = 'payments.setupComplete',
     Validated = 'payments.validated',
@@ -172,11 +167,6 @@ export enum CardinalPaymentType {
     VisaCheckout = 'VisaCheckout',
     ApplePay = 'ApplePay',
     DiscoverWallet = 'DiscoverWallet',
-}
-
-export enum CardinalPaymentStep {
-    Setup = 'setup',
-    Authorization = 'authorization',
 }
 
 export enum CardinalTriggerEvents {

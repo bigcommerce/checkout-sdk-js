@@ -8,14 +8,21 @@ import {
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import Payment, { CreditCardInstrument } from '../../payment';
+import isCreditCardLike from '../../is-credit-card-like';
+import isCryptogramInstrument from '../../is-cryptogram-instrument';
+import isVaultedInstrument from '../../is-vaulted-instrument';
+import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import { CardinalClient, CardinalOrderData } from './index';
+import {
+    CardinalClient,
+    CardinalOrderData,
+    CardinalSupportedPaymentInstrument
+} from './index';
 
 export default class CyberSourcePaymentStrategy implements PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
@@ -55,7 +62,8 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return this._paymentMethod.config.is3dsEnabled ? this._placeOrderUsing3DS(order, payment, options, this._paymentMethod.clientToken) :
+        return this._paymentMethod.config.is3dsEnabled && this._isSupportedInstrument(payment) ?
+            this._placeOrderUsing3DS(order, payment, options, this._paymentMethod.clientToken) :
             this._placeOrder(order, payment, options);
     }
 
@@ -76,11 +84,11 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
 
-        const paymentData = payment.paymentData as CreditCardInstrument;
+        const paymentData = payment.paymentData as CardinalSupportedPaymentInstrument;
 
         return this._cardinalClient.configure(clientToken)
             .then(() => {
-                return this._cardinalClient.runBindProcess(paymentData.ccNumber)
+                return this._cardinalClient.runBindProcess(this._getBinNumber(paymentData))
                     .then(() => {
                         return this._placeOrder(order, payment, options).catch(error => {
                             if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
@@ -119,7 +127,19 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
         );
     }
 
-    private _getOrderData(paymentData: CreditCardInstrument): CardinalOrderData {
+    private _getBinNumber(payment: CardinalSupportedPaymentInstrument): string {
+        return isVaultedInstrument(payment) ? payment.iin : payment.ccNumber;
+    }
+
+    private _isSupportedInstrument(payment: OrderPaymentRequestBody): boolean {
+        if (!payment.paymentData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        }
+
+        return isVaultedInstrument(payment.paymentData) || isCreditCardLike(payment.paymentData) || isCryptogramInstrument(payment.paymentData);
+    }
+
+    private _getOrderData(paymentData: CardinalSupportedPaymentInstrument): CardinalOrderData {
         const billingAddress = this._store.getState().billingAddress.getBillingAddress();
         const shippingAddress = this._store.getState().shippingAddress.getShippingAddress();
         const checkout = this._store.getState().checkout.getCheckout();
@@ -137,13 +157,18 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingOrder);
         }
 
-        return {
+        const payment: CardinalOrderData = {
             billingAddress,
             shippingAddress,
             currencyCode: checkout.cart.currency.code,
             id: order.orderId.toString(),
             amount: checkout.cart.cartAmount,
-            paymentData,
         };
+
+        if (isCreditCardLike(paymentData)) {
+            payment.paymentData = paymentData;
+        }
+
+        return payment;
     }
 }

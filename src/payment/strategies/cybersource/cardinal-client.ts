@@ -125,8 +125,11 @@ export default class CardinalClient {
     private _mapToPartialOrder(orderData: CardinalOrderData, transactionId: string): CardinalPartialOrder {
         const consumer: CardinalConsumer = {
             BillingAddress: this._mapToCardinalAddress(orderData.billingAddress),
-            Account: this._mapToCardinalAccount(orderData.paymentData),
         };
+
+        if (orderData.paymentData) {
+            consumer.Account = this._mapToCardinalAccount(orderData.paymentData);
+        }
 
         if (orderData.billingAddress.email) {
             consumer.Email1 = orderData.billingAddress.email;
