@@ -69,7 +69,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.dispatch(
                 this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
             ))
-            .then(state => this._displayModal(storeCountryName, state.paymentMethods.getPaymentMethod(paymentId)))
+            .then(state => this._redirectToAfterpay(storeCountryName, state.paymentMethods.getPaymentMethod(paymentId)))
             // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
             .then(() => new Promise<never>(() => {}));
     }
@@ -107,7 +107,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    private _displayModal(countryName: string, paymentMethod?: PaymentMethod): void {
+    private _redirectToAfterpay(countryName: string, paymentMethod?: PaymentMethod): void {
         if (!this._afterpaySdk || !paymentMethod || !paymentMethod.clientToken) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }

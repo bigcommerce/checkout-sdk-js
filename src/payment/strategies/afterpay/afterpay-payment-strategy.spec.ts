@@ -148,7 +148,7 @@ describe('AfterpayPaymentStrategy', () => {
             await new Promise(resolve => process.nextTick(resolve));
         });
 
-        it('displays the afterpay modal', () => {
+        it('redirects to Afterpay', () => {
             expect(afterpaySdk.initialize).toHaveBeenCalledWith({ countryCode: 'US' });
             expect(afterpaySdk.redirect).toHaveBeenCalledWith({ token: paymentMethod.clientToken });
         });
