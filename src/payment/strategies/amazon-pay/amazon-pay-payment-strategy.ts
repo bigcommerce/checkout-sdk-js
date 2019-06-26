@@ -224,32 +224,33 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
     private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean, options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return new Promise((resolve, reject) => {
             if (!this._window.OffAmazonPayments) {
-                return Promise.reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+                return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
             }
 
             return this._window.OffAmazonPayments.initConfirmationFlow(
-            sellerId,
-            referenceId,
-            (confirmationFlow: AmazonPayConfirmationFlow) => {
-                return this._store.dispatch(
-                    this._orderActionCreator.submitOrder({useStoreCredit}, options)
-                )
-                    .then(() => this._store.dispatch(
-                        this._remoteCheckoutActionCreator.initializePayment(methodId, {
-                            referenceId,
-                            useStoreCredit,
-                        }))
+                sellerId,
+                referenceId,
+                (confirmationFlow: AmazonPayConfirmationFlow) => {
+                    return this._store.dispatch(
+                        this._orderActionCreator.submitOrder({useStoreCredit}, options)
                     )
-                    .then(() => {
-                        confirmationFlow.success();
+                        .then(() => this._store.dispatch(
+                            this._remoteCheckoutActionCreator.initializePayment(methodId, {
+                                referenceId,
+                                useStoreCredit,
+                            }))
+                        )
+                        .then(() => {
+                            confirmationFlow.success();
 
-                        return new Promise<never>(() => {});
-                    })
-                    .catch(error => {
-                        confirmationFlow.error();
+                            return new Promise<never>(() => {
+                            });
+                        })
+                        .catch(error => {
+                            confirmationFlow.error();
 
-                        reject(error);
-                    });
+                            reject(error);
+                        });
                 }
             );
         });

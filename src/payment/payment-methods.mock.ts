@@ -434,7 +434,7 @@ export function getPaymentMethodsMeta() {
     };
 }
 
-export function getPaymentMethodsWith3ds(): PaymentMethod[] {
+export function getPaymentMethodsWith3dsMock(): PaymentMethod[] {
     const amazon3ds = getAmazonPay();
     amazon3ds.config.is3dsEnabled = true;
 
@@ -450,9 +450,9 @@ export function getPaymentMethodsState(): PaymentMethodState {
     };
 }
 
-export function getPaymentMethodsStateWith3ds(): PaymentMethodState {
+export function getPaymentMethodsStateWith3dsMock(): PaymentMethodState {
     return {
-        data: getPaymentMethodsWith3ds(),
+        data: getPaymentMethodsWith3dsMock(),
         meta: getPaymentMethodsMeta(),
         errors: {},
         statuses: {},

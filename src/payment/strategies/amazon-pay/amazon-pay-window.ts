@@ -10,14 +10,16 @@ export default interface AmazonPayWindow extends Window {
     amazon?: {
         Login: AmazonPayLogin;
     };
-    OffAmazonPayments?: {
-        Button: AmazonPayLoginButtonConstructor;
-        Widgets: {
-            AddressBook: AmazonPayAddressBookConstructor;
-            Wallet: AmazonPayWalletConstructor;
-        };
-        initConfirmationFlow(sellerId: string, id: string, callback: (confirmationFlow: AmazonPayConfirmationFlow) => void): Promise<InternalCheckoutSelectors>;
-    };
+    OffAmazonPayments?: OffAmazonPayments;
     onAmazonLoginReady?(): void;
     onAmazonPaymentsReady?(): void;
+}
+
+export interface OffAmazonPayments {
+    Button: AmazonPayLoginButtonConstructor;
+    Widgets: {
+        AddressBook: AmazonPayAddressBookConstructor;
+        Wallet: AmazonPayWalletConstructor;
+    };
+    initConfirmationFlow(sellerId: string, id: string, callback: (confirmationFlow: AmazonPayConfirmationFlow) => void): Promise<InternalCheckoutSelectors>;
 }

@@ -9,11 +9,20 @@ import { BillingAddressActionType } from '../../../billing/billing-address-actio
 import { getBillingAddress, getBillingAddressState } from '../../../billing/billing-addresses.mock';
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStoreState, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import {InvalidArgumentError, MissingDataError, NotInitializedError, RequestError} from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    NotInitializedError,
+    RequestError
+} from '../../../common/error/errors';
 import StandardError from '../../../common/error/errors/standard-error';
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
-import {OrderActionCreator, OrderActionType, OrderPaymentRequestBody, OrderRequestSender} from '../../../order';
+import {
+    OrderActionCreator,
+    OrderActionType,
+    OrderRequestSender
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
@@ -21,14 +30,21 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRe
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import PaymentMethod from '../../payment-method';
-import { getAmazonPay, getPaymentMethodsState, getPaymentMethodsStateWith3ds } from '../../payment-methods.mock';
+import {
+    getAmazonPay,
+    getPaymentMethodsState,
+    getPaymentMethodsStateWith3dsMock
+} from '../../payment-methods.mock';
+import { PaymentInitializeOptions } from '../../payment-request-options';
 
+import { AmazonPayAddressBookConstructor } from './amazon-pay-address-book';
 import AmazonPayConfirmationFlow from './amazon-pay-confirmation-flow';
+import { AmazonPayLoginButtonConstructor } from './amazon-pay-login-button';
 import AmazonPayOrderReference from './amazon-pay-order-reference';
 import AmazonPayPaymentStrategy from './amazon-pay-payment-strategy';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
 import AmazonPayWallet, { AmazonPayWalletOptions } from './amazon-pay-wallet';
-import AmazonPayWindow from './amazon-pay-window';
+import AmazonPayWindow, { OffAmazonPayments } from './amazon-pay-window';
 
 describe('AmazonPayPaymentStrategy', () => {
     let billingAddressActionCreator: BillingAddressActionCreator;
@@ -130,9 +146,13 @@ describe('AmazonPayPaymentStrategy', () => {
 
         jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
             hostWindow.OffAmazonPayments = {
-                Widgets: { Wallet: MockWallet },
+                Button: {} as AmazonPayLoginButtonConstructor,
+                Widgets: {
+                    AddressBook: {} as AmazonPayAddressBookConstructor,
+                    Wallet: MockWallet,
+                },
                 initConfirmationFlow: jest.fn((sellerId, referenceId, confirmationFlow) => {}),
-            } as any;
+            } as OffAmazonPayments;
 
             onReady();
 
@@ -444,18 +464,17 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     describe('When 3ds is enabled', () => {
-        let payload: any;
-        let options: any;
+        const payload = getOrderRequestBody();
+        let options: PaymentInitializeOptions;
         let store3ds: CheckoutStore;
         let strategy3ds: AmazonPayPaymentStrategy;
         let amazonConfirmationFlow: AmazonPayConfirmationFlow;
 
         beforeEach(async () => {
-            payload = getOrderRequestBody();
             options = { methodId: paymentMethod.id };
 
             store3ds = createCheckoutStore({
-                remoteCheckout: {data: {}}, paymentMethods: getPaymentMethodsStateWith3ds(),
+                remoteCheckout: {data: {}}, paymentMethods: getPaymentMethodsStateWith3dsMock(),
             });
             strategy3ds = new AmazonPayPaymentStrategy(
                 store3ds,
@@ -472,41 +491,43 @@ describe('AmazonPayPaymentStrategy', () => {
 
             jest.spyOn(store3ds, 'dispatch').mockReturnValue(Promise.resolve());
             jest.spyOn(store3ds.getState().remoteCheckout, 'getCheckout')
-                    .mockReturnValue({ referenceId: '511ed7ed-221c-418c-8286-f5102e49220b' });
+                    .mockReturnValue({ referenceId: 'referenceId' });
             await strategy3ds.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
         });
 
-        it('redirect to confirmation flow when support 3ds', async () => {
-            // tslint:disable-next-line:no-non-null-assertion
-            hostWindow.OffAmazonPayments!.initConfirmationFlow = jest.fn((sellerId, referenceId, callback) => {
-                callback(amazonConfirmationFlow);
-            });
+        it('redirects to confirmation flow success when support 3ds', async () => {
+            if (hostWindow.OffAmazonPayments) {
+                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((sellerId, referenceId, callback) => {
+                    callback(amazonConfirmationFlow);
+                });
 
-            strategy3ds.execute(payload, options);
+                strategy3ds.execute(payload, options);
 
-            await new Promise(resolve => process.nextTick(resolve));
-            // tslint:disable-next-line:no-non-null-assertion
-            expect(hostWindow.OffAmazonPayments!.initConfirmationFlow).toHaveBeenCalled();
+                await new Promise(resolve => process.nextTick(resolve));
+
+                expect(hostWindow.OffAmazonPayments.initConfirmationFlow).toHaveBeenCalled();
+            }
 
         });
 
-        it('redirect to confirmation flow  error when initializePayment fails', async () => {
-            jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-                .mockImplementation(() => {
-                    throw new StandardError('error');
+        it('redirects to confirmation flow  error when initializePayment fails', async () => {
+            if (hostWindow.OffAmazonPayments) {
+                jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
+                    .mockImplementation(() => {
+                        throw new StandardError('error');
+                    });
+
+                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((sellerId, referenceId, callback) => {
+                    callback(amazonConfirmationFlow).catch((error: StandardError) => {
+                        expect(error).toBeInstanceOf(StandardError);
+                    });
                 });
 
-            // tslint:disable-next-line:no-non-null-assertion
-            hostWindow.OffAmazonPayments!.initConfirmationFlow = jest.fn((sellerId, referenceId, callback) => {
-                callback(amazonConfirmationFlow).catch((error: StandardError) => {
+                try {
+                    await strategy3ds.execute(payload, options);
+                } catch (error) {
                     expect(error).toBeInstanceOf(StandardError);
-                });
-            });
-
-            try {
-                await strategy3ds.execute(payload, options);
-            } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+                }
             }
         });
 
