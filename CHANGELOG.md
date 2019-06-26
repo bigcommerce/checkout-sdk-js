@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.25.2"></a>
+## [1.25.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.25.1...v1.25.2) (2019-06-26)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-3954 Use the redirect method instead of display when initialising AfterPay ([665e9f2](https://github.com/bigcommerce/checkout-sdk-js/commit/665e9f2))
+* **payment:** CHECKOUT-4209 Throw `OrderFinalizationNotRequiredError` if payment method is no longer available for shopper ([fb2386d](https://github.com/bigcommerce/checkout-sdk-js/commit/fb2386d))
+
+
+
 <a name="1.25.1"></a>
 ## [1.25.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.25.0...v1.25.1) (2019-06-21)
 
