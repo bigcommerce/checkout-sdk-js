@@ -68,21 +68,16 @@ export default class PaymentStrategyActionCreator {
             this._loadOrderPaymentsIfNeeded(store, options),
             defer(() => {
                 const state = store.getState();
-                const payment = state.payment.getPaymentId();
-
-                if (!payment) {
-                    throw new OrderFinalizationNotRequiredError();
-                }
-
-                const method = state.paymentMethods.getPaymentMethod(payment.providerId, payment.gatewayId);
+                const { providerId = '', gatewayId = '' } = state.payment.getPaymentId() || {};
+                const method = state.paymentMethods.getPaymentMethod(providerId, gatewayId);
 
                 if (!method) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                    throw new OrderFinalizationNotRequiredError();
                 }
 
                 return this._strategyRegistry.getByMethod(method)
                     .finalize({ ...options, methodId: method.id, gatewayId: method.gateway })
-                    .then(() => createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, { methodId: payment.providerId }));
+                    .then(() => createAction(PaymentStrategyActionType.FinalizeSucceeded, undefined, { methodId: method.id }));
             })
         ).pipe(
             catchError(error => {
