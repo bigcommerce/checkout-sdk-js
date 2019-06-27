@@ -80,10 +80,6 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             return Promise.reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
         }
 
-        if (!payment.paymentData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPayment);
-        }
-
         const paymentData = payment.paymentData as CardinalSupportedPaymentInstrument;
 
         return this._cardinalClient.configure(clientToken)
