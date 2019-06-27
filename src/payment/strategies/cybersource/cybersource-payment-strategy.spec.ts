@@ -368,6 +368,29 @@ describe('CyberSourcePaymentStrategy', () => {
                     expect(error).toBeInstanceOf(MissingDataError);
                 }
             });
+
+            it('use iin as BinNumber if is vaulted instrument', async () =>{
+                jest.spyOn(paymentActionCreator, 'submitPayment')
+                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
+                jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
+
+                payload = merge({}, getOrderRequestBody(), {
+                    payment: {
+                        methodId: paymentMethodMock.id,
+                        gatewayId: paymentMethodMock.gateway,
+                        paymentData: {
+                            ccCvv: undefined,
+                            ccNumber: '',
+                            iin: '123123',
+                            instrumentId: '123123'
+                        }
+                    },
+                });
+
+                await strategy.execute(payload);
+
+                expect(cardinalClient.getThreeDSecureData).toHaveBeenCalled();
+            });
         });
     });
 
