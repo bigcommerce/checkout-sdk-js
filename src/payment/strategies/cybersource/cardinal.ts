@@ -1,10 +1,10 @@
 import Address from '../../../address/address';
 import BillingAddress from '../../../billing/billing-address';
-import {CreditCardInstrument, CryptogramInstrument, VaultedInstrument} from '../../payment';
+import {CreditCardInstrument, VaultedInstrument} from '../../payment';
 
 export const CardinalSignatureValidationErrors = [100004, 1010, 1011, 1020];
 
-export type CardinalSupportedPaymentInstrument = CreditCardInstrument | VaultedInstrument | CryptogramInstrument;
+export type CardinalSupportedPaymentInstrument = CreditCardInstrument | VaultedInstrument;
 
 export interface CardinalSDK {
     configure(params: CardinalConfiguration): void;

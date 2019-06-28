@@ -38,7 +38,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentMethodActionType } from '../../payment-method-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getCybersource } from '../../payment-methods.mock';
-import { getErrorPaymentResponseBody, getVaultedInstrument, getCryptogramInstrument } from '../../payments.mock';
+import { getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
 
 import {
     CardinalClient,
@@ -383,27 +383,6 @@ describe('CyberSourcePaymentStrategy', () => {
                     },
                 });
 
-                await strategy.execute(payload);
-
-                expect(cardinalClient.getThreeDSecureData).toHaveBeenCalled();
-            });
-
-            it('completes the purchase if cryptogram instrument is used', async () =>{
-                jest.spyOn(paymentActionCreator, 'submitPayment')
-                    .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-                jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
-
-                payload = merge({}, getOrderRequestBody(), {
-                    payment: {
-                        methodId: paymentMethodMock.id,
-                        gatewayId: paymentMethodMock.gateway,                        
-                    },
-                });
-
-                if(payload.payment) {
-                    payload.payment.paymentData = getCryptogramInstrument();
-                }
-                
                 await strategy.execute(payload);
 
                 expect(cardinalClient.getThreeDSecureData).toHaveBeenCalled();

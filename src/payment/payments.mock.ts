@@ -10,7 +10,7 @@ import { getConsignments } from '../shipping/consignments.mock';
 import { getFlatRateOption } from '../shipping/internal-shipping-options.mock';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
-import Payment, { CreditCardInstrument, VaultedInstrument, CryptogramInstrument } from './payment';
+import Payment, { CreditCardInstrument, VaultedInstrument } from './payment';
 import { getAuthorizenet, getPaymentMethodsMeta } from './payment-methods.mock';
 import PaymentRequestBody from './payment-request-body';
 import PaymentResponseBody from './payment-response-body';
@@ -41,19 +41,6 @@ export function getVaultedInstrument(): VaultedInstrument {
         ccNumber: '',
         iin: '123123',
         instrumentId: '123123',
-    };
-}
-
-export function getCryptogramInstrument() :CryptogramInstrument {
-    return {
-        cryptogramId: '123',
-        eci: '123',
-        ccExpiry: {
-            month: '10',
-            year: '20',
-        },
-        ccNumber: '123123',
-        accountMask: '123123',
     };
 }
 

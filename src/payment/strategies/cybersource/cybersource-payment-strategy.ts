@@ -9,7 +9,6 @@ import {
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import isCreditCardLike from '../../is-credit-card-like';
-import isCryptogramInstrument from '../../is-cryptogram-instrument';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -62,7 +61,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return this._paymentMethod.config.is3dsEnabled && this._isSupportedInstrument(payment) ?
+        return this._paymentMethod.config.is3dsEnabled ?
             this._placeOrderUsing3DS(order, payment, options, this._paymentMethod.clientToken) :
             this._placeOrder(order, payment, options);
     }
@@ -78,6 +77,10 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
     private _placeOrderUsing3DS(order: OrderRequestBody, payment: OrderPaymentRequestBody, options?: PaymentRequestOptions, clientToken?: string): Promise<InternalCheckoutSelectors> {
         if (!clientToken) {
             return Promise.reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
+        }
+
+        if (!payment.paymentData) {
+            throw new MissingDataError(MissingDataErrorType.MissingPayment);
         }
 
         const paymentData = payment.paymentData as CardinalSupportedPaymentInstrument;
@@ -125,14 +128,6 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
 
     private _getBinNumber(payment: CardinalSupportedPaymentInstrument): string {
         return isVaultedInstrument(payment) ? payment.iin : payment.ccNumber;
-    }
-
-    private _isSupportedInstrument(payment: OrderPaymentRequestBody): boolean {
-        if (!payment.paymentData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPayment);
-        }
-
-        return isVaultedInstrument(payment.paymentData) || isCreditCardLike(payment.paymentData) || isCryptogramInstrument(payment.paymentData);
     }
 
     private _getOrderData(paymentData: CardinalSupportedPaymentInstrument): CardinalOrderData {
