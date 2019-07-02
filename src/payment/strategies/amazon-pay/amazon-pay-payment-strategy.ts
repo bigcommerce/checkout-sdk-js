@@ -1,9 +1,20 @@
 import { noop } from 'lodash';
 
-import { isInternalAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../../address';
+import {
+    isInternalAddressEqual,
+    mapFromInternalAddress,
+    mapToInternalAddress
+} from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+    RequestError
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
@@ -88,7 +99,13 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
         const { payment: { paymentData, ...paymentPayload }, useStoreCredit = false } = payload;
 
         if (options && this._paymentMethod && this._paymentMethod.config.is3dsEnabled) {
-            return this._processPaymentWith3ds(sellerId, referenceId, paymentPayload.methodId, useStoreCredit, options);
+            return this._processPaymentWith3ds(
+                sellerId,
+                referenceId,
+                paymentPayload.methodId,
+                useStoreCredit,
+                options
+            );
         }
 
         return this._store.dispatch(
@@ -249,7 +266,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
                         .catch(error => {
                             confirmationFlow.error();
 
-                            reject(error);
+                            return reject(error);
                         });
                 }
             );
