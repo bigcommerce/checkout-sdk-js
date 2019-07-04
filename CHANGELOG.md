@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.26.0"></a>
+# [1.26.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.25.2...v1.26.0) (2019-07-04)
+
+
+### Features
+
+* **payment:** INT-1479 Create CyberSource strategy ([54dc4f3](https://github.com/bigcommerce/checkout-sdk-js/commit/54dc4f3))
+
+
+
 <a name="1.25.2"></a>
 ## [1.25.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.25.1...v1.25.2) (2019-06-26)
 

@@ -17,6 +17,7 @@
 * [ccNumber](creditcardinstrument.md#ccnumber)
 * [extraData](creditcardinstrument.md#extradata)
 * [shouldSaveInstrument](creditcardinstrument.md#shouldsaveinstrument)
+* [threeDSecure](creditcardinstrument.md#threedsecure)
 
 ---
 
@@ -77,6 +78,14 @@ ___
 ### `<Optional>` shouldSaveInstrument
 
 **● shouldSaveInstrument**: * `undefined` &#124; `false` &#124; `true`
+*
+
+___
+<a id="threedsecure"></a>
+
+### `<Optional>` threeDSecure
+
+**● threeDSecure**: * [ThreeDSecure](threedsecure.md) &#124; [ThreeDSecureToken](threedsecuretoken.md)
 *
 
 ___
