@@ -1,5 +1,6 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { Observable, Observer } from 'rxjs';
+import { concat, of, throwError, Observable, Observer } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors } from '../../checkout';
 import { MissingDataError, MissingDataErrorType } from '../../common/error/errors';
@@ -13,7 +14,7 @@ export default class SpamProtectionActionCreator {
         private _googleRecaptcha: GoogleRecaptcha
     ) {}
 
-    initialize(options: SpamProtectionOptions, callbacks: SpamProtectionCallbacks): ThunkAction<SpamProtectionAction, InternalCheckoutSelectors> {
+    initialize(options: SpamProtectionOptions): ThunkAction<SpamProtectionAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<SpamProtectionAction>) => {
             const state = store.getState();
             const config = state.config.getConfig();
@@ -27,10 +28,7 @@ export default class SpamProtectionActionCreator {
 
             const recaptchaSitekey = config.storeConfig.checkoutSettings.googleRecaptchaSitekey;
 
-            return this._googleRecaptcha.render(containerId, recaptchaSitekey, {
-                callback: callbacks.onComplete,
-                'expired-callback': callbacks.onExpire,
-            })
+            return this._googleRecaptcha.load(containerId, recaptchaSitekey)
                 .then(() => {
                     observer.next(createAction(SpamProtectionActionType.InitializeSucceeded));
                     observer.complete();
@@ -41,16 +39,16 @@ export default class SpamProtectionActionCreator {
         });
     }
 
-    complete(token: string): SpamProtectionAction {
-        return createAction(SpamProtectionActionType.Completed, token);
+    execute(): Observable<SpamProtectionAction> {
+        return concat(
+            of(createAction(SpamProtectionActionType.ExecuteRequested, undefined)),
+            this._googleRecaptcha.execute()
+                .pipe(take(1))
+                .pipe(switchMap(({ error, token }) => {
+                    return error ?
+                        throwError(createErrorAction(SpamProtectionActionType.SubmitFailed, error)) :
+                        of(createAction(SpamProtectionActionType.Completed, token));
+                }))
+        );
     }
-
-    expire(): SpamProtectionAction {
-        return createAction(SpamProtectionActionType.TokenExpired);
-    }
-}
-
-export interface SpamProtectionCallbacks {
-    onComplete(token: string): void;
-    onExpire(): void;
 }

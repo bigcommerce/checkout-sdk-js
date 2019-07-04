@@ -1,6 +1,6 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
-import { ScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { map, merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -210,21 +210,21 @@ describe('CheckoutService', () => {
 
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
 
-        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
+        spamProtectionActionCreator = new SpamProtectionActionCreator(
+            createSpamProtection(createScriptLoader())
+        );
+
+        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator, spamProtectionActionCreator);
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,
-            new OrderActionCreator(orderRequestSender, checkoutValidator)
+            orderActionCreator
         );
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
             createShippingStrategyRegistry(store, requestSender)
-        );
-
-        spamProtectionActionCreator = new SpamProtectionActionCreator(
-            createSpamProtection(new ScriptLoader())
         );
 
         errorActionCreator = new ErrorActionCreator();
@@ -997,31 +997,7 @@ describe('CheckoutService', () => {
             await checkoutService.initializeSpamProtection(options);
 
             expect(spamProtectionActionCreator.initialize)
-                .toHaveBeenCalledWith(options, {
-                    onComplete: expect.any(Function),
-                    onExpire: expect.any(Function),
-                });
-        });
-
-        it('dispatch the completed action when spam protection is completed', async () => {
-            await checkoutService.initializeSpamProtection(options);
-
-            (spamProtectionActionCreator.initialize as jest.Mock).mock.calls[0][1].onComplete('fake_token');
-
-            expect(store.dispatch).toHaveBeenCalledWith({
-                type: SpamProtectionActionType.Completed,
-                payload: 'fake_token',
-            }, { queueId: 'spamProtection' });
-        });
-
-        it('dispatch the expired action when spam protection is expired', async () => {
-            await checkoutService.initializeSpamProtection(options);
-
-            (spamProtectionActionCreator.initialize as jest.Mock).mock.calls[0][1].onExpire();
-
-            expect(store.dispatch).toHaveBeenCalledWith({
-                type: SpamProtectionActionType.TokenExpired,
-            }, { queueId: 'spamProtection' });
+                .toHaveBeenCalledWith(options);
         });
     });
 });

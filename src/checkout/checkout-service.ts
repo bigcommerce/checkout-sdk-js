@@ -1071,10 +1071,7 @@ export default class CheckoutService {
      * @returns A promise that resolves to the current state.
      */
     initializeSpamProtection(options: SpamProtectionOptions): Promise<CheckoutSelectors> {
-        const action = this._spamProtectionActionCreator.initialize(options, {
-            onComplete: token => this._dispatch(this._spamProtectionActionCreator.complete(token), { queueId: 'spamProtection' }),
-            onExpire: () => this._dispatch(this._spamProtectionActionCreator.expire(), { queueId: 'spamProtection' }),
-        });
+        const action = this._spamProtectionActionCreator.initialize(options);
 
         return this._dispatch(action, { queueId: 'spamProtection' });
     }

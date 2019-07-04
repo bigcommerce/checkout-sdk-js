@@ -25,6 +25,7 @@ import {
 } from '../../../order';
 import OrderFinalizationNotRequiredError from '../../../order/errors/order-finalization-not-required-error';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import {
     RemoteCheckoutActionCreator,
     RemoteCheckoutActionType,
@@ -76,7 +77,10 @@ describe('CyberSourcePaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            new SpamProtectionActionCreator(
+                createSpamProtection(createScriptLoader())
+            )
         );
 
         paymentActionCreator = new PaymentActionCreator(

@@ -34,6 +34,7 @@ import ConfigRequestSender from '../../../config/config-request-sender';
 import { getConfigState } from '../../../config/configs.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -99,14 +100,16 @@ describe('SquarePaymentStrategy', () => {
 
         const requestSender = createRequestSender();
         const paymentClient = createPaymentClient(store);
-        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
+        const spamProtection = createSpamProtection(createScriptLoader());
+        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
         const checkoutRequestSender = new CheckoutRequestSender(requestSender);
         const configRequestSender = new ConfigRequestSender(requestSender);
         const configActionCreator = new ConfigActionCreator(configRequestSender);
 
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            new SpamProtectionActionCreator(spamProtection)
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),

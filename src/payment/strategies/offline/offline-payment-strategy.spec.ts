@@ -1,10 +1,12 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 
 import OfflinePaymentStrategy from './offline-payment-strategy';
 
@@ -18,7 +20,8 @@ describe('OfflinePaymentStrategy', () => {
         store = createCheckoutStore();
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
         );
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
 

@@ -1,7 +1,9 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { createCheckoutStore } from '../checkout';
+import { createSpamProtection } from '../order/spam-protection';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
@@ -27,7 +29,8 @@ describe('CreatePaymentStrategyRegistry', () => {
         const store = createCheckoutStore();
         const requestSender = createRequestSender();
         const paymentClient = createPaymentClient();
-        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
+        const spamProtection = createSpamProtection(createScriptLoader());
+        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
     });
 
     it('can create a payment strategy registry', () => {

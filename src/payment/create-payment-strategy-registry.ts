@@ -6,6 +6,8 @@ import { BillingAddressActionCreator, BillingAddressRequestSender } from '../bil
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator, OrderRequestSender } from '../order';
+import { createSpamProtection, SpamProtectionActionCreator } from '../order/spam-protection';
+import GoogleRecaptcha from '../order/spam-protection/google-recaptcha';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 
 import PaymentActionCreator from './payment-action-creator';
@@ -58,7 +60,8 @@ import { ZipPaymentStrategy, ZipScriptLoader } from './strategies/zip';
 export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
     paymentClient: any,
-    requestSender: RequestSender
+    requestSender: RequestSender,
+    spamProtection: GoogleRecaptcha
 ) {
     const registry = new PaymentStrategyRegistry(store, { defaultToken: PaymentStrategyType.CREDIT_CARD });
     const scriptLoader = getScriptLoader();
@@ -66,7 +69,8 @@ export default function createPaymentStrategyRegistry(
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
+    const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection);
+    const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator, spamProtectionActionCreator);
     const paymentActionCreator = new PaymentActionCreator(new PaymentRequestSender(paymentClient), orderActionCreator);
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(requestSender));
