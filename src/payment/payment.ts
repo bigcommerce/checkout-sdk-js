@@ -47,4 +47,3 @@ export interface CryptogramInstrument {
     accountMask: string;
     extraData?: any;
 }
-
