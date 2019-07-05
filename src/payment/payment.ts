@@ -33,7 +33,6 @@ export interface VaultedInstrument {
     ccCvv?: string;
     ccNumber?: string;
     iin: string;
-    threeDSecure?: ThreeDSecure | ThreeDSecureToken;
 }
 
 export interface CryptogramInstrument {
@@ -49,15 +48,3 @@ export interface CryptogramInstrument {
     extraData?: any;
 }
 
-export interface ThreeDSecure {
-    version: string;
-    status: string;
-    vendor: string;
-    cavv: string;
-    eci: string;
-    xid: string;
-}
-
-export interface ThreeDSecureToken {
-    token: string;
-}
