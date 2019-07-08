@@ -1,6 +1,7 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { from, of, Observable } from 'rxjs';
 
@@ -12,6 +13,7 @@ import { Order, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequ
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
+import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -52,7 +54,8 @@ describe('BraintreeCreditCardPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),

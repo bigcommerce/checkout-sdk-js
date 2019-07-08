@@ -1,8 +1,8 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, from, of, Observable, Observer } from 'rxjs';
+import { concat, defer, empty, from, of, Observable, Observer } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
-import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
+import { CheckoutValidator, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
@@ -11,11 +11,14 @@ import InternalOrderRequestBody from './internal-order-request-body';
 import { FinalizeOrderAction, LoadOrderAction, LoadOrderPaymentsAction, OrderActionType, SubmitOrderAction } from './order-actions';
 import OrderRequestBody from './order-request-body';
 import OrderRequestSender from './order-request-sender';
+import { SpamProtectionActionCreator } from './spam-protection';
+import { SpamProtectionAction } from './spam-protection/spam-protection-actions';
 
 export default class OrderActionCreator {
     constructor(
         private _orderRequestSender: OrderRequestSender,
-        private _checkoutValidator: CheckoutValidator
+        private _checkoutValidator: CheckoutValidator,
+        private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {}
 
     loadOrder(orderId: number, options?: RequestOptions): Observable<LoadOrderAction> {
@@ -61,9 +64,10 @@ export default class OrderActionCreator {
         });
     }
 
-    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction, InternalCheckoutSelectors> {
+    submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction | SpamProtectionAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(OrderActionType.SubmitOrderRequested)),
+            this._executeSpamProtection(store),
             defer(() => {
                 const state = store.getState();
                 const externalSource = state.config.getExternalSource();
@@ -127,6 +131,22 @@ export default class OrderActionCreator {
         const checkout = state.checkout.getCheckout();
 
         return (order && order.orderId) || (checkout && checkout.orderId);
+    }
+
+    private _executeSpamProtection(store: ReadableCheckoutStore): Observable<SpamProtectionAction> {
+        const storeConfig = store.getState().config.getStoreConfig();
+
+        if (!storeConfig) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
+        const { isSpamProtectionEnabled } = storeConfig.checkoutSettings;
+
+        if (!isSpamProtectionEnabled) {
+            return empty();
+        }
+
+        return this._spamProtectionActionCreator.execute();
     }
 
     private _mapToOrderRequestBody(

@@ -1,4 +1,6 @@
+import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, Response } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { from, of } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
@@ -25,12 +27,15 @@ import OrderActionCreator from './order-action-creator';
 import { OrderActionType } from './order-actions';
 import OrderRequestSender from './order-request-sender';
 import { getOrder, getOrderState } from './orders.mock';
+import { createSpamProtection, SpamProtectionActionCreator } from './spam-protection';
+import { SpamProtectionActionType } from './spam-protection/spam-protection-actions';
 
 describe('OrderActionCreator', () => {
     let orderRequestSender: OrderRequestSender;
     let checkoutValidator: CheckoutValidator;
     let checkoutRequestSender: CheckoutRequestSender;
     let orderActionCreator: OrderActionCreator;
+    let spamProtectionActionCreator: SpamProtectionActionCreator;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
 
@@ -51,6 +56,7 @@ describe('OrderActionCreator', () => {
         orderRequestSender = new OrderRequestSender(createRequestSender());
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
+        spamProtectionActionCreator = new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()));
 
         jest.spyOn(orderRequestSender, 'loadOrder').mockReturnValue({});
         jest.spyOn(orderRequestSender, 'submitOrder').mockReturnValue({});
@@ -59,7 +65,12 @@ describe('OrderActionCreator', () => {
         jest.spyOn(checkoutValidator, 'validate')
             .mockReturnValue(Promise.resolve());
 
-        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
+        jest.spyOn(spamProtectionActionCreator, 'execute').mockReturnValue(from([
+            createAction(SpamProtectionActionType.ExecuteRequested),
+            createAction(SpamProtectionActionType.Completed, { token: 'spamProtectionToken' }),
+        ]));
+
+        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator, spamProtectionActionCreator);
     });
 
     describe('#loadOrder()', () => {
@@ -241,6 +252,8 @@ describe('OrderActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: OrderActionType.SubmitOrderRequested },
+                { type: SpamProtectionActionType.ExecuteRequested },
+                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
                 { type: OrderActionType.LoadOrderRequested },
                 { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
                 {
@@ -268,6 +281,8 @@ describe('OrderActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: OrderActionType.SubmitOrderRequested },
+                { type: SpamProtectionActionType.ExecuteRequested },
+                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
                 { type: OrderActionType.SubmitOrderFailed, payload: errorResponse, error: true },
             ]);
         });

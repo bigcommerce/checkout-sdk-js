@@ -10,18 +10,18 @@ import {
     CheckoutStore,
     CheckoutValidator
 } from '../../../checkout';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
+import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentMethodActionType } from '../../payment-method-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
-
-import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError } from '../../../common/error/errors';
 import { getKlarna } from '../../payment-methods.mock';
 
 import KlarnaCredit from './klarna-credit';
@@ -58,7 +58,8 @@ describe('KlarnaPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(

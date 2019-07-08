@@ -1,5 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { ScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { ErrorActionCreator } from '../common/error';
@@ -61,7 +61,13 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const orderRequestSender = new OrderRequestSender(requestSender);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
-    const orderActionCreator = new OrderActionCreator(orderRequestSender, new CheckoutValidator(checkoutRequestSender));
+    const spamProtection = createSpamProtection(createScriptLoader());
+    const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection);
+    const orderActionCreator = new OrderActionCreator(
+        orderRequestSender,
+        new CheckoutValidator(checkoutRequestSender),
+        spamProtectionActionCreator
+    );
 
     return new CheckoutService(
         store,
@@ -78,12 +84,12 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         orderActionCreator,
         new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
-            createPaymentStrategyRegistry(store, paymentClient, requestSender),
+            createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection),
             orderActionCreator
         ),
         new ShippingCountryActionCreator(new ShippingCountryRequestSender(requestSender, { locale })),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),
-        new SpamProtectionActionCreator(createSpamProtection(new ScriptLoader()))
+        spamProtectionActionCreator
     );
 }
 

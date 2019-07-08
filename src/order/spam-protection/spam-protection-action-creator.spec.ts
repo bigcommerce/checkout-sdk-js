@@ -7,7 +7,7 @@ import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 
 import createSpamProtection from './create-spam-protection';
 import GoogleRecaptcha from './google-recaptcha';
-import SpamProtectionActionCreator, { SpamProtectionCallbacks } from './spam-protection-action-creator';
+import SpamProtectionActionCreator from './spam-protection-action-creator';
 import { SpamProtectionActionType } from './spam-protection-actions';
 import { SpamProtectionOptions } from './spam-protection-options';
 
@@ -24,19 +24,13 @@ describe('SpamProtectionActionCreator', () => {
 
         spamProtectionActionCreator = new SpamProtectionActionCreator(googleRecaptcha);
 
-        jest.spyOn(googleRecaptcha, 'render').mockImplementation(() => Promise.resolve());
+        jest.spyOn(googleRecaptcha, 'load').mockImplementation(() => Promise.resolve());
     });
 
     describe('#initialize()', () => {
-        let callbacks: SpamProtectionCallbacks;
         let options: SpamProtectionOptions;
 
         beforeEach(() => {
-            callbacks = {
-                onComplete: () => jest.fn(),
-                onExpire: () => jest.fn(),
-            };
-
             options = {
                 containerId: 'spamProtection',
             };
@@ -45,7 +39,7 @@ describe('SpamProtectionActionCreator', () => {
         });
 
         it('emits actions if able to initialize spam protection', async () => {
-            const actions = await from(spamProtectionActionCreator.initialize(options, callbacks)(store))
+            const actions = await from(spamProtectionActionCreator.initialize(options)(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -56,11 +50,11 @@ describe('SpamProtectionActionCreator', () => {
         });
 
         it('emits error actions if unable to initialize spam protection', async () => {
-            jest.spyOn(googleRecaptcha, 'render').mockReturnValue(Promise.reject());
+            jest.spyOn(googleRecaptcha, 'load').mockReturnValue(Promise.reject());
 
             const errorHandler = jest.fn(action => of(action));
 
-            const actions = await from(spamProtectionActionCreator.initialize(options, callbacks)(store))
+            const actions = await from(spamProtectionActionCreator.initialize(options)(store))
                 .pipe(
                     catchError(errorHandler),
                     toArray()
@@ -77,35 +71,6 @@ describe('SpamProtectionActionCreator', () => {
                     error: true,
                 },
             ]);
-        });
-    });
-
-    describe('#complete()', () => {
-        beforeEach(() => {
-            jest.spyOn(store, 'dispatch');
-        });
-
-        it('emits actions if able to complete spam protection', () => {
-            const token = 'spam-protection-token';
-
-            expect(spamProtectionActionCreator.complete(token))
-                .toEqual({
-                    type: SpamProtectionActionType.Completed,
-                    payload: token,
-                });
-        });
-    });
-
-    describe('#expire()', () => {
-        beforeEach(() => {
-            jest.spyOn(store, 'dispatch');
-        });
-
-        it('emits actions if spam protection expired', () => {
-            expect(spamProtectionActionCreator.expire())
-            .toEqual({
-                type: SpamProtectionActionType.TokenExpired,
-            });
         });
     });
 });

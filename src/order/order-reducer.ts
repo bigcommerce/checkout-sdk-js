@@ -57,11 +57,6 @@ function metaReducer(
             orderToken: action.payload.order.token,
             payment: action.payload.order && action.payload.order.payment,
         } : meta;
-    case SpamProtectionActionType.TokenExpired:
-        return {
-            ...meta,
-            spamProtectionToken: undefined,
-        };
     case SpamProtectionActionType.Completed:
         return action.payload ? {
             ...meta,

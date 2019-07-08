@@ -15,6 +15,7 @@ import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
@@ -94,7 +95,8 @@ describe('AmazonPayPaymentStrategy', () => {
         billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender);
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
+            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
         );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())

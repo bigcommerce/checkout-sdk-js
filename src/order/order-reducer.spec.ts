@@ -109,22 +109,6 @@ describe('orderReducer()', () => {
         }));
     });
 
-    it('clears spam protection token if spam protection expired', () => {
-        const action: SpamProtectionAction = {
-            type: SpamProtectionActionType.TokenExpired,
-        };
-
-        const state = { ...initialState, meta: {
-            spamProtectionToken: 'spamProtectionToken',
-        }};
-
-        expect(orderReducer(state, action)).toEqual(expect.objectContaining({
-            meta: {
-                spamProtectionToken: undefined,
-            },
-        }));
-    });
-
     describe('loadOrderPayments', () => {
         it('returns new status while fetching order', () => {
             const action: LoadOrderPaymentsAction = {

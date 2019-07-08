@@ -19,6 +19,10 @@ import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import OrderActionCreator from '../../../order/order-action-creator';
 import {
+    createSpamProtection,
+    SpamProtectionActionCreator
+} from '../../../order/spam-protection';
+import {
     createPaymentClient,
     PaymentInitializeOptions,
     PaymentMethodRequestSender,
@@ -67,7 +71,8 @@ describe('StripeV3PaymentStrategy', () => {
             paymentClient,
             new CheckoutValidator(
                 new CheckoutRequestSender(requestSender)
-            )
+            ),
+            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
         );
         stripeScriptLoader = new StripeV3ScriptLoader(scriptLoader);
 

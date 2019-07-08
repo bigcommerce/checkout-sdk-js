@@ -5,6 +5,7 @@ export enum NotInitializedErrorType {
     CustomerNotInitialized,
     PaymentNotInitialized,
     ShippingNotInitialized,
+    SpamProtectionNotInitialized,
 }
 
 export default class NotInitializedError extends StandardError {
@@ -27,6 +28,9 @@ function getErrorMessage(type: NotInitializedErrorType): string {
 
     case NotInitializedErrorType.ShippingNotInitialized:
         return 'Unable to proceed because the shipping step of checkout has not been initialized.';
+
+    case NotInitializedErrorType.SpamProtectionNotInitialized:
+        return 'Unable to proceed because the checkout spam protection has not been initialized.';
 
     default:
         return 'Unable to proceed because the required component has not been initialized.';

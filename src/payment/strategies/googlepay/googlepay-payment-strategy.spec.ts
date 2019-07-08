@@ -1,4 +1,5 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
+import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { getCartState } from '../../../cart/carts.mock';
 import {
@@ -15,6 +16,7 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
+import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import {
     createPaymentClient,
     createPaymentStrategyRegistry,
@@ -62,7 +64,8 @@ describe('GooglePayPaymentStrategy', () => {
         const configActionCreator = new ConfigActionCreator(configRequestSender);
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const paymentClient = createPaymentClient(store);
-        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender);
+        const spamProtection = createSpamProtection(createScriptLoader());
+        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
 
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
@@ -72,7 +75,8 @@ describe('GooglePayPaymentStrategy', () => {
             paymentClient,
             new CheckoutValidator(
                 new CheckoutRequestSender(requestSender)
-            )
+            ),
+            new SpamProtectionActionCreator(spamProtection)
         );
 
         googlePayPaymentProcessor = createGooglePayPaymentProcessor(
