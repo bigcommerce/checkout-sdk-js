@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.27.0"></a>
+# [1.27.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.26.0...v1.27.0) (2019-07-08)
+
+
+### Features
+
+* **order:** CHECKOUT-2530 Add support for invisible recaptcha ([ee9aca5](https://github.com/bigcommerce/checkout-sdk-js/commit/ee9aca5))
+
+
+
 <a name="1.26.0"></a>
 # [1.26.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.25.2...v1.26.0) (2019-07-04)
 
