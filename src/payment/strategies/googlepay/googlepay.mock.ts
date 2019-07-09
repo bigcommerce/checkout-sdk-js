@@ -1,7 +1,6 @@
 import { Cart } from '../../../cart';
 import { Checkout } from '../../../checkout';
-import { Coupon } from '../../../coupon';
-import { GiftCertificate } from '../../../coupon';
+import { Coupon, GiftCertificate } from '../../../coupon';
 import { Customer } from '../../../customer';
 import { Discount } from '../../../discount';
 import { OrderRequestBody } from '../../../order';

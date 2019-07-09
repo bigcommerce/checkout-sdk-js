@@ -32,7 +32,7 @@ export default interface InternalOrder {
     storeCredit: {
         amount: number;
     };
-    taxes: Array<{ name: string, amount: number }>;
+    taxes: Array<{ name: string; amount: number }>;
     taxTotal: {
         amount: number;
         integerAmount: number;

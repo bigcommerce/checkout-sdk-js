@@ -70,7 +70,7 @@ describe('Braintree SDK Creator', () => {
             expect(client1).toBe(client2);
         });
 
-        it('throws if no client token is provided', async () => {
+        it('throws if no client token is provided', () => {
             const braintreeSDKCreator = new BraintreeSDKCreator(braintreeScriptLoader);
             expect(() => braintreeSDKCreator.getClient()).toThrow(expect.any(NotInitializedError));
         });
@@ -105,7 +105,7 @@ describe('Braintree SDK Creator', () => {
             expect(threeDSecureCreatorMock.create).toHaveBeenCalledTimes(1);
         });
 
-        it('throws if getting the client throws', async () => {
+        it('throws if getting the client throws', () => {
             const errorMessage = 'some_error';
 
             jest.spyOn(braintreeSDKCreator, 'getClient')
@@ -203,7 +203,7 @@ describe('Braintree SDK Creator', () => {
             expect(visaCheckoutCreatorMock.create).toHaveBeenCalledTimes(1);
         });
 
-        it('throws if getting the client throws', async () => {
+        it('throws if getting the client throws', () => {
             const errorMessage = 'some_error';
 
             jest.spyOn(braintreeSDKCreator, 'getClient')
@@ -242,7 +242,7 @@ describe('Braintree SDK Creator', () => {
             expect(googlePayCreatorMock.create).toHaveBeenCalledTimes(1);
         });
 
-        it('throws if getting the client throws', async () => {
+        it('throws if getting the client throws', () => {
             const errorMessage = 'some_error';
 
             jest.spyOn(braintreeSDKCreator, 'getClient')

@@ -1,4 +1,4 @@
-import { CheckoutStore, InternalCheckoutSelectors} from '../../../checkout';
+import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { AmazonPayLoginButton, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';

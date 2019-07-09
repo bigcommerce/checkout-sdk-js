@@ -194,7 +194,7 @@ describe('SquarePaymentStrategy', () => {
                     await strategy.initialize(initOptions);
                 });
 
-                it('Creates Payload', async () => {
+                it('Creates Payload', () => {
                     jest.spyOn(store.getState().checkout, 'getCheckout')
                     .mockReturnValue(getSquarePaymentInitializeOptions());
 
@@ -205,7 +205,7 @@ describe('SquarePaymentStrategy', () => {
                     expect(scriptLoader.load).toHaveBeenCalledTimes(1);
                 });
 
-                it('Fails because no checkout information is present' , async () => {
+                it('Fails because no checkout information is present' , () => {
                     store = createCheckoutStore({});
 
                     if (callbacks.createPaymentRequest) {
@@ -347,7 +347,7 @@ describe('SquarePaymentStrategy', () => {
                 });
             });
 
-            describe('when cardNonceResponseReceived returns errors and callback is passed', async () => {
+            describe('when cardNonceResponseReceived returns errors and callback is passed', () => {
                 const catchSpy = jest.fn();
 
                 beforeEach(async () => {
@@ -370,7 +370,7 @@ describe('SquarePaymentStrategy', () => {
                 });
             });
 
-            describe('when cardNonceResponseReceived returns errors and no callback is passed', async () => {
+            describe('when cardNonceResponseReceived returns errors and no callback is passed', () => {
                 const catchSpy = jest.fn();
 
                 beforeEach(async () => {
@@ -395,7 +395,7 @@ describe('SquarePaymentStrategy', () => {
                 });
             });
 
-            describe('when the nonce is received', async () => {
+            describe('when the nonce is received', () => {
                 const payloadVaulted = getPayloadVaulted();
 
                 beforeEach(async () => {

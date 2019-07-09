@@ -1,6 +1,5 @@
-import { selector } from '../common/selector';
-
 import { Address } from '../address';
+import { selector } from '../common/selector';
 
 import ConsignmentState from './consignment-state';
 

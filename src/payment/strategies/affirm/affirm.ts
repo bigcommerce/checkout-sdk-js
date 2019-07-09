@@ -2,7 +2,7 @@ export interface Affirm {
     checkout: AffirmCheckout;
     ui: {
         error: {
-            on(event: string, callback: () => void): void,
+            on(event: string, callback: () => void): void;
         };
         ready(callback: () => void): void;
     };
@@ -34,23 +34,23 @@ export interface AffirmFailResponse {
 
 export interface AffirmRequestData {
     merchant: {
-        user_confirmation_url: string,
-        user_cancel_url: string,
-        user_confirmation_url_action?: string,
-        name?: string,
+        user_confirmation_url: string;
+        user_cancel_url: string;
+        user_confirmation_url_action?: string;
+        name?: string;
     };
     shipping: AffirmAddress;
     billing?: AffirmAddress;
     items: AffirmItem[];
     discounts: AffirmDiscount;
     metadata: {
-        shipping_type: string,
-        entity_name?: string,
-        webhook_session_id?: string,
-        mode?: string,
-        platform_type: string,
-        platform_version: string,
-        platform_affirm: string,
+        shipping_type: string;
+        entity_name?: string;
+        webhook_session_id?: string;
+        mode?: string;
+        platform_type: string;
+        platform_version: string;
+        platform_affirm: string;
     };
     order_id?: string;
     shipping_amount: number;
@@ -70,24 +70,24 @@ export interface AffirmItem {
 
 export interface AffirmDiscount {
     [key: string]: {
-        discount_amount: number,
-        discount_display_name: string,
+        discount_amount: number;
+        discount_display_name: string;
     };
 }
 
 export interface AffirmAddress {
     name: {
-        first: string,
-        last: string,
-        full?: string,
+        first: string;
+        last: string;
+        full?: string;
     };
     address: {
-        line1: string,
-        line2?: string,
-        city: string,
-        state: string,
-        zipcode: string,
-        country?: string,
+        line1: string;
+        line2?: string;
+        city: string;
+        state: string;
+        zipcode: string;
+        country?: string;
     };
     phone_number?: string;
     email?: string;

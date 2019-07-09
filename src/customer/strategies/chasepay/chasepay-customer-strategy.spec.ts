@@ -106,7 +106,7 @@ describe('ChasePayCustomerStrategy', () => {
             expect(chasePayScriptLoader.load).toHaveBeenLastCalledWith(false);
         });
 
-        it('does not load chasepay if initialization options are not provided', async () => {
+        it('does not load chasepay if initialization options are not provided', () => {
             chasePayOptions = { methodId: 'chasepay' };
             expect(() => strategy.initialize(chasePayOptions)).toThrowError(InvalidArgumentError);
             expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
@@ -217,7 +217,7 @@ describe('ChasePayCustomerStrategy', () => {
             await strategy.initialize({ methodId: 'chasepay', chasepay: { container: 'login' } });
         });
 
-        it('throws error if trying to sign in programmatically', async () => {
+        it('throws error if trying to sign in programmatically', () => {
             expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrowError();
         });
     });

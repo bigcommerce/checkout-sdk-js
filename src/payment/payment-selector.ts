@@ -15,7 +15,7 @@ export default class PaymentSelector {
         private _order: OrderSelector
     ) {}
 
-    getPaymentId(): { providerId: string, gatewayId?: string } | undefined {
+    getPaymentId(): { providerId: string; gatewayId?: string } | undefined {
         const internalPayment = this._getInternalPayment();
 
         if (internalPayment && internalPayment.id) {

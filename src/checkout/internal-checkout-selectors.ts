@@ -10,8 +10,7 @@ import { OrderSelector } from '../order';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
-import { ShippingAddressSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
-import { ConsignmentSelector } from '../shipping';
+import { ConsignmentSelector, ShippingAddressSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
 

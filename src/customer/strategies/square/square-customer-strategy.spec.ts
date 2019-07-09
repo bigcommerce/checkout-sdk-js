@@ -59,13 +59,13 @@ describe('SquareCustomerStrategy', () => {
     });
 
     describe('#signIn()', () => {
-        it('throws error if trying to sign in programmatically', async () => {
+        it('throws error if trying to sign in programmatically', () => {
             expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrowError();
         });
     });
 
     describe('#signOut()', () => {
-        beforeEach(async () => {
+        beforeEach(() => {
             const paymentId = {
                 providerId: 'squarev2',
             };

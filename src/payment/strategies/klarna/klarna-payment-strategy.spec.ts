@@ -233,7 +233,7 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         describe('when klarna authorizaron is not approved', () => {
-            beforeEach(async () => {
+            beforeEach(() => {
                 klarnaCredit.authorize = jest.fn(
                     (params, callback) => callback({ approved: false, show_form: true })
                 );
@@ -253,7 +253,7 @@ describe('KlarnaPaymentStrategy', () => {
         });
 
         describe('when klarna authorizaron fails', () => {
-            beforeEach(async () => {
+            beforeEach(() => {
                 klarnaCredit.authorize = jest.fn(
                     (params, callback) => callback({ approved: false })
                 );

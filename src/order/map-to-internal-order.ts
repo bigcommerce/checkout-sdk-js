@@ -1,7 +1,6 @@
 import { filter, find, keyBy, reduce } from 'lodash';
 
-import { LineItem } from '../cart';
-import { mapToInternalLineItems } from '../cart';
+import { mapToInternalLineItems, LineItem } from '../cart';
 import { Checkout } from '../checkout';
 import { AmountTransformer } from '../common/utility';
 import { mapToInternalCoupon } from '../coupon';

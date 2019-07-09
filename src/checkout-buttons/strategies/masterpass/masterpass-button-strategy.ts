@@ -9,7 +9,6 @@ import {
 import { bindDecorator as bind } from '../../../common/utility';
 import { getCallbackUrl, Masterpass, MasterpassCheckoutOptions, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class MasterpassButtonStrategy implements CheckoutButtonStrategy {

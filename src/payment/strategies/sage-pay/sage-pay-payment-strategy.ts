@@ -8,7 +8,6 @@ import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
-
 import PaymentStrategy from '../payment-strategy';
 
 export default class SagePayPaymentStrategy implements PaymentStrategy {

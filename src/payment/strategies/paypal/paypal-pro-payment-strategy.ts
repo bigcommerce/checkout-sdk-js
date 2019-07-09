@@ -1,11 +1,10 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
-
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentStrategy from '../payment-strategy';
 
 export default class PaypalProPaymentStrategy implements PaymentStrategy {

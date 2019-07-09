@@ -1,14 +1,12 @@
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplementedError } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
-import { BraintreeVisaCheckoutPaymentProcessor } from '../../../payment/strategies/braintree';
-import { VisaCheckoutScriptLoader } from '../../../payment/strategies/braintree';
+import { BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '../../../payment/strategies/braintree';
 import { VisaCheckoutPaymentSuccessPayload } from '../../../payment/strategies/braintree/visacheckout';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
-
 import CustomerStrategy from '../customer-strategy';
 
 export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerStrategy {

@@ -28,7 +28,7 @@ describe('GooglePayBraintreeInitializer', () => {
         expect(googlePayBraintreeInitializer).toBeInstanceOf(GooglePayBraintreeInitializer);
     });
 
-    describe('#initialize', async () => {
+    describe('#initialize', () => {
         const googlePayMock = getGooglePayBraintreeMock();
         let googlePayBraintreeInitializer: GooglePayBraintreeInitializer;
 

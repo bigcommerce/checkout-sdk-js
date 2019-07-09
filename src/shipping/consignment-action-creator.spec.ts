@@ -342,7 +342,7 @@ describe('consignmentActionCreator', () => {
                 );
             });
 
-            it('emits actions if able to update consignment', async () => {
+            it('emits actions if able to update consignment', () => {
                 expect(actions).toEqual([
                     {
                         type: ConsignmentActionType.DeleteConsignmentRequested,
@@ -906,7 +906,7 @@ describe('consignmentActionCreator', () => {
             );
         });
 
-        it('sends request to create consigments', async () => {
+        it('sends request to create consignments', async () => {
             store = createCheckoutStore(omit(getCheckoutStoreState(), 'consignments'));
 
             await from(consignmentActionCreator.updateAddress(address, options)(store))

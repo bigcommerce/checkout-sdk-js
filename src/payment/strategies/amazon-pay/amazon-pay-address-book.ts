@@ -5,9 +5,7 @@ export default interface AmazonPayAddressBook {
     bind(container: string): void;
 }
 
-export interface AmazonPayAddressBookConstructor {
-    new(options: AmazonPayAddressBookOptions): AmazonPayAddressBook;
-}
+export type AmazonPayAddressBookConstructor = new(options: AmazonPayAddressBookOptions) => AmazonPayAddressBook;
 
 export interface AmazonPayAddressBookOptions {
     design: {

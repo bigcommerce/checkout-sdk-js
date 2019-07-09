@@ -27,8 +27,8 @@ export interface GooglePaySDK {
         api: {
             PaymentsClient: {
                 new(options: GooglePayPaymentOptions): GooglePayClient;
-            },
-        },
+            };
+        };
     };
 }
 
@@ -77,7 +77,7 @@ export interface GooglePaymentData {
         tokenizationData: {
             token: string;
             type: string;
-        }
+        };
         type: string;
     };
     shippingAddress: GooglePayAddress;
@@ -106,12 +106,12 @@ export interface GooglePaymentsError {
 export interface PaymentMethodData {
     methodId: string;
     paymentData: {
-        method: string,
-        nonce: string,
+        method: string;
+        nonce: string;
         cardInformation: {
-            type: string,
-            number: string,
-        },
+            type: string;
+            number: string;
+        };
     };
 }
 
@@ -144,7 +144,7 @@ export interface GooglePayPaymentDataRequestV2 {
                 format?: string;
                 phoneNumberRequired?: boolean;
             };
-        },
+        };
         tokenizationSpecification?: {
             type: string;
             parameters: {

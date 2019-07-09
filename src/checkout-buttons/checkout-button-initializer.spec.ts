@@ -109,7 +109,7 @@ describe('CheckoutButtonInitializer', () => {
         expect(subscriber).toHaveBeenCalledWith(initializer.getState());
     });
 
-    it('returns selector object for querying current state', async () => {
+    it('returns selector object for querying current state', () => {
         expect(initializer.getState()).toEqual({
             errors: expect.any(CheckoutButtonErrorSelector),
             statuses: expect.any(CheckoutButtonStatusSelector),

@@ -7,7 +7,7 @@ describe('SelectorDecorator', () => {
             private name: string
         ) {}
 
-        serialize(message?: string): { name: string, message?: string } {
+        serialize(message?: string): { name: string; message?: string } {
             return { name: this.name, message };
         }
     }
@@ -19,7 +19,7 @@ describe('SelectorDecorator', () => {
             private name: string
         ) {}
 
-        serialize(message?: string): { name: string, message?: string } {
+        serialize(message?: string): { name: string; message?: string } {
             return { name: this.name, message };
         }
     }

@@ -189,7 +189,7 @@ describe('MasterpassPaymentStragegy', () => {
             paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
         });
 
-        it('fails to submit order when payment is not provided', async () => {
+        it('fails to submit order when payment is not provided', () => {
             delete payload.payment;
             const error = 'Unable to submit payment because "payload.payment" argument is not provided.';
             expect(() => strategy.execute(payload)).toThrowError(error);

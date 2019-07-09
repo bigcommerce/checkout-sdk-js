@@ -137,7 +137,7 @@ export default class GooglePayPaymentProcessor {
             });
     }
 
-    private _getCardInformation(cardInformation: { cardType: string, lastFour: string }) {
+    private _getCardInformation(cardInformation: { cardType: string; lastFour: string }) {
         return {
             type: cardInformation.cardType,
             number: cardInformation.lastFour,

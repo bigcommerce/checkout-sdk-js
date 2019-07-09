@@ -3,8 +3,7 @@ import { getCoupon, getShippingCoupon } from '../coupon/coupons.mock';
 import { getCurrency } from '../currency/currencies.mock';
 import { getDiscount } from '../discount/discounts.mock';
 
-import { getDigitalItem, getGiftCertificateItem } from './line-items.mock';
-import { getPhysicalItem } from './line-items.mock';
+import { getDigitalItem, getGiftCertificateItem, getPhysicalItem } from './line-items.mock';
 
 export function getCart(): Cart {
     return {

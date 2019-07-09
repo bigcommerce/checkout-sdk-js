@@ -6,7 +6,7 @@ export default interface PaymentStrategyState {
 
 export interface PaymentStrategyDataState {
     [key: string]: {
-        isInitialized: boolean,
+        isInitialized: boolean;
     };
 }
 

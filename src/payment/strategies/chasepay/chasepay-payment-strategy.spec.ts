@@ -210,7 +210,7 @@ describe('ChasePayPaymentStrategy', () => {
             expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.CancelCheckout, expect.any(Function));
         });
 
-        it('does not load chasepay if initialization options are not provided', async () => {
+        it('does not load chasepay if initialization options are not provided', () => {
             chasePayOptions = { methodId: 'chasepay'};
             expect(() => strategy.initialize(chasePayOptions)).toThrowError(InvalidArgumentError);
             expect(chasePayScriptLoader.load).not.toHaveBeenCalled();

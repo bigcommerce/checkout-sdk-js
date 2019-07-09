@@ -3,18 +3,18 @@ type AddressFormat = 'FULL' | 'MIN';
 
 export interface GooglePayBraintreeDataRequest {
     merchantInfo: {
-        authJwt?: string,
-        merchantId?: string,
-        merchantName?: string,
+        authJwt?: string;
+        merchantId?: string;
+        merchantName?: string;
     };
     transactionInfo: {
-        currencyCode: string,
-        totalPriceStatus: TotalPriceStatus,
-        totalPrice: string,
+        currencyCode: string;
+        totalPriceStatus: TotalPriceStatus;
+        totalPrice: string;
     };
     cardRequirements: {
-        billingAddressRequired: boolean,
-        billingAddressFormat: AddressFormat,
+        billingAddressRequired: boolean;
+        billingAddressFormat: AddressFormat;
     };
     emailRequired: boolean;
     phoneNumberRequired: boolean;

@@ -25,12 +25,12 @@ export interface CardinalEventMap {
 
 export type CardinalConfiguration = Partial<{
     logging: {
-        level: string,
+        level: string;
     };
     payment: {
-        view: string,
-        framework: string,
-        displayLoading: boolean,
+        view: string;
+        framework: string;
+        displayLoading: boolean;
     };
 }>;
 

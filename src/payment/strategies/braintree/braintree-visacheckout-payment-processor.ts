@@ -120,7 +120,7 @@ export default class BraintreeVisaCheckoutPaymentProcessor {
         };
     }
 
-    private _getCardInformation(cardInformation: { cardType: string, lastTwo: string }) {
+    private _getCardInformation(cardInformation: { cardType: string; lastTwo: string }) {
         return {
             type: cardInformation.cardType,
             number: cardInformation.lastTwo,

@@ -8,7 +8,6 @@ import { ChasePayScriptLoader, ChasePaySuccessPayload } from '../../../payment/s
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
-
 import CustomerStrategy from '../customer-strategy';
 
 export default class ChasePayCustomerStrategy implements CustomerStrategy {

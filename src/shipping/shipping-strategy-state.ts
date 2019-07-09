@@ -6,7 +6,7 @@ export default interface ShippingStrategyState {
 
 export interface ShippingStrategyDataState {
     [key: string]: {
-        isInitialized: boolean,
+        isInitialized: boolean;
     };
 }
 
