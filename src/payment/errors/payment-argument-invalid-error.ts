@@ -9,5 +9,7 @@ export default class PaymentArgumentInvalidError extends InvalidArgumentError {
         }
 
         super(message);
+
+        this.name = 'PaymentArgumentInvalidError';
     }
 }

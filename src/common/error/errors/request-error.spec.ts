@@ -9,6 +9,12 @@ describe('RequestError', () => {
         expect(error.type).toEqual('request');
     });
 
+    it('sets name', () => {
+        const error = new RequestError(getErrorResponse());
+
+        expect(error.name).toEqual('RequestError');
+    });
+
     it('sets body', () => {
         const response = getErrorResponse();
         const error = new RequestError(response);

@@ -9,6 +9,12 @@ describe('init', () => {
         expect(error.type).toEqual('checkout_not_available');
     });
 
+    it('returns error name', () => {
+        const error = new CheckoutNotAvailableError(getErrorResponse());
+
+        expect(error.name).toEqual('CheckoutNotAvailableError');
+    });
+
     it('sets the message as `body.title`', () => {
         const response = getErrorResponse();
         const error = new CheckoutNotAvailableError(response);

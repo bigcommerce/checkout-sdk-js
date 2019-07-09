@@ -14,6 +14,7 @@ export default class NotInitializedError extends StandardError {
     ) {
         super(getErrorMessage(subtype));
 
+        this.name = 'NotInitializedError';
         this.type = 'not_initialized';
     }
 }

@@ -13,6 +13,7 @@ export default class NotEmbeddableError extends StandardError {
     ) {
         super(message || 'Unable to embed the checkout form.');
 
+        this.name = 'NotEmbeddableError';
         this.type = 'not_embeddable';
     }
 }

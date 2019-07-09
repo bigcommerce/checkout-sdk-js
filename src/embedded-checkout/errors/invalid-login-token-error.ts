@@ -7,6 +7,7 @@ export default class InvalidLoginTokenError extends RequestError {
     constructor(response: Response<InternalErrorResponseBody>) {
         super(response, { message: response.body.title });
 
+        this.name = 'InvalidLoginTokenError';
         this.type = 'invalid_login_token';
     }
 }

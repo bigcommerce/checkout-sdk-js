@@ -8,6 +8,7 @@ export default class TimeoutError extends RequestError<{}> {
             message: 'The request has timed out or aborted.',
         });
 
+        this.name = 'TimeoutError';
         this.type = 'timeout';
     }
 }
