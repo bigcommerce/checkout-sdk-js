@@ -21,6 +21,7 @@ export default class MissingDataError extends StandardError {
     ) {
         super(getErrorMessage(subtype));
 
+        this.name = 'MissingDataError';
         this.type = 'missing_data';
     }
 }

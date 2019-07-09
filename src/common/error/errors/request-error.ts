@@ -25,6 +25,7 @@ export default class RequestError<TBody = any> extends StandardError {
 
         super(message || 'An unexpected error has occurred.');
 
+        this.name = 'RequestError';
         this.type = 'request';
         this.body = body;
         this.headers = headers;

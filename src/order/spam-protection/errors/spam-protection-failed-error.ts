@@ -4,6 +4,7 @@ export default class SpamProtectionFailedError extends StandardError {
     constructor() {
         super('We were not able to complete our spam protection verification. Please try again.');
 
+        this.name = 'SpamProtectionFailedError';
         this.type = 'spam_protection_failed';
     }
 }

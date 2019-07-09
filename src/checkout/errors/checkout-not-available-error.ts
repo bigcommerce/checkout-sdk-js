@@ -7,6 +7,7 @@ export default class CheckoutNotAvailableError extends RequestError {
     constructor(response: Response<InternalErrorResponseBody>) {
         super(response, { message: response.body.title });
 
+        this.name = 'CheckoutNotAvailableError';
         this.type = 'checkout_not_available';
     }
 }
