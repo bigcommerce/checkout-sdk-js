@@ -25,9 +25,7 @@ export interface GooglePayIsReadyToPayResponse {
 export interface GooglePaySDK {
     payments: {
         api: {
-            PaymentsClient: {
-                new(options: GooglePayPaymentOptions): GooglePayClient;
-            };
+            PaymentsClient: new(options: GooglePayPaymentOptions) => GooglePayClient;
         };
     };
 }

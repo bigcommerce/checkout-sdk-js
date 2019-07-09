@@ -5,9 +5,7 @@ export default interface AmazonPayWallet {
     bind(container: string): void;
 }
 
-export interface AmazonPayWalletConstructor {
-    new(options: AmazonPayWalletOptions): AmazonPayWallet;
-}
+export type AmazonPayWalletConstructor = new(options: AmazonPayWalletOptions) => AmazonPayWallet;
 
 export interface AmazonPayWalletOptions {
     design: {

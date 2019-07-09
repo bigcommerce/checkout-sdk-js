@@ -3,9 +3,7 @@ import AmazonPayWidgetError from './amazon-pay-widget-error';
 // tslint:disable-next-line:no-empty-interface
 export default interface AmazonPayLoginButton {}
 
-export interface AmazonPayLoginButtonConstructor {
-    new(container: string, merchantId: string, options: AmazonPayLoginButtonOptions): AmazonPayLoginButton;
-}
+export type AmazonPayLoginButtonConstructor = new(container: string, merchantId: string, options: AmazonPayLoginButtonOptions) => AmazonPayLoginButton;
 
 export interface AmazonPayLoginButtonOptions {
     type: string;
