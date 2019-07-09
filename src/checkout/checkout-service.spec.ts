@@ -983,7 +983,7 @@ describe('CheckoutService', () => {
     describe('#initializeSpamProtection()', () => {
         let options: SpamProtectionOptions;
 
-        beforeEach(async () => {
+        beforeEach(() => {
             options = { containerId: 'spamProtectionContainer' };
             const action = of(createAction(SpamProtectionActionType.InitializeSucceeded));
 

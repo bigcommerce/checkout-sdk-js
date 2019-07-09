@@ -5,7 +5,7 @@ import { AmazonPayWalletConstructor } from './amazon-pay-wallet';
 
 export default interface AmazonPayWindow extends Window {
     amazon?: {
-        Login: AmazonPayLogin,
+        Login: AmazonPayLogin;
     };
     OffAmazonPayments?: {
         Button: AmazonPayLoginButtonConstructor;

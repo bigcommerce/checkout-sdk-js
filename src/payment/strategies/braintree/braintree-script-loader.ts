@@ -1,7 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
-
 import { GooglePayCreator } from '../googlepay';
 
 import {

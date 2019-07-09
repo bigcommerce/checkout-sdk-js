@@ -17,7 +17,7 @@ describe('GooglePayStripeInitializer', () => {
         expect(googlePayStripeInitializer).toBeInstanceOf(GooglePayStripeInitializer);
     });
 
-    describe('#initialize', async () => {
+    describe('#initialize', () => {
         let googlePayStripeInitializer: GooglePayStripeInitializer;
 
         beforeEach(() => {
@@ -56,14 +56,14 @@ describe('GooglePayStripeInitializer', () => {
             googlePayStripeInitializer = new GooglePayStripeInitializer();
         });
 
-        it('parses a response from google pay payload received', async () => {
+        it('parses a response from google pay payload received', () => {
             const tokenizePayload = googlePayStripeInitializer.parseResponse(getGooglePaymentStripeDataMock());
 
             expect(tokenizePayload).toBeTruthy();
             expect(tokenizePayload).toEqual(getGooglePayTokenizePayloadStripe());
         });
 
-        it('throws when try to parse a response from google pay payload received', async () => {
+        it('throws when try to parse a response from google pay payload received', () => {
             try {
                 googlePayStripeInitializer.parseResponse(getGooglePaymentDataMock());
             } catch (error) {

@@ -24,7 +24,7 @@ import { MasterpassCheckoutOptions, MasterpassPaymentStrategy, MasterpassScriptL
 import { Masterpass } from './masterpass';
 import { getCallbackUrlMock, getMasterpassScriptMock } from './masterpass.mock';
 
-describe('MasterpassPaymentStragegy', () => {
+describe('MasterpassPaymentStrategy', () => {
     let strategy: MasterpassPaymentStrategy;
     let orderRequestSender: OrderRequestSender;
     let store: CheckoutStore;
@@ -189,7 +189,7 @@ describe('MasterpassPaymentStragegy', () => {
             paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
         });
 
-        it('fails to submit order when payment is not provided', async () => {
+        it('fails to submit order when payment is not provided', () => {
             delete payload.payment;
             const error = 'Unable to submit payment because "payload.payment" argument is not provided.';
             expect(() => strategy.execute(payload)).toThrowError(error);

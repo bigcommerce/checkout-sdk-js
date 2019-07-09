@@ -110,7 +110,7 @@ describe('MasterpassCustomerStrategy', () => {
             expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false);
         });
 
-        it('fails to initialize the strategy if no methodid is supplied', async () => {
+        it('fails to initialize the strategy if no methodId is supplied', async () => {
             masterpassOptions = { methodId: undefined, masterpass: { container: 'login' } };
             try {
                 await strategy.initialize(masterpassOptions);
@@ -161,7 +161,7 @@ describe('MasterpassCustomerStrategy', () => {
             masterpassOptions = { methodId: 'masterpass', masterpass: { container: 'login' } };
         });
 
-        it('succesfully deinitializes the strategy', async () => {
+        it('successfully deinitializes the strategy', async () => {
             jest.spyOn(masterpass, 'checkout');
             await strategy.initialize(masterpassOptions);
             strategy.deinitialize();
@@ -182,7 +182,7 @@ describe('MasterpassCustomerStrategy', () => {
             await strategy.initialize({ methodId: 'masterpass', masterpass: { container: 'login' } });
         });
 
-        it('throws error if trying to sign in programmatically', async () => {
+        it('throws error if trying to sign in programmatically', () => {
             expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrowError();
         });
     });

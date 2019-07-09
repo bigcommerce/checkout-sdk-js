@@ -179,7 +179,7 @@ describe('consignmentActionCreator', () => {
                 });
         });
 
-        it('sends request to create consigments', async () => {
+        it('sends request to create consignments', async () => {
             store = createCheckoutStore(omit(getCheckoutStoreState(), 'consignments'));
 
             await from(thunkAction(store)).toPromise();
@@ -342,7 +342,7 @@ describe('consignmentActionCreator', () => {
                 );
             });
 
-            it('emits actions if able to update consignment', async () => {
+            it('emits actions if able to update consignment', () => {
                 expect(actions).toEqual([
                     {
                         type: ConsignmentActionType.DeleteConsignmentRequested,
@@ -886,7 +886,7 @@ describe('consignmentActionCreator', () => {
                 });
         });
 
-        it('sends request to update shipping address in first consigment', async () => {
+        it('sends request to update shipping address in first consignment', async () => {
             await from(consignmentActionCreator.updateAddress(address, options)(store))
                 .toPromise();
 
@@ -906,7 +906,7 @@ describe('consignmentActionCreator', () => {
             );
         });
 
-        it('sends request to create consigments', async () => {
+        it('sends request to create consignments', async () => {
             store = createCheckoutStore(omit(getCheckoutStoreState(), 'consignments'));
 
             await from(consignmentActionCreator.updateAddress(address, options)(store))

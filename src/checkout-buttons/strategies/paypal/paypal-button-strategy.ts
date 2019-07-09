@@ -5,8 +5,7 @@ import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { PaymentMethod } from '../../../payment';
-import { PaypalActions, PaypalAuthorizeData, PaypalClientToken } from '../../../payment/strategies/paypal';
-import { PaypalScriptLoader } from '../../../payment/strategies/paypal';
+import { PaypalActions, PaypalAuthorizeData, PaypalClientToken, PaypalScriptLoader } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 

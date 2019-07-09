@@ -105,15 +105,15 @@ export interface BraintreeRequestData {
                 countryName: string;
                 postalCode: string;
                 streetAddress: string;
-            }
+            };
             cardholderName: string;
             cvv?: string;
             expirationDate: string;
             number: string;
             options: {
                 validate: boolean;
-            }
-        },
+            };
+        };
     };
     endpoint: string;
     method: string;

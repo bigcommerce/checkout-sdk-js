@@ -6,7 +6,7 @@ export default interface CustomerStrategyState {
 
 export interface CustomerStrategyDataState {
     [key: string]: {
-        isInitialized: boolean,
+        isInitialized: boolean;
     };
 }
 

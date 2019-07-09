@@ -1,6 +1,5 @@
 import { AddressRequestBody } from '../../address';
 import { InternalCheckoutSelectors } from '../../checkout';
-
 import { ShippingRequestOptions } from '../shipping-request-options';
 
 export default interface ShippingStrategy {

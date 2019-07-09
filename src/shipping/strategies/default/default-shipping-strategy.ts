@@ -2,7 +2,6 @@ import { AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ShippingRequestOptions } from '../../shipping-request-options';
-
 import ShippingStrategy from '../shipping-strategy';
 
 export default class DefaultShippingStrategy implements ShippingStrategy {

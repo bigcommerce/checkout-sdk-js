@@ -17,7 +17,7 @@ const CardinalWindowMock: CardinalWindow = window;
 
 export function getCardinalScriptMock(): CardinalWindow {
     return {
-        ... CardinalWindowMock,
+        ...CardinalWindowMock,
         Cardinal: getCardinalSDK(),
     };
 }

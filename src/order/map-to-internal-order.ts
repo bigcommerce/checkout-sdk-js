@@ -1,7 +1,6 @@
 import { filter, find, keyBy, reduce } from 'lodash';
 
-import { LineItem } from '../cart';
-import { mapToInternalLineItems } from '../cart';
+import { mapToInternalLineItems, LineItem } from '../cart';
 import { Checkout } from '../checkout';
 import { AmountTransformer } from '../common/utility';
 import { mapToInternalCoupon } from '../coupon';
@@ -26,7 +25,7 @@ export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaSta
         orderId: order.orderId,
         currency: order.currency.code,
         customerCanBeCreated: order.customerCanBeCreated,
-        payment: mapToInteralOrderPayment(order.payments, orderMeta.payment),
+        payment: mapToInternalOrderPayment(order.payments, orderMeta.payment),
         subtotal: {
             amount: order.baseAmount,
             integerAmount: amountTransformer.toInteger(order.baseAmount),
@@ -117,7 +116,7 @@ function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificat
     };
 }
 
-function mapToInteralOrderPayment(payments?: OrderPayments, payment: InternalOrderPayment = {}): InternalOrderPayment {
+function mapToInternalOrderPayment(payments?: OrderPayments, payment: InternalOrderPayment = {}): InternalOrderPayment {
     const item = find(payments, isDefaultOrderPayment) as GatewayOrderPayment;
 
     if (!item) {

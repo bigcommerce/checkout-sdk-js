@@ -52,7 +52,7 @@ export interface LineItem {
     categories?: LineItemCategory[][];
     isTaxable: boolean;
     imageUrl: string;
-    discounts: Array<{ name: string, discountedAmount: number }>;
+    discounts: Array<{ name: string; discountedAmount: number }>;
     discountAmount: number;
     couponAmount: number;
     listPrice: number;

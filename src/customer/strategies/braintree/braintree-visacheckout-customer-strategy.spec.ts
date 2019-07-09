@@ -219,7 +219,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
             await strategy.initialize({ methodId: 'visaCheckout', braintreevisacheckout: { container: 'login' } });
         });
 
-        it('throws error if trying to sign in programmatically', async () => {
+        it('throws error if trying to sign in programmatically', () => {
             expect(() => strategy.signIn({ email: 'foo@bar.com', password: 'foobar' })).toThrowError();
         });
     });

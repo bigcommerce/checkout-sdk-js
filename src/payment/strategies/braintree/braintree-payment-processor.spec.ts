@@ -88,7 +88,7 @@ describe('BraintreePaymentProcessor', () => {
                 .mockReturnValue(Promise.resolve({ nonce: 'my_nonce' }));
         });
 
-        it('throws if no modal handler was supplied on initialization', async () => {
+        it('throws if no modal handler was supplied on initialization', () => {
             const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
             expect(() => braintreePaymentProcessor.verifyCard(getBraintreePaymentData(), getBillingAddress(), 122))
                 .toThrow();
@@ -185,7 +185,7 @@ describe('BraintreePaymentProcessor', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('calls teardown in the braintre sdk creator', async () => {
+        it('calls teardown in the braintree sdk creator', async () => {
             braintreeSDKCreator.teardown = jest.fn();
             const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
             await braintreePaymentProcessor.deinitialize();

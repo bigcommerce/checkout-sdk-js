@@ -1,9 +1,8 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { NotImplementedError} from '../../../common/error/errors';
+import { NotImplementedError } from '../../../common/error/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
-
 import CustomerStrategy from '../customer-strategy';
 
 export default class SquareCustomerStrategy implements CustomerStrategy {

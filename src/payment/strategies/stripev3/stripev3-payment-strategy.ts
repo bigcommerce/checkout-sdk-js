@@ -157,7 +157,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private _mapStripeBillingDetails({ billingAddress, customer }: { billingAddress?: BillingAddress; customer?: Customer; } = {}): StripeBillingDetails {
+    private _mapStripeBillingDetails({ billingAddress, customer }: { billingAddress?: BillingAddress; customer?: Customer } = {}): StripeBillingDetails {
         const stripeBillingDetails = {
             address: this._mapStripeBillingAddress(billingAddress),
         };
@@ -183,7 +183,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         };
     }
 
-    private _mapStripeShippingDetails({ shippingAddress, customer }: { shippingAddress?: Address ; customer?: Customer; } = {}): StripeShippingDetails {
+    private _mapStripeShippingDetails({ shippingAddress, customer }: { shippingAddress?: Address ; customer?: Customer } = {}): StripeShippingDetails {
         const stripeShippingDetails = {
             address: this._mapStripeShippingAddress(shippingAddress),
         };

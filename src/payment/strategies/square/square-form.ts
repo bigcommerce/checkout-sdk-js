@@ -4,9 +4,7 @@ export default interface SquarePaymentForm {
     setPostalCode(postalCode: string): void;
 }
 
-export interface SquarePaymentFormConstructor {
-    new(options: SquareFormOptions): SquarePaymentForm;
-}
+export type SquarePaymentFormConstructor = new(options: SquareFormOptions) => SquarePaymentForm;
 
 export interface SquareFormOptions {
     applicationId: string;

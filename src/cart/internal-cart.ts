@@ -38,7 +38,7 @@ export default interface InternalCart {
         amount: number;
         integerAmount: number;
     };
-    taxes: Array<{ name: string, amount: number }>;
+    taxes: Array<{ name: string; amount: number }>;
     taxTotal: {
         amount: number;
         integerAmount: number;

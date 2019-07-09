@@ -4,7 +4,6 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
-
 import PaymentStrategy from '../payment-strategy';
 
 export default class CreditCardPaymentStrategy implements PaymentStrategy {

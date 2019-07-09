@@ -5,7 +5,6 @@ import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import { getAdyenAmex, getAmazonPay, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
-
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';

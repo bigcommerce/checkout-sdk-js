@@ -1,5 +1,6 @@
 import ConsoleLogger from './console-logger';
 
+// tslint:disable:no-console
 describe('ConsoleLogger', () => {
     let logger: ConsoleLogger;
 

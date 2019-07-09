@@ -8,7 +8,6 @@ import { PaymentMethod } from '../../../payment';
 import { BraintreeAddress, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../../payment/strategies/braintree';
 import { PaypalAuthorizeData, PaypalScriptLoader } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
-
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
 export default class BraintreePaypalButtonStrategy implements CheckoutButtonStrategy {

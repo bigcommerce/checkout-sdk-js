@@ -17,7 +17,7 @@ export default function mapFromPaymentErrorResponse(
     });
 }
 
-function joinErrors(errors: Array<{ code: string, message?: string }>): string | undefined {
+function joinErrors(errors: Array<{ code: string; message?: string }>): string | undefined {
     if (!Array.isArray(errors)) {
         return;
     }

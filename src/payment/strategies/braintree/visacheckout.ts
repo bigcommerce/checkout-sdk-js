@@ -102,7 +102,7 @@ export interface VisaCheckoutInitOptions {
         promoCode?: string;
         customData?: {
             [key: string]: any;
-        }
+        };
     };
 }
 

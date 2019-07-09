@@ -150,7 +150,7 @@ describe('StripeV3PaymentStrategy', () => {
             expect(response).toBe(store.getState());
         });
 
-        it('throws an error when payment is not set properly into payload', async () => {
+        it('throws an error when payment is not set properly into payload', () => {
             const payload = {
                 payment: undefined,
             };

@@ -20,8 +20,8 @@ export default class BraintreeSDKCreator {
     private _clientToken?: string;
     private _visaCheckout?: Promise<BraintreeVisaCheckout>;
     private _dataCollectors: {
-        default?: Promise<BraintreeDataCollector>,
-        paypal?: Promise<BraintreeDataCollector>,
+        default?: Promise<BraintreeDataCollector>;
+        paypal?: Promise<BraintreeDataCollector>;
     } = {};
     private _googlePay?: Promise<GooglePayBraintreeSDK>;
 
