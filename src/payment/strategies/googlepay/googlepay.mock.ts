@@ -46,7 +46,7 @@ export function getGooglePayBraintreePaymentDataRequest(): GooglePayBraintreePay
             billingAddressFormat: '',
             billingAddressRequired: true,
         },
-        enviroment: '',
+        environment: '',
         i: {
             googleTransactionId: '',
             startTimeMs: 1,

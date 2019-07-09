@@ -232,7 +232,7 @@ describe('KlarnaPaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
         });
 
-        describe('when klarna authorizaron is not approved', () => {
+        describe('when klarna authorization is not approved', () => {
             beforeEach(() => {
                 klarnaCredit.authorize = jest.fn(
                     (params, callback) => callback({ approved: false, show_form: true })
@@ -252,7 +252,7 @@ describe('KlarnaPaymentStrategy', () => {
             });
         });
 
-        describe('when klarna authorizaron fails', () => {
+        describe('when klarna authorization fails', () => {
             beforeEach(() => {
                 klarnaCredit.authorize = jest.fn(
                     (params, callback) => callback({ approved: false })

@@ -110,7 +110,7 @@ describe('MasterpassCustomerStrategy', () => {
             expect(masterpassScriptLoader.load).toHaveBeenLastCalledWith(false);
         });
 
-        it('fails to initialize the strategy if no methodid is supplied', async () => {
+        it('fails to initialize the strategy if no methodId is supplied', async () => {
             masterpassOptions = { methodId: undefined, masterpass: { container: 'login' } };
             try {
                 await strategy.initialize(masterpassOptions);

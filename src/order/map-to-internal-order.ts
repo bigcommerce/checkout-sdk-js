@@ -25,7 +25,7 @@ export default function mapToInternalOrder(order: Order, orderMeta: OrderMetaSta
         orderId: order.orderId,
         currency: order.currency.code,
         customerCanBeCreated: order.customerCanBeCreated,
-        payment: mapToInteralOrderPayment(order.payments, orderMeta.payment),
+        payment: mapToInternalOrderPayment(order.payments, orderMeta.payment),
         subtotal: {
             amount: order.baseAmount,
             integerAmount: amountTransformer.toInteger(order.baseAmount),
@@ -116,7 +116,7 @@ function mapToGiftCertificates(payments?: OrderPayments): InternalGiftCertificat
     };
 }
 
-function mapToInteralOrderPayment(payments?: OrderPayments, payment: InternalOrderPayment = {}): InternalOrderPayment {
+function mapToInternalOrderPayment(payments?: OrderPayments, payment: InternalOrderPayment = {}): InternalOrderPayment {
     const item = find(payments, isDefaultOrderPayment) as GatewayOrderPayment;
 
     if (!item) {

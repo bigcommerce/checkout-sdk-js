@@ -29,7 +29,7 @@ export interface GooglePayBraintreePaymentDataRequestV1 {
         billingAddressFormat: string;
         billingAddressRequired: boolean;
     };
-    enviroment: string;
+    environment: string;
     i: {
         googleTransactionId: string;
         startTimeMs: number;

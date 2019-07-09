@@ -24,7 +24,7 @@ import { MasterpassCheckoutOptions, MasterpassPaymentStrategy, MasterpassScriptL
 import { Masterpass } from './masterpass';
 import { getCallbackUrlMock, getMasterpassScriptMock } from './masterpass.mock';
 
-describe('MasterpassPaymentStragegy', () => {
+describe('MasterpassPaymentStrategy', () => {
     let strategy: MasterpassPaymentStrategy;
     let orderRequestSender: OrderRequestSender;
     let store: CheckoutStore;

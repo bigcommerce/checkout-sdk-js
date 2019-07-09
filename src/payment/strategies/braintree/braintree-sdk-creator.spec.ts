@@ -283,7 +283,7 @@ describe('Braintree SDK Creator', () => {
             expect(visaCheckoutMock.teardown).toHaveBeenCalled();
         });
 
-        it('only teardown instanciated dependencies', async () => {
+        it('only teardown instantiated dependencies', async () => {
             await braintreeSDKCreator.getDataCollector();
 
             await braintreeSDKCreator.teardown();

@@ -185,7 +185,7 @@ describe('BraintreePaymentProcessor', () => {
     });
 
     describe('#deinitialize()', () => {
-        it('calls teardown in the braintre sdk creator', async () => {
+        it('calls teardown in the braintree sdk creator', async () => {
             braintreeSDKCreator.teardown = jest.fn();
             const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
             await braintreePaymentProcessor.deinitialize();
