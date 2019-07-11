@@ -1,5 +1,3 @@
-import InternalCheckoutSelectors from '../../../checkout/internal-checkout-selectors';
-
 import { AmazonPayAddressBookConstructor } from './amazon-pay-address-book';
 import AmazonPayConfirmationFlow from './amazon-pay-confirmation-flow';
 import AmazonPayLogin from './amazon-pay-login';
@@ -21,5 +19,5 @@ export interface OffAmazonPayments {
         AddressBook: AmazonPayAddressBookConstructor;
         Wallet: AmazonPayWalletConstructor;
     };
-    initConfirmationFlow(sellerId: string, id: string, callback: (confirmationFlow: AmazonPayConfirmationFlow) => void): Promise<InternalCheckoutSelectors>;
+    initConfirmationFlow(sellerId: string, id: string, callback: (confirmationFlow: AmazonPayConfirmationFlow) => void): void;
 }

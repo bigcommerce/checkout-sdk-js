@@ -84,11 +84,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
         const referenceId = this._getOrderReferenceId();
         const sellerId = this._getMerchantId();
 
-        if (!referenceId) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-        }
-
-        if (!sellerId) {
+        if (!referenceId || !sellerId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -238,7 +234,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
         );
     }
 
-    private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean, options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean, options: PaymentRequestOptions): Promise<never> {
         return new Promise((resolve, reject) => {
             if (!this._window.OffAmazonPayments) {
                 return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
@@ -260,8 +256,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
                         .then(() => {
                             confirmationFlow.success();
 
-                            return new Promise<never>(() => {
-                            });
+                            return new Promise<never>(() => {});
                         })
                         .catch(error => {
                             confirmationFlow.error();

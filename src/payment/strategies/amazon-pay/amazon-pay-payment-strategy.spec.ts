@@ -40,11 +40,7 @@ import {
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import PaymentMethod from '../../payment-method';
-import {
-    getAmazonPay,
-    getPaymentMethodsState,
-    getPaymentMethodsStateWith3dsMock
-} from '../../payment-methods.mock';
+import { getAmazonPay, getPaymentMethodsState } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
 import { AmazonPayAddressBookConstructor } from './amazon-pay-address-book';
@@ -474,6 +470,34 @@ describe('AmazonPayPaymentStrategy', () => {
     });
 
     describe('When 3ds is enabled', () => {
+        const paymentMethodsState = {
+            data: [{
+                id: 'amazon',
+                logoUrl: '',
+                method: 'widget',
+                supportedCards: [],
+                config: {
+                    displayName: 'AmazonPay',
+                    is3dsEnabled: true,
+                    merchantId: '0c173620-beb6-4421-99ef-03dc71a60685',
+                    testMode: false,
+                },
+                type: 'PAYMENT_TYPE_API',
+                initializationData: {
+                    clientId: '087eccf4-7f68-4384-b0a9-5f2fd6b0d344',
+                    region: 'US',
+                    redirectUrl: '/remote-checkout/amazon/redirect',
+                    tokenPrefix: 'ABCD|',
+                },
+            }],
+            meta: {
+                geoCountryCode: 'AU',
+                deviceSessionId: 'a37230e9a8e4ea2d7765e2f3e19f7b1d',
+                sessionHash: 'cfbbbac580a920b395571fe086db1e06',
+            },
+            errors: {},
+            statuses: {},
+        };
         const payload = getOrderRequestBody();
         let options: PaymentInitializeOptions;
         let store3ds: CheckoutStore;
@@ -484,7 +508,7 @@ describe('AmazonPayPaymentStrategy', () => {
             options = { methodId: paymentMethod.id };
 
             store3ds = createCheckoutStore({
-                remoteCheckout: {data: {}}, paymentMethods: getPaymentMethodsStateWith3dsMock(),
+                remoteCheckout: {data: {}}, paymentMethods: paymentMethodsState,
             });
             strategy3ds = new AmazonPayPaymentStrategy(
                 store3ds,
