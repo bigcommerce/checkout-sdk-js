@@ -2,6 +2,7 @@ import { Address } from '../address';
 import { BillingAddress, BillingAddressSelector } from '../billing';
 import { Cart, CartSelector } from '../cart';
 import { selector } from '../common/selector';
+import { clone } from '../common/utility';
 import { ConfigSelector } from '../config';
 import { StoreConfig } from '../config/config';
 import { Coupon, CouponSelector, GiftCertificate, GiftCertificateSelector } from '../coupon';
@@ -30,6 +31,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
  * checkout information, such as shipping and billing details.
  */
 @selector
+@clone
 export default class CheckoutStoreSelector {
     private _billingAddress: BillingAddressSelector;
     private _cart: CartSelector;
