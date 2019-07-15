@@ -131,4 +131,15 @@ describe('CheckoutStoreSelector', () => {
         expect(field && field.options && field.options.items)
             .toEqual(getUnitedStates().subdivisions.map(({ code, name }) => ({ label: name, value: code })));
     });
+
+    it('changes to the public objects do not affect the private copy', () => {
+        const publicCheckout = selector.getCheckout();
+        const privateCheckout = internalSelectors.checkout.getCheckout();
+
+        // tslint:disable-next-line:no-non-null-assertion
+        publicCheckout!.customer.email = 'should@notchange.com';
+
+        // tslint:disable-next-line:no-non-null-assertion
+        expect(privateCheckout!.customer.email).not.toEqual('should@notchange.com');
+    });
 });
