@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.27.2"></a>
+## [1.27.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.27.1...v1.27.2) (2019-07-16)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-4254 Make sure changes to the public object don't affect the internal copies ([4447212](https://github.com/bigcommerce/checkout-sdk-js/commit/4447212))
+
+
+
 <a name="1.27.1"></a>
 ## [1.27.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.27.0...v1.27.1) (2019-07-10)
 
