@@ -8,6 +8,7 @@ export default interface Cart {
     id: string;
     customerId: number;
     currency: Currency;
+    email: string;
     isTaxIncluded: boolean;
     baseAmount: number;
     discountAmount: number;

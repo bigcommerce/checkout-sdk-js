@@ -13,4 +13,5 @@ export default interface Customer {
 
 export interface CustomerAddress extends Address {
     id: number;
+    type: string;
 }

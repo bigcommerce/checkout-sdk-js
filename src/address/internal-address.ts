@@ -14,7 +14,7 @@ export default interface InternalAddress {
     phone: string;
     customFields: Array<{
         fieldId: string;
-        fieldValue: string;
+        fieldValue: string | number | string[];
     }>;
     type?: string;
 }

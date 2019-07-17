@@ -20,7 +20,7 @@ export default class ShippingStrategyActionCreator {
         private _strategyRegistry: Registry<ShippingStrategy>
     ) {}
 
-    updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): ThunkAction<ShippingStrategyUpdateAddressAction, InternalCheckoutSelectors> {
+    updateAddress(address: Partial<AddressRequestBody>, options?: ShippingRequestOptions): ThunkAction<ShippingStrategyUpdateAddressAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<ShippingStrategyUpdateAddressAction>) => {
             const payment = store.getState().payment.getPaymentId();
             const methodId = options && options.methodId || payment && payment.providerId;

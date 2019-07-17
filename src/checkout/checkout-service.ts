@@ -705,7 +705,7 @@ export default class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateShippingAddress(address: Partial<AddressRequestBody>, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
         return this._dispatch(action, { queueId: 'shippingStrategy' });
@@ -906,7 +906,7 @@ export default class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: BillingAddressRequestBody, options: RequestOptions = {}): Promise<CheckoutSelectors> {
+    updateBillingAddress(address: Partial<BillingAddressRequestBody>, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
 
         return this._dispatch(action);

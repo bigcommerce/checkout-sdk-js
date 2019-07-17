@@ -4,7 +4,7 @@ import { selector } from '../common/selector';
 import { ConfigState } from '../config';
 import { Country } from '../geography';
 
-import FormField from './form-field';
+import FormField, { FormFieldFieldType, FormFieldType } from './form-field';
 
 @selector
 export default class FormSelector {
@@ -57,8 +57,8 @@ export default class FormSelector {
             ...field,
             options: { items },
             default: code,
-            type: 'array',
-            fieldType: 'dropdown',
+            type: FormFieldType.array,
+            fieldType: FormFieldFieldType.dropdown,
             itemtype: 'string',
         };
     }
@@ -83,8 +83,8 @@ export default class FormSelector {
             name: 'stateOrProvinceCode',
             options: { items },
             required: true,
-            type: 'array',
-            fieldType: 'dropdown',
+            type: FormFieldType.array,
+            fieldType: FormFieldFieldType.dropdown,
             itemtype: 'string',
         };
     }

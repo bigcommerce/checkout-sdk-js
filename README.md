@@ -138,12 +138,14 @@ const state = await service.signInCustomer({ email: 'foo@bar.com', password: 'pa
 console.log(state.data.getCustomer());
 ```
 
-Alternatively, you can ask the customer to continue as a guest.
+Alternatively, you can ask the customer to continue as a guest. Note that in this scenario, the email is stored
+as part of the billing address, but is also accessible via the cart object.
 
 ```js
 const state = await service.continueAsGuest({ email: 'foo@bar.com' });
 
-console.log(state.data.getCustomer());
+console.log(state.data.getCart().email);
+console.log(state.data.getBillingAddress().email);
 ```
 
 ### Set shipping details
@@ -285,7 +287,9 @@ If the submission is successful, you should redirect the customer to the order c
 
 #### Finalize order
 
-Also, for some payment methods, the customer may be asked to enter their payment details on an external website. For these methods, you must finalize the order when the customer is redirected back to the checkout page in order to complete the checkout flow. This should be done in the background before you present any checkout information to the customer. 
+Also, for some payment methods, the customer may be asked to enter their payment details on an external website.
+For these methods, you must finalize the order when the customer is redirected back to the checkout page in order to
+complete the checkout flow. This should be done in the background before you present any checkout information to the customer.
 
 ```js
 await service.loadCheckout();
