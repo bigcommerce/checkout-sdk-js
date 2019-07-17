@@ -18,6 +18,7 @@
 * [customerId](cart.md#customerid)
 * [discountAmount](cart.md#discountamount)
 * [discounts](cart.md#discounts)
+* [email](cart.md#email)
 * [id](cart.md#id)
 * [isTaxIncluded](cart.md#istaxincluded)
 * [lineItems](cart.md#lineitems)
@@ -81,6 +82,13 @@ ___
 ###  discounts
 
 **● discounts**: *[Discount](discount.md)[]*
+
+___
+<a id="email"></a>
+
+###  email
+
+**● email**: *`string`*
 
 ___
 <a id="id"></a>

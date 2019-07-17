@@ -17,7 +17,7 @@ declare interface AddressRequestBody {
     phone: string;
     customFields: Array<{
         fieldId: string;
-        fieldValue: string;
+        fieldValue: string | number | string[];
     }>;
 }
 
@@ -44,6 +44,7 @@ declare interface Cart {
     id: string;
     customerId: number;
     currency: Currency;
+    email: string;
     isTaxIncluded: boolean;
     baseAmount: number;
     discountAmount: number;
@@ -136,6 +137,7 @@ declare interface Customer {
 
 declare interface CustomerAddress extends Address {
     id: number;
+    type: string;
 }
 
 declare interface DigitalItem extends LineItem {
@@ -211,7 +213,7 @@ declare interface InternalAddress {
     phone: string;
     customFields: Array<{
         fieldId: string;
-        fieldValue: string;
+        fieldValue: string | number | string[];
     }>;
     type?: string;
 }

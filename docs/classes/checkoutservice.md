@@ -1025,7 +1025,7 @@ ___
 
 ###  updateBillingAddress
 
-▸ **updateBillingAddress**(address: *[BillingAddressRequestBody](../interfaces/billingaddressrequestbody.md)*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **updateBillingAddress**(address: *`Partial`<[BillingAddressRequestBody](../interfaces/billingaddressrequestbody.md)>*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Updates the billing address for the current checkout.
 
@@ -1043,7 +1043,7 @@ console.log(state.data.getBillingAddress());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| address | [BillingAddressRequestBody](../interfaces/billingaddressrequestbody.md) |  The address to be used for billing. |
+| address | `Partial`<[BillingAddressRequestBody](../interfaces/billingaddressrequestbody.md)> |  The address to be used for billing. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for updating the billing address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
@@ -1114,7 +1114,7 @@ ___
 
 ###  updateShippingAddress
 
-▸ **updateShippingAddress**(address: *[AddressRequestBody](../interfaces/addressrequestbody.md)*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **updateShippingAddress**(address: *`Partial`<[AddressRequestBody](../interfaces/addressrequestbody.md)>*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Updates the shipping address for the current checkout.
 
@@ -1134,7 +1134,7 @@ console.log(state.data.getShippingAddress());
 
 | Param | Type | Description |
 | ------ | ------ | ------ |
-| address | [AddressRequestBody](../interfaces/addressrequestbody.md) |  The address to be used for shipping. |
+| address | `Partial`<[AddressRequestBody](../interfaces/addressrequestbody.md)> |  The address to be used for shipping. |
 | `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md) |  Options for updating the shipping address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>

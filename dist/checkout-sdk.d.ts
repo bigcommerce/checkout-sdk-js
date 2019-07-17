@@ -7,6 +7,8 @@ declare interface Address extends AddressRequestBody {
     country: string;
 }
 
+declare type AddressKey = keyof Address;
+
 declare interface AddressRequestBody {
     firstName: string;
     lastName: string;
@@ -21,7 +23,7 @@ declare interface AddressRequestBody {
     phone: string;
     customFields: Array<{
         fieldId: string;
-        fieldValue: string;
+        fieldValue: string | number | string[];
     }>;
 }
 
@@ -133,9 +135,31 @@ declare interface AmazonPayWidgetError extends Error {
     getErrorCode(): string;
 }
 
+declare interface ArrayCustomFormField extends BaseCustomFormField {
+    fieldType: FormFieldFieldType.checkbox | FormFieldFieldType.radio | FormFieldFieldType.dropdown;
+    type: FormFieldType.array;
+    itemtype: 'string';
+    options: FormFieldOptions;
+}
+
 declare interface Banner {
     type: string;
     text: string;
+}
+
+declare interface BaseCustomFormField extends BaseFormField {
+    custom: true;
+    type?: FormFieldType;
+}
+
+declare interface BaseFormField {
+    name: string;
+    custom: boolean;
+    id: string;
+    label: string;
+    required: boolean;
+    default?: string;
+    fieldType?: FormFieldFieldType;
 }
 
 declare interface BaseProps extends Properties {
@@ -304,6 +328,7 @@ declare interface Cart {
     id: string;
     customerId: number;
     currency: Currency;
+    email: string;
     isTaxIncluded: boolean;
     baseAmount: number;
     discountAmount: number;
@@ -1088,7 +1113,7 @@ declare class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    updateShippingAddress(address: Partial<AddressRequestBody>, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
     /**
      * Creates consignments given a list.
      *
@@ -1232,7 +1257,7 @@ declare class CheckoutService {
      * @param options - Options for updating the billing address.
      * @returns A promise that resolves to the current state.
      */
-    updateBillingAddress(address: BillingAddressRequestBody, options?: RequestOptions): Promise<CheckoutSelectors>;
+    updateBillingAddress(address: Partial<BillingAddressRequestBody>, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
      * Applies a coupon code to the current checkout.
      *
@@ -1380,8 +1405,10 @@ declare interface CheckoutSettings {
     };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
+    googleMapsApiKey: string;
     googleRecaptchaSitekey: string;
     guestCheckoutEnabled: boolean;
+    hasMultiShippingEnabled: boolean;
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
@@ -2194,6 +2221,8 @@ declare interface CustomError extends Error {
     subtype?: string;
 }
 
+declare type CustomFormField = DateCustomFormField | TextCustomFormField | NumberCustomFormField | MultilineCustomFormField | ArrayCustomFormField;
+
 declare interface CustomItem {
     id: string;
     listPrice: number;
@@ -2216,6 +2245,7 @@ declare interface Customer {
 
 declare interface CustomerAddress extends Address {
     id: number;
+    type: string;
 }
 
 declare interface CustomerCredentials {
@@ -2275,6 +2305,13 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
  */
 declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
+}
+
+declare interface DateCustomFormField extends BaseCustomFormField {
+    min: number | string;
+    max: number | string;
+    fieldType: FormFieldFieldType.date;
+    type: FormFieldType.date;
 }
 
 declare interface DigitalItem extends LineItem {
@@ -2409,17 +2446,15 @@ declare interface EmbeddedContentOptions {
     contentId?: string;
 }
 
-declare interface FormField {
-    id: string;
-    name: string;
-    custom: boolean;
-    label: string;
-    required: boolean;
-    default?: string;
-    type?: string;
-    fieldType?: string;
-    itemtype?: string;
-    options?: FormFieldOptions;
+declare type FormField = SystemFormField | CustomFormField;
+
+declare enum FormFieldFieldType {
+    checkbox = "checkbox",
+    date = "date",
+    text = "text",
+    dropdown = "dropdown",
+    radio = "radio",
+    multiline = "multiline"
 }
 
 declare interface FormFieldItem {
@@ -2430,6 +2465,13 @@ declare interface FormFieldItem {
 declare interface FormFieldOptions {
     helperLabel?: string;
     items: FormFieldItem[];
+}
+
+declare enum FormFieldType {
+    array = "array",
+    date = "date",
+    number = "integer",
+    string = "string"
 }
 
 declare interface FormFields {
@@ -2752,10 +2794,24 @@ declare interface MsClearProperties extends Properties {
     display?: string;
 }
 
+declare interface MultilineCustomFormField extends TextCustomFormField {
+    options: {
+        rows: number;
+    };
+}
+
 declare interface NonceGenerationError {
     type: string;
     message: string;
     field: string;
+}
+
+declare interface NumberCustomFormField extends BaseCustomFormField {
+    fieldType: FormFieldFieldType.text;
+    type: FormFieldType.number;
+    min?: number;
+    max?: number;
+    maxLength?: number;
 }
 
 declare interface Order {
@@ -3296,9 +3352,23 @@ declare interface StripeV3PaymentInitializeOptions {
     style?: StripeStyleProps;
 }
 
+declare interface SystemFormField extends BaseFormField {
+    name: AddressKey;
+    custom: false;
+    maxLength?: number;
+    options?: FormFieldOptions;
+}
+
 declare interface Tax {
     name: string;
     amount: number;
+}
+
+declare interface TextCustomFormField extends BaseCustomFormField {
+    fieldType: FormFieldFieldType.text;
+    type: FormFieldType.string;
+    maxLength?: number;
+    secret?: boolean;
 }
 
 declare interface TextInputStyles extends InputStyles {

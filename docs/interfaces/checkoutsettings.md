@@ -13,8 +13,10 @@
 * [enableOrderComments](checkoutsettings.md#enableordercomments)
 * [enableTermsAndConditions](checkoutsettings.md#enabletermsandconditions)
 * [features](checkoutsettings.md#features)
+* [googleMapsApiKey](checkoutsettings.md#googlemapsapikey)
 * [googleRecaptchaSitekey](checkoutsettings.md#googlerecaptchasitekey)
 * [guestCheckoutEnabled](checkoutsettings.md#guestcheckoutenabled)
+* [hasMultiShippingEnabled](checkoutsettings.md#hasmultishippingenabled)
 * [isAnalyticsEnabled](checkoutsettings.md#isanalyticsenabled)
 * [isCardVaultingEnabled](checkoutsettings.md#iscardvaultingenabled)
 * [isCouponCodeCollapsed](checkoutsettings.md#iscouponcodecollapsed)
@@ -58,6 +60,13 @@ ___
 [featureName: `string`]: `boolean`
 
 ___
+<a id="googlemapsapikey"></a>
+
+###  googleMapsApiKey
+
+**● googleMapsApiKey**: *`string`*
+
+___
 <a id="googlerecaptchasitekey"></a>
 
 ###  googleRecaptchaSitekey
@@ -70,6 +79,13 @@ ___
 ###  guestCheckoutEnabled
 
 **● guestCheckoutEnabled**: *`boolean`*
+
+___
+<a id="hasmultishippingenabled"></a>
+
+###  hasMultiShippingEnabled
+
+**● hasMultiShippingEnabled**: *`boolean`*
 
 ___
 <a id="isanalyticsenabled"></a>

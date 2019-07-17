@@ -26,6 +26,7 @@
 * [postalCode](customeraddress.md#postalcode)
 * [stateOrProvince](customeraddress.md#stateorprovince)
 * [stateOrProvinceCode](customeraddress.md#stateorprovincecode)
+* [type](customeraddress.md#type)
 
 ---
 
@@ -127,6 +128,13 @@ ___
 ###  stateOrProvinceCode
 
 **● stateOrProvinceCode**: *`string`*
+
+___
+<a id="type"></a>
+
+###  type
+
+**● type**: *`string`*
 
 ___
 
