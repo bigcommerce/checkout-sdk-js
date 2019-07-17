@@ -27,6 +27,7 @@ export function getCustomer(): Customer {
             {
                 ...getShippingAddress(),
                 id: 5,
+                type: 'residential',
             },
         ],
         isGuest: false,

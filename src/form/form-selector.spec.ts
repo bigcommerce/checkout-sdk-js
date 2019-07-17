@@ -6,8 +6,12 @@ import { Country } from '../geography';
 import { getCountries } from '../geography/countries.mock';
 import { getShippingCountries } from '../shipping/shipping-countries.mock';
 
+import { SystemFormField } from './form-field';
 import FormSelector from './form-selector';
 import { getFormFields } from './form.mocks';
+
+// tslint:disable:no-unnecessary-type-assertion
+// tslint:disable:no-non-null-assertion
 
 describe('FormSelector', () => {
     let state: CheckoutStoreState;
@@ -34,11 +38,9 @@ describe('FormSelector', () => {
 
         it('includes the countries as options for the country field', () => {
             const forms = formSelector.getShippingAddressFields(countries, '');
-            const country = find(forms, { name: 'countryCode' });
+            const country = find(forms, { name: 'countryCode' }) as SystemFormField;
 
-            // tslint:disable-next-line:no-non-null-assertion
-            expect(country!.fieldType).toBe('dropdown');
-            // tslint:disable-next-line:no-non-null-assertion
+            expect(country!.fieldType).toEqual('dropdown');
             expect(country!.options!.items).toEqual([
                 { value: 'AU', label: 'Australia' },
                 { value: 'JP', label: 'Japan' },
@@ -49,19 +51,15 @@ describe('FormSelector', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'JP');
             const country = find(forms, { name: 'countryCode' });
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(country!.default).toEqual('JP');
         });
 
         it('includes the provinces for the selected country', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'AU');
-            const province = find(forms, { name: 'stateOrProvinceCode' });
+            const province = find(forms, { name: 'stateOrProvinceCode' }) as SystemFormField;
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(province!.required).toBe(true);
-            // tslint:disable-next-line:no-non-null-assertion
-            expect(province!.fieldType).toBe('dropdown');
-            // tslint:disable-next-line:no-non-null-assertion
+            expect(province!.fieldType).toEqual('dropdown');
             expect(province!.options!.items).toEqual([
                 { value: 'NSW', label: 'New South Wales' },
             ]);
@@ -71,17 +69,14 @@ describe('FormSelector', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'JP');
             const province = find(forms, { name: 'stateOrProvince' });
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(province!.required).toBe(false);
-            // tslint:disable-next-line:no-non-null-assertion
-            expect(province!.fieldType).not.toBe('dropdown');
+            expect(province!.fieldType).not.toEqual('dropdown');
         });
 
         it('makes postcode required for countries that require it', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'AU');
             const postCode = find(forms, { name: 'postalCode' });
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(postCode!.required).toBe(true);
         });
 
@@ -89,7 +84,6 @@ describe('FormSelector', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'JP');
             const postCode = find(forms, { name: 'postalCode' });
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(postCode!.required).toBe(false);
         });
     });
@@ -112,11 +106,9 @@ describe('FormSelector', () => {
 
         it('includes the countries as options for the country field', () => {
             const forms = formSelector.getBillingAddressFields(countries, '');
-            const country = find(forms, { name: 'countryCode' });
+            const country = find(forms, { name: 'countryCode' }) as SystemFormField;
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(country!.fieldType).toBe('dropdown');
-            // tslint:disable-next-line:no-non-null-assertion
             expect(country!.options!.items).toEqual([
                 { value: 'AU', label: 'Australia' },
                 { value: 'US', label: 'United States' },
@@ -128,19 +120,15 @@ describe('FormSelector', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'US');
             const country = find(forms, { name: 'countryCode' });
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(country!.default).toEqual('US');
         });
 
         it('includes the provinces for the selected country', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'AU');
-            const province = find(forms, { name: 'stateOrProvinceCode' });
+            const province = find(forms, { name: 'stateOrProvinceCode' }) as SystemFormField;
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(province!.required).toBe(true);
-            // tslint:disable-next-line:no-non-null-assertion
             expect(province!.fieldType).toBe('dropdown');
-            // tslint:disable-next-line:no-non-null-assertion
             expect(province!.options!.items).toEqual([
                 { value: 'NSW', label: 'New South Wales' },
                 { value: 'VIC', label: 'Victoria' },
@@ -151,9 +139,7 @@ describe('FormSelector', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'JP');
             const province = find(forms, { name: 'stateOrProvince' });
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(province!.required).toBe(false);
-            // tslint:disable-next-line:no-non-null-assertion
             expect(province!.fieldType).not.toBe('dropdown');
         });
 
@@ -161,7 +147,6 @@ describe('FormSelector', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'AU');
             const postCode = find(forms, { name: 'postalCode' });
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(postCode!.required).toBe(true);
         });
 
@@ -169,7 +154,6 @@ describe('FormSelector', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'JP');
             const postCode = find(forms, { name: 'postalCode' });
 
-            // tslint:disable-next-line:no-non-null-assertion
             expect(postCode!.required).toBe(false);
         });
     });

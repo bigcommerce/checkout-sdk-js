@@ -21,6 +21,8 @@ export function getConfig(): Config {
                 enableOrderComments: true,
                 enableTermsAndConditions: false,
                 guestCheckoutEnabled: true,
+                hasMultiShippingEnabled: true,
+                googleMapsApiKey: '',
                 googleRecaptchaSitekey: 'sitekey',
                 isAnalyticsEnabled: false,
                 isCardVaultingEnabled: true,

@@ -82,8 +82,10 @@ export interface CheckoutSettings {
     features: { [featureName: string]: boolean };
     enableOrderComments: boolean;
     enableTermsAndConditions: boolean;
+    googleMapsApiKey: string;
     googleRecaptchaSitekey: string;
     guestCheckoutEnabled: boolean;
+    hasMultiShippingEnabled: boolean;
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
