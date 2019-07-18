@@ -1,4 +1,4 @@
-import FormField, { FormFieldFieldType, FormFieldType } from './form-field';
+import FormField from './form-field';
 
 export function getFormFields(): FormField[] {
     return [{
@@ -75,8 +75,8 @@ export function getFormFields(): FormField[] {
         custom: true,
         label: 'picklist',
         required: false,
-        type: FormFieldType.array,
-        fieldType: FormFieldFieldType.dropdown,
+        type: 'array',
+        fieldType: 'dropdown',
         itemtype: 'string',
         options: {
             helperLabel: 'my pick list',

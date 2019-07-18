@@ -6,11 +6,9 @@ import { Country } from '../geography';
 import { getCountries } from '../geography/countries.mock';
 import { getShippingCountries } from '../shipping/shipping-countries.mock';
 
-import { SystemFormField } from './form-field';
 import FormSelector from './form-selector';
 import { getFormFields } from './form.mocks';
 
-// tslint:disable:no-unnecessary-type-assertion
 // tslint:disable:no-non-null-assertion
 
 describe('FormSelector', () => {
@@ -38,7 +36,7 @@ describe('FormSelector', () => {
 
         it('includes the countries as options for the country field', () => {
             const forms = formSelector.getShippingAddressFields(countries, '');
-            const country = find(forms, { name: 'countryCode' }) as SystemFormField;
+            const country = find(forms, { name: 'countryCode' });
 
             expect(country!.fieldType).toEqual('dropdown');
             expect(country!.options!.items).toEqual([
@@ -56,7 +54,7 @@ describe('FormSelector', () => {
 
         it('includes the provinces for the selected country', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'AU');
-            const province = find(forms, { name: 'stateOrProvinceCode' }) as SystemFormField;
+            const province = find(forms, { name: 'stateOrProvinceCode' });
 
             expect(province!.required).toBe(true);
             expect(province!.fieldType).toEqual('dropdown');
@@ -106,7 +104,7 @@ describe('FormSelector', () => {
 
         it('includes the countries as options for the country field', () => {
             const forms = formSelector.getBillingAddressFields(countries, '');
-            const country = find(forms, { name: 'countryCode' }) as SystemFormField;
+            const country = find(forms, { name: 'countryCode' });
 
             expect(country!.fieldType).toBe('dropdown');
             expect(country!.options!.items).toEqual([
@@ -125,7 +123,7 @@ describe('FormSelector', () => {
 
         it('includes the provinces for the selected country', () => {
             const forms = formSelector.getBillingAddressFields(countries, 'AU');
-            const province = find(forms, { name: 'stateOrProvinceCode' }) as SystemFormField;
+            const province = find(forms, { name: 'stateOrProvinceCode' });
 
             expect(province!.required).toBe(true);
             expect(province!.fieldType).toBe('dropdown');
