@@ -38,6 +38,7 @@ export interface CardinalOrderData {
 
 export default class CardinalClient {
     private _sdk?: Promise<CardinalSDK>;
+    private _clientToken?: string;
 
     constructor(
         private _scriptLoader: CardinalScriptLoader
@@ -52,11 +53,14 @@ export default class CardinalClient {
     }
 
     configure(clientToken: string): Promise<void> {
+        if (this._clientToken) { return Promise.resolve(); }
+
         return this._getClientSDK()
             .then(client => new Promise<void>((resolve, reject) => {
                 client.on(CardinalEventType.SetupCompleted, () => {
                     client.off(CardinalEventType.SetupCompleted);
                     client.off(CardinalEventType.Validated);
+                    this._clientToken = clientToken;
 
                     resolve();
                 });
@@ -90,29 +94,25 @@ export default class CardinalClient {
             });
     }
 
+    getClientToken(): string {
+        if (!this._clientToken) {
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+        }
+
+        return this._clientToken;
+    }
+
     getThreeDSecureData(threeDSecureData: ThreeDsResult, orderData: CardinalOrderData): Promise<ThreeDSecureToken> {
         return this._getClientSDK()
             .then(client => {
                 return new Promise<ThreeDSecureToken>((resolve, reject) => {
                     client.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
                         client.off(CardinalEventType.Validated);
-                        switch (data.ActionCode) {
-                            case CardinalValidatedAction.Success:
-                                resolve({ token: jwt });
-                                break;
-                            case CardinalValidatedAction.NoAction:
-                                if (data.ErrorNumber > 0) {
-                                    reject(new StandardError(data.ErrorDescription));
-                                } else {
-                                    resolve({ token: jwt });
-                                }
-                                break;
-                            case CardinalValidatedAction.Failure:
-                                reject(new StandardError('User failed authentication or an error was encountered while processing the transaction'));
-                                break;
-                            case CardinalValidatedAction.Error:
-                                reject(new StandardError(data.ErrorDescription));
+                        if (!jwt) {
+                            reject(new StandardError('User failed authentication or an error was encountered while processing the transaction.'));
                         }
+
+                        resolve({ token: jwt });
                     });
 
                     const continueObject = {

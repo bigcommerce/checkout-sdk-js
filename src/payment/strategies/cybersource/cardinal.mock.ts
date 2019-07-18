@@ -40,9 +40,8 @@ export function getCardinalBinProcessResponse(status: boolean): CardinalBinProce
     };
 }
 
-export function getCardinalValidatedData(actionCode: CardinalValidatedAction, status: boolean, errorNumber?: number): CardinalValidatedData {
+export function getCardinalValidatedData(status: boolean, errorNumber?: number): CardinalValidatedData {
     return {
-        ActionCode: actionCode,
         ErrorDescription: '',
         ErrorNumber: errorNumber ? errorNumber : 0,
         Validated: status,
@@ -51,6 +50,13 @@ export function getCardinalValidatedData(actionCode: CardinalValidatedAction, st
             Type: CardinalPaymentType.CCA,
         },
     };
+}
+
+export function getCardinalValidatedDataWithActionCode(actionCode: CardinalValidatedAction, status: boolean, errorNumber?: number): CardinalValidatedData {
+    const data = getCardinalValidatedData(status, errorNumber);
+    data.ActionCode = actionCode;
+
+    return data;
 }
 
 export function getCardinalThreeDSResult(): ThreeDsResult {
