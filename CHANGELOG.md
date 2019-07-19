@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.27.4"></a>
+## [1.27.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.27.3...v1.27.4) (2019-07-19)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-4201 Make FormField type easier to consume ([92eaa12](https://github.com/bigcommerce/checkout-sdk-js/commit/92eaa12))
+
+
+
 <a name="1.27.3"></a>
 ## [1.27.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.27.2...v1.27.3) (2019-07-17)
 

@@ -12,6 +12,7 @@
 
 * [helperLabel](formfieldoptions.md#helperlabel)
 * [items](formfieldoptions.md#items)
+* [rows](formfieldoptions.md#rows)
 
 ---
 
@@ -27,9 +28,17 @@
 ___
 <a id="items"></a>
 
-###  items
+### `<Optional>` items
 
 **● items**: *[FormFieldItem](formfielditem.md)[]*
+
+___
+<a id="rows"></a>
+
+### `<Optional>` rows
+
+**● rows**: * `undefined` &#124; `number`
+*
 
 ___
 

@@ -58,7 +58,7 @@ ___
 
 ###  getBillingAddressFields
 
-▸ **getBillingAddressFields**(countryCode: *`string`*): [FormField](../#formfield)[]
+▸ **getBillingAddressFields**(countryCode: *`string`*): [FormField](../interfaces/formfield.md)[]
 
 Gets a set of form fields that should be presented to customers in order to capture their billing address for a specific country.
 
@@ -68,7 +68,7 @@ Gets a set of form fields that should be presented to customers in order to capt
 | ------ | ------ | ------ |
 | countryCode | `string` |  A 2-letter country code (ISO 3166-1 alpha-2). |
 
-**Returns:** [FormField](../#formfield)[]
+**Returns:** [FormField](../interfaces/formfield.md)[]
 The set of billing address form fields if it is loaded,
 otherwise undefined.
 
@@ -290,7 +290,7 @@ ___
 
 ###  getShippingAddressFields
 
-▸ **getShippingAddressFields**(countryCode: *`string`*): [FormField](../#formfield)[]
+▸ **getShippingAddressFields**(countryCode: *`string`*): [FormField](../interfaces/formfield.md)[]
 
 Gets a set of form fields that should be presented to customers in order to capture their shipping address for a specific country.
 
@@ -300,7 +300,7 @@ Gets a set of form fields that should be presented to customers in order to capt
 | ------ | ------ | ------ |
 | countryCode | `string` |  A 2-letter country code (ISO 3166-1 alpha-2). |
 
-**Returns:** [FormField](../#formfield)[]
+**Returns:** [FormField](../interfaces/formfield.md)[]
 The set of shipping address form fields if it is loaded,
 otherwise undefined.
 

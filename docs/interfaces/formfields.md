@@ -21,14 +21,14 @@
 
 ###  billingAddressFields
 
-**● billingAddressFields**: *[FormField](../#formfield)[]*
+**● billingAddressFields**: *[FormField](formfield.md)[]*
 
 ___
 <a id="shippingaddressfields"></a>
 
 ###  shippingAddressFields
 
-**● shippingAddressFields**: *[FormField](../#formfield)[]*
+**● shippingAddressFields**: *[FormField](formfield.md)[]*
 
 ___
 

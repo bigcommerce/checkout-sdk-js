@@ -135,31 +135,9 @@ declare interface AmazonPayWidgetError extends Error {
     getErrorCode(): string;
 }
 
-declare interface ArrayCustomFormField extends BaseCustomFormField {
-    fieldType: FormFieldFieldType.checkbox | FormFieldFieldType.radio | FormFieldFieldType.dropdown;
-    type: FormFieldType.array;
-    itemtype: 'string';
-    options: FormFieldOptions;
-}
-
 declare interface Banner {
     type: string;
     text: string;
-}
-
-declare interface BaseCustomFormField extends BaseFormField {
-    custom: true;
-    type?: FormFieldType;
-}
-
-declare interface BaseFormField {
-    name: string;
-    custom: boolean;
-    id: string;
-    label: string;
-    required: boolean;
-    default?: string;
-    fieldType?: FormFieldFieldType;
 }
 
 declare interface BaseProps extends Properties {
@@ -2221,8 +2199,6 @@ declare interface CustomError extends Error {
     subtype?: string;
 }
 
-declare type CustomFormField = DateCustomFormField | TextCustomFormField | NumberCustomFormField | MultilineCustomFormField | ArrayCustomFormField;
-
 declare interface CustomItem {
     id: string;
     listPrice: number;
@@ -2305,13 +2281,6 @@ declare interface CustomerInitializeOptions extends CustomerRequestOptions {
  */
 declare interface CustomerRequestOptions extends RequestOptions {
     methodId?: string;
-}
-
-declare interface DateCustomFormField extends BaseCustomFormField {
-    min: number | string;
-    max: number | string;
-    fieldType: FormFieldFieldType.date;
-    type: FormFieldType.date;
 }
 
 declare interface DigitalItem extends LineItem {
@@ -2446,16 +2415,24 @@ declare interface EmbeddedContentOptions {
     contentId?: string;
 }
 
-declare type FormField = SystemFormField | CustomFormField;
-
-declare enum FormFieldFieldType {
-    checkbox = "checkbox",
-    date = "date",
-    text = "text",
-    dropdown = "dropdown",
-    radio = "radio",
-    multiline = "multiline"
+declare interface FormField {
+    name: string | AddressKey;
+    custom: boolean;
+    id: string;
+    label: string;
+    required: boolean;
+    default?: string;
+    fieldType?: FormFieldFieldType;
+    type?: FormFieldType;
+    itemtype?: string;
+    maxLength?: number;
+    secret?: boolean;
+    min?: string | number;
+    max?: string | number;
+    options?: FormFieldOptions;
 }
+
+declare type FormFieldFieldType = 'checkbox' | 'date' | 'text' | 'dropdown' | 'radio' | 'multiline';
 
 declare interface FormFieldItem {
     value: string;
@@ -2464,15 +2441,11 @@ declare interface FormFieldItem {
 
 declare interface FormFieldOptions {
     helperLabel?: string;
-    items: FormFieldItem[];
+    items?: FormFieldItem[];
+    rows?: number;
 }
 
-declare enum FormFieldType {
-    array = "array",
-    date = "date",
-    number = "integer",
-    string = "string"
-}
+declare type FormFieldType = 'array' | 'date' | 'integer' | 'string';
 
 declare interface FormFields {
     shippingAddressFields: FormField[];
@@ -2794,24 +2767,10 @@ declare interface MsClearProperties extends Properties {
     display?: string;
 }
 
-declare interface MultilineCustomFormField extends TextCustomFormField {
-    options: {
-        rows: number;
-    };
-}
-
 declare interface NonceGenerationError {
     type: string;
     message: string;
     field: string;
-}
-
-declare interface NumberCustomFormField extends BaseCustomFormField {
-    fieldType: FormFieldFieldType.text;
-    type: FormFieldType.number;
-    min?: number;
-    max?: number;
-    maxLength?: number;
 }
 
 declare interface Order {
@@ -3352,23 +3311,9 @@ declare interface StripeV3PaymentInitializeOptions {
     style?: StripeStyleProps;
 }
 
-declare interface SystemFormField extends BaseFormField {
-    name: AddressKey;
-    custom: false;
-    maxLength?: number;
-    options?: FormFieldOptions;
-}
-
 declare interface Tax {
     name: string;
     amount: number;
-}
-
-declare interface TextCustomFormField extends BaseCustomFormField {
-    fieldType: FormFieldFieldType.text;
-    type: FormFieldType.string;
-    maxLength?: number;
-    secret?: boolean;
 }
 
 declare interface TextInputStyles extends InputStyles {
