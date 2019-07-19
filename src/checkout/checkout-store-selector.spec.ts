@@ -1,7 +1,6 @@
 import { find, reject } from 'lodash';
 
 import { FormField } from '../form';
-import { SystemFormField } from '../form/form-field';
 import { getFormFields } from '../form/form.mocks';
 import { getUnitedStates } from '../geography/countries.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
@@ -116,7 +115,7 @@ describe('CheckoutStoreSelector', () => {
     it('returns shipping address fields', () => {
         const results = selector.getShippingAddressFields('AU');
         const predicate = ({ name }: FormField) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
-        const field = find(results, { name: 'stateOrProvinceCode' }) as SystemFormField;
+        const field = find(results, { name: 'stateOrProvinceCode' });
 
         expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
         expect(field && field.options && field.options.items)
@@ -126,7 +125,7 @@ describe('CheckoutStoreSelector', () => {
     it('returns billing address fields', () => {
         const results = selector.getBillingAddressFields('US');
         const predicate = ({ name }: FormField) => name === 'stateOrProvince' || name === 'stateOrProvinceCode' || name === 'countryCode';
-        const field = find(results, { name: 'stateOrProvinceCode' }) as SystemFormField;
+        const field = find(results, { name: 'stateOrProvinceCode' });
 
         expect(reject(results, predicate)).toEqual(reject(getFormFields(), predicate));
         expect(field && field.options && field.options.items)
