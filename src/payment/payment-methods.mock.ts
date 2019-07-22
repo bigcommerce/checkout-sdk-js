@@ -211,6 +211,7 @@ export function getAmazonPay(): PaymentMethod {
         supportedCards: [],
         config: {
             displayName: 'AmazonPay',
+            is3dsEnabled: false,
             merchantId: '0c173620-beb6-4421-99ef-03dc71a60685',
             testMode: false,
         },

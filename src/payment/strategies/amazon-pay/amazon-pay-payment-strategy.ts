@@ -1,9 +1,20 @@
 import { noop } from 'lodash';
 
-import { isInternalAddressEqual, mapFromInternalAddress, mapToInternalAddress } from '../../../address';
+import {
+    isInternalAddressEqual,
+    mapFromInternalAddress,
+    mapToInternalAddress
+} from '../../../address';
 import { BillingAddressActionCreator } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    MissingDataErrorType,
+    NotInitializedError,
+    NotInitializedErrorType,
+    RequestError
+} from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
@@ -12,6 +23,7 @@ import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
+import AmazonPayConfirmationFlow from './amazon-pay-confirmation-flow';
 import AmazonPayOrderReference from './amazon-pay-order-reference';
 import AmazonPayPaymentInitializeOptions from './amazon-pay-payment-initialize-options';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
@@ -70,8 +82,9 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const referenceId = this._getOrderReferenceId();
+        const sellerId = this._getMerchantId();
 
-        if (!referenceId) {
+        if (!referenceId || !sellerId) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
@@ -80,6 +93,16 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
         }
 
         const { payment: { paymentData, ...paymentPayload }, useStoreCredit = false } = payload;
+
+        if (options && this._paymentMethod && this._paymentMethod.config.is3dsEnabled) {
+            return this._processPaymentWith3ds(
+                sellerId,
+                referenceId,
+                paymentPayload.methodId,
+                useStoreCredit,
+                options
+            );
+        }
 
         return this._store.dispatch(
             this._remoteCheckoutActionCreator.initializePayment(paymentPayload.methodId, { referenceId, useStoreCredit })
@@ -209,5 +232,39 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
                 referenceId: orderReference.getAmazonOrderReferenceId(),
             })
         );
+    }
+
+    private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean, options: PaymentRequestOptions): Promise<never> {
+        return new Promise((resolve, reject) => {
+            if (!this._window.OffAmazonPayments) {
+                return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
+            }
+
+            return this._window.OffAmazonPayments.initConfirmationFlow(
+                sellerId,
+                referenceId,
+                (confirmationFlow: AmazonPayConfirmationFlow) => {
+                    return this._store.dispatch(
+                        this._orderActionCreator.submitOrder({useStoreCredit}, options)
+                    )
+                        .then(() => this._store.dispatch(
+                            this._remoteCheckoutActionCreator.initializePayment(methodId, {
+                                referenceId,
+                                useStoreCredit,
+                            }))
+                        )
+                        .then(() => {
+                            confirmationFlow.success();
+
+                            return new Promise<never>(() => {});
+                        })
+                        .catch(error => {
+                            confirmationFlow.error();
+
+                            return reject(error);
+                        });
+                }
+            );
+        });
     }
 }

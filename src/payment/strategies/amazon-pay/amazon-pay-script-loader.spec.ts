@@ -105,6 +105,7 @@ describe('AmazonPayScriptLoader', () => {
                 AddressBook: jest.fn(),
                 Wallet: jest.fn(),
             },
+            initConfirmationFlow: jest.fn(),
         };
 
         amazonPayScriptLoader.loadWidget(getAmazonPay(), onReady);
