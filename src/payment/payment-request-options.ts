@@ -1,5 +1,6 @@
 import { RequestOptions } from '../common/http-request';
 
+import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
 import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
@@ -33,6 +34,12 @@ export interface PaymentRequestOptions extends RequestOptions {
  * current checkout flow.
  */
 export interface PaymentInitializeOptions extends PaymentRequestOptions {
+    /**
+     * The options that are required to initialize the AdyenV2 payment
+     * method. They can be omitted unless you need to support AdyenV2.
+     */
+    adyenv2?: AdyenV2PaymentInitializeOptions;
+
     /**
      * The options that are required to initialize the Amazon Pay payment
      * method. They can be omitted unless you need to support AmazonPay.
