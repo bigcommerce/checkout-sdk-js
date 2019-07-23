@@ -126,4 +126,11 @@ describe('EmbeddedCheckoutMessenger', () => {
             payload: { contentId: 'foobar' },
         });
     });
+
+    it('has methods that can be destructed', () => {
+        const { postComplete } = messenger;
+
+        expect(() => postComplete())
+            .not.toThrow(TypeError);
+    });
 });

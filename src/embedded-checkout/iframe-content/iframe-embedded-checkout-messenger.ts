@@ -1,4 +1,5 @@
 import { isCustomError, CustomError } from '../../common/error/errors';
+import { bindDecorator as bind } from '../../common/utility';
 import EmbeddedCheckoutError from '../embedded-checkout-error';
 import {
     EmbeddedCheckoutCompleteEvent,
@@ -19,6 +20,7 @@ import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
 import { EmbeddedContentEventMap, EmbeddedContentEventType } from './embedded-content-events';
 import EmbeddedContentOptions from './embedded-content-options';
 
+@bind
 export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckoutMessenger {
     /**
      * @internal

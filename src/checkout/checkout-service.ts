@@ -5,6 +5,7 @@ import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
 import { ErrorActionCreator, ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
+import { bindDecorator as bind } from '../common/utility';
 import { ConfigActionCreator } from '../config';
 import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
@@ -32,6 +33,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
  * checkout, such as shipping and billing information. It can also be used to
  * retrieve the current checkout state and subscribe to its changes.
  */
+@bind
 export default class CheckoutService {
     private _state: CheckoutSelectors;
     private _errorTransformer: ErrorMessageTransformer;

@@ -309,6 +309,13 @@ describe('EmbeddedCheckout', () => {
         }
     });
 
+    it('has methods that can be destructed', () => {
+        const { attach } = embeddedCheckout;
+
+        expect(() => attach())
+            .not.toThrow(TypeError);
+    });
+
     describe('if login URL is passed', () => {
         beforeEach(() => {
             options = {
