@@ -1,4 +1,5 @@
 enum PaymentStrategyType {
+    ADYENV2 = 'adyenv2',
     AFFIRM = 'affirm',
     AFTERPAY = 'afterpay',
     AMAZON = 'amazon',

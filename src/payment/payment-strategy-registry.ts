@@ -25,7 +25,10 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
         }
 
         const token = this._getToken(paymentMethod);
-        const cacheToken = paymentMethod.gateway || paymentMethod.id;
+
+        const cacheToken = [paymentMethod.gateway, paymentMethod.id]
+            .filter(value => value !== undefined && value !== null)
+            .join('-');
 
         return this.get(token, cacheToken);
     }
