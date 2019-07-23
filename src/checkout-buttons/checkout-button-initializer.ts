@@ -1,11 +1,13 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { isElementId, setUniqueElementId } from '../common/dom';
+import { bindDecorator as bind } from '../common/utility';
 
 import { CheckoutButtonInitializeOptions, CheckoutButtonOptions } from './checkout-button-options';
 import CheckoutButtonSelectors from './checkout-button-selectors';
 import CheckoutButtonStrategyActionCreator from './checkout-button-strategy-action-creator';
 import createCheckoutButtonSelectors from './create-checkout-button-selectors';
 
+@bind
 export default class CheckoutButtonInitializer {
     private _state: CheckoutButtonSelectors;
 

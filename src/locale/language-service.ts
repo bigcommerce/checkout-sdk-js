@@ -2,6 +2,7 @@ import { isObject, union } from 'lodash';
 import * as MessageFormat from 'messageformat';
 
 import Logger from '../common/log/logger';
+import { bindDecorator as bind } from '../common/utility';
 
 import LanguageConfig, { Locales, Translations } from './language-config';
 
@@ -17,6 +18,7 @@ const KEY_PREFIX = 'optimized_checkout';
  * The language strings provided to the object should follow [ICU
  * MessageFormat](http://userguide.icu-project.org/formatparse/messages) syntax.
  */
+@bind
 export default class LanguageService {
     private _locale: string;
     private _locales: Locales;

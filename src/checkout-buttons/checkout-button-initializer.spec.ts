@@ -115,4 +115,14 @@ describe('CheckoutButtonInitializer', () => {
             statuses: expect.any(CheckoutButtonStatusSelector),
         });
     });
+
+    it('has methods that can be destructed', () => {
+        const { initializeButton } = initializer;
+
+        expect(() => initializeButton({
+            methodId: CheckoutButtonMethodType.BRAINTREE_PAYPAL,
+            containerId: 'checkout-button',
+        }))
+            .not.toThrow(TypeError);
+    });
 });

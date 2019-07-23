@@ -34,6 +34,13 @@ describe('LanguageService', () => {
         langService = new LanguageService(config, logger);
     });
 
+    it('has methods that can be destructed', () => {
+        const { translate } = langService;
+
+        expect(() => translate('test.continue_as_guest_action'))
+            .not.toThrow(TypeError);
+    });
+
     describe('#translate()', () => {
         it('returns translated strings', () => {
             expect(langService.translate('test.continue_as_guest_action')).toEqual('Continue as guest');

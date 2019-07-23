@@ -249,6 +249,16 @@ describe('CheckoutService', () => {
             spamProtectionActionCreator
         );
     });
+
+    it('has methods that can be destructed', () => {
+        const { loadCheckout, loadOrder } = checkoutService;
+
+        expect(() => loadCheckout())
+            .not.toThrow(TypeError);
+        expect(() => loadOrder(123))
+            .not.toThrow(TypeError);
+    });
+
     describe('#getState()', () => {
         it('returns state', () => {
             expect(checkoutService.getState()).toEqual(expect.objectContaining({

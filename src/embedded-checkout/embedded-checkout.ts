@@ -3,6 +3,7 @@ import { IFrameComponent } from 'iframe-resizer';
 
 import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
+import { bindDecorator as bind } from '../common/utility';
 
 import EmbeddedCheckoutError from './embedded-checkout-error';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
@@ -17,6 +18,7 @@ import ResizableIframeCreator from './resizable-iframe-creator';
 const CAN_RETRY_ALLOW_COOKIE = 'canRetryAllowCookie';
 const IS_COOKIE_ALLOWED_KEY = 'isCookieAllowed';
 
+@bind
 export default class EmbeddedCheckout {
     private _iframe?: IFrameComponent;
     private _isAttached: boolean;

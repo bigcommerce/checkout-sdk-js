@@ -1,3 +1,4 @@
+import { bindDecorator as bind } from '../common/utility';
 import { StoreConfig } from '../config';
 
 import CurrencyFormatter from './currency-formatter';
@@ -5,6 +6,7 @@ import CurrencyFormatter from './currency-formatter';
 /**
  * Responsible for formatting and converting currencies.
  */
+@bind
 export default class CurrencyService {
     private _customerFormatter: CurrencyFormatter;
     private _storeFormatter: CurrencyFormatter;
