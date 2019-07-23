@@ -31,7 +31,6 @@ export default class AdyenV2ScriptLoader {
         .catch(() => {
             throw new PaymentMethodClientUnavailableError();
         });
-
     }
 
     private _loadStylesheet(src: string): Promise<Event> {

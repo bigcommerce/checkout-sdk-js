@@ -371,7 +371,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             formPoster
-            )
+        )
     );
 
     registry.register(PaymentStrategyType.STRIPEV3, () =>

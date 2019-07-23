@@ -1,6 +1,6 @@
 import Omit from '../../../common/types/omit';
 
-import { CreditCardComponentOptions, ThreeDS2ComponentOptions } from './adyenv2';
+import { AdyenCreditCardComponentOptions, AdyenThreeDS2Options } from './adyenv2';
 
 /**
  * A set of options that are required to initialize the AdyenV2 payment method.
@@ -21,12 +21,12 @@ export default interface AdyenV2PaymentInitializeOptions {
     threeDS2ContainerId: string;
 
     /**
-     * Optional. Overwriting the default options
+     * ThreeDS2Options
      */
-    options?: Omit<CreditCardComponentOptions, 'onChange'>;
+    threeDS2Options: AdyenThreeDS2Options;
 
     /**
-     * Optional. Contains all three ds 2 options
+     * Optional. Overwriting the default options
      */
-    threeDS2Options?: ThreeDS2ComponentOptions;
+    options?: Omit<AdyenCreditCardComponentOptions, 'onChange'>;
 }

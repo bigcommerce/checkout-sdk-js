@@ -1,5 +1,9 @@
+
+import { RequestError } from '../../../common/error/errors';
+import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions } from '../../payment-request-options';
+import { getErrorPaymentResponseBody } from '../../payments.mock';
 
 import {
     AdyenCardState,
@@ -38,7 +42,11 @@ export function getAdyenInitializeOptions(): PaymentInitializeOptions {
                 styles: {},
                 placeholders: {},
             },
-            threeDS2Options: { threeDS2ChallengeWidgetSize: '01' },
+            threeDS2Options: {
+                widgetSize: '1',
+                onComplete: jest.fn(),
+                onLoad: jest.fn(),
+            },
         },
     };
 }
@@ -86,7 +94,7 @@ export function getValidChallengeResponse(): any {
     };
 }
 
-export function getChallengeShopperErrorResponse(): ThreeDSRequiredErrorResponse {
+function getChallengeShopperErrorResponse(): ThreeDSRequiredErrorResponse {
     return {
         errors: [
             { code: 'three_d_secure_required' },
@@ -98,6 +106,13 @@ export function getChallengeShopperErrorResponse(): ThreeDSRequiredErrorResponse
         },
         status: 'error',
     };
+}
+
+export function getChallengeShopperError(): RequestError {
+    return new RequestError(getResponse({
+        ...getErrorPaymentResponseBody(),
+        ...getChallengeShopperErrorResponse(),
+    }));
 }
 
 export function getIdentifyShopperErrorResponse(): ThreeDSRequiredErrorResponse {
@@ -113,8 +128,14 @@ export function getIdentifyShopperErrorResponse(): ThreeDSRequiredErrorResponse 
         status: 'error',
     };
 }
+export function getIdentifyShopperError(): RequestError {
+    return new RequestError(getResponse({
+        ...getErrorPaymentResponseBody(),
+        ...getIdentifyShopperErrorResponse(),
+    }));
+}
 
-export function getRedirectShopperErrorResponse(): ThreeDSRequiredErrorResponse {
+function getRedirectShopperErrorResponse(): ThreeDSRequiredErrorResponse {
     return {
         errors: [
             { code: 'three_d_secure_required' },
@@ -128,4 +149,11 @@ export function getRedirectShopperErrorResponse(): ThreeDSRequiredErrorResponse 
         },
         status: 'error',
     };
+}
+
+export function getRedirectShopperError(): RequestError {
+    return new RequestError(getResponse({
+        ...getErrorPaymentResponseBody(),
+        ...getRedirectShopperErrorResponse(),
+    }));
 }
