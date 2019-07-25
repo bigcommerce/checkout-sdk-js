@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.29.0"></a>
+# [1.29.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.28.0...v1.29.0) (2019-07-25)
+
+
+### Features
+
+* **common:** CHECKOUT-4272 Bind methods to object instances to allow destructing ([8acd3f9](https://github.com/bigcommerce/checkout-sdk-js/commit/8acd3f9))
+* **payment:** INT-1577 Support Stored Credit Card (vaulting) for Stripe V3 ([9bc1657](https://github.com/bigcommerce/checkout-sdk-js/commit/9bc1657))
+
+
+
 <a name="1.28.0"></a>
 # [1.28.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.27.4...v1.28.0) (2019-07-22)
 

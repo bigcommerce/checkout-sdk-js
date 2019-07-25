@@ -2548,6 +2548,10 @@ declare interface GuestCredentials {
     email: string;
 }
 
+declare interface HostedInstrument {
+    shouldSaveInstrument?: boolean;
+}
+
 declare interface InlineElementStyles {
     color?: string;
     fontFamily?: string;
@@ -2824,7 +2828,7 @@ declare interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card or vaulted payment
      * instrument.
      */
-    paymentData?: CreditCardInstrument | VaultedInstrument;
+    paymentData?: CreditCardInstrument | VaultedInstrument | HostedInstrument;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
