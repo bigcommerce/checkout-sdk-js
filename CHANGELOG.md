@@ -19,13 +19,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* **checkout:** INT-1586 addressing comments from mexico ([86e3ffb](https://github.com/bigcommerce/checkout-sdk-js/commit/86e3ffb))
-* **checkout:** INT-1586 addressing comments from mexico 2 ([57f26f4](https://github.com/bigcommerce/checkout-sdk-js/commit/57f26f4))
-* **checkout:** INT-1586 addressing comments from Sydney ([6a697b1](https://github.com/bigcommerce/checkout-sdk-js/commit/6a697b1))
-* **checkout:** INT-1586 code refactor and unit test ([d42dc37](https://github.com/bigcommerce/checkout-sdk-js/commit/d42dc37))
-* **checkout:** INT-1586 functionality working and confirmationFlow.success cover ([5c1e883](https://github.com/bigcommerce/checkout-sdk-js/commit/5c1e883))
-* **checkout:** INT-1586 functionality working only missing to cover confimationFlow.success ([12ff96e](https://github.com/bigcommerce/checkout-sdk-js/commit/12ff96e))
-* **checkout:** INT-1586 Update order of providers on Payments section of checkout ([7773a9c](https://github.com/bigcommerce/checkout-sdk-js/commit/7773a9c))
+* **checkout:** INT-1586 Support Amazon Pay 3DS flow ([#616](https://github.com/bigcommerce/checkout-sdk-js/pull/616))
 
 
 
