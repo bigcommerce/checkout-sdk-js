@@ -29,6 +29,7 @@ import {
     PaymentStrategyActionCreator
 } from '../../../payment';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import createGooglePayPaymentProcessor from './create-googlepay-payment-processor';
 import GooglePayPaymentProcessor from './googlepay-payment-processor';
@@ -70,7 +71,11 @@ describe('GooglePayPaymentStrategy', () => {
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-        paymentActionCreator = new PaymentActionCreator(new PaymentRequestSender(paymentClient), orderActionCreator);
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(paymentClient),
+            orderActionCreator,
+            new PaymentRequestTransformer()
+        );
         orderActionCreator = new OrderActionCreator(
             paymentClient,
             new CheckoutValidator(

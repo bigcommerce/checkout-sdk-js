@@ -13,6 +13,7 @@ import { createSpamProtection, SpamProtectionActionCreator } from '../../../orde
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import CreditCardPaymentStrategy from './credit-card-payment-strategy';
 
@@ -29,7 +30,8 @@ describe('CreditCardPaymentStrategy', () => {
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
 
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));

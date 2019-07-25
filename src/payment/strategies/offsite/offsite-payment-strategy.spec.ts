@@ -16,6 +16,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { InitializeOffsitePaymentAction, PaymentActionType } from '../../payment-actions';
 import { PaymentRequestOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 import * as paymentStatusTypes from '../../payment-status-types';
 
 import OffsitePaymentStrategy from './offsite-payment-strategy';
@@ -40,7 +41,8 @@ describe('OffsitePaymentStrategy', () => {
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
         initializeOffsitePaymentAction = of(createAction(PaymentActionType.InitializeOffsitePaymentRequested));

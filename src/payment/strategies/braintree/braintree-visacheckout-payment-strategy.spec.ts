@@ -23,6 +23,7 @@ import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getBraintreeVisaCheckout } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import { PaymentStrategyActionType } from '../../payment-strategy-actions';
 
@@ -85,7 +86,8 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient(store)),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
 
         strategy = new BraintreeVisaCheckoutPaymentStrategy(

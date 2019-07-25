@@ -18,6 +18,7 @@ import { createSpamProtection, SpamProtectionActionCreator } from '../../../orde
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
@@ -44,7 +45,8 @@ describe('SagePayPaymentStrategy', () => {
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
 
         formPoster = createFormPoster();

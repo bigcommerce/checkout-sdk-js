@@ -1,4 +1,3 @@
-
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
@@ -15,6 +14,7 @@ import { createSpamProtection, SpamProtectionActionCreator } from '../../../orde
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import PaypalProPaymentStrategy from './paypal-pro-payment-strategy';
 
@@ -39,7 +39,8 @@ describe('PaypalProPaymentStrategy', () => {
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
 
         state = getCheckoutStoreState();

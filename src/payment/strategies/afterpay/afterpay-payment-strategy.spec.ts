@@ -20,6 +20,7 @@ import { PaymentMethodActionType } from '../../payment-method-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getAfterpay } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import AfterpayPaymentStrategy from './afterpay-payment-strategy';
 import AfterpayScriptLoader from './afterpay-script-loader';
@@ -59,7 +60,8 @@ describe('AfterpayPaymentStrategy', () => {
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator, spamProtectionActionCreator);
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
         remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
             new RemoteCheckoutRequestSender(createRequestSender())

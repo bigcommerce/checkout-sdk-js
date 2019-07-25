@@ -39,6 +39,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentMethodActionType } from '../../payment-method-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { getCybersource } from '../../payment-methods.mock';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
 import {
@@ -85,7 +86,8 @@ describe('CyberSourcePaymentStrategy', () => {
 
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator
+            orderActionCreator,
+            new PaymentRequestTransformer()
         );
 
         strategy = new CyberSourcePaymentStrategy(

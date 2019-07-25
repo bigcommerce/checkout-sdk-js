@@ -19,6 +19,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import { getMasterpass, getPaymentMethodsState } from '../../payment-methods.mock';
+import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import { MasterpassCheckoutOptions, MasterpassPaymentStrategy, MasterpassScriptLoader } from './';
 import { Masterpass } from './masterpass';
@@ -63,7 +64,11 @@ describe('MasterpassPaymentStrategy', () => {
         const spamProtectionActionCreator = new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()));
         orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator, spamProtectionActionCreator);
         const paymentRequestSender = new PaymentRequestSender(createPaymentClient());
-        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator);
+        paymentActionCreator = new PaymentActionCreator(
+            paymentRequestSender,
+            orderActionCreator,
+            new PaymentRequestTransformer()
+        );
 
         scriptLoader = new MasterpassScriptLoader(createScriptLoader());
         masterpassScript = getMasterpassScriptMock();

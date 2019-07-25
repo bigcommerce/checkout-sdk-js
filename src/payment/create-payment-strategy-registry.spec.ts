@@ -8,19 +8,31 @@ import { createSpamProtection } from '../order/spam-protection';
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
+import { AffirmPaymentStrategy } from './strategies/affirm';
 import { AfterpayPaymentStrategy } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy } from './strategies/amazon-pay';
+import {
+    BraintreeCreditCardPaymentStrategy,
+    BraintreePaypalPaymentStrategy,
+    BraintreeVisaCheckoutPaymentStrategy
+} from './strategies/braintree';
+import { ChasepayPaymentStrategy } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
+import { CyberSourcePaymentStrategy } from './strategies/cybersource';
 import { GooglePayPaymentStrategy } from './strategies/googlepay';
 import { KlarnaPaymentStrategy } from './strategies/klarna';
 import { LegacyPaymentStrategy } from './strategies/legacy';
+import { MasterpassPaymentStrategy } from './strategies/masterpass';
 import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy } from './strategies/paypal';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy } from './strategies/square';
+import { StripeV3PaymentStrategy } from './strategies/stripev3';
+import { WepayPaymentStrategy } from './strategies/wepay';
+import { ZipPaymentStrategy } from './strategies/zip';
 
 describe('CreatePaymentStrategyRegistry', () => {
     let registry: PaymentStrategyRegistry;
@@ -37,6 +49,11 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(registry).toEqual(expect.any(PaymentStrategyRegistry));
     });
 
+    it('can instantiate affirm', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.AFFIRM);
+        expect(paymentStrategy).toBeInstanceOf(AffirmPaymentStrategy);
+    });
+
     it('can instantiate amazon', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.AMAZON);
         expect(paymentStrategy).toBeInstanceOf(AmazonPayPaymentStrategy);
@@ -47,9 +64,44 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(AfterpayPaymentStrategy);
     });
 
+    it('can instantiate braintree', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE);
+        expect(paymentStrategy).toBeInstanceOf(BraintreeCreditCardPaymentStrategy);
+    });
+
+    it('can instantiate braintreepaypal', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_PAYPAL);
+        expect(paymentStrategy).toBeInstanceOf(BraintreePaypalPaymentStrategy);
+    });
+
+    it('can instantiate braintreepaypaylcredit', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_PAYPAL_CREDIT);
+        expect(paymentStrategy).toBeInstanceOf(BraintreePaypalPaymentStrategy);
+    });
+
+    it('can instantiate braintreevisacheckout', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.BRAINTREE_VISA_CHECKOUT);
+        expect(paymentStrategy).toBeInstanceOf(BraintreeVisaCheckoutPaymentStrategy);
+    });
+
+    it('can instantiate chasepay', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CHASE_PAY);
+        expect(paymentStrategy).toBeInstanceOf(ChasepayPaymentStrategy);
+    });
+
+    it('can instantiate converge', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
+        expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
+    });
+
     it('can instantiate creditcard', () => {
         const paymentStrategy = registry.get(PaymentStrategyType.CREDIT_CARD);
         expect(paymentStrategy).toBeInstanceOf(CreditCardPaymentStrategy);
+    });
+
+    it('can instantiate cybersource', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.CYBERSOURCE);
+        expect(paymentStrategy).toBeInstanceOf(CyberSourcePaymentStrategy);
     });
 
     it('can instantiate klarna', () => {
@@ -107,8 +159,28 @@ describe('CreatePaymentStrategyRegistry', () => {
         expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
     });
 
-    it('can instantiate converge', () => {
-        const paymentStrategy = registry.get(PaymentStrategyType.CONVERGE);
-        expect(paymentStrategy).toBeInstanceOf(ConvergePaymentStrategy);
+    it('can instantiate googlepaystripe', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.STRIPE_GOOGLE_PAY);
+        expect(paymentStrategy).toBeInstanceOf(GooglePayPaymentStrategy);
+    });
+
+    it('can instantiate stripev3', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.STRIPEV3);
+        expect(paymentStrategy).toBeInstanceOf(StripeV3PaymentStrategy);
+    });
+
+    it('can instantiate wepay', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.WE_PAY);
+        expect(paymentStrategy).toBeInstanceOf(WepayPaymentStrategy);
+    });
+
+    it('can instantiate masterpass', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.MASTERPASS);
+        expect(paymentStrategy).toBeInstanceOf(MasterpassPaymentStrategy);
+    });
+
+    it('can instantiate zip', () => {
+        const paymentStrategy = registry.get(PaymentStrategyType.ZIP);
+        expect(paymentStrategy).toBeInstanceOf(ZipPaymentStrategy);
     });
 });

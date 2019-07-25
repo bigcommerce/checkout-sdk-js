@@ -4,7 +4,7 @@ export default interface Payment {
     paymentData?: PaymentInstrument & PaymentInstrumentMeta;
 }
 
-export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument | CryptogramInstrument;
+export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument | CryptogramInstrument | HostedInstrument;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -59,4 +59,8 @@ export interface ThreeDSecure {
 
 export interface ThreeDSecureToken {
     token: string;
+}
+
+export interface HostedInstrument {
+    shouldSaveInstrument?: boolean;
 }

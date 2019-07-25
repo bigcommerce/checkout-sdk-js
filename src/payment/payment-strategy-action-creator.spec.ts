@@ -21,6 +21,7 @@ import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentActionCreator from './payment-action-creator';
 import { getPaymentMethod } from './payment-methods.mock';
 import PaymentRequestSender from './payment-request-sender';
+import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import { PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
@@ -57,7 +58,8 @@ describe('PaymentStrategyActionCreator', () => {
             orderActionCreator,
             new PaymentActionCreator(
                 new PaymentRequestSender(createPaymentClient()),
-                orderActionCreator
+                orderActionCreator,
+                new PaymentRequestTransformer()
             )
         );
         noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(
