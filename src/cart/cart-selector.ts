@@ -1,23 +1,40 @@
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 
 import Cart from './cart';
-import CartState from './cart-state';
+import CartState, { DEFAULT_STATE } from './cart-state';
 
-@selector
-export default class CartSelector {
-    constructor(
-        private _cart: CartState
-    ) {}
+export default interface CartSelector {
+    getCart(): Cart | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
 
-    getCart(): Cart | undefined {
-        return this._cart.data;
-    }
+export type CartSelectorFactory = (state: CartState) => CartSelector;
 
-    getLoadError(): Error | undefined {
-        return this._cart.errors.loadError;
-    }
+export function createCartSelectorFactory() {
+    const getCart = createSelector(
+        (state: CartState) => state.data,
+        cart => () => cart
+    );
 
-    isLoading(): boolean {
-        return !!this._cart.statuses.isLoading;
-    }
+    const getLoadError = createSelector(
+        (state: CartState) => state.errors.loadError,
+        error => () => error
+    );
+
+    const isLoading = createSelector(
+        (state: CartState) => !!state.statuses.isLoading,
+        status => () => status
+    );
+
+    return memoizeOne((
+        state: CartState = DEFAULT_STATE
+    ): CartSelector => {
+        return {
+            getCart: getCart(state),
+            getLoadError: getLoadError(state),
+            isLoading: isLoading(state),
+        };
+    });
 }

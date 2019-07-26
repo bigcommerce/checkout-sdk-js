@@ -8,12 +8,7 @@ import { GiftCertificateAction, GiftCertificateActionType } from '../coupon/gift
 import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
 
 import Cart from './cart';
-import CartState, { CartErrorsState, CartStatusesState } from './cart-state';
-
-const DEFAULT_STATE: CartState = {
-    errors: {},
-    statuses: {},
-};
+import CartState, { CartErrorsState, CartStatusesState, DEFAULT_STATE } from './cart-state';
 
 export default function cartReducer(
     state: CartState = DEFAULT_STATE,
