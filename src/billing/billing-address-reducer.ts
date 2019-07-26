@@ -2,6 +2,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
+import { objectSet, replace } from '../common/utility';
 import { OrderAction, OrderActionType } from '../order';
 
 import BillingAddress from './billing-address';
@@ -30,7 +31,7 @@ function dataReducer(
     case BillingAddressActionType.ContinueAsGuestSucceeded:
     case CheckoutActionType.LoadCheckoutSucceeded:
     case OrderActionType.LoadOrderSucceeded:
-        return action.payload ? action.payload.billingAddress : data;
+        return replace(data, action.payload && action.payload.billingAddress);
 
     default:
         return data;
@@ -44,24 +45,24 @@ function errorsReducer(
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...errors, loadError: undefined };
+        return objectSet(errors, 'loadError', undefined);
 
     case CheckoutActionType.LoadCheckoutFailed:
-        return { ...errors, loadError: action.payload };
+        return objectSet(errors, 'loadError', action.payload);
 
     case BillingAddressActionType.UpdateBillingAddressRequested:
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
-        return { ...errors, updateError: undefined };
+        return objectSet(errors, 'updateError', undefined);
 
     case BillingAddressActionType.UpdateBillingAddressFailed:
-        return { ...errors, updateError: action.payload };
+        return objectSet(errors, 'updateError', action.payload);
 
     case BillingAddressActionType.ContinueAsGuestRequested:
     case BillingAddressActionType.ContinueAsGuestSucceeded:
-        return { ...errors, continueAsGuestError: undefined };
+        return objectSet(errors, 'continueAsGuestError', undefined);
 
     case BillingAddressActionType.ContinueAsGuestFailed:
-        return { ...errors, continueAsGuestError: action.payload };
+        return objectSet(errors, 'continueAsGuestError', action.payload);
 
     default:
         return errors;
@@ -74,25 +75,25 @@ function statusesReducer(
 ): BillingAddressStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
-        return { ...statuses, isLoading: true };
+        return objectSet(statuses, 'isLoading', true);
 
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CheckoutActionType.LoadCheckoutFailed:
-        return { ...statuses, isLoading: false };
+        return objectSet(statuses, 'isLoading', false);
 
     case BillingAddressActionType.UpdateBillingAddressRequested:
-        return { ...statuses, isUpdating: true };
+        return objectSet(statuses, 'isUpdating', true);
 
     case BillingAddressActionType.UpdateBillingAddressFailed:
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
-        return { ...statuses, isUpdating: false };
+        return objectSet(statuses, 'isUpdating', false);
 
     case BillingAddressActionType.ContinueAsGuestRequested:
-        return { ...statuses, isContinuingAsGuest: true };
+        return objectSet(statuses, 'isContinuingAsGuest', true);
 
     case BillingAddressActionType.ContinueAsGuestFailed:
     case BillingAddressActionType.ContinueAsGuestSucceeded:
-        return { ...statuses, isContinuingAsGuest: false };
+        return objectSet(statuses, 'isContinuingAsGuest', false);
 
     default:
         return statuses;
