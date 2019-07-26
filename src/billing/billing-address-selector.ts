@@ -1,39 +1,68 @@
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 
 import BillingAddress from './billing-address';
-import BillingAddressState from './billing-address-state';
+import BillingAddressState, { DEFAULT_STATE } from './billing-address-state';
 
-@selector
-export default class BillingAddressSelector {
-    constructor(
-        private _billingAddress: BillingAddressState
-    ) {}
+export default interface BillingAddressSelector {
+    getBillingAddress(): BillingAddress | undefined;
+    getUpdateError(): Error | undefined;
+    getContinueAsGuestError(): Error | undefined;
+    getLoadError(): Error | undefined;
+    isUpdating(): boolean;
+    isContinuingAsGuest(): boolean;
+    isLoading(): boolean;
+}
 
-    getBillingAddress(): BillingAddress | undefined {
-        return this._billingAddress.data;
-    }
+export type BillingAddressSelectorFactory = (state: BillingAddressState) => BillingAddressSelector;
 
-    getUpdateError(): Error | undefined {
-        return this._billingAddress.errors.updateError;
-    }
+export function createBillingAddressSelectorFactory(): BillingAddressSelectorFactory {
+    const getBillingAddress = createSelector(
+        (state: BillingAddressState) => state.data,
+        data => () => data
+    );
 
-    getContinueAsGuestError(): Error | undefined {
-        return this._billingAddress.errors.continueAsGuestError;
-    }
+    const getUpdateError = createSelector(
+        (state: BillingAddressState) => state.errors.updateError,
+        error => () => error
+    );
 
-    getLoadError(): Error | undefined {
-        return this._billingAddress.errors.loadError;
-    }
+    const getContinueAsGuestError = createSelector(
+        (state: BillingAddressState) => state.errors.continueAsGuestError,
+        error => () => error
+    );
 
-    isUpdating(): boolean {
-        return !!this._billingAddress.statuses.isUpdating;
-    }
+    const getLoadError = createSelector(
+        (state: BillingAddressState) => state.errors.loadError,
+        error => () => error
+    );
 
-    isContinuingAsGuest(): boolean {
-        return !!this._billingAddress.statuses.isContinuingAsGuest;
-    }
+    const isUpdating = createSelector(
+        (state: BillingAddressState) => !!state.statuses.isUpdating,
+        status => () => status
+    );
 
-    isLoading(): boolean {
-        return !!this._billingAddress.statuses.isLoading;
-    }
+    const isContinuingAsGuest = createSelector(
+        (state: BillingAddressState) => !!state.statuses.isContinuingAsGuest,
+        status => () => status
+    );
+
+    const isLoading = createSelector(
+        (state: BillingAddressState) => !!state.statuses.isLoading,
+        status => () => status
+    );
+
+    return memoizeOne((
+        state: BillingAddressState = DEFAULT_STATE
+    ): BillingAddressSelector => {
+        return {
+            getBillingAddress: getBillingAddress(state),
+            getUpdateError: getUpdateError(state),
+            getContinueAsGuestError: getContinueAsGuestError(state),
+            getLoadError: getLoadError(state),
+            isUpdating: isUpdating(state),
+            isContinuingAsGuest: isContinuingAsGuest(state),
+            isLoading: isLoading(state),
+        };
+    });
 }

@@ -6,12 +6,7 @@ import { OrderAction, OrderActionType } from '../order';
 
 import BillingAddress from './billing-address';
 import { BillingAddressAction, BillingAddressActionType } from './billing-address-actions';
-import BillingAddressState, { BillingAddressErrorsState, BillingAddressStatusesState } from './billing-address-state';
-
-const DEFAULT_STATE: BillingAddressState = {
-    errors: {},
-    statuses: {},
-};
+import BillingAddressState, { BillingAddressErrorsState, BillingAddressStatusesState, DEFAULT_STATE } from './billing-address-state';
 
 export default function billingAddressReducer(
     state: BillingAddressState = DEFAULT_STATE,
