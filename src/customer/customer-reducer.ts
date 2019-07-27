@@ -3,9 +3,7 @@ import { combineReducers } from '@bigcommerce/data-store';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 
 import Customer from './customer';
-import CustomerState from './customer-state';
-
-const DEFAULT_STATE: CustomerState = {};
+import CustomerState, { DEFAULT_STATE } from './customer-state';
 
 export default function customerReducer(
     state: CustomerState = DEFAULT_STATE,

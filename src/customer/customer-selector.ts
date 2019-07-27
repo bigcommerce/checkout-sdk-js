@@ -1,15 +1,26 @@
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 
 import Customer from './customer';
-import CustomerState from './customer-state';
+import CustomerState, { DEFAULT_STATE } from './customer-state';
 
-@selector
-export default class CustomerSelector {
-    constructor(
-        private _customer: CustomerState
-    ) {}
+export default interface CustomerSelector {
+    getCustomer(): Customer | undefined;
+}
 
-    getCustomer(): Customer | undefined {
-        return this._customer.data;
-    }
+export type CustomerSelectorFactory = (state: CustomerState) => CustomerSelector;
+
+export function createCustomerSelectorFactory(): CustomerSelectorFactory {
+    const getCustomer = createSelector(
+        (state: CustomerState) => state.data,
+        customer => () => customer
+    );
+
+    return memoizeOne((
+        state: CustomerState = DEFAULT_STATE
+    ): CustomerSelector => {
+        return {
+            getCustomer: getCustomer(state),
+        };
+    });
 }
