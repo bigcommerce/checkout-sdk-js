@@ -8,7 +8,7 @@ describe('isCreditCardLike', () => {
     });
 
     it('returns false if a Vaulted Instrument', () => {
-        const paymentData = { instrumentId: 'my_instrument_id', cvv: 123 };
+        const paymentData = { instrumentId: 'my_instrument_id', cvv: 123, iin: '123123' };
         expect(isCreditCardLike(paymentData)).toBeFalsy();
     });
 

@@ -11,7 +11,7 @@ import {
     CardinalValidatedAction,
     CardinalValidatedData,
     CardinalWindow,
-} from './cardinal';
+} from '.';
 
 const CardinalWindowMock: CardinalWindow = window;
 

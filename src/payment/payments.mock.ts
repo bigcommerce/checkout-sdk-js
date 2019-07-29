@@ -10,7 +10,7 @@ import { getConsignments } from '../shipping/consignments.mock';
 import { getFlatRateOption } from '../shipping/internal-shipping-options.mock';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
-import Payment, { CreditCardInstrument } from './payment';
+import Payment, { CreditCardInstrument, ThreeDSVaultedInstrument, VaultedInstrument } from './payment';
 import { getAuthorizenet, getPaymentMethodsMeta } from './payment-methods.mock';
 import PaymentRequestBody from './payment-request-body';
 import PaymentResponseBody from './payment-response-body';
@@ -32,6 +32,12 @@ export function getCreditCardInstrument(): CreditCardInstrument {
         ccName: 'BigCommerce',
         ccNumber: '4111111111111111',
         ccCvv: '123',
+    };
+}
+
+export function getVaultedInstrument(): VaultedInstrument {
+    return {
+        instrumentId: '123',
     };
 }
 

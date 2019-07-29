@@ -1,11 +1,12 @@
 import { includes } from 'lodash';
 
 import Address from '../../../address/address';
+import BillingAddress from '../../../billing/billing-address';
 import {
     MissingDataError, MissingDataErrorType, NotInitializedError,
     NotInitializedErrorType, StandardError
 } from '../../../common/error/errors';
-import { CreditCardInstrument, ThreeDSecureToken } from '../../payment';
+import { CreditCardInstrument, ThreeDSecureToken, VaultedInstrument } from '../../payment';
 import { ThreeDsResult } from '../../payment-response-body';
 
 import {
@@ -14,7 +15,6 @@ import {
     CardinalConsumer,
     CardinalEventType,
     CardinalInitializationType,
-    CardinalOrderData,
     CardinalPartialOrder,
     CardinalPaymentBrand,
     CardinalScriptLoader,
@@ -24,6 +24,17 @@ import {
     CardinalValidatedAction,
     CardinalValidatedData
 } from './index';
+
+export type CardinalSupportedPaymentInstrument = CreditCardInstrument | VaultedInstrument;
+
+export interface CardinalOrderData {
+    billingAddress: BillingAddress;
+    shippingAddress?: Address;
+    currencyCode: string;
+    id: string;
+    amount: number;
+    paymentData?: CreditCardInstrument;
+}
 
 export default class CardinalClient {
     private _sdk?: Promise<CardinalSDK>;
@@ -69,9 +80,9 @@ export default class CardinalClient {
         }));
     }
 
-    runBindProcess(ccNumber: string): Promise<void> {
+    runBinProcess(binNumber: string): Promise<void> {
         return this._getClientSDK()
-            .then(client => client.trigger(CardinalTriggerEvents.BinProcess, ccNumber).catch(() => {}))
+            .then(client => client.trigger(CardinalTriggerEvents.BinProcess, binNumber).catch(() => {}))
             .then(result => {
                 if (!result || !result.Status) {
                     throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
@@ -119,8 +130,11 @@ export default class CardinalClient {
     private _mapToPartialOrder(orderData: CardinalOrderData, transactionId: string): CardinalPartialOrder {
         const consumer: CardinalConsumer = {
             BillingAddress: this._mapToCardinalAddress(orderData.billingAddress),
-            Account: this._mapToCardinalAccount(orderData.paymentData),
         };
+
+        if (orderData.paymentData) {
+            consumer.Account = this._mapToCardinalAccount(orderData.paymentData);
+        }
 
         if (orderData.billingAddress.email) {
             consumer.Email1 = orderData.billingAddress.email;
