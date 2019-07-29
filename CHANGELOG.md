@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.30.0"></a>
+# [1.30.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.29.0...v1.30.0) (2019-07-29)
+
+
+### Features
+
+* **payment:** INT-1650 Adding IIN field to vaulted instrument strategy ([19ae743](https://github.com/bigcommerce/checkout-sdk-js/commit/19ae743))
+
+
+
 <a name="1.29.0"></a>
 # [1.29.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.28.0...v1.29.0) (2019-07-25)
 
