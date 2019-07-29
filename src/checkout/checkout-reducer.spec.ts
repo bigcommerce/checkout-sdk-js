@@ -22,7 +22,7 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
             errors: { loadError: undefined },
             statuses: { isLoading: false },
         });
@@ -53,7 +53,7 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
             errors: { updateError: undefined },
             statuses: { isUpdating: false },
         });
@@ -64,7 +64,7 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
         }));
     });
 
@@ -73,7 +73,7 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
         }));
     });
 
@@ -82,7 +82,7 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
         }));
     });
 
@@ -91,7 +91,7 @@ describe('checkoutReducer', () => {
         const output = checkoutReducer(initialState, action);
 
         expect(output).toEqual(expect.objectContaining({
-            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertifcates']),
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
         }));
     });
 

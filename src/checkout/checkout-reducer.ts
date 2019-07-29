@@ -7,6 +7,7 @@ import { objectMerge, objectSet } from '../common/utility';
 import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateActionType } from '../coupon';
 import { OrderAction, OrderActionType } from '../order';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
+import { StoreCreditAction, StoreCreditActionType } from '../store-credit/store-credit-actions';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
 import CheckoutState, { CheckoutDataState, CheckoutErrorsState, CheckoutStatusesState, DEFAULT_STATE } from './checkout-state';
@@ -26,11 +27,13 @@ export default function checkoutReducer(
 
 function dataReducer(
     data: CheckoutDataState | undefined,
-    action: CheckoutAction | BillingAddressAction | ConsignmentAction | CouponAction | GiftCertificateAction | OrderAction
+    action: CheckoutAction | BillingAddressAction | ConsignmentAction | CouponAction |
+        GiftCertificateAction | OrderAction | StoreCreditAction
 ): CheckoutDataState | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CheckoutActionType.UpdateCheckoutSucceeded:
+    case StoreCreditActionType.ApplyStoreCreditSucceeded:
     case BillingAddressActionType.UpdateBillingAddressSucceeded:
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
@@ -46,7 +49,7 @@ function dataReducer(
             'consignments',
             'customer',
             'coupons',
-            'giftCertifcates',
+            'giftCertificates',
         ])) as CheckoutDataState;
 
     case OrderActionType.SubmitOrderSucceeded:

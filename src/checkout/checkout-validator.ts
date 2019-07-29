@@ -23,7 +23,7 @@ export default class CheckoutValidator {
             .then(response => {
                 const comparator = new CartComparator();
 
-                if (checkout.grandTotal === response.body.grandTotal
+                if (checkout.outstandingBalance === response.body.outstandingBalance
                     && this._compareCoupons(checkout.coupons, response.body.coupons)
                     && this._compareGiftCertificates(checkout.giftCertificates, response.body.giftCertificates)
                     && comparator.isEqual(checkout.cart, response.body.cart)

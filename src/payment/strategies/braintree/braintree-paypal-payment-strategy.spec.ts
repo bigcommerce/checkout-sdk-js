@@ -169,17 +169,17 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             const { checkout } = store.getState();
 
-            jest.spyOn(checkout, 'getGrandTotal')
+            jest.spyOn(checkout, 'getOutstandingBalance')
                 .mockImplementation(useStoreCredit => useStoreCredit ? 150 : 190);
 
             await braintreePaypalPaymentStrategy.execute({ ...orderRequestBody, useStoreCredit: true }, options);
 
-            expect(checkout.getGrandTotal).toHaveBeenCalledWith(true);
+            expect(checkout.getOutstandingBalance).toHaveBeenCalledWith(true);
             expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(150, 'en_US', 'USD', false);
 
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
-            expect(checkout.getGrandTotal).toHaveBeenCalledWith(false);
+            expect(checkout.getOutstandingBalance).toHaveBeenCalledWith(false);
             expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', false);
         });
 

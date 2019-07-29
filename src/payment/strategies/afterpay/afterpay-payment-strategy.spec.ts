@@ -11,7 +11,7 @@ import { MissingDataError, NotInitializedError } from '../../../common/error/err
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
-import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -28,16 +28,14 @@ import AfterpayScriptLoader from './afterpay-script-loader';
 describe('AfterpayPaymentStrategy', () => {
     let checkoutValidator: CheckoutValidator;
     let checkoutRequestSender: CheckoutRequestSender;
-    let initializePaymentAction: Observable<Action>;
     let loadPaymentMethodAction: Observable<Action>;
-    let loadRemoteSettingsAction: Observable<Action>;
     let orderActionCreator: OrderActionCreator;
     let orderRequestSender: OrderRequestSender;
     let payload: OrderRequestBody;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
+    let storeCreditActionCreator: StoreCreditActionCreator;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let scriptLoader: AfterpayScriptLoader;
     let submitOrderAction: Observable<Action>;
@@ -63,8 +61,8 @@ describe('AfterpayPaymentStrategy', () => {
             orderActionCreator,
             new PaymentRequestTransformer()
         );
-        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(createRequestSender())
+        storeCreditActionCreator = new StoreCreditActionCreator(
+            new StoreCreditRequestSender(createRequestSender())
         );
         scriptLoader = new AfterpayScriptLoader(createScriptLoader());
         strategy = new AfterpayPaymentStrategy(
@@ -73,7 +71,7 @@ describe('AfterpayPaymentStrategy', () => {
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            remoteCheckoutActionCreator,
+            storeCreditActionCreator,
             scriptLoader
         );
 
@@ -86,17 +84,12 @@ describe('AfterpayPaymentStrategy', () => {
             },
         });
 
-        initializePaymentAction = of(createAction(RemoteCheckoutActionType.InitializeRemotePaymentRequested));
         loadPaymentMethodAction = of(createAction(
             PaymentMethodActionType.LoadPaymentMethodSucceeded,
             { ...paymentMethod, id: 'afterpay' },
             { methodId: paymentMethod.gateway }
         ));
-        loadRemoteSettingsAction = of(createAction(
-            RemoteCheckoutActionType.LoadRemoteSettingsSucceeded,
-            { useStoreCredit: false },
-            { methodId: paymentMethod.gateway }
-        ));
+
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
@@ -118,11 +111,8 @@ describe('AfterpayPaymentStrategy', () => {
         jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
             .mockReturnValue(loadPaymentMethodAction);
 
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-            .mockReturnValue(initializePaymentAction);
-
-        jest.spyOn(remoteCheckoutActionCreator, 'loadSettings')
-            .mockReturnValue(loadRemoteSettingsAction);
+        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
+            .mockReturnValue(of(createAction(StoreCreditActionType.ApplyStoreCreditSucceeded)));
 
         jest.spyOn(paymentActionCreator, 'submitPayment')
             .mockReturnValue(submitPaymentAction);
@@ -158,9 +148,8 @@ describe('AfterpayPaymentStrategy', () => {
             expect(afterpaySdk.redirect).toHaveBeenCalledWith({ token: paymentMethod.clientToken });
         });
 
-        it('notifies store credit usage to remote checkout service', () => {
-            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith( paymentMethod.gateway, { useStoreCredit: false });
-            expect(store.dispatch).toHaveBeenCalledWith(initializePaymentAction);
+        it('applies store credit usage', () => {
+            expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
         });
 
         it('validates the checkout', () => {
@@ -172,8 +161,8 @@ describe('AfterpayPaymentStrategy', () => {
         });
 
         it('rejects with error if execution is unsuccessful', async () => {
-            jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-                .mockReturnValue(of(createErrorAction(RemoteCheckoutActionType.InitializeRemotePaymentFailed, new Error())));
+            jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
+                .mockReturnValue(of(createErrorAction(StoreCreditActionType.ApplyStoreCreditFailed, new Error())));
 
             const errorHandler = jest.fn();
 
@@ -229,7 +218,7 @@ describe('AfterpayPaymentStrategy', () => {
                 orderActionCreator,
                 paymentActionCreator,
                 paymentMethodActionCreator,
-                remoteCheckoutActionCreator,
+                storeCreditActionCreator,
                 scriptLoader
             );
 
@@ -242,7 +231,7 @@ describe('AfterpayPaymentStrategy', () => {
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(
-                { useStoreCredit: false },
+                {},
                 { methodId: paymentMethod.id, gatewayId: paymentMethod.gateway }
             );
 

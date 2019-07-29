@@ -17,7 +17,7 @@ import { createSpamProtection, SpamProtectionActionCreator } from '../../../orde
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { getPaymentMethodsState, getZip } from '../../../payment/payment-methods.mock';
 import { getZipScriptMock } from '../../../payment/strategies/zip/zip.mock';
-import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
+import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
 import { PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -33,11 +33,12 @@ import ZipScriptLoader from './zip-script-loader';
 
 describe('ZipPaymentStrategy', () => {
 
+    let applyStoreCreditAction: Observable<Action>;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let paymentMethodMock: PaymentMethod;
-    let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
+    let storeCreditActionCreator: StoreCreditActionCreator;
     let requestSender: RequestSender;
     let store: CheckoutStore;
     let scriptLoader: ScriptLoader;
@@ -77,15 +78,16 @@ describe('ZipPaymentStrategy', () => {
             orderActionCreator,
             new PaymentRequestTransformer()
         );
-        remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(
-            new RemoteCheckoutRequestSender(createRequestSender())
+        storeCreditActionCreator = new StoreCreditActionCreator(
+            new StoreCreditRequestSender(createRequestSender())
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
+        applyStoreCreditAction = of(createAction(StoreCreditActionType.ApplyStoreCreditRequested));
         submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
         submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
 
-        jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
-            .mockReturnValue(submitOrderAction);
+        jest.spyOn(storeCreditActionCreator, 'applyStoreCredit')
+            .mockReturnValue(applyStoreCreditAction);
         jest.spyOn(requestSender, 'sendRequest')
             .mockReturnValue(Promise.resolve());
         jest.spyOn(orderActionCreator, 'submitOrder')
@@ -107,7 +109,7 @@ describe('ZipPaymentStrategy', () => {
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            remoteCheckoutActionCreator,
+            storeCreditActionCreator,
             zipScriptLoader,
             requestSender
         );
@@ -157,7 +159,7 @@ describe('ZipPaymentStrategy', () => {
             };
             await strategy.execute(orderRequestBody, zipOptions);
 
-            expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: false });
+            expect(storeCreditActionCreator.applyStoreCredit).toHaveBeenCalledWith(false);
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, zipOptions);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
@@ -174,7 +176,7 @@ describe('ZipPaymentStrategy', () => {
                 await strategy.execute(orderRequestBody, zipOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(NotInitializedError);
-                expect(remoteCheckoutActionCreator.initializePayment).not.toHaveBeenCalled();
+                expect(storeCreditActionCreator.applyStoreCredit).not.toHaveBeenCalled();
                 expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
                 expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
                 expect(store.dispatch).not.toHaveBeenCalledWith(submitOrderAction);

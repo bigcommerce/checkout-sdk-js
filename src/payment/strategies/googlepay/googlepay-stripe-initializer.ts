@@ -81,7 +81,7 @@ export default class GooglePayStripeInitializer implements GooglePayInitializer 
             transactionInfo: {
                 currencyCode: checkout.cart.currency.code,
                 totalPriceStatus: 'FINAL',
-                totalPrice: round(checkout.grandTotal, 2).toFixed(2),
+                totalPrice: round(checkout.outstandingBalance, 2).toFixed(2),
             },
             emailRequired: true,
             shippingAddressRequired: !hasShippingAddress,

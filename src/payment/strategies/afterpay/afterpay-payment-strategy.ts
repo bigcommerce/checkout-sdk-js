@@ -1,7 +1,7 @@
 import { CheckoutStore, CheckoutValidator, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -21,11 +21,11 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
+        private _storeCreditActionCreator: StoreCreditActionCreator,
         private _afterpayScriptLoader: AfterpayScriptLoader
     ) {}
 
-    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         const state = this._store.getState();
         const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId, options.gatewayId);
         const config = state.config.getStoreConfig();
@@ -35,11 +35,9 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        return this._afterpayScriptLoader.load(paymentMethod, this._mapCountryToISO2(storeCountryName))
-            .then(afterpaySdk => {
-                this._afterpaySdk = afterpaySdk;
-            })
-            .then(() => this._store.getState());
+        this._afterpaySdk = await this._afterpayScriptLoader.load(paymentMethod, this._mapCountryToISO2(storeCountryName));
+
+        return this._store.getState();
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
@@ -50,61 +48,57 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const paymentId = payload.payment && payload.payment.gatewayId;
 
         if (!paymentId) {
             throw new PaymentArgumentInvalidError(['payment.gatewayId']);
         }
 
-        const useStoreCredit = !!payload.useStoreCredit;
-        const state = this._store.getState();
+        let state = this._store.getState();
         const config = state.config.getStoreConfig();
         const storeCountryName = config ? config.storeProfile.storeCountry : '';
+        const { useStoreCredit } = payload;
 
-        return this._store.dispatch(
-            this._remoteCheckoutActionCreator.initializePayment(paymentId, { useStoreCredit })
-        )
-            .then(state => this._checkoutValidator.validate(state.checkout.getCheckout(), options))
-            .then(() => this._store.dispatch(
-                this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
-            ))
-            .then(state => this._redirectToAfterpay(storeCountryName, state.paymentMethods.getPaymentMethod(paymentId)))
-            // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
-            .then(() => new Promise<never>(() => {}));
+        if (useStoreCredit !== undefined) {
+            state = await this._store.dispatch(
+                this._storeCreditActionCreator.applyStoreCredit(useStoreCredit)
+            );
+        }
+
+        await this._checkoutValidator.validate(state.checkout.getCheckout(), options);
+
+        state = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(paymentId, options)
+        );
+
+        await this._redirectToAfterpay(storeCountryName, state.paymentMethods.getPaymentMethod(paymentId));
+
+        // Afterpay will handle the rest of the flow so return a promise that doesn't really resolve
+        return new Promise<never>(() => {});
     }
 
-    finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        return this._store.dispatch(this._remoteCheckoutActionCreator.loadSettings(options.methodId))
-            .then(state => {
-                const payment = state.payment.getPaymentId();
-                const config = state.config.getContextConfig();
-                const afterpay = state.remoteCheckout.getCheckout('afterpay');
+    async finalize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        const state = this._store.getState();
+        const payment = state.payment.getPaymentId();
+        const config = state.config.getContextConfig();
 
-                if (!payment) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-                }
+        if (!payment) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
+        }
 
-                if (!config || !config.payment.token) {
-                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-                }
+        if (!config || !config.payment.token) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
 
-                if (!afterpay || !afterpay.settings) {
-                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-                }
+        const paymentPayload = {
+            methodId: payment.providerId,
+            paymentData: { nonce: config.payment.token },
+        };
 
-                const orderPayload = {
-                    useStoreCredit: afterpay.settings.useStoreCredit,
-                };
+        await this._store.dispatch(this._orderActionCreator.submitOrder({}, options));
 
-                const paymentPayload = {
-                    methodId: payment.providerId,
-                    paymentData: { nonce: config.payment.token },
-                };
-
-                return this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
-                    .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload)));
-            });
+        return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
     }
 
     private _redirectToAfterpay(countryName: string, paymentMethod?: PaymentMethod): void {

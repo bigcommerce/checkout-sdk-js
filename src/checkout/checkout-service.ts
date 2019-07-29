@@ -17,6 +17,7 @@ import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOpt
 import { InstrumentActionCreator } from '../payment/instrument';
 import { ConsignmentsRequestBody, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
 import { ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody } from '../shipping/consignment';
+import StoreCreditActionCreator from '../store-credit/store-credit-action-creator';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
@@ -59,7 +60,8 @@ export default class CheckoutService {
         private _paymentStrategyActionCreator: PaymentStrategyActionCreator,
         private _shippingCountryActionCreator: ShippingCountryActionCreator,
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator,
-        private _spamProtectionActionCreator: SpamProtectionActionCreator
+        private _spamProtectionActionCreator: SpamProtectionActionCreator,
+        private _storeCreditActionCreator: StoreCreditActionCreator
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
         this._selectorsFactory = createCheckoutSelectorsFactory();
@@ -905,6 +907,26 @@ export default class CheckoutService {
      */
     updateBillingAddress(address: Partial<BillingAddressRequestBody>, options: RequestOptions = {}): Promise<CheckoutSelectors> {
         const action = this._billingAddressActionCreator.updateAddress(address, options);
+
+        return this._dispatch(action);
+    }
+
+    /**
+     * Applies or removes customer's store credit code to the current checkout.
+     *
+     * Once the store credit gets applied, the outstanding balance will be adjusted accordingly.
+     *
+     * ```js
+     * const state = await service.applyStoreCredit(true);
+     *
+     * console.log(state.data.getCheckout().outstandingBalance);
+     * ```
+     *
+     * @param options - Options for applying store credit.
+     * @returns A promise that resolves to the current state.
+     */
+    applyStoreCredit(useStoreCredit: boolean, options?: RequestOptions): Promise<CheckoutSelectors> {
+        const action = this._storeCreditActionCreator.applyStoreCredit(useStoreCredit, options);
 
         return this._dispatch(action);
     }

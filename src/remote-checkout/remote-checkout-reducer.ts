@@ -24,7 +24,7 @@ export default function remoteCheckoutReducer(
 }
 
 function dataReducer(
-    data: RemoteCheckout = DEFAULT_STATE.data,
+    data: RemoteCheckout,
     action: RemoteCheckoutAction
 ): RemoteCheckout {
     switch (action.type) {

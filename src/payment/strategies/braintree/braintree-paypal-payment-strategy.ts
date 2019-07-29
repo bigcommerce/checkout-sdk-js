@@ -87,7 +87,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
     private _preparePaymentData(payment: OrderPaymentRequestBody, useStoreCredit?: boolean): Promise<Payment> {
         const state = this._store.getState();
-        const grandTotal = state.checkout.getGrandTotal(useStoreCredit);
+        const grandTotal = state.checkout.getOutstandingBalance(useStoreCredit);
         const config = state.config.getStoreConfig();
 
         if (!grandTotal) {

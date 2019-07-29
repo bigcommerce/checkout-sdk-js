@@ -9,6 +9,7 @@ import { OrderActionCreator, OrderRequestSender } from '../order';
 import { SpamProtectionActionCreator } from '../order/spam-protection';
 import GoogleRecaptcha from '../order/spam-protection/google-recaptcha';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
+import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
 import PaymentActionCreator from './payment-action-creator';
 import PaymentMethodActionCreator from './payment-method-action-creator';
@@ -75,6 +76,7 @@ export default function createPaymentStrategyRegistry(
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
     const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection);
     const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator, spamProtectionActionCreator);
+    const storeCreditActionCreator = new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender));
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(requestSender));
@@ -100,7 +102,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            remoteCheckoutActionCreator,
+            storeCreditActionCreator,
             new AfterpayScriptLoader(scriptLoader)
         )
     );
@@ -344,7 +346,7 @@ export default function createPaymentStrategyRegistry(
             orderActionCreator,
             paymentActionCreator,
             paymentMethodActionCreator,
-            remoteCheckoutActionCreator,
+            storeCreditActionCreator,
             new ZipScriptLoader(scriptLoader),
             requestSender
         )

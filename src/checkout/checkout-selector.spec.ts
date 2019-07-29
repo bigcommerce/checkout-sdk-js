@@ -67,7 +67,7 @@ describe('CheckoutSelector', () => {
         expect(selector.isUpdating()).toEqual(true);
     });
 
-    it('returns grand total with store credit if flag is passed', () => {
+    it('returns outstanding balance total with store credit if flag is passed', () => {
         state = merge(getCheckoutStoreState(), {
             customer: { data: { storeCredit: 50 } },
         });
@@ -83,10 +83,10 @@ describe('CheckoutSelector', () => {
             selectors.giftCertificates
         );
 
-        expect(selector.getGrandTotal(true))
+        expect(selector.getOutstandingBalance(true))
             .toEqual(140);
 
-        expect(selector.getGrandTotal())
+        expect(selector.getOutstandingBalance())
             .toEqual(190);
     });
 });

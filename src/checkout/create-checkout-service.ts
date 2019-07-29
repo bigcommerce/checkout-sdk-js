@@ -14,6 +14,7 @@ import { createSpamProtection, SpamProtectionActionCreator } from '../order/spam
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
+import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
@@ -89,7 +90,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         ),
         new ShippingCountryActionCreator(new ShippingCountryRequestSender(requestSender, { locale })),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),
-        spamProtectionActionCreator
+        spamProtectionActionCreator,
+        new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender))
     );
 }
 
