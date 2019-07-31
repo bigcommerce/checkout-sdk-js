@@ -5,7 +5,7 @@ export { default as createFreezeProxy, createFreezeProxies } from './create-free
 export { default as CacheKeyResolver } from './cache-key-resolver';
 export { default as CancellablePromise } from './cancellable-promise';
 export { default as getEnvironment } from './get-environment';
-export { default as memoize } from './memoize';
+export { default as memoize, memoizeOne, MemoizeOptions } from './memoize';
 export { default as isEqual } from './is-equal';
 export { default as isPrivate } from './is-private';
 export { default as mergeOrPush } from './merge-or-push';
