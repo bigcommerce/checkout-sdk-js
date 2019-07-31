@@ -91,46 +91,49 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                     return this._store.dispatch(this._paymentActionCreator.submitPayment({...payment, paymentData}));
                 }
 
-                return this._generatePaymentIntent(
-                    payment.methodId,
-                    shouldSaveInstrument,
-                    this._store,
-                    payment.gatewayId
-                ).then(paymentIntent => {
-                    if (!this._cardElement) {
-                        throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
-                    }
+                return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId))
+                    .then(state => {
+                        const paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
+                        const paymentIntent = paymentMethod && paymentMethod.clientToken;
 
-                    return this._getStripeJs().createPaymentMethod('card', this._cardElement,
-                        this._mapStripePaymentMethodOptions()
-                    ).then(stripePaymentMethod => {
-                        if (stripePaymentMethod.error || !stripePaymentMethod.paymentMethod.id) {
-                            throw new StandardError(stripePaymentMethod.error && stripePaymentMethod.error.message);
+                        if (!this._cardElement) {
+                            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
                         }
 
-                        const stripeCardPaymentOptions = {
-                            ...this._mapStripeCardPaymentOptions(shouldSaveInstrument),
-                            payment_method: stripePaymentMethod.paymentMethod.id,
-                        };
+                        return this._getStripeJs().createPaymentMethod('card', this._cardElement,
+                            this._mapStripePaymentMethodOptions()
+                        ).then(stripePaymentMethod => {
+                            if (stripePaymentMethod.error || !stripePaymentMethod.paymentMethod.id) {
+                                throw new StandardError(stripePaymentMethod.error && stripePaymentMethod.error.message);
+                            }
 
-                        return this._getStripeJs().handleCardPayment(paymentIntent, stripeCardPaymentOptions);
-                    })
-                    .then(stripeResponse => {
-                        if (stripeResponse.error || !stripeResponse.paymentIntent.id) {
-                            throw new StandardError(stripeResponse.error && stripeResponse.error.message);
-                        }
+                            if (!paymentIntent) {
+                                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                            }
 
-                        const paymentPayload = {
-                            methodId: payment.methodId,
-                            paymentData: {
-                                nonce: stripeResponse.paymentIntent.id,
-                                shouldSaveInstrument,
-                            },
-                        };
+                            const stripeCardPaymentOptions = {
+                                ...this._mapStripeCardPaymentOptions(shouldSaveInstrument),
+                                payment_method: stripePaymentMethod.paymentMethod.id,
+                            };
 
-                        return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+                            return this._getStripeJs().handleCardPayment(paymentIntent, stripeCardPaymentOptions);
+                        })
+                            .then(stripeResponse => {
+                                if (stripeResponse.error || !stripeResponse.paymentIntent.id) {
+                                    throw new StandardError(stripeResponse.error && stripeResponse.error.message);
+                                }
+
+                                const paymentPayload = {
+                                    methodId: payment.methodId,
+                                    paymentData: {
+                                        nonce: stripeResponse.paymentIntent.id,
+                                        shouldSaveInstrument,
+                                    },
+                                };
+
+                                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+                            });
                     });
-                });
             });
     }
 
@@ -144,27 +147,6 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         }
 
         return Promise.resolve(this._store.getState());
-    }
-
-    private _generatePaymentIntent(
-        methodId: string,
-        shouldSavePaymentInstrument: boolean,
-        store: CheckoutStore,
-        gatewayId?: string
-    ): Promise<string> {
-        const paymentRequestBody = this._paymentRequestTransformer.transform(
-            { gatewayId, methodId },
-            store.getState()
-        );
-        const payload = {
-            ...paymentRequestBody,
-            shouldSavePaymentInstrument,
-        };
-
-        return this._paymentRequestSender.generatePaymentIntent(payload)
-            .then(response => {
-                return response.body.client_token;
-            });
     }
 
     private _getStripeJs(): StripeV3Client {
