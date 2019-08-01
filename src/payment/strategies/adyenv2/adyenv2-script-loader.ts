@@ -2,7 +2,11 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { AdyenClient, AdyenConfiguration, AdyenHostWindow } from './adyenv2';
+import {
+    AdyenClient,
+    AdyenConfiguration,
+    AdyenHostWindow
+} from './adyenv2';
 
 export default class AdyenV2ScriptLoader {
     constructor(
