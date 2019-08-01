@@ -1,10 +1,12 @@
-import { InternalRequestError } from '../../../common/error/errors';
-
 export interface AdyenHostWindow extends Window {
-    AdyenCheckout?: new(options: AdyenJsOptions) => AdyenCheckout;
+    AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenClient;
 }
 
-export interface AdyenJsOptions {
+export interface AdyenClient {
+    adyenCheckout(): AdyenCheckout;
+}
+
+export interface AdyenConfiguration {
     /*
      * Use test, and then change this to live when you're ready to accept live payments.
      */

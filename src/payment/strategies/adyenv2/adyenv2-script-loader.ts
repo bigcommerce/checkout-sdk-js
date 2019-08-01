@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { AdyenCheckout, AdyenHostWindow, AdyenJsOptions } from './adyenv2';
+import { AdyenClient, AdyenConfiguration, AdyenHostWindow } from './adyenv2';
 
 export default class AdyenV2ScriptLoader {
     constructor(
@@ -10,7 +10,7 @@ export default class AdyenV2ScriptLoader {
         private _window: AdyenHostWindow = window
     ) {}
 
-    load(configuration: AdyenJsOptions): Promise<AdyenCheckout> {
+    load(configuration: AdyenConfiguration): Promise<AdyenClient> {
         return this._scriptLoader
             .loadScript(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.0.0/adyen.js`)
             .then(() => {
