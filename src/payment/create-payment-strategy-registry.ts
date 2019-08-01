@@ -87,11 +87,9 @@ export default function createPaymentStrategyRegistry(
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
             store,
-            paymentMethodActionCreator,
             paymentActionCreator,
             orderActionCreator,
-            new AdyenV2ScriptLoader(scriptLoader),
-            paymentRequestSender
+            new AdyenV2ScriptLoader(scriptLoader)
         )
     );
 

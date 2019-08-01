@@ -404,6 +404,25 @@ export function getStripeV3(): PaymentMethod {
     };
 }
 
+export function getAdyenV2(): PaymentMethod {
+    return {
+        id: 'adyenv2',
+        logoUrl: '',
+        method: 'adyenv2',
+        supportedCards: [],
+        config: {
+            displayName: 'Adyen',
+            merchantId: '',
+            testMode: true,
+        },
+        initializationData: {
+            originKey: 'YOUR_ORIGIN_KEY',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+    };
+}
+
 export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
