@@ -25,7 +25,11 @@ import PaymentRequestTransformer from '../../payment-request-transformer';
 
 import AdyenV2PaymentStrategy from './adyenv2-payment-strategy';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
-import { getAdyenClient, getAdyenInitializeOptions, getAdyenOrderRequestBody } from './adyenv2.mock';
+import {
+    getAdyenClient,
+    getAdyenInitializeOptions,
+    getAdyenOrderRequestBody
+} from './adyenv2.mock';
 
 describe('AdyenV2PaymentStrategy', () => {
     let store: CheckoutStore;
