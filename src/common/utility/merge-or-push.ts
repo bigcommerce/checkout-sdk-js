@@ -1,6 +1,9 @@
-import { assign, findIndex, isPlainObject, pickBy } from 'lodash';
+import { findIndex, pick, pickBy } from 'lodash';
 
 import { PartialDeep } from '../types';
+
+import isPlainObject from './is-plain-object';
+import objectMerge from './object-merge';
 
 /**
  * Push an item to an array if it doesn't exist in the array. Otherwise, merge
@@ -8,16 +11,25 @@ import { PartialDeep } from '../types';
  */
 export default function mergeOrPush<T>(
     array: T[],
-    item: T,
-    predicate: ((item: T) => boolean) | PartialDeep<T>
+    item?: T,
+    predicate?: ((item: T) => boolean) | PartialDeep<T>
 ): T[] {
-    const index = findIndex(array, typeof predicate === 'object' ? pickBy(predicate) : predicate);
+    if (!item) {
+        return array;
+    }
+
+    const defaultPredicate = pick(item, 'id');
+    const index = findIndex(array, typeof predicate === 'object' ? pickBy(predicate) : (predicate || defaultPredicate));
     const newArray = [...array];
 
     if (index === -1) {
         newArray.push(item);
     } else {
-        newArray[index] = isPlainObject(item) ? assign({}, array[index], item) : item;
+        const existingItem = array[index];
+
+        newArray[index] = isPlainObject(existingItem) && isPlainObject(item) ?
+            objectMerge(existingItem, item) :
+            item;
     }
 
     return newArray;
