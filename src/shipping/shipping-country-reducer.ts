@@ -1,6 +1,7 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
+import { arrayReplace, objectSet } from '../common/utility';
 import { Country } from '../geography';
 
 import { LoadShippingCountriesAction, ShippingCountryActionType } from './shipping-country-actions';
@@ -25,7 +26,7 @@ function dataReducer(
 ): Country[] | undefined {
     switch (action.type) {
     case ShippingCountryActionType.LoadShippingCountriesSucceeded:
-        return action.payload || [];
+        return arrayReplace(data, action.payload);
 
     default:
         return data;
@@ -39,10 +40,10 @@ function errorsReducer(
     switch (action.type) {
     case ShippingCountryActionType.LoadShippingCountriesRequested:
     case ShippingCountryActionType.LoadShippingCountriesSucceeded:
-        return { ...errors, loadError: undefined };
+        return objectSet(errors, 'loadError', undefined);
 
     case ShippingCountryActionType.LoadShippingCountriesFailed:
-        return { ...errors, loadError: action.payload };
+        return objectSet(errors, 'loadError', action.payload);
 
     default:
         return errors;
@@ -55,11 +56,11 @@ function statusesReducer(
 ): ShippingCountryStatusesState {
     switch (action.type) {
     case ShippingCountryActionType.LoadShippingCountriesRequested:
-        return { ...statuses, isLoading: true };
+        return objectSet(statuses, 'isLoading', true);
 
     case ShippingCountryActionType.LoadShippingCountriesSucceeded:
     case ShippingCountryActionType.LoadShippingCountriesFailed:
-        return { ...statuses, isLoading: false };
+        return objectSet(statuses, 'isLoading', false);
 
     default:
         return statuses;
