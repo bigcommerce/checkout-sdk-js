@@ -1,13 +1,15 @@
 import { RequestError } from '../common/error/errors';
 
-import CouponSelector from './coupon-selector';
+import CouponSelector, { createCouponSelectorFactory, CouponSelectorFactory } from './coupon-selector';
 import CouponState from './coupon-state';
 
 describe('CouponSelector', () => {
     let couponSelector: CouponSelector;
+    let createCouponSelector: CouponSelectorFactory;
     let state: CouponState;
 
     beforeEach(() => {
+        createCouponSelector = createCouponSelectorFactory();
         state = {
             errors: {},
             statuses: {},
@@ -18,7 +20,7 @@ describe('CouponSelector', () => {
         it('returns error if unable to apply', () => {
             const applyCouponError = new RequestError();
 
-            couponSelector = new CouponSelector({
+            couponSelector = createCouponSelector({
                 ...state,
                 errors: { applyCouponError },
             });
@@ -27,7 +29,7 @@ describe('CouponSelector', () => {
         });
 
         it('does not returns error if able to apply', () => {
-            couponSelector = new CouponSelector(state);
+            couponSelector = createCouponSelector(state);
 
             expect(couponSelector.getApplyError()).toBeUndefined();
         });
@@ -35,7 +37,7 @@ describe('CouponSelector', () => {
 
     describe('#isApplying()', () => {
         it('returns true if applying a coupon', () => {
-            couponSelector = new CouponSelector({
+            couponSelector = createCouponSelector({
                 ...state,
                 statuses: { isApplyingCoupon: true },
             });
@@ -44,7 +46,7 @@ describe('CouponSelector', () => {
         });
 
         it('returns false if not applying a coupon', () => {
-            couponSelector = new CouponSelector(state);
+            couponSelector = createCouponSelector(state);
 
             expect(couponSelector.isApplying()).toEqual(false);
         });
@@ -54,7 +56,7 @@ describe('CouponSelector', () => {
         it('returns error if unable to remove', () => {
             const removeCouponError = new RequestError();
 
-            couponSelector = new CouponSelector({
+            couponSelector = createCouponSelector({
                 ...state,
                 errors: { removeCouponError },
             });
@@ -63,7 +65,7 @@ describe('CouponSelector', () => {
         });
 
         it('does not returns error if able to remove', () => {
-            couponSelector = new CouponSelector(state);
+            couponSelector = createCouponSelector(state);
 
             expect(couponSelector.getRemoveError()).toBeUndefined();
         });
@@ -71,7 +73,7 @@ describe('CouponSelector', () => {
 
     describe('#isRemoving()', () => {
         it('returns true if removing a coupon', () => {
-            couponSelector = new CouponSelector({
+            couponSelector = createCouponSelector({
                 ...state,
                 statuses: { isRemovingCoupon: true },
             });
@@ -80,7 +82,7 @@ describe('CouponSelector', () => {
         });
 
         it('returns false if not removing a coupon', () => {
-            couponSelector = new CouponSelector(state);
+            couponSelector = createCouponSelector(state);
 
             expect(couponSelector.isRemoving()).toEqual(false);
         });

@@ -6,7 +6,7 @@ export { default as CouponState } from './coupon-state';
 export { default as InternalCoupon } from './internal-coupon';
 export { default as CouponActionCreator } from './coupon-action-creator';
 export { default as CouponRequestSender } from './coupon-request-sender';
-export { default as CouponSelector } from './coupon-selector';
+export { default as CouponSelector, CouponSelectorFactory, createCouponSelectorFactory } from './coupon-selector';
 export { default as couponReducer } from './coupon-reducer';
 
 export { default as GiftCertificate } from './gift-certificate';
