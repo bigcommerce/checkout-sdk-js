@@ -2,6 +2,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 import { omit } from 'lodash';
 
 import { clearErrorReducer } from '../common/error';
+import { objectMerge, objectSet } from '../common/utility';
 
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { DEFAULT_STATE, OrderDataState, OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
@@ -28,9 +29,7 @@ function dataReducer(
     switch (action.type) {
     case OrderActionType.LoadOrderSucceeded:
     case OrderActionType.LoadOrderPaymentsSucceeded:
-        return action.payload
-            ? omit({ ...data, ...action.payload }, ['billingAddress', 'coupons'])
-            : data;
+        return objectMerge(data, omit(action.payload, ['billingAddress', 'coupons'])) as OrderDataState;
 
     default:
         return data;
@@ -44,18 +43,16 @@ function metaReducer(
     switch (action.type) {
     case OrderActionType.FinalizeOrderSucceeded:
     case OrderActionType.SubmitOrderSucceeded:
-        return action.payload ? {
-            ...meta,
+        return objectMerge(meta, {
             ...action.meta,
-            callbackUrl: action.payload.order.callbackUrl,
-            orderToken: action.payload.order.token,
-            payment: action.payload.order && action.payload.order.payment,
-        } : meta;
+            callbackUrl: action.payload && action.payload.order.callbackUrl,
+            orderToken: action.payload && action.payload.order.token,
+            payment: action.payload && action.payload.order && action.payload.order.payment,
+        });
+
     case SpamProtectionActionType.Completed:
-        return action.payload ? {
-            ...meta,
-            spamProtectionToken: action.payload,
-        } : meta;
+        return objectSet(meta, 'spamProtectionToken', action.payload);
+
     default:
         return meta;
     }
@@ -70,11 +67,11 @@ function errorsReducer(
     case OrderActionType.LoadOrderSucceeded:
     case OrderActionType.LoadOrderPaymentsSucceeded:
     case OrderActionType.LoadOrderPaymentsRequested:
-        return { ...errors, loadError: undefined };
+        return objectSet(errors, 'loadError', undefined);
 
     case OrderActionType.LoadOrderFailed:
     case OrderActionType.LoadOrderPaymentsFailed:
-        return { ...errors, loadError: action.payload };
+        return objectSet(errors, 'loadError', action.payload);
 
     default:
         return errors;
@@ -88,13 +85,13 @@ function statusesReducer(
     switch (action.type) {
     case OrderActionType.LoadOrderRequested:
     case OrderActionType.LoadOrderPaymentsRequested:
-        return { ...statuses, isLoading: true };
+        return objectSet(statuses, 'isLoading', true);
 
     case OrderActionType.LoadOrderSucceeded:
     case OrderActionType.LoadOrderFailed:
     case OrderActionType.LoadOrderPaymentsSucceeded:
     case OrderActionType.LoadOrderPaymentsFailed:
-        return { ...statuses, isLoading: false };
+        return objectSet(statuses, 'isLoading', false);
 
     default:
         return statuses;
