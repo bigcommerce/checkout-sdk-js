@@ -23,12 +23,15 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { getAdyenV2, getPaymentMethodsState } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 
+import { AdyenCardState, AdyenComponent } from './adyenv2';
 import AdyenV2PaymentStrategy from './adyenv2-payment-strategy';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 import {
     getAdyenClient,
     getAdyenInitializeOptions,
-    getAdyenOrderRequestBody
+    getAdyenOrderRequestBody,
+    getInvalidCardState,
+    getValidCardState
 } from './adyenv2.mock';
 
 describe('AdyenV2PaymentStrategy', () => {
@@ -86,7 +89,7 @@ describe('AdyenV2PaymentStrategy', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getAdyenV2());
         });
 
-        it('loads stripe v3 script', async () => {
+        it('loads adyen V2 script', async () => {
             jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
 
             const promise =  strategy.initialize(options);
@@ -96,14 +99,25 @@ describe('AdyenV2PaymentStrategy', () => {
             return expect(promise).resolves.toBe(store.getState());
         });
 
-        it('does not load stripe V3 if initialization options are not provided', () => {
+        it('loads adyen V2 script with no storeConfig', async () => {
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+            jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
+
+            const promise =  strategy.initialize(options);
+
+            expect(adyenV2ScriptLoader.load).toHaveBeenCalled();
+
+            return expect(promise).resolves.toBe(store.getState());
+        });
+
+        it('does not load adyen V2 if initialization options are not provided', () => {
             options.adyenv2 = undefined;
 
             expect(() => strategy.initialize(options))
                 .toThrow(InvalidArgumentError);
         });
 
-        it('does not load stripe V3 if paymentMethod is not provided', () => {
+        it('does not load adyen V2 if paymentMethod is not provided', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(undefined);
 
             expect(() => strategy.initialize(options))
@@ -111,9 +125,67 @@ describe('AdyenV2PaymentStrategy', () => {
         });
     });
 
+    describe('#callbacks', () => {
+        const adyenClient = getAdyenClient();
+        let options: PaymentInitializeOptions;
+        let adyenComponent: AdyenComponent;
+        let handleOnChange: (state: AdyenCardState, component: AdyenComponent) => {};
+
+        beforeEach(() => {
+            options = getAdyenInitializeOptions();
+
+            adyenClient.adyenCheckout = jest.fn(() => {
+                return {
+                    create: jest.fn((type, options) => {
+                        const { onChange } = options;
+                        handleOnChange = onChange;
+
+                        return adyenComponent;
+                    }),
+                };
+            });
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getAdyenV2());
+        });
+
+        it('fires onChange with valid state', async () => {
+            adyenComponent = {
+                mount: jest.fn((containerId: string) => {
+                    handleOnChange(getValidCardState(), adyenComponent);
+
+                    return;
+                }),
+                unmount: jest.fn(),
+            };
+
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+
+            const promise =  strategy.initialize(options);
+
+            return expect(promise).resolves.toBe(store.getState());
+        });
+
+        it('fires onChange with invalid state', async () => {
+            adyenComponent = {
+                mount: jest.fn((containerId: string) => {
+                    handleOnChange(getInvalidCardState(), adyenComponent);
+
+                    return;
+                }),
+                unmount: jest.fn(),
+            };
+
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+
+            const promise =  strategy.initialize(options);
+
+            return expect(promise).resolves.toBe(store.getState());
+        });
+    });
+
     describe('#execute', () => {
         let options: PaymentInitializeOptions;
-        const adyenV2JsMock = getAdyenClient();
+        const adyenClient = getAdyenClient();
 
         beforeEach(() => {
             options = getAdyenInitializeOptions();
@@ -128,7 +200,7 @@ describe('AdyenV2PaymentStrategy', () => {
         });
 
         it('creates the order and submit payment', async () => {
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenV2JsMock));
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
 
             await strategy.initialize(options);
             const response = await strategy.execute(getAdyenOrderRequestBody());
@@ -158,7 +230,7 @@ describe('AdyenV2PaymentStrategy', () => {
     });
 
     describe('#deinitialize', () => {
-        it('deinitializes stripe payment strategy', async () => {
+        it('deinitializes adyen payment strategy', async () => {
             const adyenClient = getAdyenClient();
             const adyenCheckout = adyenClient.adyenCheckout();
             const adyenComponent = adyenCheckout.create('scheme', {});
@@ -176,7 +248,7 @@ describe('AdyenV2PaymentStrategy', () => {
             return expect(promise).resolves.toBe(store.getState());
         });
 
-        it('does not unmount when stripe card element is not available', async () => {
+        it('does not unmount when adyen component is not available', async () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getAdyenV2());
 
             const promise = strategy.deinitialize();

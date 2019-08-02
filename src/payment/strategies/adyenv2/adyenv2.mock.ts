@@ -1,7 +1,7 @@
 import { OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
-import { AdyenClient, AdyenConfiguration } from './adyenv2';
+import { AdyenCardState, AdyenClient, AdyenConfiguration } from './adyenv2';
 
 export function getAdyenClient(): AdyenClient {
     return {
@@ -44,5 +44,35 @@ export function getAdyenOrderRequestBody(): OrderRequestBody {
         payment: {
             methodId: 'adyenv2',
         },
+    };
+}
+
+export function getValidCardState(): AdyenCardState {
+    return {
+        data: {
+            paymentMethod: {
+                encryptedCardNumber: 'CARD_NUMBER',
+                encryptedExpiryMonth: 'EXPIRY_MONTH',
+                encryptedExpiryYear: 'EXPIRY_YEAR',
+                encryptedSecurityCode: 'CVV',
+                type: 'scheme',
+            },
+        },
+        isValid: true,
+    };
+}
+
+export function getInvalidCardState(): AdyenCardState {
+    return {
+        data: {
+            paymentMethod: {
+                encryptedCardNumber: 'CARD_NUMBER',
+                encryptedExpiryMonth: 'EXPIRY_MONTH',
+                encryptedExpiryYear: 'EXPIRY_YEAR',
+                encryptedSecurityCode: 'CVV',
+                type: 'scheme',
+            },
+        },
+        isValid: false,
     };
 }

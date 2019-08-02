@@ -18,14 +18,14 @@ describe('AdyenV2PayScriptLoader', () => {
     });
 
     describe('#load()', () => {
-        const adyenV2JsMock = getAdyenClient();
+        const adyenClient = getAdyenClient();
 
         const configuration = getAdyenConfiguration();
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.AdyenCheckout = jest.fn(
-                    (configuration: AdyenConfiguration) => adyenV2JsMock
+                    (configuration: AdyenConfiguration) => adyenClient
                 );
 
                 return Promise.resolve();
@@ -41,7 +41,7 @@ describe('AdyenV2PayScriptLoader', () => {
         it('returns the JS from the window', async () => {
             const adyenJs = await adyenV2ScriptLoader.load(configuration);
 
-            expect(adyenJs).toBe(adyenV2JsMock);
+            expect(adyenJs).toBe(adyenClient);
         });
 
         it('throws an error when window is not set', async () => {
