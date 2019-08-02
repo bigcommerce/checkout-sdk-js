@@ -4,13 +4,7 @@ import { clearErrorReducer } from '../common/error';
 
 import Config from './config';
 import { ConfigActionType, LoadConfigAction } from './config-actions';
-import ConfigState, { ConfigErrorsState, ConfigStatusesState } from './config-state';
-
-const DEFAULT_STATE: ConfigState = {
-    meta: {},
-    errors: {},
-    statuses: {},
-};
+import ConfigState, { ConfigErrorsState, ConfigStatusesState, DEFAULT_STATE } from './config-state';
 
 export default function configReducer(
     state: ConfigState = DEFAULT_STATE,
