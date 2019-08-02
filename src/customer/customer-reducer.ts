@@ -1,6 +1,7 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
+import { objectMerge } from '../common/utility';
 
 import Customer from './customer';
 import CustomerState, { DEFAULT_STATE } from './customer-state';
@@ -22,7 +23,7 @@ function dataReducer(
 ): Customer | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return action.payload ? { ...data, ...action.payload.customer } : data;
+        return objectMerge(data, action.payload && action.payload.customer);
 
     default:
         return data;
