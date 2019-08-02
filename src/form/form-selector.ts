@@ -1,48 +1,58 @@
 import { find } from 'lodash';
 
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 import { ConfigState } from '../config';
+import { DEFAULT_STATE } from '../config/config-state';
 import { Country } from '../geography';
 
 import FormField from './form-field';
 
-@selector
-export default class FormSelector {
-    constructor(
-        private _config: ConfigState
-    ) {}
+export default interface FormSelector {
+    getShippingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
+    getBillingAddressFields(countries: Country[] | undefined, countryCode: string): FormField[];
+}
 
-    getShippingAddressFields(countries: Country[] = [], countryCode: string): FormField[] {
-        const selectedCountry = find(countries, { code: countryCode });
-        const fields = this._config.data ? this._config.data.storeConfig.formFields.shippingAddressFields : [];
+export type FormSelectorFactory = (state: ConfigState) => FormSelector;
 
-        return fields.map((field: any) => this._processField(field, countries, selectedCountry));
-    }
+export function createFormSelectorFactory(): FormSelectorFactory {
+    const getShippingAddressFields = createSelector(
+        (state: ConfigState) => state.data,
+        config => (countries: Country[] = [], countryCode: string) => {
+            const selectedCountry = find(countries, { code: countryCode });
+            const fields = config ? config.storeConfig.formFields.shippingAddressFields : [];
 
-    getBillingAddressFields(countries: Country[] = [], countryCode: string): FormField[] {
-        const selectedCountry = find(countries, { code: countryCode });
-        const fields = this._config.data ? this._config.data.storeConfig.formFields.billingAddressFields : [];
+            return fields.map((field: any) => processField(field, countries, selectedCountry));
+        }
+    );
 
-        return fields.map((field: any) => this._processField(field, countries, selectedCountry));
-    }
+    const getBillingAddressFields = createSelector(
+        (state: ConfigState) => state.data,
+        config => (countries: Country[] = [], countryCode: string) => {
+            const selectedCountry = find(countries, { code: countryCode });
+            const fields = config ? config.storeConfig.formFields.billingAddressFields : [];
 
-    private _processField(field: FormField, countries: Country[], selectedCountry?: Country): FormField {
+            return fields.map((field: any) => processField(field, countries, selectedCountry));
+        }
+    );
+
+    function processField(field: FormField, countries: Country[], selectedCountry?: Country): FormField {
         if (field.name === 'countryCode') {
-            return this._processCountry(field, countries, selectedCountry);
+            return processCountry(field, countries, selectedCountry);
         }
 
         if (field.name === 'stateOrProvince') {
-            return this._processProvince(field, selectedCountry);
+            return processProvince(field, selectedCountry);
         }
 
         if (field.name === 'postalCode') {
-            return this._processsPostCode(field, selectedCountry);
+            return processsPostCode(field, selectedCountry);
         }
 
         return field;
     }
 
-    private _processCountry(field: FormField, countries: Country[] = [], country?: Country): FormField {
+    function processCountry(field: FormField, countries: Country[] = [], country?: Country): FormField {
         if (!countries.length) {
             return field;
         }
@@ -63,7 +73,7 @@ export default class FormSelector {
         };
     }
 
-    private _processProvince(field: FormField, country?: Country): FormField {
+    function processProvince(field: FormField, country?: Country): FormField {
         const { subdivisions = [] } = country || {};
 
         if (!subdivisions.length) {
@@ -89,7 +99,7 @@ export default class FormSelector {
         };
     }
 
-    private _processsPostCode(field: FormField, country?: Country): FormField {
+    function processsPostCode(field: FormField, country?: Country): FormField {
         const { hasPostalCodes = [] } = country || {};
 
         if (hasPostalCodes === undefined) {
@@ -98,4 +108,13 @@ export default class FormSelector {
 
         return { ...field, required: Boolean(hasPostalCodes) };
     }
+
+    return memoizeOne((
+        state: ConfigState = DEFAULT_STATE
+    ): FormSelector => {
+        return {
+            getShippingAddressFields: getShippingAddressFields(state),
+            getBillingAddressFields: getBillingAddressFields(state),
+        };
+    });
 }
