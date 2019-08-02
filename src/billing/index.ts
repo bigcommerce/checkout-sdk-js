@@ -1,7 +1,7 @@
 export * from './billing-address-actions';
 
 export { default as BillingAddress, BillingAddressRequestBody, BillingAddressUpdateRequestBody } from './billing-address';
-export { default as BillingAddressSelector } from './billing-address-selector';
+export { default as BillingAddressSelector, BillingAddressSelectorFactory, createBillingAddressSelectorFactory } from './billing-address-selector';
 export { default as BillingAddressActionCreator } from './billing-address-action-creator';
 export { default as BillingAddressState } from './billing-address-state';
 export { default as BillingAddressRequestSender } from './billing-address-request-sender';

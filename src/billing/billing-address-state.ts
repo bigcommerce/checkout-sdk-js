@@ -17,3 +17,8 @@ export interface BillingAddressStatusesState {
     isUpdating?: boolean;
     isContinuingAsGuest?: boolean;
 }
+
+export const DEFAULT_STATE: BillingAddressState = {
+    errors: {},
+    statuses: {},
+};
