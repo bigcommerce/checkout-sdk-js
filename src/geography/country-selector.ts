@@ -1,23 +1,40 @@
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 
 import Country from './country';
-import CountryState from './country-state';
+import CountryState, { DEFAULT_STATE } from './country-state';
 
-@selector
-export default class CountrySelector {
-    constructor(
-        private _countries: CountryState
-    ) {}
+export default interface CountrySelector {
+    getCountries(): Country[] | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
 
-    getCountries(): Country[] | undefined {
-        return this._countries.data;
-    }
+export type CountrySelectorFactory = (state: CountryState) => CountrySelector;
 
-    getLoadError(): Error | undefined {
-        return this._countries.errors.loadError;
-    }
+export function createCountrySelectorFactory(): CountrySelectorFactory {
+    const getCountries = createSelector(
+        (state: CountryState) => state.data,
+        countries => () => countries
+    );
 
-    isLoading(): boolean {
-        return !!this._countries.statuses.isLoading;
-    }
+    const getLoadError = createSelector(
+        (state: CountryState) => state.errors.loadError,
+        error => () => error
+    );
+
+    const isLoading = createSelector(
+        (state: CountryState) => !!state.statuses.isLoading,
+        status => () => status
+    );
+
+    return memoizeOne((
+        state: CountryState = DEFAULT_STATE
+    ): CountrySelector => {
+        return {
+            getCountries: getCountries(state),
+            getLoadError: getLoadError(state),
+            isLoading: isLoading(state),
+        };
+    });
 }

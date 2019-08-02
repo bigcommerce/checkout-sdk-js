@@ -4,12 +4,7 @@ import { clearErrorReducer } from '../common/error';
 
 import Country from './country';
 import { CountryActionType, LoadCountriesAction } from './country-actions';
-import CountryState, { CountryErrorsState, CountryStatusesState } from './country-state';
-
-const DEFAULT_STATE: CountryState = {
-    errors: {},
-    statuses: {},
-};
+import CountryState, { CountryErrorsState, CountryStatusesState, DEFAULT_STATE } from './country-state';
 
 export default function countryReducer(
     state: CountryState = DEFAULT_STATE,
