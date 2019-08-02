@@ -220,7 +220,7 @@ describe('AfterpayPaymentStrategy', () => {
                         }],
                     },
                 },
-                order: null,
+                order: {},
             }));
 
             strategy = new AfterpayPaymentStrategy(
