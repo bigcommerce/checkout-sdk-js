@@ -1,13 +1,7 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
 import { CheckoutButtonAction, CheckoutButtonActionType } from './checkout-button-actions';
-import CheckoutButtonState, { CheckoutButtonDataState, CheckoutButtonErrorsState, CheckoutButtonStatusesState } from './checkout-button-state';
-
-const DEFAULT_STATE: CheckoutButtonState = {
-    data: {},
-    errors: {},
-    statuses: {},
-};
+import CheckoutButtonState, { CheckoutButtonDataState, CheckoutButtonErrorsState, CheckoutButtonStatusesState, DEFAULT_STATE } from './checkout-button-state';
 
 const DEFAULT_DATA_STATE: CheckoutButtonDataState = { initializedContainers: {} };
 const DEFAULT_ERROR_STATE: CheckoutButtonErrorsState = {};
