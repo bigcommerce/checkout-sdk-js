@@ -13,3 +13,8 @@ export interface ShippingCountryErrorsState {
 export interface ShippingCountryStatusesState {
     isLoading?: boolean;
 }
+
+export const DEFAULT_STATE: ShippingCountryState = {
+    errors: {},
+    statuses: {},
+};

@@ -4,12 +4,7 @@ import { clearErrorReducer } from '../common/error';
 import { Country } from '../geography';
 
 import { LoadShippingCountriesAction, ShippingCountryActionType } from './shipping-country-actions';
-import ShippingCountryState, { ShippingCountryErrorsState, ShippingCountryStatusesState } from './shipping-country-state';
-
-const DEFAULT_STATE: ShippingCountryState = {
-    errors: {},
-    statuses: {},
-};
+import ShippingCountryState, { DEFAULT_STATE, ShippingCountryErrorsState, ShippingCountryStatusesState } from './shipping-country-state';
 
 export default function shippingCountryReducer(
     state: ShippingCountryState = DEFAULT_STATE,

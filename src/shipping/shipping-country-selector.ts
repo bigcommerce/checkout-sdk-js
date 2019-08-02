@@ -1,23 +1,40 @@
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 import { Country } from '../geography';
 
-import ShippingCountryState from './shipping-country-state';
+import ShippingCountryState, { DEFAULT_STATE } from './shipping-country-state';
 
-@selector
-export default class ShippingCountrySelector {
-    constructor(
-        private _shippingCountries: ShippingCountryState
-    ) {}
+export default interface ShippingCountrySelector {
+    getShippingCountries(): Country[] | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
 
-    getShippingCountries(): Country[] | undefined {
-        return this._shippingCountries.data;
-    }
+export type ShippingCountrySelectorFactory = (state: ShippingCountryState) => ShippingCountrySelector;
 
-    getLoadError(): Error | undefined {
-        return this._shippingCountries.errors.loadError;
-    }
+export function createShippingCountrySelectorFactory(): ShippingCountrySelectorFactory {
+    const getShippingCountries = createSelector(
+        (state: ShippingCountryState) => state.data,
+        data => () => data
+    );
 
-    isLoading(): boolean {
-        return !!this._shippingCountries.statuses.isLoading;
-    }
+    const getLoadError = createSelector(
+        (state: ShippingCountryState) => state.errors.loadError,
+        error => () => error
+    );
+
+    const isLoading = createSelector(
+        (state: ShippingCountryState) => state.statuses.isLoading,
+        status => () => !!status
+    );
+
+    return memoizeOne((
+        state: ShippingCountryState = DEFAULT_STATE
+    ): ShippingCountrySelector => {
+        return {
+            getShippingCountries: getShippingCountries(state),
+            getLoadError: getLoadError(state),
+            isLoading: isLoading(state),
+        };
+    });
 }
