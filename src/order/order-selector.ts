@@ -1,43 +1,72 @@
 import { BillingAddressSelector } from '../billing';
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 import { CouponSelector } from '../coupon';
 
 import Order from './order';
-import OrderState, { OrderMetaState } from './order-state';
+import OrderState, { DEFAULT_STATE, OrderMetaState } from './order-state';
 
-@selector
-export default class OrderSelector {
-    constructor(
-        private _order: OrderState,
-        private _billingAddress: BillingAddressSelector,
-        private _coupons: CouponSelector
-    ) {}
+export default interface OrderSelector {
+    getOrder(): Order | undefined;
+    getOrderMeta(): OrderMetaState | undefined;
+    getLoadError(): Error | undefined;
+    isLoading(): boolean;
+}
 
-    getOrder(): Order | undefined {
-        const { data } = this._order;
-        const billingAddress = this._billingAddress.getBillingAddress();
-        const coupons = this._coupons.getCoupons() || [];
+export type OrderSelectorFactory = (
+    state: OrderState,
+    billingAddress: BillingAddressSelector,
+    coupons: CouponSelector
+) => OrderSelector;
 
-        if (!data || !billingAddress) {
-            return;
+interface OrderSelectorDependencies {
+    billingAddress: BillingAddressSelector;
+    coupons: CouponSelector;
+}
+
+export function createOrderSelectorFactory(): OrderSelectorFactory {
+    const getOrder = createSelector(
+        (state: OrderState) => state.data,
+        (_: OrderState, { billingAddress }: OrderSelectorDependencies) => billingAddress.getBillingAddress(),
+        (_: OrderState, { coupons }: OrderSelectorDependencies) => coupons.getCoupons(),
+        (data, billingAddress, coupons = []) => () => {
+            if (!data || !billingAddress) {
+                return;
+            }
+
+            return {
+                ...data,
+                billingAddress,
+                coupons,
+            };
         }
+    );
 
+    const getOrderMeta = createSelector(
+        (state: OrderState) => state.meta,
+        meta => () => meta
+    );
+
+    const getLoadError = createSelector(
+        (state: OrderState) => state.errors.loadError,
+        error => () => error
+    );
+
+    const isLoading = createSelector(
+        (state: OrderState) => !!state.statuses.isLoading,
+        status => () => status
+    );
+
+    return memoizeOne((
+        state: OrderState = DEFAULT_STATE,
+        billingAddress: BillingAddressSelector,
+        coupons: CouponSelector
+    ): OrderSelector => {
         return {
-            ...data,
-            billingAddress,
-            coupons,
+            getOrder: getOrder(state, { billingAddress, coupons }),
+            getOrderMeta: getOrderMeta(state),
+            getLoadError: getLoadError(state),
+            isLoading: isLoading(state),
         };
-    }
-
-    getOrderMeta(): OrderMetaState | undefined {
-        return this._order.meta;
-    }
-
-    getLoadError(): Error | undefined {
-        return this._order.errors.loadError;
-    }
-
-    isLoading(): boolean {
-        return !!this._order.statuses.isLoading;
-    }
+    });
 }

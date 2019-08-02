@@ -4,14 +4,8 @@ import { omit } from 'lodash';
 import { clearErrorReducer } from '../common/error';
 
 import { OrderAction, OrderActionType } from './order-actions';
-import OrderState, { OrderDataState, OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
+import OrderState, { DEFAULT_STATE, OrderDataState, OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
 import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection';
-
-const DEFAULT_STATE: OrderState = {
-    errors: {},
-    meta: {},
-    statuses: {},
-};
 
 export default function orderReducer(
     state: OrderState = DEFAULT_STATE,

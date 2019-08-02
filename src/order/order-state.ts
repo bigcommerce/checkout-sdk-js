@@ -31,3 +31,9 @@ export interface OrderStatusesState {
     isSubmitting?: boolean;
     isFinalizing?: boolean;
 }
+
+export const DEFAULT_STATE: OrderState = {
+    errors: {},
+    meta: {},
+    statuses: {},
+};
