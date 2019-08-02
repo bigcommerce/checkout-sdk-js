@@ -22,4 +22,4 @@ export { default as createActionTransformer } from './create-action-transformer'
 export { default as createCheckoutService } from './create-checkout-service';
 export { default as createCheckoutStore } from './create-checkout-store';
 export { default as createCheckoutSelectors } from './create-checkout-selectors';
-export { default as createInternalCheckoutSelectors } from './create-internal-checkout-selectors';
+export { default as createInternalCheckoutSelectors, createInternalCheckoutSelectorsFactory } from './create-internal-checkout-selectors';
