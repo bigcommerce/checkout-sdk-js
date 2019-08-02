@@ -1,6 +1,7 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
+import { objectMerge, objectSet } from '../common/utility';
 
 import Config from './config';
 import { ConfigActionType, LoadConfigAction } from './config-actions';
@@ -25,7 +26,7 @@ function dataReducer(
 ): Config | undefined {
     switch (action.type) {
     case ConfigActionType.LoadConfigSucceeded:
-        return action.payload ? action.payload : data;
+        return objectMerge(data, action.payload);
 
     default:
         return data;
@@ -38,10 +39,10 @@ function errorsReducer(
 ): ConfigErrorsState {
     switch (action.type) {
     case ConfigActionType.LoadConfigSucceeded:
-        return { ...errors, loadError: undefined };
+        return objectSet(errors, 'loadError', undefined);
 
     case ConfigActionType.LoadConfigFailed:
-        return { ...errors, loadError: action.payload };
+        return objectSet(errors, 'loadError', action.payload);
 
     default:
         return errors;
@@ -54,11 +55,11 @@ function statusesReducer(
 ): ConfigStatusesState {
     switch (action.type) {
     case ConfigActionType.LoadConfigRequested:
-        return { ...statuses, isLoading: true };
+        return objectSet(statuses, 'isLoading', true);
 
     case ConfigActionType.LoadConfigSucceeded:
     case ConfigActionType.LoadConfigFailed:
-        return { ...statuses, isLoading: false };
+        return objectSet(statuses, 'isLoading', false);
 
     default:
         return statuses;
