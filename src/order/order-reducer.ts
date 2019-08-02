@@ -5,7 +5,7 @@ import { clearErrorReducer } from '../common/error';
 
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { OrderDataState, OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
-import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection/spam-protection-actions';
+import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection';
 
 const DEFAULT_STATE: OrderState = {
     errors: {},

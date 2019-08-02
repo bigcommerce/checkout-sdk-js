@@ -2,7 +2,7 @@ import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { map, merge } from 'lodash';
-import { of, Observable } from 'rxjs';
+import { from, of, Observable } from 'rxjs';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { getBillingAddress } from '../billing/billing-addresses.mock';
@@ -23,8 +23,7 @@ import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionOptions } from '../order/spam-protection';
-import { SpamProtectionActionType } from '../order/spam-protection/spam-protection-actions';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionOptions } from '../order/spam-protection';
 import {
     createPaymentClient,
     PaymentMethodActionCreator,
@@ -432,6 +431,12 @@ describe('CheckoutService', () => {
             jest.spyOn(noPaymentDataRequiredPaymentStrategy, 'execute').mockResolvedValue(store.getState());
 
             paymentStrategyRegistry.get = jest.fn(() => noPaymentDataRequiredPaymentStrategy);
+
+            jest.spyOn(orderActionCreator, 'executeSpamProtection')
+                .mockReturnValue(() => from([
+                    createAction(SpamProtectionActionType.ExecuteRequested),
+                    createAction(SpamProtectionActionType.Completed, { token: 'spamProtectionToken' }),
+                ]));
         });
 
         it('finds payment strategy', async () => {

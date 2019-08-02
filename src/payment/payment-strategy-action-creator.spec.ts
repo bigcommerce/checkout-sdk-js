@@ -14,7 +14,7 @@ import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../orde
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrderState } from '../order/orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../order/spam-protection';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType } from '../order/spam-protection';
 import GoogleRecaptcha from '../order/spam-protection/google-recaptcha';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
@@ -251,6 +251,12 @@ describe('PaymentStrategyActionCreator', () => {
 
     describe('#execute()', () => {
         beforeEach(() => {
+            jest.spyOn(orderActionCreator, 'executeSpamProtection')
+                .mockReturnValue(() => from([
+                    createAction(SpamProtectionActionType.ExecuteRequested),
+                    createAction(SpamProtectionActionType.Completed, { token: 'spamProtectionToken' }),
+                ]));
+
             jest.spyOn(strategy, 'execute')
                 .mockReturnValue(Promise.resolve(store.getState()));
 
@@ -293,6 +299,8 @@ describe('PaymentStrategyActionCreator', () => {
                 .toPromise();
 
             expect(actions).toEqual([
+                { type: SpamProtectionActionType.ExecuteRequested },
+                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId } },
             ]);
@@ -317,6 +325,8 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
+                { type: SpamProtectionActionType.ExecuteRequested },
+                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId } },
             ]);
