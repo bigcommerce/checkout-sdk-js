@@ -1,77 +1,142 @@
-import CustomerStrategyState from './customer-strategy-state';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 
-export default class CustomerStrategySelector {
-    constructor(
-        private _customerStrategies: CustomerStrategyState
-    ) {}
+import CustomerStrategyState, { DEFAULT_STATE } from './customer-strategy-state';
 
-    getSignInError(methodId?: string): Error | undefined {
-        if (methodId && this._customerStrategies.errors.signInMethodId !== methodId) {
-            return;
+export default interface CustomerStrategySelector {
+    getSignInError(methodId?: string): Error | undefined;
+    getSignOutError(methodId?: string): Error | undefined;
+    getInitializeError(methodId?: string): Error | undefined;
+    getWidgetInteractionError(methodId?: string): Error | undefined;
+    isSigningIn(methodId?: string): boolean;
+    isSigningOut(methodId?: string): boolean;
+    isInitializing(methodId?: string): boolean;
+    isInitialized(methodId: string): boolean;
+    isWidgetInteracting(methodId?: string): boolean;
+}
+
+export type CustomerStrategySelectorFactory = (state: CustomerStrategyState) => CustomerStrategySelector;
+
+export function createCustomerStrategySelectorFactory(): CustomerStrategySelectorFactory {
+    const getSignInError = createSelector(
+        (state: CustomerStrategyState) => state.errors.signInMethodId,
+        (state: CustomerStrategyState) => state.errors.signInError,
+        (signInMethodId, signInError) => (methodId?: string) => {
+            if (methodId && signInMethodId !== methodId) {
+                return;
+            }
+
+            return signInError;
         }
+    );
 
-        return this._customerStrategies.errors.signInError;
-    }
+    const getSignOutError = createSelector(
+        (state: CustomerStrategyState) => state.errors.signOutMethodId,
+        (state: CustomerStrategyState) => state.errors.signOutError,
+        (signOutMethodId, signOutError) => (methodId?: string) => {
+            if (methodId && signOutMethodId !== methodId) {
+                return;
+            }
 
-    getSignOutError(methodId?: string): Error | undefined {
-        if (methodId && this._customerStrategies.errors.signOutMethodId !== methodId) {
-            return;
+            return signOutError;
         }
+    );
 
-        return this._customerStrategies.errors.signOutError;
-    }
+    const getInitializeError = createSelector(
+        (state: CustomerStrategyState) => state.errors.initializeMethodId,
+        (state: CustomerStrategyState) => state.errors.initializeError,
+        (initializeMethodId, initializeError) => (methodId?: string) => {
+            if (methodId && initializeMethodId !== methodId) {
+                return;
+            }
 
-    getInitializeError(methodId?: string): Error | undefined {
-        if (methodId && this._customerStrategies.errors.initializeMethodId !== methodId) {
-            return;
+            return initializeError;
         }
+    );
 
-        return this._customerStrategies.errors.initializeError;
-    }
+    const getWidgetInteractionError = createSelector(
+        (state: CustomerStrategyState) => state.errors.widgetInteractionMethodId,
+        (state: CustomerStrategyState) => state.errors.widgetInteractionError,
+        (widgetInteractionMethodId, widgetInteractionError) => (methodId?: string) => {
+            if (methodId && widgetInteractionMethodId !== methodId) {
+                return;
+            }
 
-    getWidgetInteractionError(methodId?: string): Error | undefined {
-        if (methodId && this._customerStrategies.errors.widgetInteractionMethodId !== methodId) {
-            return;
+            return widgetInteractionError;
         }
+    );
 
-        return this._customerStrategies.errors.widgetInteractionError;
-    }
+    const isSigningIn = createSelector(
+        (state: CustomerStrategyState) => state.statuses.signInMethodId,
+        (state: CustomerStrategyState) => state.statuses.isSigningIn,
+        (signInMethodId, isSigningIn) => (methodId?: string) => {
+            if (methodId && signInMethodId !== methodId) {
+                return false;
+            }
 
-    isSigningIn(methodId?: string): boolean {
-        if (methodId && this._customerStrategies.statuses.signInMethodId !== methodId) {
-            return false;
+            return !!isSigningIn;
         }
+    );
 
-        return !!this._customerStrategies.statuses.isSigningIn;
-    }
+    const isSigningOut = createSelector(
+        (state: CustomerStrategyState) => state.statuses.signOutMethodId,
+        (state: CustomerStrategyState) => state.statuses.isSigningOut,
+        (signOutMethodId, isSigningOut) => (methodId?: string) => {
+            if (methodId && signOutMethodId !== methodId) {
+                return false;
+            }
 
-    isSigningOut(methodId?: string): boolean {
-        if (methodId && this._customerStrategies.statuses.signOutMethodId !== methodId) {
-            return false;
+            return !!isSigningOut;
         }
+    );
 
-        return !!this._customerStrategies.statuses.isSigningOut;
-    }
+    const isInitializing = createSelector(
+        (state: CustomerStrategyState) => state.statuses.initializeMethodId,
+        (state: CustomerStrategyState) => state.statuses.isInitializing,
+        (initializeMethodId, isInitializing) => (methodId?: string) => {
+            if (methodId && initializeMethodId !== methodId) {
+                return false;
+            }
 
-    isInitializing(methodId?: string): boolean {
-        if (methodId && this._customerStrategies.statuses.initializeMethodId !== methodId) {
-            return false;
+            return !!isInitializing;
         }
+    );
 
-        return !!this._customerStrategies.statuses.isInitializing;
-    }
-
-    isInitialized(methodId: string): boolean {
-        return !!(
-            this._customerStrategies.data[methodId] &&
-            this._customerStrategies.data[methodId].isInitialized
-        );
-    }
-
-    isWidgetInteracting(methodId?: string): boolean {
-        if (methodId && this._customerStrategies.statuses.widgetInteractionMethodId !== methodId) {
-            return false;
+    const isInitialized = createSelector(
+        (state: CustomerStrategyState) => state.data,
+        data => (methodId: string) => {
+            return !!(
+                data[methodId] &&
+                data[methodId].isInitialized
+            );
         }
+    );
 
-        return !!this._customerStrategies.statuses.isWidgetInteracting;
-    }}
+    const isWidgetInteracting = createSelector(
+        (state: CustomerStrategyState) => state.statuses.widgetInteractionMethodId,
+        (state: CustomerStrategyState) => state.statuses.isWidgetInteracting,
+        (widgetInteractionMethodId, isWidgetInteracting) => (methodId?: string) => {
+            if (methodId && widgetInteractionMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isWidgetInteracting;
+        }
+    );
+
+    return memoizeOne((
+        state: CustomerStrategyState = DEFAULT_STATE
+    ): CustomerStrategySelector => {
+        return {
+            getSignInError: getSignInError(state),
+            getSignOutError: getSignOutError(state),
+            getInitializeError: getInitializeError(state),
+            getWidgetInteractionError: getWidgetInteractionError(state),
+            isSigningIn: isSigningIn(state),
+            isSigningOut: isSigningOut(state),
+            isInitializing: isInitializing(state),
+            isInitialized: isInitialized(state),
+            isWidgetInteracting: isWidgetInteracting(state),
+        };
+    });
+}

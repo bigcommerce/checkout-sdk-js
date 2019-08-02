@@ -1,13 +1,15 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import CustomerStrategySelector from './customer-strategy-selector';
+import CustomerStrategySelector, { createCustomerStrategySelectorFactory, CustomerStrategySelectorFactory } from './customer-strategy-selector';
 import { getCustomerStrategyState } from './internal-customers.mock';
 
 describe('CustomerStrategySelector', () => {
+    let createCustomerStrategySelector: CustomerStrategySelectorFactory;
     let selector: CustomerStrategySelector;
     let state: any;
 
     beforeEach(() => {
+        createCustomerStrategySelector = createCustomerStrategySelectorFactory();
         state = {
             customerStrategy: getCustomerStrategyState(),
         };
@@ -17,7 +19,7 @@ describe('CustomerStrategySelector', () => {
         it('returns error if unable to sign in', () => {
             const signInError = getErrorResponse();
 
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: { signInError },
             });
@@ -26,7 +28,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('does not returns error if able to sign in', () => {
-            selector = new CustomerStrategySelector(state.customerStrategy);
+            selector = createCustomerStrategySelector(state.customerStrategy);
 
             expect(selector.getSignInError()).toBeUndefined();
         });
@@ -36,7 +38,7 @@ describe('CustomerStrategySelector', () => {
         it('returns error if unable to sign out', () => {
             const signOutError = getErrorResponse();
 
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: { signOutError },
             });
@@ -45,7 +47,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('does not returns error if able to sign out', () => {
-            selector = new CustomerStrategySelector(state.customerStrategy);
+            selector = createCustomerStrategySelector(state.customerStrategy);
 
             expect(selector.getSignOutError()).toBeUndefined();
         });
@@ -53,7 +55,7 @@ describe('CustomerStrategySelector', () => {
 
     describe('#getInitializeError()', () => {
         it('returns error if unable to initialize any method', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
@@ -62,7 +64,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns error if unable to initialize specific method', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
@@ -72,7 +74,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('does not return error if able to initialize', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: {},
             });
@@ -83,7 +85,7 @@ describe('CustomerStrategySelector', () => {
 
     describe('#getWidgetInteractingError()', () => {
         it('returns error if unable to initialize any method', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
             });
@@ -92,7 +94,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns error if unable to initialize specific method', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
             });
@@ -102,7 +104,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('does not return error if able to initialize', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 errors: {},
             });
@@ -113,7 +115,7 @@ describe('CustomerStrategySelector', () => {
 
     describe('#isSigningIn()', () => {
         it('returns true if signing in', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 statuses: { isSigningIn: true },
             });
@@ -122,7 +124,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns false if not signing in', () => {
-            selector = new CustomerStrategySelector(state.customerStrategy);
+            selector = createCustomerStrategySelector(state.customerStrategy);
 
             expect(selector.isSigningIn()).toEqual(false);
         });
@@ -130,7 +132,7 @@ describe('CustomerStrategySelector', () => {
 
     describe('#isSigningOut()', () => {
         it('returns true if signing out', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 statuses: { isSigningOut: true },
             });
@@ -139,7 +141,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns false if not signing out', () => {
-            selector = new CustomerStrategySelector(state.customerStrategy);
+            selector = createCustomerStrategySelector(state.customerStrategy);
 
             expect(selector.isSigningOut()).toEqual(false);
         });
@@ -147,7 +149,7 @@ describe('CustomerStrategySelector', () => {
 
     describe('#isInitializing()', () => {
         it('returns true if initializing any method', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
@@ -156,7 +158,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns true if initializing specific method', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
@@ -166,7 +168,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns false if not initializing method', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 statuses: { initializeMethodId: undefined, isInitializing: false },
             });
@@ -177,7 +179,7 @@ describe('CustomerStrategySelector', () => {
 
     describe('#isInitialized()', () => {
         it('returns true if method is initialized', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 data: { foobar: { isInitialized: true } },
             });
@@ -186,7 +188,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns false if method is not initialized', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 data: { foobar: { isInitialized: false } },
             });
@@ -198,7 +200,7 @@ describe('CustomerStrategySelector', () => {
 
     describe('#isWidgetInteracting()', () => {
         it('returns true if any method is interacting with a widget', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
             });
@@ -207,7 +209,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns true if a specific method is interacting with a widget', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
             });
@@ -217,7 +219,7 @@ describe('CustomerStrategySelector', () => {
         });
 
         it('returns false if not interacting with a widget', () => {
-            selector = new CustomerStrategySelector({
+            selector = createCustomerStrategySelector({
                 ...state.customerStrategy,
                 statuses: { widgetInteractionMethodId: undefined, isWidgetInteracting: false },
             });
