@@ -18,3 +18,8 @@ export interface CouponStatusesState {
     isApplyingCoupon?: boolean;
     isRemovingCoupon?: boolean;
 }
+
+export const DEFAULT_STATE: CouponState = {
+    errors: {},
+    statuses: {},
+};

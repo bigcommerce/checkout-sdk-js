@@ -2,17 +2,13 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
+import { arrayReplace, objectSet } from '../common/utility';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
 
 import { CouponAction, CouponActionType } from './coupon-actions';
 import GiftCertificate from './gift-certificate';
 import { GiftCertificateAction, GiftCertificateActionType } from './gift-certificate-actions';
-import GiftCertificateState, { GiftCertificateErrorsState, GiftCertificateStatusesState } from './gift-certificate-state';
-
-const DEFAULT_STATE: GiftCertificateState = {
-    errors: {},
-    statuses: {},
-};
+import GiftCertificateState, { DEFAULT_STATE, GiftCertificateErrorsState, GiftCertificateStatusesState } from './gift-certificate-state';
 
 export default function giftCertificateReducer(
     state: GiftCertificateState = DEFAULT_STATE,
@@ -41,7 +37,7 @@ function dataReducer(
     case CouponActionType.RemoveCouponSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
-        return action.payload ? action.payload.giftCertificates : data;
+        return arrayReplace(data, action.payload && action.payload.giftCertificates);
 
     default:
         return data;
@@ -55,17 +51,17 @@ function errorsReducer(
     switch (action.type) {
     case GiftCertificateActionType.ApplyGiftCertificateRequested:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
-        return { ...errors, applyGiftCertificateError: undefined };
+        return objectSet(errors, 'applyGiftCertificateError', undefined);
 
     case GiftCertificateActionType.ApplyGiftCertificateFailed:
-        return { ...errors, applyGiftCertificateError: action.payload };
+        return objectSet(errors, 'applyGiftCertificateError', action.payload);
 
     case GiftCertificateActionType.RemoveGiftCertificateRequested:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
-        return { ...errors, removeGiftCertificateError: undefined };
+        return objectSet(errors, 'removeGiftCertificateError', undefined);
 
     case GiftCertificateActionType.RemoveGiftCertificateFailed:
-        return { ...errors, removeGiftCertificateError: action.payload };
+        return objectSet(errors, 'removeGiftCertificateError', action.payload);
 
     default:
         return errors;
@@ -78,18 +74,18 @@ function statusesReducer(
 ): GiftCertificateStatusesState {
     switch (action.type) {
     case GiftCertificateActionType.ApplyGiftCertificateRequested:
-        return { ...statuses, isApplyingGiftCertificate: true };
+        return objectSet(statuses, 'isApplyingGiftCertificate', true);
 
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateFailed:
-        return { ...statuses, isApplyingGiftCertificate: false };
+        return objectSet(statuses, 'isApplyingGiftCertificate', false);
 
     case GiftCertificateActionType.RemoveGiftCertificateRequested:
-        return { ...statuses, isRemovingGiftCertificate: true };
+        return objectSet(statuses, 'isRemovingGiftCertificate', true);
 
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateFailed:
-        return { ...statuses, isRemovingGiftCertificate: false };
+        return objectSet(statuses, 'isRemovingGiftCertificate', false);
 
     default:
         return statuses;

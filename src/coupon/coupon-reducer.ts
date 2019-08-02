@@ -2,16 +2,12 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
+import { arrayReplace, objectSet } from '../common/utility';
 import { OrderAction, OrderActionType } from '../order';
 
 import Coupon from './coupon';
 import { CouponAction, CouponActionType } from './coupon-actions';
-import CouponState, { CouponErrorsState, CouponStatusesState } from './coupon-state';
-
-const DEFAULT_STATE: CouponState = {
-    errors: {},
-    statuses: {},
-};
+import CouponState, { CouponErrorsState, CouponStatusesState, DEFAULT_STATE } from './coupon-state';
 
 export default function couponReducer(
     state: CouponState = DEFAULT_STATE,
@@ -35,7 +31,7 @@ function dataReducer(
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
     case OrderActionType.LoadOrderSucceeded:
-        return action.payload ? action.payload.coupons : data;
+        return arrayReplace(data, action.payload && action.payload.coupons);
 
     default:
         return data;
@@ -49,17 +45,17 @@ function errorsReducer(
     switch (action.type) {
     case CouponActionType.ApplyCouponRequested:
     case CouponActionType.ApplyCouponSucceeded:
-        return { ...errors, applyCouponError: undefined };
+        return objectSet(errors, 'applyCouponError', undefined);
 
     case CouponActionType.ApplyCouponFailed:
-        return { ...errors, applyCouponError: action.payload };
+        return objectSet(errors, 'applyCouponError', action.payload);
 
     case CouponActionType.RemoveCouponRequested:
     case CouponActionType.RemoveCouponSucceeded:
-        return { ...errors, removeCouponError: undefined };
+        return objectSet(errors, 'removeCouponError', undefined);
 
     case CouponActionType.RemoveCouponFailed:
-        return { ...errors, removeCouponError: action.payload };
+        return objectSet(errors, 'removeCouponError', action.payload);
 
     default:
         return errors;
@@ -72,18 +68,18 @@ function statusesReducer(
 ): CouponStatusesState {
     switch (action.type) {
     case CouponActionType.ApplyCouponRequested:
-        return { ...statuses, isApplyingCoupon: true };
+        return objectSet(statuses, 'isApplyingCoupon', true);
 
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.ApplyCouponFailed:
-        return { ...statuses, isApplyingCoupon: false };
+        return objectSet(statuses, 'isApplyingCoupon', false);
 
     case CouponActionType.RemoveCouponRequested:
-        return { ...statuses, isRemovingCoupon: true };
+        return objectSet(statuses, 'isRemovingCoupon', true);
 
     case CouponActionType.RemoveCouponSucceeded:
     case CouponActionType.RemoveCouponFailed:
-        return { ...statuses, isRemovingCoupon: false };
+        return objectSet(statuses, 'isRemovingCoupon', false);
 
     default:
         return statuses;

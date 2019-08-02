@@ -18,3 +18,8 @@ export interface GiftCertificateStatusesState {
     isApplyingGiftCertificate?: boolean;
     isRemovingGiftCertificate?: boolean;
 }
+
+export const DEFAULT_STATE: GiftCertificateState = {
+    errors: {},
+    statuses: {},
+};

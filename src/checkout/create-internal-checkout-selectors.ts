@@ -3,7 +3,7 @@ import { CartSelector } from '../cart';
 import { CheckoutButtonSelector } from '../checkout-buttons';
 import { createFreezeProxies } from '../common/utility';
 import { ConfigSelector } from '../config';
-import { CouponSelector, GiftCertificateSelector } from '../coupon';
+import { createCouponSelectorFactory, createGiftCertificateSelectorFactory } from '../coupon';
 import { CustomerSelector, CustomerStrategySelector } from '../customer';
 import { FormSelector } from '../form';
 import { CountrySelector } from '../geography';
@@ -24,17 +24,20 @@ export type InternalCheckoutSelectorsFactory = (
 ) => InternalCheckoutSelectors;
 
 export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelectorsFactory {
+    const createCouponSelector = createCouponSelectorFactory();
+    const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
+
     return (state, options = {}) => {
         const billingAddress = new BillingAddressSelector(state.billingAddress);
         const cart = new CartSelector(state.cart);
         const checkoutButton = new CheckoutButtonSelector(state.checkoutButton);
         const config = new ConfigSelector(state.config);
         const countries = new CountrySelector(state.countries);
-        const coupons = new CouponSelector(state.coupons);
+        const coupons = createCouponSelector(state.coupons);
         const customer = new CustomerSelector(state.customer);
         const customerStrategies = new CustomerStrategySelector(state.customerStrategies);
         const form = new FormSelector(state.config);
-        const giftCertificates = new GiftCertificateSelector(state.giftCertificates);
+        const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
         const instruments = new InstrumentSelector(state.instruments);
         const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
         const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
