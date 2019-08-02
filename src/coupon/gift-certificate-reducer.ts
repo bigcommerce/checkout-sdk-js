@@ -7,12 +7,7 @@ import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignmen
 import { CouponAction, CouponActionType } from './coupon-actions';
 import GiftCertificate from './gift-certificate';
 import { GiftCertificateAction, GiftCertificateActionType } from './gift-certificate-actions';
-import GiftCertificateState, { GiftCertificateErrorsState, GiftCertificateStatusesState } from './gift-certificate-state';
-
-const DEFAULT_STATE: GiftCertificateState = {
-    errors: {},
-    statuses: {},
-};
+import GiftCertificateState, { DEFAULT_STATE, GiftCertificateErrorsState, GiftCertificateStatusesState } from './gift-certificate-state';
 
 export default function giftCertificateReducer(
     state: GiftCertificateState = DEFAULT_STATE,
