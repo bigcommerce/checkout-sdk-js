@@ -13,3 +13,8 @@ export interface CartErrorsState {
 export interface CartStatusesState {
     isLoading?: boolean;
 }
+
+export const DEFAULT_STATE: CartState = {
+    errors: {},
+    statuses: {},
+};

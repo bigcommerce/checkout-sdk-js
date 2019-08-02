@@ -1,19 +1,21 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import CartSelector from './cart-selector';
+import CartSelector, { createCartSelectorFactory, CartSelectorFactory } from './cart-selector';
 
 describe('CartSelector', () => {
     let cartSelector: CartSelector;
+    let createCartSelector: CartSelectorFactory;
     let state: CheckoutStoreState;
 
     beforeEach(() => {
+        createCartSelector = createCartSelectorFactory();
         state = getCheckoutStoreState();
     });
 
     describe('#getCart()', () => {
         it('returns the current cart', () => {
-            cartSelector = new CartSelector(state.cart);
+            cartSelector = createCartSelector(state.cart);
 
             expect(cartSelector.getCart()).toEqual(state.cart.data);
         });
@@ -23,7 +25,7 @@ describe('CartSelector', () => {
         it('returns error if unable to load', () => {
             const loadError = new Error();
 
-            cartSelector = new CartSelector({
+            cartSelector = createCartSelector({
                 ...state.cart,
                 errors: { loadError },
             });
@@ -32,7 +34,7 @@ describe('CartSelector', () => {
         });
 
         it('does not returns error if able to load', () => {
-            cartSelector = new CartSelector(state.cart);
+            cartSelector = createCartSelector(state.cart);
 
             expect(cartSelector.getLoadError()).toBeUndefined();
         });
@@ -40,7 +42,7 @@ describe('CartSelector', () => {
 
     describe('#isLoading()', () => {
         it('returns true if loading cart', () => {
-            cartSelector = new CartSelector({
+            cartSelector = createCartSelector({
                 ...state.cart,
                 statuses: { isLoading: true },
             });
@@ -49,7 +51,7 @@ describe('CartSelector', () => {
         });
 
         it('returns false if not loading cart', () => {
-            cartSelector = new CartSelector(state.cart);
+            cartSelector = createCartSelector(state.cart);
 
             expect(cartSelector.isLoading()).toEqual(false);
         });

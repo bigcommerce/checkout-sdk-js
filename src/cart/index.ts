@@ -7,7 +7,7 @@ export { default as LineItemMap } from './line-item-map';
 export { default as CartComparator } from './cart-comparator';
 export { default as cartReducer } from './cart-reducer';
 export { default as CartRequestSender } from './cart-request-sender';
-export { default as CartSelector } from './cart-selector';
+export { default as CartSelector, CartSelectorFactory, createCartSelectorFactory } from './cart-selector';
 export { default as CartState } from './cart-state';
 
 export { default as map } from './map-to-internal-cart';

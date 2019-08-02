@@ -3,17 +3,13 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 import { BillingAddressAction, BillingAddressActionType } from '../billing/billing-address-actions';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
+import { objectMerge, objectSet } from '../common/utility';
 import { CouponAction, CouponActionType } from '../coupon/coupon-actions';
 import { GiftCertificateAction, GiftCertificateActionType } from '../coupon/gift-certificate-actions';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
 
 import Cart from './cart';
-import CartState, { CartErrorsState, CartStatusesState } from './cart-state';
-
-const DEFAULT_STATE: CartState = {
-    errors: {},
-    statuses: {},
-};
+import CartState, { CartErrorsState, CartStatusesState, DEFAULT_STATE } from './cart-state';
 
 export default function cartReducer(
     state: CartState = DEFAULT_STATE,
@@ -43,7 +39,7 @@ function dataReducer(
     case CouponActionType.RemoveCouponSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
-        return action.payload ? { ...data, ...action.payload.cart } : data;
+        return objectMerge(data, action.payload && action.payload.cart);
 
     default:
         return data;
@@ -56,11 +52,11 @@ function statusesReducer(
 ): CartStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
-        return { ...statuses, isLoading: true };
+        return objectSet(statuses, 'isLoading', true);
 
     case CheckoutActionType.LoadCheckoutFailed:
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...statuses, isLoading: false };
+        return objectSet(statuses, 'isLoading', false);
 
     default:
         return statuses;
@@ -74,10 +70,10 @@ function errorsReducer(
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return { ...errors, loadError: undefined };
+        return objectSet(errors, 'loadError', undefined);
 
     case CheckoutActionType.LoadCheckoutFailed:
-        return { ...errors, loadError: action.payload };
+        return objectSet(errors, 'loadError', action.payload);
 
     default:
         return errors;

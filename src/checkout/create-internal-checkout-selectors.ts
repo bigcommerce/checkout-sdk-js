@@ -1,5 +1,5 @@
 import { createBillingAddressSelectorFactory } from '../billing';
-import { CartSelector } from '../cart';
+import { createCartSelectorFactory } from '../cart/cart-selector';
 import { CheckoutButtonSelector } from '../checkout-buttons';
 import { createFreezeProxies } from '../common/utility';
 import { ConfigSelector } from '../config';
@@ -25,13 +25,14 @@ export type InternalCheckoutSelectorsFactory = (
 
 export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelectorsFactory {
     const createBillingAddressSelector = createBillingAddressSelectorFactory();
+    const createCartSelector = createCartSelectorFactory();
     const createCouponSelector = createCouponSelectorFactory();
     const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
     const createOrderSelector = createOrderSelectorFactory();
 
     return (state, options = {}) => {
         const billingAddress = createBillingAddressSelector(state.billingAddress);
-        const cart = new CartSelector(state.cart);
+        const cart = createCartSelector(state.cart);
         const checkoutButton = new CheckoutButtonSelector(state.checkoutButton);
         const config = new ConfigSelector(state.config);
         const countries = new CountrySelector(state.countries);

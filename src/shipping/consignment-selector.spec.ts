@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
 
-import { CartSelector } from '../cart';
+import { createCartSelectorFactory, CartSelector } from '../cart';
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
@@ -32,7 +32,7 @@ describe('ConsignmentSelector', () => {
 
     beforeEach(() => {
         state = getCheckoutStoreState();
-        cartSelector = new CartSelector(state.cart);
+        cartSelector = createCartSelectorFactory()(state.cart);
     });
 
     describe('#getConsignmentByAddress()', () => {
