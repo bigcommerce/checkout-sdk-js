@@ -11,8 +11,7 @@ import InternalOrderRequestBody from './internal-order-request-body';
 import { FinalizeOrderAction, LoadOrderAction, LoadOrderPaymentsAction, OrderActionType, SubmitOrderAction } from './order-actions';
 import OrderRequestBody from './order-request-body';
 import OrderRequestSender from './order-request-sender';
-import { SpamProtectionActionCreator } from './spam-protection';
-import { SpamProtectionAction } from './spam-protection/spam-protection-actions';
+import { SpamProtectionAction, SpamProtectionActionCreator } from './spam-protection';
 
 export default class OrderActionCreator {
     constructor(
@@ -67,7 +66,6 @@ export default class OrderActionCreator {
     submitOrder(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<SubmitOrderAction | SpamProtectionAction, InternalCheckoutSelectors> {
         return store => concat(
             of(createAction(OrderActionType.SubmitOrderRequested)),
-            this._executeSpamProtection(store),
             defer(() => {
                 const state = store.getState();
                 const externalSource = state.config.getExternalSource();
@@ -126,27 +124,29 @@ export default class OrderActionCreator {
         );
     }
 
+    executeSpamProtection(): ThunkAction<SpamProtectionAction> {
+        return store => {
+            const storeConfig = store.getState().config.getStoreConfig();
+
+            if (!storeConfig) {
+                throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+            }
+
+            const { isSpamProtectionEnabled } = storeConfig.checkoutSettings;
+
+            if (!isSpamProtectionEnabled) {
+                return empty();
+            }
+
+            return this._spamProtectionActionCreator.execute();
+        };
+    }
+
     private _getCurrentOrderId(state: InternalCheckoutSelectors): number | undefined {
         const order = state.order.getOrder();
         const checkout = state.checkout.getCheckout();
 
         return (order && order.orderId) || (checkout && checkout.orderId);
-    }
-
-    private _executeSpamProtection(store: ReadableCheckoutStore): Observable<SpamProtectionAction> {
-        const storeConfig = store.getState().config.getStoreConfig();
-
-        if (!storeConfig) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
-        }
-
-        const { isSpamProtectionEnabled } = storeConfig.checkoutSettings;
-
-        if (!isSpamProtectionEnabled) {
-            return empty();
-        }
-
-        return this._spamProtectionActionCreator.execute();
     }
 
     private _mapToOrderRequestBody(

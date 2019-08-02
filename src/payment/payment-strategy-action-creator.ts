@@ -1,5 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, empty, of, Observable, Observer } from 'rxjs';
+import { concat, defer, empty, from, of, Observable, Observer } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
@@ -8,6 +8,7 @@ import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { LoadOrderPaymentsAction, OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
+import { SpamProtectionAction } from '../order/spam-protection';
 
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import {
@@ -28,38 +29,41 @@ export default class PaymentStrategyActionCreator {
         private _orderActionCreator: OrderActionCreator
     ) {}
 
-    execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction, InternalCheckoutSelectors> {
-        return store => new Observable((observer: Observer<PaymentStrategyExecuteAction>) => {
-            const state = store.getState();
-            const { payment = {} as OrderPaymentRequestBody, useStoreCredit } = payload;
-            const meta = { methodId: payment.methodId };
+    execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction | SpamProtectionAction, InternalCheckoutSelectors> {
+        return store => concat(
+            this._orderActionCreator.executeSpamProtection()(store),
+            new Observable((observer: Observer<PaymentStrategyExecuteAction>) => {
+                const state = store.getState();
+                const { payment = {} as OrderPaymentRequestBody, useStoreCredit } = payload;
+                const meta = { methodId: payment.methodId };
 
-            let strategy: PaymentStrategy;
+                let strategy: PaymentStrategy;
 
-            if (state.payment.isPaymentDataRequired(useStoreCredit)) {
-                const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
+                if (state.payment.isPaymentDataRequired(useStoreCredit)) {
+                    const method = state.paymentMethods.getPaymentMethod(payment.methodId, payment.gatewayId);
 
-                if (!method) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                    if (!method) {
+                        throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                    }
+
+                    strategy = this._strategyRegistry.getByMethod(method);
+                } else {
+                    strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
                 }
 
-                strategy = this._strategyRegistry.getByMethod(method);
-            } else {
-                strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
-            }
+                observer.next(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta));
 
-            observer.next(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta));
-
-            strategy
-                .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
-                .then(() => {
-                    observer.next(createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
-                    observer.complete();
-                })
-                .catch(error => {
-                    observer.error(createErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta));
-                });
-        });
+                strategy
+                    .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
+                    .then(() => {
+                        observer.next(createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
+                        observer.complete();
+                    })
+                    .catch(error => {
+                        observer.error(createErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta));
+                    });
+            })
+        );
     }
 
     finalize(options?: RequestOptions): ThunkAction<PaymentStrategyFinalizeAction, InternalCheckoutSelectors> {

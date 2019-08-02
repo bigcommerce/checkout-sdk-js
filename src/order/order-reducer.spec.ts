@@ -9,7 +9,7 @@ import { FinalizeOrderAction, LoadOrderAction, LoadOrderPaymentsAction, OrderAct
 import orderReducer from './order-reducer';
 import OrderState from './order-state';
 import { getOrder } from './orders.mock';
-import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection/spam-protection-actions';
+import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection';
 
 describe('orderReducer()', () => {
     let initialState: OrderState;

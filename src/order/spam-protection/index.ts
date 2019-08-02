@@ -1,3 +1,4 @@
+export * from './spam-protection-actions';
 export * from './spam-protection-options';
 
 export { default as createSpamProtection } from './create-spam-protection';

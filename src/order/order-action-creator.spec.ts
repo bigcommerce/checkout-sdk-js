@@ -12,7 +12,7 @@ import { ErrorResponseBody } from '../common/error';
 import { MissingDataError } from '../common/error/errors';
 import { InternalResponseBody } from '../common/http-request';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { getConfigState } from '../config/configs.mock';
+import { getConfig, getConfigState } from '../config/configs.mock';
 
 import { InternalOrderResponseBody } from './internal-order-responses';
 import {
@@ -27,8 +27,7 @@ import OrderActionCreator from './order-action-creator';
 import { OrderActionType } from './order-actions';
 import OrderRequestSender from './order-request-sender';
 import { getOrder, getOrderState } from './orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from './spam-protection';
-import { SpamProtectionActionType } from './spam-protection/spam-protection-actions';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType } from './spam-protection';
 
 describe('OrderActionCreator', () => {
     let orderRequestSender: OrderRequestSender;
@@ -252,8 +251,6 @@ describe('OrderActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: OrderActionType.SubmitOrderRequested },
-                { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
                 { type: OrderActionType.LoadOrderRequested },
                 { type: OrderActionType.LoadOrderSucceeded, payload: getOrder() },
                 {
@@ -281,8 +278,6 @@ describe('OrderActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: OrderActionType.SubmitOrderRequested },
-                { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
                 { type: OrderActionType.SubmitOrderFailed, payload: errorResponse, error: true },
             ]);
         });
@@ -397,6 +392,38 @@ describe('OrderActionCreator', () => {
                 { type: OrderActionType.FinalizeOrderRequested },
                 { type: OrderActionType.FinalizeOrderFailed, payload: errorResponse, error: true },
             ]);
+        });
+    });
+
+    describe('#executeSpamProtection()', () => {
+        it('emits actions if able to execute spam protection', async () => {
+            const actions = await from(orderActionCreator.executeSpamProtection()(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([
+                { type: SpamProtectionActionType.ExecuteRequested },
+                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
+            ]);
+        });
+
+        it('does not emit actions if spam protection is disabled', async () => {
+            const config = getConfig();
+            config.storeConfig.checkoutSettings.isSpamProtectionEnabled = false;
+            const configState = { ...getConfigState(),
+                data: config,
+            };
+            const state = { ...getCheckoutStoreState(),
+                config: configState,
+            };
+
+            const store = createCheckoutStore(state);
+
+            const actions = await from(orderActionCreator.executeSpamProtection()(store))
+                .pipe(toArray())
+                .toPromise();
+
+            expect(actions).toEqual([]);
         });
     });
 });
