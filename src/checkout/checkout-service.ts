@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
 import { BillingAddressActionCreator, BillingAddressRequestBody } from '../billing';
+import { DataStoreProjection } from '../common/data-store';
 import { ErrorActionCreator, ErrorMessageTransformer } from '../common/error';
 import { RequestOptions } from '../common/http-request';
 import { bindDecorator as bind } from '../common/utility';
@@ -35,7 +36,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
  */
 @bind
 export default class CheckoutService {
-    private _state: CheckoutSelectors;
+    private _storeProjection: DataStoreProjection<InternalCheckoutSelectors, CheckoutSelectors>;
     private _errorTransformer: ErrorMessageTransformer;
 
     /**
@@ -60,12 +61,8 @@ export default class CheckoutService {
         private _shippingStrategyActionCreator: ShippingStrategyActionCreator,
         private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {
-        this._state = createCheckoutSelectors(this._store.getState());
         this._errorTransformer = createCheckoutServiceErrorTransformer();
-
-        this._store.subscribe(state => {
-            this._state = createCheckoutSelectors(state);
-        });
+        this._storeProjection = new DataStoreProjection(this._store, createCheckoutSelectors);
     }
 
     /**
@@ -86,7 +83,7 @@ export default class CheckoutService {
      * @returns The current customer's checkout state
      */
     getState(): CheckoutSelectors {
-        return this._state;
+        return this._storeProjection.getState();
     }
 
     /**
@@ -133,9 +130,9 @@ export default class CheckoutService {
         subscriber: (state: CheckoutSelectors) => void,
         ...filters: Array<(state: CheckoutSelectors) => any>
     ): () => void {
-        return this._store.subscribe(
+        return this._storeProjection.subscribe(
             () => subscriber(this.getState()),
-            ...filters.map(filter => (state: InternalCheckoutSelectors) => filter(createCheckoutSelectors(state)))
+            ...filters.map(filter => (state: CheckoutSelectors) => filter(state))
         );
     }
 

@@ -1,7 +1,7 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { Observable, Observer } from 'rxjs';
 
-import { cachableAction, ActionOptions } from '../common/action';
+import { cachableAction, ActionOptions } from '../common/data-store';
 import { RequestOptions } from '../common/http-request';
 
 import { ConfigRequestSender } from '.';
