@@ -11,18 +11,17 @@ export default class AdyenV2ScriptLoader {
     ) {}
 
     load(configuration: AdyenConfiguration): Promise<AdyenClient> {
-        return this._loadStylesheet(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.0.0/adyen.css`)
-            .then(() => {
-                return this._scriptLoader
-                    .loadScript(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.0.0/adyen.js`)
-                    .then(() => {
-                        if (!this._window.AdyenCheckout) {
-                            throw new StandardError();
-                        }
+        this._loadStylesheet(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.0.0/adyen.css`);
 
-                        return new this._window.AdyenCheckout(configuration);
-                    });
-                });
+        return this._scriptLoader
+            .loadScript(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.0.0/adyen.js`)
+            .then(() => {
+                if (!this._window.AdyenCheckout) {
+                    throw new StandardError();
+                }
+
+                return new this._window.AdyenCheckout(configuration);
+            });
     }
 
     private _loadStylesheet(src: string): Promise<Event> {
