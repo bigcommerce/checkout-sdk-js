@@ -27,3 +27,9 @@ export interface CheckoutButtonStatusesState {
     isInitializing?: boolean;
     isDeinitializing?: boolean;
 }
+
+export const DEFAULT_STATE: CheckoutButtonState = {
+    data: {},
+    errors: {},
+    statuses: {},
+};

@@ -1,13 +1,15 @@
-import CheckoutButtonSelector from './checkout-button-selector';
+import { createCheckoutButtonSelectorFactory, CheckoutButtonSelectorFactory } from './checkout-button-selector';
 import CheckoutButtonState from './checkout-button-state';
 import { getCheckoutButtonState } from './checkout-buttons.mock';
 import { CheckoutButtonMethodType } from './strategies';
 
 describe('CheckoutButtonSelector', () => {
     let state: CheckoutButtonState;
+    let createCheckoutButtonSelector: CheckoutButtonSelectorFactory;
 
     describe('#isInitializing()', () => {
         beforeEach(() => {
+            createCheckoutButtonSelector = createCheckoutButtonSelectorFactory();
             state = {
                 ...getCheckoutButtonState(),
                 statuses: {
@@ -19,19 +21,19 @@ describe('CheckoutButtonSelector', () => {
         });
 
         it('returns true if initializing checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.isInitializing(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(true);
         });
 
         it('returns true if initializing any checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.isInitializing()).toEqual(true);
         });
 
         it('returns false if not initializing checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.isInitializing(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT)).toEqual(false);
         });
@@ -39,7 +41,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns false if not initializing any checkout button', () => {
             state = getCheckoutButtonState();
 
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.isInitializing()).toEqual(false);
         });
@@ -47,7 +49,7 @@ describe('CheckoutButtonSelector', () => {
 
     describe('#isInitialized()', () => {
         it('returns true if method is initialized', () => {
-            const selector = new CheckoutButtonSelector({
+            const selector = createCheckoutButtonSelector({
                 ...state,
                 data: {
                     [CheckoutButtonMethodType.BRAINTREE_PAYPAL]: {
@@ -60,7 +62,7 @@ describe('CheckoutButtonSelector', () => {
         });
 
         it('returns false if method is not initialized', () => {
-            const selector = new CheckoutButtonSelector({
+            const selector = createCheckoutButtonSelector({
                 ...state,
                 data: {
                     [CheckoutButtonMethodType.BRAINTREE_PAYPAL]: {
@@ -87,19 +89,19 @@ describe('CheckoutButtonSelector', () => {
         });
 
         it('returns true if deinitializing checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.isDeinitializing(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(true);
         });
 
         it('returns true if deinitializing any checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.isDeinitializing()).toEqual(true);
         });
 
         it('returns false if not deinitializing checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.isDeinitializing(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT)).toEqual(false);
         });
@@ -107,7 +109,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns false if not deinitializing any checkout button', () => {
             state = getCheckoutButtonState();
 
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.isDeinitializing()).toEqual(false);
         });
@@ -130,19 +132,19 @@ describe('CheckoutButtonSelector', () => {
         });
 
         it('returns error if unable to initialize checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.getInitializeError(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(expectedError);
         });
 
         it('returns error if unable to initialize any checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.getInitializeError()).toEqual(expectedError);
         });
 
         it('returns undefined if able to initialize checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.getInitializeError(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT)).toBeUndefined();
         });
@@ -150,7 +152,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns undefined if there are no issues initializing any checkout button', () => {
             state = getCheckoutButtonState();
 
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.getInitializeError()).toBeUndefined();
         });
@@ -173,19 +175,19 @@ describe('CheckoutButtonSelector', () => {
         });
 
         it('returns error if unable to deinitialize checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.getDeinitializeError(CheckoutButtonMethodType.BRAINTREE_PAYPAL)).toEqual(expectedError);
         });
 
         it('returns error if unable to deinitialize any checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.getDeinitializeError()).toEqual(expectedError);
         });
 
         it('returns undefined if able to deinitialize checkout button', () => {
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.getDeinitializeError(CheckoutButtonMethodType.BRAINTREE_PAYPAL_CREDIT)).toBeUndefined();
         });
@@ -193,7 +195,7 @@ describe('CheckoutButtonSelector', () => {
         it('returns undefined if there are no issues deinitializing any checkout button', () => {
             state = getCheckoutButtonState();
 
-            const selector = new CheckoutButtonSelector(state);
+            const selector = createCheckoutButtonSelector(state);
 
             expect(selector.getDeinitializeError()).toBeUndefined();
         });

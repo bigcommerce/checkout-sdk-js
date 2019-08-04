@@ -1,13 +1,9 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
-import { CheckoutButtonAction, CheckoutButtonActionType } from './checkout-button-actions';
-import CheckoutButtonState, { CheckoutButtonDataState, CheckoutButtonErrorsState, CheckoutButtonStatusesState } from './checkout-button-state';
+import { objectMerge, objectSet } from '../common/utility';
 
-const DEFAULT_STATE: CheckoutButtonState = {
-    data: {},
-    errors: {},
-    statuses: {},
-};
+import { CheckoutButtonAction, CheckoutButtonActionType } from './checkout-button-actions';
+import CheckoutButtonState, { CheckoutButtonDataState, CheckoutButtonErrorsState, CheckoutButtonStatusesState, DEFAULT_STATE } from './checkout-button-state';
 
 const DEFAULT_DATA_STATE: CheckoutButtonDataState = { initializedContainers: {} };
 const DEFAULT_ERROR_STATE: CheckoutButtonErrorsState = {};
@@ -46,19 +42,14 @@ function dataReducer(
             return data;
         }
 
-        return {
-            ...data,
+        return objectMerge(data, {
             initializedContainers: {
-                ...data.initializedContainers,
                 [action.meta.containerId]: true,
             },
-        };
+        });
 
     case CheckoutButtonActionType.DeinitializeButtonSucceeded:
-        return {
-            ...data,
-            initializedContainers: {},
-        };
+        return objectSet(data, 'initializedContainers', {});
     }
 
     return data;
@@ -71,29 +62,17 @@ function errorsReducer(
     switch (action.type) {
     case CheckoutButtonActionType.InitializeButtonRequested:
     case CheckoutButtonActionType.InitializeButtonSucceeded:
-        return {
-            ...errors,
-            initializeError: undefined,
-        };
+        return objectSet(errors, 'initializeError', undefined);
 
     case CheckoutButtonActionType.InitializeButtonFailed:
-        return {
-            ...errors,
-            initializeError: action.payload,
-        };
+        return objectSet(errors, 'initializeError', action.payload);
 
     case CheckoutButtonActionType.DeinitializeButtonRequested:
     case CheckoutButtonActionType.DeinitializeButtonSucceeded:
-        return {
-            ...errors,
-            deinitializeError: undefined,
-        };
+        return objectSet(errors, 'deinitializeError', undefined);
 
     case CheckoutButtonActionType.DeinitializeButtonFailed:
-        return {
-            ...errors,
-            deinitializeError: action.payload,
-        };
+        return objectSet(errors, 'deinitializeError', action.payload);
 
     default:
         return errors;
@@ -106,30 +85,18 @@ function statusesReducer(
 ): CheckoutButtonStatusesState {
     switch (action.type) {
     case CheckoutButtonActionType.InitializeButtonRequested:
-        return {
-            ...statuses,
-            isInitializing: true,
-        };
+        return objectSet(statuses, 'isInitializing', true);
 
     case CheckoutButtonActionType.InitializeButtonFailed:
     case CheckoutButtonActionType.InitializeButtonSucceeded:
-        return {
-            ...statuses,
-            isInitializing: false,
-        };
+        return objectSet(statuses, 'isInitializing', false);
 
     case CheckoutButtonActionType.DeinitializeButtonRequested:
-        return {
-            ...statuses,
-            isDeinitializing: true,
-        };
+        return objectSet(statuses, 'isDeinitializing', true);
 
     case CheckoutButtonActionType.DeinitializeButtonFailed:
     case CheckoutButtonActionType.DeinitializeButtonSucceeded:
-        return {
-            ...statuses,
-            isDeinitializing: false,
-        };
+        return objectSet(statuses, 'isDeinitializing', false);
 
     default:
         return statuses;
