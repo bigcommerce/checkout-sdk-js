@@ -32,18 +32,6 @@ export default class PaymentRequestSender {
         });
     }
 
-    generatePaymentIntent(payload: any): Promise<Response> {
-        return new Promise((resolve, reject) => {
-            this._client.generatePaymentIntent(payload, (error: any, response: any) => {
-                if (error) {
-                    reject(this._transformResponse(error));
-                } else {
-                    resolve(this._transformResponse(response));
-                }
-            });
-        });
-    }
-
     private _transformResponse(response: any): Response {
         return {
             headers: {},

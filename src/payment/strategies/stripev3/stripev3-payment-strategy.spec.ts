@@ -33,6 +33,7 @@ import {
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
+import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getPaymentMethodsState, getStripeV3 } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
@@ -136,6 +137,7 @@ describe('StripeV3PaymentStrategy', () => {
 
     describe('#execute', () => {
         let stripeV3Options: PaymentInitializeOptions;
+        let paymentMethodMock: PaymentMethod;
         const stripeV3JsMock = getStripeV3JsMock();
 
         beforeEach(() => {
@@ -145,12 +147,6 @@ describe('StripeV3PaymentStrategy', () => {
             jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve());
             jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
             jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
-            jest.spyOn(paymentRequestSender, 'generatePaymentIntent')
-                .mockReturnValue(Promise.resolve({
-                    body: {
-                        client_token: 'paymentIntent',
-                    },
-                }));
             jest.spyOn(paymentRequestTransformer, 'transform').mockReturnValue({
                 state: 'state',
             });
@@ -178,7 +174,7 @@ describe('StripeV3PaymentStrategy', () => {
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalled();
             expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-            expect(paymentRequestSender.generatePaymentIntent).toHaveBeenCalled();
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(response).toBe(store.getState());
         });
@@ -294,6 +290,36 @@ describe('StripeV3PaymentStrategy', () => {
             return expect(response).rejects.toThrow(StandardError);
         });
 
+        it('throws an error when ClientToken is undefined', async () => {
+            paymentMethodMock = {
+                ...getStripeV3(),
+                clientToken: undefined,
+                initializationData: {
+                    stripePublishableKey: 'key',
+                },
+            };
+            stripeV3JsMock.handleCardPayment = jest.fn(
+                () => Promise.resolve(getStripeV3HandleCardResponse())
+            );
+
+            stripeV3JsMock.createPaymentMethod = jest.fn(
+                () => Promise.resolve({
+                    paymentMethod: {
+                        id: 'paymentMethod',
+                    },
+                })
+            );
+
+            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
+                .mockReturnValue(paymentMethodMock);
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+
+            await strategy.initialize(stripeV3Options);
+            const response = strategy.execute(getStripeV3OrderRequestBodyMock());
+
+            return expect(response).rejects.toThrow(MissingDataError);
+        });
+
         it('creates the order and submit payment with a signed user', async () => {
             const elements = stripeV3JsMock.elements();
             const cardElement = elements.create('card', {});
@@ -326,14 +352,14 @@ describe('StripeV3PaymentStrategy', () => {
                 getStripePaymentMethodOptionsWithSignedUser()
             );
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalledWith(
-                'paymentIntent',
+                'clientToken',
                 {
                     ...getStripeCardPaymentOptionsWithSignedUser(),
                     payment_method: 'paymentMethod',
                 }
             );
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-            expect(paymentRequestSender.generatePaymentIntent).toHaveBeenCalled();
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(response).toBe(store.getState());
         });
@@ -371,14 +397,14 @@ describe('StripeV3PaymentStrategy', () => {
                 getStripePaymentMethodOptionsWithGuestUser()
             );
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalledWith(
-                'paymentIntent',
+                'clientToken',
                 {
                     ...getStripeCardPaymentOptionsWithGuestUser(),
                     payment_method: 'paymentMethod',
                 }
             );
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-            expect(paymentRequestSender.generatePaymentIntent).toHaveBeenCalled();
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(response).toBe(store.getState());
         });
@@ -416,14 +442,14 @@ describe('StripeV3PaymentStrategy', () => {
                 getStripePaymentMethodOptionsWithGuestUserWithoutAddress()
             );
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalledWith(
-                'paymentIntent',
+                'clientToken',
                 {
                     ...getStripeCardPaymentOptionsWithGuestUserWithoutAddress(),
                     payment_method: 'paymentMethod',
                 }
             );
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-            expect(paymentRequestSender.generatePaymentIntent).toHaveBeenCalled();
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(response).toBe(store.getState());
         });
@@ -463,14 +489,14 @@ describe('StripeV3PaymentStrategy', () => {
                 getStripePaymentMethodOptionsWithGuestUser()
             );
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalledWith(
-                'paymentIntent',
+                'clientToken',
                 {
                     ...getStripeCardPaymentOptionsWithGuestUser(),
                     payment_method: 'paymentMethod',
                 }
             );
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
-            expect(paymentRequestSender.generatePaymentIntent).toHaveBeenCalled();
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(response).toBe(store.getState());
         });
