@@ -33,11 +33,22 @@ declare interface BillingAddress extends Address {
 
 export declare class CacheKeyResolver {
     private _lastId;
-    private _maps;
+    private _map;
+    private _usedMaps;
+    private _options;
+    constructor(options?: CacheKeyResolverOptions);
     getKey(...args: any[]): string;
     getUsedCount(...args: any[]): number;
     private _resolveMap;
-    private _generateKey;
+    private _generateMap;
+    private _removeLeastUsedMap;
+    private _removeMap;
+}
+
+declare interface CacheKeyResolverOptions {
+    maxSize?: number;
+    onExpire?(key: string): void;
+    isEqual?(valueA: any, valueB: any): boolean;
 }
 
 declare interface Cart {

@@ -590,7 +590,7 @@ declare class CheckoutService {
     private _shippingCountryActionCreator;
     private _shippingStrategyActionCreator;
     private _spamProtectionActionCreator;
-    private _state;
+    private _storeProjection;
     private _errorTransformer;
     /**
      * Returns a snapshot of the current checkout state.

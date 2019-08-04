@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.31.0"></a>
+# [1.31.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.30.0...v1.31.0) (2019-08-04)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-4273 Fix PayPal Express modal does not load when recaptcha is enabled ([b4f2054](https://github.com/bigcommerce/checkout-sdk-js/commit/b4f2054))
+
+
+### Features
+
+* **payment:** INT-1768 Payment Intent creation refactor ([ba07314](https://github.com/bigcommerce/checkout-sdk-js/commit/ba07314))
+
+
+### Performance Improvements
+
+* **billing:** CHECKOUT-4272 Refactor billing selector to return new getters only when there are changes to relevant data ([fe78e6d](https://github.com/bigcommerce/checkout-sdk-js/commit/fe78e6d))
+* **billing:** CHECKOUT-4272 Update billing reducer to transform state only when necessary ([8d49c5a](https://github.com/bigcommerce/checkout-sdk-js/commit/8d49c5a))
+* **cart:** CHECKOUT-4272 Refactor cart selector to return new getters only when there are changes to relevant data ([5bb0b94](https://github.com/bigcommerce/checkout-sdk-js/commit/5bb0b94))
+* **cart:** CHECKOUT-4272 Update cart reducer to transform state only when necessary ([1e9d658](https://github.com/bigcommerce/checkout-sdk-js/commit/1e9d658))
+* **checkout:** CHECKOUT-4272 Add function for creating internal checkout selectors factory ([722a09a](https://github.com/bigcommerce/checkout-sdk-js/commit/722a09a))
+* **checkout:** CHECKOUT-4272 Refactor coupon selector to return new getters only when there are changes to relevant data ([39b69fc](https://github.com/bigcommerce/checkout-sdk-js/commit/39b69fc))
+* **checkout:** CHECKOUT-4272 Refactor gift certificate selector to return new getters only when there are changes to relevant data ([2d53e4d](https://github.com/bigcommerce/checkout-sdk-js/commit/2d53e4d))
+* **checkout:** CHECKOUT-4272 Update coupon reducer to transform state only when necessary ([daaa59a](https://github.com/bigcommerce/checkout-sdk-js/commit/daaa59a))
+* **checkout:** CHECKOUT-4272 Update gift certificate reducer to transform state only when necessary ([ef9d7c2](https://github.com/bigcommerce/checkout-sdk-js/commit/ef9d7c2))
+* **common:** CHECKOUT-4272 Add shallow equal selector creator for creating selectors that does shallow comparison instead of strict comparison ([7a313e1](https://github.com/bigcommerce/checkout-sdk-js/commit/7a313e1))
+* **common:** CHECKOUT-4272 Add size limit to cache key resolver ([d6dd84b](https://github.com/bigcommerce/checkout-sdk-js/commit/d6dd84b))
+* **common:** CHECKOUT-4272 Add utility functions for transforming data in reducers ([d3a1505](https://github.com/bigcommerce/checkout-sdk-js/commit/d3a1505))
+* **common:** CHECKOUT-4272 Avoid doing another round of transformation for subscription filters ([d4fb957](https://github.com/bigcommerce/checkout-sdk-js/commit/d4fb957))
+* **order:** CHECKOUT-4272 Refactor order selector to return new getters only when there are changes to relevant data ([6e20543](https://github.com/bigcommerce/checkout-sdk-js/commit/6e20543))
+* **order:** CHECKOUT-4272 Update order reducer to transform state only when necessary ([d79afec](https://github.com/bigcommerce/checkout-sdk-js/commit/d79afec))
+
+
+
 <a name="1.30.0"></a>
 # [1.30.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.29.0...v1.30.0) (2019-07-29)
 
