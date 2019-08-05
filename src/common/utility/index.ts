@@ -2,6 +2,7 @@ export { default as AmountTransformer } from './amount-transformer';
 export { default as arrayReplace } from './array-replace';
 export { default as bindDecorator } from './bind-decorator';
 export { default as clone } from './clone-decorator';
+export { default as cloneResult } from './clone-result';
 export { default as createFreezeProxy, createFreezeProxies } from './create-freeze-proxy';
 export { default as CacheKeyResolver } from './cache-key-resolver';
 export { default as CancellablePromise } from './cancellable-promise';
