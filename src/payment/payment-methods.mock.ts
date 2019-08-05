@@ -412,7 +412,7 @@ export function getAdyenV2(): PaymentMethod {
         supportedCards: [],
         config: {
             displayName: 'Adyen',
-            merchantId: '',
+            merchantId: 'YOUR_MERCHANT_ID',
             testMode: true,
         },
         initializationData: {
