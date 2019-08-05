@@ -1,13 +1,15 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import PaymentStrategySelector from './payment-strategy-selector';
+import PaymentStrategySelector, { createPaymentStrategySelectorFactory, PaymentStrategySelectorFactory } from './payment-strategy-selector';
 import { DEFAULT_STATE } from './payment-strategy-state';
 
 describe('PaymentStrategySelector', () => {
+    let createPaymentStrategySelector: PaymentStrategySelectorFactory;
     let selector: PaymentStrategySelector;
     let state: any;
 
     beforeEach(() => {
+        createPaymentStrategySelector = createPaymentStrategySelectorFactory();
         state = {
             paymentStrategy: DEFAULT_STATE,
         };
@@ -17,7 +19,7 @@ describe('PaymentStrategySelector', () => {
         it('returns error if unable to execute', () => {
             const executeError = getErrorResponse();
 
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 errors: { executeError },
             });
@@ -26,7 +28,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('does not returns error if able to execute', () => {
-            selector = new PaymentStrategySelector(state.paymentStrategy);
+            selector = createPaymentStrategySelector(state.paymentStrategy);
 
             expect(selector.getExecuteError()).toBeUndefined();
         });
@@ -36,7 +38,7 @@ describe('PaymentStrategySelector', () => {
         it('returns error if unable to finalize', () => {
             const finalizeError = getErrorResponse();
 
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 errors: { finalizeError },
             });
@@ -45,7 +47,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('does not returns error if able to finalize', () => {
-            selector = new PaymentStrategySelector(state.paymentStrategy);
+            selector = createPaymentStrategySelector(state.paymentStrategy);
 
             expect(selector.getFinalizeError()).toBeUndefined();
         });
@@ -53,7 +55,7 @@ describe('PaymentStrategySelector', () => {
 
     describe('#getInitializeError()', () => {
         it('returns error if unable to initialize any method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
@@ -62,7 +64,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('returns error if unable to initialize specific method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
@@ -72,7 +74,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('does not return error if able to initialize', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 errors: {},
             });
@@ -83,7 +85,7 @@ describe('PaymentStrategySelector', () => {
 
     describe('#getWidgetInteractingError()', () => {
         it('returns error if widget interaction failed', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 errors: { widgetInteractionError: getErrorResponse(), widgetInteractionMethodId: 'foobar' },
             });
@@ -92,7 +94,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('returns error if unable to initialize specific method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
@@ -102,7 +104,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('does not return error if able to initialize', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 errors: {},
             });
@@ -113,7 +115,7 @@ describe('PaymentStrategySelector', () => {
 
     describe('#isExecuting()', () => {
         it('returns true if updating address', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 statuses: { isExecuting: true },
             });
@@ -122,7 +124,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('returns false if not updating address', () => {
-            selector = new PaymentStrategySelector(state.paymentStrategy);
+            selector = createPaymentStrategySelector(state.paymentStrategy);
 
             expect(selector.isExecuting()).toEqual(false);
         });
@@ -130,7 +132,7 @@ describe('PaymentStrategySelector', () => {
 
     describe('#isFinalizing()', () => {
         it('returns true if selecting option', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 statuses: { isFinalizing: true },
             });
@@ -139,7 +141,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('returns false if not selecting option', () => {
-            selector = new PaymentStrategySelector(state.paymentStrategy);
+            selector = createPaymentStrategySelector(state.paymentStrategy);
 
             expect(selector.isFinalizing()).toEqual(false);
         });
@@ -147,7 +149,7 @@ describe('PaymentStrategySelector', () => {
 
     describe('#isInitializing()', () => {
         it('returns true if initializing any method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
@@ -156,7 +158,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('returns true if initializing specific method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
@@ -166,7 +168,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('returns false if not initializing method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 statuses: { initializeMethodId: undefined, isInitializing: false },
             });
@@ -177,7 +179,7 @@ describe('PaymentStrategySelector', () => {
 
     describe('#isWidgetInteracting()', () => {
         it('returns true if widget interacting in any method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 statuses: { initializeMethodId: 'foobar', isWidgetInteracting: true },
             });
@@ -186,7 +188,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('returns true if widget interacting for a specific method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 statuses: { widgetInteractionMethodId: 'foobar', isWidgetInteracting: true },
             });
@@ -196,7 +198,7 @@ describe('PaymentStrategySelector', () => {
         });
 
         it('returns false if widget not interacting for a specific method', () => {
-            selector = new PaymentStrategySelector({
+            selector = createPaymentStrategySelector({
                 ...state.paymentStrategy,
                 statuses: { widgetInteractionMethodId: undefined, isWidgetInteracting: false },
             });

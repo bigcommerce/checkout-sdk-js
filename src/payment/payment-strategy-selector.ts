@@ -1,81 +1,142 @@
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 
 import PaymentStrategyState, { DEFAULT_STATE } from './payment-strategy-state';
 
-@selector
-export default class PaymentStrategySelector {
-    constructor(
-        private _paymentStrategies: PaymentStrategyState = DEFAULT_STATE
-    ) {}
+export default interface PaymentStrategySelector {
+    getInitializeError(methodId?: string): Error | undefined;
+    getExecuteError(methodId?: string): Error | undefined;
+    getFinalizeError(methodId?: string): Error | undefined;
+    getWidgetInteractingError(methodId?: string): Error | undefined;
+    isInitializing(methodId?: string): boolean;
+    isInitialized(methodId: string): boolean;
+    isExecuting(methodId?: string): boolean;
+    isFinalizing(methodId?: string): boolean;
+    isWidgetInteracting(methodId?: string): boolean;
+}
 
-    getInitializeError(methodId?: string): Error | undefined {
-        if (methodId && this._paymentStrategies.errors.initializeMethodId !== methodId) {
-            return;
+export type PaymentStrategySelectorFactory = (state: PaymentStrategyState) => PaymentStrategySelector;
+
+export function createPaymentStrategySelectorFactory(): PaymentStrategySelectorFactory {
+    const getInitializeError = createSelector(
+        (state: PaymentStrategyState) => state.errors.initializeMethodId,
+        (state: PaymentStrategyState) => state.errors.initializeError,
+        (initializeMethodId, initializeError) => (methodId?: string) => {
+            if (methodId && initializeMethodId !== methodId) {
+                return;
+            }
+
+            return initializeError;
         }
+    );
 
-        return this._paymentStrategies.errors.initializeError;
-    }
+    const getExecuteError = createSelector(
+        (state: PaymentStrategyState) => state.errors.executeMethodId,
+        (state: PaymentStrategyState) => state.errors.executeError,
+        (executeMethodId, executeError) => (methodId?: string) => {
+            if (methodId && executeMethodId !== methodId) {
+                return;
+            }
 
-    getExecuteError(methodId?: string): Error | undefined {
-        if (methodId && this._paymentStrategies.errors.executeMethodId !== methodId) {
-            return;
+            return executeError;
         }
+    );
 
-        return this._paymentStrategies.errors.executeError;
-    }
+    const getFinalizeError = createSelector(
+        (state: PaymentStrategyState) => state.errors.finalizeMethodId,
+        (state: PaymentStrategyState) => state.errors.finalizeError,
+        (finalizeMethodId, finalizeError) => (methodId?: string) => {
+            if (methodId && finalizeMethodId !== methodId) {
+                return;
+            }
 
-    getFinalizeError(methodId?: string): Error | undefined {
-        if (methodId && this._paymentStrategies.errors.finalizeMethodId !== methodId) {
-            return;
+            return finalizeError;
         }
+    );
 
-        return this._paymentStrategies.errors.finalizeError;
-    }
+    const getWidgetInteractingError = createSelector(
+        (state: PaymentStrategyState) => state.errors.widgetInteractionMethodId,
+        (state: PaymentStrategyState) => state.errors.widgetInteractionError,
+        (widgetInteractionMethodId, widgetInteractionError) => (methodId?: string) => {
+            if (methodId && widgetInteractionMethodId !== methodId) {
+                return;
+            }
 
-    getWidgetInteractingError(methodId?: string): Error | undefined {
-        if (methodId && this._paymentStrategies.errors.widgetInteractionMethodId !== methodId) {
-            return;
+            return widgetInteractionError;
         }
+    );
 
-        return this._paymentStrategies.errors.widgetInteractionError;
-    }
+    const isInitializing = createSelector(
+        (state: PaymentStrategyState) => state.statuses.initializeMethodId,
+        (state: PaymentStrategyState) => state.statuses.isInitializing,
+        (initializeMethodId, isInitializing) => (methodId?: string) => {
+            if (methodId && initializeMethodId !== methodId) {
+                return false;
+            }
 
-    isInitializing(methodId?: string): boolean {
-        if (methodId && this._paymentStrategies.statuses.initializeMethodId !== methodId) {
-            return false;
+            return !!isInitializing;
         }
+    );
 
-        return !!this._paymentStrategies.statuses.isInitializing;
-    }
-
-    isInitialized(methodId: string): boolean {
-        return !!(
-            this._paymentStrategies.data[methodId] &&
-            this._paymentStrategies.data[methodId].isInitialized
-        );
-    }
-
-    isExecuting(methodId?: string): boolean {
-        if (methodId && this._paymentStrategies.statuses.executeMethodId !== methodId) {
-            return false;
+    const isInitialized = createSelector(
+        (state: PaymentStrategyState) => state.data,
+        data => (methodId: string) => {
+            return !!(
+                data[methodId] &&
+                data[methodId].isInitialized
+            );
         }
+    );
 
-        return !!this._paymentStrategies.statuses.isExecuting;
-    }
+    const isExecuting = createSelector(
+        (state: PaymentStrategyState) => state.statuses.executeMethodId,
+        (state: PaymentStrategyState) => state.statuses.isExecuting,
+        (executeMethodId, isExecuting) => (methodId?: string) => {
+            if (methodId && executeMethodId !== methodId) {
+                return false;
+            }
 
-    isFinalizing(methodId?: string): boolean {
-        if (methodId && this._paymentStrategies.statuses.finalizeMethodId !== methodId) {
-            return false;
+            return !!isExecuting;
         }
+    );
 
-        return !!this._paymentStrategies.statuses.isFinalizing;
-    }
+    const isFinalizing = createSelector(
+        (state: PaymentStrategyState) => state.statuses.finalizeMethodId,
+        (state: PaymentStrategyState) => state.statuses.isFinalizing,
+        (finalizeMethodId, isFinalizing) => (methodId?: string) => {
+            if (methodId && finalizeMethodId !== methodId) {
+                return false;
+            }
 
-    isWidgetInteracting(methodId?: string): boolean {
-        if (methodId && this._paymentStrategies.statuses.widgetInteractionMethodId !== methodId) {
-            return false;
+            return !!isFinalizing;
         }
+    );
 
-        return !!this._paymentStrategies.statuses.isWidgetInteracting;
-    }
+    const isWidgetInteracting = createSelector(
+        (state: PaymentStrategyState) => state.statuses.widgetInteractionMethodId,
+        (state: PaymentStrategyState) => state.statuses.isWidgetInteracting,
+        (widgetInteractionMethodId, isWidgetInteracting) => (methodId?: string) => {
+            if (methodId && widgetInteractionMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isWidgetInteracting;
+        }
+    );
+
+    return memoizeOne((
+        state: PaymentStrategyState = DEFAULT_STATE
+    ): PaymentStrategySelector => {
+        return {
+            getInitializeError: getInitializeError(state),
+            getExecuteError: getExecuteError(state),
+            getFinalizeError: getFinalizeError(state),
+            getWidgetInteractingError: getWidgetInteractingError(state),
+            isInitializing: isInitializing(state),
+            isInitialized: isInitialized(state),
+            isExecuting: isExecuting(state),
+            isFinalizing: isFinalizing(state),
+            isWidgetInteracting: isWidgetInteracting(state),
+        };
+    });
 }
