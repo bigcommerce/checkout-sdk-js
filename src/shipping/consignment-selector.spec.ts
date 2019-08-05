@@ -4,7 +4,7 @@ import { createCartSelectorFactory, CartSelector } from '../cart';
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import ConsignmentSelector from './consignment-selector';
+import ConsignmentSelector, { createConsignmentSelectorFactory, ConsignmentSelectorFactory } from './consignment-selector';
 import ConsignmentState from './consignment-state';
 import { getConsignment, getConsignmentsState } from './consignments.mock';
 import { getShippingAddress } from './shipping-addresses.mock';
@@ -29,15 +29,17 @@ describe('ConsignmentSelector', () => {
     let selector: ConsignmentSelector;
     let state: CheckoutStoreState;
     let cartSelector: CartSelector;
+    let createConsignmentSelector: ConsignmentSelectorFactory;
 
     beforeEach(() => {
+        createConsignmentSelector = createConsignmentSelectorFactory();
         state = getCheckoutStoreState();
         cartSelector = createCartSelectorFactory()(state.cart);
     });
 
     describe('#getConsignmentByAddress()', () => {
         it('returns first matched consignment when address matches', () => {
-            selector = new ConsignmentSelector(state.consignments, cartSelector);
+            selector = createConsignmentSelector(state.consignments, cartSelector);
 
             expect(selector.getConsignmentByAddress(existingAddress))
                 // tslint:disable-next-line:no-non-null-assertion
@@ -45,7 +47,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns undefined if no address matches a consignment', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.getConsignmentByAddress(nonexistentAddress))
                 .toEqual(undefined);
@@ -54,7 +56,7 @@ describe('ConsignmentSelector', () => {
 
     describe('#getConsignmentById()', () => {
         it('returns consignment that matches id', () => {
-            selector = new ConsignmentSelector(state.consignments, cartSelector);
+            selector = createConsignmentSelector(state.consignments, cartSelector);
 
             expect(selector.getConsignmentById('55c96cda6f04c'))
                 // tslint:disable-next-line:no-non-null-assertion
@@ -62,7 +64,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns undefined if no id matches a consignment', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.getConsignmentById('none'))
                 .toEqual(undefined);
@@ -71,13 +73,13 @@ describe('ConsignmentSelector', () => {
 
     describe('#getConsignments()', () => {
         it('returns consignments', () => {
-            selector = new ConsignmentSelector(state.consignments, cartSelector);
+            selector = createConsignmentSelector(state.consignments, cartSelector);
 
             expect(selector.getConsignments()).toEqual(getConsignmentsState().data);
         });
 
         it('returns undefined if unavailable', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.getConsignments()).toEqual(undefined);
         });
@@ -85,13 +87,13 @@ describe('ConsignmentSelector', () => {
 
     describe('#getShippingOption()', () => {
         it('returns selected shipping option for default consignment', () => {
-            selector = new ConsignmentSelector(state.consignments, cartSelector);
+            selector = createConsignmentSelector(state.consignments, cartSelector);
 
             expect(selector.getShippingOption()).toEqual(getConsignment().selectedShippingOption);
         });
 
         it('returns undefined if unavailable', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.getConsignments()).toEqual(undefined);
         });
@@ -101,7 +103,7 @@ describe('ConsignmentSelector', () => {
         it('returns load error', () => {
             const loadError = new Error();
 
-            selector = new ConsignmentSelector(merge({}, emptyState, {
+            selector = createConsignmentSelector(merge({}, emptyState, {
                 errors: { loadError },
             }), cartSelector);
 
@@ -109,7 +111,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns undefined if unavailable', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.getLoadError()).toEqual(undefined);
         });
@@ -119,7 +121,7 @@ describe('ConsignmentSelector', () => {
         it('returns create error', () => {
             const createError = new Error();
 
-            selector = new ConsignmentSelector(merge({}, emptyState, {
+            selector = createConsignmentSelector(merge({}, emptyState, {
                 errors: { createError },
             }), cartSelector);
 
@@ -127,7 +129,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns undefined if unavailable', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.getCreateError()).toEqual(undefined);
         });
@@ -137,7 +139,7 @@ describe('ConsignmentSelector', () => {
         it('returns shipping options load error', () => {
             const loadShippingOptionsError = new Error();
 
-            selector = new ConsignmentSelector(merge({}, emptyState, {
+            selector = createConsignmentSelector(merge({}, emptyState, {
                 errors: { loadShippingOptionsError },
             }), cartSelector);
 
@@ -145,7 +147,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns undefined if unavailable', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.getLoadShippingOptionsError()).toEqual(undefined);
         });
@@ -153,7 +155,7 @@ describe('ConsignmentSelector', () => {
 
     describe('#getUpdateShippingOptionError()', () => {
         it('returns undefined if none errored', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState), cartSelector);
+            selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
             expect(selector.getUpdateShippingOptionError()).toEqual(undefined);
         });
 
@@ -161,7 +163,7 @@ describe('ConsignmentSelector', () => {
             const error = new Error();
 
             beforeEach(() => {
-                selector = new ConsignmentSelector(merge({}, emptyState, {
+                selector = createConsignmentSelector(merge({}, emptyState, {
                     errors: {
                         updateShippingOptionError: {
                             foo: error,
@@ -186,7 +188,7 @@ describe('ConsignmentSelector', () => {
 
     describe('#getUpdateError()', () => {
         it('returns undefined if none errored', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState), cartSelector);
+            selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
             expect(selector.getUpdateError()).toEqual(undefined);
         });
 
@@ -194,7 +196,7 @@ describe('ConsignmentSelector', () => {
             const error = new Error();
 
             beforeEach(() => {
-                selector = new ConsignmentSelector(merge({}, emptyState, {
+                selector = createConsignmentSelector(merge({}, emptyState, {
                     errors: {
                         updateError: {
                             foo: error,
@@ -219,7 +221,7 @@ describe('ConsignmentSelector', () => {
 
     describe('#getDeleteError()', () => {
         it('returns undefined if none errored', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState), cartSelector);
+            selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
             expect(selector.getDeleteError()).toEqual(undefined);
         });
 
@@ -227,7 +229,7 @@ describe('ConsignmentSelector', () => {
             const error = new Error();
 
             beforeEach(() => {
-                selector = new ConsignmentSelector(merge({}, emptyState, {
+                selector = createConsignmentSelector(merge({}, emptyState, {
                     errors: {
                         deleteError: {
                             foo: error,
@@ -255,7 +257,7 @@ describe('ConsignmentSelector', () => {
         const createError = new Error();
 
         beforeEach(() => {
-            selector = new ConsignmentSelector(merge(state.consignments, {
+            selector = createConsignmentSelector(merge(state.consignments, {
                 errors: {
                     updateError: {
                         '55c96cda6f04c': updateError,
@@ -275,11 +277,9 @@ describe('ConsignmentSelector', () => {
     });
 
     describe('#getUnassignedItems()', () => {
-        beforeEach(() => {
-            selector = new ConsignmentSelector(state.consignments, cartSelector);
-        });
-
         it('returns unassigned items', () => {
+            selector = createConsignmentSelector(state.consignments, cartSelector);
+
             expect(selector.getUnassignedItems()).toEqual([
                 // tslint:disable-next-line:no-non-null-assertion
                 state.cart.data!.lineItems.physicalItems[0],
@@ -297,6 +297,9 @@ describe('ConsignmentSelector', () => {
                     }],
                 },
             });
+
+            selector = createConsignmentSelector(state.consignments, cartSelector);
+
             expect(selector.getUnassignedItems()).toEqual([]);
         });
 
@@ -305,18 +308,24 @@ describe('ConsignmentSelector', () => {
                 ...state.cart,
                 lineItems: { physicalItems: null },
             });
+
+            selector = createConsignmentSelector(state.consignments, cartSelector);
+
             expect(selector.getUnassignedItems()).toEqual([]);
         });
 
         it('returns empty array if there is no cart', () => {
             jest.spyOn(cartSelector, 'getCart').mockReturnValue(null);
+
+            selector = createConsignmentSelector(state.consignments, cartSelector);
+
             expect(selector.getUnassignedItems()).toEqual([]);
         });
     });
 
     describe('#isLoading()', () => {
         it('returns true if loading', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState, {
+            selector = createConsignmentSelector(merge({}, emptyState, {
                 statuses: { isLoading: true },
             }), cartSelector);
 
@@ -324,7 +333,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns false if unavailable', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.isLoading()).toEqual(false);
         });
@@ -332,7 +341,7 @@ describe('ConsignmentSelector', () => {
 
     describe('#isLoadingShippingOptions()', () => {
         it('returns true if loading', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState, {
+            selector = createConsignmentSelector(merge({}, emptyState, {
                 statuses: { isLoadingShippingOptions: true },
             }), cartSelector);
 
@@ -340,7 +349,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns false if unavailable', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.isLoadingShippingOptions()).toEqual(false);
         });
@@ -348,7 +357,7 @@ describe('ConsignmentSelector', () => {
 
     describe('#isCreating()', () => {
         it('returns true if creating', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState, {
+            selector = createConsignmentSelector(merge({}, emptyState, {
                 statuses: { isCreating: true },
             }), cartSelector);
 
@@ -356,7 +365,7 @@ describe('ConsignmentSelector', () => {
         });
 
         it('returns false if unavailable', () => {
-            selector = new ConsignmentSelector(emptyState, cartSelector);
+            selector = createConsignmentSelector(emptyState, cartSelector);
 
             expect(selector.isCreating()).toEqual(false);
         });
@@ -364,13 +373,13 @@ describe('ConsignmentSelector', () => {
 
     describe('#isUpdating()', () => {
         it('returns false if none is updating', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState), cartSelector);
+            selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
             expect(selector.isUpdating()).toEqual(false);
         });
 
         describe('when only one consignment is being updated', () => {
             beforeEach(() => {
-                selector = new ConsignmentSelector(merge({}, emptyState, {
+                selector = createConsignmentSelector(merge({}, emptyState, {
                     statuses: {
                         isUpdating: {
                             foo: true,
@@ -396,13 +405,13 @@ describe('ConsignmentSelector', () => {
 
     describe('#isDeleting()', () => {
         it('returns false if none is deleting', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState), cartSelector);
+            selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
             expect(selector.isDeleting()).toEqual(false);
         });
 
         describe('when only one consignment is being deleted', () => {
             beforeEach(() => {
-                selector = new ConsignmentSelector(merge({}, emptyState, {
+                selector = createConsignmentSelector(merge({}, emptyState, {
                     statuses: {
                         isDeleting: {
                             foo: true,
@@ -428,7 +437,7 @@ describe('ConsignmentSelector', () => {
 
     describe('#isAssigningItems()', () => {
         beforeEach(() => {
-            selector = new ConsignmentSelector(merge(state.consignments, {
+            selector = createConsignmentSelector(merge(state.consignments, {
                 statuses: {
                     isUpdating: {
                         '55c96cda6f04c': true,
@@ -449,13 +458,13 @@ describe('ConsignmentSelector', () => {
 
     describe('#isUpdatingShippingOption()', () => {
         it('returns false if none is updating', () => {
-            selector = new ConsignmentSelector(merge({}, emptyState), cartSelector);
+            selector = createConsignmentSelector(merge({}, emptyState), cartSelector);
             expect(selector.isUpdatingShippingOption()).toEqual(false);
         });
 
         describe('when only one consignment is being updated', () => {
             beforeEach(() => {
-                selector = new ConsignmentSelector(merge({}, emptyState, {
+                selector = createConsignmentSelector(merge({}, emptyState, {
                     statuses: {
                         isUpdatingShippingOption: {
                             foo: true,

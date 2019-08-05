@@ -7,20 +7,7 @@ import { CustomerAction, CustomerActionType } from '../customer';
 
 import Consignment from './consignment';
 import { ConsignmentAction, ConsignmentActionType } from './consignment-actions';
-import ConsignmentState, { ConsignmentErrorsState, ConsignmentStatusesState } from './consignment-state';
-
-const DEFAULT_STATE: ConsignmentState = {
-    errors: {
-        updateShippingOptionError: {},
-        updateError: {},
-        deleteError: {},
-    },
-    statuses: {
-        isUpdating: {},
-        isUpdatingShippingOption: {},
-        isDeleting: {},
-    },
-};
+import ConsignmentState, { ConsignmentErrorsState, ConsignmentStatusesState, DEFAULT_STATE } from './consignment-state';
 
 export default function consignmentReducer(
     state: ConsignmentState = DEFAULT_STATE,

@@ -4,7 +4,7 @@ export * from './shipping-request-options';
 export { default as createShippingStrategyRegistry } from './create-shipping-strategy-registry';
 
 export { default as Consignment, ConsignmentsRequestBody, ConsignmentRequestBody } from './consignment';
-export { default as ConsignmentSelector } from './consignment-selector';
+export { default as ConsignmentSelector, ConsignmentSelectorFactory, createConsignmentSelectorFactory } from './consignment-selector';
 export { default as ConsignmentState } from './consignment-state';
 export { default as consignmentReducer } from './consignment-reducer';
 export { default as ConsignmentActionCreator } from './consignment-action-creator';
