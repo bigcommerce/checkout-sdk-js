@@ -5,22 +5,24 @@ import { getCheckoutStoreStateWithOrder, getCheckoutWithPayments } from '../chec
 import { getCompleteOrder as getInternalCompleteOrder } from '../order/internal-orders.mock';
 
 import { getPaymentMethod } from './payment-methods.mock';
-import PaymentSelector from './payment-selector';
+import PaymentSelector, { createPaymentSelectorFactory, PaymentSelectorFactory } from './payment-selector';
 import { ACKNOWLEDGE, FINALIZE } from './payment-status-types';
 
 describe('PaymentSelector', () => {
+    let createPaymentSelector: PaymentSelectorFactory;
     let state: CheckoutStoreState;
     let selectors: InternalCheckoutSelectors;
     let paymentSelector: PaymentSelector;
 
     beforeEach(() => {
+        createPaymentSelector = createPaymentSelectorFactory();
         state = getCheckoutStoreStateWithOrder();
         selectors = createInternalCheckoutSelectors(state);
     });
 
     describe('#getPaymentId()', () => {
         it('returns payment ID from order if order has been created', () => {
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             const payment = paymentSelector.getPaymentId();
 
@@ -36,7 +38,7 @@ describe('PaymentSelector', () => {
                     meta: { payment: getInternalCompleteOrder().payment },
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             const payment = paymentSelector.getPaymentId();
 
@@ -55,7 +57,7 @@ describe('PaymentSelector', () => {
                     data: undefined,
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             const payment = paymentSelector.getPaymentId();
 
@@ -65,7 +67,7 @@ describe('PaymentSelector', () => {
 
     describe('#getPaymentStatus()', () => {
         it('returns payment status from order if order has been created', () => {
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.getPaymentStatus()).toEqual(FINALIZE);
         });
@@ -79,7 +81,7 @@ describe('PaymentSelector', () => {
                     meta: { payment: getInternalCompleteOrder().payment },
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.getPaymentStatus()).toEqual(FINALIZE);
         });
@@ -97,7 +99,7 @@ describe('PaymentSelector', () => {
                     meta: undefined,
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.getPaymentStatus()).toEqual(ACKNOWLEDGE);
         });
@@ -118,13 +120,13 @@ describe('PaymentSelector', () => {
                     },
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.getPaymentRedirectUrl()).toEqual('/checkout.php');
         });
 
         it('returns undefined if unavailable', () => {
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.getPaymentRedirectUrl()).toEqual(undefined);
         });
@@ -132,7 +134,7 @@ describe('PaymentSelector', () => {
 
     describe('#getPaymentToken()', () => {
         it('returns payment token if available', () => {
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.getPaymentToken()).toEqual(state.order.meta && state.order.meta.token);
         });
@@ -146,7 +148,7 @@ describe('PaymentSelector', () => {
                     meta: undefined,
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.getPaymentToken()).toEqual(undefined);
         });
@@ -154,7 +156,7 @@ describe('PaymentSelector', () => {
 
     describe('#isPaymentDataRequired()', () => {
         it('returns true if payment is required', () => {
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.isPaymentDataRequired()).toEqual(true);
         });
@@ -167,7 +169,7 @@ describe('PaymentSelector', () => {
                     },
                 },
             }));
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.isPaymentDataRequired(true)).toEqual(false);
         });
@@ -180,7 +182,7 @@ describe('PaymentSelector', () => {
                     },
                 },
             }));
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.isPaymentDataRequired(false)).toEqual(true);
         });
@@ -192,7 +194,7 @@ describe('PaymentSelector', () => {
                 ...getPaymentMethod(),
                 nonce: '8903d867-6f7b-475c-8ab2-0b47ec6e000d',
             };
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.isPaymentDataSubmitted(paymentMethod)).toEqual(true);
         });
@@ -205,7 +207,7 @@ describe('PaymentSelector', () => {
                     data: getCheckoutWithPayments(),
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(true);
         });
@@ -224,7 +226,7 @@ describe('PaymentSelector', () => {
                     data: checkout,
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(true);
         });
@@ -238,7 +240,7 @@ describe('PaymentSelector', () => {
                     meta: undefined,
                 },
             });
-            paymentSelector = new PaymentSelector(selectors.checkout, selectors.order);
+            paymentSelector = createPaymentSelector(selectors.checkout, selectors.order);
 
             expect(paymentSelector.isPaymentDataSubmitted(getPaymentMethod())).toEqual(false);
         });

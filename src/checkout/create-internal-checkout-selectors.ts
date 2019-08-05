@@ -8,7 +8,7 @@ import { createCustomerSelectorFactory, createCustomerStrategySelectorFactory } 
 import { createFormSelectorFactory } from '../form';
 import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
-import { createPaymentMethodSelectorFactory, PaymentSelector, PaymentStrategySelector } from '../payment';
+import { createPaymentMethodSelectorFactory, createPaymentSelectorFactory, PaymentStrategySelector } from '../payment';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
@@ -41,6 +41,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createShippingStrategySelector = createShippingStrategySelectorFactory();
     const createConsignmentSelector = createConsignmentSelectorFactory();
     const createOrderSelector = createOrderSelectorFactory();
+    const createPaymentSelector = createPaymentSelectorFactory();
 
     return (state, options = {}) => {
         const billingAddress = createBillingAddressSelector(state.billingAddress);
@@ -65,7 +66,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const consignments = createConsignmentSelector(state.consignments, cart);
         const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
         const order = createOrderSelector(state.order, billingAddress, coupons);
-        const payment = new PaymentSelector(checkout, order);
+        const payment = createPaymentSelector(checkout, order);
 
         const selectors = {
             billingAddress,

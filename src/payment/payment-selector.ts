@@ -1,99 +1,158 @@
 import { find } from 'lodash';
 
-import { CheckoutPayment, CheckoutSelector } from '../checkout';
-import { selector } from '../common/selector';
-import { GatewayOrderPayment, InternalOrderPayment, OrderSelector } from '../order';
+import { CheckoutSelector } from '../checkout';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
+import { GatewayOrderPayment, OrderSelector } from '../order';
 
 import PaymentMethod from './payment-method';
 import { HOSTED } from './payment-method-types';
 import { ACKNOWLEDGE, FINALIZE } from './payment-status-types';
 
-@selector
-export default class PaymentSelector {
-    constructor(
-        private _checkout: CheckoutSelector,
-        private _order: OrderSelector
-    ) {}
+export default interface PaymentSelector {
+    getPaymentId(): { providerId: string; gatewayId?: string } | undefined;
+    getPaymentStatus(): string | undefined;
+    getPaymentToken(): string | undefined;
+    getPaymentRedirectUrl(): string | undefined;
+    isPaymentDataRequired(useStoreCredit?: boolean): boolean;
+    isPaymentDataSubmitted(paymentMethod?: PaymentMethod): boolean;
+}
 
-    getPaymentId(): { providerId: string; gatewayId?: string } | undefined {
-        const internalPayment = this._getInternalPayment();
+export type PaymentSelectorFactory = (
+    checkout: CheckoutSelector,
+    order: OrderSelector
+) => PaymentSelector;
 
-        if (internalPayment && internalPayment.id) {
-            return {
-                providerId: internalPayment.id,
-                gatewayId: internalPayment.gateway,
-            };
+interface PaymentSelectorDependencies {
+    checkout: CheckoutSelector;
+    order: OrderSelector;
+}
+
+export function createPaymentSelectorFactory(): PaymentSelectorFactory {
+    const getInternalPayment = createSelector(
+        ({ order }: PaymentSelectorDependencies) => order.getOrderMeta,
+        getOrderMeta => () => {
+            const meta = getOrderMeta();
+
+            return meta && meta.payment;
         }
+    );
 
-        const payment = this._getHostedPayment() || this._getGatewayPayment();
+    const getGatewayPayment = createSelector(
+        ({ order }: PaymentSelectorDependencies) => order.getOrder,
+        getOrder => () => {
+            const order = getOrder();
 
-        if (payment && payment.providerId) {
-            return {
-                providerId: payment.providerId,
-                gatewayId: payment.gatewayId,
-            };
+            return find(order && order.payments, ({ providerId }) =>
+                providerId !== 'giftcertificate' && providerId !== 'storecredit'
+            ) as GatewayOrderPayment;
         }
-    }
+    );
 
-    getPaymentStatus(): string | undefined {
-        const internalPayment = this._getInternalPayment();
+    const getHostedPayment = createSelector(
+        ({ checkout }: PaymentSelectorDependencies) => checkout.getCheckout,
+        getCheckout => () => {
+            const checkout = getCheckout();
 
-        if (internalPayment && internalPayment.status) {
-            return internalPayment.status.replace('PAYMENT_STATUS_', '');
+            return find(checkout && checkout.payments, ({ providerType }) =>
+                providerType === HOSTED
+            );
         }
+    );
 
-        const payment = this._getHostedPayment() || this._getGatewayPayment();
+    const getPaymentId = createSelector(
+        getInternalPayment,
+        getHostedPayment,
+        getGatewayPayment,
+        (getInternalPayment, getHostedPayment, getGatewayPayment) => () => {
+            const internalPayment = getInternalPayment();
 
-        if (payment) {
-            return payment.detail.step;
+            if (internalPayment && internalPayment.id) {
+                return {
+                    providerId: internalPayment.id,
+                    gatewayId: internalPayment.gateway,
+                };
+            }
+
+            const payment = getHostedPayment() || getGatewayPayment();
+
+            if (payment && payment.providerId) {
+                return {
+                    providerId: payment.providerId,
+                    gatewayId: payment.gatewayId,
+                };
+            }
         }
-    }
+    );
 
-    getPaymentToken(): string | undefined {
-        const meta = this._order.getOrderMeta();
+    const getPaymentStatus = createSelector(
+        getInternalPayment,
+        getHostedPayment,
+        getGatewayPayment,
+        (getInternalPayment, getHostedPayment, getGatewayPayment) => () => {
+            const internalPayment = getInternalPayment();
 
-        return meta && meta.token;
-    }
+            if (internalPayment && internalPayment.status) {
+                return internalPayment.status.replace('PAYMENT_STATUS_', '');
+            }
 
-    getPaymentRedirectUrl(): string | undefined {
-        const payment = this._getInternalPayment();
+            const payment = getHostedPayment() || getGatewayPayment();
 
-        return payment && payment.redirectUrl;
-    }
-
-    isPaymentDataRequired(useStoreCredit: boolean = false): boolean {
-        const grandTotal = this._checkout.getGrandTotal(useStoreCredit);
-
-        return grandTotal ? grandTotal > 0 : false;
-    }
-
-    isPaymentDataSubmitted(paymentMethod?: PaymentMethod): boolean {
-        if (paymentMethod && paymentMethod.nonce) {
-            return true;
+            if (payment) {
+                return payment.detail.step;
+            }
         }
+    );
 
-        return this.getPaymentStatus() === ACKNOWLEDGE || this.getPaymentStatus() === FINALIZE;
-    }
+    const getPaymentToken = createSelector(
+        ({ order }: PaymentSelectorDependencies) => order.getOrderMeta,
+        getOrderMeta => () => {
+            const meta = getOrderMeta();
 
-    private _getInternalPayment(): InternalOrderPayment | undefined {
-        const meta = this._order.getOrderMeta();
+            return meta && meta.token;
+        }
+    );
 
-        return meta && meta.payment;
-    }
+    const getPaymentRedirectUrl = createSelector(
+        getInternalPayment,
+        getInternalPayment => () => {
+            const payment = getInternalPayment();
 
-    private _getGatewayPayment(): GatewayOrderPayment | undefined {
-        const order = this._order.getOrder();
+            return payment && payment.redirectUrl;
+        }
+    );
 
-        return find(order && order.payments, ({ providerId }) =>
-            providerId !== 'giftcertificate' && providerId !== 'storecredit'
-        ) as GatewayOrderPayment;
-    }
+    const isPaymentDataRequired = createSelector(
+        ({ checkout }: PaymentSelectorDependencies) => checkout.getGrandTotal,
+        getGrandTotal => (useStoreCredit: boolean = false) => {
+            const grandTotal = getGrandTotal(useStoreCredit);
 
-    private _getHostedPayment(): CheckoutPayment | undefined {
-        const checkout = this._checkout.getCheckout();
+            return grandTotal ? grandTotal > 0 : false;
+        }
+    );
 
-        return find(checkout && checkout.payments, ({ providerType }) =>
-            providerType === HOSTED
-        );
-    }
+    const isPaymentDataSubmitted = createSelector(
+        getPaymentStatus,
+        getPaymentStatus => (paymentMethod?: PaymentMethod) => {
+            if (paymentMethod && paymentMethod.nonce) {
+                return true;
+            }
+
+            return getPaymentStatus() === ACKNOWLEDGE || getPaymentStatus() === FINALIZE;
+        }
+    );
+
+    return memoizeOne((
+        checkout: CheckoutSelector,
+        order: OrderSelector
+    ): PaymentSelector => {
+        return {
+            getPaymentId: getPaymentId({ checkout, order }),
+            getPaymentStatus: getPaymentStatus({ checkout, order }),
+            getPaymentToken: getPaymentToken({ checkout, order }),
+            getPaymentRedirectUrl: getPaymentRedirectUrl({ checkout, order }),
+            isPaymentDataRequired: isPaymentDataRequired({ checkout, order }),
+            isPaymentDataSubmitted: isPaymentDataSubmitted({ checkout, order }),
+        };
+    });
 }
