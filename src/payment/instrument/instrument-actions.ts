@@ -1,5 +1,6 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { VaultAccessToken } from './instrument';
 import { InstrumentsResponseBody } from './instrument-response-body';
 
 export enum InstrumentActionType {
@@ -30,7 +31,7 @@ export interface LoadInstrumentsRequestedAction extends Action {
     type: InstrumentActionType.LoadInstrumentsRequested;
 }
 
-export interface LoadInstrumentsSucceededAction extends Action<InstrumentsResponseBody> {
+export interface LoadInstrumentsSucceededAction extends Action<InstrumentsResponseBody, VaultAccessToken> {
     type: InstrumentActionType.LoadInstrumentsSucceeded;
 }
 
@@ -42,7 +43,7 @@ export interface DeleteInstrumentRequestedAction extends Action {
     type: InstrumentActionType.DeleteInstrumentRequested;
 }
 
-export interface DeleteInstrumentSucceededAction extends Action<InstrumentsResponseBody> {
+export interface DeleteInstrumentSucceededAction extends Action<InstrumentsResponseBody, VaultAccessToken & { instrumentId: string }> {
     type: InstrumentActionType.DeleteInstrumentSucceeded;
 }
 

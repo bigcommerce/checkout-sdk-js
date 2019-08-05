@@ -1,6 +1,7 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../../common/error';
+import { arrayReplace, objectMerge, objectSet } from '../../common/utility';
 
 import Instrument from './instrument';
 import { InstrumentAction, InstrumentActionType } from './instrument-actions';
@@ -26,12 +27,12 @@ function dataReducer(
 ): Instrument[] {
     switch (action.type) {
     case InstrumentActionType.LoadInstrumentsSucceeded:
-        return action.payload ? action.payload.vaultedInstruments : [];
+        return arrayReplace(data, action.payload && action.payload.vaultedInstruments || []);
 
     case InstrumentActionType.DeleteInstrumentSucceeded:
-        return data.filter(instrument =>
-            instrument.bigpayToken !== action.meta.instrumentId
-        );
+        return arrayReplace(data, data.filter(instrument =>
+            instrument.bigpayToken !== (action.meta && action.meta.instrumentId)
+        ));
 
     default:
         return data;
@@ -45,7 +46,7 @@ function metaReducer(
     switch (action.type) {
     case InstrumentActionType.LoadInstrumentsSucceeded:
     case InstrumentActionType.DeleteInstrumentSucceeded:
-        return { ...meta, ...action.meta };
+        return objectMerge(meta, action.meta);
 
     default:
         return meta;
@@ -59,25 +60,23 @@ function errorsReducer(
     switch (action.type) {
     case InstrumentActionType.LoadInstrumentsRequested:
     case InstrumentActionType.LoadInstrumentsSucceeded:
-        return { ...errors, loadError: undefined };
+        return objectSet(errors, 'loadError', undefined);
 
     case InstrumentActionType.DeleteInstrumentRequested:
     case InstrumentActionType.DeleteInstrumentSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             deleteError: undefined,
             failedInstrument: undefined,
-        };
+        });
 
     case InstrumentActionType.LoadInstrumentsFailed:
-        return { ...errors, loadError: action.payload };
+        return objectSet(errors, 'loadError', action.payload);
 
     case InstrumentActionType.DeleteInstrumentFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             deleteError: action.payload,
             failedInstrument: action.meta.instrumentId,
-        };
+        });
 
     default:
         return errors;
@@ -90,26 +89,24 @@ function statusesReducer(
 ): InstrumentStatusState {
     switch (action.type) {
     case InstrumentActionType.LoadInstrumentsRequested:
-        return { ...statuses, isLoading: true };
+        return objectSet(statuses, 'isLoading', true);
 
     case InstrumentActionType.DeleteInstrumentRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isDeleting: true,
             deletingInstrument: action.meta.instrumentId,
-        };
+        });
 
     case InstrumentActionType.LoadInstrumentsSucceeded:
     case InstrumentActionType.LoadInstrumentsFailed:
-        return { ...statuses, isLoading: false };
+        return objectSet(statuses, 'isLoading', false);
 
     case InstrumentActionType.DeleteInstrumentSucceeded:
     case InstrumentActionType.DeleteInstrumentFailed:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isDeleting: false,
             deletingInstrument: undefined,
-        };
+        });
 
     default:
         return statuses;
