@@ -8,7 +8,7 @@ import { createCustomerSelectorFactory, createCustomerStrategySelectorFactory } 
 import { createFormSelectorFactory } from '../form';
 import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
-import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
+import { createPaymentMethodSelectorFactory, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
@@ -35,6 +35,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
     const createInstrumentSelector = createInstrumentSelectorFactory();
     const createFormSelector = createFormSelectorFactory();
+    const createPaymentMethodSelector = createPaymentMethodSelectorFactory();
     const createShippingAddressSelector = createShippingAddressSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
     const createShippingStrategySelector = createShippingStrategySelectorFactory();
@@ -53,7 +54,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const form = createFormSelector(state.config);
         const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
         const instruments = createInstrumentSelector(state.instruments);
-        const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
+        const paymentMethods = createPaymentMethodSelector(state.paymentMethods);
         const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
         const shippingAddress = createShippingAddressSelector(state.consignments);
         const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);

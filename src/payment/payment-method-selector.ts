@@ -1,52 +1,89 @@
 import { find } from 'lodash';
 
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 
 import PaymentMethod from './payment-method';
 import PaymentMethodMeta from './payment-method-meta';
-import PaymentMethodState from './payment-method-state';
+import PaymentMethodState, { DEFAULT_STATE } from './payment-method-state';
 
-@selector
-export default class PaymentMethodSelector {
-    constructor(
-        private _paymentMethods: PaymentMethodState
-    ) {}
+export default interface PaymentMethodSelector {
+    getPaymentMethods(): PaymentMethod[] | undefined;
+    getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
+    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
+    getLoadError(): Error | undefined;
+    getLoadMethodError(methodId?: string): Error | undefined;
+    isLoading(): boolean;
+    isLoadingMethod(methodId?: string): boolean;
+}
 
-    getPaymentMethods(): PaymentMethod[] | undefined {
-        return this._paymentMethods.data;
-    }
+export type PaymentMethodSelectorFactory = (state: PaymentMethodState) => PaymentMethodSelector;
 
-    getPaymentMethodsMeta(): PaymentMethodMeta | undefined {
-        return this._paymentMethods.meta;
-    }
+export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFactory {
+    const getPaymentMethods = createSelector(
+        (state: PaymentMethodState) => state.data,
+        paymentMethods => () => paymentMethods
+    );
 
-    getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined {
-        return gatewayId ?
-            find(this._paymentMethods.data, { id: methodId, gateway: gatewayId }) :
-            find(this._paymentMethods.data, { id: methodId });
-    }
+    const getPaymentMethodsMeta = createSelector(
+        (state: PaymentMethodState) => state.meta,
+        meta => () => meta
+    );
 
-    getLoadError(): Error | undefined {
-        return this._paymentMethods.errors && this._paymentMethods.errors.loadError;
-    }
-
-    getLoadMethodError(methodId?: string): Error | undefined {
-        if (methodId && this._paymentMethods.errors.loadMethodId !== methodId) {
-            return;
+    const getPaymentMethod = createSelector(
+        (state: PaymentMethodState) => state.data,
+        paymentMethods => (methodId: string, gatewayId?: string) => {
+            return gatewayId ?
+                find(paymentMethods, { id: methodId, gateway: gatewayId }) :
+                find(paymentMethods, { id: methodId });
         }
+    );
 
-        return this._paymentMethods.errors.loadMethodError;
-    }
+    const getLoadError = createSelector(
+        (state: PaymentMethodState) => state.errors.loadError,
+        loadError => () => loadError
+    );
 
-    isLoading(): boolean {
-        return !!this._paymentMethods.statuses.isLoading;
-    }
+    const getLoadMethodError = createSelector(
+        (state: PaymentMethodState) => state.errors.loadMethodId,
+        (state: PaymentMethodState) => state.errors.loadMethodError,
+        (loadMethodId, loadMethodError) => (methodId?: string) => {
+            if (methodId && loadMethodId !== methodId) {
+                return;
+            }
 
-    isLoadingMethod(methodId?: string): boolean {
-        if (methodId && this._paymentMethods.statuses.loadMethodId !== methodId) {
-            return false;
+            return loadMethodError;
         }
+    );
 
-        return !!this._paymentMethods.statuses.isLoadingMethod;
-    }
+    const isLoading = createSelector(
+        (state: PaymentMethodState) => state.statuses.isLoading,
+        isLoading => () => !!isLoading
+    );
+
+    const isLoadingMethod = createSelector(
+        (state: PaymentMethodState) => state.statuses.loadMethodId,
+        (state: PaymentMethodState) => state.statuses.isLoadingMethod,
+        (loadMethodId, isLoadingMethod) => (methodId?: string) => {
+            if (methodId && loadMethodId !== methodId) {
+                return false;
+            }
+
+            return !!isLoadingMethod;
+        }
+    );
+
+    return memoizeOne((
+        state: PaymentMethodState = DEFAULT_STATE
+    ): PaymentMethodSelector => {
+        return {
+            getPaymentMethods: getPaymentMethods(state),
+            getPaymentMethodsMeta: getPaymentMethodsMeta(state),
+            getPaymentMethod: getPaymentMethod(state),
+            getLoadError: getLoadError(state),
+            getLoadMethodError: getLoadMethodError(state),
+            isLoading: isLoading(state),
+            isLoadingMethod: isLoadingMethod(state),
+        };
+    });
 }
