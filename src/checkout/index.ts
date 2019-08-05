@@ -6,7 +6,7 @@ export { default as CheckoutActionCreator } from './checkout-action-creator';
 export { default as CheckoutParams, CheckoutIncludes } from './checkout-params';
 export { default as checkoutReducer } from './checkout-reducer';
 export { default as CheckoutRequestSender } from './checkout-request-sender';
-export { default as CheckoutSelector } from './checkout-selector';
+export { default as CheckoutSelector, CheckoutSelectorFactory, createCheckoutSelectorFactory } from './checkout-selector';
 export { default as CheckoutSelectors } from './checkout-selectors';
 export { default as CheckoutService } from './checkout-service';
 export { default as CheckoutState } from './checkout-state';

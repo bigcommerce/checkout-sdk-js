@@ -1,22 +1,24 @@
 import { merge } from 'lodash';
 
-import CheckoutSelector from './checkout-selector';
+import { createCheckoutSelectorFactory, CheckoutSelectorFactory } from './checkout-selector';
 import CheckoutStoreState from './checkout-store-state';
 import { getCheckout, getCheckoutState, getCheckoutStoreState } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 describe('CheckoutSelector', () => {
+    let createCheckoutSelector: CheckoutSelectorFactory;
     let selectors: InternalCheckoutSelectors;
     let state: CheckoutStoreState;
 
     beforeEach(() => {
+        createCheckoutSelector = createCheckoutSelectorFactory();
         state = getCheckoutStoreState();
         selectors = createInternalCheckoutSelectors(state);
     });
 
     it('returns checkout', () => {
-        const selector = new CheckoutSelector(state.checkout, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+        const selector = createCheckoutSelector(state.checkout, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
 
         expect(selector.getCheckout()).toEqual({
             ...getCheckout(),
@@ -29,7 +31,7 @@ describe('CheckoutSelector', () => {
 
     it('returns load error', () => {
         const loadError = new Error();
-        const selector = new CheckoutSelector({
+        const selector = createCheckoutSelector({
             ...getCheckoutState(),
             errors: { loadError },
         }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
@@ -38,7 +40,7 @@ describe('CheckoutSelector', () => {
     });
 
     it('returns loading status', () => {
-        const selector = new CheckoutSelector({
+        const selector = createCheckoutSelector({
             ...getCheckoutState(),
             statuses: { isLoading: true },
         }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
@@ -48,7 +50,7 @@ describe('CheckoutSelector', () => {
 
     it('returns update error', () => {
         const updateError = new Error();
-        const selector = new CheckoutSelector({
+        const selector = createCheckoutSelector({
             ...getCheckoutState(),
             errors: { updateError },
         }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
@@ -57,7 +59,7 @@ describe('CheckoutSelector', () => {
     });
 
     it('returns updating status', () => {
-        const selector = new CheckoutSelector({
+        const selector = createCheckoutSelector({
             ...getCheckoutState(),
             statuses: { isUpdating: true },
         }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
@@ -71,7 +73,7 @@ describe('CheckoutSelector', () => {
         });
         selectors = createInternalCheckoutSelectors(state);
 
-        const selector = new CheckoutSelector(
+        const selector = createCheckoutSelector(
             state.checkout,
             selectors.billingAddress,
             selectors.cart,

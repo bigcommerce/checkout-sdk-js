@@ -8,12 +8,7 @@ import { OrderAction, OrderActionType } from '../order';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
-import CheckoutState, { CheckoutDataState, CheckoutErrorsState, CheckoutStatusesState } from './checkout-state';
-
-const DEFAULT_STATE: CheckoutState = {
-    errors: {},
-    statuses: {},
-};
+import CheckoutState, { CheckoutDataState, CheckoutErrorsState, CheckoutStatusesState, DEFAULT_STATE } from './checkout-state';
 
 export default function checkoutReducer(
     state: CheckoutState = DEFAULT_STATE,

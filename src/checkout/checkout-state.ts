@@ -19,3 +19,8 @@ export interface CheckoutStatusesState {
     isLoading?: boolean;
     isUpdating?: boolean;
 }
+
+export const DEFAULT_STATE: CheckoutState = {
+    errors: {},
+    statuses: {},
+};
