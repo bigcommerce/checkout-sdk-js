@@ -2,6 +2,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
+import { arrayReplace, objectMerge, objectSet } from '../common/utility';
 import { CouponAction, CouponActionType } from '../coupon';
 import { CustomerAction, CustomerActionType } from '../customer';
 
@@ -35,10 +36,10 @@ function dataReducer(
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
-        return action.payload ? action.payload.consignments : data;
+        return arrayReplace(data, action.payload && action.payload.consignments);
 
     case CustomerActionType.SignOutCustomerSucceeded:
-        return [];
+        return arrayReplace(data, []);
 
     default:
         return data;
@@ -54,42 +55,38 @@ function errorsReducer(
     case CheckoutActionType.LoadCheckoutSucceeded:
     case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case ConsignmentActionType.LoadShippingOptionsRequested:
-        return { ...errors, loadError: undefined };
+        return objectSet(errors, 'loadError', undefined);
 
     case CheckoutActionType.LoadCheckoutFailed:
     case ConsignmentActionType.LoadShippingOptionsFailed:
-        return { ...errors, loadError: action.payload };
+        return objectSet(errors, 'loadError', action.payload);
 
     case ConsignmentActionType.CreateConsignmentsRequested:
     case ConsignmentActionType.CreateConsignmentsSucceeded:
-        return { ...errors, createError: undefined };
+        return objectSet(errors, 'createError', undefined);
 
     case ConsignmentActionType.CreateConsignmentsFailed:
-        return { ...errors, createError: action.payload };
+        return objectSet(errors, 'createError', action.payload);
 
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentRequested:
         if (action.meta) {
-            errors = {
-                ...errors,
+            return objectMerge(errors, {
                 updateError: {
-                    ...errors.updateError,
                     [action.meta.id]: undefined,
                 },
-            };
+            });
         }
 
         return errors;
 
     case ConsignmentActionType.UpdateConsignmentFailed:
         if (action.meta) {
-            errors = {
-                ...errors,
+            return objectMerge(errors, {
                 updateError: {
-                    ...errors.updateError,
                     [action.meta.id]: action.payload,
                 },
-            };
+            });
         }
 
         return errors;
@@ -97,26 +94,22 @@ function errorsReducer(
     case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.DeleteConsignmentRequested:
         if (action.meta) {
-            errors = {
-                ...errors,
+            return objectMerge(errors, {
                 deleteError: {
-                    ...errors.deleteError,
                     [action.meta.id]: undefined,
                 },
-            };
+            });
         }
 
         return errors;
 
     case ConsignmentActionType.DeleteConsignmentFailed:
         if (action.meta) {
-            errors = {
-                ...errors,
+            return objectMerge(errors, {
                 deleteError: {
-                    ...errors.deleteError,
                     [action.meta.id]: action.payload,
                 },
-            };
+            });
         }
 
         return errors;
@@ -124,26 +117,22 @@ function errorsReducer(
     case ConsignmentActionType.UpdateShippingOptionRequested:
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
         if (action.meta) {
-            errors = {
-                ...errors,
+            return objectMerge(errors, {
                 updateShippingOptionError: {
-                    ...errors.updateShippingOptionError,
                     [action.meta.id]: undefined,
                 },
-            };
+            });
         }
 
         return errors;
 
     case ConsignmentActionType.UpdateShippingOptionFailed:
         if (action.meta) {
-            errors = {
-                ...errors,
+            return objectMerge(errors, {
                 updateShippingOptionError: {
-                    ...errors.updateShippingOptionError,
                     [action.meta.id]: action.payload,
                 },
-            };
+            });
         }
 
         return errors;
@@ -159,35 +148,33 @@ function statusesReducer(
 ): ConsignmentStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
-        return { ...statuses, isLoading: true };
+        return objectSet(statuses, 'isLoading', true);
 
     case ConsignmentActionType.LoadShippingOptionsRequested:
-        return { ...statuses, isLoadingShippingOptions: true };
+        return objectSet(statuses, 'isLoadingShippingOptions', true);
 
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CheckoutActionType.LoadCheckoutFailed:
-        return { ...statuses, isLoading: false };
+        return objectSet(statuses, 'isLoading', false);
 
     case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case ConsignmentActionType.LoadShippingOptionsFailed:
-        return { ...statuses, isLoadingShippingOptions: false };
+        return objectSet(statuses, 'isLoadingShippingOptions', false);
 
     case ConsignmentActionType.CreateConsignmentsRequested:
-        return { ...statuses, isCreating: true };
+        return objectSet(statuses, 'isCreating', true);
 
     case ConsignmentActionType.CreateConsignmentsSucceeded:
     case ConsignmentActionType.CreateConsignmentsFailed:
-        return { ...statuses, isCreating: false };
+        return objectSet(statuses, 'isCreating', false);
 
     case ConsignmentActionType.UpdateConsignmentRequested:
         if (action.meta) {
-            statuses = {
-                ...statuses,
+            return objectMerge(statuses, {
                 isUpdating: {
-                    ...statuses.isUpdating,
                     [action.meta.id]: true,
                 },
-            };
+            });
         }
 
         return statuses;
@@ -195,26 +182,22 @@ function statusesReducer(
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentFailed:
         if (action.meta) {
-            statuses = {
-                ...statuses,
+            return objectMerge(statuses, {
                 isUpdating: {
-                    ...statuses.isUpdating,
                     [action.meta.id]: false,
                 },
-            };
+            });
         }
 
         return statuses;
 
     case ConsignmentActionType.DeleteConsignmentRequested:
         if (action.meta) {
-            statuses = {
-                ...statuses,
+            return objectMerge(statuses, {
                 isDeleting: {
-                    ...statuses.isDeleting,
                     [action.meta.id]: true,
                 },
-            };
+            });
         }
 
         return statuses;
@@ -222,26 +205,22 @@ function statusesReducer(
     case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.DeleteConsignmentFailed:
         if (action.meta) {
-            statuses = {
-                ...statuses,
+            return objectMerge(statuses, {
                 isDeleting: {
-                    ...statuses.isDeleting,
                     [action.meta.id]: false,
                 },
-            };
+            });
         }
 
         return statuses;
 
     case ConsignmentActionType.UpdateShippingOptionRequested:
         if (action.meta) {
-            statuses = {
-                ...statuses,
+            return objectMerge(statuses, {
                 isUpdatingShippingOption: {
-                    ...statuses.isUpdatingShippingOption,
                     [action.meta.id]: true,
                 },
-            };
+            });
         }
 
         return statuses;
@@ -249,13 +228,11 @@ function statusesReducer(
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
     case ConsignmentActionType.UpdateShippingOptionFailed:
         if (action.meta) {
-            statuses = {
-                ...statuses,
+            return objectMerge(statuses, {
                 isUpdatingShippingOption: {
-                    ...statuses.isUpdatingShippingOption,
                     [action.meta.id]: false,
                 },
-            };
+            });
         }
 
         return statuses;
