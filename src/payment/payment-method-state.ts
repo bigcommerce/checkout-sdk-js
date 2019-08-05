@@ -19,3 +19,8 @@ export interface PaymentMethodStatusesState {
     isLoading?: boolean;
     isLoadingMethod?: boolean;
 }
+
+export const DEFAULT_STATE: PaymentMethodState = {
+    errors: {},
+    statuses: {},
+};

@@ -6,12 +6,7 @@ import { mergeOrPush } from '../common/utility';
 import PaymentMethod from './payment-method';
 import { PaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
 import PaymentMethodMeta from './payment-method-meta';
-import PaymentMethodState, { PaymentMethodErrorsState, PaymentMethodStatusesState } from './payment-method-state';
-
-const DEFAULT_STATE: PaymentMethodState = {
-    errors: {},
-    statuses: {},
-};
+import PaymentMethodState, { DEFAULT_STATE, PaymentMethodErrorsState, PaymentMethodStatusesState } from './payment-method-state';
 
 export default function paymentMethodReducer(
     state: PaymentMethodState = DEFAULT_STATE,
