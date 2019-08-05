@@ -1,6 +1,7 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
+import { objectMerge } from '../common/utility';
 
 import { ShippingStrategyAction, ShippingStrategyActionType } from './shipping-strategy-actions';
 import ShippingStrategyState, { DEFAULT_STATE, ShippingStrategyDataState, ShippingStrategyErrorsState, ShippingStrategyStatusesState } from './shipping-strategy-state';
@@ -24,20 +25,18 @@ function dataReducer(
 ): ShippingStrategyDataState {
     switch (action.type) {
     case ShippingStrategyActionType.InitializeSucceeded:
-        return {
-            ...data,
+        return objectMerge(data, {
             [action.meta && action.meta.methodId]: {
                 isInitialized: true,
             },
-        };
+        });
 
     case ShippingStrategyActionType.DeinitializeSucceeded:
-        return {
-            ...data,
+        return objectMerge(data, {
             [action.meta && action.meta.methodId]: {
                 isInitialized: false,
             },
-        };
+        });
     }
 
     return data;
@@ -50,63 +49,55 @@ function errorsReducer(
     switch (action.type) {
     case ShippingStrategyActionType.InitializeRequested:
     case ShippingStrategyActionType.InitializeSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             initializeError: undefined,
             initializeMethodId: undefined,
-        };
+        });
 
     case ShippingStrategyActionType.InitializeFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             initializeError: action.payload,
             initializeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case ShippingStrategyActionType.DeinitializeRequested:
     case ShippingStrategyActionType.DeinitializeSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             deinitializeError: undefined,
             deinitializeMethodId: undefined,
-        };
+        });
 
     case ShippingStrategyActionType.DeinitializeFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             deinitializeError: action.payload,
             deinitializeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case ShippingStrategyActionType.UpdateAddressRequested:
     case ShippingStrategyActionType.UpdateAddressSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             updateAddressError: undefined,
             updateAddressMethodId: undefined,
-        };
+        });
 
     case ShippingStrategyActionType.UpdateAddressFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             updateAddressError: action.payload,
             updateAddressMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case ShippingStrategyActionType.SelectOptionRequested:
     case ShippingStrategyActionType.SelectOptionSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             selectOptionError: undefined,
             selectOptionMethodId: undefined,
-        };
+        });
 
     case ShippingStrategyActionType.SelectOptionFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             selectOptionError: action.payload,
             selectOptionMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     default:
         return errors;
@@ -119,64 +110,56 @@ function statusesReducer(
 ): ShippingStrategyStatusesState {
     switch (action.type) {
     case ShippingStrategyActionType.InitializeRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isInitializing: true,
             initializeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case ShippingStrategyActionType.InitializeFailed:
     case ShippingStrategyActionType.InitializeSucceeded:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isInitializing: false,
             initializeMethodId: undefined,
-        };
+        });
 
     case ShippingStrategyActionType.DeinitializeRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isDeinitializing: true,
             deinitializeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case ShippingStrategyActionType.DeinitializeFailed:
     case ShippingStrategyActionType.DeinitializeSucceeded:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isDeinitializing: false,
             deinitializeMethodId: undefined,
-        };
+        });
 
     case ShippingStrategyActionType.UpdateAddressRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isUpdatingAddress: true,
             updateAddressMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case ShippingStrategyActionType.UpdateAddressFailed:
     case ShippingStrategyActionType.UpdateAddressSucceeded:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isUpdatingAddress: false,
             updateAddressMethodId: undefined,
-        };
+        });
 
     case ShippingStrategyActionType.SelectOptionRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isSelectingOption: true,
             selectOptionMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case ShippingStrategyActionType.SelectOptionFailed:
     case ShippingStrategyActionType.SelectOptionSucceeded:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isSelectingOption: false,
             selectOptionMethodId: undefined,
-        };
+        });
 
     default:
         return statuses;
