@@ -13,3 +13,8 @@ export interface CountryErrorsState {
 export interface CountryStatusesState {
     isLoading?: boolean;
 }
+
+export const DEFAULT_STATE: CountryState = {
+    errors: {},
+    statuses: {},
+};

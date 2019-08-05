@@ -14,7 +14,7 @@ export { default as ShippingAddressSelector } from './shipping-address-selector'
 
 export { default as ShippingCountryActionCreator } from './shipping-country-action-creator';
 export { default as ShippingCountryRequestSender } from './shipping-country-request-sender';
-export { default as ShippingCountrySelector } from './shipping-country-selector';
+export { default as ShippingCountrySelector, ShippingCountrySelectorFactory, createShippingCountrySelectorFactory } from './shipping-country-selector';
 export { default as ShippingCountryState } from './shipping-country-state';
 export { default as shippingCountryReducer } from './shipping-country-reducer';
 

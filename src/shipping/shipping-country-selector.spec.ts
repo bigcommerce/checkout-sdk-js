@@ -1,25 +1,27 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import ShippingCountrySelector from './shipping-country-selector';
+import ShippingCountrySelector, { createShippingCountrySelectorFactory, ShippingCountrySelectorFactory } from './shipping-country-selector';
 
 describe('ShippingCountrySelector', () => {
+    let createShippingCountrySelector: ShippingCountrySelectorFactory;
     let shippingCountrySelector: ShippingCountrySelector;
     let state: CheckoutStoreState;
 
     beforeEach(() => {
+        createShippingCountrySelector = createShippingCountrySelectorFactory();
         state = getCheckoutStoreState();
     });
 
     describe('#getShippingCountries()', () => {
         it('returns a list of countries', () => {
-            shippingCountrySelector = new ShippingCountrySelector(state.shippingCountries);
+            shippingCountrySelector = createShippingCountrySelector(state.shippingCountries);
 
             expect(shippingCountrySelector.getShippingCountries()).toEqual(state.shippingCountries.data);
         });
 
         it('returns an empty array if there are no countries', () => {
-            shippingCountrySelector = new ShippingCountrySelector({
+            shippingCountrySelector = createShippingCountrySelector({
                 ...state.shippingCountries,
                 data: [],
             });
@@ -32,7 +34,7 @@ describe('ShippingCountrySelector', () => {
         it('returns error if unable to load', () => {
             const loadError = new Error();
 
-            shippingCountrySelector = new ShippingCountrySelector({
+            shippingCountrySelector = createShippingCountrySelector({
                 ...state.shippingCountries,
                 errors: { loadError },
             });
@@ -41,7 +43,7 @@ describe('ShippingCountrySelector', () => {
         });
 
         it('does not returns error if able to load', () => {
-            shippingCountrySelector = new ShippingCountrySelector(state.shippingCountries);
+            shippingCountrySelector = createShippingCountrySelector(state.shippingCountries);
 
             expect(shippingCountrySelector.getLoadError()).toBeUndefined();
         });
@@ -49,7 +51,7 @@ describe('ShippingCountrySelector', () => {
 
     describe('#isLoading()', () => {
         it('returns true if loading countries', () => {
-            shippingCountrySelector = new ShippingCountrySelector({
+            shippingCountrySelector = createShippingCountrySelector({
                 ...state.shippingCountries,
                 statuses: { isLoading: true },
             });
@@ -58,7 +60,7 @@ describe('ShippingCountrySelector', () => {
         });
 
         it('returns false if not loading countries', () => {
-            shippingCountrySelector = new ShippingCountrySelector(state.shippingCountries);
+            shippingCountrySelector = createShippingCountrySelector(state.shippingCountries);
 
             expect(shippingCountrySelector.isLoading()).toEqual(false);
         });
