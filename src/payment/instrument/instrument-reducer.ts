@@ -4,13 +4,7 @@ import { clearErrorReducer } from '../../common/error';
 
 import Instrument from './instrument';
 import { InstrumentAction, InstrumentActionType } from './instrument-actions';
-import InstrumentState, { InstrumentErrorState, InstrumentMeta, InstrumentStatusState } from './instrument-state';
-
-const DEFAULT_STATE = {
-    data: [],
-    errors: {},
-    statuses: {},
-};
+import InstrumentState, { DEFAULT_STATE, InstrumentErrorState, InstrumentMeta, InstrumentStatusState } from './instrument-state';
 
 export default function instrumentReducer(
     state: InstrumentState = DEFAULT_STATE,

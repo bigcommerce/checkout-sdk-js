@@ -1,26 +1,28 @@
 import { CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 
-import InstrumentSelector from './instrument-selector';
+import InstrumentSelector, { createInstrumentSelectorFactory, InstrumentSelectorFactory } from './instrument-selector';
 import { getInstrumentsMeta } from './instrument.mock';
 
 describe('InstrumentSelector', () => {
+    let createInstrumentSelector: InstrumentSelectorFactory;
     let instrumentSelector: InstrumentSelector;
     let state: CheckoutStoreState;
 
     beforeEach(() => {
+        createInstrumentSelector = createInstrumentSelectorFactory();
         state = getCheckoutStoreState();
     });
 
     describe('#loadInstruments()', () => {
         it('returns a list of instruments', () => {
-            instrumentSelector = new InstrumentSelector(state.instruments);
+            instrumentSelector = createInstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getInstruments()).toEqual(state.instruments.data);
         });
 
         it('returns an empty array if there are no instruments', () => {
-            instrumentSelector = new InstrumentSelector({ data: [], errors: {}, statuses: {} });
+            instrumentSelector = createInstrumentSelector({ data: [], errors: {}, statuses: {} });
 
             expect(instrumentSelector.getInstruments()).toEqual([]);
         });
@@ -28,21 +30,21 @@ describe('InstrumentSelector', () => {
 
     describe('#getInstrumentsMeta()', () => {
         it('returns instrument meta', () => {
-            instrumentSelector = new InstrumentSelector(state.instruments);
+            instrumentSelector = createInstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getInstrumentsMeta()).toEqual(getInstrumentsMeta());
         });
 
         it('returns same instrument meta unless state changes', () => {
-            instrumentSelector = new InstrumentSelector(state.instruments);
+            instrumentSelector = createInstrumentSelector(state.instruments);
 
             const meta = instrumentSelector.getInstrumentsMeta();
 
-            instrumentSelector = new InstrumentSelector(state.instruments);
+            instrumentSelector = createInstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getInstrumentsMeta()).toBe(meta);
 
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 meta: {
                     vaultAccessToken: '321efg',
@@ -58,7 +60,7 @@ describe('InstrumentSelector', () => {
         it('returns error if unable to load', () => {
             const loadError = new Error();
 
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 errors: { loadError },
             });
@@ -67,7 +69,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('does not return error if able to load', () => {
-            instrumentSelector = new InstrumentSelector(state.instruments);
+            instrumentSelector = createInstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getLoadError()).toBeUndefined();
         });
@@ -79,7 +81,7 @@ describe('InstrumentSelector', () => {
         it('returns error if unable to delete', () => {
             const deleteError = new Error();
 
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 errors: { deleteError, failedInstrument: mockInstrumentId },
             });
@@ -88,7 +90,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('does not return error if able to delete', () => {
-            instrumentSelector = new InstrumentSelector(state.instruments);
+            instrumentSelector = createInstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getDeleteError(mockInstrumentId)).toBeUndefined();
         });
@@ -96,7 +98,7 @@ describe('InstrumentSelector', () => {
         it('does not return error if unable to delete irrelevant instrument', () => {
             const deleteError = new Error();
 
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 errors: { deleteError, failedInstrument: mockInstrumentId },
             });
@@ -107,7 +109,7 @@ describe('InstrumentSelector', () => {
         it('returns any error if instrument id is not passed', () => {
             const deleteError = new Error();
 
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 errors: { deleteError, failedInstrument: mockInstrumentId },
             });
@@ -118,7 +120,7 @@ describe('InstrumentSelector', () => {
 
     describe('#isLoading()', () => {
         it('returns true if loading instruments', () => {
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 statuses: { isLoading: true },
             });
@@ -127,7 +129,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns false if not loading instruments', () => {
-            instrumentSelector = new InstrumentSelector(state.instruments);
+            instrumentSelector = createInstrumentSelector(state.instruments);
 
             expect(instrumentSelector.isLoading()).toEqual(false);
         });
@@ -137,7 +139,7 @@ describe('InstrumentSelector', () => {
         const mockInstrumentId = '123';
 
         it('returns true if deleting an instrument', () => {
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 statuses: { isDeleting: true, deletingInstrument: mockInstrumentId },
             });
@@ -146,7 +148,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns false if not deleting an instrument', () => {
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 statuses: { isDeleting: false, deletingInstrument: undefined },
             });
@@ -155,7 +157,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns false if not deleting specific instrument', () => {
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 statuses: { isDeleting: true, deletingInstrument: '321' },
             });
@@ -164,7 +166,7 @@ describe('InstrumentSelector', () => {
         });
 
         it('returns any deleting status if instrument id is not passed', () => {
-            instrumentSelector = new InstrumentSelector({
+            instrumentSelector = createInstrumentSelector({
                 ...state.instruments,
                 statuses: { isDeleting: true, deletingInstrument: mockInstrumentId },
             });

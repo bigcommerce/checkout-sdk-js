@@ -9,7 +9,7 @@ import { createFormSelectorFactory } from '../form';
 import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
-import { InstrumentSelector } from '../payment/instrument';
+import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
 import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
 
@@ -33,6 +33,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createCustomerSelector = createCustomerSelectorFactory();
     const createCustomerStrategySelector = createCustomerStrategySelectorFactory();
     const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
+    const createInstrumentSelector = createInstrumentSelectorFactory();
     const createFormSelector = createFormSelectorFactory();
     const createShippingAddressSelector = createShippingAddressSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
@@ -51,7 +52,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const customerStrategies = createCustomerStrategySelector(state.customerStrategies);
         const form = createFormSelector(state.config);
         const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
-        const instruments = new InstrumentSelector(state.instruments);
+        const instruments = createInstrumentSelector(state.instruments);
         const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
         const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
         const shippingAddress = createShippingAddressSelector(state.consignments);

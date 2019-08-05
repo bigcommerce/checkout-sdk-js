@@ -22,3 +22,9 @@ export interface InstrumentStatusState {
 }
 
 export type InstrumentMeta = VaultAccessToken;
+
+export const DEFAULT_STATE = {
+    data: [],
+    errors: {},
+    statuses: {},
+};

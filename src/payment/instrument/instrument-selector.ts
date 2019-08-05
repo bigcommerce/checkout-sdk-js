@@ -1,40 +1,75 @@
+import { createSelector } from '../../common/selector';
+import { memoizeOne } from '../../common/utility';
+
 import Instrument from './instrument';
-import InstrumentState, { InstrumentMeta } from './instrument-state';
+import InstrumentState, { DEFAULT_STATE, InstrumentMeta } from './instrument-state';
 
-export default class InstrumentSelector {
-    constructor(
-        private _instruments: InstrumentState
-    ) {}
+export default interface InstrumentSelector {
+    getInstruments(): Instrument[] | undefined;
+    getInstrumentsMeta(): InstrumentMeta | undefined;
+    getLoadError(): Error | undefined;
+    getDeleteError(instrumentId?: string): Error | undefined;
+    isLoading(): boolean ;
+    isDeleting(instrumentId?: string): boolean;
+}
 
-    getInstruments(): Instrument[] | undefined {
-        return this._instruments.data;
-    }
+export type InstrumentSelectorFactory = (state: InstrumentState) => InstrumentSelector;
 
-    getInstrumentsMeta(): InstrumentMeta | undefined {
-        return this._instruments.meta;
-    }
+export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
+    const getInstruments = createSelector(
+        (state: InstrumentState) => state.data,
+        instruments => () => instruments
+    );
 
-    getLoadError(): Error | undefined {
-        return this._instruments.errors && this._instruments.errors.loadError;
-    }
+    const getInstrumentsMeta = createSelector(
+        (state: InstrumentState) => state.meta,
+        meta => () => meta
+    );
 
-    getDeleteError(instrumentId?: string): Error | undefined {
-        if (!this._instruments.errors || (instrumentId && this._instruments.errors.failedInstrument !== instrumentId)) {
-            return;
+    const getLoadError = createSelector(
+        (state: InstrumentState) => state.errors.loadError,
+        loadError => () => loadError
+    );
+
+    const getDeleteError = createSelector(
+        (state: InstrumentState) => state.errors.failedInstrument,
+        (state: InstrumentState) => state.errors.deleteError,
+        (failedInstrument, deleteError) => (instrumentId?: string) => {
+            if (instrumentId && failedInstrument !== instrumentId) {
+                return;
+            }
+
+            return deleteError;
         }
+    );
 
-        return this._instruments.errors.deleteError;
-    }
+    const isLoading = createSelector(
+        (state: InstrumentState) => state.statuses.isLoading,
+        isLoading => () => !!isLoading
+    );
 
-    isLoading(): boolean {
-        return !!(this._instruments.statuses && this._instruments.statuses.isLoading);
-    }
+    const isDeleting = createSelector(
+        (state: InstrumentState) => state.statuses.deletingInstrument,
+        (state: InstrumentState) => state.statuses.isDeleting,
+        (deletingInstrument, isDeleting) => (instrumentId?: string) => {
+            if (instrumentId && deletingInstrument !== instrumentId) {
+                return false;
+            }
 
-    isDeleting(instrumentId?: string): boolean {
-        if (!this._instruments.statuses || (instrumentId && this._instruments.statuses.deletingInstrument !== instrumentId)) {
-            return false;
+            return !!isDeleting;
         }
+    );
 
-        return !!this._instruments.statuses.isDeleting;
-    }
+    return memoizeOne((
+        state: InstrumentState = DEFAULT_STATE
+    ): InstrumentSelector => {
+        return {
+            getInstruments: getInstruments(state),
+            getInstrumentsMeta: getInstrumentsMeta(state),
+            getLoadError: getLoadError(state),
+            getDeleteError: getDeleteError(state),
+            isLoading: isLoading(state),
+            isDeleting: isDeleting(state),
+        };
+    });
 }
