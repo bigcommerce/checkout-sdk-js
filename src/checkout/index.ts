@@ -13,7 +13,7 @@ export { default as CheckoutState } from './checkout-state';
 export { default as CheckoutStoreErrorSelector } from './checkout-store-error-selector';
 export { default as CheckoutStoreSelector, CheckoutStoreSelectorFactory, createCheckoutStoreSelectorFactory } from './checkout-store-selector';
 export { default as CheckoutStoreState } from './checkout-store-state';
-export { default as CheckoutStoreStatusSelector } from './checkout-store-status-selector';
+export { default as CheckoutStoreStatusSelector, CheckoutStoreStatusSelectorFactory, createCheckoutStoreStatusSelectorFactory } from './checkout-store-status-selector';
 export { default as CheckoutStore, CheckoutStoreOptions, ReadableCheckoutStore } from './checkout-store';
 export { default as CheckoutValidator } from './checkout-validator';
 export { default as InternalCheckoutSelectors } from './internal-checkout-selectors';

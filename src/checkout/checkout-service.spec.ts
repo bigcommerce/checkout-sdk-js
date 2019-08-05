@@ -263,7 +263,7 @@ describe('CheckoutService', () => {
             expect(checkoutService.getState()).toEqual(expect.objectContaining({
                 data: expect.any(Object),
                 errors: expect.any(CheckoutStoreErrorSelector),
-                statuses: expect.any(CheckoutStoreStatusSelector),
+                statuses: expect.any(Object),
             }));
         });
 
