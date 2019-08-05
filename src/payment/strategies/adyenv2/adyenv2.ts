@@ -1,9 +1,5 @@
 export interface AdyenHostWindow extends Window {
-    AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenClient;
-}
-
-export interface AdyenClient {
-    adyenCheckout(): AdyenCheckout;
+    AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenCheckout;
 }
 
 export interface AdyenConfiguration {

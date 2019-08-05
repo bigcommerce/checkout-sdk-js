@@ -1,18 +1,14 @@
 import { OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
-import { AdyenCardState, AdyenClient, AdyenConfiguration } from './adyenv2';
+import { AdyenCardState, AdyenCheckout, AdyenConfiguration } from './adyenv2';
 
-export function getAdyenClient(): AdyenClient {
+export function getAdyenCheckout(): AdyenCheckout {
     return {
-        adyenCheckout: jest.fn(() => {
+        create: jest.fn(() => {
             return {
-                create: jest.fn(() => {
-                    return {
-                        mount: jest.fn(),
-                        unmount: jest.fn(),
-                    };
-                }),
+                mount: jest.fn(),
+                unmount: jest.fn(),
             };
         }),
     };

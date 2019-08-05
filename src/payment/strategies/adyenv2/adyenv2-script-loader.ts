@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { AdyenClient, AdyenConfiguration, AdyenHostWindow } from './adyenv2';
+import { AdyenCheckout, AdyenConfiguration, AdyenHostWindow } from './adyenv2';
 
 export default class AdyenV2ScriptLoader {
     private _stylesheets: { [key: string]: Promise<Event> } = {};
@@ -12,7 +12,7 @@ export default class AdyenV2ScriptLoader {
         private _window: AdyenHostWindow = window
     ) {}
 
-    load(configuration: AdyenConfiguration): Promise<AdyenClient> {
+    load(configuration: AdyenConfiguration): Promise<AdyenCheckout> {
         return this._loadStylesheet(
             `https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.0.0/adyen.css`
         ).then(() => {
