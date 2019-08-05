@@ -1,19 +1,31 @@
 import {
+    createCheckoutStoreErrorSelectorFactory,
+    createCheckoutStoreSelectorFactory,
+    createCheckoutStoreStatusSelectorFactory,
     CheckoutSelectors,
-    CheckoutStoreErrorSelector,
-    CheckoutStoreSelector,
-    CheckoutStoreStatusSelector,
     InternalCheckoutSelectors,
 } from '../checkout';
 
-export default function createCheckoutSelectors(selectors: InternalCheckoutSelectors): CheckoutSelectors {
-    const data = new CheckoutStoreSelector(selectors);
-    const errors = new CheckoutStoreErrorSelector(selectors);
-    const statuses = new CheckoutStoreStatusSelector(selectors);
+export type CheckoutSelectorsFactory = (selectors: InternalCheckoutSelectors) => CheckoutSelectors;
 
-    return {
-        data,
-        errors,
-        statuses,
+export function createCheckoutSelectorsFactory(): CheckoutSelectorsFactory {
+    const createCheckoutStoreSelector = createCheckoutStoreSelectorFactory();
+    const createCheckoutStoreErrorSelector = createCheckoutStoreErrorSelectorFactory();
+    const createCheckoutStoreStatusSelector = createCheckoutStoreStatusSelectorFactory();
+
+    return (selectors: InternalCheckoutSelectors) => {
+        const data = createCheckoutStoreSelector(selectors);
+        const errors = createCheckoutStoreErrorSelector(selectors);
+        const statuses = createCheckoutStoreStatusSelector(selectors);
+
+        return {
+            data,
+            errors,
+            statuses,
+        };
     };
+}
+
+export default function createCheckoutSelectors(selectors: InternalCheckoutSelectors): CheckoutSelectors {
+    return createCheckoutSelectorsFactory()(selectors);
 }

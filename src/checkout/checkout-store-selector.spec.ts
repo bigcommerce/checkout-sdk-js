@@ -6,21 +6,23 @@ import { getUnitedStates } from '../geography/countries.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 
-import CheckoutStoreSelector from './checkout-store-selector';
+import CheckoutStoreSelector, { createCheckoutStoreSelectorFactory, CheckoutStoreSelectorFactory } from './checkout-store-selector';
 import CheckoutStoreState from './checkout-store-state';
 import { getCheckoutStoreStateWithOrder } from './checkouts.mock';
 import createInternalCheckoutSelectors from './create-internal-checkout-selectors';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 describe('CheckoutStoreSelector', () => {
+    let createCheckoutStoreSelector: CheckoutStoreSelectorFactory;
     let state: CheckoutStoreState;
     let internalSelectors: InternalCheckoutSelectors;
     let selector: CheckoutStoreSelector;
 
     beforeEach(() => {
+        createCheckoutStoreSelector = createCheckoutStoreSelectorFactory();
         state = getCheckoutStoreStateWithOrder();
         internalSelectors = createInternalCheckoutSelectors(state);
-        selector = new CheckoutStoreSelector(internalSelectors);
+        selector = createCheckoutStoreSelector(internalSelectors);
     });
 
     it('returns checkout data', () => {
@@ -77,7 +79,11 @@ describe('CheckoutStoreSelector', () => {
         });
 
         it('returns geo-ip dummy shipping address', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
             jest.spyOn(internalSelectors.shippingAddress, 'getShippingAddress').mockReturnValue(undefined);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
 
             expect(selector.getShippingAddress()).toEqual({
                 address1: '',
@@ -97,8 +103,12 @@ describe('CheckoutStoreSelector', () => {
         });
 
         it('returns undefined if shippingAddress & geoIp are not present', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
             jest.spyOn(internalSelectors.shippingAddress, 'getShippingAddress').mockReturnValue(undefined);
             jest.spyOn(internalSelectors.config, 'getContextConfig').mockReturnValue(undefined);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
 
             expect(selector.getShippingAddress()).toBeUndefined();
         });

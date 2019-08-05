@@ -23,7 +23,7 @@ import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutParams from './checkout-params';
 import CheckoutSelectors from './checkout-selectors';
 import CheckoutStore from './checkout-store';
-import createCheckoutSelectors from './create-checkout-selectors';
+import createCheckoutSelectors, { createCheckoutSelectorsFactory, CheckoutSelectorsFactory } from './create-checkout-selectors';
 import createCheckoutServiceErrorTransformer from './create-checkout-service-error-transformer';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
@@ -38,6 +38,7 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
 export default class CheckoutService {
     private _storeProjection: DataStoreProjection<InternalCheckoutSelectors, CheckoutSelectors>;
     private _errorTransformer: ErrorMessageTransformer;
+    private _selectorsFactory: CheckoutSelectorsFactory;
 
     /**
      * @internal
@@ -62,6 +63,7 @@ export default class CheckoutService {
         private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {
         this._errorTransformer = createCheckoutServiceErrorTransformer();
+        this._selectorsFactory = createCheckoutSelectorsFactory();
         this._storeProjection = new DataStoreProjection(this._store, createCheckoutSelectors);
     }
 

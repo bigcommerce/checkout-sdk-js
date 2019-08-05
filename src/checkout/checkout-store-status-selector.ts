@@ -1,16 +1,7 @@
-import { BillingAddressSelector } from '../billing';
-import { CartSelector } from '../cart';
-import { selector } from '../common/selector';
-import { ConfigSelector } from '../config';
-import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerStrategySelector } from '../customer';
-import { CountrySelector } from '../geography';
-import { OrderSelector } from '../order';
-import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
-import { InstrumentSelector } from '../payment/instrument';
-import { ConsignmentSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
+import { createSelector, createShallowEqualSelector } from '../common/selector';
+import { Omit } from '../common/types';
+import { memoizeOne } from '../common/utility';
 
-import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
@@ -21,165 +12,76 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
  * progress. For example, you can check whether a customer is submitting an
  * order and waiting for the request to complete.
  */
-@selector
-export default class CheckoutStoreStatusSelector {
-    private _billingAddress: BillingAddressSelector;
-    private _cart: CartSelector;
-    private _checkout: CheckoutSelector;
-    private _config: ConfigSelector;
-    private _consignments: ConsignmentSelector;
-    private _countries: CountrySelector;
-    private _coupons: CouponSelector;
-    private _customerStrategies: CustomerStrategySelector;
-    private _giftCertificates: GiftCertificateSelector;
-    private _instruments: InstrumentSelector;
-    private _order: OrderSelector;
-    private _paymentMethods: PaymentMethodSelector;
-    private _paymentStrategies: PaymentStrategySelector;
-    private _shippingCountries: ShippingCountrySelector;
-    private _shippingStrategies: ShippingStrategySelector;
-
-    /**
-     * @internal
-     */
-    constructor(selectors: InternalCheckoutSelectors) {
-        this._billingAddress = selectors.billingAddress;
-        this._cart = selectors.cart;
-        this._checkout = selectors.checkout;
-        this._config = selectors.config;
-        this._consignments = selectors.consignments;
-        this._countries = selectors.countries;
-        this._coupons = selectors.coupons;
-        this._customerStrategies = selectors.customerStrategies;
-        this._giftCertificates = selectors.giftCertificates;
-        this._instruments = selectors.instruments;
-        this._order = selectors.order;
-        this._paymentMethods = selectors.paymentMethods;
-        this._paymentStrategies = selectors.paymentStrategies;
-        this._shippingCountries = selectors.shippingCountries;
-        this._shippingStrategies = selectors.shippingStrategies;
-    }
-
+export default interface CheckoutStoreStatusSelector {
     /**
      * Checks whether any checkout action is pending.
      *
      * @returns True if there is a pending action, otherwise false.
      */
-    isPending(): boolean {
-        // tslint:disable-next-line:cyclomatic-complexity
-        return this.isLoadingCheckout() ||
-            this.isSubmittingOrder() ||
-            this.isFinalizingOrder() ||
-            this.isLoadingOrder() ||
-            this.isLoadingCart() ||
-            this.isLoadingBillingCountries() ||
-            this.isLoadingShippingCountries() ||
-            this.isLoadingPaymentMethods() ||
-            this.isLoadingPaymentMethod() ||
-            this.isInitializingPayment() ||
-            this.isLoadingShippingOptions() ||
-            this.isSelectingShippingOption() ||
-            this.isSigningIn() ||
-            this.isSigningOut() ||
-            this.isInitializingCustomer() ||
-            this.isUpdatingBillingAddress() ||
-            this.isContinuingAsGuest() ||
-            this.isUpdatingShippingAddress() ||
-            this.isUpdatingConsignment() ||
-            this.isCreatingConsignments() ||
-            this.isDeletingConsignment() ||
-            this.isInitializingShipping() ||
-            this.isApplyingCoupon() ||
-            this.isRemovingCoupon() ||
-            this.isApplyingGiftCertificate() ||
-            this.isRemovingGiftCertificate() ||
-            this.isLoadingInstruments() ||
-            this.isDeletingInstrument() ||
-            this.isLoadingConfig() ||
-            this.isCustomerStepPending() ||
-            this.isPaymentStepPending();
-    }
+    isPending(): boolean;
 
     /**
      * Checks whether the current checkout is loading.
      *
      * @returns True if the current checkout is loading, otherwise false.
      */
-    isLoadingCheckout(): boolean {
-        return this._checkout.isLoading();
-    }
+    isLoadingCheckout(): boolean;
 
     /**
      * Checks whether the current checkout is being updated.
      *
      * @returns True if the current checkout is being updated, otherwise false.
      */
-    isUpdatingCheckout(): boolean {
-        return this._checkout.isUpdating();
-    }
+    isUpdatingCheckout(): boolean;
 
     /**
      * Checks whether the current order is submitting.
      *
      * @returns True if the current order is submitting, otherwise false.
      */
-    isSubmittingOrder(): boolean {
-        return this._paymentStrategies.isExecuting();
-    }
+    isSubmittingOrder(): boolean;
 
     /**
      * Checks whether the current order is finalizing.
      *
      * @returns True if the current order is finalizing, otherwise false.
      */
-    isFinalizingOrder(): boolean {
-        return this._paymentStrategies.isFinalizing();
-    }
+    isFinalizingOrder(): boolean;
 
     /**
      * Checks whether the current order is loading.
      *
      * @returns True if the current order is loading, otherwise false.
      */
-    isLoadingOrder(): boolean {
-        return this._order.isLoading();
-    }
+    isLoadingOrder(): boolean;
 
     /**
      * Checks whether the current cart is loading.
      *
      * @returns True if the current cart is loading, otherwise false.
      */
-    isLoadingCart(): boolean {
-        return this._cart.isLoading();
-    }
+    isLoadingCart(): boolean;
 
     /**
      * Checks whether billing countries are loading.
      *
      * @returns True if billing countries are loading, otherwise false.
      */
-    isLoadingBillingCountries(): boolean {
-        return this._countries.isLoading();
-    }
+    isLoadingBillingCountries(): boolean;
 
     /**
      * Checks whether shipping countries are loading.
      *
      * @returns True if shipping countries are loading, otherwise false.
      */
-    isLoadingShippingCountries(): boolean {
-        return this._shippingCountries.isLoading();
-    }
+    isLoadingShippingCountries(): boolean;
 
     /**
      * Checks whether payment methods are loading.
      *
      * @returns True if payment methods are loading, otherwise false.
      */
-    isLoadingPaymentMethods(): boolean {
-        return this._paymentMethods.isLoading();
-    }
+    isLoadingPaymentMethods(): boolean;
 
     /**
      * Checks whether a specific or any payment method is loading.
@@ -190,9 +92,7 @@ export default class CheckoutStoreStatusSelector {
      * @param methodId - The identifier of the payment method to check.
      * @returns True if the payment method is loading, otherwise false.
      */
-    isLoadingPaymentMethod(methodId?: string): boolean {
-        return this._paymentMethods.isLoadingMethod(methodId);
-    }
+    isLoadingPaymentMethod(methodId?: string): boolean;
 
     /**
      * Checks whether a specific or any payment method is initializing.
@@ -203,9 +103,7 @@ export default class CheckoutStoreStatusSelector {
      * @param methodId - The identifier of the payment method to check.
      * @returns True if the payment method is initializing, otherwise false.
      */
-    isInitializingPayment(methodId?: string): boolean {
-        return this._paymentStrategies.isInitializing(methodId);
-    }
+    isInitializingPayment(methodId?: string): boolean;
 
     /**
      * Checks whether the current customer is signing in.
@@ -217,9 +115,7 @@ export default class CheckoutStoreStatusSelector {
      * current customer.
      * @returns True if the customer is signing in, otherwise false.
      */
-    isSigningIn(methodId?: string): boolean {
-        return this._customerStrategies.isSigningIn(methodId);
-    }
+    isSigningIn(methodId?: string): boolean;
 
     /**
      * Checks whether the current customer is signing out.
@@ -231,9 +127,7 @@ export default class CheckoutStoreStatusSelector {
      * current customer.
      * @returns True if the customer is signing out, otherwise false.
      */
-    isSigningOut(methodId?: string): boolean {
-        return this._customerStrategies.isSigningOut(methodId);
-    }
+    isSigningOut(methodId?: string): boolean;
 
     /**
      * Checks whether the customer step is initializing.
@@ -245,18 +139,14 @@ export default class CheckoutStoreStatusSelector {
      * customer step of checkout.
      * @returns True if the customer step is initializing, otherwise false.
      */
-    isInitializingCustomer(methodId?: string): boolean {
-        return this._customerStrategies.isInitializing(methodId);
-    }
+    isInitializingCustomer(methodId?: string): boolean;
 
     /**
      * Checks whether shipping options are loading.
      *
      * @returns True if shipping options are loading, otherwise false.
      */
-    isLoadingShippingOptions(): boolean {
-        return this._consignments.isLoadingShippingOptions();
-    }
+    isLoadingShippingOptions(): boolean;
 
     /**
      * Checks whether a shipping option is being selected.
@@ -268,37 +158,28 @@ export default class CheckoutStoreStatusSelector {
      * @param consignmentId - The identifier of the consignment to be checked.
      * @returns True if selecting a shipping option, otherwise false.
      */
-    isSelectingShippingOption(consignmentId?: string): boolean {
-        return this._shippingStrategies.isSelectingOption() ||
-            this._consignments.isUpdatingShippingOption(consignmentId);
-    }
+    isSelectingShippingOption(consignmentId?: string): boolean;
 
     /**
      * Checks whether the billing address is being updated.
      *
      * @returns True if updating their billing address, otherwise false.
      */
-    isUpdatingBillingAddress(): boolean {
-        return this._billingAddress.isUpdating();
-    }
+    isUpdatingBillingAddress(): boolean;
 
     /**
      * Checks whether the shopper is continuing out as a guest.
      *
      * @returns True if continuing as guest, otherwise false.
      */
-    isContinuingAsGuest(): boolean {
-        return this._billingAddress.isContinuingAsGuest();
-    }
+    isContinuingAsGuest(): boolean;
 
     /**
      * Checks the shipping address is being updated.
      *
      * @returns True if updating their shipping address, otherwise false.
      */
-    isUpdatingShippingAddress(): boolean {
-        return this._shippingStrategies.isUpdatingAddress();
-    }
+    isUpdatingShippingAddress(): boolean;
 
     /**
      * Checks whether a given/any consignment is being updated.
@@ -309,9 +190,7 @@ export default class CheckoutStoreStatusSelector {
      * @param consignmentId - The identifier of the consignment to be checked.
      * @returns True if updating consignment(s), otherwise false.
      */
-    isUpdatingConsignment(consignmentId?: string): boolean {
-        return this._consignments.isUpdating(consignmentId);
-    }
+    isUpdatingConsignment(consignmentId?: string): boolean;
 
     /**
      * Checks whether a given/any consignment is being deleted.
@@ -322,9 +201,7 @@ export default class CheckoutStoreStatusSelector {
      * @param consignmentId - The identifier of the consignment to be checked.
      * @returns True if deleting consignment(s), otherwise false.
      */
-    isDeletingConsignment(consignmentId?: string): boolean {
-        return this._consignments.isDeleting(consignmentId);
-    }
+    isDeletingConsignment(consignmentId?: string): boolean;
 
     /**
      * Checks whether a given/any consignment is being updated.
@@ -334,9 +211,7 @@ export default class CheckoutStoreStatusSelector {
      *
      * @returns True if creating consignments, otherwise false.
      */
-    isCreatingConsignments(): boolean {
-        return this._consignments.isCreating();
-    }
+    isCreatingConsignments(): boolean;
 
     /**
      * Checks whether the shipping step of a checkout process is initializing.
@@ -348,72 +223,56 @@ export default class CheckoutStoreStatusSelector {
      * @param methodId - The identifer of the initialization method to check.
      * @returns True if the shipping step is initializing, otherwise false.
      */
-    isInitializingShipping(methodId?: string) {
-        return this._shippingStrategies.isInitializing(methodId);
-    }
+    isInitializingShipping(methodId?: string): boolean;
 
     /**
      * Checks whether the current customer is applying a coupon code.
      *
      * @returns True if applying a coupon code, otherwise false.
      */
-    isApplyingCoupon(): boolean {
-        return this._coupons.isApplying();
-    }
+    isApplyingCoupon(): boolean;
 
     /**
      * Checks whether the current customer is removing a coupon code.
      *
      * @returns True if removing a coupon code, otherwise false.
      */
-    isRemovingCoupon(): boolean {
-        return this._coupons.isRemoving();
-    }
+    isRemovingCoupon(): boolean;
 
     /**
      * Checks whether the current customer is applying a gift certificate.
      *
      * @returns True if applying a gift certificate, otherwise false.
      */
-    isApplyingGiftCertificate(): boolean {
-        return this._giftCertificates.isApplying();
-    }
+    isApplyingGiftCertificate(): boolean;
 
     /**
      * Checks whether the current customer is removing a gift certificate.
      *
      * @returns True if removing a gift certificate, otherwise false.
      */
-    isRemovingGiftCertificate(): boolean {
-        return this._giftCertificates.isRemoving();
-    }
+    isRemovingGiftCertificate(): boolean;
 
     /**
      * Checks whether the current customer's payment instruments are loading.
      *
      * @returns True if payment instruments are loading, otherwise false.
      */
-    isLoadingInstruments(): boolean {
-        return this._instruments.isLoading();
-    }
+    isLoadingInstruments(): boolean;
 
     /**
      * Checks whether the current customer is deleting a payment instrument.
      *
      * @returns True if deleting a payment instrument, otherwise false.
      */
-    isDeletingInstrument(instrumentId?: string): boolean {
-        return this._instruments.isDeleting(instrumentId);
-    }
+    isDeletingInstrument(instrumentId?: string): boolean;
 
     /**
      * Checks whether the checkout configuration of a store is loading.
      *
      * @returns True if the configuration is loading, otherwise false.
      */
-    isLoadingConfig(): boolean {
-        return this._config.isLoading();
-    }
+    isLoadingConfig(): boolean;
 
     /**
      * Checks whether the customer step of a checkout is in a pending state.
@@ -424,12 +283,7 @@ export default class CheckoutStoreStatusSelector {
      *
      * @returns True if the customer step is pending, otherwise false.
      */
-    isCustomerStepPending(): boolean {
-        return this._customerStrategies.isInitializing() ||
-            this._customerStrategies.isSigningIn() ||
-            this._customerStrategies.isSigningOut() ||
-            this._customerStrategies.isWidgetInteracting();
-    }
+    isCustomerStepPending(): boolean;
 
     /**
      * Checks whether the payment step of a checkout is in a pending state.
@@ -440,10 +294,102 @@ export default class CheckoutStoreStatusSelector {
      *
      * @returns True if the payment step is pending, otherwise false.
      */
-    isPaymentStepPending(): boolean {
-        return this._paymentStrategies.isInitializing() ||
-            this._paymentStrategies.isExecuting() ||
-            this._paymentStrategies.isFinalizing() ||
-            this._paymentStrategies.isWidgetInteracting();
-    }
+    isPaymentStepPending(): boolean;
+}
+
+export type CheckoutStoreStatusSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreStatusSelector;
+
+export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusSelectorFactory {
+    const isPending = createShallowEqualSelector(
+        (selector: Omit<CheckoutStoreStatusSelector, 'isPending'>) => selector,
+        selector => () => {
+            return (Object.keys(selector) as Array<keyof Omit<CheckoutStoreStatusSelector, 'isPending'>>)
+                .some(key => selector[key]());
+        }
+    );
+
+    const isSelectingShippingOption = createSelector(
+        ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.isSelectingOption,
+        ({ consignments }: InternalCheckoutSelectors) => consignments.isUpdatingShippingOption,
+        (isSelectingOption, isUpdatingShippingOption) => (consignmentId?: string) => {
+            return (
+                isSelectingOption() ||
+                isUpdatingShippingOption(consignmentId)
+            );
+        }
+    );
+
+    const isCustomerStepPending = createSelector(
+        ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isInitializing,
+        ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isSigningIn,
+        ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isSigningOut,
+        ({ customerStrategies }: InternalCheckoutSelectors) => customerStrategies.isWidgetInteracting,
+        (isInitializing, isSigningIn, isSigningOut, isWidgetInteracting) => (methodId?: string) => {
+            return (
+                isInitializing(methodId) ||
+                isSigningIn(methodId) ||
+                isSigningOut(methodId) ||
+                isWidgetInteracting(methodId)
+            );
+        }
+    );
+
+    const isPaymentStepPending = createSelector(
+        ({ paymentStrategies }: InternalCheckoutSelectors) => paymentStrategies.isInitializing,
+        ({ paymentStrategies }: InternalCheckoutSelectors) => paymentStrategies.isExecuting,
+        ({ paymentStrategies }: InternalCheckoutSelectors) => paymentStrategies.isFinalizing,
+        ({ paymentStrategies }: InternalCheckoutSelectors) => paymentStrategies.isWidgetInteracting,
+        (isInitializing, isExecuting, isFinalizing, isWidgetInteracting) => (methodId?: string) => {
+            return (
+                isInitializing(methodId) ||
+                isExecuting(methodId) ||
+                isFinalizing(methodId) ||
+                isWidgetInteracting(methodId)
+            );
+        }
+    );
+
+    return memoizeOne((
+        state: InternalCheckoutSelectors
+    ): CheckoutStoreStatusSelector => {
+        const selector = {
+            isLoadingCheckout: state.checkout.isLoading,
+            isUpdatingCheckout: state.checkout.isUpdating,
+            isSubmittingOrder: state.paymentStrategies.isExecuting,
+            isFinalizingOrder: state.paymentStrategies.isFinalizing,
+            isLoadingOrder: state.order.isLoading,
+            isLoadingCart: state.cart.isLoading,
+            isLoadingBillingCountries: state.countries.isLoading,
+            isLoadingShippingCountries: state.shippingCountries.isLoading,
+            isLoadingPaymentMethods: state.paymentMethods.isLoading,
+            isLoadingPaymentMethod: state.paymentMethods.isLoadingMethod,
+            isInitializingPayment: state.paymentStrategies.isInitializing,
+            isSigningIn: state.customerStrategies.isSigningIn,
+            isSigningOut: state.customerStrategies.isSigningOut,
+            isInitializingCustomer: state.customerStrategies.isInitializing,
+            isLoadingShippingOptions: state.consignments.isLoadingShippingOptions,
+            isSelectingShippingOption: isSelectingShippingOption(state),
+            isUpdatingBillingAddress: state.billingAddress.isUpdating,
+            isContinuingAsGuest: state.billingAddress.isContinuingAsGuest,
+            isUpdatingShippingAddress: state.shippingStrategies.isUpdatingAddress,
+            isUpdatingConsignment: state.consignments.isUpdating,
+            isDeletingConsignment: state.consignments.isDeleting,
+            isCreatingConsignments: state.consignments.isCreating,
+            isInitializingShipping: state.shippingStrategies.isInitializing,
+            isApplyingCoupon: state.coupons.isApplying,
+            isRemovingCoupon: state.coupons.isRemoving,
+            isApplyingGiftCertificate: state.giftCertificates.isApplying,
+            isRemovingGiftCertificate: state.giftCertificates.isRemoving,
+            isLoadingInstruments: state.instruments.isLoading,
+            isDeletingInstrument: state.instruments.isDeleting,
+            isLoadingConfig: state.config.isLoading,
+            isCustomerStepPending: isCustomerStepPending(state),
+            isPaymentStepPending: isPaymentStepPending(state),
+        };
+
+        return {
+            isPending: isPending(selector),
+            ...selector,
+        };
+    });
 }
