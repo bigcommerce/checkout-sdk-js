@@ -1,7 +1,7 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
-import { mergeOrPush } from '../common/utility';
+import { arrayReplace, mergeOrPush, objectMerge, objectSet } from '../common/utility';
 
 import PaymentMethod from './payment-method';
 import { PaymentMethodAction, PaymentMethodActionType } from './payment-method-actions';
@@ -28,15 +28,17 @@ function dataReducer(
 ): PaymentMethod[] | undefined {
     switch (action.type) {
     case PaymentMethodActionType.LoadPaymentMethodSucceeded:
-        return action.payload ?
-            mergeOrPush(data || [], action.payload, {
-                id: action.payload.id,
-                gateway: action.payload.gateway,
-            }) :
-            data;
+        return mergeOrPush(data || [], action.payload, action.payload && {
+            id: action.payload.id,
+            gateway: action.payload.gateway,
+        });
 
     case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
-        return action.payload ? action.payload : [];
+        return arrayReplace(data, action.payload, {
+            matchObject: (methodA, methodB) => (
+                methodA.id === methodB.id && methodA.gateway === methodB.gateway
+            ),
+        });
 
     default:
         return data;
@@ -49,7 +51,7 @@ function metaReducer(
 ): PaymentMethodMeta | undefined {
     switch (action.type) {
     case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
-        return action.meta ? { ...meta, ...action.meta } : meta;
+        return objectMerge(meta, action.meta);
 
     default:
         return meta;
@@ -63,25 +65,23 @@ function errorsReducer(
     switch (action.type) {
     case PaymentMethodActionType.LoadPaymentMethodsRequested:
     case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
-        return { ...errors, loadError: undefined };
+        return objectSet(errors, 'loadError', undefined);
 
     case PaymentMethodActionType.LoadPaymentMethodsFailed:
-        return { ...errors, loadError: action.payload };
+        return objectSet(errors, 'loadError', action.payload);
 
     case PaymentMethodActionType.LoadPaymentMethodRequested:
     case PaymentMethodActionType.LoadPaymentMethodSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             loadMethodId: undefined,
             loadMethodError: undefined,
-        };
+        });
 
     case PaymentMethodActionType.LoadPaymentMethodFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             loadMethodId: action.meta.methodId,
             loadMethodError: action.payload,
-        };
+        });
 
     default:
         return errors;
@@ -94,26 +94,24 @@ function statusesReducer(
 ): PaymentMethodStatusesState {
     switch (action.type) {
     case PaymentMethodActionType.LoadPaymentMethodsRequested:
-        return { ...statuses, isLoading: true };
+        return objectSet(statuses, 'isLoading', true);
 
     case PaymentMethodActionType.LoadPaymentMethodsSucceeded:
     case PaymentMethodActionType.LoadPaymentMethodsFailed:
-        return { ...statuses, isLoading: false };
+        return objectSet(statuses, 'isLoading', false);
 
     case PaymentMethodActionType.LoadPaymentMethodRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isLoadingMethod: true,
             loadMethodId: action.meta.methodId,
-        };
+        });
 
     case PaymentMethodActionType.LoadPaymentMethodSucceeded:
     case PaymentMethodActionType.LoadPaymentMethodFailed:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isLoadingMethod: false,
             loadMethodId: undefined,
-        };
+        });
 
     default:
         return statuses;
