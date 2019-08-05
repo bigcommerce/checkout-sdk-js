@@ -18,3 +18,9 @@ export interface ConfigErrorsState {
 export interface ConfigStatusesState {
     isLoading?: boolean;
 }
+
+export const DEFAULT_STATE: ConfigState = {
+    meta: {},
+    errors: {},
+    statuses: {},
+};

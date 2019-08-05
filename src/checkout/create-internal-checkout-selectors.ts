@@ -2,10 +2,10 @@ import { createBillingAddressSelectorFactory } from '../billing';
 import { createCartSelectorFactory } from '../cart/cart-selector';
 import { createCheckoutButtonSelectorFactory } from '../checkout-buttons';
 import { createFreezeProxies } from '../common/utility';
-import { ConfigSelector } from '../config';
+import { createConfigSelectorFactory } from '../config';
 import { createCouponSelectorFactory, createGiftCertificateSelectorFactory } from '../coupon';
 import { CustomerSelector, CustomerStrategySelector } from '../customer';
-import { FormSelector } from '../form';
+import { createFormSelectorFactory } from '../form';
 import { CountrySelector } from '../geography';
 import { createOrderSelectorFactory } from '../order';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
@@ -27,20 +27,22 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createBillingAddressSelector = createBillingAddressSelectorFactory();
     const createCartSelector = createCartSelectorFactory();
     const createCheckoutButtonSelector = createCheckoutButtonSelectorFactory();
+    const createConfigSelector = createConfigSelectorFactory();
     const createCouponSelector = createCouponSelectorFactory();
     const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
+    const createFormSelector = createFormSelectorFactory();
     const createOrderSelector = createOrderSelectorFactory();
 
     return (state, options = {}) => {
         const billingAddress = createBillingAddressSelector(state.billingAddress);
         const cart = createCartSelector(state.cart);
         const checkoutButton = createCheckoutButtonSelector(state.checkoutButton);
-        const config = new ConfigSelector(state.config);
+        const config = createConfigSelector(state.config);
         const countries = new CountrySelector(state.countries);
         const coupons = createCouponSelector(state.coupons);
         const customer = new CustomerSelector(state.customer);
         const customerStrategies = new CustomerStrategySelector(state.customerStrategies);
-        const form = new FormSelector(state.config);
+        const form = createFormSelector(state.config);
         const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
         const instruments = new InstrumentSelector(state.instruments);
         const paymentMethods = new PaymentMethodSelector(state.paymentMethods);

@@ -6,15 +6,17 @@ import { Country } from '../geography';
 import { getCountries } from '../geography/countries.mock';
 import { getShippingCountries } from '../shipping/shipping-countries.mock';
 
-import FormSelector from './form-selector';
+import FormSelector, { createFormSelectorFactory, FormSelectorFactory } from './form-selector';
 import { getFormFields } from './form.mocks';
 
 // tslint:disable:no-non-null-assertion
 
 describe('FormSelector', () => {
+    let createFormSelector: FormSelectorFactory;
     let state: CheckoutStoreState;
 
     beforeEach(() => {
+        createFormSelector = createFormSelectorFactory();
         state = getCheckoutStoreState();
     });
 
@@ -23,7 +25,7 @@ describe('FormSelector', () => {
         let countries: Country[];
 
         beforeEach(() => {
-            formSelector = new FormSelector(state.config);
+            formSelector = createFormSelector(state.config);
             countries = getShippingCountries();
         });
 
@@ -91,7 +93,7 @@ describe('FormSelector', () => {
         let countries: Country[];
 
         beforeEach(() => {
-            formSelector = new FormSelector(state.config);
+            formSelector = createFormSelector(state.config);
             countries = getCountries();
         });
 
