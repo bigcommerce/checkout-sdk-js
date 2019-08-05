@@ -1,6 +1,7 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
 import { clearErrorReducer } from '../common/error';
+import { objectMerge } from '../common/utility';
 
 import { PaymentStrategyAction, PaymentStrategyActionType } from './payment-strategy-actions';
 import PaymentStrategyState, { DEFAULT_STATE, PaymentStrategyDataState, PaymentStrategyErrorsState, PaymentStrategyStatusesState } from './payment-strategy-state';
@@ -24,20 +25,18 @@ function dataReducer(
 ): PaymentStrategyDataState {
     switch (action.type) {
     case PaymentStrategyActionType.InitializeSucceeded:
-        return {
-            ...data,
+        return objectMerge(data, {
             [action.meta && action.meta.methodId]: {
                 isInitialized: true,
             },
-        };
+        });
 
     case PaymentStrategyActionType.DeinitializeSucceeded:
-        return {
-            ...data,
+        return objectMerge(data, {
             [action.meta && action.meta.methodId]: {
                 isInitialized: false,
             },
-        };
+        });
     }
 
     return data;
@@ -50,78 +49,68 @@ function errorsReducer(
     switch (action.type) {
     case PaymentStrategyActionType.InitializeRequested:
     case PaymentStrategyActionType.InitializeSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             initializeError: undefined,
             initializeMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.InitializeFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             initializeError: action.payload,
             initializeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case PaymentStrategyActionType.DeinitializeRequested:
     case PaymentStrategyActionType.DeinitializeSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             deinitializeError: undefined,
             deinitializeMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.DeinitializeFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             deinitializeError: action.payload,
             deinitializeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case PaymentStrategyActionType.ExecuteRequested:
     case PaymentStrategyActionType.ExecuteSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             executeError: undefined,
             executeMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.ExecuteFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             executeError: action.payload,
             executeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case PaymentStrategyActionType.FinalizeRequested:
     case PaymentStrategyActionType.FinalizeSucceeded:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             finalizeError: undefined,
             finalizeMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.FinalizeFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             finalizeError: action.payload,
             finalizeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case PaymentStrategyActionType.WidgetInteractionStarted:
     case PaymentStrategyActionType.WidgetInteractionFinished:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             widgetInteractionError: undefined,
             widgetInteractionMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.WidgetInteractionFailed:
-        return {
-            ...errors,
+        return objectMerge(errors, {
             widgetInteractionError: action.payload,
             widgetInteractionMethodId: action.meta.methodId,
-        };
+        });
 
     default:
         return errors;
@@ -134,79 +123,69 @@ function statusesReducer(
 ): PaymentStrategyStatusesState {
     switch (action.type) {
     case PaymentStrategyActionType.InitializeRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isInitializing: true,
             initializeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case PaymentStrategyActionType.InitializeFailed:
     case PaymentStrategyActionType.InitializeSucceeded:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isInitializing: false,
             initializeMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.DeinitializeRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isDeinitializing: true,
             deinitializeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case PaymentStrategyActionType.DeinitializeFailed:
     case PaymentStrategyActionType.DeinitializeSucceeded:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isDeinitializing: false,
             deinitializeMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.ExecuteRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isExecuting: true,
             executeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case PaymentStrategyActionType.ExecuteFailed:
     case PaymentStrategyActionType.ExecuteSucceeded:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isExecuting: false,
             executeMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.FinalizeRequested:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isFinalizing: true,
             finalizeMethodId: action.meta && action.meta.methodId,
-        };
+        });
 
     case PaymentStrategyActionType.FinalizeFailed:
     case PaymentStrategyActionType.FinalizeSucceeded:
-        return {
-            ...statuses,
+        return objectMerge(statuses, {
             isFinalizing: false,
             finalizeMethodId: undefined,
-        };
+        });
 
     case PaymentStrategyActionType.WidgetInteractionStarted:
-    return {
-        ...statuses,
-        isWidgetInteracting: true,
-        widgetInteractionMethodId: action.meta.methodId,
-     };
+        return objectMerge(statuses, {
+            isWidgetInteracting: true,
+            widgetInteractionMethodId: action.meta.methodId,
+        });
 
     case PaymentStrategyActionType.WidgetInteractionFinished:
     case PaymentStrategyActionType.WidgetInteractionFailed:
-     return {
-        ...statuses,
-        isWidgetInteracting: false,
-        widgetInteractionMethodId: undefined,
-     };
+        return objectMerge(statuses, {
+            isWidgetInteracting: false,
+            widgetInteractionMethodId: undefined,
+        });
 
     default:
         return statuses;
