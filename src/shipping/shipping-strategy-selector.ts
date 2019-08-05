@@ -1,65 +1,114 @@
-import { selector } from '../common/selector';
+import { createSelector } from '../common/selector';
+import { memoizeOne } from '../common/utility';
 
-import ShippingStrategyState from './shipping-strategy-state';
+import ShippingStrategyState, { DEFAULT_STATE } from './shipping-strategy-state';
 
-@selector
-export default class ShippingStrategySelector {
-    constructor(
-        private _shippingStrategies: ShippingStrategyState
-    ) {}
+export default interface ShippingStrategySelector {
+    getUpdateAddressError(methodId?: string): Error | undefined;
+    getSelectOptionError(methodId?: string): Error | undefined;
+    getInitializeError(methodId?: string): Error | undefined;
+    isUpdatingAddress(methodId?: string): boolean;
+    isSelectingOption(methodId?: string): boolean;
+    isInitializing(methodId?: string): boolean;
+    isInitialized(methodId: string): boolean;
+}
 
-    getUpdateAddressError(methodId?: string): Error | undefined {
-        if (methodId && this._shippingStrategies.errors.updateAddressMethodId !== methodId) {
-            return;
+export type ShippingStrategySelectorFactory = (state: ShippingStrategyState) => ShippingStrategySelector;
+
+export function createShippingStrategySelectorFactory(): ShippingStrategySelectorFactory {
+    const getUpdateAddressError = createSelector(
+        (state: ShippingStrategyState) => state.errors.updateAddressMethodId,
+        (state: ShippingStrategyState) => state.errors.updateAddressError,
+        (updateAddressMethodId, updateAddressError) => (methodId?: string) => {
+            if (methodId && updateAddressMethodId !== methodId) {
+                return;
+            }
+
+            return updateAddressError;
         }
+    );
 
-        return this._shippingStrategies.errors.updateAddressError;
-    }
+    const getSelectOptionError = createSelector(
+        (state: ShippingStrategyState) => state.errors.selectOptionMethodId,
+        (state: ShippingStrategyState) => state.errors.selectOptionError,
+        (selectOptionMethodId, selectOptionError) => (methodId?: string) => {
+            if (methodId && selectOptionMethodId !== methodId) {
+                return;
+            }
 
-    getSelectOptionError(methodId?: string): Error | undefined {
-        if (methodId && this._shippingStrategies.errors.selectOptionMethodId !== methodId) {
-            return;
+            return selectOptionError;
         }
+    );
 
-        return this._shippingStrategies.errors.selectOptionError;
-    }
+    const getInitializeError = createSelector(
+        (state: ShippingStrategyState) => state.errors.initializeMethodId,
+        (state: ShippingStrategyState) => state.errors.initializeError,
+        (initializeMethodId, initializeError) => (methodId?: string) => {
+            if (methodId && initializeMethodId !== methodId) {
+                return;
+            }
 
-    getInitializeError(methodId?: string): Error | undefined {
-        if (methodId && this._shippingStrategies.errors.initializeMethodId !== methodId) {
-            return;
+            return initializeError;
         }
+    );
 
-        return this._shippingStrategies.errors.initializeError;
-    }
+    const isUpdatingAddress = createSelector(
+        (state: ShippingStrategyState) => state.statuses.updateAddressMethodId,
+        (state: ShippingStrategyState) => state.statuses.isUpdatingAddress,
+        (updateAddressMethodId, isUpdatingAddress) => (methodId?: string) => {
+            if (methodId && updateAddressMethodId !== methodId) {
+                return false;
+            }
 
-    isUpdatingAddress(methodId?: string): boolean {
-        if (methodId && this._shippingStrategies.statuses.updateAddressMethodId !== methodId) {
-            return false;
+            return !!isUpdatingAddress;
         }
+    );
 
-        return !!this._shippingStrategies.statuses.isUpdatingAddress;
-    }
+    const isSelectingOption = createSelector(
+        (state: ShippingStrategyState) => state.statuses.selectOptionMethodId,
+        (state: ShippingStrategyState) => state.statuses.isSelectingOption,
+        (selectOptionMethodId, isSelectingOption) => (methodId?: string) => {
+            if (methodId && selectOptionMethodId !== methodId) {
+                return false;
+            }
 
-    isSelectingOption(methodId?: string): boolean {
-        if (methodId && this._shippingStrategies.statuses.selectOptionMethodId !== methodId) {
-            return false;
+            return !!isSelectingOption;
         }
+    );
 
-        return !!this._shippingStrategies.statuses.isSelectingOption;
-    }
+    const isInitializing = createSelector(
+        (state: ShippingStrategyState) => state.statuses.initializeMethodId,
+        (state: ShippingStrategyState) => state.statuses.isInitializing,
+        (initializeMethodId, isInitializing) => (methodId?: string) => {
+            if (methodId && initializeMethodId !== methodId) {
+                return false;
+            }
 
-    isInitializing(methodId?: string): boolean {
-        if (methodId && this._shippingStrategies.statuses.initializeMethodId !== methodId) {
-            return false;
+            return !!isInitializing;
         }
+    );
 
-        return !!this._shippingStrategies.statuses.isInitializing;
-    }
+    const isInitialized = createSelector(
+        (state: ShippingStrategyState) => state.data,
+        data => (methodId: string) => {
+            return !!(
+                data[methodId] &&
+                data[methodId].isInitialized
+            );
+        }
+    );
 
-    isInitialized(methodId: string): boolean {
-        return !!(
-            this._shippingStrategies.data[methodId] &&
-            this._shippingStrategies.data[methodId].isInitialized
-        );
-    }
+    return memoizeOne((
+        state: ShippingStrategyState = DEFAULT_STATE
+    ): ShippingStrategySelector => {
+        return {
+            getUpdateAddressError: getUpdateAddressError(state),
+            getSelectOptionError: getSelectOptionError(state),
+            getInitializeError: getInitializeError(state),
+            isUpdatingAddress: isUpdatingAddress(state),
+            isSelectingOption: isSelectingOption(state),
+            isInitializing: isInitializing(state),
+            isInitialized: isInitialized(state),
+        };
+    });
 }
