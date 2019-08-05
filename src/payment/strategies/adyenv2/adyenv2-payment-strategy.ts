@@ -1,4 +1,3 @@
-
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -14,14 +13,14 @@ import PaymentStrategy from '../payment-strategy';
 
 import {
     AdyenCardState,
-    AdyenClient,
+    AdyenCheckout,
     AdyenComponent,
     AdyenConfiguration
 } from './adyenv2';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
 export default class AdyenV2PaymentStrategy implements PaymentStrategy {
-    private _adyenClient?: AdyenClient;
+    private _adyenCheckout?: AdyenCheckout;
     private _adyenComponent?: AdyenComponent;
     private _stateContainer: string = '';
     private _containerId?: string;
@@ -56,13 +55,12 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         };
 
         return this._adyenV2ScriptLoader.load(configuration)
-            .then(adyenClient => {
-                this._adyenClient = adyenClient;
+            .then(adyenCheckout => {
+                this._adyenCheckout = adyenCheckout;
 
-                const adyenComponent = this._adyenClient.adyenCheckout()
-                    .create(paymentMethod.method, {
+                const adyenComponent = this._adyenCheckout.create(paymentMethod.method, {
                         ...adyenv2.options,
-                        onChange: (state, component) => {
+                        onChange: (state: any, component: any) => {
                             this._updateStateContainer(state);
                         },
                     });

@@ -4,7 +4,7 @@ import { StandardError } from '../../../common/error/errors';
 
 import { AdyenConfiguration, AdyenHostWindow } from './adyenv2';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
-import { getAdyenClient, getAdyenConfiguration } from './adyenv2.mock';
+import { getAdyenCheckout, getAdyenConfiguration } from './adyenv2.mock';
 
 describe('AdyenV2ScriptLoader', () => {
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;
@@ -18,7 +18,7 @@ describe('AdyenV2ScriptLoader', () => {
     });
 
     describe('#load()', () => {
-        const adyenClient = getAdyenClient();
+        const adyenClient = getAdyenCheckout();
         const configuration = getAdyenConfiguration();
         const stylesheet = document.createElement('link');
 

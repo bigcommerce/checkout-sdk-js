@@ -27,7 +27,7 @@ import { AdyenCardState, AdyenComponent } from './adyenv2';
 import AdyenV2PaymentStrategy from './adyenv2-payment-strategy';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 import {
-    getAdyenClient,
+    getAdyenCheckout,
     getAdyenInitializeOptions,
     getAdyenOrderRequestBody,
     getInvalidCardState,
@@ -80,7 +80,7 @@ describe('AdyenV2PaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
-        const adyenClient = getAdyenClient();
+        const adyenCheckout = getAdyenCheckout();
         let options: PaymentInitializeOptions;
 
         beforeEach(() => {
@@ -90,7 +90,7 @@ describe('AdyenV2PaymentStrategy', () => {
         });
 
         it('loads adyen V2 script', async () => {
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
 
             const promise =  strategy.initialize(options);
 
@@ -100,7 +100,7 @@ describe('AdyenV2PaymentStrategy', () => {
         });
 
         it('loads adyen V2 script with no storeConfig', async () => {
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
             jest.spyOn(store.getState().config, 'getStoreConfig').mockReturnValue(undefined);
 
             const promise =  strategy.initialize(options);
@@ -126,7 +126,7 @@ describe('AdyenV2PaymentStrategy', () => {
     });
 
     describe('#callbacks', () => {
-        const adyenClient = getAdyenClient();
+        const adyenCheckout = getAdyenCheckout();
         let options: PaymentInitializeOptions;
         let adyenComponent: AdyenComponent;
         let handleOnChange: (state: AdyenCardState, component: AdyenComponent) => {};
@@ -134,15 +134,11 @@ describe('AdyenV2PaymentStrategy', () => {
         beforeEach(() => {
             options = getAdyenInitializeOptions();
 
-            adyenClient.adyenCheckout = jest.fn(() => {
-                return {
-                    create: jest.fn((type, options) => {
-                        const { onChange } = options;
-                        handleOnChange = onChange;
+            adyenCheckout.create = jest.fn((type, options) => {
+                const { onChange } = options;
+                handleOnChange = onChange;
 
-                        return adyenComponent;
-                    }),
-                };
+                return adyenComponent;
             });
 
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getAdyenV2());
@@ -150,7 +146,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
         it('fires onChange with valid state', async () => {
             adyenComponent = {
-                mount: jest.fn((containerId: string) => {
+                mount: jest.fn(() => {
                     handleOnChange(getValidCardState(), adyenComponent);
 
                     return;
@@ -158,7 +154,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 unmount: jest.fn(),
             };
 
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
 
             const promise =  strategy.initialize(options);
 
@@ -167,7 +163,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
         it('fires onChange with invalid state', async () => {
             adyenComponent = {
-                mount: jest.fn((containerId: string) => {
+                mount: jest.fn(() => {
                     handleOnChange(getInvalidCardState(), adyenComponent);
 
                     return;
@@ -175,7 +171,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 unmount: jest.fn(),
             };
 
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
 
             const promise =  strategy.initialize(options);
 
@@ -185,7 +181,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
     describe('#execute', () => {
         let options: PaymentInitializeOptions;
-        const adyenClient = getAdyenClient();
+        const adyenCheckout = getAdyenCheckout();
 
         beforeEach(() => {
             options = getAdyenInitializeOptions();
@@ -200,7 +196,7 @@ describe('AdyenV2PaymentStrategy', () => {
         });
 
         it('creates the order and submit payment', async () => {
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
 
             await strategy.initialize(options);
             const response = await strategy.execute(getAdyenOrderRequestBody());
@@ -231,14 +227,12 @@ describe('AdyenV2PaymentStrategy', () => {
 
     describe('#deinitialize', () => {
         it('deinitializes adyen payment strategy', async () => {
-            const adyenClient = getAdyenClient();
-            const adyenCheckout = adyenClient.adyenCheckout();
+            const adyenCheckout = getAdyenCheckout();
             const adyenComponent = adyenCheckout.create('scheme', {});
 
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getAdyenV2());
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenClient));
-            jest.spyOn(adyenClient, 'adyenCheckout').mockReturnValue(adyenCheckout);
-            jest.spyOn(adyenClient.adyenCheckout(), 'create').mockReturnValue(adyenComponent);
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
+            jest.spyOn(adyenCheckout, 'create').mockReturnValue(adyenComponent);
 
             await strategy.initialize(getAdyenInitializeOptions());
             const promise = strategy.deinitialize();
