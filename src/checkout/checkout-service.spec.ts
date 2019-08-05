@@ -261,7 +261,7 @@ describe('CheckoutService', () => {
     describe('#getState()', () => {
         it('returns state', () => {
             expect(checkoutService.getState()).toEqual(expect.objectContaining({
-                data: expect.any(CheckoutStoreSelector),
+                data: expect.any(Object),
                 errors: expect.any(CheckoutStoreErrorSelector),
                 statuses: expect.any(CheckoutStoreStatusSelector),
             }));
@@ -294,7 +294,8 @@ describe('CheckoutService', () => {
 
             await checkoutService.loadCheckout();
 
-            expect(filter).toHaveBeenCalledWith(checkoutService.getState());
+            expect(Object.keys((filter as jest.Mock).mock.calls[0][0]))
+                .toEqual(Object.keys(checkoutService.getState()));
         });
 
         it('calls subscriber on state change', async () => {
