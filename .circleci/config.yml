@@ -1,0 +1,44 @@
+version: 2.1
+
+orbs:
+  ci: bigcommerce/internal@volatile
+  node: bigcommerce/internal-node@volatile
+
+jobs:
+  build:
+    executor:
+      name: node/node
+      node-version: "10"
+
+    steps:
+      - ci/pre-setup
+
+      - restore_cache:
+          keys:
+            - checkout-sdk-js
+
+      - run: npm ci
+
+      - save_cache:
+          key: checkout-sdk-js
+          paths:
+            - ~/.npm
+
+      - run:
+          name: Test
+          command: npm run test:series -- --coverage
+          when: always
+
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+
+      - run:
+          name: Lint
+          command: npm run lint
+          when: always
+
+      - run:
+          name: Validate commits
+          command: npm run validate-commits
+          when: always
