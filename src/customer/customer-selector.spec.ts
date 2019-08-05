@@ -1,26 +1,28 @@
 import { CheckoutStoreState } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
 
-import CustomerSelector from './customer-selector';
+import CustomerSelector, { createCustomerSelectorFactory, CustomerSelectorFactory } from './customer-selector';
 import { getCustomer } from './customers.mock';
 
 describe('CustomerSelector', () => {
+    let createCustomerSelector: CustomerSelectorFactory;
     let selector: CustomerSelector;
     let state: CheckoutStoreState;
 
     beforeEach(() => {
+        createCustomerSelector = createCustomerSelectorFactory();
         state = getCheckoutStoreState();
     });
 
     describe('#getCustomer()', () => {
         it('returns current customer', () => {
-            selector = new CustomerSelector(state.customer);
+            selector = createCustomerSelector(state.customer);
 
             expect(selector.getCustomer()).toEqual(getCustomer());
         });
 
         it('returns undefined if customer is unavailable', () => {
-            selector = new CustomerSelector({});
+            selector = createCustomerSelector({});
 
             expect(selector.getCustomer()).toEqual(undefined);
         });

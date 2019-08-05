@@ -4,7 +4,7 @@ import { createCheckoutButtonSelectorFactory } from '../checkout-buttons';
 import { createFreezeProxies } from '../common/utility';
 import { createConfigSelectorFactory } from '../config';
 import { createCouponSelectorFactory, createGiftCertificateSelectorFactory } from '../coupon';
-import { CustomerSelector, CustomerStrategySelector } from '../customer';
+import { createCustomerSelectorFactory, createCustomerStrategySelectorFactory } from '../customer';
 import { createFormSelectorFactory } from '../form';
 import { createCountrySelectorFactory } from '../geography';
 import { createOrderSelectorFactory } from '../order';
@@ -30,6 +30,8 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createConfigSelector = createConfigSelectorFactory();
     const createCountrySelector = createCountrySelectorFactory();
     const createCouponSelector = createCouponSelectorFactory();
+    const createCustomerSelector = createCustomerSelectorFactory();
+    const createCustomerStrategySelector = createCustomerStrategySelectorFactory();
     const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
     const createFormSelector = createFormSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
@@ -42,8 +44,8 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const config = createConfigSelector(state.config);
         const countries = createCountrySelector(state.countries);
         const coupons = createCouponSelector(state.coupons);
-        const customer = new CustomerSelector(state.customer);
-        const customerStrategies = new CustomerStrategySelector(state.customerStrategies);
+        const customer = createCustomerSelector(state.customer);
+        const customerStrategies = createCustomerStrategySelector(state.customerStrategies);
         const form = createFormSelector(state.config);
         const giftCertificates = createGiftCertificateSelector(state.giftCertificates);
         const instruments = new InstrumentSelector(state.instruments);
