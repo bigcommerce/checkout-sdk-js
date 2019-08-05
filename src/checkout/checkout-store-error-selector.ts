@@ -1,17 +1,8 @@
-import { BillingAddressSelector } from '../billing';
-import { CartSelector } from '../cart';
 import { RequestError } from '../common/error/errors';
-import { selector } from '../common/selector';
-import { ConfigSelector } from '../config';
-import { CouponSelector, GiftCertificateSelector } from '../coupon';
-import { CustomerStrategySelector } from '../customer';
-import { CountrySelector } from '../geography';
-import { OrderSelector } from '../order';
-import { PaymentMethodSelector, PaymentStrategySelector } from '../payment';
-import { InstrumentSelector } from '../payment/instrument';
-import { ConsignmentSelector, ShippingCountrySelector, ShippingStrategySelector } from '../shipping';
+import { createSelector, createShallowEqualSelector } from '../common/selector';
+import { Omit } from '../common/types';
+import { memoizeOne } from '../common/utility';
 
-import CheckoutSelector from './checkout-selector';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 
 /**
@@ -22,164 +13,71 @@ import InternalCheckoutSelectors from './internal-checkout-selectors';
  * not executed successfully. For example, if you are unable to submit an order,
  * you can use this object to retrieve the reason for the failure.
  */
-@selector
-export default class CheckoutStoreErrorSelector {
-    private _billingAddress: BillingAddressSelector;
-    private _cart: CartSelector;
-    private _checkout: CheckoutSelector;
-    private _config: ConfigSelector;
-    private _consignments: ConsignmentSelector;
-    private _countries: CountrySelector;
-    private _coupons: CouponSelector;
-    private _customerStrategies: CustomerStrategySelector;
-    private _giftCertificates: GiftCertificateSelector;
-    private _instruments: InstrumentSelector;
-    private _order: OrderSelector;
-    private _paymentMethods: PaymentMethodSelector;
-    private _paymentStrategies: PaymentStrategySelector;
-    private _shippingCountries: ShippingCountrySelector;
-    private _shippingStrategies: ShippingStrategySelector;
-
-    /**
-     * @internal
-     */
-    constructor(selectors: InternalCheckoutSelectors) {
-        this._billingAddress = selectors.billingAddress;
-        this._cart = selectors.cart;
-        this._checkout = selectors.checkout;
-        this._config = selectors.config;
-        this._consignments = selectors.consignments;
-        this._countries = selectors.countries;
-        this._coupons = selectors.coupons;
-        this._customerStrategies = selectors.customerStrategies;
-        this._giftCertificates = selectors.giftCertificates;
-        this._instruments = selectors.instruments;
-        this._order = selectors.order;
-        this._paymentMethods = selectors.paymentMethods;
-        this._paymentStrategies = selectors.paymentStrategies;
-        this._shippingCountries = selectors.shippingCountries;
-        this._shippingStrategies = selectors.shippingStrategies;
-    }
-
-    /**
-     * Gets the error of any checkout action that has failed.
-     *
-     * @returns The error object if unable to perform any checkout action,
-     * otherwise undefined.
-     */
-    getError(): Error | undefined {
-        // tslint:disable-next-line:cyclomatic-complexity
-        return this.getLoadCheckoutError() ||
-            this.getSubmitOrderError() ||
-            this.getFinalizeOrderError() ||
-            this.getLoadOrderError() ||
-            this.getLoadCartError() ||
-            this.getLoadBillingCountriesError() ||
-            this.getLoadShippingCountriesError() ||
-            this.getLoadPaymentMethodsError() ||
-            this.getLoadPaymentMethodError() ||
-            this.getInitializePaymentError() ||
-            this.getLoadShippingOptionsError() ||
-            this.getSelectShippingOptionError() ||
-            this.getSignInError() ||
-            this.getSignOutError() ||
-            this.getInitializeCustomerError() ||
-            this.getUpdateShippingAddressError() ||
-            this.getUpdateBillingAddressError() ||
-            this.getContinueAsGuestError() ||
-            this.getUpdateConsignmentError() ||
-            this.getCreateConsignmentsError() ||
-            this.getDeleteConsignmentError() ||
-            this.getInitializeShippingError() ||
-            this.getApplyCouponError() ||
-            this.getRemoveCouponError() ||
-            this.getApplyGiftCertificateError() ||
-            this.getRemoveGiftCertificateError() ||
-            this.getLoadInstrumentsError() ||
-            this.getDeleteInstrumentError() ||
-            this.getLoadConfigError();
-    }
+export default interface CheckoutStoreErrorSelector {
+    getError(): Error | undefined;
 
     /**
      * Returns an error if unable to load the current checkout.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadCheckoutError(): Error | undefined {
-        return this._checkout.getLoadError();
-    }
+    getLoadCheckoutError(): Error | undefined;
 
     /**
      * Returns an error if unable to update the current checkout.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
-    getUpdateCheckoutError(): Error | undefined {
-        return this._checkout.getUpdateError();
-    }
+    getUpdateCheckoutError(): Error | undefined;
 
     /**
      * Returns an error if unable to submit the current order.
      *
      * @returns The error object if unable to submit, otherwise undefined.
      */
-    getSubmitOrderError(): Error | undefined {
-        return this._paymentStrategies.getExecuteError();
-    }
+    getSubmitOrderError(): Error | undefined;
 
     /**
      * Returns an error if unable to finalize the current order.
      *
      * @returns The error object if unable to finalize, otherwise undefined.
      */
-    getFinalizeOrderError(): Error | undefined {
-        return this._paymentStrategies.getFinalizeError();
-    }
+    getFinalizeOrderError(): Error | undefined;
 
     /**
      * Returns an error if unable to load the current order.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadOrderError(): Error | undefined {
-        return this._order.getLoadError();
-    }
+    getLoadOrderError(): Error | undefined;
 
     /**
      * Returns an error if unable to load the current cart.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadCartError(): Error | undefined {
-        return this._cart.getLoadError();
-    }
+    getLoadCartError(): Error | undefined;
 
     /**
      * Returns an error if unable to load billing countries.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadBillingCountriesError(): Error | undefined {
-        return this._countries.getLoadError();
-    }
+    getLoadBillingCountriesError(): Error | undefined;
 
     /**
      * Returns an error if unable to load shipping countries.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadShippingCountriesError(): Error | undefined {
-        return this._shippingCountries.getLoadError();
-    }
+    getLoadShippingCountriesError(): Error | undefined;
 
     /**
      * Returns an error if unable to load payment methods.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadPaymentMethodsError(): Error | undefined {
-        return this._paymentMethods.getLoadError();
-    }
+    getLoadPaymentMethodsError(): Error | undefined;
 
     /**
      * Returns an error if unable to load a specific payment method.
@@ -187,9 +85,7 @@ export default class CheckoutStoreErrorSelector {
      * @param methodId - The identifier of the payment method to load.
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadPaymentMethodError(methodId?: string): Error | undefined {
-        return this._paymentMethods.getLoadMethodError(methodId);
-    }
+    getLoadPaymentMethodError(methodId?: string): Error | undefined;
 
     /**
      * Returns an error if unable to initialize a specific payment method.
@@ -197,27 +93,21 @@ export default class CheckoutStoreErrorSelector {
      * @param methodId - The identifier of the payment method to initialize.
      * @returns The error object if unable to initialize, otherwise undefined.
      */
-    getInitializePaymentError(methodId?: string): Error | undefined {
-        return this._paymentStrategies.getInitializeError(methodId);
-    }
+    getInitializePaymentError(methodId?: string): Error | undefined;
 
     /**
      * Returns an error if unable to sign in.
      *
      * @returns The error object if unable to sign in, otherwise undefined.
      */
-    getSignInError(): Error | undefined {
-        return this._customerStrategies.getSignInError();
-    }
+    getSignInError(): Error | undefined;
 
     /**
      * Returns an error if unable to sign out.
      *
      * @returns The error object if unable to sign out, otherwise undefined.
      */
-    getSignOutError(): Error | undefined {
-        return this._customerStrategies.getSignOutError();
-    }
+    getSignOutError(): Error | undefined;
 
     /**
      * Returns an error if unable to initialize the customer step of a checkout
@@ -226,18 +116,14 @@ export default class CheckoutStoreErrorSelector {
      * @param methodId - The identifer of the initialization method to execute.
      * @returns The error object if unable to initialize, otherwise undefined.
      */
-    getInitializeCustomerError(methodId?: string): Error | undefined {
-        return this._customerStrategies.getInitializeError(methodId);
-    }
+    getInitializeCustomerError(methodId?: string): Error | undefined;
 
     /**
      * Returns an error if unable to load shipping options.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadShippingOptionsError(): Error | undefined {
-        return this._consignments.getLoadShippingOptionsError();
-    }
+    getLoadShippingOptionsError(): Error | undefined;
 
     /**
      * Returns an error if unable to select a shipping option.
@@ -248,37 +134,28 @@ export default class CheckoutStoreErrorSelector {
      * @param consignmentId - The identifier of the consignment to be checked.
      * @returns The error object if unable to select, otherwise undefined.
      */
-    getSelectShippingOptionError(consignmentId?: string): Error | undefined {
-        return this._shippingStrategies.getSelectOptionError() ||
-            this._consignments.getUpdateShippingOptionError(consignmentId);
-    }
+    getSelectShippingOptionError(consignmentId?: string): Error | undefined;
 
     /**
      * Returns an error if unable to continue as guest.
      *
      * @returns The error object if unable to continue, otherwise undefined.
      */
-    getContinueAsGuestError(): Error | undefined {
-        return this._billingAddress.getContinueAsGuestError();
-    }
+    getContinueAsGuestError(): Error | undefined;
 
     /**
      * Returns an error if unable to update billing address.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
-    getUpdateBillingAddressError(): Error | undefined {
-        return this._billingAddress.getUpdateError();
-    }
+    getUpdateBillingAddressError(): Error | undefined;
 
     /**
      * Returns an error if unable to update shipping address.
      *
      * @returns The error object if unable to update, otherwise undefined.
      */
-    getUpdateShippingAddressError(): Error | undefined {
-        return this._shippingStrategies.getUpdateAddressError();
-    }
+    getUpdateShippingAddressError(): Error | undefined;
 
     /**
      * Returns an error if unable to delete a consignment.
@@ -289,9 +166,7 @@ export default class CheckoutStoreErrorSelector {
      * @param consignmentId - The identifier of the consignment to be checked.
      * @returns The error object if unable to delete, otherwise undefined.
      */
-    getDeleteConsignmentError(consignmentId?: string): Error | undefined {
-        return this._consignments.getDeleteError(consignmentId);
-    }
+    getDeleteConsignmentError(consignmentId?: string): Error | undefined;
 
     /**
      * Returns an error if unable to update a consignment.
@@ -302,18 +177,14 @@ export default class CheckoutStoreErrorSelector {
      * @param consignmentId - The identifier of the consignment to be checked.
      * @returns The error object if unable to update, otherwise undefined.
      */
-    getUpdateConsignmentError(consignmentId?: string): Error | undefined {
-        return this._consignments.getUpdateError(consignmentId);
-    }
+    getUpdateConsignmentError(consignmentId?: string): Error | undefined;
 
     /**
      * Returns an error if unable to create consignments.
      *
      * @returns The error object if unable to create, otherwise undefined.
      */
-    getCreateConsignmentsError(): Error | undefined {
-        return this._consignments.getCreateError();
-    }
+    getCreateConsignmentsError(): Error | undefined;
 
     /**
      * Returns an error if unable to initialize the shipping step of a checkout
@@ -322,54 +193,42 @@ export default class CheckoutStoreErrorSelector {
      * @param methodId - The identifer of the initialization method to execute.
      * @returns The error object if unable to initialize, otherwise undefined.
      */
-    getInitializeShippingError(methodId?: string): Error | undefined {
-        return this._shippingStrategies.getInitializeError(methodId);
-    }
+    getInitializeShippingError(methodId?: string): Error | undefined;
 
     /**
      * Returns an error if unable to apply a coupon code.
      *
      * @returns The error object if unable to apply, otherwise undefined.
      */
-    getApplyCouponError(): RequestError | undefined {
-        return this._coupons.getApplyError();
-    }
+    getApplyCouponError(): RequestError | undefined;
 
     /**
      * Returns an error if unable to remove a coupon code.
      *
      * @returns The error object if unable to remove, otherwise undefined.
      */
-    getRemoveCouponError(): RequestError | undefined {
-        return this._coupons.getRemoveError();
-    }
+    getRemoveCouponError(): RequestError | undefined;
 
     /**
      * Returns an error if unable to apply a gift certificate.
      *
      * @returns The error object if unable to apply, otherwise undefined.
      */
-    getApplyGiftCertificateError(): RequestError | undefined {
-        return this._giftCertificates.getApplyError();
-    }
+    getApplyGiftCertificateError(): RequestError | undefined;
 
     /**
      * Returns an error if unable to remove a gift certificate.
      *
      * @returns The error object if unable to remove, otherwise undefined.
      */
-    getRemoveGiftCertificateError(): RequestError | undefined {
-        return this._giftCertificates.getRemoveError();
-    }
+    getRemoveGiftCertificateError(): RequestError | undefined;
 
     /**
      * Returns an error if unable to load payment instruments.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadInstrumentsError(): Error | undefined {
-        return this._instruments.getLoadError();
-    }
+    getLoadInstrumentsError(): Error | undefined;
 
     /**
      * Returns an error if unable to delete a payment instrument.
@@ -377,16 +236,82 @@ export default class CheckoutStoreErrorSelector {
      * @param instrumentId - The identifier of the payment instrument to delete.
      * @returns The error object if unable to delete, otherwise undefined.
      */
-    getDeleteInstrumentError(instrumentId?: string): Error | undefined {
-        return this._instruments.getDeleteError(instrumentId);
-    }
+    getDeleteInstrumentError(instrumentId?: string): Error | undefined;
 
     /**
      * Returns an error if unable to load the checkout configuration of a store.
      *
      * @returns The error object if unable to load, otherwise undefined.
      */
-    getLoadConfigError(): Error | undefined {
-        return this._config.getLoadError();
-    }
+    getLoadConfigError(): Error | undefined;
+}
+
+export type CheckoutStoreErrorSelectorFactory = (state: InternalCheckoutSelectors) => CheckoutStoreErrorSelector;
+
+export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSelectorFactory {
+    const getError = createShallowEqualSelector(
+        (selector: Omit<CheckoutStoreErrorSelector, 'getError'>) => selector,
+        selector => () => {
+            for (const key of Object.keys(selector) as Array<keyof Omit<CheckoutStoreErrorSelector, 'getError'>>) {
+                const error = selector[key]();
+
+                if (error) {
+                    return error;
+                }
+            }
+        }
+    );
+
+    const getSelectShippingOptionError = createSelector(
+        ({ shippingStrategies }: InternalCheckoutSelectors) => shippingStrategies.getSelectOptionError,
+        ({ consignments }: InternalCheckoutSelectors) => consignments.getUpdateShippingOptionError,
+        (getSelectOptionError, getUpdateShippingOptionError) => (consignmentId?: string) => {
+            return (
+                getSelectOptionError() ||
+                getUpdateShippingOptionError(consignmentId)
+            );
+        }
+    );
+
+    return memoizeOne((
+        state: InternalCheckoutSelectors
+    ): CheckoutStoreErrorSelector => {
+        const selector = {
+            getLoadCheckoutError: state.checkout.getLoadError,
+            getUpdateCheckoutError: state.checkout.getUpdateError,
+            getSubmitOrderError: state.paymentStrategies.getExecuteError,
+            getFinalizeOrderError: state.paymentStrategies.getFinalizeError,
+            getLoadOrderError: state.order.getLoadError,
+            getLoadCartError: state.cart.getLoadError,
+            getLoadBillingCountriesError: state.countries.getLoadError,
+            getLoadShippingCountriesError: state.shippingCountries.getLoadError,
+            getLoadPaymentMethodsError: state.paymentMethods.getLoadError,
+            getLoadPaymentMethodError: state.paymentMethods.getLoadMethodError,
+            getInitializePaymentError: state.paymentStrategies.getInitializeError,
+            getSignInError: state.customerStrategies.getSignInError,
+            getSignOutError: state.customerStrategies.getSignOutError,
+            getInitializeCustomerError: state.customerStrategies.getInitializeError,
+            getLoadShippingOptionsError: state.consignments.getLoadShippingOptionsError,
+            getSelectShippingOptionError: getSelectShippingOptionError(state),
+            getContinueAsGuestError: state.billingAddress.getContinueAsGuestError,
+            getUpdateBillingAddressError: state.billingAddress.getUpdateError,
+            getUpdateShippingAddressError: state.shippingStrategies.getUpdateAddressError,
+            getDeleteConsignmentError: state.consignments.getDeleteError,
+            getUpdateConsignmentError: state.consignments.getUpdateError,
+            getCreateConsignmentsError: state.consignments.getCreateError,
+            getInitializeShippingError: state.shippingStrategies.getInitializeError,
+            getApplyCouponError: state.coupons.getApplyError,
+            getRemoveCouponError: state.coupons.getRemoveError,
+            getApplyGiftCertificateError: state.giftCertificates.getApplyError,
+            getRemoveGiftCertificateError: state.giftCertificates.getRemoveError,
+            getLoadInstrumentsError: state.instruments.getLoadError,
+            getDeleteInstrumentError: state.instruments.getDeleteError,
+            getLoadConfigError: state.config.getLoadError,
+        };
+
+        return {
+            getError: getError(selector),
+            ...selector,
+        };
+    });
 }
