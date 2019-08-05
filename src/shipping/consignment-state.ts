@@ -23,3 +23,16 @@ export interface ConsignmentStatusesState {
     isDeleting: { [key: string]: boolean };
     isUpdatingShippingOption: { [key: string]: boolean };
 }
+
+export const DEFAULT_STATE: ConsignmentState = {
+    errors: {
+        updateShippingOptionError: {},
+        updateError: {},
+        deleteError: {},
+    },
+    statuses: {
+        isUpdating: {},
+        isUpdatingShippingOption: {},
+        isDeleting: {},
+    },
+};

@@ -11,7 +11,7 @@ import { createOrderSelectorFactory } from '../order';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
-import { createShippingCountrySelectorFactory, ConsignmentSelector, ShippingAddressSelector, ShippingStrategySelector } from '../shipping';
+import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
 import { CheckoutStoreOptions } from './checkout-store';
@@ -34,7 +34,10 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createCustomerStrategySelector = createCustomerStrategySelectorFactory();
     const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
     const createFormSelector = createFormSelectorFactory();
+    const createShippingAddressSelector = createShippingAddressSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
+    const createShippingStrategySelector = createShippingStrategySelectorFactory();
+    const createConsignmentSelector = createConsignmentSelectorFactory();
     const createOrderSelector = createOrderSelectorFactory();
 
     return (state, options = {}) => {
@@ -51,13 +54,13 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const instruments = new InstrumentSelector(state.instruments);
         const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
         const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
-        const shippingAddress = new ShippingAddressSelector(state.consignments);
+        const shippingAddress = createShippingAddressSelector(state.consignments);
         const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
         const shippingCountries = createShippingCountrySelector(state.shippingCountries);
-        const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
+        const shippingStrategies = createShippingStrategySelector(state.shippingStrategies);
 
         // Compose selectors
-        const consignments = new ConsignmentSelector(state.consignments, cart);
+        const consignments = createConsignmentSelector(state.consignments, cart);
         const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
         const order = createOrderSelector(state.order, billingAddress, coupons);
         const payment = new PaymentSelector(checkout, order);

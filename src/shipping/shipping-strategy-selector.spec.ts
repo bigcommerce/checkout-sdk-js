@@ -1,13 +1,15 @@
 import { getErrorResponse } from '../common/http-request/responses.mock';
 
-import ShippingStrategySelector from './shipping-strategy-selector';
+import ShippingStrategySelector, { createShippingStrategySelectorFactory, ShippingStrategySelectorFactory } from './shipping-strategy-selector';
 import { DEFAULT_STATE } from './shipping-strategy-state';
 
 describe('ShippingStrategySelector', () => {
+    let createShippingStrategySelector: ShippingStrategySelectorFactory;
     let selector: ShippingStrategySelector;
     let state: any;
 
     beforeEach(() => {
+        createShippingStrategySelector = createShippingStrategySelectorFactory();
         state = {
             shippingStrategy: DEFAULT_STATE,
         };
@@ -17,7 +19,7 @@ describe('ShippingStrategySelector', () => {
         it('returns error if unable to update address', () => {
             const updateAddressError = getErrorResponse();
 
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 errors: { updateAddressError },
             });
@@ -26,7 +28,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('does not returns error if able to update address', () => {
-            selector = new ShippingStrategySelector(state.shippingStrategy);
+            selector = createShippingStrategySelector(state.shippingStrategy);
 
             expect(selector.getUpdateAddressError()).toBeUndefined();
         });
@@ -36,7 +38,7 @@ describe('ShippingStrategySelector', () => {
         it('returns error if unable to select option', () => {
             const selectOptionError = getErrorResponse();
 
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 errors: { selectOptionError },
             });
@@ -45,7 +47,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('does not returns error if able to select option', () => {
-            selector = new ShippingStrategySelector(state.shippingStrategy);
+            selector = createShippingStrategySelector(state.shippingStrategy);
 
             expect(selector.getSelectOptionError()).toBeUndefined();
         });
@@ -53,7 +55,7 @@ describe('ShippingStrategySelector', () => {
 
     describe('#getInitializeError()', () => {
         it('returns error if unable to initialize any method', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
@@ -62,7 +64,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('returns error if unable to initialize specific method', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 errors: { initializeError: getErrorResponse(), initializeMethodId: 'foobar' },
             });
@@ -72,7 +74,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('does not return error if able to initialize', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 errors: {},
             });
@@ -83,7 +85,7 @@ describe('ShippingStrategySelector', () => {
 
     describe('#isUpdatingAddress()', () => {
         it('returns true if updating address', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 statuses: { isUpdatingAddress: true },
             });
@@ -92,7 +94,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('returns false if not updating address', () => {
-            selector = new ShippingStrategySelector(state.shippingStrategy);
+            selector = createShippingStrategySelector(state.shippingStrategy);
 
             expect(selector.isUpdatingAddress()).toEqual(false);
         });
@@ -100,7 +102,7 @@ describe('ShippingStrategySelector', () => {
 
     describe('#isSelectingOption()', () => {
         it('returns true if selecting option', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 statuses: { isSelectingOption: true },
             });
@@ -109,7 +111,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('returns false if not selecting option', () => {
-            selector = new ShippingStrategySelector(state.shippingStrategy);
+            selector = createShippingStrategySelector(state.shippingStrategy);
 
             expect(selector.isSelectingOption()).toEqual(false);
         });
@@ -117,7 +119,7 @@ describe('ShippingStrategySelector', () => {
 
     describe('#isInitializing()', () => {
         it('returns true if initializing any method', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
@@ -126,7 +128,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('returns true if initializing specific method', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 statuses: { initializeMethodId: 'foobar', isInitializing: true },
             });
@@ -136,7 +138,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('returns false if not initializing method', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 statuses: { initializeMethodId: undefined, isInitializing: false },
             });
@@ -147,7 +149,7 @@ describe('ShippingStrategySelector', () => {
 
     describe('#isInitialized()', () => {
         it('returns true if method is initialized', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 data: { foobar: { isInitialized: true } },
             });
@@ -156,7 +158,7 @@ describe('ShippingStrategySelector', () => {
         });
 
         it('returns false if method is not initialized', () => {
-            selector = new ShippingStrategySelector({
+            selector = createShippingStrategySelector({
                 ...state.shippingStrategy,
                 data: { foobar: { isInitialized: false } },
             });
