@@ -3,6 +3,7 @@ import { omit } from 'lodash';
 
 import { BillingAddressAction, BillingAddressActionType } from '../billing';
 import { clearErrorReducer } from '../common/error';
+import { objectMerge, objectSet } from '../common/utility';
 import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateActionType } from '../coupon';
 import { OrderAction, OrderActionType } from '../order';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
@@ -39,14 +40,17 @@ function dataReducer(
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
-        return action.payload
-            ? omit({ ...data, ...action.payload }, ['billingAddress', 'cart', 'consignments', 'customer', 'coupons', 'giftCertifcates'])
-            : data;
+        return objectMerge(data, omit(action.payload, [
+            'billingAddress',
+            'cart',
+            'consignments',
+            'customer',
+            'coupons',
+            'giftCertifcates',
+        ])) as CheckoutDataState;
 
     case OrderActionType.SubmitOrderSucceeded:
-        return action.payload && data
-            ? { ...data, orderId: action.payload.order.orderId }
-            : data;
+        return objectSet(data, 'orderId', action.payload && action.payload.order.orderId) ;
 
     default:
         return data;
@@ -60,29 +64,17 @@ function errorsReducer(
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return {
-            ...errors,
-            loadError: undefined,
-        };
+        return objectSet(errors, 'loadError', undefined);
 
     case CheckoutActionType.LoadCheckoutFailed:
-        return {
-            ...errors,
-            loadError: action.payload,
-        };
+        return objectSet(errors, 'loadError', action.payload);
 
     case CheckoutActionType.UpdateCheckoutRequested:
     case CheckoutActionType.UpdateCheckoutSucceeded:
-        return {
-            ...errors,
-            updateError: undefined,
-        };
+        return objectSet(errors, 'updateError', undefined);
 
     case CheckoutActionType.UpdateCheckoutFailed:
-        return {
-            ...errors,
-            updateError: action.payload,
-        };
+        return objectSet(errors, 'updateError', action.payload);
 
     default:
         return errors;
@@ -95,30 +87,18 @@ function statusesReducer(
 ): CheckoutStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
-        return {
-            ...statuses,
-            isLoading: true,
-        };
+        return objectSet(statuses, 'isLoading', true);
 
     case CheckoutActionType.LoadCheckoutFailed:
     case CheckoutActionType.LoadCheckoutSucceeded:
-        return {
-            ...statuses,
-            isLoading: false,
-        };
+        return objectSet(statuses, 'isLoading', false);
 
     case CheckoutActionType.UpdateCheckoutRequested:
-        return {
-            ...statuses,
-            isUpdating: true,
-        };
+        return objectSet(statuses, 'isUpdating', true);
 
     case CheckoutActionType.UpdateCheckoutFailed:
     case CheckoutActionType.UpdateCheckoutSucceeded:
-        return {
-            ...statuses,
-            isUpdating: false,
-        };
+        return objectSet(statuses, 'isUpdating', false);
 
     default:
         return statuses;
