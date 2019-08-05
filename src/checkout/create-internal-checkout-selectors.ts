@@ -13,7 +13,7 @@ import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
 import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
 
-import CheckoutSelector from './checkout-selector';
+import { createCheckoutSelectorFactory } from './checkout-selector';
 import { CheckoutStoreOptions } from './checkout-store';
 import CheckoutStoreState from './checkout-store-state';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
@@ -42,6 +42,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
     const createShippingStrategySelector = createShippingStrategySelectorFactory();
     const createConsignmentSelector = createConsignmentSelectorFactory();
+    const createCheckoutSelector = createCheckoutSelectorFactory();
     const createOrderSelector = createOrderSelectorFactory();
     const createPaymentSelector = createPaymentSelectorFactory();
 
@@ -66,7 +67,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
 
         // Compose selectors
         const consignments = createConsignmentSelector(state.consignments, cart);
-        const checkout = new CheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
+        const checkout = createCheckoutSelector(state.checkout, billingAddress, cart, consignments, coupons, customer, giftCertificates);
         const order = createOrderSelector(state.order, billingAddress, coupons);
         const payment = createPaymentSelector(checkout, order);
 
