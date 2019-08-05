@@ -10,7 +10,7 @@ export { default as consignmentReducer } from './consignment-reducer';
 export { default as ConsignmentActionCreator } from './consignment-action-creator';
 export { default as ConsignmentRequestSender } from './consignment-request-sender';
 
-export { default as ShippingAddressSelector } from './shipping-address-selector';
+export { default as ShippingAddressSelector, ShippingAddressSelectorFactory, createShippingAddressSelectorFactory } from './shipping-address-selector';
 
 export { default as ShippingCountryActionCreator } from './shipping-country-action-creator';
 export { default as ShippingCountryRequestSender } from './shipping-country-request-sender';

@@ -11,7 +11,7 @@ import { createOrderSelectorFactory } from '../order';
 import { PaymentMethodSelector, PaymentSelector, PaymentStrategySelector } from '../payment';
 import { InstrumentSelector } from '../payment/instrument';
 import { RemoteCheckoutSelector } from '../remote-checkout';
-import { createConsignmentSelectorFactory, createShippingCountrySelectorFactory, ShippingAddressSelector, ShippingStrategySelector } from '../shipping';
+import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, ShippingStrategySelector } from '../shipping';
 
 import CheckoutSelector from './checkout-selector';
 import { CheckoutStoreOptions } from './checkout-store';
@@ -34,6 +34,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
     const createCustomerStrategySelector = createCustomerStrategySelectorFactory();
     const createGiftCertificateSelector = createGiftCertificateSelectorFactory();
     const createFormSelector = createFormSelectorFactory();
+    const createShippingAddressSelector = createShippingAddressSelectorFactory();
     const createShippingCountrySelector = createShippingCountrySelectorFactory();
     const createConsignmentSelector = createConsignmentSelectorFactory();
     const createOrderSelector = createOrderSelectorFactory();
@@ -52,7 +53,7 @@ export function createInternalCheckoutSelectorsFactory(): InternalCheckoutSelect
         const instruments = new InstrumentSelector(state.instruments);
         const paymentMethods = new PaymentMethodSelector(state.paymentMethods);
         const paymentStrategies = new PaymentStrategySelector(state.paymentStrategies);
-        const shippingAddress = new ShippingAddressSelector(state.consignments);
+        const shippingAddress = createShippingAddressSelector(state.consignments);
         const remoteCheckout = new RemoteCheckoutSelector(state.remoteCheckout);
         const shippingCountries = createShippingCountrySelector(state.shippingCountries);
         const shippingStrategies = new ShippingStrategySelector(state.shippingStrategies);
