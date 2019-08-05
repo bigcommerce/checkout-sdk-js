@@ -1,12 +1,10 @@
 import { combineReducers } from '@bigcommerce/data-store';
 
+import { objectMerge, objectSet } from '../common/utility';
+
 import RemoteCheckout from './remote-checkout';
 import { RemoteCheckoutAction, RemoteCheckoutActionType } from './remote-checkout-actions';
-import RemoteCheckoutState, { RemoteCheckoutStateData } from './remote-checkout-state';
-
-const DEFAULT_STATE: RemoteCheckoutState = {
-    data: {},
-};
+import RemoteCheckoutState, { DEFAULT_STATE, RemoteCheckoutStateData } from './remote-checkout-state';
 
 export default function remoteCheckoutReducer(
     state: RemoteCheckoutState = DEFAULT_STATE,
@@ -31,16 +29,16 @@ function dataReducer(
 ): RemoteCheckout {
     switch (action.type) {
     case RemoteCheckoutActionType.InitializeRemoteBillingSucceeded:
-        return action.payload ? { ...data, billing: action.payload.billing } : data;
+        return objectSet(data, 'billing' as any, action.payload && action.payload.billing);
 
     case RemoteCheckoutActionType.InitializeRemoteShippingSucceeded:
-        return action.payload ? { ...data, shipping: action.payload.shipping } : data;
+        return objectSet(data, 'shipping' as any, action.payload && action.payload.shipping);
 
     case RemoteCheckoutActionType.LoadRemoteSettingsSucceeded:
-        return { ...data, settings: action.payload };
+        return objectSet(data, 'settings', action.payload);
 
     case RemoteCheckoutActionType.UpdateRemoteCheckout:
-        return { ...data, ...action.payload };
+        return objectMerge(data, action.payload);
 
     default:
         return data;
