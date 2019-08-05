@@ -7,3 +7,7 @@ export default interface RemoteCheckoutState {
 export type RemoteCheckoutStateData =
     { amazon?: AmazonPayRemoteCheckout } &
     { afterpay?: AfterpayRemoteCheckout };
+
+export const DEFAULT_STATE: RemoteCheckoutState = {
+    data: {},
+};

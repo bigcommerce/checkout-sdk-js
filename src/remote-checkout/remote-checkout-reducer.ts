@@ -2,11 +2,7 @@ import { combineReducers } from '@bigcommerce/data-store';
 
 import RemoteCheckout from './remote-checkout';
 import { RemoteCheckoutAction, RemoteCheckoutActionType } from './remote-checkout-actions';
-import RemoteCheckoutState, { RemoteCheckoutStateData } from './remote-checkout-state';
-
-const DEFAULT_STATE: RemoteCheckoutState = {
-    data: {},
-};
+import RemoteCheckoutState, { DEFAULT_STATE, RemoteCheckoutStateData } from './remote-checkout-state';
 
 export default function remoteCheckoutReducer(
     state: RemoteCheckoutState = DEFAULT_STATE,
