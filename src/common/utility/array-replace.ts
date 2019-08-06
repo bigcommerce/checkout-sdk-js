@@ -14,6 +14,7 @@ export default function arrayReplace<T>(currentArray?: T[], newArray?: T[], opti
 export default function arrayReplace<T>(currentArray?: T[], newArray?: T[], options?: ArrayReplaceOptions): T[] | undefined {
     const { matchObject = (a: any, b: any) => a.id === b.id } = options || {};
 
+    // Return the new array if the current array does not exist
     if (!currentArray) {
         return newArray;
     }
@@ -28,10 +29,12 @@ export default function arrayReplace<T>(currentArray?: T[], newArray?: T[], opti
     // Otherwise, try to replace the items of the current array with the new
     // array. If the item from the two arrays are the same, keep the current
     // one. Do it recursively until all arrays are replaced.
-    let newItemCount = 0;
+    let sameAsCurrentCount = 0;
+    let sameAsNewCount = 0;
 
-    const countNewItem = <T>(replacedValue: T, currentValue: T, newValue: T): T => {
-        newItemCount += replacedValue === newValue && replacedValue !== currentValue ? 1 : 0;
+    const countSameAsReplaced = <T>(replacedValue: T, currentValue: T, newValue: T): T => {
+        sameAsCurrentCount += replacedValue === currentValue ? 1 : 0;
+        sameAsNewCount += replacedValue === newValue ? 1 : 0;
 
         return replacedValue;
     };
@@ -41,14 +44,14 @@ export default function arrayReplace<T>(currentArray?: T[], newArray?: T[], opti
 
         if (isPlainObject(currentItem) && isPlainObject(newItem)) {
             if (matchObject(currentItem, newItem)) {
-                return countNewItem(
+                return countSameAsReplaced(
                     objectMerge(currentItem, newItem),
                     currentItem,
                     newItem
                 );
             }
 
-            return countNewItem(
+            return countSameAsReplaced(
                 replace(currentItem, newItem),
                 currentItem,
                 newItem
@@ -56,25 +59,30 @@ export default function arrayReplace<T>(currentArray?: T[], newArray?: T[], opti
         }
 
         if (isArray(currentItem) && isArray(newItem)) {
-            return countNewItem(
+            return countSameAsReplaced(
                 arrayReplace(currentItem, newItem),
                 currentItem,
                 newItem
             );
         }
 
-        return countNewItem(
+        return countSameAsReplaced(
             replace(currentItem, newItem),
             currentItem,
             newItem
         );
     }) as T[];
 
-    if (newItemCount === 0 && (currentArray && currentArray.length === newArray.length)) {
+    // If all items in the result are identical to the current array, and the
+    // current array and the new array have the same size, simply return the
+    // current array instead of the result.
+    if (sameAsCurrentCount === newArray.length && (currentArray && currentArray.length === newArray.length)) {
         return currentArray;
     }
 
-    if (newItemCount === newArray.length) {
+    // If all items in the result are identical to the new array, simply return
+    // the new array.
+    if (sameAsNewCount === newArray.length) {
         return newArray;
     }
 
