@@ -1,6 +1,6 @@
 # @bigcommerce/checkout-sdk
 
-[![Build Status](https://travis-ci.com/bigcommerce/checkout-sdk-js.svg?token=pywwZy8zX1F5AzeQ9WpL&branch=master)](https://travis-ci.com/bigcommerce/checkout-sdk-js)
+[![CircleCI](https://circleci.com/gh/bigcommerce/checkout-sdk-js/tree/master.svg?style=svg)](https://circleci.com/gh/bigcommerce/checkout-sdk-js/tree/master)
 
 Checkout JS SDK provides you with the tools you need to build your own checkout solution for a BigCommerce store.
 
