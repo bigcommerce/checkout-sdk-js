@@ -42,4 +42,25 @@ describe('DataStoreProjection', () => {
         expect(filter)
             .toHaveBeenCalledWith(projection.getState());
     });
+
+    it('can be unsubscribed', () => {
+        const subscriber = jest.fn();
+        const store = createDataStore(() => ({ message: 'foobar' }));
+        const projection = new DataStoreProjection(store, (state: TestState) => {
+            return {
+                ...state,
+                transformed: true,
+            };
+        });
+        const unsubscribe = projection.subscribe(subscriber);
+
+        expect(subscriber)
+            .toHaveBeenCalledTimes(1);
+
+        unsubscribe();
+        store.notifyState();
+
+        expect(subscriber)
+            .toHaveBeenCalledTimes(1);
+    });
 });

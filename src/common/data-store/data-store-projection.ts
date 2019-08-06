@@ -1,8 +1,7 @@
 import { Action, DataStore, Filter, ReadableDataStore, Subscriber, SubscribeOptions, Unsubscriber } from '@bigcommerce/data-store';
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
-
-import { isEqual } from '../utility';
+import * as shallowEqual from 'shallowequal';
 
 export default class DataStoreProjection<TState, TTransformedState = TState> implements ReadableDataStore<TTransformedState> {
     private _state$: BehaviorSubject<TTransformedState>;
@@ -30,11 +29,11 @@ export default class DataStoreProjection<TState, TTransformedState = TState> imp
         const subscription = this._state$
             .pipe(distinctUntilChanged((stateA, stateB) =>
                 filters.length > 0 ?
-                    filters.every(filterFn => isEqual(filterFn(stateA), filterFn(stateB))) :
+                    filters.every(filterFn => shallowEqual(filterFn(stateA), filterFn(stateB))) :
                     false
             ))
             .subscribe(subscriber);
 
-        return subscription.unsubscribe;
+        return () => subscription.unsubscribe();
     }
 }
