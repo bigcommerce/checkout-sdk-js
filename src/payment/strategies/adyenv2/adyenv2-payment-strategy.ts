@@ -1,8 +1,12 @@
+import { FormPoster } from '@bigcommerce/form-poster';
+import { some } from 'lodash';
+
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
     MissingDataError,
-    MissingDataErrorType
+    MissingDataErrorType,
+    RequestError
 } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -29,7 +33,9 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         private _store: CheckoutStore,
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
-        private _adyenV2ScriptLoader: AdyenV2ScriptLoader
+        private _adyenV2ScriptLoader: AdyenV2ScriptLoader,
+        private _formPoster: FormPoster
+
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -89,7 +95,28 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     },
                 };
 
-                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
+                    .catch(error => {
+                        if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
+                            return Promise.reject(error);
+                        }
+
+                        if (!some(error.body.errors, { action: 'IdentifyShopper' })) {
+
+                        }
+
+                        if (!some(error.body.errors, { action: 'ChallengeShopper' })) {
+
+                        }
+
+                        return new Promise(() => {
+                            this._formPoster.postForm(error.body.three_ds_result.acs_url, {
+                                PaReq: error.body.three_ds_result.payer_auth_request,
+                                TermUrl: error.body.three_ds_result.callback_url,
+                                MD: error.body.three_ds_result.merchant_data,
+                            });
+                        });
+                    });
         });
     }
 
@@ -120,5 +147,22 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         if (newState.isValid) {
             this._stateContainer = JSON.stringify(newState.data.paymentMethod, null, 2);
         }
+    }
+
+    private _mount3DSFingerprint(resultObject: any): AdyenComponent {
+        if (!this._adyenCheckout) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        const threeDS2IdentifyShopper = this._adyenCheckout
+            .create('threeDS2DeviceFingerprint', {
+                fingerprintToken: resultObject.authentication['threeds2.fingerprintToken'],
+                onComplete: () => {},
+                onError: () => {},
+            });
+
+        threeDS2IdentifyShopper.mount(`#${this._containerId}-3ds`);
+
+        return threeDS2IdentifyShopper;
     }
 }
