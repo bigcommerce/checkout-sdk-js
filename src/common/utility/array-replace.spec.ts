@@ -67,4 +67,90 @@ describe('arrayReplace()', () => {
         expect(result[1])
             .toBe(newArray[1]);
     });
+
+    it('handles nested collections of objects', () => {
+        const currentArray = [
+            {
+                id: '5d49eb3897a7d',
+                shippingCost: 0,
+                handlingCost: 0,
+                couponDiscounts: [],
+                discounts: [],
+                lineItemIds: [
+                    '5193c8b5-752a-4369-aeb4-53f881871aa2',
+                    '0aa305d8-3549-4a96-94e7-8c2ee0f3c23b',
+                ],
+                shippingAddress: {
+                    firstName: 'Good',
+                    lastName: 'Shopper',
+                    email: '',
+                    company: 'BigShopper',
+                    address1: '685 Market St',
+                    address2: '',
+                    city: 'San Francisco',
+                    stateOrProvince: 'California',
+                    stateOrProvinceCode: 'CA',
+                    country: 'United States',
+                    countryCode: 'US',
+                    postalCode: '94105',
+                    phone: '5677891234',
+                    customFields: [],
+                },
+                availableShippingOptions: [],
+            },
+        ];
+
+        const newArray = [
+            {
+                id: '5d49eb3897a7d',
+                shippingCost: 0,
+                handlingCost: 0,
+                couponDiscounts: [],
+                discounts: [],
+                lineItemIds: [
+                    '5193c8b5-752a-4369-aeb4-53f881871aa2',
+                    '0aa305d8-3549-4a96-94e7-8c2ee0f3c23b',
+                ],
+                shippingAddress: {
+                    firstName: 'Good',
+                    lastName: 'Shopper',
+                    email: '',
+                    company: 'BigShopper',
+                    address1: '685 Market St',
+                    address2: '',
+                    city: 'San Francisco',
+                    stateOrProvince: 'California',
+                    stateOrProvinceCode: 'CA',
+                    country: 'United States',
+                    countryCode: 'US',
+                    postalCode: '94105',
+                    phone: '5677891234',
+                    customFields: [],
+                },
+                availableShippingOptions: [
+                    {
+                        id: '4dcbf24f457dd67d5f89bcf374e0bc9b',
+                        type: 'freeshipping',
+                        description: 'Free Shipping',
+                        imageUrl: '',
+                        cost: 0,
+                        transitTime: '',
+                        isRecommended: true,
+                        additionalDescription: '',
+                    },
+                ],
+            },
+        ];
+
+        const result = arrayReplace(currentArray, newArray);
+
+        expect(result)
+            .toEqual(newArray);
+        expect(result[0].shippingAddress)
+            .toBe(currentArray[0].shippingAddress);
+        expect(result[0].lineItemIds)
+            .toBe(currentArray[0].lineItemIds);
+        expect(result[0].availableShippingOptions)
+            .toBe(newArray[0].availableShippingOptions);
+    });
 });
