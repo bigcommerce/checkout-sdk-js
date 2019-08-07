@@ -503,8 +503,8 @@ export interface AdyenCardPaymentMethodState {
 }
 export interface ThreeDS2DeviceFingerprintComponentOptions {
     fingerprintToken: string;
-    onComplete(): void;
-    onError(): void;
+    onComplete(fingerprintData: any): void;
+    onError(error: AdyenError): void;
 }
 
 export interface AdyenStyleOptions {
@@ -529,9 +529,8 @@ export interface AdyenStyleOptions {
     validated?: CssProperties;
 }
 
-export interface Error {
-    type: string;
-    code: string;
+export interface AdyenError {
+    errorCode: string;
     message: string;
 }
 

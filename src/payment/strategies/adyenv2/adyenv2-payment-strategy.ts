@@ -19,15 +19,16 @@ import {
     AdyenCardState,
     AdyenCheckout,
     AdyenComponent,
-    AdyenConfiguration
+    AdyenConfiguration,
+    AdyenError
 } from './adyenv2';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
 export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     private _adyenCheckout?: AdyenCheckout;
+    private _containerId?: string;
     private _adyenComponent?: AdyenComponent;
     private _stateContainer: string = '';
-    private _containerId?: string;
 
     constructor(
         private _store: CheckoutStore,
@@ -95,29 +96,31 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     },
                 };
 
-                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload))
-                    .catch(error => {
-                        if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
-                            return Promise.reject(error);
-                        }
+                return this._store.dispatch(this._paymentActionCreator.submitPayment(paymentPayload));
+            })
+            .catch(error => {
+                if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
+                    return Promise.reject(error);
+                }
 
-                        if (!some(error.body.errors, { action: 'IdentifyShopper' })) {
+                if (!some(error.body.errors, { action: 'IdentifyShopper' })) {
 
-                        }
+                    this._handle3DSFingerprint(error.body.error, payment)
+                        .then((response: any) => this._store.dispatch(this._paymentActionCreator.submitPayment(response)));
+                }
 
-                        if (!some(error.body.errors, { action: 'ChallengeShopper' })) {
+                if (!some(error.body.errors, { action: 'ChallengeShopper' })) {
 
-                        }
+                }
 
-                        return new Promise(() => {
-                            this._formPoster.postForm(error.body.three_ds_result.acs_url, {
-                                PaReq: error.body.three_ds_result.payer_auth_request,
-                                TermUrl: error.body.three_ds_result.callback_url,
-                                MD: error.body.three_ds_result.merchant_data,
-                            });
-                        });
+                return new Promise(() => {
+                    this._formPoster.postForm(error.body.three_ds_result.acs_url, {
+                        PaReq: error.body.three_ds_result.payer_auth_request,
+                        TermUrl: error.body.three_ds_result.callback_url,
+                        MD: error.body.three_ds_result.merchant_data,
                     });
-        });
+                });
+            });
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
@@ -149,20 +152,44 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _mount3DSFingerprint(resultObject: any): AdyenComponent {
-        if (!this._adyenCheckout) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-        }
+    private _handle3DSFingerprint(resultObject: any, payment: any): Promise<string> {
+        let fingerprint: string;
 
-        const threeDS2IdentifyShopper = this._adyenCheckout
-            .create('threeDS2DeviceFingerprint', {
-                fingerprintToken: resultObject.authentication['threeds2.fingerprintToken'],
-                onComplete: () => {},
-                onError: () => {},
-            });
+        return new Promise((resolve, reject) => {
+            if (!this._adyenCheckout) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
 
-        threeDS2IdentifyShopper.mount(`#${this._containerId}-3ds`);
+            const threeDS2IdentifyShopper = this._adyenCheckout
+                .create('threeDS2DeviceFingerprint', {
+                    fingerprintToken: resultObject.authentication['threeds2.fingerprintToken'],
+                    onComplete: (fingerprintData: any) => {
+                        fingerprint = this.handleOnComplete(fingerprintData);
 
-        return threeDS2IdentifyShopper;
+                        const paymentPayload = {
+                            methodId: payment.methodId,
+                            paymentData: {
+                                nonce: this._stateContainer,
+                            },
+                        };
+
+                        const fingerprintPaymentPayload = {
+                            details: {
+                                'threeds2.fingerprint':  fingerprint,
+                            },
+                            paymentData: paymentPayload,
+                        };
+
+                        resolve(JSON.stringify(fingerprintPaymentPayload, null, 2));
+                    },
+                    onError: (error: AdyenError) => reject(error),
+                });
+
+            threeDS2IdentifyShopper.mount(`#${this._containerId}-3ds`);
+        });
+    }
+
+    private handleOnComplete(fingerprintData: any): string {
+        return fingerprintData.data.details['threeds2.fingerprint'];
     }
 }

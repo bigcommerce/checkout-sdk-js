@@ -1,3 +1,4 @@
+import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
@@ -35,14 +36,15 @@ import {
 } from './adyenv2.mock';
 
 describe('AdyenV2PaymentStrategy', () => {
-    let store: CheckoutStore;
-    let strategy: AdyenV2PaymentStrategy;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let paymentActionCreator: PaymentActionCreator;
-    let paymentRequestSender: PaymentRequestSender;
-    let orderActionCreator: OrderActionCreator;
     let paymentRequestTransformer: PaymentRequestTransformer;
     let adyenV2ScriptLoader: AdyenV2ScriptLoader;
+    let formPoster: FormPoster;
+    let orderActionCreator: OrderActionCreator;
+    let strategy: AdyenV2PaymentStrategy;
+    let paymentActionCreator: PaymentActionCreator;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paymentRequestSender: PaymentRequestSender;
+    let store: CheckoutStore;
 
     beforeEach(() => {
         store = createCheckoutStore({
@@ -57,10 +59,12 @@ describe('AdyenV2PaymentStrategy', () => {
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const paymentClient = createPaymentClient(store);
         const scriptLoader = createScriptLoader();
+
+        formPoster = createFormPoster();
+        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
         paymentRequestSender = new PaymentRequestSender(paymentClient);
         paymentRequestTransformer = new PaymentRequestTransformer();
 
-        paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
         orderActionCreator = new OrderActionCreator(
             paymentClient,
@@ -71,11 +75,15 @@ describe('AdyenV2PaymentStrategy', () => {
         ));
         adyenV2ScriptLoader = new AdyenV2ScriptLoader(scriptLoader);
 
+        jest.spyOn(formPoster, 'postForm')
+            .mockImplementation((url, data, callback = () => {}) => callback());
+
         strategy = new AdyenV2PaymentStrategy(
             store,
             paymentActionCreator,
             orderActionCreator,
-            adyenV2ScriptLoader
+            adyenV2ScriptLoader,
+            formPoster
         );
     });
 
