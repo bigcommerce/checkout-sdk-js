@@ -22,21 +22,21 @@
 
 ###  data
 
-**● data**: *[CheckoutStoreSelector](../classes/checkoutstoreselector.md)*
+**● data**: *[CheckoutStoreSelector](checkoutstoreselector.md)*
 
 ___
 <a id="errors"></a>
 
 ###  errors
 
-**● errors**: *[CheckoutStoreErrorSelector](../classes/checkoutstoreerrorselector.md)*
+**● errors**: *[CheckoutStoreErrorSelector](checkoutstoreerrorselector.md)*
 
 ___
 <a id="statuses"></a>
 
 ###  statuses
 
-**● statuses**: *[CheckoutStoreStatusSelector](../classes/checkoutstorestatusselector.md)*
+**● statuses**: *[CheckoutStoreStatusSelector](checkoutstorestatusselector.md)*
 
 ___
 

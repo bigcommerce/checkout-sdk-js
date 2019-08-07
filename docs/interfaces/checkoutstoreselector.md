@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutStoreSelector](../classes/checkoutstoreselector.md)
+[@bigcommerce/checkout-sdk](../README.md) > [CheckoutStoreSelector](../interfaces/checkoutstoreselector.md)
 
 # CheckoutStoreSelector
 
@@ -45,11 +45,11 @@ This object has a set of methods that allow you to get a specific piece of check
 
 ###  getBillingAddress
 
-▸ **getBillingAddress**():  [BillingAddress](../interfaces/billingaddress.md) &#124; `undefined`
+▸ **getBillingAddress**():  [BillingAddress](billingaddress.md) &#124; `undefined`
 
 Gets the billing address of an order.
 
-**Returns:**  [BillingAddress](../interfaces/billingaddress.md) &#124; `undefined`
+**Returns:**  [BillingAddress](billingaddress.md) &#124; `undefined`
 
 The billing address object if it is loaded, otherwise undefined.
 
@@ -58,7 +58,7 @@ ___
 
 ###  getBillingAddressFields
 
-▸ **getBillingAddressFields**(countryCode: *`string`*): [FormField](../interfaces/formfield.md)[]
+▸ **getBillingAddressFields**(countryCode: *`string`*): [FormField](formfield.md)[]
 
 Gets a set of form fields that should be presented to customers in order to capture their billing address for a specific country.
 
@@ -68,7 +68,7 @@ Gets a set of form fields that should be presented to customers in order to capt
 | ------ | ------ | ------ |
 | countryCode | `string` |  A 2-letter country code (ISO 3166-1 alpha-2). |
 
-**Returns:** [FormField](../interfaces/formfield.md)[]
+**Returns:** [FormField](formfield.md)[]
 The set of billing address form fields if it is loaded,
 otherwise undefined.
 
@@ -77,11 +77,11 @@ ___
 
 ###  getBillingCountries
 
-▸ **getBillingCountries**():  [Country](../interfaces/country.md)[] &#124; `undefined`
+▸ **getBillingCountries**():  [Country](country.md)[] &#124; `undefined`
 
 Gets a list of countries available for billing.
 
-**Returns:**  [Country](../interfaces/country.md)[] &#124; `undefined`
+**Returns:**  [Country](country.md)[] &#124; `undefined`
 
 The list of countries if it is loaded, otherwise undefined.
 
@@ -90,11 +90,11 @@ ___
 
 ###  getCart
 
-▸ **getCart**():  [Cart](../interfaces/cart.md) &#124; `undefined`
+▸ **getCart**():  [Cart](cart.md) &#124; `undefined`
 
 Gets the current cart.
 
-**Returns:**  [Cart](../interfaces/cart.md) &#124; `undefined`
+**Returns:**  [Cart](cart.md) &#124; `undefined`
 
 The current cart object if it is loaded, otherwise undefined.
 
@@ -103,11 +103,11 @@ ___
 
 ###  getCheckout
 
-▸ **getCheckout**():  [Checkout](../interfaces/checkout.md) &#124; `undefined`
+▸ **getCheckout**():  [Checkout](checkout.md) &#124; `undefined`
 
 Gets the current checkout.
 
-**Returns:**  [Checkout](../interfaces/checkout.md) &#124; `undefined`
+**Returns:**  [Checkout](checkout.md) &#124; `undefined`
 
 The current checkout if it is loaded, otherwise undefined.
 
@@ -116,11 +116,11 @@ ___
 
 ###  getConfig
 
-▸ **getConfig**():  [StoreConfig](../interfaces/storeconfig.md) &#124; `undefined`
+▸ **getConfig**():  [StoreConfig](storeconfig.md) &#124; `undefined`
 
 Gets the checkout configuration of a store.
 
-**Returns:**  [StoreConfig](../interfaces/storeconfig.md) &#124; `undefined`
+**Returns:**  [StoreConfig](storeconfig.md) &#124; `undefined`
 
 The configuration object if it is loaded, otherwise undefined.
 
@@ -129,13 +129,13 @@ ___
 
 ###  getConsignments
 
-▸ **getConsignments**():  [Consignment](../interfaces/consignment.md)[] &#124; `undefined`
+▸ **getConsignments**():  [Consignment](consignment.md)[] &#124; `undefined`
 
 Gets a list of consignments.
 
 If there are no consignments created for to the current checkout, the list will be empty.
 
-**Returns:**  [Consignment](../interfaces/consignment.md)[] &#124; `undefined`
+**Returns:**  [Consignment](consignment.md)[] &#124; `undefined`
 
 The list of consignments if any, otherwise undefined.
 
@@ -144,11 +144,11 @@ ___
 
 ###  getCoupons
 
-▸ **getCoupons**():  [Coupon](../interfaces/coupon.md)[] &#124; `undefined`
+▸ **getCoupons**():  [Coupon](coupon.md)[] &#124; `undefined`
 
 Gets a list of coupons that are applied to the current checkout.
 
-**Returns:**  [Coupon](../interfaces/coupon.md)[] &#124; `undefined`
+**Returns:**  [Coupon](coupon.md)[] &#124; `undefined`
 
 The list of applied coupons if there is any, otherwise undefined.
 
@@ -157,11 +157,11 @@ ___
 
 ###  getCustomer
 
-▸ **getCustomer**():  [Customer](../interfaces/customer.md) &#124; `undefined`
+▸ **getCustomer**():  [Customer](customer.md) &#124; `undefined`
 
 Gets the current customer.
 
-**Returns:**  [Customer](../interfaces/customer.md) &#124; `undefined`
+**Returns:**  [Customer](customer.md) &#124; `undefined`
 
 The current customer object if it is loaded, otherwise
 undefined.
@@ -171,11 +171,11 @@ ___
 
 ###  getGiftCertificates
 
-▸ **getGiftCertificates**():  [GiftCertificate](../interfaces/giftcertificate.md)[] &#124; `undefined`
+▸ **getGiftCertificates**():  [GiftCertificate](giftcertificate.md)[] &#124; `undefined`
 
 Gets a list of gift certificates that are applied to the current checkout.
 
-**Returns:**  [GiftCertificate](../interfaces/giftcertificate.md)[] &#124; `undefined`
+**Returns:**  [GiftCertificate](giftcertificate.md)[] &#124; `undefined`
 
 The list of applied gift certificates if there is any, otherwise undefined.
 
@@ -184,11 +184,11 @@ ___
 
 ###  getInstruments
 
-▸ **getInstruments**():  [Instrument](../interfaces/instrument.md)[] &#124; `undefined`
+▸ **getInstruments**():  [Instrument](instrument.md)[] &#124; `undefined`
 
 Gets a list of payment instruments associated with the current customer.
 
-**Returns:**  [Instrument](../interfaces/instrument.md)[] &#124; `undefined`
+**Returns:**  [Instrument](instrument.md)[] &#124; `undefined`
 
 The list of payment instruments if it is loaded, otherwise undefined.
 
@@ -197,11 +197,11 @@ ___
 
 ###  getOrder
 
-▸ **getOrder**():  [Order](../interfaces/order.md) &#124; `undefined`
+▸ **getOrder**():  [Order](order.md) &#124; `undefined`
 
 Gets the current order.
 
-**Returns:**  [Order](../interfaces/order.md) &#124; `undefined`
+**Returns:**  [Order](order.md) &#124; `undefined`
 
 The current order if it is loaded, otherwise undefined.
 
@@ -210,7 +210,7 @@ ___
 
 ###  getPaymentMethod
 
-▸ **getPaymentMethod**(methodId: *`string`*, gatewayId?: * `undefined` &#124; `string`*):  [PaymentMethod](../interfaces/paymentmethod.md) &#124; `undefined`
+▸ **getPaymentMethod**(methodId: *`string`*, gatewayId?: * `undefined` &#124; `string`*):  [PaymentMethod](paymentmethod.md) &#124; `undefined`
 
 Gets a payment method by an id.
 
@@ -223,7 +223,7 @@ The method returns undefined if unable to find a payment method with the specifi
 | methodId | `string` |  The identifier of the payment method. |
 | `Optional` gatewayId |  `undefined` &#124; `string`|  The identifier of a payment provider providing the payment method. |
 
-**Returns:**  [PaymentMethod](../interfaces/paymentmethod.md) &#124; `undefined`
+**Returns:**  [PaymentMethod](paymentmethod.md) &#124; `undefined`
 
 The payment method object if loaded and available, otherwise,
 undefined.
@@ -233,11 +233,11 @@ ___
 
 ###  getPaymentMethods
 
-▸ **getPaymentMethods**():  [PaymentMethod](../interfaces/paymentmethod.md)[] &#124; `undefined`
+▸ **getPaymentMethods**():  [PaymentMethod](paymentmethod.md)[] &#124; `undefined`
 
 Gets a list of payment methods available for checkout.
 
-**Returns:**  [PaymentMethod](../interfaces/paymentmethod.md)[] &#124; `undefined`
+**Returns:**  [PaymentMethod](paymentmethod.md)[] &#124; `undefined`
 
 The list of payment methods if it is loaded, otherwise undefined.
 
@@ -246,11 +246,11 @@ ___
 
 ###  getSelectedPaymentMethod
 
-▸ **getSelectedPaymentMethod**():  [PaymentMethod](../interfaces/paymentmethod.md) &#124; `undefined`
+▸ **getSelectedPaymentMethod**():  [PaymentMethod](paymentmethod.md) &#124; `undefined`
 
 Gets the payment method that is selected for checkout.
 
-**Returns:**  [PaymentMethod](../interfaces/paymentmethod.md) &#124; `undefined`
+**Returns:**  [PaymentMethod](paymentmethod.md) &#124; `undefined`
 
 The payment method object if there is a selected method;
 undefined if otherwise.
@@ -260,11 +260,11 @@ ___
 
 ###  getSelectedShippingOption
 
-▸ **getSelectedShippingOption**():  [ShippingOption](../interfaces/shippingoption.md) &#124; `undefined`
+▸ **getSelectedShippingOption**():  [ShippingOption](shippingoption.md) &#124; `undefined`
 
 Gets the selected shipping option for the current checkout.
 
-**Returns:**  [ShippingOption](../interfaces/shippingoption.md) &#124; `undefined`
+**Returns:**  [ShippingOption](shippingoption.md) &#124; `undefined`
 
 The shipping option object if there is a selected option,
 otherwise undefined.
@@ -274,13 +274,13 @@ ___
 
 ###  getShippingAddress
 
-▸ **getShippingAddress**():  [Address](../interfaces/address.md) &#124; `undefined`
+▸ **getShippingAddress**():  [Address](address.md) &#124; `undefined`
 
 Gets the shipping address of the current checkout.
 
 If the address is partially complete, it may not have shipping options associated with it.
 
-**Returns:**  [Address](../interfaces/address.md) &#124; `undefined`
+**Returns:**  [Address](address.md) &#124; `undefined`
 
 The shipping address object if it is loaded, otherwise
 undefined.
@@ -290,7 +290,7 @@ ___
 
 ###  getShippingAddressFields
 
-▸ **getShippingAddressFields**(countryCode: *`string`*): [FormField](../interfaces/formfield.md)[]
+▸ **getShippingAddressFields**(countryCode: *`string`*): [FormField](formfield.md)[]
 
 Gets a set of form fields that should be presented to customers in order to capture their shipping address for a specific country.
 
@@ -300,7 +300,7 @@ Gets a set of form fields that should be presented to customers in order to capt
 | ------ | ------ | ------ |
 | countryCode | `string` |  A 2-letter country code (ISO 3166-1 alpha-2). |
 
-**Returns:** [FormField](../interfaces/formfield.md)[]
+**Returns:** [FormField](formfield.md)[]
 The set of shipping address form fields if it is loaded,
 otherwise undefined.
 
@@ -309,11 +309,11 @@ ___
 
 ###  getShippingCountries
 
-▸ **getShippingCountries**():  [Country](../interfaces/country.md)[] &#124; `undefined`
+▸ **getShippingCountries**():  [Country](country.md)[] &#124; `undefined`
 
 Gets a list of countries available for shipping.
 
-**Returns:**  [Country](../interfaces/country.md)[] &#124; `undefined`
+**Returns:**  [Country](country.md)[] &#124; `undefined`
 
 The list of countries if it is loaded, otherwise undefined.
 
@@ -322,13 +322,13 @@ ___
 
 ###  getShippingOptions
 
-▸ **getShippingOptions**():  [ShippingOption](../interfaces/shippingoption.md)[] &#124; `undefined`
+▸ **getShippingOptions**():  [ShippingOption](shippingoption.md)[] &#124; `undefined`
 
 Gets a list of shipping options available for the shipping address.
 
 If there is no shipping address assigned to the current checkout, the list of shipping options will be empty.
 
-**Returns:**  [ShippingOption](../interfaces/shippingoption.md)[] &#124; `undefined`
+**Returns:**  [ShippingOption](shippingoption.md)[] &#124; `undefined`
 
 The list of shipping options if any, otherwise undefined.
 

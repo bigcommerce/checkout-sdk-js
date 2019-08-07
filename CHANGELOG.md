@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.31.1"></a>
+## [1.31.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.31.0...v1.31.1) (2019-08-07)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-4272 Fix immutable array replacer as it returns original array instead of merged array ([e02f62b](https://github.com/bigcommerce/checkout-sdk-js/commit/e02f62b))
+* **common:** CHECKOUT-4272 Fix unsubscribe function not able to unsubscribe ([537e6d6](https://github.com/bigcommerce/checkout-sdk-js/commit/537e6d6))
+* **common:** CHECKOUT-4272 Use another data store as projection instead of plain observable so you can still notify subscribers when subscription filters are applied ([397ab34](https://github.com/bigcommerce/checkout-sdk-js/commit/397ab34))
+
+
+### Performance Improvements
+
+* **checkout:** CHECKOUT-4272 Add function for creating checkout selectors factory ([f7b3ba5](https://github.com/bigcommerce/checkout-sdk-js/commit/f7b3ba5))
+* **checkout:** CHECKOUT-4272 Refactor checkout selector to return new getters only when there are changes to relevant data ([cf77c05](https://github.com/bigcommerce/checkout-sdk-js/commit/cf77c05))
+* **checkout:** CHECKOUT-4272 Refactor checkout store data selector to return new getters only when there are changes to relevant data ([7a4d7b7](https://github.com/bigcommerce/checkout-sdk-js/commit/7a4d7b7))
+* **checkout:** CHECKOUT-4272 Refactor checkout store error selector to return new getters only when there are changes to relevant data ([9dccc3d](https://github.com/bigcommerce/checkout-sdk-js/commit/9dccc3d))
+* **checkout:** CHECKOUT-4272 Refactor checkout store status selector to return new getters only when there are changes to relevant data ([4b0391d](https://github.com/bigcommerce/checkout-sdk-js/commit/4b0391d))
+* **checkout:** CHECKOUT-4272 Refactor remote checkout selector to return new getters only when there are changes to relevant data ([db65c75](https://github.com/bigcommerce/checkout-sdk-js/commit/db65c75))
+* **checkout:** CHECKOUT-4272 Update checkout reducer to transform state only when necessary ([ed5f6a8](https://github.com/bigcommerce/checkout-sdk-js/commit/ed5f6a8))
+* **checkout:** CHECKOUT-4272 Update remote checkout reducer to transform state only when necessary ([76c6a61](https://github.com/bigcommerce/checkout-sdk-js/commit/76c6a61))
+* **checkout-button:** CHECKOUT-4272 Refactor checkout button selector to return new getters only when there are changes to relevant data ([6b939af](https://github.com/bigcommerce/checkout-sdk-js/commit/6b939af))
+* **checkout-button:** CHECKOUT-4272 Update checkout button reducer to transform state only when necessary ([eacc9a1](https://github.com/bigcommerce/checkout-sdk-js/commit/eacc9a1))
+* **common:** CHECKOUT-4272 Add function that can clone return value of function if it is different from previous call ([2b4f7e2](https://github.com/bigcommerce/checkout-sdk-js/commit/2b4f7e2))
+* **common:** CHECKOUT-4272 Refactor config selector to return new getters only when there are changes to relevant data ([f055ab0](https://github.com/bigcommerce/checkout-sdk-js/commit/f055ab0))
+* **common:** CHECKOUT-4272 Refactor country selector to return new getters only when there are changes to relevant data ([83d9ca3](https://github.com/bigcommerce/checkout-sdk-js/commit/83d9ca3))
+* **common:** CHECKOUT-4272 Refactor form selector to return new getters only when there are changes to relevant data ([7489058](https://github.com/bigcommerce/checkout-sdk-js/commit/7489058))
+* **common:** CHECKOUT-4272 Update config reducer to transform state only when necessary ([74805a6](https://github.com/bigcommerce/checkout-sdk-js/commit/74805a6))
+* **common:** CHECKOUT-4272 Update country reducer to transform state only when necessary ([2bdae4c](https://github.com/bigcommerce/checkout-sdk-js/commit/2bdae4c))
+* **payment:** CHECKOUT-4272 Refactor instrument selector to return new getters only when there are changes to relevant data ([655d298](https://github.com/bigcommerce/checkout-sdk-js/commit/655d298))
+* **payment:** CHECKOUT-4272 Refactor payment method selector to return new getters only when there are changes to relevant data ([f5bddc4](https://github.com/bigcommerce/checkout-sdk-js/commit/f5bddc4))
+* **payment:** CHECKOUT-4272 Refactor payment selector to return new getters only when there are changes to relevant data ([c35b0a1](https://github.com/bigcommerce/checkout-sdk-js/commit/c35b0a1))
+* **payment:** CHECKOUT-4272 Refactor payment strategy selector to return new getters only when there are changes to relevant data ([1c419e7](https://github.com/bigcommerce/checkout-sdk-js/commit/1c419e7))
+* **payment:** CHECKOUT-4272 Update instrument reducer to transform state only when necessary ([6543213](https://github.com/bigcommerce/checkout-sdk-js/commit/6543213))
+* **payment:** CHECKOUT-4272 Update payment method reducer to transform state only when necessary ([a6dbba9](https://github.com/bigcommerce/checkout-sdk-js/commit/a6dbba9))
+* **payment:** CHECKOUT-4272 Update payment strategy reducer to transform state only when necessary ([dfda886](https://github.com/bigcommerce/checkout-sdk-js/commit/dfda886))
+* **shipping:** CHECKOUT-4272 Refactor consignment selector to return new getters only when there are changes to relevant data ([87ad888](https://github.com/bigcommerce/checkout-sdk-js/commit/87ad888))
+* **shipping:** CHECKOUT-4272 Refactor shipping address selector to return new getters only when there are changes to relevant data ([c18b8de](https://github.com/bigcommerce/checkout-sdk-js/commit/c18b8de))
+* **shipping:** CHECKOUT-4272 Refactor shipping country selector to return new getters only when there are changes to relevant data ([698ee10](https://github.com/bigcommerce/checkout-sdk-js/commit/698ee10))
+* **shipping:** CHECKOUT-4272 Refactor shipping strategy selector to return new getters only when there are changes to relevant data ([974972f](https://github.com/bigcommerce/checkout-sdk-js/commit/974972f))
+* **shipping:** CHECKOUT-4272 Update consignment reducer to transform state only when necessary ([511311b](https://github.com/bigcommerce/checkout-sdk-js/commit/511311b))
+* **shipping:** CHECKOUT-4272 Update shipping country reducer to transform state only when necessary ([4319777](https://github.com/bigcommerce/checkout-sdk-js/commit/4319777))
+* **shipping:** CHECKOUT-4272 Update shipping strategy reducer to transform state only when necessary ([a032432](https://github.com/bigcommerce/checkout-sdk-js/commit/a032432))
+* **shopper:** CHECKOUT-4272 Refactor customer selector to return new getters only when there are changes to relevant data ([f27f763](https://github.com/bigcommerce/checkout-sdk-js/commit/f27f763))
+* **shopper:** CHECKOUT-4272 Refactor customer strategy selector to return new getters only when there are changes to relevant data ([80a24e3](https://github.com/bigcommerce/checkout-sdk-js/commit/80a24e3))
+* **shopper:** CHECKOUT-4272 Update customer reducer to transform state only when necessary ([87e0b56](https://github.com/bigcommerce/checkout-sdk-js/commit/87e0b56))
+* **shopper:** CHECKOUT-4272 Update customer strategy reducer to transform state only when necessary ([8b86d8a](https://github.com/bigcommerce/checkout-sdk-js/commit/8b86d8a))
+
+
+
 <a name="1.31.0"></a>
 # [1.31.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.30.0...v1.31.0) (2019-08-04)
 

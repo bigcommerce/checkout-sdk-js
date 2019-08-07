@@ -592,6 +592,7 @@ declare class CheckoutService {
     private _spamProtectionActionCreator;
     private _storeProjection;
     private _errorTransformer;
+    private _selectorsFactory;
     /**
      * Returns a snapshot of the current checkout state.
      *
@@ -1410,28 +1411,7 @@ declare interface CheckoutSettings {
  * not executed successfully. For example, if you are unable to submit an order,
  * you can use this object to retrieve the reason for the failure.
  */
-declare class CheckoutStoreErrorSelector {
-    private _billingAddress;
-    private _cart;
-    private _checkout;
-    private _config;
-    private _consignments;
-    private _countries;
-    private _coupons;
-    private _customerStrategies;
-    private _giftCertificates;
-    private _instruments;
-    private _order;
-    private _paymentMethods;
-    private _paymentStrategies;
-    private _shippingCountries;
-    private _shippingStrategies;
-    /**
-     * Gets the error of any checkout action that has failed.
-     *
-     * @returns The error object if unable to perform any checkout action,
-     * otherwise undefined.
-     */
+declare interface CheckoutStoreErrorSelector {
     getError(): Error | undefined;
     /**
      * Returns an error if unable to load the current checkout.
@@ -1640,23 +1620,7 @@ declare class CheckoutStoreErrorSelector {
  * This object has a set of methods that allow you to get a specific piece of
  * checkout information, such as shipping and billing details.
  */
-declare class CheckoutStoreSelector {
-    private _billingAddress;
-    private _cart;
-    private _checkout;
-    private _config;
-    private _consignments;
-    private _countries;
-    private _coupons;
-    private _customer;
-    private _form;
-    private _giftCertificates;
-    private _instruments;
-    private _order;
-    private _payment;
-    private _paymentMethods;
-    private _shippingAddress;
-    private _shippingCountries;
+declare interface CheckoutStoreSelector {
     /**
      * Gets the current checkout.
      *
@@ -1845,22 +1809,7 @@ declare class CheckoutStoreSelector {
  * progress. For example, you can check whether a customer is submitting an
  * order and waiting for the request to complete.
  */
-declare class CheckoutStoreStatusSelector {
-    private _billingAddress;
-    private _cart;
-    private _checkout;
-    private _config;
-    private _consignments;
-    private _countries;
-    private _coupons;
-    private _customerStrategies;
-    private _giftCertificates;
-    private _instruments;
-    private _order;
-    private _paymentMethods;
-    private _paymentStrategies;
-    private _shippingCountries;
-    private _shippingStrategies;
+declare interface CheckoutStoreStatusSelector {
     /**
      * Checks whether any checkout action is pending.
      *

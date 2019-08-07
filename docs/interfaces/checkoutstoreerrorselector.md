@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutStoreErrorSelector](../classes/checkoutstoreerrorselector.md)
+[@bigcommerce/checkout-sdk](../README.md) > [CheckoutStoreErrorSelector](../interfaces/checkoutstoreerrorselector.md)
 
 # CheckoutStoreErrorSelector
 
@@ -54,11 +54,11 @@ This object has a set of getters that would return an error if an action is not 
 
 ###  getApplyCouponError
 
-▸ **getApplyCouponError**():  [RequestError](requesterror.md) &#124; `undefined`
+▸ **getApplyCouponError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 Returns an error if unable to apply a coupon code.
 
-**Returns:**  [RequestError](requesterror.md) &#124; `undefined`
+**Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 The error object if unable to apply, otherwise undefined.
 
@@ -67,11 +67,11 @@ ___
 
 ###  getApplyGiftCertificateError
 
-▸ **getApplyGiftCertificateError**():  [RequestError](requesterror.md) &#124; `undefined`
+▸ **getApplyGiftCertificateError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 Returns an error if unable to apply a gift certificate.
 
-**Returns:**  [RequestError](requesterror.md) &#124; `undefined`
+**Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 The error object if unable to apply, otherwise undefined.
 
@@ -148,12 +148,7 @@ ___
 
 ▸ **getError**():  `Error` &#124; `undefined`
 
-Gets the error of any checkout action that has failed.
-
 **Returns:**  `Error` &#124; `undefined`
-
-The error object if unable to perform any checkout action,
-otherwise undefined.
 
 ___
 <a id="getfinalizeordererror"></a>
@@ -366,11 +361,11 @@ ___
 
 ###  getRemoveCouponError
 
-▸ **getRemoveCouponError**():  [RequestError](requesterror.md) &#124; `undefined`
+▸ **getRemoveCouponError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 Returns an error if unable to remove a coupon code.
 
-**Returns:**  [RequestError](requesterror.md) &#124; `undefined`
+**Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 The error object if unable to remove, otherwise undefined.
 
@@ -379,11 +374,11 @@ ___
 
 ###  getRemoveGiftCertificateError
 
-▸ **getRemoveGiftCertificateError**():  [RequestError](requesterror.md) &#124; `undefined`
+▸ **getRemoveGiftCertificateError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 Returns an error if unable to remove a gift certificate.
 
-**Returns:**  [RequestError](requesterror.md) &#124; `undefined`
+**Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 The error object if unable to remove, otherwise undefined.
 

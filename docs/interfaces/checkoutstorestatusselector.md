@@ -1,4 +1,4 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CheckoutStoreStatusSelector](../classes/checkoutstorestatusselector.md)
+[@bigcommerce/checkout-sdk](../README.md) > [CheckoutStoreStatusSelector](../interfaces/checkoutstorestatusselector.md)
 
 # CheckoutStoreStatusSelector
 
