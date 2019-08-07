@@ -21,7 +21,7 @@ export default function withMemoizedCombiner<T extends typeof defaultSelectorCre
             const result = combiner(...combinerArgs);
 
             if (typeof result === 'function') {
-                return memoize(combiner(...combinerArgs));
+                return memoize(result);
             }
 
             return result;
