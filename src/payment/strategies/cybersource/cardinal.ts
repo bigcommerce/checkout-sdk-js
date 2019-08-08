@@ -66,7 +66,7 @@ export interface CardinalConfirmTypeData {
 }
 
 export interface CardinalValidatedData {
-    ActionCode: CardinalValidatedAction;
+    ActionCode?: CardinalValidatedAction;
     ErrorDescription: string;
     ErrorNumber: number;
     Validated: boolean;
