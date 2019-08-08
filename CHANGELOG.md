@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.32.0"></a>
+# [1.32.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.31.1...v1.32.0) (2019-08-08)
+
+
+### Features
+
+* **payment:** INT-1736 Add Reference Id value in the jwt to initialize cardinal and update logic to handle the new Cardinal's Payload ([dc8abe1](https://github.com/bigcommerce/checkout-sdk-js/commit/dc8abe1))
+
+
+
 <a name="1.31.1"></a>
 ## [1.31.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.31.0...v1.31.1) (2019-08-07)
 
