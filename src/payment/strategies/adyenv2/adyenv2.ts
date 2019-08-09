@@ -160,6 +160,7 @@ export interface InputDetail {
 
 export interface ThreeDS2Result {
     result_code: string;
+    payment_data: string;
     token: string;
 }
 

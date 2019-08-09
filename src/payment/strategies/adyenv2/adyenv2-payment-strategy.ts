@@ -11,6 +11,7 @@ import {
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
+import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -107,7 +108,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 if (!some(error.body.three_ds_result, { result_code: 'IdentifyShopper' })) {
 
                     return this._handle3DSFingerprint(error.body.three_ds_result, payment)
-                        .then((response: any) =>
+                        .then(response =>
                             this._store.dispatch(this._paymentActionCreator.submitPayment(response)));
                 }
 
@@ -150,11 +151,16 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
     private _updateStateContainer(newState: AdyenCardState) {
         if (newState.isValid) {
-            this._stateContainer = JSON.stringify(newState.data.paymentMethod, null, 2);
+            const state = {
+                ...newState.data.paymentMethod,
+                origin: window.location.origin,
+            };
+
+            this._stateContainer = JSON.stringify(state, null, 2);
         }
     }
 
-    private _handle3DSFingerprint(resultObject: ThreeDS2Result, payment: any): Promise<string> {
+    private _handle3DSFingerprint(resultObject: ThreeDS2Result, payment: any): Promise<Payment> {
 
         return new Promise((resolve, reject) => {
             if (!this._adyenCheckout) {
@@ -165,22 +171,19 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 .create('threeDS2DeviceFingerprint', {
                     fingerprintToken: resultObject.token,
                     onComplete: (fingerprintData: any) => {
+                        const fingerprintPaymentPayload = {
+                            ...fingerprintData.data,
+                            paymentData: resultObject.payment_data,
+                        };
 
                         const paymentPayload = {
                             methodId: payment.methodId,
                             paymentData: {
-                                nonce: this._stateContainer,
+                                nonce: JSON.stringify(fingerprintPaymentPayload, null, 2),
                             },
                         };
 
-                        const fingerprintPaymentPayload = {
-                            details: {
-                                'threeds2.fingerprint': fingerprintData.data.details['threeds2.fingerprint'],
-                            },
-                            paymentData: paymentPayload,
-                        };
-
-                        resolve(JSON.stringify(fingerprintPaymentPayload, null, 2));
+                        resolve(paymentPayload);
                     },
                     onError: (error: AdyenError) => reject(error),
                 });
