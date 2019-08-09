@@ -20,7 +20,8 @@ import {
     AdyenCheckout,
     AdyenComponent,
     AdyenConfiguration,
-    AdyenError
+    AdyenError,
+    ThreeDS2Result
 } from './adyenv2';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
@@ -103,13 +104,14 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     return Promise.reject(error);
                 }
 
-                if (!some(error.body.errors, { action: 'IdentifyShopper' })) {
+                if (!some(error.body.three_ds_result, { result_code: 'IdentifyShopper' })) {
 
-                    this._handle3DSFingerprint(error.body.error, payment)
-                        .then((response: any) => this._store.dispatch(this._paymentActionCreator.submitPayment(response)));
+                    return this._handle3DSFingerprint(error.body.three_ds_result, payment)
+                        .then((response: any) =>
+                            this._store.dispatch(this._paymentActionCreator.submitPayment(response)));
                 }
 
-                if (!some(error.body.errors, { action: 'ChallengeShopper' })) {
+                if (!some(error.body.three_ds_result, { result_code: 'ChallengeShopper' })) {
 
                 }
 
@@ -152,8 +154,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         }
     }
 
-    private _handle3DSFingerprint(resultObject: any, payment: any): Promise<string> {
-        let fingerprint: string;
+    private _handle3DSFingerprint(resultObject: ThreeDS2Result, payment: any): Promise<string> {
 
         return new Promise((resolve, reject) => {
             if (!this._adyenCheckout) {
@@ -162,9 +163,8 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
             const threeDS2IdentifyShopper = this._adyenCheckout
                 .create('threeDS2DeviceFingerprint', {
-                    fingerprintToken: resultObject.authentication['threeds2.fingerprintToken'],
+                    fingerprintToken: resultObject.token,
                     onComplete: (fingerprintData: any) => {
-                        fingerprint = this.handleOnComplete(fingerprintData);
 
                         const paymentPayload = {
                             methodId: payment.methodId,
@@ -175,7 +175,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
                         const fingerprintPaymentPayload = {
                             details: {
-                                'threeds2.fingerprint':  fingerprint,
+                                'threeds2.fingerprint': fingerprintData.data.details['threeds2.fingerprint'],
                             },
                             paymentData: paymentPayload,
                         };
@@ -187,9 +187,5 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
             threeDS2IdentifyShopper.mount(`#${this._containerId}-3ds`);
         });
-    }
-
-    private handleOnComplete(fingerprintData: any): string {
-        return fingerprintData.data.details['threeds2.fingerprint'];
     }
 }

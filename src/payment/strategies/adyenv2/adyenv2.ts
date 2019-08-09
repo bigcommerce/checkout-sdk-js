@@ -158,6 +158,18 @@ export interface InputDetail {
     value?: string;
 }
 
+export interface ThreeDS2Result {
+    result_code: string;
+    token: string;
+}
+
+export interface ThreeDS1Result {
+    acs_url: string;
+    payer_auth_request: string;
+    callback_url: string;
+    merchant_data: string;
+}
+
 export interface SubInputDetail {
     /**
      * Configuration parameters for the required input.
