@@ -1,7 +1,7 @@
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender, createTimeout } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
-import { map, merge } from 'lodash';
+import { get, map, merge } from 'lodash';
 import { from, of, Observable } from 'rxjs';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
@@ -44,6 +44,7 @@ import { OfflinePaymentStrategy } from '../payment/strategies/offline';
 import {
     createShippingStrategyRegistry,
     ConsignmentActionCreator,
+    ConsignmentActionType,
     ConsignmentRequestSender,
     ShippingCountryActionCreator,
     ShippingCountryRequestSender,
@@ -52,6 +53,7 @@ import {
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 
+import Checkout from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutService from './checkout-service';
@@ -60,7 +62,7 @@ import CheckoutStoreErrorSelector from './checkout-store-error-selector';
 import CheckoutStoreSelector from './checkout-store-selector';
 import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 import CheckoutValidator from './checkout-validator';
-import { getCheckout, getCheckoutStoreState, getCheckoutWithCoupons } from './checkouts.mock';
+import { getCheckout, getCheckoutState, getCheckoutStoreState, getCheckoutWithCoupons, getCheckoutWithGiftCertificates, getCheckoutWithPayments } from './checkouts.mock';
 import createCheckoutStore from './create-checkout-store';
 
 describe('CheckoutService', () => {
@@ -308,6 +310,30 @@ describe('CheckoutService', () => {
                 .mockReturnValue(Promise.resolve(getResponse(getCheckoutWithCoupons())));
 
             await checkoutService.loadCheckout('abc');
+            await checkoutService.loadCheckout('abc');
+
+            expect(subscriber).toHaveBeenCalledTimes(1);
+        });
+
+        it('only calls subscriber when filters are matched', async () => {
+            const subscriber = jest.fn();
+
+            checkoutService.subscribe(
+                subscriber,
+                state => get(state.data.getCheckout(), 'payments')
+            );
+            subscriber.mockReset();
+
+            jest.spyOn(checkoutRequestSender, 'loadCheckout')
+                .mockReturnValue(Promise.resolve(getResponse(getCheckoutWithPayments())));
+
+            await checkoutService.loadCheckout('abc');
+
+            expect(subscriber).toHaveBeenCalledTimes(1);
+
+            jest.spyOn(checkoutRequestSender, 'loadCheckout')
+                .mockReturnValue(Promise.resolve(getResponse(getCheckoutWithCoupons())));
+
             await checkoutService.loadCheckout('abc');
 
             expect(subscriber).toHaveBeenCalledTimes(1);
