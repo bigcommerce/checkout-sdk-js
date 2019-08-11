@@ -13,8 +13,8 @@ export default interface CheckoutSelector {
     getCheckout(): Checkout | undefined;
     getGrandTotal(useStoreCredit?: boolean): number | undefined;
     getLoadError(): Error | undefined;
-    isLoading(): boolean;
     getUpdateError(): Error | undefined;
+    isLoading(): boolean;
     isUpdating(): boolean;
 }
 
@@ -91,14 +91,14 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
         error => () => error
     );
 
-    const isLoading = createSelector(
-        (state: CheckoutState) => state.statuses.isLoading,
-        isLoading => () => isLoading === true
-    );
-
     const getUpdateError = createSelector(
         (state: CheckoutState) => state.errors.updateError,
         error => () => error
+    );
+
+    const isLoading = createSelector(
+        (state: CheckoutState) => state.statuses.isLoading,
+        isLoading => () => isLoading === true
     );
 
     const isUpdating = createSelector(
@@ -133,8 +133,8 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
                 giftCertificates,
             }),
             getLoadError: getLoadError(state),
-            isLoading: isLoading(state),
             getUpdateError: getUpdateError(state),
+            isLoading: isLoading(state),
             isUpdating: isUpdating(state),
         };
     });
