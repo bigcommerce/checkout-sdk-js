@@ -69,7 +69,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             },
         };
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, requestOptions))
+        return this._store.dispatch(this._orderActionCreator.submitOrder({ payment: { methodId }, useStoreCredit }, requestOptions))
             .then<AffirmSuccessResponse>(() => {
                 _affirm.checkout(this._getCheckoutInformation());
 
@@ -95,7 +95,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    deinitialize(): Promise<InternalCheckoutSelectors> {
+    deinitialize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (this._affirm) {
             this._affirm = undefined;
         }
@@ -103,7 +103,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    finalize(): Promise<InternalCheckoutSelectors> {
+    finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 

@@ -158,11 +158,12 @@ describe('AffirmPaymentStrategy', () => {
                     ],
                 }};
 
+            const expectedPayload = { payment: { methodId: 'affirm' }, useStoreCredit: false };
+
             await strategy.execute(payload, options);
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ useStoreCredit: false }, options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expectedPayload, options);
             expect(affirm.checkout).toHaveBeenCalled();
             expect(affirm.checkout.open).toHaveBeenCalled();
             expect(affirm.ui.error.on).toHaveBeenCalled();
