@@ -527,7 +527,7 @@ export interface ThreeDS2DeviceFingerprintComponentOptions {
     onError(error: AdyenError): void;
 }
 
-export enum ThreeDS2ChanllengeWidgetSize {
+export enum ThreeDS2ChallengeWidgetSize {
     Small = '01',
     Medium = '02',
     Large = '03',
@@ -550,7 +550,7 @@ export enum ResultCode {
 
 export interface ThreeDS2ChallengeComponentOptions {
     challengeToken: string;
-    size?: ThreeDS2ChanllengeWidgetSize;
+    size?: ThreeDS2ChallengeWidgetSize;
     onComplete(fingerprintData: any): void;
     onError(error: AdyenError): void;
 }

@@ -1,4 +1,4 @@
-import { CardComponentOptions } from './adyenv2';
+import { CardComponentOptions, ThreeDS2ChallengeWidgetSize } from './adyenv2';
 
 /**
  * A set of options that are required to initialize the AdyenV2 payment method.
@@ -17,4 +17,9 @@ export default interface AdyenV2PaymentInitializeOptions {
      * Optional. Overwriting the default options
      */
     options?: CardComponentOptions;
+
+    /**
+     * Specify Three3DSChallenge Widget Size
+     */
+    threeDS2ChallengeWidgetSize?: ThreeDS2ChallengeWidgetSize;
 }

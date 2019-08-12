@@ -16,6 +16,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
+import { AdyenV2PaymentInitializeOptions } from '.';
 import {
     AdyenCardState,
     AdyenCheckout,
@@ -23,7 +24,7 @@ import {
     AdyenConfiguration,
     AdyenError,
     ResultCode,
-    ThreeDS2ChanllengeWidgetSize,
+    ThreeDS2ChallengeWidgetSize,
     ThreeDS2ComponentType,
     ThreeDS2Result
 } from './adyenv2';
@@ -31,9 +32,9 @@ import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
 export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     private _adyenCheckout?: AdyenCheckout;
-    private _containerId?: string;
     private _adyenComponent?: AdyenComponent;
-    private _stateContainer: string = '';
+    private _stateContainer?: string;
+    private _adyenv2?: AdyenV2PaymentInitializeOptions;
 
     constructor(
         private _store: CheckoutStore,
@@ -57,7 +58,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
-        this._containerId = adyenv2.containerId;
+        this._adyenv2 = adyenv2;
 
         const configuration: AdyenConfiguration = {
             environment:  paymentMethod.initializationData.environment,
@@ -77,7 +78,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         },
                     });
 
-                adyenComponent.mount(`#${this._containerId}`);
+                adyenComponent.mount(`#${adyenv2.containerId}`);
 
                 this._adyenComponent = adyenComponent;
 
@@ -97,7 +98,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 const paymentPayload = {
                     methodId: payment.methodId,
                     paymentData: {
-                        nonce: this._stateContainer,
+                        nonce: this._getStateContainer(),
                     },
                 };
 
@@ -124,7 +125,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         });
                 }
 
-                if (!some(error.body.three_ds_result, { result_code: ResultCode.ChallengeShopper })) {
+                if (!some(error.body.three_ds_result, { result_code: 'ChallengeShopper' })) {
 
                     return this._handle3DS2Challenge(error.body.three_ds_result, payment.methodId)
                         .then((payment: Payment) =>
@@ -165,7 +166,6 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     }
 
     private _handle3DS2Challenge(resultObject: ThreeDS2Result, paymentMethodId: string): Promise<Payment> {
-
         return new Promise((resolve, reject) => {
             if (!this._adyenCheckout) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -190,10 +190,10 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         resolve(paymentPayload);
                     },
                     onError: (error: AdyenError) => reject(error),
-                    size: ThreeDS2ChanllengeWidgetSize.Medium,
+                    size: this._getThreeDS2ChallengeWidgetSize(),
                 });
 
-            threeDS2Component.mount(`#${this._containerId}-3ds`);
+            threeDS2Component.mount(`#${this._getAdyenV2PaymentInitializeOptions().containerId}-3ds`);
         });
     }
 
@@ -225,7 +225,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     onError: (error: AdyenError) => reject(error),
                 });
 
-            threeDS2Component.mount(`#${this._containerId}-3ds`);
+            threeDS2Component.mount(`#${this._getAdyenV2PaymentInitializeOptions().containerId}-3ds`);
         });
     }
 
@@ -238,5 +238,29 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
             this._stateContainer = JSON.stringify(state, null, 2);
         }
+    }
+
+    private _getStateContainer(): string {
+        if (this._stateContainer) {
+            return this._stateContainer;
+        }
+
+        return '{}';
+    }
+
+    private _getThreeDS2ChallengeWidgetSize(): ThreeDS2ChallengeWidgetSize {
+        if (this._adyenv2 && this._adyenv2.threeDS2ChallengeWidgetSize) {
+            return this._adyenv2.threeDS2ChallengeWidgetSize;
+        }
+
+        return ThreeDS2ChallengeWidgetSize.Medium;
+    }
+
+    private _getAdyenV2PaymentInitializeOptions(): AdyenV2PaymentInitializeOptions {
+        if (!this._adyenv2) {
+            throw new InvalidArgumentError(' "options.adyen" argument was not provided during initialization.');
+        }
+
+        return this._adyenv2;
     }
 }
