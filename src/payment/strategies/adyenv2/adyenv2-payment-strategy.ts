@@ -125,7 +125,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         });
                 }
 
-                if (!some(error.body.three_ds_result, { result_code: 'ChallengeShopper' })) {
+                if (!some(error.body.three_ds_result, { result_code: ResultCode.ChallengeShopper })) {
 
                     return this._handle3DS2Challenge(error.body.three_ds_result, payment.methodId)
                         .then((payment: Payment) =>
