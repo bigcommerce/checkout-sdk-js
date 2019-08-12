@@ -249,8 +249,10 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     }
 
     private _getThreeDS2ChallengeWidgetSize(): ThreeDS2ChallengeWidgetSize {
-        if (this._adyenv2 && this._adyenv2.threeDS2ChallengeWidgetSize) {
-            return this._adyenv2.threeDS2ChallengeWidgetSize;
+        const { threeDS2ChallengeWidgetSize } = this._getAdyenV2PaymentInitializeOptions();
+
+        if (threeDS2ChallengeWidgetSize) {
+            return threeDS2ChallengeWidgetSize;
         }
 
         return ThreeDS2ChallengeWidgetSize.Medium;
