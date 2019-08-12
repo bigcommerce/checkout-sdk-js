@@ -53,7 +53,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const { payment, ...order } = payload;
+        const { payment } = payload;
         const { _zipClient: zipClient } = this;
         const useStoreCredit = !!payload.useStoreCredit;
 
@@ -65,7 +65,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+        return this._store.dispatch(this._orderActionCreator.submitOrder(payload, options))
             .then(() => this._store.dispatch(
                 this._remoteCheckoutActionCreator.initializePayment(payment.methodId, { useStoreCredit })
             ))

@@ -48,7 +48,6 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const methodId = payload.payment && payload.payment.methodId;
-        const { useStoreCredit } = payload;
         const { _affirm } = this;
 
         if (!_affirm) {
@@ -69,7 +68,7 @@ export default class AffirmPaymentStrategy implements PaymentStrategy {
             },
         };
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit }, requestOptions))
+        return this._store.dispatch(this._orderActionCreator.submitOrder(payload, requestOptions))
             .then<AffirmSuccessResponse>(() => {
                 _affirm.checkout(this._getCheckoutInformation());
 

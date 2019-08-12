@@ -144,7 +144,6 @@ describe('ZipPaymentStrategy', () => {
         });
 
         it('executes the strategy successfully and submits the payment', async () => {
-            const { payment, ...order } = orderRequestBody;
             const expectedPayment = {
                 methodId: 'zip',
                 paymentData: {
@@ -158,7 +157,7 @@ describe('ZipPaymentStrategy', () => {
             await strategy.execute(orderRequestBody, zipOptions);
 
             expect(remoteCheckoutActionCreator.initializePayment).toHaveBeenCalledWith(expectedPayment.methodId, { useStoreCredit: false });
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, zipOptions);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(orderRequestBody, zipOptions);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expectedPayment);
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);

@@ -162,7 +162,7 @@ describe('AffirmPaymentStrategy', () => {
 
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith({ useStoreCredit: false }, options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
             expect(affirm.checkout).toHaveBeenCalled();
             expect(affirm.checkout.open).toHaveBeenCalled();
             expect(affirm.ui.error.on).toHaveBeenCalled();
