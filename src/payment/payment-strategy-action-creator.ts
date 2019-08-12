@@ -1,5 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, empty, from, of, Observable, Observer } from 'rxjs';
+import { concat, defer, empty, of, Observable, Observer } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
@@ -150,7 +150,7 @@ export default class PaymentStrategyActionCreator {
     }
 
     widgetInteraction(method: () => Promise<any>, options?: PaymentRequestOptions): ThunkAction<PaymentStrategyWidgetAction> {
-        return store => Observable.create((observer: Observer<PaymentStrategyWidgetAction>) => {
+        return () => Observable.create((observer: Observer<PaymentStrategyWidgetAction>) => {
             const methodId = options && options.methodId;
             const meta = { methodId };
 

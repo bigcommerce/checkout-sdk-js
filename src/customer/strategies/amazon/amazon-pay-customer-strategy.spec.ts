@@ -19,6 +19,7 @@ import {
 } from '../../../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getRemoteTokenResponseBody } from '../../../remote-checkout/remote-checkout.mock';
+import CustomerStrategy from '../customer-strategy';
 
 import AmazonPayCustomerStrategy from './amazon-pay-customer-strategy';
 
@@ -32,7 +33,7 @@ describe('AmazonPayCustomerStrategy', () => {
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let remoteCheckoutRequestSender: RemoteCheckoutRequestSender;
     let scriptLoader: AmazonPayScriptLoader;
-    let strategy: AmazonPayCustomerStrategy;
+    let strategy: CustomerStrategy;
     let state: CheckoutStoreState;
     let store: CheckoutStore;
 
@@ -45,7 +46,7 @@ describe('AmazonPayCustomerStrategy', () => {
             const element = document.getElementById(container);
 
             if (element) {
-                element.addEventListener('authorize', event => {
+                element.addEventListener('authorize', _ => {
                     if (options.authorization) {
                         options.authorization();
                     }
@@ -87,7 +88,7 @@ describe('AmazonPayCustomerStrategy', () => {
         container.setAttribute('id', 'login');
         document.body.appendChild(container);
 
-        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
+        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((_, onReady) => {
             hostWindow.OffAmazonPayments = { Button: MockLoginButton } as any;
             hostWindow.amazon = { Login: MockLogin };
 

@@ -94,9 +94,7 @@ describe('StripeV3PaymentStrategy', () => {
             paymentMethodActionCreator,
             paymentActionCreator,
             orderActionCreator,
-            stripeScriptLoader,
-            paymentRequestSender,
-            paymentRequestTransformer
+            stripeScriptLoader
         );
     });
 

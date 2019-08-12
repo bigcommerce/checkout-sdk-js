@@ -8,7 +8,6 @@ import {
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { getCallbackUrl, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
@@ -67,7 +66,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
             .then(() => this._store.getState());
     }
 
-    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = undefined;
 
         if (this._signInButton && this._signInButton.parentNode) {
@@ -78,7 +77,7 @@ export default class MasterpassCustomerStrategy implements CustomerStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
             'In order to sign in via Masterpass, the shopper must click on "Masterpass" button.'
         );

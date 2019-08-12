@@ -57,7 +57,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.getState());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         if (this._unsubscribe) {
             this._unsubscribe();
         }
@@ -87,7 +87,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
             ));
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
@@ -99,7 +99,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
         const { methodId, klarna: { container, onLoad } } = options;
 
         return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => new Promise<KlarnaLoadResponse>((resolve, reject) => {
+            .then(state => new Promise<KlarnaLoadResponse>(resolve => {
                 const paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
 
                 if (!paymentMethod) {

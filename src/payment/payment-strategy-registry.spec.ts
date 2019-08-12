@@ -1,10 +1,8 @@
 import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../checkout';
 import { getConfigState } from '../config/configs.mock';
-import { OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 
 import { getAdyenAmex, getAmazonPay, getBankDeposit, getBraintree, getBraintreePaypal, getCybersource } from './payment-methods.mock';
-import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';
@@ -18,19 +16,19 @@ describe('PaymentStrategyRegistry', () => {
             private _store: CheckoutStore
         ) {}
 
-        execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        execute(): Promise<InternalCheckoutSelectors> {
             return Promise.resolve(this._store.getState());
         }
 
-        finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        finalize(): Promise<InternalCheckoutSelectors> {
             return Promise.reject(new OrderFinalizationNotRequiredError());
         }
 
-        initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        initialize(): Promise<InternalCheckoutSelectors> {
             return Promise.resolve(this._store.getState());
         }
 
-        deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+        deinitialize(): Promise<InternalCheckoutSelectors> {
             return Promise.resolve(this._store.getState());
         }
     }

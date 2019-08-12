@@ -6,7 +6,7 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import { PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
 import PaymentStrategy from '../payment-strategy';
 
@@ -56,11 +56,11 @@ export default class SagePayPaymentStrategy implements PaymentStrategy {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    initialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 }

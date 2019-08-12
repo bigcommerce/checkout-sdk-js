@@ -19,6 +19,6 @@ describe('omitDeep()', () => {
             ],
         };
 
-        expect(omitDeep(object, (value, key) => key === '$$key')).toEqual(expected);
+        expect(omitDeep(object, (_, key) => key === '$$key')).toEqual(expected);
     });
 });

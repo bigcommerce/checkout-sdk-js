@@ -10,7 +10,7 @@ import { getConsignments } from '../shipping/consignments.mock';
 import { getFlatRateOption } from '../shipping/internal-shipping-options.mock';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 
-import Payment, { CreditCardInstrument, ThreeDSVaultedInstrument, VaultedInstrument } from './payment';
+import Payment, { CreditCardInstrument, VaultedInstrument } from './payment';
 import { getAuthorizenet, getPaymentMethodsMeta } from './payment-methods.mock';
 import PaymentRequestBody from './payment-request-body';
 import PaymentResponseBody from './payment-response-body';

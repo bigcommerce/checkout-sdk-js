@@ -26,7 +26,7 @@ describe('CheckoutButtonStrategyActionCreator', () => {
     let store: CheckoutStore;
 
     class MockButtonStrategy implements CheckoutButtonStrategy {
-        initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
+        initialize(): Promise<void> {
             return Promise.resolve();
         }
 

@@ -354,9 +354,7 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             paymentActionCreator,
             orderActionCreator,
-            new StripeScriptLoader(scriptLoader),
-            paymentRequestSender,
-            paymentRequestTransformer
+            new StripeScriptLoader(scriptLoader)
         )
     );
 

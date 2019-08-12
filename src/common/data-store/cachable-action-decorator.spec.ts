@@ -12,13 +12,13 @@ describe('cachableActionDecorator()', () => {
         ) {}
 
         @cachableAction
-        loadMessage(name: string, options?: ActionOptions): Observable<Action> {
+        loadMessage(name: string, _options?: ActionOptions): Observable<Action> {
             return from(this._fetch(name))
                 .pipe(map(response => createAction('GET_MESSAGE', response)));
         }
 
         @cachableAction
-        loadUppercaseMessage(name: string, options?: ActionOptions): Observable<Action> {
+        loadUppercaseMessage(name: string, _options?: ActionOptions): Observable<Action> {
             return from(this._fetch(name))
                 .pipe(map(response => createAction('GET_UPPERCASE_MESSAGE', response.toUpperCase())));
         }

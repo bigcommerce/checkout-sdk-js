@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 
 import { getAmazonPay } from '../../payment-methods.mock';
 
-import AmazonPayLogin, { AmazonPayLoginOptions } from './amazon-pay-login';
+import AmazonPayLogin from './amazon-pay-login';
 import AmazonPayScriptLoader from './amazon-pay-script-loader';
 import AmazonPayWindow from './amazon-pay-window';
 
@@ -15,7 +15,7 @@ describe('AmazonPayScriptLoader', () => {
     let setUseCookieSpy: jest.Mock;
 
     const MockLogin: AmazonPayLogin = {
-        authorize(options: AmazonPayLoginOptions, redirectUrl: string): void {},
+        authorize(): void {},
 
         setClientId(clientId: string): void {
             setClientIdSpy(clientId);

@@ -175,7 +175,7 @@ describe('ChasePayCustomerStrategy', () => {
         });
 
         it('registers the start and complete callbacks', async () => {
-            JPMC.ChasePay.on = jest.fn((type, callback) => callback);
+            JPMC.ChasePay.on = jest.fn((_, callback) => callback);
 
             await strategy.initialize(chasePayOptions);
 

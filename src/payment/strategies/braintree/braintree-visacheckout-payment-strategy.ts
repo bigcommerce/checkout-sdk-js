@@ -76,7 +76,7 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
                             .then(() => onPaymentSelect())
                             .catch(error => onError(error))
                     );
-                    visaCheckout.on('payment.error', (payment, error) => onError(error));
+                    visaCheckout.on('payment.error', (_, error) => onError(error));
                 });
             })
             .then(() => this._store.getState());
@@ -102,11 +102,11 @@ export default class BraintreeVisaCheckoutPaymentStrategy implements PaymentStra
             .catch((error: Error) => this._handleError(error));
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         return this._braintreeVisaCheckoutPaymentProcessor.deinitialize()
             .then(() => this._store.getState());
     }

@@ -30,10 +30,10 @@ describe('InstrumentRequestSender', () => {
         requestSender = createRequestSender();
 
         client = {
-            getVaultAccessToken: jest.fn((payload, callback) => callback()),
-            loadInstruments: jest.fn((payload, callback) => callback()),
-            loadInstrumentsWithAddress: jest.fn((payload, callback) => callback()),
-            deleteShopperInstrument: jest.fn((payload, callback) => callback()),
+            getVaultAccessToken: jest.fn((_, callback) => callback()),
+            loadInstruments: jest.fn((_, callback) => callback()),
+            loadInstrumentsWithAddress: jest.fn((_, callback) => callback()),
+            deleteShopperInstrument: jest.fn((_, callback) => callback()),
         };
 
         jest.spyOn(requestSender, 'get').mockReturnValue(Promise.resolve());
@@ -78,7 +78,7 @@ describe('InstrumentRequestSender', () => {
 
     describe('#loadInstruments()', () => {
         it('returns instruments if request is successful', async () => {
-            client.loadInstruments = jest.fn((payload, callback) => callback(null,
+            client.loadInstruments = jest.fn((_, callback) => callback(null,
                 getPaymentResponse(getInternalInstrumentsResponseBody())
             ));
 
@@ -96,7 +96,7 @@ describe('InstrumentRequestSender', () => {
         });
 
         it('returns error response if request is unsuccessful', async () => {
-            client.loadInstruments = jest.fn((payload, callback) => callback(
+            client.loadInstruments = jest.fn((_, callback) => callback(
                 getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request')
             ));
 
@@ -109,7 +109,7 @@ describe('InstrumentRequestSender', () => {
         });
 
         it('returns loads trusted instruments if shipping address is available', async () => {
-            client.loadInstrumentsWithAddress = jest.fn((payload, callback) => callback(null,
+            client.loadInstrumentsWithAddress = jest.fn((_, callback) => callback(null,
                 getPaymentResponse(getInternalInstrumentsResponseBody())
             ));
 
@@ -128,7 +128,7 @@ describe('InstrumentRequestSender', () => {
         });
 
         it('returns error response if request is unsuccessful when passing shipping address', async () => {
-            client.loadInstrumentsWithAddress = jest.fn((payload, callback) => callback(
+            client.loadInstrumentsWithAddress = jest.fn((_, callback) => callback(
                 getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request')
             ));
 
@@ -143,7 +143,7 @@ describe('InstrumentRequestSender', () => {
 
     describe('#deleteInstrument()', () => {
         it('deletes an instrument if request is successful', async () => {
-            client.deleteShopperInstrument = jest.fn((payload, callback) => callback(null,
+            client.deleteShopperInstrument = jest.fn((_, callback) => callback(null,
                 getPaymentResponse(deleteInstrumentResponseBody())
             ));
 
@@ -158,7 +158,7 @@ describe('InstrumentRequestSender', () => {
         });
 
         it('returns error response if request is unsuccessful', async () => {
-            client.deleteShopperInstrument = jest.fn((payload, callback) => callback(
+            client.deleteShopperInstrument = jest.fn((_, callback) => callback(
                 getPaymentResponse(getErrorInstrumentResponseBody(), {}, 400, 'Bad Request')
             ));
 

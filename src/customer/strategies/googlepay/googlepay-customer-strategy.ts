@@ -5,7 +5,6 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { bindDecorator as bind } from '../../../common/utility';
 import { GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
@@ -37,7 +36,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             .then(() => this._store.getState());
     }
 
-    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         if (this._walletButton && this._walletButton.parentNode) {
             this._walletButton.parentNode.removeChild(this._walletButton);
             this._walletButton = undefined;
@@ -47,7 +46,7 @@ export default class GooglePayCustomerStrategy implements CustomerStrategy {
             .then(() => this._store.getState());
     }
 
-    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
             'In order to sign in via Google Pay, the shopper must click on "Google Pay" button.'
         );

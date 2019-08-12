@@ -6,7 +6,7 @@ import { NotEmbeddableError } from './errors';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 jest.mock('iframe-resizer', () => ({
-    iframeResizer: jest.fn((options: IFrameOptions, element: HTMLIFrameElement) => {
+    iframeResizer: jest.fn((_: IFrameOptions, element: HTMLIFrameElement) => {
         (element as IFrameComponent).iFrameResizer = {} as IFrameObject;
 
         return [element];

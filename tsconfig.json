@@ -11,6 +11,8 @@
         ],
         "module": "es6",
         "moduleResolution": "node",
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
         "skipLibCheck": true,
         "sourceMap": true,
         "strict": true,

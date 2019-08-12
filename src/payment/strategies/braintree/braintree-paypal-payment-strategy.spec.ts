@@ -17,6 +17,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentMethodActionType } from '../../payment-method-actions';
 import { getBraintreePaypal } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
+import PaymentStrategy from '../payment-strategy';
 
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
@@ -26,7 +27,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
     let paymentActionCreator: PaymentActionCreator;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let braintreePaymentProcessorMock: BraintreePaymentProcessor;
-    let braintreePaypalPaymentStrategy: BraintreePaypalPaymentStrategy;
+    let braintreePaypalPaymentStrategy: PaymentStrategy;
     let paymentMethodMock: PaymentMethod;
     let loadPaymentMethodAction: Observable<Action>;
     let store: CheckoutStore;

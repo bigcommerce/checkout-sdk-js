@@ -3,7 +3,6 @@ import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotImplem
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { AmazonPayLoginButton, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
-import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
@@ -57,13 +56,13 @@ export default class AmazonPayCustomerStrategy implements CustomerStrategy {
             .then(() => this._store.getState());
     }
 
-    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = undefined;
 
         return Promise.resolve(this._store.getState());
     }
 
-    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
             'In order to sign in via AmazonPay, the shopper must click on "Login with Amazon" button.'
         );

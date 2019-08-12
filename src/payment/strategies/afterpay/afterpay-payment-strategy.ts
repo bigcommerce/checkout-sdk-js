@@ -42,7 +42,7 @@ export default class AfterpayPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.getState());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         if (this._afterpaySdk) {
             this._afterpaySdk = undefined;
         }

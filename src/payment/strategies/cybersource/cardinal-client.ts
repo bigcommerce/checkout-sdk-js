@@ -106,7 +106,7 @@ export default class CardinalClient {
         return this._getClientSDK()
             .then(client => {
                 return new Promise<ThreeDSecureToken>((resolve, reject) => {
-                    client.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
+                    client.on(CardinalEventType.Validated, (_: CardinalValidatedData, jwt: string) => {
                         client.off(CardinalEventType.Validated);
                         if (!jwt) {
                             reject(new StandardError('User failed authentication or an error was encountered while processing the transaction.'));

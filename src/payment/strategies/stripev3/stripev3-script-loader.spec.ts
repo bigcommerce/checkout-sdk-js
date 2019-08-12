@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { StripeHostWindow, StripeV3JsOptions } from './stripev3';
+import { StripeHostWindow } from './stripev3';
 import StripeV3ScriptLoader from './stripev3-script-loader';
 import { getStripeV3JsMock } from './stripev3.mock';
 
@@ -22,9 +22,7 @@ describe('StripeV3PayScriptLoader', () => {
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
-                mockWindow.Stripe = jest.fn(
-                    (publishableKey: string, options: StripeV3JsOptions) => stripeV3JsMock
-                );
+                mockWindow.Stripe = jest.fn(() => stripeV3JsMock);
 
                 return Promise.resolve();
             });

@@ -22,11 +22,11 @@ export default class DefaultShippingStrategy implements ShippingStrategy {
         );
     }
 
-    initialize(options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+    initialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    deinitialize(options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 }

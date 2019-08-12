@@ -1,8 +1,7 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { NotImplementedError } from '../../../common/error/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import CustomerCredentials from '../../customer-credentials';
-import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
+import { CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategy from '../customer-strategy';
 
 export default class SquareCustomerStrategy implements CustomerStrategy {
@@ -12,7 +11,7 @@ export default class SquareCustomerStrategy implements CustomerStrategy {
         private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator
     ) {}
 
-    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
             'In order to sign in via Masterpass, the shopper must click on "Masterpass" button.'
         );
@@ -31,11 +30,11 @@ export default class SquareCustomerStrategy implements CustomerStrategy {
         );
     }
 
-    initialize(options?: CustomerInitializeOptions): Promise<InternalCheckoutSelectors> {
+    initialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 }

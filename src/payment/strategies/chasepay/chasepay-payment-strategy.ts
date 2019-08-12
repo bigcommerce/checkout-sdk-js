@@ -58,7 +58,7 @@ export default class ChasePayPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.getState());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         if (this._walletButton) {
             this._walletButton.removeEventListener('click', this._handleWalletButtonClick);
         }
@@ -84,7 +84,7 @@ export default class ChasePayPaymentStrategy implements PaymentStrategy {
             );
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 

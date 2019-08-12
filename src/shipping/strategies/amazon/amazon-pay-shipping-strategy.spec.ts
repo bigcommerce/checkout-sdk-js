@@ -89,7 +89,7 @@ describe('AmazonPayShippingStrategy', () => {
         container.setAttribute('id', 'addressBook');
         document.body.appendChild(container);
 
-        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
+        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((_, onReady) => {
             hostWindow.OffAmazonPayments = { Widgets: { AddressBook: MockAddressBook } } as any;
 
             onReady();

@@ -10,7 +10,7 @@ import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '.
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import isCreditCardLike from '../../is-credit-card-like';
 import isVaultedInstrument from '../../is-vaulted-instrument';
-import { CreditCardInstrument, VaultedInstrument } from '../../payment';
+import { CreditCardInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -66,11 +66,11 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
             this._placeOrder(order, payment, options);
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
