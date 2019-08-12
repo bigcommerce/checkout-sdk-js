@@ -109,13 +109,13 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     return Promise.reject(error);
                 }
 
-                if (some(error.body.three_ds_result, { result_code: ResultCode.IdentifyShopper })) {
+                if (error.body.three_ds_result.result_code === ResultCode.IdentifyShopper) {
 
                     return this._handle3DS2Fingerprint(error.body.three_ds_result, payment.methodId)
                         .then((payment: Payment) =>
                             this._store.dispatch(this._paymentActionCreator.submitPayment(payment)))
                         .catch(error => {
-                            if (!some(error.body.three_ds_result, { result_code: ResultCode.ChallengeShopper })) {
+                            if (error.body.three_ds_result.result_code === ResultCode.ChallengeShopper) {
                                 return this._handle3DS2Challenge(error.body.three_ds_result, payment.methodId)
                                     .then((payment: Payment) =>
                                         this._store.dispatch(this._paymentActionCreator.submitPayment(payment)));
@@ -125,7 +125,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         });
                 }
 
-                if (some(error.body.three_ds_result, { result_code: ResultCode.ChallengeShopper })) {
+                if (error.body.three_ds_result.result_code === ResultCode.ChallengeShopper) {
 
                     return this._handle3DS2Challenge(error.body.three_ds_result, payment.methodId)
                         .then((payment: Payment) =>
