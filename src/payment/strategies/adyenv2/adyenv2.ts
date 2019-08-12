@@ -527,9 +527,30 @@ export interface ThreeDS2DeviceFingerprintComponentOptions {
     onError(error: AdyenError): void;
 }
 
+export enum ThreeDS2ChanllengeWidgetSize {
+    Small = '01',
+    Medium = '02',
+    Large = '03',
+    ExtraLarge = '04',
+    Full = '05',
+}
+
+export enum ResultCode {
+    AuthenticationFinished = 'AuthenticationFinished',
+    Authorised = 'Authorised',
+    Cancelled = 'Cancelled',
+    ChallengeShopper = 'ChallengeShopper',
+    Error = 'Error',
+    IdentifyShopper = 'IdentifyShopper',
+    Pending = 'Pending',
+    Received = 'Received',
+    RedirectShopper = 'RedirectShopper',
+    Refused = 'Refused',
+}
+
 export interface ThreeDS2ChallengeComponentOptions {
     challengeToken: string;
-    size?: string;
+    size?: ThreeDS2ChanllengeWidgetSize;
     onComplete(fingerprintData: any): void;
     onError(error: AdyenError): void;
 }

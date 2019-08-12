@@ -22,6 +22,8 @@ import {
     AdyenComponent,
     AdyenConfiguration,
     AdyenError,
+    ResultCode,
+    ThreeDS2ChanllengeWidgetSize,
     ThreeDS2ComponentType,
     ThreeDS2Result
 } from './adyenv2';
@@ -43,7 +45,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const adyenv2 = options.adyenv2;
+        const { adyenv2 } = options;
 
         if (!adyenv2) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.adyen" argument is not provided.');
@@ -70,7 +72,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
                 const adyenComponent = this._adyenCheckout.create(paymentMethod.method, {
                         ...adyenv2.options,
-                        onChange: (state: any, component: any) => {
+                        onChange: (state: AdyenCardState, component: AdyenComponent) => {
                             this._updateStateContainer(state);
                         },
                     });
@@ -106,23 +108,27 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     return Promise.reject(error);
                 }
 
-                if (!some(error.body.three_ds_result, { result_code: 'IdentifyShopper' })) {
-                    return this._handle3DS2Fingerprint(error.body.three_ds_result, payment)
+                if (!some(error.body.three_ds_result, { result_code: ResultCode.IdentifyShopper })) {
+
+                    return this._handle3DS2Fingerprint(error.body.three_ds_result, payment.methodId)
                         .then((payment: Payment) =>
-                            this._store.dispatch(this._paymentActionCreator.submitPayment(payment))
-                                .catch(error => {
-                                    if (!some(error.body.three_ds_result, { result_code: 'ChallengeShopper' })) {
-                                        return this._handle3DS2Challenge(error.body.three_ds_result, payment)
-                                            .then((payment: Payment) =>  this._store.dispatch(this._paymentActionCreator.submitPayment(payment)));
-                                    }
-                        }));
+                            this._store.dispatch(this._paymentActionCreator.submitPayment(payment)))
+                        .catch(error => {
+                            if (!some(error.body.three_ds_result, { result_code: ResultCode.ChallengeShopper })) {
+                                return this._handle3DS2Challenge(error.body.three_ds_result, payment.methodId)
+                                    .then((payment: Payment) =>
+                                        this._store.dispatch(this._paymentActionCreator.submitPayment(payment)));
+                            }
+
+                            return Promise.reject(error);
+                        });
                 }
 
-                if (!some(error.body.three_ds_result, { result_code: 'ChallengeShopper' })) {
+                if (!some(error.body.three_ds_result, { result_code: ResultCode.ChallengeShopper })) {
 
-                    return this._handle3DS2Challenge(error.body.three_ds_result, payment)
-                        .then(response =>
-                            this._store.dispatch(this._paymentActionCreator.submitPayment(response)));
+                    return this._handle3DS2Challenge(error.body.three_ds_result, payment.methodId)
+                        .then((payment: Payment) =>
+                            this._store.dispatch(this._paymentActionCreator.submitPayment(payment)));
                 }
 
                 return new Promise(() => {
@@ -158,50 +164,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         return storeConfig.storeProfile.storeLanguage;
     }
 
-    private _updateStateContainer(newState: AdyenCardState) {
-        if (newState.isValid) {
-            const state = {
-                ...newState.data.paymentMethod,
-                origin: window.location.origin,
-            };
-
-            this._stateContainer = JSON.stringify(state, null, 2);
-        }
-    }
-
-    private _handle3DS2Fingerprint(resultObject: ThreeDS2Result, payment: any): Promise<Payment> {
-
-        return new Promise((resolve, reject) => {
-            if (!this._adyenCheckout) {
-                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-            }
-
-            const threeDS2Component = this._adyenCheckout
-                .create(ThreeDS2ComponentType.ThreeDS2DeviceFingerprint, {
-                    fingerprintToken: resultObject.token,
-                    onComplete: (fingerprintData: any) => {
-                        const fingerprintPaymentPayload = {
-                            ...fingerprintData.data,
-                            paymentData: resultObject.payment_data,
-                        };
-
-                        const paymentPayload = {
-                            methodId: payment.methodId,
-                            paymentData: {
-                                nonce: JSON.stringify(fingerprintPaymentPayload, null, 2),
-                            },
-                        };
-
-                        resolve(paymentPayload);
-                    },
-                    onError: (error: AdyenError) => reject(error),
-                });
-
-            threeDS2Component.mount(`#${this._containerId}-3ds`);
-        });
-    }
-
-    private _handle3DS2Challenge(resultObject: ThreeDS2Result, payment: any): Promise<Payment> {
+    private _handle3DS2Challenge(resultObject: ThreeDS2Result, paymentMethodId: string): Promise<Payment> {
 
         return new Promise((resolve, reject) => {
             if (!this._adyenCheckout) {
@@ -218,7 +181,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         };
 
                         const paymentPayload = {
-                            methodId: payment.methodId,
+                            methodId: paymentMethodId,
                             paymentData: {
                                 nonce: JSON.stringify(challengePaymentPayload, null, 2),
                             },
@@ -227,10 +190,53 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         resolve(paymentPayload);
                     },
                     onError: (error: AdyenError) => reject(error),
-                    size: '01',
+                    size: ThreeDS2ChanllengeWidgetSize.Medium,
                 });
 
             threeDS2Component.mount(`#${this._containerId}-3ds`);
         });
+    }
+
+    private _handle3DS2Fingerprint(resultObject: ThreeDS2Result, paymentMethodId: string): Promise<Payment> {
+
+        return new Promise((resolve, reject) => {
+            if (!this._adyenCheckout) {
+                throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+            }
+
+            const threeDS2Component = this._adyenCheckout
+                .create(ThreeDS2ComponentType.ThreeDS2DeviceFingerprint, {
+                    fingerprintToken: resultObject.token,
+                    onComplete: (fingerprintData: any) => {
+                        const fingerprintPaymentPayload = {
+                            ...fingerprintData.data,
+                            paymentData: resultObject.payment_data,
+                        };
+
+                        const paymentPayload = {
+                            methodId: paymentMethodId,
+                            paymentData: {
+                                nonce: JSON.stringify(fingerprintPaymentPayload, null, 2),
+                            },
+                        };
+
+                        resolve(paymentPayload);
+                    },
+                    onError: (error: AdyenError) => reject(error),
+                });
+
+            threeDS2Component.mount(`#${this._containerId}-3ds`);
+        });
+    }
+
+    private _updateStateContainer(newState: AdyenCardState) {
+        if (newState.isValid) {
+            const state = {
+                ...newState.data.paymentMethod,
+                origin: window.location.origin,
+            };
+
+            this._stateContainer = JSON.stringify(state, null, 2);
+        }
     }
 }
