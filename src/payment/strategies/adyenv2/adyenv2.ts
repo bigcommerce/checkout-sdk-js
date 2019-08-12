@@ -158,10 +158,16 @@ export interface InputDetail {
     value?: string;
 }
 
+export enum ThreeDS2ComponentType {
+    ThreeDS2DeviceFingerprint = 'threeDS2DeviceFingerprint',
+    ThreeDS2Challenge = 'threeDS2Challenge',
+}
+
 export interface ThreeDS2Result {
-    result_code: string;
     payment_data: string;
+    result_code: string;
     token: string;
+    type: string;
 }
 
 export interface ThreeDS1Result {
@@ -443,7 +449,8 @@ export interface AdyenComponent {
 }
 
 export interface AdyenCheckout {
-    create(type: string, componentOptions?: CardComponentOptions | ThreeDS2DeviceFingerprintComponentOptions): AdyenComponent;
+    create(type: string, componentOptions?: CardComponentOptions |
+        ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions): AdyenComponent;
 }
 
 export interface CardComponentOptions {
@@ -516,6 +523,13 @@ export interface AdyenCardPaymentMethodState {
 }
 export interface ThreeDS2DeviceFingerprintComponentOptions {
     fingerprintToken: string;
+    onComplete(fingerprintData: any): void;
+    onError(error: AdyenError): void;
+}
+
+export interface ThreeDS2ChallengeComponentOptions {
+    challengeToken: string;
+    size?: string;
     onComplete(fingerprintData: any): void;
     onError(error: AdyenError): void;
 }
