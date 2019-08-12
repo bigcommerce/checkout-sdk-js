@@ -167,7 +167,6 @@ export interface ThreeDS2Result {
     payment_data: string;
     result_code: string;
     token: string;
-    type: string;
 }
 
 export interface ThreeDS1Result {
