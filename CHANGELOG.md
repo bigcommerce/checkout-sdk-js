@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.32.1"></a>
+## [1.32.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.32.0...v1.32.1) (2019-08-12)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-4321 Fix getters not returning previous cloned objects that are nested inside another even when they are unchanged. ([277a8fe](https://github.com/bigcommerce/checkout-sdk-js/commit/277a8fe))
+
+
+
 <a name="1.32.0"></a>
 # [1.32.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.31.1...v1.32.0) (2019-08-08)
 
