@@ -75,9 +75,9 @@ describe('KlarnaPaymentStrategy', () => {
         );
 
         klarnaCredit = {
-            authorize: jest.fn((data, callback) => callback({ approved: true, authorization_token: 'bar' })),
+            authorize: jest.fn((_, callback) => callback({ approved: true, authorization_token: 'bar' })),
             init: jest.fn(() => {}),
-            load: jest.fn((options, callback) => callback({ show_form: true })),
+            load: jest.fn((_, callback) => callback({ show_form: true })),
         };
 
         paymentMethod = getKlarna();
@@ -235,7 +235,7 @@ describe('KlarnaPaymentStrategy', () => {
         describe('when klarna authorization is not approved', () => {
             beforeEach(() => {
                 klarnaCredit.authorize = jest.fn(
-                    (params, callback) => callback({ approved: false, show_form: true })
+                    (_, callback) => callback({ approved: false, show_form: true })
                 );
             });
 
@@ -255,7 +255,7 @@ describe('KlarnaPaymentStrategy', () => {
         describe('when klarna authorization fails', () => {
             beforeEach(() => {
                 klarnaCredit.authorize = jest.fn(
-                    (params, callback) => callback({ approved: false })
+                    (_, callback) => callback({ approved: false })
                 );
             });
 

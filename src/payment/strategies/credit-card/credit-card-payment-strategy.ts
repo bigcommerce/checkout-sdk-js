@@ -27,15 +27,15 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
             );
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    initialize(options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    initialize(_options?: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(_options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         return Promise.resolve(this._store.getState());
     }
 }

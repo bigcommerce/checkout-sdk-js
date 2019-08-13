@@ -185,7 +185,7 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('registers the start and complete callbacks', async () => {
-            JPMC.ChasePay.on = jest.fn((type, callback) => callback);
+            JPMC.ChasePay.on = jest.fn((_, callback) => callback);
 
             await strategy.initialize(chasePayOptions);
 
@@ -199,7 +199,7 @@ describe('ChasePayPaymentStrategy', () => {
 
             jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve());
 
-            JPMC.ChasePay.on = jest.fn((type, callback) => callback(payload));
+            JPMC.ChasePay.on = jest.fn((_, callback) => callback(payload));
 
             await strategy.initialize(chasePayOptions);
 
@@ -208,7 +208,7 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('registers the start and cancel callbacks', async () => {
-            JPMC.ChasePay.on = jest.fn((type, callback) => callback);
+            JPMC.ChasePay.on = jest.fn((_, callback) => callback);
 
             await strategy.initialize(chasePayOptions);
 

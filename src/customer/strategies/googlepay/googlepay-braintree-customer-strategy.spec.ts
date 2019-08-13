@@ -15,6 +15,7 @@ import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 import { getCustomerState } from '../../customers.mock';
+import CustomerStrategy from '../customer-strategy';
 
 import { getBraintreeCustomerInitializeOptions, Mode } from './googlepay-customer-mock';
 import GooglePayCustomerStrategy from './googlepay-customer-strategy';
@@ -28,7 +29,7 @@ describe('GooglePayCustomerStrategy', () => {
     let remoteCheckoutActionCreator: RemoteCheckoutActionCreator;
     let requestSender: RequestSender;
     let store: CheckoutStore;
-    let strategy: GooglePayCustomerStrategy;
+    let strategy: CustomerStrategy;
     let walletButton: HTMLAnchorElement;
 
     beforeEach(() => {
@@ -185,7 +186,6 @@ describe('GooglePayCustomerStrategy', () => {
     });
 
     describe('#signIn()', () => {
-
         it('throws error if trying to sign in programmatically', async () => {
             customerInitializeOptions = getBraintreeCustomerInitializeOptions();
 

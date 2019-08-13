@@ -150,14 +150,14 @@ describe('AmazonPayPaymentStrategy', () => {
         container.setAttribute('id', 'wallet');
         document.body.appendChild(container);
 
-        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((method, onReady) => {
+        jest.spyOn(scriptLoader, 'loadWidget').mockImplementation((_, onReady) => {
             hostWindow.OffAmazonPayments = {
                 Button: {} as AmazonPayLoginButtonConstructor,
                 Widgets: {
                     AddressBook: {} as AmazonPayAddressBookConstructor,
                     Wallet: MockWallet,
                 },
-                initConfirmationFlow: jest.fn((sellerId, referenceId, confirmationFlow) => {}),
+                initConfirmationFlow: jest.fn(() => {}),
             } as OffAmazonPayments;
 
             onReady();
@@ -531,7 +531,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         it('redirects to confirmation flow success when support 3ds', async () => {
             if (hostWindow.OffAmazonPayments) {
-                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((sellerId, referenceId, callback) => {
+                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((_sellerId, _referenceId, callback) => {
                     callback(amazonConfirmationFlow);
                 });
 
@@ -551,7 +551,7 @@ describe('AmazonPayPaymentStrategy', () => {
                         throw new StandardError('error');
                     });
 
-                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((sellerId, referenceId, callback) => {
+                hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((_sellerId, _referenceId, callback) => {
                     callback(amazonConfirmationFlow).catch((error: StandardError) => {
                         expect(error).toBeInstanceOf(StandardError);
                     });

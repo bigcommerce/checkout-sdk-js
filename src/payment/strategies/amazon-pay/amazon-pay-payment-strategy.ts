@@ -74,7 +74,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.getState());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         this._walletOptions = undefined;
 
         return Promise.resolve(this._store.getState());
@@ -123,7 +123,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
@@ -235,7 +235,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
     }
 
     private _processPaymentWith3ds(sellerId: string, referenceId: string, methodId: string, useStoreCredit: boolean, options: PaymentRequestOptions): Promise<never> {
-        return new Promise((resolve, reject) => {
+        return new Promise((_, reject) => {
             if (!this._window.OffAmazonPayments) {
                 return reject(new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized));
             }

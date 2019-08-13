@@ -18,8 +18,6 @@ import { HostedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
-import PaymentRequestSender from '../../payment-request-sender';
-import PaymentRequestTransformer from '../../payment-request-transformer';
 import PaymentStrategy from '../payment-strategy';
 
 import {
@@ -42,9 +40,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _orderActionCreator: OrderActionCreator,
-        private _stripeScriptLoader: StripeV3ScriptLoader,
-        private _paymentRequestSender: PaymentRequestSender,
-        private _paymentRequestTransformer: PaymentRequestTransformer
+        private _stripeScriptLoader: StripeV3ScriptLoader
     ) {}
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
@@ -137,11 +133,11 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
             });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         if (this._cardElement) {
             this._cardElement.unmount();
         }

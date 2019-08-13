@@ -78,7 +78,7 @@ describe('BraintreePaymentProcessor', () => {
             braintreePaymentProcessor.initialize('clientToken', {
                 threeDSecure: {
                     ...getThreeDSecureOptionsMock(),
-                    addFrame: (error, iframe, cancel) => {
+                    addFrame: (_error, _iframe, cancel) => {
                         cancelVerifyCard = cancel;
                     },
                 },

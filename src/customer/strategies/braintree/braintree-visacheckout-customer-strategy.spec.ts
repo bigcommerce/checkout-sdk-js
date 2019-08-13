@@ -157,7 +157,7 @@ describe('BraintreeVisaCheckoutCustomerStrategy', () => {
         });
 
         it('registers the error and success callbacks', async () => {
-            visaCheckoutSDK.on = jest.fn((type, callback) => callback());
+            visaCheckoutSDK.on = jest.fn((_, callback) => callback());
             await strategy.initialize(visaCheckoutOptions);
 
             expect(visaCheckoutSDK.on).toHaveBeenCalledWith('payment.success', expect.any(Function));

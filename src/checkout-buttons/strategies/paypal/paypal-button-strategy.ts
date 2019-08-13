@@ -60,7 +60,7 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
                         shape: 'rect',
                         ...pick(paypalOptions.style, 'layout', 'size', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
                     },
-                    payment: (data, actions) => this._setupPayment(merchantId, actions, paypalOptions.onPaymentError),
+                    payment: (_, actions) => this._setupPayment(merchantId, actions, paypalOptions.onPaymentError),
                     onAuthorize: (data, actions) => this._tokenizePayment(data, actions, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
                 }, options.containerId);
             });
@@ -102,7 +102,7 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
         data: PaypalAuthorizeData,
         actions?: PaypalActions,
         shouldProcessPayment?: boolean,
-        onError?: (error: StandardError) => void
+        _onError?: (error: StandardError) => void // FIXME: This parameter seems to be unused
     ): Promise<void> {
         if (!this._paymentMethod) {
             throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);

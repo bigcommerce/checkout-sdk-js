@@ -2,7 +2,7 @@ import cacheAction from './cache-action';
 import isActionOptions from './is-action-options';
 
 export default function cachableActionDecorator<TMethod extends (...args: any[]) => any>(
-    target: object,
+    _: object,
     key: string,
     descriptor: TypedPropertyDescriptor<TMethod>
 ): TypedPropertyDescriptor<TMethod> {

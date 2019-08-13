@@ -44,7 +44,6 @@ import { OfflinePaymentStrategy } from '../payment/strategies/offline';
 import {
     createShippingStrategyRegistry,
     ConsignmentActionCreator,
-    ConsignmentActionType,
     ConsignmentRequestSender,
     ShippingCountryActionCreator,
     ShippingCountryRequestSender,
@@ -53,16 +52,12 @@ import {
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 
-import Checkout from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
 import CheckoutService from './checkout-service';
 import CheckoutStore from './checkout-store';
-import CheckoutStoreErrorSelector from './checkout-store-error-selector';
-import CheckoutStoreSelector from './checkout-store-selector';
-import CheckoutStoreStatusSelector from './checkout-store-status-selector';
 import CheckoutValidator from './checkout-validator';
-import { getCheckout, getCheckoutState, getCheckoutStoreState, getCheckoutWithCoupons, getCheckoutWithGiftCertificates, getCheckoutWithPayments } from './checkouts.mock';
+import { getCheckout, getCheckoutStoreState, getCheckoutWithCoupons, getCheckoutWithPayments } from './checkouts.mock';
 import createCheckoutStore from './create-checkout-store';
 
 describe('CheckoutService', () => {

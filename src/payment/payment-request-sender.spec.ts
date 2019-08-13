@@ -8,7 +8,7 @@ describe('PaymentRequestSender', () => {
     describe('#submitPayment()', () => {
         beforeEach(() => {
             bigpayClient = {
-                submitPayment: jest.fn((payload, callback) => callback(null, {
+                submitPayment: jest.fn((_, callback) => callback(null, {
                     data: getPaymentResponseBody(),
                     status: 200,
                     statusText: 'OK',
@@ -37,7 +37,7 @@ describe('PaymentRequestSender', () => {
         });
 
         it('returns error response if submission is unsuccessful', async () => {
-            bigpayClient.submitPayment = jest.fn((payload, callback) => callback({
+            bigpayClient.submitPayment = jest.fn((_, callback) => callback({
                 data: getErrorPaymentResponseBody(),
                 status: 400,
                 statusText: 'Bad Request',

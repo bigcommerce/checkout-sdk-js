@@ -31,7 +31,7 @@ export function cloneClassDecorator<T extends Constructor<object>>(target: T): T
     return decoratedTarget;
 }
 
-export function cloneMethodDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
+export function cloneMethodDecorator<T extends Method>(_: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
     if (typeof descriptor.value !== 'function') {
         return descriptor;
     }

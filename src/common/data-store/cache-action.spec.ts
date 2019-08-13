@@ -42,7 +42,7 @@ describe('cacheAction()', () => {
     it('returns thunk action that emits cached value', async () => {
         const getMessage = jest.fn(() => Promise.resolve(createAction('GET_MESSAGE', 'Hello world')));
         const subscriber = jest.fn();
-        const createCachedAction = cacheAction(() => store => defer(() => getMessage()));
+        const createCachedAction = cacheAction(() => _ => defer(() => getMessage()));
         const store = createDataStore(state => state);
 
         createCachedAction()(store).subscribe(subscriber);
@@ -58,7 +58,7 @@ describe('cacheAction()', () => {
     it('caches emitted values from thunk action based on parameters', async () => {
         const getMessage = jest.fn(name => Promise.resolve(createAction('GET_MESSAGE', `Hello ${name}`)));
         const subscriber = jest.fn();
-        const createCachedAction = cacheAction(name => store => defer(() => getMessage(name)));
+        const createCachedAction = cacheAction(name => _ => defer(() => getMessage(name)));
         const store = createDataStore(state => state);
 
         createCachedAction('Foo')(store).subscribe(subscriber);

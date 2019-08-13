@@ -57,7 +57,7 @@ export function getZipScriptMock(status: string): Zip {
         Checkout: {
             attachButton: jest.fn(),
             init: jest.fn(payload => {
-                new Promise((resolve, reject) => {
+                new Promise(resolve => {
                     payload.onCheckout(resolve);
                 })
                     .then(() => payload.onComplete(mockZipResponse));

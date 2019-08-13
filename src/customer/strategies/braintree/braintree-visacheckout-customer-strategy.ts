@@ -4,7 +4,6 @@ import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { BraintreeVisaCheckoutPaymentProcessor, VisaCheckoutScriptLoader } from '../../../payment/strategies/braintree';
 import { VisaCheckoutPaymentSuccessPayload } from '../../../payment/strategies/braintree/visacheckout';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import CustomerCredentials from '../../customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from '../../customer-request-options';
 import CustomerStrategyActionCreator from '../../customer-strategy-action-creator';
 import CustomerStrategy from '../customer-strategy';
@@ -73,7 +72,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
                         this._paymentInstrumentSelected(paymentSuccessPayload)
                             .catch(error => onError(error))
                     );
-                    visaCheckout.on('payment.error', (payment, error) => onError(error));
+                    visaCheckout.on('payment.error', (_, error) => onError(error));
 
                     return signInButton;
                 })
@@ -82,7 +81,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
             .then(() => this._store.getState());
     }
 
-    signIn(credentials: CustomerCredentials, options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
             'In order to sign in via VisaCheckout, the shopper must click on "Visa Checkout" button.'
         );
@@ -94,7 +93,7 @@ export default class BraintreeVisaCheckoutCustomerStrategy implements CustomerSt
         );
     }
 
-    deinitialize(options?: CustomerRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = undefined;
 
         return this._braintreeVisaCheckoutPaymentProcessor.deinitialize()

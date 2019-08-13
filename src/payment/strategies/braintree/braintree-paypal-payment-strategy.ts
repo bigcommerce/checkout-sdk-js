@@ -64,11 +64,11 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             .catch((error: Error) => this._handleError(error));
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(options: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         return this._braintreePaymentProcessor.deinitialize()
             .then(() => this._store.getState());
     }

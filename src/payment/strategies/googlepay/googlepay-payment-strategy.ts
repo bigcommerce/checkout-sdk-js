@@ -57,7 +57,7 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         if (this._walletButton) {
             this._walletButton.removeEventListener('click', this._handleWalletButtonClick);
         }
@@ -95,13 +95,13 @@ export default class GooglePayPaymentStrategy implements PaymentStrategy {
 
                 return payment;
             })
-            .then(payment =>
+            .then(() =>
                 this._store.dispatch(this._orderActionCreator.submitOrder({ useStoreCredit: payload.useStoreCredit }, options))
                     .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment(this._getPayment())))
             );
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 

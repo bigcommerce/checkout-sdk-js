@@ -59,7 +59,7 @@ describe('ConvergeaymentStrategy', () => {
         jest.spyOn(store, 'dispatch');
 
         jest.spyOn(formPoster, 'postForm')
-            .mockImplementation((url, data, callback = () => {}) => callback());
+            .mockImplementation((_url, _data, callback = () => {}) => callback());
 
         jest.spyOn(orderActionCreator, 'finalizeOrder')
             .mockReturnValue(finalizeOrderAction);

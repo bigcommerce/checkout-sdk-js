@@ -92,7 +92,7 @@ describe('GooglePayPaymentProcessor', () => {
             const googlePaySDK = getGooglePaySDKMock();
             clientMock = {
                 isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
-                loadPaymentData: jest.fn((a: any) => Promise.resolve(googlePaymentDataMock)),
+                loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
                 createButton: jest.fn(() => Promise.resolve(new HTMLElement())),
             };
             googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
@@ -173,7 +173,7 @@ describe('GooglePayPaymentProcessor', () => {
             const googlePaySDK = getGooglePaySDKMock();
             clientMock = {
                 isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
-                loadPaymentData: jest.fn((a: any) => Promise.resolve(googlePaymentDataMock)),
+                loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
                 createButton: jest.fn(() => Promise.resolve()),
             };
             googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
@@ -225,7 +225,7 @@ describe('GooglePayPaymentProcessor', () => {
             const googlePaySDK = getGooglePaySDKMock();
             clientMock = {
                 isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
-                loadPaymentData: jest.fn((a: any) => Promise.resolve(googlePaymentDataMock)),
+                loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
                 createButton: jest.fn(() => Promise.resolve(new HTMLElement())),
             };
             googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
@@ -302,7 +302,7 @@ describe('GooglePayPaymentProcessor', () => {
         it('displays wallet properly', async () => {
             clientMock = {
                 isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
-                loadPaymentData: jest.fn((a: any) => Promise.resolve(googlePaymentDataMock)),
+                loadPaymentData: jest.fn(() => Promise.resolve(googlePaymentDataMock)),
                 createButton: jest.fn(() => Promise.resolve()),
             };
             googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);
@@ -331,7 +331,7 @@ describe('GooglePayPaymentProcessor', () => {
             };
             clientMock = {
                 isReadyToPay: jest.fn(() => Promise.resolve(googlePayIsReadyToPayResponse)),
-                loadPaymentData: jest.fn((a: any) => Promise.reject(googlePayError)),
+                loadPaymentData: jest.fn(() => Promise.reject(googlePayError)),
                 createButton: jest.fn(() => Promise.resolve()),
             };
             googlePaySDK.payments.api.PaymentsClient = jest.fn(() => clientMock);

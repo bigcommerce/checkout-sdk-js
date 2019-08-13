@@ -2,7 +2,7 @@ import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-
 import { concat, defer, empty, from, of, Observable, Observer } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
-import { CheckoutValidator, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import { CheckoutValidator, InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';

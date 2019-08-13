@@ -52,7 +52,7 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = undefined;
 
         if (this._walletButton) {
@@ -89,7 +89,7 @@ export default class MasterpassPaymentStrategy implements PaymentStrategy {
             .then(() => this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData })));
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 

@@ -16,7 +16,7 @@ import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodI
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
+import { PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
 import { Zip, ZipModalEvent } from './zip';
@@ -36,7 +36,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         private _requestSender: RequestSender
     ) { }
 
-    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+    initialize(): Promise<InternalCheckoutSelectors> {
         return this._zipScriptLoader.load()
             .then(zip => {
                 this._zipClient = zip;
@@ -45,7 +45,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         this._paymentMethod = undefined;
         this._zipClient = undefined;
 
@@ -123,7 +123,7 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 

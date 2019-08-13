@@ -40,7 +40,7 @@ export function bindClassDecorator<T extends Constructor<object>>(target: T): T 
 /**
  * Decorates a method by binding it to the calling instance.
  */
-export function bindMethodDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
+export function bindMethodDecorator<T extends Method>(_: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
     if (typeof descriptor.value !== 'function') {
         return descriptor;
     }
