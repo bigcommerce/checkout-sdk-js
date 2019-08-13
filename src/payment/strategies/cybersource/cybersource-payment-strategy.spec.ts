@@ -214,7 +214,7 @@ describe('CyberSourcePaymentStrategy', () => {
                 requestError = new RequestError(getResponse({
                     ...getErrorPaymentResponseBody(),
                     errors: [
-                        { code: 'enrolled_card' },
+                        { code: 'three_d_secure_required' },
                     ],
                     three_ds_result: {
                         acs_url: 'https://acs/url',

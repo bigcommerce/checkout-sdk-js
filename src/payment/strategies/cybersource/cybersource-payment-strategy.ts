@@ -98,7 +98,7 @@ export default class CyberSourcePaymentStrategy implements PaymentStrategy {
 
                 return this._placeOrder(order, payment, options)
                     .catch(error => {
-                        if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'enrolled_card' })) {
+                        if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
                             return Promise.reject(error);
                         }
 
