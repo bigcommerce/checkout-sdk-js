@@ -1,7 +1,7 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
-import { iframeResizer, IFrameComponent } from 'iframe-resizer';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
+import { iframeResizer, IFrameComponent } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 
 import EmbeddedCheckout from './embedded-checkout';

@@ -1,5 +1,4 @@
-import { iframeResizer, IFrameComponent } from 'iframe-resizer';
-
+import { iframeResizer, IFrameComponent } from '../common/iframe';
 import { parseUrl } from '../common/url';
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';

@@ -1,6 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
-import { IFrameComponent } from 'iframe-resizer';
 
+import { IFrameComponent } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
 import { bindDecorator as bind } from '../common/utility';

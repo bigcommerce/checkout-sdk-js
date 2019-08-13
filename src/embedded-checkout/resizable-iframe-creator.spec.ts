@@ -1,11 +1,12 @@
 import { EventEmitter } from 'events';
-import { iframeResizer, IFrameComponent, IFrameObject, IFrameOptions } from 'iframe-resizer';
+
+import { iframeResizer, IFrameComponent, IFrameObject, IFrameOptions } from '../common/iframe';
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError } from './errors';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
-jest.mock('iframe-resizer', () => ({
+jest.mock('../common/iframe', () => ({
     iframeResizer: jest.fn((_: IFrameOptions, element: HTMLIFrameElement) => {
         (element as IFrameComponent).iFrameResizer = {} as IFrameObject;
 
