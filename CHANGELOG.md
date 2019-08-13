@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.33.0"></a>
+# [1.33.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.32.1...v1.33.0) (2019-08-13)
+
+
+### Features
+
+* **payment:** INT-1811 Fix enrolled card Issue ([f2e1ab0](https://github.com/bigcommerce/checkout-sdk-js/commit/f2e1ab0))
+
+
+
 <a name="1.32.1"></a>
 ## [1.32.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.32.0...v1.32.1) (2019-08-12)
 
