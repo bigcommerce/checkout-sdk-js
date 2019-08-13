@@ -18,19 +18,19 @@ describe('CardinalScriptLoader', () => {
 
     it('loads widget test script', () => {
         const testMode = true;
-        cardinalScriptLoader.load(testMode);
+        cardinalScriptLoader.load('provider', testMode);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js'
+            'https://songbirdstag.cardinalcommerce.com/edge/v1/songbird.js?v=provider'
         );
     });
 
     it('loads widget production script', () => {
         const testMode = false;
-        cardinalScriptLoader.load(testMode);
+        cardinalScriptLoader.load('provider', testMode);
 
         expect(scriptLoader.loadScript).toHaveBeenCalledWith(
-            'https://songbird.cardinalcommerce.com/edge/v1/songbird.js'
+            'https://songbird.cardinalcommerce.com/edge/v1/songbird.js?v=provider'
         );
     });
 
@@ -41,7 +41,7 @@ describe('CardinalScriptLoader', () => {
             return Promise.resolve();
         });
 
-        const script = await cardinalScriptLoader.load();
+        const script = await cardinalScriptLoader.load('provider');
         expect(script).toBe(cardinalWindow.Cardinal);
     });
 
@@ -51,7 +51,7 @@ describe('CardinalScriptLoader', () => {
         });
 
         try {
-            await cardinalScriptLoader.load();
+            await cardinalScriptLoader.load('provider');
         } catch (error) {
             expect(error).toBeInstanceOf(StandardError);
         }

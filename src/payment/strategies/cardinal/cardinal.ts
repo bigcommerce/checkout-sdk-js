@@ -74,6 +74,7 @@ export interface CardinalValidatedData {
 }
 
 export interface CardinalPayment {
+    ExtendedData?: CardinalCCAExtendedData;
     ProcessorTransactionId: string;
     Type: CardinalPaymentType;
 }
@@ -133,6 +134,15 @@ export interface CardinalOrderDetails {
     TransactionId?: string;
 }
 
+export type CardinalCCAExtendedData = Partial<{
+    CAVV: string;
+    ECIFlag: string;
+    PAResStatus: string;
+    SignatureVerification: string;
+    XID: string;
+    UCAFIndicator: string;
+}>;
+
 export enum CardinalEventType {
     SetupCompleted = 'payments.setupComplete',
     Validated = 'payments.validated',
@@ -160,4 +170,9 @@ export enum CardinalTriggerEvents {
 
 export enum CardinalPaymentBrand {
     CCA = 'cca',
+}
+
+export enum CardinalSignatureVerification {
+    Yes = 'Y',
+    No = 'N',
 }

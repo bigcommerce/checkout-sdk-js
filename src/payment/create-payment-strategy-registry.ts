@@ -31,14 +31,15 @@ import {
     BraintreeVisaCheckoutPaymentStrategy,
     VisaCheckoutScriptLoader
 } from './strategies/braintree';
-import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
-import { ConvergePaymentStrategy } from './strategies/converge';
-import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import {
     CardinalClient,
     CardinalScriptLoader,
-    CyberSourcePaymentStrategy
-} from './strategies/cybersource';
+    CardinalThreeDSecureFlow,
+} from './strategies/cardinal';
+import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
+import { ConvergePaymentStrategy } from './strategies/converge';
+import { CreditCardPaymentStrategy } from './strategies/credit-card';
+import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import {
     createGooglePayPaymentProcessor,
     GooglePayBraintreeInitializer,
@@ -125,10 +126,14 @@ export default function createPaymentStrategyRegistry(
     registry.register(PaymentStrategyType.CYBERSOURCE, () =>
         new CyberSourcePaymentStrategy(
             store,
-            paymentMethodActionCreator,
             orderActionCreator,
             paymentActionCreator,
-            new CardinalClient(new CardinalScriptLoader(scriptLoader))
+            new CardinalThreeDSecureFlow(
+                store,
+                paymentActionCreator,
+                paymentMethodActionCreator,
+                new CardinalClient(new CardinalScriptLoader(scriptLoader))
+            )
         )
     );
 
@@ -168,7 +173,13 @@ export default function createPaymentStrategyRegistry(
         new PaypalProPaymentStrategy(
             store,
             orderActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
+            new CardinalThreeDSecureFlow(
+                store,
+                paymentActionCreator,
+                paymentMethodActionCreator,
+                new CardinalClient(new CardinalScriptLoader(scriptLoader))
+            )
         )
     );
 

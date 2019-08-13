@@ -13,9 +13,11 @@ export default class CardinalScriptLoader {
         private _window: CardinalWindow = window
     ) {}
 
-    load(testMode?: boolean): Promise<CardinalSDK> {
+    load(provider: string, testMode?: boolean): Promise<CardinalSDK> {
+        const url = testMode ? SDK_TEST_URL : SDK_PROD_URL;
+
         return this._scriptLoader
-            .loadScript(testMode ? SDK_TEST_URL : SDK_PROD_URL)
+            .loadScript(url + '?v=' + provider)
             .then(() => {
                 if (!this._window.Cardinal) {
                     throw new StandardError();
