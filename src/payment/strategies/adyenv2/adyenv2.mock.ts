@@ -43,7 +43,7 @@ export function getAdyenOrderRequestBody(): OrderRequestBody {
     };
 }
 
-export function getValidCardState(): AdyenCardState {
+function getCardState() {
     return {
         data: {
             paymentMethod: {
@@ -54,21 +54,19 @@ export function getValidCardState(): AdyenCardState {
                 type: 'scheme',
             },
         },
+    };
+}
+
+export function getValidCardState(): AdyenCardState {
+    return {
+        ...getCardState(),
         isValid: true,
     };
 }
 
 export function getInvalidCardState(): AdyenCardState {
     return {
-        data: {
-            paymentMethod: {
-                encryptedCardNumber: 'CARD_NUMBER',
-                encryptedExpiryMonth: 'EXPIRY_MONTH',
-                encryptedExpiryYear: 'EXPIRY_YEAR',
-                encryptedSecurityCode: 'CVV',
-                type: 'scheme',
-            },
-        },
+        ...getCardState(),
         isValid: false,
     };
 }

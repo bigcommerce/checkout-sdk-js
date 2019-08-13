@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { AdyenConfiguration, AdyenHostWindow } from './adyenv2';
+import { AdyenHostWindow } from './adyenv2';
 import AdyenV2ScriptLoader from './adyenv2-script-loader';
 import { getAdyenCheckout, getAdyenConfiguration } from './adyenv2.mock';
 
@@ -25,7 +25,7 @@ describe('AdyenV2ScriptLoader', () => {
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
                 mockWindow.AdyenCheckout = jest.fn(
-                    (configuration: AdyenConfiguration) => adyenClient
+                    () => adyenClient
                 );
 
                 return Promise.resolve();

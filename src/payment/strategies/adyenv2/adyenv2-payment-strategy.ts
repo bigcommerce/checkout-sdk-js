@@ -73,7 +73,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
                 const adyenComponent = this._adyenCheckout.create(paymentMethod.method, {
                         ...adyenv2.options,
-                        onChange: (state: AdyenCardState, component: AdyenComponent) => {
+                        onChange: (state: AdyenCardState) => {
                             this._updateStateContainer(state);
                         },
                     });
@@ -142,11 +142,11 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             });
     }
 
-    finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    finalize(): Promise<InternalCheckoutSelectors> {
         return Promise.reject(new OrderFinalizationNotRequiredError());
     }
 
-    deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    deinitialize(): Promise<InternalCheckoutSelectors> {
         if (this._adyenComponent) {
             this._adyenComponent.unmount();
         }

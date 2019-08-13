@@ -1,3 +1,8 @@
+
+export interface AdyenComponentCallbacks {
+    onChange?(state: AdyenCardState): void;
+}
+
 export interface AdyenHostWindow extends Window {
     AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenCheckout;
 }
