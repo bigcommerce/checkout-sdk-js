@@ -154,6 +154,14 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
+    private _getAdyenV2PaymentInitializeOptions(): AdyenV2PaymentInitializeOptions {
+        if (!this._adyenv2) {
+            throw new InvalidArgumentError(' "options.adyen" argument was not provided during initialization.');
+        }
+
+        return this._adyenv2;
+    }
+
     private _getLocale(): string {
         const state = this._store.getState();
         const storeConfig = state.config.getStoreConfig();
@@ -165,7 +173,26 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         return storeConfig.storeProfile.storeLanguage;
     }
 
+    private _getStateContainer(): string {
+        if (!this._stateContainer) {
+            return '{}';
+        }
+
+        return this._stateContainer;
+    }
+
+    private _getThreeDS2ChallengeWidgetSize(): ThreeDS2ChallengeWidgetSize {
+        const { threeDS2ChallengeWidgetSize } = this._getAdyenV2PaymentInitializeOptions();
+
+        if (!threeDS2ChallengeWidgetSize) {
+            return ThreeDS2ChallengeWidgetSize.Medium;
+        }
+
+        return threeDS2ChallengeWidgetSize;
+    }
+
     private _handle3DS2Challenge(resultObject: ThreeDS2Result, paymentMethodId: string): Promise<Payment> {
+
         return new Promise((resolve, reject) => {
             if (!this._adyenCheckout) {
                 throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -238,31 +265,5 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
             this._stateContainer = JSON.stringify(state, null, 2);
         }
-    }
-
-    private _getStateContainer(): string {
-        if (this._stateContainer) {
-            return this._stateContainer;
-        }
-
-        return '{}';
-    }
-
-    private _getThreeDS2ChallengeWidgetSize(): ThreeDS2ChallengeWidgetSize {
-        const { threeDS2ChallengeWidgetSize } = this._getAdyenV2PaymentInitializeOptions();
-
-        if (threeDS2ChallengeWidgetSize) {
-            return threeDS2ChallengeWidgetSize;
-        }
-
-        return ThreeDS2ChallengeWidgetSize.Medium;
-    }
-
-    private _getAdyenV2PaymentInitializeOptions(): AdyenV2PaymentInitializeOptions {
-        if (!this._adyenv2) {
-            throw new InvalidArgumentError(' "options.adyen" argument was not provided during initialization.');
-        }
-
-        return this._adyenv2;
     }
 }
