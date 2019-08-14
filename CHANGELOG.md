@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.34.0"></a>
+# [1.34.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.33.0...v1.34.0) (2019-08-14)
+
+
+### Features
+
+* **payment:** INT-1608 Modify Paypal Payments Pro strategy for 3DS ([6e0d6f0](https://github.com/bigcommerce/checkout-sdk-js/commit/6e0d6f0))
+
+
+
 <a name="1.33.0"></a>
 # [1.33.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.32.1...v1.33.0) (2019-08-13)
 
