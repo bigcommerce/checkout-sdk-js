@@ -115,6 +115,10 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                         .then((payment: Payment) =>
                             this._store.dispatch(this._paymentActionCreator.submitPayment(payment)))
                         .catch(error => {
+                            if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
+                                return Promise.reject(error);
+                            }
+
                             if (error.body.three_ds_result.result_code === ResultCode.ChallengeShopper) {
                                 return this._handle3DS2Challenge(error.body.three_ds_result, payment.methodId)
                                     .then((payment: Payment) =>
