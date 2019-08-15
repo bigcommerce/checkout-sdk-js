@@ -1,7 +1,11 @@
 import { OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
-import { AdyenCardState, AdyenCheckout, AdyenConfiguration } from './adyenv2';
+import {
+    AdyenCardState,
+    AdyenCheckout,
+    AdyenConfiguration
+} from './adyenv2';
 
 export function getAdyenCheckout(): AdyenCheckout {
     return {

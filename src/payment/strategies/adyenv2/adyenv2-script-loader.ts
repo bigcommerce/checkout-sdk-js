@@ -2,7 +2,11 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import { AdyenCheckout, AdyenConfiguration, AdyenHostWindow } from './adyenv2';
+import {
+    AdyenCheckout,
+    AdyenConfiguration,
+    AdyenHostWindow
+} from './adyenv2';
 
 export default class AdyenV2ScriptLoader {
     private _stylesheets: { [key: string]: Promise<Event> } = {};

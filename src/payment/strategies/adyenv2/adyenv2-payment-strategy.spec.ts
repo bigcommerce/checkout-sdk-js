@@ -14,7 +14,11 @@ import {
     CheckoutValidator
 } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, RequestError } from '../../../common/error/errors';
+import {
+    InvalidArgumentError,
+    MissingDataError,
+    RequestError
+} from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import {
     FinalizeOrderAction,
@@ -37,11 +41,17 @@ import { getErrorPaymentResponseBody } from '../../payments.mock';
 import {
     AdyenV2PaymentStrategy,
     AdyenV2ScriptLoader,
-    ThreeDS2ChallengeComponentOptions, ThreeDS2ChallengeWidgetSize,
+    ThreeDS2ChallengeComponentOptions,
+    ThreeDS2ChallengeWidgetSize,
     ThreeDS2ComponentType,
     ThreeDS2DeviceFingerprintComponentOptions
 } from '.';
-import { AdyenCardState, AdyenCheckout, AdyenComponent, ResultCode } from './adyenv2';
+import {
+    AdyenCardState,
+    AdyenCheckout,
+    AdyenComponent,
+    ResultCode
+} from './adyenv2';
 import {
     getAdyenCheckout,
     getAdyenInitializeOptions,
@@ -397,7 +407,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 methodId: 'authorizenet',
                 paymentData: {
                     nonce: JSON.stringify({
-                        ...{threeDS2Token: 'token'},
+                        ...{ threeDS2Token: 'token' },
                         paymentData: 'paymentData',
                     }, null, 2),
                 },
@@ -480,7 +490,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 ],
                 three_ds_result: {
                     result_code: ResultCode.ChallengeShopper,
-                    token: 'tokenChallenge',
+                    token: 'chellengeToken',
                     payment_data: 'paymentData',
                 },
                 status: 'error',
@@ -489,7 +499,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 mount: jest.fn(() => {
                     componentOptions.onComplete({
                         data: {
-                            threeDS2Token: 'tokenChallenge',
+                            threeDS2Token: 'challengeToken',
                         },
                     });
 
@@ -526,7 +536,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 methodId: 'authorizenet',
                 paymentData: {
                     nonce: JSON.stringify({
-                        ...{threeDS2Token: 'tokenChallenge'},
+                        ...{ threeDS2Token: 'challengeToken' },
                         paymentData: 'paymentData',
                     }, null, 2),
                 },
@@ -605,7 +615,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 ],
                 three_ds_result: {
                     result_code: ResultCode.IdentifyShopper,
-                    token: 'tokenChallenge',
+                    token: 'challengeToken',
                     payment_data: 'paymentData',
                 },
                 status: 'error',
@@ -693,7 +703,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 methodId: 'authorizenet',
                 paymentData: {
                     nonce: JSON.stringify({
-                        ...{threeDS2Token: 'token'},
+                        ...{ threeDS2Token: 'token' },
                         paymentData: 'paymentData',
                     }, null, 2),
                 },

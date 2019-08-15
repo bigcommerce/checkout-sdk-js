@@ -21,6 +21,7 @@ describe('AdyenV2ScriptLoader', () => {
         const adyenClient = getAdyenCheckout();
         const configuration = getAdyenConfiguration();
         const stylesheet = document.createElement('link');
+        const jsUlr = `https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.0.0/adyen.js`;
 
         beforeEach(() => {
             scriptLoader.loadScript = jest.fn(() => {
@@ -51,8 +52,7 @@ describe('AdyenV2ScriptLoader', () => {
         it('loads the JS and CSS', async () => {
             await adyenV2ScriptLoader.load(configuration);
 
-            expect(scriptLoader.loadScript)
-                .toHaveBeenCalledWith(`https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.0.0/adyen.js`);
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUlr);
             expect(document.head.appendChild).toHaveBeenCalledWith(stylesheet);
         });
 
@@ -60,8 +60,7 @@ describe('AdyenV2ScriptLoader', () => {
             await adyenV2ScriptLoader.load(configuration);
             await adyenV2ScriptLoader.load(configuration);
 
-            expect(scriptLoader.loadScript)
-                .toHaveBeenCalledWith(`https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.0.0/adyen.js`);
+            expect(scriptLoader.loadScript).toHaveBeenCalledWith(jsUlr);
             expect(document.head.appendChild).toHaveBeenCalledWith(stylesheet);
         });
 
