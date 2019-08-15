@@ -92,7 +92,7 @@ export function createFormSelectorFactory(): FormSelectorFactory {
             ...field,
             name: 'stateOrProvinceCode',
             options: { items },
-            required: true,
+            required: requireProvince(country),
             type: 'array',
             fieldType: 'dropdown',
             itemtype: 'string',
@@ -107,6 +107,18 @@ export function createFormSelectorFactory(): FormSelectorFactory {
         }
 
         return { ...field, required: Boolean(hasPostalCodes) };
+    }
+
+    function requireProvince(country?: Country): boolean {
+        const countriesRequiringProvince = [
+            'US',
+            'CA',
+            'AU',
+            'MX',
+            'MY',
+        ];
+
+        return country ? countriesRequiringProvince.indexOf(country.code) !== -1 : false;
     }
 
     return memoizeOne((
