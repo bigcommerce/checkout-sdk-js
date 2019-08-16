@@ -190,7 +190,7 @@ describe('CardinalClient', () => {
 
         it('returns an error and a no action code', async () => {
             jest.spyOn(sdk, 'continue').mockImplementation(() => {
-                validatedCall(getCardinalValidatedData(CardinalValidatedAction.NoAction, false, 3002), '');
+                validatedCall(getCardinalValidatedData(CardinalValidatedAction.NoAction, false, 3002), 'token');
             });
 
             try {
@@ -213,7 +213,7 @@ describe('CardinalClient', () => {
                     },
                 };
 
-                validatedCall(data, '');
+                validatedCall(data, 'token');
             });
 
             try {
@@ -225,7 +225,7 @@ describe('CardinalClient', () => {
 
         it('returns an error code', async () => {
             jest.spyOn(sdk, 'continue').mockImplementation(() => {
-                validatedCall(getCardinalValidatedData(CardinalValidatedAction.Error, false, 3004), '');
+                validatedCall(getCardinalValidatedData(CardinalValidatedAction.Error, false, 3004), 'token');
             });
 
             try {
@@ -237,7 +237,7 @@ describe('CardinalClient', () => {
 
         it('returns a failure code', async () => {
             jest.spyOn(sdk, 'continue').mockImplementation(() => {
-                validatedCall(getCardinalValidatedData(CardinalValidatedAction.Failure, false, 3004), '');
+                validatedCall(getCardinalValidatedData(CardinalValidatedAction.Failure, false, 3004), 'token');
             });
 
             try {
@@ -284,11 +284,22 @@ describe('CardinalClient', () => {
                 validatedCall(data, 'token');
             });
 
+            const promise = await client.getThreeDSecureData(getCardinalThreeDSResult(), getCardinalOrderData());
+
+            expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.Validated, expect.any(Function));
+            expect(promise).toEqual({ token: 'token' });
+        });
+
+        it('returns a response without a jwt', async () => {
+            jest.spyOn(sdk, 'continue').mockImplementation(() => {
+                validatedCall(getCardinalValidatedData(CardinalValidatedAction.Error, false, 100), '');
+            });
+
             try {
                 await client.getThreeDSecureData(getCardinalThreeDSResult(), getCardinalOrderData());
             } catch (error) {
                 expect(error).toBeInstanceOf(StandardError);
-                expect(error.message).toBe('Custom error');
+                expect(error.message).toBe('An error was encountered while processing the transaction.');
             }
         });
     });

@@ -96,36 +96,32 @@ export default class CardinalClient {
         return this._getClientSDK()
             .then(client => {
                 return new Promise<ThreeDSecureToken>((resolve, reject) => {
-                    client.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt: string) => {
+                    client.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt?: string) => {
                         client.off(CardinalEventType.Validated);
+                        if (!jwt) {
+                            return reject(new StandardError(data.ErrorDescription ? data.ErrorDescription : 'An error was encountered while processing the transaction.'));
+                        }
+
                         if (!data.ActionCode) {
-                            if (data.ErrorNumber > 0) {
-                                reject(new StandardError(data.ErrorDescription));
-                            }
-                            resolve({ token: jwt });
+                            return resolve({ token: jwt });
                         }
 
                         switch (data.ActionCode) {
                             case CardinalValidatedAction.Success:
-                                resolve({ token: jwt });
-                                break;
+                                return resolve({ token: jwt });
                             case CardinalValidatedAction.NoAction:
                                 if (data.ErrorNumber > 0) {
-                                    reject(new StandardError(data.ErrorDescription));
+                                    return reject(new StandardError(data.ErrorDescription));
                                 } else if (!data.Payment || !data.Payment.ExtendedData || data.Payment.ExtendedData.SignatureVerification !== CardinalSignatureVerification.Yes) {
-                                    reject(new StandardError('Transaction signature could not be validated.'));
-                                } else {
-                                    resolve({ token: jwt });
+                                    return reject(new StandardError('Transaction signature could not be validated.'));
                                 }
-                                break;
-                            case CardinalValidatedAction.Failure:
-                                reject(new StandardError('User failed authentication or an error was encountered while processing the transaction.'));
-                                break;
-                            case CardinalValidatedAction.Error:
-                                reject(new StandardError(data.ErrorDescription));
-                        }
 
-                        resolve({ token: jwt });
+                                return resolve({ token: jwt });
+                            case CardinalValidatedAction.Failure:
+                                return reject(new StandardError('User failed authentication or an error was encountered while processing the transaction.'));
+                            case CardinalValidatedAction.Error:
+                                return reject(new StandardError(data.ErrorDescription));
+                        }
                     });
 
                     const continueObject = {
