@@ -1,23 +1,32 @@
+import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
+import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
+import { of, Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import { getCartState } from '../../../cart/carts.mock';
 import {
     createCheckoutStore,
     CheckoutRequestSender,
     CheckoutValidator
 } from '../../../checkout';
 import CheckoutStore from '../../../checkout/checkout-store';
-import { getCheckoutState } from '../../../checkout/checkouts.mock';
+import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import {
     InvalidArgumentError,
     MissingDataError,
     NotInitializedError,
+    RequestError,
     StandardError
 } from '../../../common/error/errors';
-import { getConfigState } from '../../../config/configs.mock';
-import { getCustomer, getCustomerState } from '../../../customer/customers.mock';
+import { getResponse } from '../../../common/http-request/responses.mock';
+import { getCustomer } from '../../../customer/customers.mock';
+import {
+    FinalizeOrderAction,
+    OrderActionType,
+    OrderRequestSender,
+    SubmitOrderAction
+} from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import OrderActionCreator from '../../../order/order-action-creator';
 import {
@@ -25,23 +34,27 @@ import {
     SpamProtectionActionCreator
 } from '../../../order/spam-protection';
 import {
-    createPaymentClient,
+    LoadPaymentMethodAction,
     PaymentInitializeOptions,
+    PaymentMethodActionType,
     PaymentMethodRequestSender,
     PaymentRequestSender
 } from '../../../payment';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
+import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
-import { getPaymentMethodsState, getStripeV3 } from '../../payment-methods.mock';
+import { getStripeV3 } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
+import { getErrorPaymentResponseBody } from '../../payments.mock';
 
 import StripeV3PaymentStrategy from './stripev3-payment-strategy';
 import StripeV3ScriptLoader from './stripev3-script-loader';
 import {
-    getStripeCardPaymentOptionsWithGuestUser, getStripeCardPaymentOptionsWithGuestUserWithoutAddress,
+    getStripeCardPaymentOptionsWithGuestUser,
+    getStripeCardPaymentOptionsWithGuestUserWithoutAddress,
     getStripeCardPaymentOptionsWithSignedUser,
     getStripePaymentMethodOptionsWithGuestUser,
     getStripePaymentMethodOptionsWithGuestUserWithoutAddress,
@@ -49,45 +62,77 @@ import {
     getStripeV3HandleCardResponse,
     getStripeV3InitializeOptionsMock,
     getStripeV3JsMock,
-    getStripeV3OrderRequestBodyMock
+    getStripeV3OrderRequestBodyMock,
 } from './stripev3.mock';
 
 describe('StripeV3PaymentStrategy', () => {
+    let errorResponse: RequestError;
+    let finalizeOrderAction: Observable<FinalizeOrderAction>;
+    let loadPaymentMethodAction: Observable<LoadPaymentMethodAction>;
+    let orderActionCreator: OrderActionCreator;
+    let orderRequestSender: OrderRequestSender;
+    let paymentActionCreator: PaymentActionCreator;
+    let paymentMethodActionCreator: PaymentMethodActionCreator;
+    let paymentMethodMock: PaymentMethod;
     let store: CheckoutStore;
     let strategy: StripeV3PaymentStrategy;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let paymentActionCreator: PaymentActionCreator;
-    let paymentRequestSender: PaymentRequestSender;
-    let orderActionCreator: OrderActionCreator;
     let stripeScriptLoader: StripeV3ScriptLoader;
-    let paymentRequestTransformer: PaymentRequestTransformer;
+    let submitOrderAction: Observable<SubmitOrderAction>;
+    let submitPaymentAction: Observable<SubmitPaymentAction>;
 
     beforeEach(() => {
-        store = createCheckoutStore({
-            checkout: getCheckoutState(),
-            customer: getCustomerState(),
-            config: getConfigState(),
-            cart: getCartState(),
-            paymentMethods: getPaymentMethodsState(),
-        });
-
+        store = createCheckoutStore(getCheckoutStoreState());
         const requestSender = createRequestSender();
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
-        const paymentClient = createPaymentClient(store);
         const scriptLoader = createScriptLoader();
-        paymentRequestSender = new PaymentRequestSender(paymentClient);
-        paymentRequestTransformer = new PaymentRequestTransformer();
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
-        paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
+
+        orderRequestSender = new OrderRequestSender(createRequestSender());
         orderActionCreator = new OrderActionCreator(
-            paymentClient,
-            new CheckoutValidator(
-                new CheckoutRequestSender(requestSender)
-            ),
+            orderRequestSender,
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
             new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
         );
+
+        paymentActionCreator = new PaymentActionCreator(
+            new PaymentRequestSender(createPaymentClient()),
+            orderActionCreator,
+            new PaymentRequestTransformer()
+        );
+
+        errorResponse = new RequestError(getResponse({
+            ...getErrorPaymentResponseBody(),
+            errors: [
+                { code: 'three_d_secure_required' },
+            ],
+            three_ds_result: {
+                token: 'token',
+            },
+            status: 'error',
+        }));
+
+        paymentMethodMock = { ...getStripeV3(), clientToken: 'myToken' };
+
         stripeScriptLoader = new StripeV3ScriptLoader(scriptLoader);
+        finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
+        submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
+        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+        loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: paymentMethodMock.id }));
+
+        jest.spyOn(store, 'dispatch');
+
+        jest.spyOn(orderActionCreator, 'submitOrder')
+            .mockReturnValue(submitOrderAction);
+
+        jest.spyOn(paymentActionCreator, 'submitPayment')
+            .mockReturnValue(submitPaymentAction);
+
+        jest.spyOn(orderActionCreator, 'finalizeOrder')
+            .mockReturnValue(finalizeOrderAction);
+
+        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
+            .mockReturnValue(loadPaymentMethodAction);
 
         strategy = new StripeV3PaymentStrategy(
             store,
@@ -135,19 +180,10 @@ describe('StripeV3PaymentStrategy', () => {
 
     describe('#execute', () => {
         let stripeV3Options: PaymentInitializeOptions;
-        let paymentMethodMock: PaymentMethod;
         const stripeV3JsMock = getStripeV3JsMock();
 
         beforeEach(() => {
             stripeV3Options = getStripeV3InitializeOptionsMock();
-            jest.spyOn(store, 'dispatch').mockReturnValue(Promise.resolve(store.getState()));
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getStripeV3());
-            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod').mockReturnValue(Promise.resolve());
-            jest.spyOn(orderActionCreator, 'submitOrder').mockReturnValue(Promise.resolve());
-            jest.spyOn(paymentActionCreator, 'submitPayment').mockReturnValue(Promise.resolve());
-            jest.spyOn(paymentRequestTransformer, 'transform').mockReturnValue({
-                state: 'state',
-            });
         });
 
         it('creates the order and submit payment', async () => {
@@ -168,7 +204,6 @@ describe('StripeV3PaymentStrategy', () => {
             await strategy.initialize(stripeV3Options);
             const response = await strategy.execute(getStripeV3OrderRequestBodyMock());
 
-            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalled();
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalled();
             expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalled();
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
@@ -204,20 +239,6 @@ describe('StripeV3PaymentStrategy', () => {
             expect(orderActionCreator.submitOrder).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(response).toBe(store.getState());
-        });
-
-        it('throws an error when stripe card element has not been initialized', async () => {
-            const payload = {
-                payment: {
-                    methodId: 'stripev3',
-                },
-            };
-
-            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
-
-            const response = strategy.execute(payload);
-
-            return expect(response).rejects.toThrow(NotInitializedError);
         });
 
         it('throws an error when stripe card element has not been initialized', async () => {
@@ -289,13 +310,7 @@ describe('StripeV3PaymentStrategy', () => {
         });
 
         it('throws an error when ClientToken is undefined', async () => {
-            paymentMethodMock = {
-                ...getStripeV3(),
-                clientToken: undefined,
-                initializationData: {
-                    stripePublishableKey: 'key',
-                },
-            };
+            paymentMethodMock.clientToken = undefined;
             stripeV3JsMock.handleCardPayment = jest.fn(
                 () => Promise.resolve(getStripeV3HandleCardResponse())
             );
@@ -308,8 +323,6 @@ describe('StripeV3PaymentStrategy', () => {
                 })
             );
 
-            jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
-                .mockReturnValue(paymentMethodMock);
             jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
 
             await strategy.initialize(stripeV3Options);
@@ -343,14 +356,13 @@ describe('StripeV3PaymentStrategy', () => {
             await strategy.initialize(stripeV3Options);
             const response = await strategy.execute(getStripeV3OrderRequestBodyMock());
 
-            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalled();
             expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalledWith(
                 'card',
                 cardElement,
                 getStripePaymentMethodOptionsWithSignedUser()
             );
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalledWith(
-                'clientToken',
+                'myToken',
                 {
                     ...getStripeCardPaymentOptionsWithSignedUser(),
                     payment_method: 'paymentMethod',
@@ -388,14 +400,13 @@ describe('StripeV3PaymentStrategy', () => {
             await strategy.initialize(stripeV3Options);
             const response = await strategy.execute(getStripeV3OrderRequestBodyMock());
 
-            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalled();
             expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalledWith(
                 'card',
                 cardElement,
                 getStripePaymentMethodOptionsWithGuestUser()
             );
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalledWith(
-                'clientToken',
+                'myToken',
                 {
                     ...getStripeCardPaymentOptionsWithGuestUser(),
                     payment_method: 'paymentMethod',
@@ -433,14 +444,13 @@ describe('StripeV3PaymentStrategy', () => {
             await strategy.initialize(stripeV3Options);
             const response = await strategy.execute(getStripeV3OrderRequestBodyMock());
 
-            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalled();
             expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalledWith(
                 'card',
                 cardElement,
                 getStripePaymentMethodOptionsWithGuestUserWithoutAddress()
             );
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalledWith(
-                'clientToken',
+                'myToken',
                 {
                     ...getStripeCardPaymentOptionsWithGuestUserWithoutAddress(),
                     payment_method: 'paymentMethod',
@@ -480,14 +490,13 @@ describe('StripeV3PaymentStrategy', () => {
             await strategy.initialize(stripeV3Options);
             const response = await strategy.execute(getStripeV3OrderRequestBodyMock());
 
-            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalled();
             expect(stripeV3JsMock.createPaymentMethod).toHaveBeenCalledWith(
                 'card',
                 cardElement,
                 getStripePaymentMethodOptionsWithGuestUser()
             );
             expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalledWith(
-                'clientToken',
+                'myToken',
                 {
                     ...getStripeCardPaymentOptionsWithGuestUser(),
                     payment_method: 'paymentMethod',
@@ -497,6 +506,121 @@ describe('StripeV3PaymentStrategy', () => {
             expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(response).toBe(store.getState());
+        });
+
+        it('creates a payment when an instrument is being used and 3ds is required by card', async () => {
+            const payload = {
+                payment: {
+                    methodId: 'stripev3',
+                    paymentData: {
+                        instrumentId: 'token',
+                    },
+                },
+            };
+            const successHandler = jest.fn();
+
+            stripeV3Options = getStripeV3InitializeOptionsMock();
+            stripeV3JsMock.handleCardPayment = jest.fn(
+                () => Promise.resolve(getStripeV3HandleCardResponse())
+            );
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(stripeV3Options);
+            try {
+                await strategy.execute(payload).then(successHandler);
+            } catch {
+                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
+                expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalled();
+            }
+        });
+
+        it('throws an error when submit payment with an instrument', async () => {
+            errorResponse = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'error' },
+                ],
+                three_ds_result: {
+                    token: 'token',
+                },
+                status: 'error',
+            }));
+
+            const payload = {
+                payment: {
+                    methodId: 'stripev3',
+                    paymentData: {
+                        instrumentId: 'token',
+                    },
+                },
+            };
+
+            stripeV3JsMock.handleCardPayment = jest.fn(
+                () => Promise.resolve(getStripeV3HandleCardResponse())
+            );
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(stripeV3Options);
+            try {
+                await strategy.execute(payload);
+            } catch (error) {
+                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                expect(stripeV3JsMock.handleCardPayment).not.toHaveBeenCalled();
+                expect(error).toEqual(errorResponse);
+            }
+        });
+
+        it('throws an error when handleCardPayment in 3ds instrument flow', async () => {
+            errorResponse = new RequestError(getResponse({
+                ...getErrorPaymentResponseBody(),
+                errors: [
+                    { code: 'three_d_secure_required' },
+                ],
+                three_ds_result: {
+                    token: 'token',
+                },
+                status: 'error',
+            }));
+
+            const payload = {
+                payment: {
+                    methodId: 'stripev3',
+                    paymentData: {
+                        instrumentId: 'token',
+                    },
+                },
+            };
+
+            const stripeError = {
+                error: {
+                    message: 'stripe error',
+                },
+            };
+
+            stripeV3JsMock.handleCardPayment = jest.fn(
+                () => Promise.resolve(stripeError));
+
+            jest.spyOn(stripeScriptLoader, 'load').mockReturnValue(Promise.resolve(stripeV3JsMock));
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorResponse)));
+
+            await strategy.initialize(stripeV3Options);
+            try {
+                await strategy.execute(payload);
+            } catch (error) {
+                expect(orderActionCreator.submitOrder).toHaveBeenCalled();
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
+                expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalled();
+                expect(error).toEqual(new StandardError(stripeError.error && stripeError.error.message));
+            }
         });
     });
 
