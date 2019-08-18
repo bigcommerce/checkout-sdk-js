@@ -24,7 +24,6 @@ import {
     AdyenConfiguration,
     AdyenError,
     ResultCode,
-    ThreeDS2ChallengeWidgetSize,
     ThreeDS2ComponentType,
     ThreeDS2Result
 } from './adyenv2';
@@ -185,11 +184,11 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         return this._stateContainer;
     }
 
-    private _getThreeDS2ChallengeWidgetSize(): ThreeDS2ChallengeWidgetSize {
+    private _getThreeDS2ChallengeWidgetSize(): string {
         const { threeDS2ChallengeWidgetSize } = this._getAdyenV2PaymentInitializeOptions();
 
         if (!threeDS2ChallengeWidgetSize) {
-            return ThreeDS2ChallengeWidgetSize.Medium;
+            return '01';
         }
 
         return threeDS2ChallengeWidgetSize;

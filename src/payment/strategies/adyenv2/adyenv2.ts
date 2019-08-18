@@ -531,14 +531,6 @@ export interface ThreeDS2DeviceFingerprintComponentOptions {
     onError(error: AdyenError): void;
 }
 
-export enum ThreeDS2ChallengeWidgetSize {
-    Small = '01',
-    Medium = '02',
-    Large = '03',
-    ExtraLarge = '04',
-    Full = '05',
-}
-
 export enum ResultCode {
     AuthenticationFinished = 'AuthenticationFinished',
     Authorised = 'Authorised',
@@ -554,7 +546,7 @@ export enum ResultCode {
 
 export interface ThreeDS2ChallengeComponentOptions {
     challengeToken: string;
-    size?: ThreeDS2ChallengeWidgetSize;
+    size?: string;
     onComplete(fingerprintData: any): void;
     onError(error: AdyenError): void;
 }
@@ -589,14 +581,14 @@ export interface AdyenError {
 export interface CssProperties {
     background?: string;
     color?: string;
-    display?: Display;
+    display?: string;
     font?: string;
     fontFamily?: string;
     fontSize?: string;
     fontSizeAdjust?: string;
     fontSmoothing?: string;
-    fontStretch?: FontStretch;
-    fontStyle?: FontStyle;
+    fontStretch?: string;
+    fontStyle?: string;
     fontVariant?: string;
     fontVariantAlternates?: string;
     fontVariantCaps?: string;
@@ -609,72 +601,11 @@ export interface CssProperties {
     mozOsxFontSmoothing?: string;
     mozTransition?: string;
     outline?: string;
-    opacity?: Opacity | number;
+    opacity?: string | number;
     padding?: string;
-    textAlign?: TextAlign;
+    textAlign?: string;
     textShadow?: string;
     transition?: string;
     webkitFontSmoothing?: string;
     webkitTransition?: string;
-}
-
-export enum Display {
-    inline = 'inline',
-    block = 'block',
-    contents = 'contents',
-    flex = 'flex',
-    grid = 'grid',
-    inline_block = 'inline-block',
-    inline_flex = 'inline-flex',
-    inline_grid = 'inline-grid',
-    inline_table = 'inline-table',
-    list_item = 'list-item',
-    run_in = 'run-in',
-    table = 'table',
-    table_caption = 'table-caption',
-    table_column_group = 'table-column-group',
-    table_header_group = 'table-header-group',
-    table_footer_group = 'table-footer-group',
-    table_row_group = 'table-row-group',
-    table_cell = 'table-cell',
-    table_column = 'table-column',
-    table_row = 'table-row',
-    none = 'none',
-    inital = 'initial',
-    inherit = 'inherit',
-}
-
-export enum FontStretch {
-    ultra_condensed = 'ultra-condensed',
-    extra_condensed = 'extra-condensed',
-    condensed = 'condensed',
-    semi_condensed = 'semi-condensed',
-    normal = 'normal',
-    semi_expanded = 'semi-expanded',
-    expanded = 'expanded',
-    extra_expanded = 'extra-expanded',
-    ultra_expanded = 'ultra-expanded',
-    initial = 'initial',
-    inherit = 'inherit',
-}
-
-export enum FontStyle {
-    normal = 'normal',
-    italic = 'italic',
-    oblique = 'oblique',
-    initial = 'initial',
-    inherit = 'inherit',
-}
-
-export enum Opacity {
-    initial = 'initial',
-}
-
-export enum TextAlign {
-    left = 'left',
-    right = 'right',
-    center = 'center',
-    justify = 'justify',
-    initial = 'initial',
-    inherit = 'inherit',
 }

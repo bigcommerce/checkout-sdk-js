@@ -42,7 +42,6 @@ import {
     AdyenV2PaymentStrategy,
     AdyenV2ScriptLoader,
     ThreeDS2ChallengeComponentOptions,
-    ThreeDS2ChallengeWidgetSize,
     ThreeDS2ComponentType,
     ThreeDS2DeviceFingerprintComponentOptions
 } from '.';
@@ -286,7 +285,7 @@ describe('AdyenV2PaymentStrategy', () => {
                         styles: {},
                         placeholders: {},
                     },
-                    threeDS2ChallengeWidgetSize: ThreeDS2ChallengeWidgetSize.Small,
+                    threeDS2ChallengeWidgetSize: '01',
                 },
             };
             adyenComponent = {
