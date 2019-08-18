@@ -429,19 +429,20 @@ export function getPaymentMethod(): PaymentMethod {
 
 export function getPaymentMethods(): PaymentMethod[] {
     return [
+        getAdyenAmex(),
+        getAdyenV2(),
         getAffirm(),
+        getAfterpay(),
+        getAmazonPay(),
+        getAuthorizenet(),
         getBraintree(),
         getBraintreePaypal(),
         getBraintreePaypalCredit(),
         getBraintreeVisaCheckout(),
-        getAdyenAmex(),
-        getAuthorizenet(),
-        getPaypalExpress(),
-        getAfterpay(),
-        getAmazonPay(),
-        getKlarna(),
-        getSquare(),
         getGooglePay(),
+        getKlarna(),
+        getPaypalExpress(),
+        getSquare(),
         getStripeV3(),
     ];
 }
