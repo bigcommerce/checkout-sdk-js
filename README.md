@@ -24,6 +24,7 @@ The SDK has a convenient application interface for starting and completing a che
         - [Set shipping option](#set-shipping-option)
     - [Set billing details](#set-billing-details)
     - [Apply coupon or gift certificate](#apply-coupon-or-gift-certificate)
+    - [Initialize spam protection](#initialize-spam-protection)
     - [Submit payment and order](#submit-payment-and-order)
         - [Load payment methods](#load-payment-methods)
         - [Initialize payment method](#initialize-payment-method)
@@ -227,6 +228,14 @@ You can also allow the customer to remove any coupon code or gift certificate pr
 ```js
 await service.removeCoupon('COUPON');
 await service.removeGiftCertificate('GIFT');
+```
+
+### Initialize spam protection
+
+You can also enable bot protection to prevent bots and other types of automated abuse from creating orders. Note that enabling this feature increases checkout friction, which may affect conversions. As such, we recommend leaving this feature out if your store is not encountering bots.
+
+```js
+await service.initializeSpamProtection({ containerId: 'spamProtectionContainer' });
 ```
 
 ### Submit payment and order
