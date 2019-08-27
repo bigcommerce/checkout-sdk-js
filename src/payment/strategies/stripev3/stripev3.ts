@@ -13,7 +13,7 @@ export interface StripeV3Client {
     elements(): StripeElements;
     handleCardPayment(
         clientToken: string,
-        options: StripeHandleCardPaymentOptions
+        options?: StripeHandleCardPaymentOptions
     ): Promise<StripePaymentIntentResponse>;
     createPaymentMethod(
         type: string,
