@@ -9,7 +9,6 @@ import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { PaymentMethodCancelledError } from '../../errors';
-import { NonceInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -38,8 +37,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
         braintreePaymentProcessorMock = {} as BraintreePaymentProcessor;
         braintreePaymentProcessorMock.initialize = jest.fn();
         braintreePaymentProcessorMock.preloadPaypal = jest.fn(() => Promise.resolve());
-        braintreePaymentProcessorMock.paypal = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card' }));
-        braintreePaymentProcessorMock.appendSessionId = jest.fn(tokenizedCard => tokenizedCard.then((card: NonceInstrument) => ({ ...card, deviceSessionId: 'my_session_id' })));
+        braintreePaymentProcessorMock.paypal = jest.fn(() => Promise.resolve({ nonce: 'my_tokenized_card', details: { email: 'random@email.com' } }));
+        braintreePaymentProcessorMock.getSessionId = jest.fn(() => 'my_session_id');
         braintreePaymentProcessorMock.deinitialize = jest.fn();
 
         paymentMethodMock = { ...getBraintreePaypal(), clientToken: 'myToken' };
@@ -150,9 +149,13 @@ describe('BraintreePaypalPaymentStrategy', () => {
             const expected = {
                 ...orderRequestBody.payment,
                 paymentData: {
-                    deviceSessionId: 'my_session_id',
-                    method: 'paypal',
-                    nonce: 'my_tokenized_card',
+                    formattedPayload: {
+                        device_info: 'my_session_id',
+                        paypal_account: {
+                            token: 'my_tokenized_card',
+                            email: 'random@email.com',
+                        },
+                    },
                 },
             };
 
@@ -188,8 +191,13 @@ describe('BraintreePaypalPaymentStrategy', () => {
 
             const expected = expect.objectContaining({
                 paymentData: {
-                    method: 'paypal',
-                    nonce: 'some-nonce',
+                    formattedPayload: {
+                        device_info: null,
+                        paypal_account: {
+                            token: 'some-nonce',
+                            email: null,
+                        },
+                    },
                 },
             });
 
@@ -253,9 +261,13 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 const expected = {
                     ...orderRequestBody.payment,
                     paymentData: {
-                        deviceSessionId: 'my_session_id',
-                        method: 'paypal',
-                        nonce: 'my_tokenized_card',
+                        formattedPayload: {
+                            device_info: 'my_session_id',
+                            paypal_account: {
+                                token: 'my_tokenized_card',
+                                email: 'random@email.com',
+                            },
+                        },
                     },
                 };
 

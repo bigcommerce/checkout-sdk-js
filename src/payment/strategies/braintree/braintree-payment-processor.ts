@@ -6,7 +6,7 @@ import { OrderPaymentRequestBody } from '../../../order';
 import { PaymentMethodCancelledError } from '../../errors';
 import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
-import { BraintreePaypal, BraintreeRequestData } from './braintree';
+import { BraintreePaypal, BraintreeRequestData, BraintreeTokenizePayload, BraintreeVerifyPayload } from './braintree';
 import { BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 
@@ -38,7 +38,7 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<NonceInstrument> {
+    paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<BraintreeTokenizePayload> {
         return this._braintreeSDKCreator.getPaypal()
             .then(paypal => {
                 this._overlay.show({
@@ -67,7 +67,7 @@ export default class BraintreePaymentProcessor {
             });
     }
 
-    verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<NonceInstrument> {
+    verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<BraintreeVerifyPayload> {
         if (!this._threeDSecureOptions) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -101,6 +101,14 @@ export default class BraintreePaymentProcessor {
         });
     }
 
+    getSessionId(): Promise<string | undefined> {
+        return this._braintreeSDKCreator.getDataCollector()
+            .then(({ deviceData }) => deviceData);
+    }
+
+    /**
+     * @deprecated Use getSessionId() and combine them in the consumer.
+     */
     appendSessionId(processedPayment: Promise<NonceInstrument>): Promise<NonceInstrument> {
         return processedPayment
             .then(paymentData => Promise.all([paymentData, this._braintreeSDKCreator.getDataCollector()]))
