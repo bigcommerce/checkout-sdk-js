@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.34.1"></a>
+## [1.34.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.34.0...v1.34.1) (2019-08-28)
+
+
+### Bug Fixes
+
+* **payment:** INT-1829 Remove error validation if no code action is present ([b7e07c7](https://github.com/bigcommerce/checkout-sdk-js/commit/b7e07c7))
+* **payment:** INT-1836 Update strategy to support 3ds with vaulting ([44e8ac6](https://github.com/bigcommerce/checkout-sdk-js/commit/44e8ac6))
+
+
+### Performance Improvements
+
+* **common:** CHECKOUT-4272 Only set up event listeners for iframe resizer when it is in use ([58e0a1e](https://github.com/bigcommerce/checkout-sdk-js/commit/58e0a1e))
+
+
+
 <a name="1.34.0"></a>
 # [1.34.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.33.0...v1.34.0) (2019-08-14)
 
