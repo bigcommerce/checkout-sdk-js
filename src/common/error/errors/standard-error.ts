@@ -3,6 +3,7 @@ import { setPrototypeOf } from '../../utility';
 import CustomError from './custom-error';
 
 export default class StandardError extends Error implements CustomError {
+    name = 'StandardError';
     type = 'standard';
 
     constructor(message?: string) {
