@@ -41,7 +41,7 @@ export interface BraintreeClient {
 }
 
 export interface BraintreeThreeDSecure extends BraintreeModule {
-    verifyCard(options: BraintreeThreeDSecureOptions): Promise<{ nonce: string }>;
+    verifyCard(options: BraintreeThreeDSecureOptions): Promise<BraintreeVerifyPayload>;
     cancelVerifyCard(): Promise<BraintreeVerifyPayload>;
 }
 

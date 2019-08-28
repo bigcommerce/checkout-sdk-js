@@ -3,7 +3,7 @@ import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitial
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
-import Payment from '../../payment';
+import Payment, { FormattedPayload, PaypalInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -103,16 +103,33 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         const { currency, storeProfile: { storeLanguage } } = config;
-        const { method, nonce } = this._paymentMethod;
+        const { nonce } = this._paymentMethod;
 
         if (nonce) {
-            return Promise.resolve({ ...payment, paymentData: { nonce, method } });
+            return Promise.resolve({ ...payment, paymentData: this._formattedPayload(nonce) });
         }
 
-        const tokenizedCard = this._braintreePaymentProcessor
-            .paypal(grandTotal, storeLanguage, currency.code, this._credit);
+        return Promise.all([
+            this._braintreePaymentProcessor.paypal(grandTotal, storeLanguage, currency.code, this._credit),
+            this._braintreePaymentProcessor.getSessionId(),
+        ]).then(([
+            { nonce, details },
+            sessionId,
+        ]) => ({
+            ...payment,
+            paymentData: this._formattedPayload(nonce, details.email, sessionId),
+        }));
+    }
 
-        return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
-            .then(paymentData => ({ ...payment, paymentData: { ...paymentData, method } }));
+    private _formattedPayload(token: string, email?: string, sessionId?: string): FormattedPayload<PaypalInstrument> {
+        return {
+            formattedPayload: {
+                device_info: sessionId || null,
+                paypal_account: {
+                    token,
+                    email: email || null,
+                },
+            },
+        };
     }
 }

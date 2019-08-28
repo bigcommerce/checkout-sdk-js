@@ -176,6 +176,19 @@ describe('BraintreePaymentProcessor', () => {
         });
     });
 
+    describe('#getSessionId()', () => {
+        it('appends data to a processed payment', async () => {
+            braintreeSDKCreator.getDataCollector = jest.fn().mockResolvedValue({
+                deviceData: 'my_device_session_id',
+            });
+
+            const braintreePaymentProcessor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
+            const expected = await braintreePaymentProcessor.getSessionId();
+
+            expect(expected).toEqual('my_device_session_id');
+        });
+    });
+
     describe('#deinitialize()', () => {
         it('calls teardown in the braintree sdk creator', async () => {
             braintreeSDKCreator.teardown = jest.fn();
