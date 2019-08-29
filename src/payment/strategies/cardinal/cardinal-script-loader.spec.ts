@@ -1,6 +1,6 @@
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { getCardinalScriptMock } from './cardinal.mock';
 import { CardinalScriptLoader, CardinalWindow } from './index';
@@ -47,13 +47,13 @@ describe('CardinalScriptLoader', () => {
 
     it('throws error to inform that order finalization is not required', async () => {
         scriptLoader.loadScript = jest.fn(() => {
-            throw new StandardError();
+            throw new PaymentMethodClientUnavailableError();
         });
 
         try {
             await cardinalScriptLoader.load('provider');
         } catch (error) {
-            expect(error).toBeInstanceOf(StandardError);
+            expect(error).toBeInstanceOf(PaymentMethodClientUnavailableError);
         }
     });
 });

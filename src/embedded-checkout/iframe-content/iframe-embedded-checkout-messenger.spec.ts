@@ -1,5 +1,4 @@
 import { CartChangedError } from '../../cart/errors';
-import { StandardError } from '../../common/error/errors';
 import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-checkout-events';
 import IframeEventListener from '../iframe-event-listener';
 import IframeEventPoster from '../iframe-event-poster';
@@ -72,7 +71,7 @@ describe('EmbeddedCheckoutMessenger', () => {
     });
 
     it('posts `frame_error` event to parent window without target origin', () => {
-        const error = new StandardError();
+        const error = new Error();
 
         messenger.postFrameError(error);
 
@@ -80,7 +79,6 @@ describe('EmbeddedCheckoutMessenger', () => {
             type: EmbeddedCheckoutEventType.FrameError,
             payload: {
                 message: error.message,
-                type: error.type,
             },
         });
     });

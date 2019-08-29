@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 import { ChasePayHostWindow, JPMC } from '../chasepay/chasepay';
 
 export default class ChasePayScriptLoader {
@@ -14,7 +14,7 @@ export default class ChasePayScriptLoader {
             .loadScript(`//pwc${testMode ? 'psb' : ''}.chase.com/pwc/checkout/js/v20170521/list.action?type=raw&applId=PWC&channelId=CWC&version=1`)
             .then(() => {
                 if (!this._window.JPMC) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.JPMC;

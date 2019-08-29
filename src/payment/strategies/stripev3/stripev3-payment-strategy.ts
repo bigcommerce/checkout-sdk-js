@@ -9,13 +9,12 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
-    RequestError,
-    StandardError
+    RequestError
 } from '../../../common/error/errors';
 import { Customer } from '../../../customer';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import { HostedInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -96,7 +95,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                             return this._getStripeJs().handleCardPayment(error.body.three_ds_result.token)
                                 .then(stripeResponse => {
                                     if (stripeResponse.error || !stripeResponse.paymentIntent.id) {
-                                        throw new StandardError(stripeResponse.error && stripeResponse.error.message);
+                                        throw new PaymentMethodFailedError(stripeResponse.error && stripeResponse.error.message);
                                     }
 
                                     const paymentPayload = {
@@ -123,7 +122,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                         return this._getStripeJs().createPaymentMethod('card', this._cardElement, this._mapStripePaymentMethodOptions())
                             .then(stripePaymentMethod => {
                                 if (stripePaymentMethod.error || !stripePaymentMethod.paymentMethod.id) {
-                                    throw new StandardError(stripePaymentMethod.error && stripePaymentMethod.error.message);
+                                    throw new PaymentMethodFailedError(stripePaymentMethod.error && stripePaymentMethod.error.message);
                                 }
 
                                 if (!paymentIntent) {
@@ -139,7 +138,7 @@ export default class StripeV3PaymentStrategy implements PaymentStrategy {
                             })
                             .then(stripeResponse => {
                                 if (stripeResponse.error || !stripeResponse.paymentIntent.id) {
-                                    throw new StandardError(stripeResponse.error && stripeResponse.error.message);
+                                    throw new PaymentMethodFailedError(stripeResponse.error && stripeResponse.error.message);
                                 }
 
                                 const paymentPayload = {

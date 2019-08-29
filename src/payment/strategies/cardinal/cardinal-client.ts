@@ -1,11 +1,9 @@
 import { includes } from 'lodash';
 
-import Address from '../../../address/address';
-import BillingAddress from '../../../billing/billing-address';
-import {
-    MissingDataError, MissingDataErrorType, NotInitializedError,
-    NotInitializedErrorType, StandardError
-} from '../../../common/error/errors';
+import { Address } from '../../../address';
+import { BillingAddress } from '../../../billing';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { PaymentMethodFailedError } from '../../errors';
 import { CreditCardInstrument, ThreeDSecureToken, VaultedInstrument } from '../../payment';
 import { ThreeDsResult } from '../../payment-response-body';
 
@@ -71,7 +69,7 @@ export default class CardinalClient {
                             if (includes(CardinalSignatureValidationErrors, data.ErrorNumber)) {
                                 reject(new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
                             }
-                            reject(new StandardError(data.ErrorDescription));
+                            reject(new PaymentMethodFailedError(data.ErrorDescription));
                             break;
                     }
                 });
@@ -99,7 +97,7 @@ export default class CardinalClient {
                     client.on(CardinalEventType.Validated, (data: CardinalValidatedData, jwt?: string) => {
                         client.off(CardinalEventType.Validated);
                         if (!jwt) {
-                            return reject(new StandardError(data.ErrorDescription ? data.ErrorDescription : 'An error was encountered while processing the transaction.'));
+                            return reject(new PaymentMethodFailedError(data.ErrorDescription ? data.ErrorDescription : 'An error was encountered while processing the transaction.'));
                         }
 
                         if (!data.ActionCode) {
@@ -111,16 +109,16 @@ export default class CardinalClient {
                                 return resolve({ token: jwt });
                             case CardinalValidatedAction.NoAction:
                                 if (data.ErrorNumber > 0) {
-                                    return reject(new StandardError(data.ErrorDescription));
+                                    return reject(new PaymentMethodFailedError(data.ErrorDescription));
                                 } else if (!data.Payment || !data.Payment.ExtendedData || data.Payment.ExtendedData.SignatureVerification !== CardinalSignatureVerification.Yes) {
-                                    return reject(new StandardError('Transaction signature could not be validated.'));
+                                    return reject(new PaymentMethodFailedError('Transaction signature could not be validated.'));
                                 }
 
                                 return resolve({ token: jwt });
                             case CardinalValidatedAction.Failure:
-                                return reject(new StandardError('User failed authentication or an error was encountered while processing the transaction.'));
+                                return reject(new PaymentMethodFailedError('User failed authentication or an error was encountered while processing the transaction.'));
                             case CardinalValidatedAction.Error:
-                                return reject(new StandardError(data.ErrorDescription));
+                                return reject(new PaymentMethodFailedError(data.ErrorDescription));
                         }
                     });
 

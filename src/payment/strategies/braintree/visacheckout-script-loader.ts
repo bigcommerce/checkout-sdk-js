@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { VisaCheckoutHostWindow, VisaCheckoutSDK } from './visacheckout';
 
@@ -15,7 +15,7 @@ export default class VisaCheckoutScriptLoader {
             .loadScript(`//${testMode ? 'sandbox-' : ''}assets.secure.checkout.visa.com/checkout-widget/resources/js/integration/v1/sdk.js`)
             .then(() => {
                 if (!this._window.V) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.V;

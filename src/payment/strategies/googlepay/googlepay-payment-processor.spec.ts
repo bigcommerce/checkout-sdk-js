@@ -10,7 +10,6 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
-    StandardError
 } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
@@ -148,8 +147,7 @@ describe('GooglePayPaymentProcessor', () => {
             try {
                 await processor.initialize('googlepay');
             } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-                expect(error).toEqual(new StandardError(new MissingDataError(MissingDataErrorType.MissingPaymentMethod).message));
+                expect(error).toBeInstanceOf(MissingDataError);
             }
         });
     });

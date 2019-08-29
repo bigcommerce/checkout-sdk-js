@@ -11,10 +11,16 @@ export enum MissingDataErrorType {
     MissingOrderId,
     MissingPayment,
     MissingPaymentMethod,
+    MissingPaymentToken,
     MissingShippingAddress,
     MissingSpamProtectionToken,
 }
 
+/**
+ * Throw this error when data that is expected to exist is missing. Usually it
+ * is due to the fact that certain data has not been retrieved from or saved to
+ * the server yet. And such data is required to perform certain actions.
+ */
 export default class MissingDataError extends StandardError {
     constructor(
         public subtype: MissingDataErrorType
@@ -52,6 +58,9 @@ function getErrorMessage(type: MissingDataErrorType): string {
 
     case MissingDataErrorType.MissingPayment:
         return 'Unable to proceed because payment data is unavailable.';
+
+    case MissingDataErrorType.MissingPaymentToken:
+        return 'Unable to proceed because the token required to submit a payment is missing.';
 
     case MissingDataErrorType.MissingPaymentMethod:
         return 'Unable to proceed because payment method data is unavailable or not properly configured.';

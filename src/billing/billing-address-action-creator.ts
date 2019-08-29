@@ -3,13 +3,14 @@ import { Response } from '@bigcommerce/request-sender';
 import { Observable, Observer } from 'rxjs';
 
 import { Checkout, InternalCheckoutSelectors } from '../checkout';
-import { MissingDataError, MissingDataErrorType, StandardError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { GuestCredentials } from '../customer';
 
 import { BillingAddressRequestSender } from '.';
 import { BillingAddressUpdateRequestBody } from './billing-address';
 import { BillingAddressActionType, ContinueAsGuestAction, UpdateBillingAddressAction } from './billing-address-actions';
+import { UnableToContinueAsGuestError } from './errors';
 
 export default class BillingAddressActionCreator {
     constructor(
@@ -31,7 +32,7 @@ export default class BillingAddressActionCreator {
             const customer = state.customer.getCustomer();
 
             if (customer && !customer.isGuest) {
-                throw new StandardError('Cannot continue as guest: customer is logged in.');
+                throw new UnableToContinueAsGuestError();
             }
 
             const billingAddress = state.billingAddress.getBillingAddress();

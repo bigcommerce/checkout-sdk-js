@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { StripeHostWindow, StripeV3Client } from './stripev3';
 
@@ -15,7 +15,7 @@ export default class StripeV3ScriptLoader {
             .loadScript('https://js.stripe.com/v3/')
             .then(() => {
                 if (!this._window.Stripe) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.Stripe(publishableKey, {

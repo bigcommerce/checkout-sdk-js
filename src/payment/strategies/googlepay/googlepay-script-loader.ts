@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { GooglePayHostWindow, GooglePaySDK } from './googlepay';
 
@@ -15,7 +15,7 @@ export default class GooglePayScriptLoader {
             .loadScript('https://pay.google.com/gp/p/js/pay.js')
             .then(() => {
                 if (!this._window.google) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.google;

@@ -9,7 +9,6 @@ import {
     MissingDataErrorType,
     NotInitializedError,
     NotInitializedErrorType,
-    StandardError,
     TimeoutError,
     UnsupportedBrowserError,
 } from '../../../common/error/errors';
@@ -202,7 +201,7 @@ export default class SquarePaymentStrategy implements PaymentStrategy {
 
     private _handleCardNonceResponse(errors?: NonceGenerationError[], nonce?: string): void {
         if (!this._deferredRequestNonce) {
-            throw new StandardError();
+            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
         if (nonce && !errors) {

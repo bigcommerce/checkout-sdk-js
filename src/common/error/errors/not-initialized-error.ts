@@ -8,6 +8,11 @@ export enum NotInitializedErrorType {
     SpamProtectionNotInitialized,
 }
 
+/**
+ * Throw this error if a method requires a certain initialization call to be
+ * made first. Some objects can be constructed but they cannot be used until a
+ * separate initialization call is made.
+ */
 export default class NotInitializedError extends StandardError {
     constructor(
         public subtype: NotInitializedErrorType

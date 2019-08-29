@@ -8,6 +8,10 @@ const DEFAULT_RESPONSE = {
     status: 0,
 };
 
+/**
+ * Throw this error if we are unable to make a request to the server. It wraps
+ * any server response into a JS error object.
+ */
 export default class RequestError<TBody = any> extends StandardError {
     body: TBody | {};
     headers: { [key: string]: any };

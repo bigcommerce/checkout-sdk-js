@@ -2,7 +2,11 @@ import { setPrototypeOf } from '../../utility';
 
 import CustomError from './custom-error';
 
-export default class StandardError extends Error implements CustomError {
+/**
+ * This error type should not be constructed directly. It is a base class for
+ * all custom errors thrown in this library.
+ */
+export default abstract class StandardError extends Error implements CustomError {
     name = 'StandardError';
     type = 'standard';
 

@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { PaypalHostWindow, PaypalSDK } from './paypal-sdk';
 
@@ -18,7 +18,7 @@ export default class PaypalScriptLoader {
             .loadScript('//www.paypalobjects.com/api/checkout.min.js')
             .then(() => {
                 if (!this._window.paypal) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.paypal;
