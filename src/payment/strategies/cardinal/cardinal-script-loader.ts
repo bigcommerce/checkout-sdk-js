@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 
 import { CardinalSDK, CardinalWindow } from './cardinal';
 
@@ -20,7 +20,7 @@ export default class CardinalScriptLoader {
             .loadScript(url + '?v=' + provider)
             .then(() => {
                 if (!this._window.Cardinal) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.Cardinal;

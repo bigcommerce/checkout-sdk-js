@@ -12,7 +12,7 @@ import {
     CheckoutValidator,
 } from '../../../checkout';
 import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, RequestError, StandardError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import {
     OrderActionCreator,
@@ -175,12 +175,12 @@ describe('CardinalThreeDSecureFlow', () => {
 
         it('does not complete the purchase if there was an error', async () => {
             jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, new StandardError('Custom Error'))));
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, new Error('Custom Error'))));
 
             try {
                 await cardinalFlow.start(payment);
             } catch (error) {
-                expect(error).toBeInstanceOf(StandardError);
+                expect(error).toBeInstanceOf(Error);
                 expect(error.message).toBe('Custom Error');
             }
         });

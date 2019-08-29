@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 import { Zip, ZipHostWindow } from '../zip/zip';
 
 export default class ZipScriptLoader {
@@ -14,7 +14,7 @@ export default class ZipScriptLoader {
             .loadScript(`//static.zipmoney.com.au/checkout/checkout-v1.min.js`)
             .then(() => {
                 if (!this._window.Zip) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.Zip;

@@ -1,8 +1,8 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError, PaymentMethodCancelledError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -82,7 +82,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             throw new PaymentMethodCancelledError(error.message);
         }
 
-        throw new StandardError(error.message);
+        throw new PaymentMethodFailedError(error.message);
     }
 
     private _preparePaymentData(payment: OrderPaymentRequestBody, useStoreCredit?: boolean): Promise<Payment> {

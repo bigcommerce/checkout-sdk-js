@@ -1,5 +1,9 @@
 import { StandardError } from '../../common/error/errors';
 
+/**
+ * Throw this error if we are unable to synchronize the checkout details of a
+ * shopper with a hosted / remote checkout provider (i.e.: Amazon).
+ */
 export default class RemoteCheckoutSynchronizationError extends StandardError {
     constructor(
         public error?: Error

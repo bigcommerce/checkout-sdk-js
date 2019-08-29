@@ -1,8 +1,8 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, StandardError } from '../../../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
 import isCreditCardLike from '../../is-credit-card-like';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import Payment, { PaymentInstrument } from '../../payment';
@@ -73,7 +73,7 @@ export default class BraintreeCreditCardPaymentStrategy implements PaymentStrate
 
     private _handleError(error: Error): never {
         if (error.name === 'BraintreeError') {
-            throw new StandardError(error.message);
+            throw new PaymentMethodFailedError(error.message);
         }
 
         throw error;

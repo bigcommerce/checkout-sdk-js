@@ -2,8 +2,8 @@ import { pick } from 'lodash';
 
 import { mapToInternalAddress } from '../address';
 import { mapToInternalCart } from '../cart';
-import InternalCheckoutSelectors from '../checkout/internal-checkout-selectors';
-import { StandardError } from '../common/error/errors';
+import { InternalCheckoutSelectors } from '../checkout';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { mapToInternalCustomer } from '../customer';
 import { mapToInternalOrder } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
@@ -36,7 +36,7 @@ export default class PaymentRequestTransformer {
             checkoutState.payment.getPaymentToken();
 
         if (!authToken) {
-            throw new StandardError();
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentToken);
         }
 
         return {

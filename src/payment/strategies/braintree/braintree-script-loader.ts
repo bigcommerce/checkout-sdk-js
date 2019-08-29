@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { StandardError } from '../../../common/error/errors';
+import { PaymentMethodClientUnavailableError } from '../../errors';
 import { GooglePayCreator } from '../googlepay';
 
 import {
@@ -24,7 +24,7 @@ export default class BraintreeScriptLoader {
             .loadScript('//js.braintreegateway.com/web/3.37.0/js/client.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.client) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.braintree.client;
@@ -36,7 +36,7 @@ export default class BraintreeScriptLoader {
             .loadScript('//js.braintreegateway.com/web/3.37.0/js/three-d-secure.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.threeDSecure) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.braintree.threeDSecure;
@@ -48,7 +48,7 @@ export default class BraintreeScriptLoader {
             .loadScript('//js.braintreegateway.com/web/3.37.0/js/data-collector.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.dataCollector) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.braintree.dataCollector;
@@ -60,7 +60,7 @@ export default class BraintreeScriptLoader {
             .loadScript('//js.braintreegateway.com/web/3.37.0/js/paypal.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.paypal) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.braintree.paypal;
@@ -72,7 +72,7 @@ export default class BraintreeScriptLoader {
             .loadScript('//js.braintreegateway.com/web/3.37.0/js/paypal-checkout.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.paypalCheckout) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.braintree.paypalCheckout;
@@ -84,7 +84,7 @@ export default class BraintreeScriptLoader {
             .loadScript('//js.braintreegateway.com/web/3.37.0/js/visa-checkout.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.visaCheckout) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.braintree.visaCheckout;
@@ -96,7 +96,7 @@ export default class BraintreeScriptLoader {
             .loadScript('//js.braintreegateway.com/web/3.37.0/js/google-payment.min.js')
             .then(() => {
                 if (!this._window.braintree || !this._window.braintree.googlePayment) {
-                    throw new StandardError();
+                    throw new PaymentMethodClientUnavailableError();
                 }
 
                 return this._window.braintree.googlePayment;

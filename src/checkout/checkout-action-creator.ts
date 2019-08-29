@@ -3,7 +3,7 @@ import { concat, defer, merge, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { throwErrorAction } from '../common/error';
-import { MissingDataError, MissingDataErrorType, StandardError } from '../common/error/errors';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { ConfigActionCreator } from '../config';
 
@@ -40,7 +40,7 @@ export default class CheckoutActionCreator {
                 const context = state.config.getContextConfig();
 
                 if (!context || !context.checkoutId) {
-                    throw new StandardError('Unable to load checkout: no cart is available');
+                    throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
                 return this._checkoutRequestSender.loadCheckout(context.checkoutId, options)

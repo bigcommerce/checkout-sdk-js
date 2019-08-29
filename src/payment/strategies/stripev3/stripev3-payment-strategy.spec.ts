@@ -16,8 +16,7 @@ import {
     InvalidArgumentError,
     MissingDataError,
     NotInitializedError,
-    RequestError,
-    StandardError
+    RequestError
 } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getCustomer } from '../../../customer/customers.mock';
@@ -41,7 +40,7 @@ import {
     PaymentRequestSender
 } from '../../../payment';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
-import { PaymentArgumentInvalidError } from '../../errors';
+import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
@@ -277,7 +276,7 @@ describe('StripeV3PaymentStrategy', () => {
 
             expect(response).rejects.toThrowError(stripeError.error.message);
 
-            return expect(response).rejects.toThrow(StandardError);
+            return expect(response).rejects.toThrow(PaymentMethodFailedError);
         });
 
         it('throws an error when handle card payment to stripe', async () => {
@@ -306,7 +305,7 @@ describe('StripeV3PaymentStrategy', () => {
 
             expect(response).rejects.toThrowError(stripeError.error.message);
 
-            return expect(response).rejects.toThrow(StandardError);
+            return expect(response).rejects.toThrow(PaymentMethodFailedError);
         });
 
         it('throws an error when ClientToken is undefined', async () => {
@@ -619,7 +618,7 @@ describe('StripeV3PaymentStrategy', () => {
                 expect(orderActionCreator.submitOrder).toHaveBeenCalled();
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(1);
                 expect(stripeV3JsMock.handleCardPayment).toHaveBeenCalled();
-                expect(error).toEqual(new StandardError(stripeError.error && stripeError.error.message));
+                expect(error.message).toEqual(stripeError.error && stripeError.error.message);
             }
         });
     });

@@ -1,17 +1,17 @@
 import StandardError from './standard-error';
 
 describe('StandardError', () => {
-    it('omits error constructor in stack trace', () => {
-        try {
-            throw new StandardError();
-        } catch (error) {
-            expect(error.stack).not.toContain('StandardError');
-        }
+    class TestError extends StandardError {}
+
+    it('returns error name', () => {
+        const error = new TestError();
+
+        expect(error.name).toEqual('StandardError');
     });
 
     it('sets error message if provided', () => {
         const message = 'Hello world';
-        const error = new StandardError(message);
+        const error = new TestError(message);
 
         expect(error.message).toEqual(message);
     });

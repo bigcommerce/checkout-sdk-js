@@ -21,7 +21,6 @@ import {
     NotInitializedError,
     RequestError
 } from '../../../common/error/errors';
-import StandardError from '../../../common/error/errors/standard-error';
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import {
@@ -548,19 +547,19 @@ describe('AmazonPayPaymentStrategy', () => {
             if (hostWindow.OffAmazonPayments) {
                 jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
                     .mockImplementation(() => {
-                        throw new StandardError('error');
+                        throw new Error('error');
                     });
 
                 hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((_sellerId, _referenceId, callback) => {
-                    callback(amazonConfirmationFlow).catch((error: StandardError) => {
-                        expect(error).toBeInstanceOf(StandardError);
+                    callback(amazonConfirmationFlow).catch((error: Error) => {
+                        expect(error).toBeInstanceOf(Error);
                     });
                 });
 
                 try {
                     await strategy3ds.execute(payload, options);
                 } catch (error) {
-                    expect(error).toBeInstanceOf(StandardError);
+                    expect(error).toBeInstanceOf(Error);
                 }
             }
         });

@@ -1,7 +1,7 @@
 import { getBillingAddress } from '../billing/billing-addresses.mock';
 import { createInternalCheckoutSelectors, CheckoutStoreState, InternalCheckoutSelectors } from '../checkout';
 import { getCheckoutStoreStateWithOrder, getCheckoutWithGiftCertificates } from '../checkout/checkouts.mock';
-import { StandardError } from '../common/error/errors';
+import { MissingDataError } from '../common/error/errors';
 import { getConfig } from '../config/configs.mock';
 import { getCustomer } from '../customer/customers.mock';
 import { getOrder, getOrderMeta } from '../order/orders.mock';
@@ -68,7 +68,7 @@ describe('PaymentRequestTransformer', () => {
         jest.spyOn(selectors.payment, 'getPaymentToken')
             .mockReturnValue(undefined);
 
-        expect(() => paymentRequestTransformer.transform(payment, selectors)).toThrow(StandardError);
+        expect(() => paymentRequestTransformer.transform(payment, selectors)).toThrow(MissingDataError);
     });
 
     it('returns paymentMethod as undefined when state does not have paymentMethods', () => {
