@@ -274,7 +274,12 @@ declare interface RequestOptions<TParams = {}> {
     params?: TParams;
 }
 
-declare class StandardError extends Error implements CustomError {
+/**
+ * This error type should not be constructed directly. It is a base class for
+ * all custom errors thrown in this library.
+ */
+declare abstract class StandardError extends Error implements CustomError {
+    name: string;
     type: string;
     constructor(message?: string);
 }

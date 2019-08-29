@@ -3000,6 +3000,10 @@ declare interface Region {
     name: string;
 }
 
+/**
+ * Throw this error if we are unable to make a request to the server. It wraps
+ * any server response into a JS error object.
+ */
 declare class RequestError<TBody = any> extends StandardError {
     body: TBody | {};
     headers: {
@@ -3159,7 +3163,12 @@ declare interface SquarePaymentInitializeOptions {
     onError?(errors?: NonceGenerationError[]): void;
 }
 
-declare class StandardError extends Error implements CustomError {
+/**
+ * This error type should not be constructed directly. It is a base class for
+ * all custom errors thrown in this library.
+ */
+declare abstract class StandardError extends Error implements CustomError {
+    name: string;
     type: string;
     constructor(message?: string);
 }

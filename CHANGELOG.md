@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.34.2"></a>
+## [1.34.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.34.1...v1.34.2) (2019-08-29)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-4367 Set error name for StandardError ([59728eb](https://github.com/bigcommerce/checkout-sdk-js/commit/59728eb))
+* **common:** CHECKOUT-4367 Stop throwing generic `StandardError` type ([857c04b](https://github.com/bigcommerce/checkout-sdk-js/commit/857c04b))
+
+
+
 <a name="1.34.1"></a>
 ## [1.34.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.34.0...v1.34.1) (2019-08-28)
 
