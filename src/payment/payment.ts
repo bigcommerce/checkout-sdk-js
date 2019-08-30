@@ -72,6 +72,7 @@ export interface HostedInstrument {
 }
 
 export interface PaypalInstrument {
+    vault_payment_instrument: boolean | null;
     device_info: string | null;
     paypal_account: {
         token: string;

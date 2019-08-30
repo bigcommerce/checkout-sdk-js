@@ -15,6 +15,7 @@ export interface PaypalConfig {
     currency: string;
     locale: string;
     offerCredit?: boolean;
+    shouldSaveInstrument?: boolean;
 }
 
 export default class BraintreePaymentProcessor {
@@ -45,7 +46,7 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    paypal(config: PaypalConfig): Promise<BraintreeTokenizePayload> {
+    paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
         return this._braintreeSDKCreator.getPaypal()
             .then(paypal => {
                 this._overlay.show({
@@ -54,7 +55,7 @@ export default class BraintreePaymentProcessor {
 
                 return paypal.tokenize({
                     enableShippingAddress: true,
-                    flow: 'checkout',
+                    flow: shouldSaveInstrument ? 'vault' : 'checkout',
                     useraction: 'commit',
                     ...config,
                 });

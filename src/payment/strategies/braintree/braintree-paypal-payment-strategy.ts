@@ -119,12 +119,17 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             return Promise.resolve(payment);
         }
 
+        if (paymentData.shouldSaveInstrument && !isVaultingEnabled) {
+            throw new InvalidArgumentError('Vaulting is disabled but shouldSaveInstrument is set to true');
+        }
+
         return Promise.all([
             this._braintreePaymentProcessor.paypal({
                 amount: grandTotal,
                 locale: storeLanguage,
                 currency: currency.code,
                 offerCredit: this._credit,
+                shouldSaveInstrument: paymentData.shouldSaveInstrument || false,
             }),
             this._braintreePaymentProcessor.getSessionId(),
         ]).then(([
@@ -132,13 +137,14 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             sessionId,
         ]) => ({
             ...payment,
-            paymentData: this._formattedPayload(nonce, details.email, sessionId),
+            paymentData: this._formattedPayload(nonce, details.email, sessionId, paymentData.shouldSaveInstrument),
         }));
     }
 
-    private _formattedPayload(token: string, email?: string, sessionId?: string): FormattedPayload<PaypalInstrument> {
+    private _formattedPayload(token: string, email?: string, sessionId?: string, vaultPaymentInstrument?: boolean): FormattedPayload<PaypalInstrument> {
         return {
             formattedPayload: {
+                vault_payment_instrument: vaultPaymentInstrument || null,
                 device_info: sessionId || null,
                 paypal_account: {
                     token,

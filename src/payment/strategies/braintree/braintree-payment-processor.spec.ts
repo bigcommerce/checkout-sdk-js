@@ -237,6 +237,27 @@ describe('BraintreePaymentProcessor', () => {
                 });
         });
 
+        it('shows Paypal modal for vaulting', async () => {
+            const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
+
+            await processor.paypal({
+                amount: 200,
+                locale: 'en',
+                currency: 'USD',
+                shouldSaveInstrument: true,
+            });
+
+            expect(paypal.tokenize)
+                .toHaveBeenCalledWith({
+                    amount: 200,
+                    currency: 'USD',
+                    enableShippingAddress: true,
+                    flow: 'vault',
+                    locale: 'en',
+                    useraction: 'commit',
+                });
+        });
+
         it('toggles overlay', async () => {
             const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
 
