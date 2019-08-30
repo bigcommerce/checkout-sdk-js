@@ -162,7 +162,13 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.initialize(options);
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
-            expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', false);
+            expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith({
+                amount: 190,
+                locale: 'en_US',
+                currency: 'USD',
+                offerCredit: false,
+            });
+
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
         });
@@ -178,12 +184,22 @@ describe('BraintreePaypalPaymentStrategy', () => {
             await braintreePaypalPaymentStrategy.execute({ ...orderRequestBody, useStoreCredit: true }, options);
 
             expect(checkout.getOutstandingBalance).toHaveBeenCalledWith(true);
-            expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(150, 'en_US', 'USD', false);
+            expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith({
+                amount: 150,
+                locale: 'en_US',
+                currency: 'USD',
+                offerCredit: false,
+            });
 
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
             expect(checkout.getOutstandingBalance).toHaveBeenCalledWith(false);
-            expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', false);
+            expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith({
+                amount: 190,
+                locale: 'en_US',
+                currency: 'USD',
+                offerCredit: false,
+            });
         });
 
         it('does not call paypal if a nonce is present', async () => {
@@ -274,7 +290,12 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 await braintreePaypalPaymentStrategy.initialize(options);
                 await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
 
-                expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith(190, 'en_US', 'USD', true);
+                expect(braintreePaymentProcessorMock.paypal).toHaveBeenCalledWith({
+                    amount: 190,
+                    locale: 'en_US',
+                    currency: 'USD',
+                    offerCredit: true,
+                });
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
                 expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
             });

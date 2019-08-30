@@ -220,7 +220,11 @@ describe('BraintreePaymentProcessor', () => {
         it('shows Paypal modal for tokenization', async () => {
             const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
 
-            await processor.paypal(200, 'en', 'USD', false);
+            await processor.paypal({
+                amount: 200,
+                locale: 'en',
+                currency: 'USD',
+            });
 
             expect(paypal.tokenize)
                 .toHaveBeenCalledWith({
@@ -229,7 +233,6 @@ describe('BraintreePaymentProcessor', () => {
                     enableShippingAddress: true,
                     flow: 'checkout',
                     locale: 'en',
-                    offerCredit: false,
                     useraction: 'commit',
                 });
         });
@@ -237,8 +240,11 @@ describe('BraintreePaymentProcessor', () => {
         it('toggles overlay', async () => {
             const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
 
-            await processor.paypal(200, 'en', 'USD', false);
-
+            await processor.paypal({
+                amount: 200,
+                locale: 'en',
+                currency: 'USD',
+            });
             expect(overlay.show)
                 .toHaveBeenCalled();
 
@@ -253,7 +259,11 @@ describe('BraintreePaymentProcessor', () => {
             const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
 
             try {
-                await processor.paypal(200, 'en', 'USD', false);
+                await processor.paypal({
+                    amount: 200,
+                    locale: 'en',
+                    currency: 'USD',
+                });
             } catch (error) {
                 expect(overlay.remove)
                     .toHaveBeenCalled();
@@ -263,7 +273,11 @@ describe('BraintreePaymentProcessor', () => {
         it('focus PayPal window when overlay is clicked', async () => {
             const processor = new BraintreePaymentProcessor(braintreeSDKCreator, overlay);
 
-            await processor.paypal(200, 'en', 'USD', false);
+            await processor.paypal({
+                amount: 200,
+                locale: 'en',
+                currency: 'USD',
+            });
 
             const { onClick } = (overlay.show as jest.Mock).mock.calls[0][0];
 

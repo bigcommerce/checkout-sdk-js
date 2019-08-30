@@ -10,6 +10,13 @@ import { BraintreePaypal, BraintreeRequestData, BraintreeTokenizePayload, Braint
 import { BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 
+export interface PaypalConfig {
+    amount: number;
+    currency: string;
+    locale: string;
+    offerCredit?: boolean;
+}
+
 export default class BraintreePaymentProcessor {
     private _threeDSecureOptions?: BraintreeThreeDSecureOptions;
 
@@ -38,7 +45,7 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<BraintreeTokenizePayload> {
+    paypal(config: PaypalConfig): Promise<BraintreeTokenizePayload> {
         return this._braintreeSDKCreator.getPaypal()
             .then(paypal => {
                 this._overlay.show({
@@ -46,13 +53,10 @@ export default class BraintreePaymentProcessor {
                 });
 
                 return paypal.tokenize({
-                    amount,
-                    currency,
                     enableShippingAddress: true,
                     flow: 'checkout',
-                    locale: storeLanguage,
-                    offerCredit,
                     useraction: 'commit',
+                    ...config,
                 });
             })
             .then(response => {

@@ -110,7 +110,12 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         return Promise.all([
-            this._braintreePaymentProcessor.paypal(grandTotal, storeLanguage, currency.code, this._credit),
+            this._braintreePaymentProcessor.paypal({
+                amount: grandTotal,
+                locale: storeLanguage,
+                currency: currency.code,
+                offerCredit: this._credit,
+            }),
             this._braintreePaymentProcessor.getSessionId(),
         ]).then(([
             { nonce, details },
