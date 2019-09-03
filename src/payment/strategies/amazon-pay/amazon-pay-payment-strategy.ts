@@ -19,6 +19,7 @@ import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
+import PaymentMethodNotAllowedError from '../../errors/payment-method-not-allowed-error';
 import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
@@ -211,6 +212,10 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
                 const remoteAddress = amazon && amazon.billing && amazon.billing.address;
                 const billingAddress = state.billingAddress.getBillingAddress();
                 const internalBillingAddress = billingAddress && mapToInternalAddress(billingAddress);
+
+                if (amazon && amazon.billing && amazon.billing.paymentMethodNotAllowed) {
+                    throw new PaymentMethodNotAllowedError();
+                }
 
                 if (remoteAddress === false) {
                     throw new RemoteCheckoutSynchronizationError();

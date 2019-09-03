@@ -38,6 +38,7 @@ import {
 } from '../../../remote-checkout';
 import { getRemoteCheckoutState, getRemoteCheckoutStateData } from '../../../remote-checkout/remote-checkout.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
+import PaymentMethodNotAllowedError from '../../errors/payment-method-not-allowed-error';
 import PaymentMethod from '../../payment-method';
 import { getAmazonPay, getPaymentMethodsState } from '../../payment-methods.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
@@ -76,6 +77,7 @@ describe('AmazonPayPaymentStrategy', () => {
             walletSpy(options);
 
             options.onReady(orderReference);
+            options.onPaymentSelect(orderReference);
         }
 
         bind(id: string) {
@@ -468,7 +470,26 @@ describe('AmazonPayPaymentStrategy', () => {
         }
     });
 
-    describe('When 3ds is enabled', () => {
+    describe('#initialize', () => {
+        it('throws PaymentMethodNotAllowedError', () => {
+            const remoteCheckout = {
+                referenceId: 'referenceId',
+                billing: {
+                    address: {},
+                    paymentMethodNotAllowed: true,
+                },
+            };
+
+            jest.spyOn(store, 'getState');
+            jest.spyOn(store.getState().remoteCheckout, 'getCheckout')
+                .mockReturnValue(remoteCheckout);
+
+            expect(strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } }))
+                .resolves.toThrow(PaymentMethodNotAllowedError);
+        });
+    });
+
+    describe('#execute', () => {
         const paymentMethodsState = {
             data: [{
                 id: 'amazon',
@@ -528,7 +549,7 @@ describe('AmazonPayPaymentStrategy', () => {
             await strategy3ds.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
         });
 
-        it('redirects to confirmation flow success when support 3ds', async () => {
+        it('redirects to confirmation flow success when 3ds is enabled and supported', async () => {
             if (hostWindow.OffAmazonPayments) {
                 hostWindow.OffAmazonPayments.initConfirmationFlow = jest.fn((_sellerId, _referenceId, callback) => {
                     callback(amazonConfirmationFlow);
@@ -543,7 +564,7 @@ describe('AmazonPayPaymentStrategy', () => {
 
         });
 
-        it('redirects to confirmation flow  error when initializePayment fails', async () => {
+        it('redirects to confirmation flow  error when 3ds is enabled and initializePayment fails', async () => {
             if (hostWindow.OffAmazonPayments) {
                 jest.spyOn(remoteCheckoutActionCreator, 'initializePayment')
                     .mockImplementation(() => {
@@ -564,7 +585,7 @@ describe('AmazonPayPaymentStrategy', () => {
             }
         });
 
-        it('returns NotInitializedError when referenceId is undefined', async () => {
+        it('returns NotInitializedError when 3ds is enabled and referenceId is undefined', async () => {
             jest.spyOn(store3ds.getState().remoteCheckout, 'getCheckout')
                 .mockReturnValue({ referenceId: undefined });
             try {
@@ -574,7 +595,7 @@ describe('AmazonPayPaymentStrategy', () => {
             }
         });
 
-        it('returns NotInitializedError when payload.payment is undefined', async () => {
+        it('returns NotInitializedError when 3ds is enabled and payload.payment is undefined', async () => {
             payload.payment = undefined;
             try {
                 await strategy3ds.execute(payload, options);

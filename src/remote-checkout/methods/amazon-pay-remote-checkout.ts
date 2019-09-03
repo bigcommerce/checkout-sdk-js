@@ -4,6 +4,7 @@ export default interface AmazonPayRemoteCheckout {
     referenceId?: string;
     billing?: {
         address?: InternalAddress | false;
+        paymentMethodNotAllowed?: boolean;
     };
     shipping?: {
         address?: InternalAddress | false;
