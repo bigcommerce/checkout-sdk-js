@@ -1,3 +1,4 @@
+import { setupContentWindowForIframeResizer } from '../../common/iframe';
 import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-checkout-events';
 import IframeEventListener from '../iframe-event-listener';
 import IframeEventPoster from '../iframe-event-poster';
@@ -35,6 +36,8 @@ import NoopEmbeddedCheckoutMessenger from './noop-embedded-checkout-messenger';
  * @returns - An instance of `EmbeddedCheckoutMessenger`
  */
 export default function createEmbeddedCheckoutMessenger(options: EmbeddedCheckoutMessengerOptions): EmbeddedCheckoutMessenger {
+    setupContentWindowForIframeResizer();
+
     const parentWindow = options.parentWindow || window.parent;
 
     // Return a No-op messenger if it is not called inside an iframe

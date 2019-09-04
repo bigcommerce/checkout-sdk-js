@@ -28,3 +28,13 @@ export function iframeResizer(options: IFrameOptions, target: string | HTMLEleme
 
     return originalIframeResizer(options, target);
 }
+
+// We also need to wrap the original `iframeResizer.contentWindow` because
+// similarly the package sets up event listeners as soon as the package gets
+// imported. Another reason is that if it is imported at the top level using a
+// regular import statement, it will be stripped out by Webpack as it is
+// considered as "unused", unless we explicitly mark it as a package that
+// produces side effects.
+export function setupContentWindowForIframeResizer(): void {
+    require('iframe-resizer/js/iframeResizer.contentWindow');
+}
