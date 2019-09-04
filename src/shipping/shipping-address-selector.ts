@@ -1,6 +1,7 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { Address } from '../address';
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import ConsignmentState, { DEFAULT_STATE } from './consignment-state';
 

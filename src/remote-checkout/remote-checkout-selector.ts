@@ -1,5 +1,6 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import RemoteCheckoutState, { DEFAULT_STATE, RemoteCheckoutStateData } from './remote-checkout-state';
 

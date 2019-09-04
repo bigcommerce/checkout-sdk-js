@@ -1,6 +1,5 @@
+import { memoize } from '@bigcommerce/memoize';
 import { createSelector as defaultSelectorCreator } from 'reselect';
-
-import memoize from '../utility/memoize';
 
 /**
  * Decorate selector creators with the ability to memoize the return value of

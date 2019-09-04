@@ -1,8 +1,10 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { Address } from '../address';
 import { BillingAddress } from '../billing';
 import { Cart } from '../cart';
 import { createSelector } from '../common/selector';
-import { cloneResult as clone, memoizeOne } from '../common/utility';
+import { cloneResult as clone } from '../common/utility';
 import { StoreConfig } from '../config/config';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';

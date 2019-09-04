@@ -1,7 +1,7 @@
+import { memoizeOne } from '@bigcommerce/memoize';
 import { find } from 'lodash';
 
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 import { ConfigState } from '../config';
 import { DEFAULT_STATE } from '../config/config-state';
 import { Country } from '../geography';

@@ -1,7 +1,7 @@
+import { memoize, memoizeOne } from '@bigcommerce/memoize';
 import { find, some, values } from 'lodash';
 
 import { createSelector } from '../common/selector';
-import { memoize, memoizeOne } from '../common/utility';
 
 import CheckoutButtonState, { DEFAULT_STATE } from './checkout-button-state';
 import { CheckoutButtonMethodType } from './strategies';

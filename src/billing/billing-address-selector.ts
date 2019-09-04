@@ -1,5 +1,6 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import BillingAddress from './billing-address';
 import BillingAddressState, { DEFAULT_STATE } from './billing-address-state';

@@ -1,4 +1,4 @@
-import { memoize } from 'lodash';
+import { memoize } from '@bigcommerce/memoize';
 
 import { bindDecorator, isEqual, isPrivate, CacheKeyResolver } from '../utility';
 
@@ -36,7 +36,7 @@ function selectorMethodDecorator<T extends Method>(target: object, key: string, 
 
     let resolver = new CacheKeyResolver();
     let method = descriptor.value;
-    let memoizedMethod = memoize(method, (...args) => resolver.getKey(...args));
+    let memoizedMethod = memoize(method);
 
     return bindDecorator(target, key, {
         get() {
@@ -65,7 +65,7 @@ function selectorMethodDecorator<T extends Method>(target: object, key: string, 
         set(value) {
             resolver = new CacheKeyResolver();
             method = value;
-            memoizedMethod = memoize(method, (...args) => resolver.getKey(...args));
+            memoizedMethod = memoize(method);
         },
     });
 }

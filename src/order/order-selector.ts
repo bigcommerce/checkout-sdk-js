@@ -1,6 +1,7 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { BillingAddressSelector } from '../billing';
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 import { CouponSelector } from '../coupon';
 
 import Order from './order';

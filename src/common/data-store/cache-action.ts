@@ -1,15 +1,11 @@
 import { Action, ThunkAction } from '@bigcommerce/data-store';
-import { memoize } from 'lodash';
+import { memoize } from '@bigcommerce/memoize';
 import { from, Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-
-import { CacheKeyResolver } from '../utility';
 
 export default function cacheAction<TFunction extends CreateActionFn>(
     fn: TFunction
 ): TFunction {
-    const resolver = new CacheKeyResolver();
-
     function decoratedFn(this: any, ...args: any[]) {
         const action = fn.call(this, ...args);
 
@@ -24,10 +20,7 @@ export default function cacheAction<TFunction extends CreateActionFn>(
         return action;
     }
 
-    return memoize(
-        decoratedFn as TFunction,
-        (...args) => resolver.getKey(...args)
-    );
+    return memoize(decoratedFn as TFunction);
 }
 
 type CreateActionFn = (...args: any[]) => Observable<Action> | ThunkAction<Action> | Action;

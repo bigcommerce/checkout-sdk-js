@@ -1,9 +1,9 @@
+import { memoizeOne } from '@bigcommerce/memoize';
 import { find } from 'lodash';
 
 import { isAddressEqual, AddressRequestBody } from '../address';
 import { CartSelector, PhysicalItem } from '../cart';
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import Consignment from './consignment';
 import ConsignmentState, { DEFAULT_STATE } from './consignment-state';

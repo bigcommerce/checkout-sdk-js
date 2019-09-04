@@ -1,5 +1,6 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import Cart from './cart';
 import CartState, { DEFAULT_STATE } from './cart-state';
