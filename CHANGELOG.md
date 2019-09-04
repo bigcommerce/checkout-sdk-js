@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.34.3"></a>
+## [1.34.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.34.2...v1.34.3) (2019-09-04)
+
+
+### Bug Fixes
+
+* **embedded-checkout:** CHECKOUT-4388 Mark index file of Embedded Checkout as file with side effects ([d3c528b](https://github.com/bigcommerce/checkout-sdk-js/commit/d3c528b))
+
+
+
 <a name="1.34.2"></a>
 ## [1.34.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.34.1...v1.34.2) (2019-08-29)
 
