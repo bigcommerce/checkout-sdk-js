@@ -1,7 +1,8 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { StorefrontErrorResponseBody } from '../common/error';
 import { RequestError } from '../common/error/errors';
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import GiftCertificate from './gift-certificate';
 import GiftCertificateState, { DEFAULT_STATE } from './gift-certificate-state';

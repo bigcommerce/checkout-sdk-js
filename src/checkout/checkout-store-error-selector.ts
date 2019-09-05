@@ -1,7 +1,8 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { RequestError } from '../common/error/errors';
 import { createSelector, createShallowEqualSelector } from '../common/selector';
 import { Omit } from '../common/types';
-import { memoizeOne } from '../common/utility';
 
 import InternalCheckoutSelectors from './internal-checkout-selectors';
 

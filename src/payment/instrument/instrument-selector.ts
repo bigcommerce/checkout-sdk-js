@@ -1,5 +1,6 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { createSelector } from '../../common/selector';
-import { memoizeOne } from '../../common/utility';
 
 import Instrument from './instrument';
 import InstrumentState, { DEFAULT_STATE, InstrumentMeta } from './instrument-state';

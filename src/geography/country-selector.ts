@@ -1,5 +1,6 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import Country from './country';
 import CountryState, { DEFAULT_STATE } from './country-state';

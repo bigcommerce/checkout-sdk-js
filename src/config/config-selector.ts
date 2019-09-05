@@ -1,5 +1,6 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import Config, { ContextConfig, StoreConfig } from './config';
 import ConfigState, { DEFAULT_STATE } from './config-state';

@@ -1,7 +1,7 @@
+import { memoizeOne } from '@bigcommerce/memoize';
 import { find } from 'lodash';
 
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import PaymentMethod from './payment-method';
 import PaymentMethodMeta from './payment-method-meta';

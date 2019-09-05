@@ -1,5 +1,6 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import CustomerStrategyState, { DEFAULT_STATE } from './customer-strategy-state';
 

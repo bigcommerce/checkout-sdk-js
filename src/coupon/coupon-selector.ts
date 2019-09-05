@@ -1,6 +1,7 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { RequestError } from '../common/error/errors';
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import Coupon from './coupon';
 import CouponState, { DEFAULT_STATE } from './coupon-state';

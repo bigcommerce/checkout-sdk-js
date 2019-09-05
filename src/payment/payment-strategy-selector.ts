@@ -1,5 +1,6 @@
+import { memoizeOne } from '@bigcommerce/memoize';
+
 import { createSelector } from '../common/selector';
-import { memoizeOne } from '../common/utility';
 
 import PaymentStrategyState, { DEFAULT_STATE } from './payment-strategy-state';
 
