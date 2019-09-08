@@ -33,6 +33,7 @@ export default class GoogleRecaptcha {
                         event$.next({
                             token: recaptcha.getResponse(),
                         });
+                        recaptcha.reset();
                     },
                     'error-callback': () => {
                         event$.next({
@@ -83,8 +84,6 @@ export default class GoogleRecaptcha {
                     error: new SpamProtectionNotCompletedError(),
                 });
             }
-        })
-
-        .observe(container, { attributes: true, attributeFilter: ['style'] });
+        }).observe(container, { attributes: true, attributeFilter: ['style'] });
     }
 }

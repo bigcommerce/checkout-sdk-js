@@ -73,6 +73,8 @@ describe('GoogleRecaptcha', () => {
 
             googleRecaptchaMock = getGoogleRecaptchaMock();
 
+            googleRecaptchaMock.render = jest.fn((_containerId, { callback }) => callback());
+
             jest.spyOn(googleRecaptchaScriptLoader, 'load')
                 .mockResolvedValue(googleRecaptchaMock);
         });
@@ -98,6 +100,8 @@ describe('GoogleRecaptcha', () => {
 
             await new Promise(resolve => process.nextTick(resolve));
 
+            expect(googleRecaptchaMock.getResponse).toHaveBeenCalled();
+            expect(googleRecaptchaMock.reset).toHaveBeenCalled();
             expect(googleRecaptchaMock.execute).toHaveBeenCalled();
         });
     });
