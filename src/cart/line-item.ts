@@ -57,6 +57,7 @@ export interface LineItem {
     couponAmount: number;
     listPrice: number;
     salePrice: number;
+    comparisonPrice: number;
     extendedListPrice: number;
     extendedSalePrice: number;
     socialMedia?: LineItemSocialData[];
