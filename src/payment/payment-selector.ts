@@ -123,9 +123,9 @@ export function createPaymentSelectorFactory(): PaymentSelectorFactory {
     );
 
     const isPaymentDataRequired = createSelector(
-        ({ checkout }: PaymentSelectorDependencies) => checkout.getGrandTotal,
-        getGrandTotal => (useStoreCredit: boolean = false) => {
-            const grandTotal = getGrandTotal(useStoreCredit);
+        ({ checkout }: PaymentSelectorDependencies) => checkout.getOutstandingBalance,
+        getOutstandingBalance => (useStoreCredit: boolean = false) => {
+            const grandTotal = getOutstandingBalance(useStoreCredit);
 
             return grandTotal ? grandTotal > 0 : false;
         }

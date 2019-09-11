@@ -11,7 +11,7 @@ import {
 import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
+import { StoreCreditActionCreator } from '../../../store-credit';
 import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -31,18 +31,16 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         private _orderActionCreator: OrderActionCreator,
         private _paymentActionCreator: PaymentActionCreator,
         private _paymentMethodActionCreator: PaymentMethodActionCreator,
-        private _remoteCheckoutActionCreator: RemoteCheckoutActionCreator,
+        private _storeCreditActionCreator: StoreCreditActionCreator,
         private _zipScriptLoader: ZipScriptLoader,
         private _requestSender: RequestSender
     ) { }
 
-    initialize(): Promise<InternalCheckoutSelectors> {
-        return this._zipScriptLoader.load()
-            .then(zip => {
-                this._zipClient = zip;
+    async initialize(): Promise<InternalCheckoutSelectors> {
+        const zip = await this._zipScriptLoader.load();
+        this._zipClient = zip;
 
-                return this._store.getState();
-            });
+        return this._store.getState();
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
@@ -52,10 +50,9 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
+    async execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         const { payment, ...order } = payload;
         const { _zipClient: zipClient } = this;
-        const useStoreCredit = !!payload.useStoreCredit;
 
         if (!payment) {
             throw new InvalidArgumentError('Unable to submit payment because "payload.payment" argument is not provided.');
@@ -65,62 +62,63 @@ export default class ZipPaymentStrategy implements PaymentStrategy {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-            .then(() => this._store.dispatch(
-                this._remoteCheckoutActionCreator.initializePayment(payment.methodId, { useStoreCredit })
-            ))
-            .then(()  => {
-                return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options))
-                    .then(state => {
-                        this._paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
+        await this._store.dispatch(this._orderActionCreator.submitOrder(order, options));
 
-                        if (!this._paymentMethod || !this._paymentMethod.clientToken) {
-                            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                        }
-                    })
-                    .then(() => new Promise<string | undefined>((resolve, reject) => {
-                        zipClient.Checkout.init({
-                            onComplete: ({ checkoutId, state }) => {
-                                if (state === ZipModalEvent.CancelCheckout) {
-                                    return reject(new PaymentMethodCancelledError());
-                                }
+        const { useStoreCredit } = payload;
 
-                                if (state === ZipModalEvent.CheckoutReferred && checkoutId) {
-                                    return this._prepareForReferredRegistration(payment.methodId, checkoutId)
-                                        .then(() => resolve());
-                                }
+        if (useStoreCredit !== undefined) {
+            await this._store.dispatch(this._storeCreditActionCreator.applyStoreCredit(useStoreCredit));
+        }
 
-                                if (state === ZipModalEvent.CheckoutApproved && checkoutId) {
-                                    return resolve(checkoutId);
-                                }
+        const state = await this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(payment.methodId, options));
 
-                                if (state === ZipModalEvent.CheckoutDeclined) {
-                                    return reject(new PaymentMethodDeclinedError('Unfortunately your application was declined. Please select another payment method.'));
-                                }
+        this._paymentMethod = state.paymentMethods.getPaymentMethod(payment.methodId);
 
-                                reject(new PaymentMethodInvalidError());
-                            },
-                            onCheckout: openModal => {
-                                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
-                                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                                }
+        if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
 
-                                openModal(JSON.parse(this._paymentMethod.clientToken));
-                            },
-                        });
-                    })
-                    .then(nonce => {
-                        if (nonce !== undefined) {
-                            return this._store.dispatch(this._paymentActionCreator.submitPayment({
-                                methodId: payment.methodId,
-                                paymentData: { nonce },
-                            }));
-                        }
-
-                        return this._store.getState();
+        const nonce = await new Promise<string | undefined>((resolve, reject) => {
+            zipClient.Checkout.init({
+                onComplete: async ({ checkoutId, state }) => {
+                    if (state === ZipModalEvent.CancelCheckout) {
+                        return reject(new PaymentMethodCancelledError());
                     }
-                    ));
+
+                    if (state === ZipModalEvent.CheckoutReferred && checkoutId) {
+                        await this._prepareForReferredRegistration(payment.methodId, checkoutId);
+
+                        return resolve();
+                    }
+
+                    if (state === ZipModalEvent.CheckoutApproved && checkoutId) {
+                        return resolve(checkoutId);
+                    }
+
+                    if (state === ZipModalEvent.CheckoutDeclined) {
+                        return reject(new PaymentMethodDeclinedError('Unfortunately your application was declined. Please select another payment method.'));
+                    }
+
+                    reject(new PaymentMethodInvalidError());
+                },
+                onCheckout: openModal => {
+                    if (!this._paymentMethod || !this._paymentMethod.clientToken) {
+                        throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+                    }
+
+                    openModal(JSON.parse(this._paymentMethod.clientToken));
+                },
             });
+        });
+
+        if (nonce !== undefined) {
+            return this._store.dispatch(this._paymentActionCreator.submitPayment({
+                methodId: payment.methodId,
+                paymentData: { nonce },
+            }));
+        }
+
+        return this._store.getState();
     }
 
     finalize(): Promise<InternalCheckoutSelectors> {

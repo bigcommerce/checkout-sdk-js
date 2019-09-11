@@ -51,6 +51,7 @@ import {
 } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
+import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
 import CheckoutActionCreator from './checkout-action-creator';
 import CheckoutRequestSender from './checkout-request-sender';
@@ -89,6 +90,7 @@ describe('CheckoutService', () => {
     let shippingCountryRequestSender: ShippingCountryRequestSender;
     let spamProtectionActionCreator: SpamProtectionActionCreator;
     let store: CheckoutStore;
+    let storeCreditRequestSender: StoreCreditRequestSender;
 
     beforeEach(() => {
         store = createCheckoutStore(getCheckoutStoreState());
@@ -172,6 +174,11 @@ describe('CheckoutService', () => {
         jest.spyOn(couponRequestSender, 'applyCoupon').mockResolvedValue(getResponse(getCheckout()));
         jest.spyOn(couponRequestSender, 'removeCoupon').mockResolvedValue(getResponse(getCheckout()));
 
+        storeCreditRequestSender = new StoreCreditRequestSender(requestSender);
+
+        jest.spyOn(storeCreditRequestSender, 'applyStoreCredit').mockResolvedValue(getResponse(getCheckout()));
+        jest.spyOn(storeCreditRequestSender, 'removeStoreCredit').mockResolvedValue(getResponse(getCheckout()));
+
         configRequestSender = new ConfigRequestSender(requestSender);
 
         jest.spyOn(configRequestSender, 'loadConfig').mockResolvedValue(getResponse(getConfig()));
@@ -242,7 +249,8 @@ describe('CheckoutService', () => {
             paymentStrategyActionCreator,
             new ShippingCountryActionCreator(shippingCountryRequestSender),
             shippingStrategyActionCreator,
-            spamProtectionActionCreator
+            spamProtectionActionCreator,
+            new StoreCreditActionCreator(storeCreditRequestSender)
         );
     });
 
@@ -924,6 +932,24 @@ describe('CheckoutService', () => {
 
             expect(billingAddressRequestSender.updateAddress)
                 .toHaveBeenCalledWith(getCheckout().id, address, options);
+        });
+    });
+
+    describe('#applyStoreCredit()', () => {
+        it('applies store credit when called with true', async () => {
+            const options = { timeout: createTimeout() };
+            await checkoutService.applyStoreCredit(true, options);
+
+            expect(storeCreditRequestSender.applyStoreCredit)
+                .toHaveBeenCalledWith(getCheckout().id, options);
+        });
+
+        it('removes store credit when called with false', async () => {
+            const options = { timeout: createTimeout() };
+            await checkoutService.applyStoreCredit(false, options);
+
+            expect(storeCreditRequestSender.removeStoreCredit)
+                .toHaveBeenCalledWith(getCheckout().id, options);
         });
     });
 

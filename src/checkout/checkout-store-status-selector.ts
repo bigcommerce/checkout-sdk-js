@@ -234,6 +234,13 @@ export default interface CheckoutStoreStatusSelector {
     isApplyingCoupon(): boolean;
 
     /**
+     * Checks whether the current customer is applying store credit.
+     *
+     * @returns True if applying store credit, otherwise false.
+     */
+    isApplyingStoreCredit(): boolean;
+
+    /**
      * Checks whether the current customer is removing a coupon code.
      *
      * @returns True if removing a coupon code, otherwise false.
@@ -377,6 +384,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
             isDeletingConsignment: state.consignments.isDeleting,
             isCreatingConsignments: state.consignments.isCreating,
             isInitializingShipping: state.shippingStrategies.isInitializing,
+            isApplyingStoreCredit: state.storeCredit.isApplying,
             isApplyingCoupon: state.coupons.isApplying,
             isRemovingCoupon: state.coupons.isRemoving,
             isApplyingGiftCertificate: state.giftCertificates.isApplying,

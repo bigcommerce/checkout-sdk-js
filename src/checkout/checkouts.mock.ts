@@ -39,6 +39,7 @@ export function getCheckout(): Checkout {
         ],
         discounts: [],
         coupons: [],
+        isStoreCreditApplied: false,
         orderId: 295,
         shippingCostTotal: 15,
         shippingCostBeforeDiscount: 20,
@@ -46,6 +47,7 @@ export function getCheckout(): Checkout {
         taxTotal: 0,
         subtotal: 190,
         grandTotal: 190,
+        outstandingBalance: 190,
         giftCertificates: [],
         balanceDue: 0,
         createdTime: '2018-03-06T04:41:49+00:00',
@@ -132,6 +134,7 @@ export function getCheckoutStoreState(): CheckoutStoreState {
         remoteCheckout: getRemoteCheckoutState(),
         shippingCountries: getShippingCountriesState(),
         shippingStrategies: { data: {}, errors: {}, statuses: {} },
+        storeCredit: { errors: {}, statuses: {} },
     };
 }
 

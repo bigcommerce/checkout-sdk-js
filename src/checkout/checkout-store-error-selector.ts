@@ -197,6 +197,13 @@ export default interface CheckoutStoreErrorSelector {
     getInitializeShippingError(methodId?: string): Error | undefined;
 
     /**
+     * Returns an error if unable to apply store credit.
+     *
+     * @returns The error object if unable to apply, otherwise undefined.
+     */
+    getApplyStoreCreditError(): RequestError | undefined;
+
+    /**
      * Returns an error if unable to apply a coupon code.
      *
      * @returns The error object if unable to apply, otherwise undefined.
@@ -301,6 +308,7 @@ export function createCheckoutStoreErrorSelectorFactory(): CheckoutStoreErrorSel
             getUpdateConsignmentError: state.consignments.getUpdateError,
             getCreateConsignmentsError: state.consignments.getCreateError,
             getInitializeShippingError: state.shippingStrategies.getInitializeError,
+            getApplyStoreCreditError: state.storeCredit.getApplyError,
             getApplyCouponError: state.coupons.getApplyError,
             getRemoveCouponError: state.coupons.getRemoveError,
             getApplyGiftCertificateError: state.giftCertificates.getApplyError,

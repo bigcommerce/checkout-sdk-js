@@ -1,5 +1,5 @@
-import { AfterpayRemoteCheckout, AmazonPayRemoteCheckout } from './methods';
+import { AmazonPayRemoteCheckout } from './methods';
 
-type RemoteCheckout = AfterpayRemoteCheckout | AmazonPayRemoteCheckout;
+type RemoteCheckout = AmazonPayRemoteCheckout;
 
 export default RemoteCheckout;

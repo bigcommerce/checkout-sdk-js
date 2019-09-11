@@ -81,7 +81,7 @@ export default class GooglePayBraintreeInitializer implements GooglePayInitializ
             transactionInfo: {
                 currencyCode: checkout.cart.currency.code,
                 totalPriceStatus: 'FINAL',
-                totalPrice: round(checkout.grandTotal, 2).toFixed(2),
+                totalPrice: round(checkout.outstandingBalance, 2).toFixed(2),
             },
             cardRequirements: {
                 billingAddressRequired: true,

@@ -48,7 +48,7 @@ export default class KlarnaPaymentStrategy implements PaymentStrategy {
                     state => {
                         const checkout = state.checkout.getCheckout();
 
-                        return checkout && checkout.grandTotal;
+                        return checkout && checkout.outstandingBalance;
                     }
                 );
 

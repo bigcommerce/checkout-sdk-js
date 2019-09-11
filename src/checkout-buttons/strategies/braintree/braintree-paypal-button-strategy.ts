@@ -102,7 +102,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                     enableShippingAddress: true,
                     shippingAddressEditable: false,
                     shippingAddressOverride: address ? this._mapToBraintreeAddress(address) : undefined,
-                    amount: checkout.grandTotal,
+                    amount: checkout.outstandingBalance,
                     currency: config.currency.code,
                     offerCredit: this._offerCredit,
                 });

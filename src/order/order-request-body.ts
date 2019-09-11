@@ -8,7 +8,7 @@ export default interface OrderRequestBody {
      * An object that contains the payment details of a customer. In some cases,
      * you can omit this object if the order does not require further payment.
      * For example, the customer is able to use their store credit to pay for
-     * the entire order. Or they have already submitted thier payment details
+     * the entire order. Or they have already submitted their payment details
      * using PayPal.
      */
     payment?: OrderPaymentRequestBody;

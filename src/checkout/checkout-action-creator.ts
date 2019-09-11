@@ -35,7 +35,7 @@ export default class CheckoutActionCreator {
         return store => concat(
             of(createAction(CheckoutActionType.LoadCheckoutRequested)),
             this._configActionCreator.loadConfig(),
-            defer(() => {
+            defer(async () => {
                 const state = store.getState();
                 const context = state.config.getContextConfig();
 
@@ -43,8 +43,9 @@ export default class CheckoutActionCreator {
                     throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
                 }
 
-                return this._checkoutRequestSender.loadCheckout(context.checkoutId, options)
-                    .then(({ body }) => createAction(CheckoutActionType.LoadCheckoutSucceeded, body));
+                const { body } = await this._checkoutRequestSender.loadCheckout(context.checkoutId, options);
+
+                return createAction(CheckoutActionType.LoadCheckoutSucceeded, body);
             })
         ).pipe(
             catchError(error => throwErrorAction(CheckoutActionType.LoadCheckoutFailed, error))

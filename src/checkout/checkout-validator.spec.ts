@@ -82,11 +82,11 @@ describe('CheckoutValidator', () => {
                 expect(errorHandler).toHaveBeenCalledWith(new CartChangedError());
             });
 
-            it('rejects with "cart changed error" if grand totals are different', async () => {
+            it('rejects with "cart changed error" if outstandingBalance are different', async () => {
                 try {
                     await checkoutValidator.validate({
                         ...checkout,
-                        grandTotal: 10,
+                        outstandingBalance: 10,
                     });
                 } catch (error) {
                     expect(error).toBeInstanceOf(CartChangedError);
