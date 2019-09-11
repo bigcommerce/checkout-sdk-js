@@ -47,7 +47,7 @@ describe('PaymentStrategyActionCreator', () => {
         requestSender = createRequestSender();
         paymentClient = createPaymentClient();
         spamProtection = createSpamProtection(createScriptLoader());
-        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
+        registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
@@ -337,7 +337,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 paymentMethods: { ...state.paymentMethods, data: [] },
             });
-            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
@@ -358,7 +358,7 @@ describe('PaymentStrategyActionCreator', () => {
                 }),
             });
 
-            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
             jest.spyOn(registry, 'get')
                 .mockReturnValue(noPaymentDataStrategy);
@@ -463,7 +463,7 @@ describe('PaymentStrategyActionCreator', () => {
                 ...state,
                 order: getOrderState(),
             });
-            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
@@ -483,7 +483,7 @@ describe('PaymentStrategyActionCreator', () => {
                     data: [],
                 },
             });
-            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
+            registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 

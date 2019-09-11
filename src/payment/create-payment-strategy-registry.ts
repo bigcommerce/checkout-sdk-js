@@ -19,6 +19,7 @@ import PaymentRequestTransformer from './payment-request-transformer';
 import PaymentStrategyActionCreator from './payment-strategy-action-creator';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
+import { AdyenV2PaymentStrategy, AdyenV2ScriptLoader } from './strategies/adyenv2';
 import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
@@ -64,7 +65,8 @@ export default function createPaymentStrategyRegistry(
     store: CheckoutStore,
     paymentClient: any,
     requestSender: RequestSender,
-    spamProtection: GoogleRecaptcha
+    spamProtection: GoogleRecaptcha,
+    locale: string
 ) {
     const registry = new PaymentStrategyRegistry(store, { defaultToken: PaymentStrategyType.CREDIT_CARD });
     const scriptLoader = getScriptLoader();
@@ -84,6 +86,17 @@ export default function createPaymentStrategyRegistry(
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
     const formPoster = createFormPoster();
+
+    registry.register(PaymentStrategyType.ADYENV2, () =>
+        new AdyenV2PaymentStrategy(
+            store,
+            paymentActionCreator,
+            orderActionCreator,
+            new AdyenV2ScriptLoader(scriptLoader),
+            formPoster,
+            locale
+        )
+    );
 
     registry.register(PaymentStrategyType.AFFIRM, () =>
         new AffirmPaymentStrategy(

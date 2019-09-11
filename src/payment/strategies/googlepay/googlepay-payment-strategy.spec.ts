@@ -66,7 +66,7 @@ describe('GooglePayPaymentStrategy', () => {
         const paymentMethodRequestSender: PaymentMethodRequestSender = new PaymentMethodRequestSender(requestSender);
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
-        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
+        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);

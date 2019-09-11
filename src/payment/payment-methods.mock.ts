@@ -404,25 +404,45 @@ export function getStripeV3(): PaymentMethod {
     };
 }
 
+export function getAdyenV2(): PaymentMethod {
+    return {
+        id: 'adyenv2',
+        logoUrl: '',
+        method: 'adyenv2',
+        supportedCards: [],
+        config: {
+            displayName: 'Adyen',
+            merchantId: 'YOUR_MERCHANT_ID',
+            testMode: true,
+        },
+        initializationData: {
+            originKey: 'YOUR_ORIGIN_KEY',
+        },
+        type: 'PAYMENT_TYPE_API',
+        clientToken: 'clientToken',
+    };
+}
+
 export function getPaymentMethod(): PaymentMethod {
     return getAuthorizenet();
 }
 
 export function getPaymentMethods(): PaymentMethod[] {
     return [
+        getAdyenAmex(),
+        getAdyenV2(),
         getAffirm(),
+        getAfterpay(),
+        getAmazonPay(),
+        getAuthorizenet(),
         getBraintree(),
         getBraintreePaypal(),
         getBraintreePaypalCredit(),
         getBraintreeVisaCheckout(),
-        getAdyenAmex(),
-        getAuthorizenet(),
-        getPaypalExpress(),
-        getAfterpay(),
-        getAmazonPay(),
-        getKlarna(),
-        getSquare(),
         getGooglePay(),
+        getKlarna(),
+        getPaypalExpress(),
+        getSquare(),
         getStripeV3(),
     ];
 }

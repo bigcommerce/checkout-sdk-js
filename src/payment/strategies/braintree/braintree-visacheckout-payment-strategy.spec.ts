@@ -70,7 +70,7 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
 
         const paymentClient = createPaymentClient(store);
         const spamProtection = createSpamProtection(createScriptLoader());
-        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection);
+        const registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
         const checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         const configRequestSender = new ConfigRequestSender(createRequestSender());
         const configActionCreator = new ConfigActionCreator(configRequestSender);
