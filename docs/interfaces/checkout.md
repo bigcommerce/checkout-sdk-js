@@ -23,7 +23,9 @@
 * [grandTotal](checkout.md#grandtotal)
 * [handlingCostTotal](checkout.md#handlingcosttotal)
 * [id](checkout.md#id)
+* [isStoreCreditApplied](checkout.md#isstorecreditapplied)
 * [orderId](checkout.md#orderid)
+* [outstandingBalance](checkout.md#outstandingbalance)
 * [payments](checkout.md#payments)
 * [promotions](checkout.md#promotions)
 * [shippingCostBeforeDiscount](checkout.md#shippingcostbeforediscount)
@@ -128,12 +130,26 @@ ___
 **● id**: *`string`*
 
 ___
+<a id="isstorecreditapplied"></a>
+
+###  isStoreCreditApplied
+
+**● isStoreCreditApplied**: *`boolean`*
+
+___
 <a id="orderid"></a>
 
 ### `<Optional>` orderId
 
 **● orderId**: * `undefined` &#124; `number`
 *
+
+___
+<a id="outstandingbalance"></a>
+
+###  outstandingBalance
+
+**● outstandingBalance**: *`number`*
 
 ___
 <a id="payments"></a>

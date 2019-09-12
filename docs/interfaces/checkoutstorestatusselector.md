@@ -16,6 +16,7 @@ This object has a set of getters that return true if an action is in progress. F
 
 * [isApplyingCoupon](checkoutstorestatusselector.md#isapplyingcoupon)
 * [isApplyingGiftCertificate](checkoutstorestatusselector.md#isapplyinggiftcertificate)
+* [isApplyingStoreCredit](checkoutstorestatusselector.md#isapplyingstorecredit)
 * [isContinuingAsGuest](checkoutstorestatusselector.md#iscontinuingasguest)
 * [isCreatingConsignments](checkoutstorestatusselector.md#iscreatingconsignments)
 * [isCustomerStepPending](checkoutstorestatusselector.md#iscustomersteppending)
@@ -74,6 +75,18 @@ Checks whether the current customer is applying a gift certificate.
 
 **Returns:** `boolean`
 True if applying a gift certificate, otherwise false.
+
+___
+<a id="isapplyingstorecredit"></a>
+
+###  isApplyingStoreCredit
+
+▸ **isApplyingStoreCredit**(): `boolean`
+
+Checks whether the current customer is applying store credit.
+
+**Returns:** `boolean`
+True if applying store credit, otherwise false.
 
 ___
 <a id="iscontinuingasguest"></a>

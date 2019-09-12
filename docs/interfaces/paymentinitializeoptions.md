@@ -17,6 +17,7 @@ A set of options that are required to initialize the payment step of the current
 
 ### Properties
 
+* [adyenv2](paymentinitializeoptions.md#adyenv2)
 * [amazon](paymentinitializeoptions.md#amazon)
 * [braintree](paymentinitializeoptions.md#braintree)
 * [braintreevisacheckout](paymentinitializeoptions.md#braintreevisacheckout)
@@ -37,6 +38,15 @@ A set of options that are required to initialize the payment step of the current
 
 ## Properties
 
+<a id="adyenv2"></a>
+
+### `<Optional>` adyenv2
+
+**● adyenv2**: *[AdyenV2PaymentInitializeOptions](adyenv2paymentinitializeoptions.md)*
+
+The options that are required to initialize the AdyenV2 payment method. They can be omitted unless you need to support AdyenV2.
+
+___
 <a id="amazon"></a>
 
 ### `<Optional>` amazon

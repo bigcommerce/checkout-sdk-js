@@ -27,6 +27,74 @@ declare interface AddressRequestBody {
     }>;
 }
 
+declare interface AdyenCardDataPaymentMethodState {
+    paymentMethod: AdyenCardPaymentMethodState;
+}
+
+declare interface AdyenCardPaymentMethodState {
+    encryptedCardNumber: string;
+    encryptedExpiryMonth: string;
+    encryptedExpiryYear: string;
+    encryptedSecurityCode: string;
+    holderName?: string;
+    type: string;
+}
+
+declare interface AdyenCardState {
+    data: AdyenCardDataPaymentMethodState;
+    isValid?: boolean;
+}
+
+declare interface AdyenComponent {
+    mount(containerId: string): HTMLElement;
+    unmount(): void;
+}
+
+declare interface AdyenStyleOptions {
+    /**
+     * Base styling applied to the iframe. All styling extends from this style.
+     */
+    base?: CssProperties;
+    /**
+     * Styling applied when a field fails validation.
+     */
+    error?: CssProperties;
+    /**
+     * Styling applied to the field's placeholder values.
+     */
+    placeholder?: CssProperties;
+    /**
+     * Styling applied once a field passes validation.
+     */
+    validated?: CssProperties;
+}
+
+/**
+ * A set of options that are required to initialize the AdyenV2 payment method.
+ *
+ * Once AdyenV2 payment is initialized, credit card form fields, provided by the
+ * payment provider as iframes, will be inserted into the current page. These
+ * options provide a location and styling for each of the form fields.
+ */
+declare interface AdyenV2PaymentInitializeOptions {
+    /**
+     * The location to insert the Adyen component.
+     */
+    containerId: string;
+    /**
+     * The location to insert the Adyen 3DS V2 component.
+     */
+    threeDS2ContainerId: string;
+    /**
+     * Optional. Overwriting the default options
+     */
+    options?: Omit<CreditCardComponentOptions, 'onChange'>;
+    /**
+     * Optional. Contains all three ds 2 options
+     */
+    threeDS2Options?: ThreeDS2ComponentOptions;
+}
+
 /**
  * A set of options that are required to initialize the customer step of
  * checkout to support Amazon Pay.
@@ -363,6 +431,7 @@ declare interface Checkout {
     consignments: Consignment[];
     taxes: Tax[];
     discounts: Discount[];
+    isStoreCreditApplied: boolean;
     coupons: Coupon[];
     orderId?: number;
     shippingCostTotal: number;
@@ -371,6 +440,7 @@ declare interface Checkout {
     taxTotal: number;
     subtotal: number;
     grandTotal: number;
+    outstandingBalance: number;
     giftCertificates: GiftCertificate[];
     promotions?: Promotion[];
     balanceDue: number;
@@ -590,6 +660,7 @@ declare class CheckoutService {
     private _shippingCountryActionCreator;
     private _shippingStrategyActionCreator;
     private _spamProtectionActionCreator;
+    private _storeCreditActionCreator;
     private _storeProjection;
     private _errorTransformer;
     private _selectorsFactory;
@@ -1238,6 +1309,21 @@ declare class CheckoutService {
      */
     updateBillingAddress(address: Partial<BillingAddressRequestBody>, options?: RequestOptions): Promise<CheckoutSelectors>;
     /**
+     * Applies or removes customer's store credit code to the current checkout.
+     *
+     * Once the store credit gets applied, the outstanding balance will be adjusted accordingly.
+     *
+     * ```js
+     * const state = await service.applyStoreCredit(true);
+     *
+     * console.log(state.data.getCheckout().outstandingBalance);
+     * ```
+     *
+     * @param options - Options for applying store credit.
+     * @returns A promise that resolves to the current state.
+     */
+    applyStoreCredit(useStoreCredit: boolean, options?: RequestOptions): Promise<CheckoutSelectors>;
+    /**
      * Applies a coupon code to the current checkout.
      *
      * Once the coupon code gets applied, the quote for the current checkout will
@@ -1569,6 +1655,12 @@ declare interface CheckoutStoreErrorSelector {
      * @returns The error object if unable to initialize, otherwise undefined.
      */
     getInitializeShippingError(methodId?: string): Error | undefined;
+    /**
+     * Returns an error if unable to apply store credit.
+     *
+     * @returns The error object if unable to apply, otherwise undefined.
+     */
+    getApplyStoreCreditError(): RequestError | undefined;
     /**
      * Returns an error if unable to apply a coupon code.
      *
@@ -2005,6 +2097,12 @@ declare interface CheckoutStoreStatusSelector {
      */
     isApplyingCoupon(): boolean;
     /**
+     * Checks whether the current customer is applying store credit.
+     *
+     * @returns True if applying store credit, otherwise false.
+     */
+    isApplyingStoreCredit(): boolean;
+    /**
      * Checks whether the current customer is removing a coupon code.
      *
      * @returns True if removing a coupon code, otherwise false.
@@ -2110,6 +2208,51 @@ declare interface Coupon {
     discountedAmount: number;
 }
 
+declare interface CreditCardComponentOptions {
+    /**
+     * Set an object containing the details array for type: scheme from
+     * the /paymentMethods response.
+     */
+    details?: InputDetail[];
+    /**
+     * Set to true to show the checkbox to save card details for the next payment.
+     */
+    enableStoreDetails?: boolean;
+    /**
+     * Set to true to request the name of the card holder.
+     */
+    hasHolderName?: boolean;
+    /**
+     * Set to true to require the card holder name.
+     */
+    holderNameRequired?: boolean;
+    /**
+     * Prefill the card holder name field. Supported from Card component
+     */
+    holderName?: string;
+    /**
+     * Defaults to ['mc','visa','amex']. Configure supported card types to
+     * facilitate brand recognition used in the Secured Fields onBrand callback.
+     * See list of available card types. If a shopper enters a card type not
+     * specified in the GroupTypes configuration, the onBrand callback will not be invoked.
+     */
+    groupTypes?: string[];
+    /**
+     * Set a style object to customize the input fields. See Styling Secured Fields
+     * for a list of supported properties.
+     */
+    styles?: AdyenStyleOptions;
+    /**
+     * Specify the sample values you want to appear for card detail input fields.
+     */
+    placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
+    /**
+     * Called when the shopper enters data in the card input fields.
+     * Here you have the option to override your main Adyen Checkout configuration.
+     */
+    onChange?(state: AdyenCardState, component: AdyenComponent): void;
+}
+
 declare interface CreditCardInstrument {
     ccCustomerCode?: string;
     ccExpiry: {
@@ -2122,6 +2265,44 @@ declare interface CreditCardInstrument {
     shouldSaveInstrument?: boolean;
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
+}
+
+declare interface CreditCardPlaceHolder {
+    encryptedCardNumber?: string;
+    encryptedExpiryDate?: string;
+    encryptedSecurityCode: string;
+}
+
+declare interface CssProperties {
+    background?: string;
+    color?: string;
+    display?: string;
+    font?: string;
+    fontFamily?: string;
+    fontSize?: string;
+    fontSizeAdjust?: string;
+    fontSmoothing?: string;
+    fontStretch?: string;
+    fontStyle?: string;
+    fontVariant?: string;
+    fontVariantAlternates?: string;
+    fontVariantCaps?: string;
+    fontVariantEastAsian?: string;
+    fontVariantLigatures?: string;
+    fontVariantNumeric?: string;
+    fontWeight?: string;
+    letterSpacing?: string;
+    lineHeight?: string;
+    mozOsxFontSmoothing?: string;
+    mozTransition?: string;
+    outline?: string;
+    opacity?: string | number;
+    padding?: string;
+    textAlign?: string;
+    textShadow?: string;
+    transition?: string;
+    webkitFontSmoothing?: string;
+    webkitTransition?: string;
 }
 
 declare interface Currency {
@@ -2509,6 +2690,41 @@ declare interface InlineElementStyles {
     lineHeight?: string;
 }
 
+declare interface InputDetail {
+    /**
+     * Configuration parameters for the required input.
+     */
+    configuration?: object;
+    /**
+     * Input details can also be provided recursively.
+     */
+    details?: SubInputDetail[];
+    /**
+     * In case of a select, the URL from which to query the items.
+     */
+    itemSearchUrl?: string;
+    /**
+     * In case of a select, the items to choose from.
+     */
+    items?: Item[];
+    /**
+     * The value to provide in the result.
+     */
+    key?: string;
+    /**
+     * True if this input value is optional.
+     */
+    optional?: boolean;
+    /**
+     * The type of the required input.
+     */
+    type?: string;
+    /**
+     * The value can be pre-filled, if available.
+     */
+    value?: string;
+}
+
 declare interface InputStyles extends BlockElementStyles {
     active?: BlockElementStyles;
     error?: InputStyles;
@@ -2527,6 +2743,17 @@ declare interface Instrument {
     expiryYear: string;
     brand: string;
     trustedShippingAddress: boolean;
+}
+
+declare interface Item {
+    /**
+     * The value to provide in the result.
+     */
+    id?: string;
+    /**
+     * The display name.
+     */
+    name?: string;
 }
 
 declare interface KlarnaLoadResponse {
@@ -2651,6 +2878,7 @@ declare interface LineItem {
     couponAmount: number;
     listPrice: number;
     salePrice: number;
+    comparisonPrice: number;
     extendedListPrice: number;
     extendedSalePrice: number;
     socialMedia?: LineItemSocialData[];
@@ -2726,6 +2954,8 @@ declare interface NonceGenerationError {
     field: string;
 }
 
+declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
 declare interface Order {
     baseAmount: number;
     billingAddress: BillingAddress;
@@ -2790,7 +3020,7 @@ declare interface OrderRequestBody {
      * An object that contains the payment details of a customer. In some cases,
      * you can omit this object if the order does not require further payment.
      * For example, the customer is able to use their store credit to pay for
-     * the entire order. Or they have already submitted thier payment details
+     * the entire order. Or they have already submitted their payment details
      * using PayPal.
      */
     payment?: OrderPaymentRequestBody;
@@ -2813,6 +3043,11 @@ declare interface PasswordRequirements {
  * current checkout flow.
  */
 declare interface PaymentInitializeOptions extends PaymentRequestOptions {
+    /**
+     * The options that are required to initialize the AdyenV2 payment
+     * method. They can be omitted unless you need to support AdyenV2.
+     */
+    adyenv2?: AdyenV2PaymentInitializeOptions;
     /**
      * The options that are required to initialize the Amazon Pay payment
      * method. They can be omitted unless you need to support AmazonPay.
@@ -3037,6 +3272,11 @@ declare interface RequestOptions<TParams = {}> {
      * The parameters of the request, if required.
      */
     params?: TParams;
+}
+
+declare interface SepaPlaceHolder {
+    ownerName?: string;
+    ibanNumber?: string;
 }
 
 /**
@@ -3273,6 +3513,33 @@ declare interface StripeV3PaymentInitializeOptions {
     style?: StripeStyleProps;
 }
 
+declare interface SubInputDetail {
+    /**
+     * Configuration parameters for the required input.
+     */
+    configuration?: object;
+    /**
+     * In case of a select, the items to choose from.
+     */
+    items?: Item[];
+    /**
+     * The value to provide in the result.
+     */
+    key?: string;
+    /**
+     * True if this input is optional to provide.
+     */
+    optional?: boolean;
+    /**
+     * The type of the required input.
+     */
+    type?: string;
+    /**
+     * The value can be pre-filled, if available.
+     */
+    value?: string;
+}
+
 declare interface Tax {
     name: string;
     amount: number;
@@ -3280,6 +3547,10 @@ declare interface Tax {
 
 declare interface TextInputStyles extends InputStyles {
     placeholder?: InlineElementStyles;
+}
+
+declare interface ThreeDS2ComponentOptions {
+    threeDS2ChallengeWidgetSize?: string;
 }
 
 declare interface ThreeDSecure {

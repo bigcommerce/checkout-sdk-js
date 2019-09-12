@@ -16,6 +16,7 @@ This object has a set of getters that would return an error if an action is not 
 
 * [getApplyCouponError](checkoutstoreerrorselector.md#getapplycouponerror)
 * [getApplyGiftCertificateError](checkoutstoreerrorselector.md#getapplygiftcertificateerror)
+* [getApplyStoreCreditError](checkoutstoreerrorselector.md#getapplystorecrediterror)
 * [getContinueAsGuestError](checkoutstoreerrorselector.md#getcontinueasguesterror)
 * [getCreateConsignmentsError](checkoutstoreerrorselector.md#getcreateconsignmentserror)
 * [getDeleteConsignmentError](checkoutstoreerrorselector.md#getdeleteconsignmenterror)
@@ -70,6 +71,19 @@ ___
 ▸ **getApplyGiftCertificateError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
 
 Returns an error if unable to apply a gift certificate.
+
+**Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
+
+The error object if unable to apply, otherwise undefined.
+
+___
+<a id="getapplystorecrediterror"></a>
+
+###  getApplyStoreCreditError
+
+▸ **getApplyStoreCreditError**():  [RequestError](../classes/requesterror.md) &#124; `undefined`
+
+Returns an error if unable to apply store credit.
 
 **Returns:**  [RequestError](../classes/requesterror.md) &#124; `undefined`
 

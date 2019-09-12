@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.35.0"></a>
+# [1.35.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.34.3...v1.35.0) (2019-09-12)
+
+
+### Bug Fixes
+
+* **cart:** CHECKOUT-4315 Add comparisonPrice attribute ([9f4a2c4](https://github.com/bigcommerce/checkout-sdk-js/commit/9f4a2c4))
+* **order:** CHECKOUT-4393 Fix could not resubmit order after failed attempt ([9127318](https://github.com/bigcommerce/checkout-sdk-js/commit/9127318))
+
+
+### Features
+
+* **payment:** CHECKOUT-4263 Support for applying/removing store credit ([fc59792](https://github.com/bigcommerce/checkout-sdk-js/commit/fc59792))
+* **payment:** INT-1783 AdyenV2 payment strategy with 3DS2 / 3DS1 flow support ([1551703](https://github.com/bigcommerce/checkout-sdk-js/commit/1551703))
+
+
+
 <a name="1.34.3"></a>
 ## [1.34.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.34.2...v1.34.3) (2019-09-04)
 

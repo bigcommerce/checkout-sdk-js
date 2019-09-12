@@ -46,6 +46,13 @@ ___
 *
 
 ___
+<a id="omit"></a>
+
+###  Omit
+
+**ΤOmit**: *`Pick`<`T`, `Exclude`<`keyof T`, `K`>>*
+
+___
 <a id="orderpayments"></a>
 
 ###  OrderPayments

@@ -16,6 +16,7 @@
 * [brand](digitalitem.md#brand)
 * [categories](digitalitem.md#categories)
 * [categoryNames](digitalitem.md#categorynames)
+* [comparisonPrice](digitalitem.md#comparisonprice)
 * [couponAmount](digitalitem.md#couponamount)
 * [discountAmount](digitalitem.md#discountamount)
 * [discounts](digitalitem.md#discounts)
@@ -69,6 +70,13 @@ ___
 ### `<Optional>` categoryNames
 
 **● categoryNames**: *`string`[]*
+
+___
+<a id="comparisonprice"></a>
+
+###  comparisonPrice
+
+**● comparisonPrice**: *`number`*
 
 ___
 <a id="couponamount"></a>

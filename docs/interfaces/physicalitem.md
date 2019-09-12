@@ -16,6 +16,7 @@
 * [brand](physicalitem.md#brand)
 * [categories](physicalitem.md#categories)
 * [categoryNames](physicalitem.md#categorynames)
+* [comparisonPrice](physicalitem.md#comparisonprice)
 * [couponAmount](physicalitem.md#couponamount)
 * [discountAmount](physicalitem.md#discountamount)
 * [discounts](physicalitem.md#discounts)
@@ -68,6 +69,13 @@ ___
 ### `<Optional>` categoryNames
 
 **● categoryNames**: *`string`[]*
+
+___
+<a id="comparisonprice"></a>
+
+###  comparisonPrice
+
+**● comparisonPrice**: *`number`*
 
 ___
 <a id="couponamount"></a>

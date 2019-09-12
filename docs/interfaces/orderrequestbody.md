@@ -25,7 +25,7 @@ An object that contains the information required for submitting an order.
 
 **● payment**: *[OrderPaymentRequestBody](orderpaymentrequestbody.md)*
 
-An object that contains the payment details of a customer. In some cases, you can omit this object if the order does not require further payment. For example, the customer is able to use their store credit to pay for the entire order. Or they have already submitted thier payment details using PayPal.
+An object that contains the payment details of a customer. In some cases, you can omit this object if the order does not require further payment. For example, the customer is able to use their store credit to pay for the entire order. Or they have already submitted their payment details using PayPal.
 
 ___
 <a id="usestorecredit"></a>

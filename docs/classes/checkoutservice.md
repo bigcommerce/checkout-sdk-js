@@ -16,6 +16,7 @@ This object can be used to collect all information that is required for checkout
 
 * [applyCoupon](checkoutservice.md#applycoupon)
 * [applyGiftCertificate](checkoutservice.md#applygiftcertificate)
+* [applyStoreCredit](checkoutservice.md#applystorecredit)
 * [assignItemsToAddress](checkoutservice.md#assignitemstoaddress)
 * [clearError](checkoutservice.md#clearerror)
 * [continueAsGuest](checkoutservice.md#continueasguest)
@@ -104,6 +105,33 @@ await service.applyGiftCertificate('GIFT_CERTIFICATE');
 | ------ | ------ | ------ |
 | code | `string` |  The gift certificate to apply to the current checkout. |
 | `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for applying the gift certificate. |
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
+<a id="applystorecredit"></a>
+
+###  applyStoreCredit
+
+▸ **applyStoreCredit**(useStoreCredit: *`boolean`*, options?: *[RequestOptions](../interfaces/requestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Applies or removes customer's store credit code to the current checkout.
+
+Once the store credit gets applied, the outstanding balance will be adjusted accordingly.
+
+```js
+const state = await service.applyStoreCredit(true);
+
+console.log(state.data.getCheckout().outstandingBalance);
+```
+
+**Parameters:**
+
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| useStoreCredit | `boolean` |
+| `Optional` options | [RequestOptions](../interfaces/requestoptions.md) |  Options for applying store credit. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.

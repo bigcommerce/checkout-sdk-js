@@ -18,6 +18,7 @@
 * [brand](lineitem.md#brand)
 * [categories](lineitem.md#categories)
 * [categoryNames](lineitem.md#categorynames)
+* [comparisonPrice](lineitem.md#comparisonprice)
 * [couponAmount](lineitem.md#couponamount)
 * [discountAmount](lineitem.md#discountamount)
 * [discounts](lineitem.md#discounts)
@@ -68,6 +69,13 @@ ___
 ### `<Optional>` categoryNames
 
 **● categoryNames**: *`string`[]*
+
+___
+<a id="comparisonprice"></a>
+
+###  comparisonPrice
+
+**● comparisonPrice**: *`number`*
 
 ___
 <a id="couponamount"></a>
