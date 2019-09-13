@@ -99,7 +99,7 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('does not initialize if strategy is already initialized', async () => {
             store = createCheckoutStore(merge({}, state, {
-                customerStrategies: { data: { amazon: { isInitialized: true } } },
+                paymentStrategies: { data: { amazon: { isInitialized: true } } },
             }));
 
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
@@ -108,10 +108,12 @@ describe('PaymentStrategyActionCreator', () => {
             jest.spyOn(strategy, 'initialize')
                 .mockReturnValue(Promise.resolve(store.getState()));
 
-            await from(actionCreator.initialize({ methodId: 'amazon' })(store))
+            const actions = await from(actionCreator.initialize({ methodId: 'amazon' })(store))
+                .pipe(toArray())
                 .toPromise();
 
             expect(strategy.initialize).not.toHaveBeenCalled();
+            expect(actions).toEqual([]);
         });
 
         it('emits action to notify initialization progress', async () => {
@@ -155,8 +157,8 @@ describe('PaymentStrategyActionCreator', () => {
 
             try {
                 await from(actionCreator.initialize({ methodId: 'unknown' })(store)).toPromise();
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
+            } catch (action) {
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
     });
@@ -242,9 +244,9 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
 
             try {
-                await from(actionCreator.initialize({ methodId: 'unknown' })(store)).toPromise();
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
+                await from(actionCreator.deinitialize({ methodId: 'unknown' })(store)).toPromise();
+            } catch (action) {
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
     });
@@ -343,8 +345,8 @@ describe('PaymentStrategyActionCreator', () => {
 
             try {
                 await from(actionCreator.execute(getOrderRequestBody())(store)).toPromise();
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
+            } catch (action) {
+                expect(action.payload).toBeInstanceOf(MissingDataError);
             }
         });
 
@@ -500,7 +502,7 @@ describe('PaymentStrategyActionCreator', () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const options = { methodId: 'default' };
             const fakeMethod = jest.fn(() => Promise.resolve());
-            await from(actionCreator.widgetInteraction(fakeMethod, options)(store))
+            await from(actionCreator.widgetInteraction(fakeMethod, options))
                 .pipe(toArray())
                 .toPromise();
 
@@ -509,7 +511,7 @@ describe('PaymentStrategyActionCreator', () => {
 
         it('emits action to notify widget interaction in progress', async () => {
             const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-            const actions = await from(actionCreator.widgetInteraction(jest.fn(() => Promise.resolve()), { methodId: 'default' })(store))
+            const actions = await from(actionCreator.widgetInteraction(jest.fn(() => Promise.resolve()), { methodId: 'default' }))
                 .pipe(toArray())
                 .toPromise();
 
@@ -524,7 +526,7 @@ describe('PaymentStrategyActionCreator', () => {
             const signInError = new Error();
             const errorHandler = jest.fn(action => of(action));
 
-            const actions = await from(actionCreator.widgetInteraction(jest.fn(() => Promise.reject(signInError)), { methodId: 'default' })(store))
+            const actions = await from(actionCreator.widgetInteraction(jest.fn(() => Promise.reject(signInError)), { methodId: 'default' }))
                 .pipe(
                     catchError(errorHandler),
                     toArray()

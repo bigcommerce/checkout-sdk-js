@@ -1,5 +1,5 @@
-import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
-import { concat, defer, empty, of, Observable, Observer } from 'rxjs';
+import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { concat, defer, empty, of, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
@@ -30,12 +30,14 @@ export default class PaymentStrategyActionCreator {
     ) {}
 
     execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction | SpamProtectionAction, InternalCheckoutSelectors> {
+        const { payment = {} as OrderPaymentRequestBody, useStoreCredit } = payload;
+        const meta = { methodId: payment.methodId };
+
         return store => concat(
             this._orderActionCreator.executeSpamProtection()(store),
-            new Observable((observer: Observer<PaymentStrategyExecuteAction>) => {
+            of(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta)),
+            defer(() => {
                 const state = store.getState();
-                const { payment = {} as OrderPaymentRequestBody, useStoreCredit } = payload;
-                const meta = { methodId: payment.methodId };
 
                 let strategy: PaymentStrategy;
 
@@ -51,18 +53,12 @@ export default class PaymentStrategyActionCreator {
                     strategy = this._strategyRegistry.get(PaymentStrategyType.NO_PAYMENT_DATA_REQUIRED);
                 }
 
-                observer.next(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta));
-
-                strategy
+                return strategy
                     .execute(payload, { ...options, methodId: payment.methodId, gatewayId: payment.gatewayId })
-                    .then(() => {
-                        observer.next(createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
-                        observer.complete();
-                    })
-                    .catch(error => {
-                        observer.error(createErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta));
-                    });
+                    .then(() => createAction(PaymentStrategyActionType.ExecuteSucceeded, undefined, meta));
             })
+        ).pipe(
+            catchError(error => throwErrorAction(PaymentStrategyActionType.ExecuteFailed, error, meta))
         );
     }
 
@@ -94,9 +90,10 @@ export default class PaymentStrategyActionCreator {
     }
 
     initialize(options: PaymentInitializeOptions): ThunkAction<PaymentStrategyInitializeAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<PaymentStrategyInitializeAction>) => {
+        const { methodId, gatewayId } = options;
+
+        return store => defer(() => {
             const state = store.getState();
-            const { methodId, gatewayId } = options;
             const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
 
             if (!method) {
@@ -104,27 +101,25 @@ export default class PaymentStrategyActionCreator {
             }
 
             if (methodId && state.paymentStrategies.isInitialized(methodId)) {
-                return observer.complete();
+                return empty();
             }
 
-            observer.next(createAction(PaymentStrategyActionType.InitializeRequested, undefined, { methodId }));
-
-            this._strategyRegistry.getByMethod(method)
-                .initialize({ ...options, methodId, gatewayId })
-                .then(() => {
-                    observer.next(createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, { methodId }));
-                    observer.complete();
-                })
-                .catch(error => {
-                    observer.error(createErrorAction(PaymentStrategyActionType.InitializeFailed, error, { methodId }));
-                });
-        });
+            return concat(
+                of(createAction(PaymentStrategyActionType.InitializeRequested, undefined, { methodId })),
+                this._strategyRegistry.getByMethod(method)
+                    .initialize({ ...options, methodId, gatewayId })
+                    .then(() => createAction(PaymentStrategyActionType.InitializeSucceeded, undefined, { methodId }))
+            );
+        }).pipe(
+            catchError(error => throwErrorAction(PaymentStrategyActionType.InitializeFailed, error, { methodId }))
+        );
     }
 
     deinitialize(options: PaymentRequestOptions): ThunkAction<PaymentStrategyDeinitializeAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<PaymentStrategyDeinitializeAction>) => {
+        const { methodId, gatewayId } = options;
+
+        return store => defer(() => {
             const state = store.getState();
-            const { methodId, gatewayId } = options;
             const method = state.paymentMethods.getPaymentMethod(methodId, gatewayId);
 
             if (!method) {
@@ -132,38 +127,32 @@ export default class PaymentStrategyActionCreator {
             }
 
             if (methodId && !state.paymentStrategies.isInitialized(methodId)) {
-                return observer.complete();
+                return empty();
             }
 
-            observer.next(createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, { methodId }));
-
-            this._strategyRegistry.getByMethod(method)
-                .deinitialize({ ...options, methodId, gatewayId })
-                .then(() => {
-                    observer.next(createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, { methodId }));
-                    observer.complete();
-                })
-                .catch(error => {
-                    observer.error(createErrorAction(PaymentStrategyActionType.DeinitializeFailed, error, { methodId }));
-                });
-        });
+            return concat(
+                of(createAction(PaymentStrategyActionType.DeinitializeRequested, undefined, { methodId })),
+                this._strategyRegistry.getByMethod(method)
+                    .deinitialize({ ...options, methodId, gatewayId })
+                    .then(() => createAction(PaymentStrategyActionType.DeinitializeSucceeded, undefined, { methodId }))
+            );
+        }).pipe(
+            catchError(error => throwErrorAction(PaymentStrategyActionType.DeinitializeFailed, error, { methodId }))
+        );
     }
 
-    widgetInteraction(method: () => Promise<any>, options?: PaymentRequestOptions): ThunkAction<PaymentStrategyWidgetAction> {
-        return () => Observable.create((observer: Observer<PaymentStrategyWidgetAction>) => {
-            const methodId = options && options.methodId;
-            const meta = { methodId };
+    widgetInteraction(method: () => Promise<any>, options?: PaymentRequestOptions): Observable<PaymentStrategyWidgetAction> {
+        const methodId = options && options.methodId;
+        const meta = { methodId };
 
-            observer.next(createAction(PaymentStrategyActionType.WidgetInteractionStarted, undefined, meta));
-
-            method().then(() => {
-                observer.next(createAction(PaymentStrategyActionType.WidgetInteractionFinished, undefined, meta));
-                observer.complete();
-            })
-            .catch(error => {
-                observer.error(createErrorAction(PaymentStrategyActionType.WidgetInteractionFailed, error, meta));
-            });
-        });
+        return concat(
+            of(createAction(PaymentStrategyActionType.WidgetInteractionStarted, undefined, meta)),
+            defer(() =>
+                method().then(() => createAction(PaymentStrategyActionType.WidgetInteractionFinished, undefined, meta))
+            )
+        ).pipe(
+            catchError(error => throwErrorAction(PaymentStrategyActionType.WidgetInteractionFailed, error, meta))
+        );
     }
 
     private _loadOrderPaymentsIfNeeded(store: ReadableCheckoutStore, options?: RequestOptions): Observable<LoadOrderPaymentsAction> {

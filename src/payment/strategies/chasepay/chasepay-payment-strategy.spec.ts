@@ -6,8 +6,7 @@ import { of, Observable } from 'rxjs';
 import { getCartState } from '../../../cart/carts.mock';
 import { createCheckoutStore, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
-import InvalidArgumentError from '../../../common/error/errors/invalid-argument-error';
-import MissingDataError from '../../../common/error/errors/missing-data-error';
+import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
@@ -28,6 +27,7 @@ import PaymentStrategyActionCreator from '../../payment-strategy-action-creator'
 import PaymentStrategy from '../payment-strategy';
 import WepayRiskClient from '../wepay/wepay-risk-client';
 
+import ChasePayInitializeOptions from './chasepay-initialize-options';
 import ChasePayPaymentStrategy from './chasepay-payment-strategy';
 
 describe('ChasePayPaymentStrategy', () => {
@@ -154,16 +154,18 @@ describe('ChasePayPaymentStrategy', () => {
     });
 
     describe('#initialize()', () => {
-        let chasePayOptions: PaymentInitializeOptions;
+        let chasePayInitializeOptions: ChasePayInitializeOptions;
+        let initializeOptions: PaymentInitializeOptions;
 
         beforeEach(() => {
-            chasePayOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
+            chasePayInitializeOptions = { logoContainer: 'login', walletButton: 'mockButton' };
+            initializeOptions = { methodId: 'chasepay', chasepay: chasePayInitializeOptions };
         });
 
         it('loads chasepay in test mode if enabled', async () => {
             paymentMethodMock.config.testMode = true;
 
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
             expect(chasePayScriptLoader.load).toHaveBeenLastCalledWith(true);
         });
@@ -171,7 +173,7 @@ describe('ChasePayPaymentStrategy', () => {
         it('loads chasepay in test mode if enabled', async () => {
             paymentMethodMock.config.testMode = true;
 
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
             expect(chasePayScriptLoader.load).toHaveBeenLastCalledWith(true);
         });
@@ -179,7 +181,7 @@ describe('ChasePayPaymentStrategy', () => {
         it('loads chasepay without test mode if disabled', async () => {
             paymentMethodMock.config.testMode = false;
 
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
             expect(chasePayScriptLoader.load).toHaveBeenLastCalledWith(false);
         });
@@ -187,7 +189,7 @@ describe('ChasePayPaymentStrategy', () => {
         it('registers the start and complete callbacks', async () => {
             JPMC.ChasePay.on = jest.fn((_, callback) => callback);
 
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
             expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.CompleteCheckout, expect.any(Function));
         });
@@ -201,7 +203,7 @@ describe('ChasePayPaymentStrategy', () => {
 
             JPMC.ChasePay.on = jest.fn((_, callback) => callback(payload));
 
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
             expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.CompleteCheckout, expect.any(Function));
             expect(requestSender.post).toBeCalled();
@@ -210,14 +212,14 @@ describe('ChasePayPaymentStrategy', () => {
         it('registers the start and cancel callbacks', async () => {
             JPMC.ChasePay.on = jest.fn((_, callback) => callback);
 
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
             expect(JPMC.ChasePay.on).toHaveBeenCalledWith(ChasePayEventType.CancelCheckout, expect.any(Function));
         });
 
         it('does not load chasepay if initialization options are not provided', () => {
-            chasePayOptions = { methodId: 'chasepay'};
-            expect(() => strategy.initialize(chasePayOptions)).toThrowError(InvalidArgumentError);
+            initializeOptions = { methodId: 'chasepay'};
+            expect(() => strategy.initialize(initializeOptions)).toThrowError(InvalidArgumentError);
             expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
         });
 
@@ -225,7 +227,7 @@ describe('ChasePayPaymentStrategy', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
                 .mockReturnValue(undefined);
             try {
-                await strategy.initialize(chasePayOptions);
+                await strategy.initialize(initializeOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
@@ -237,7 +239,7 @@ describe('ChasePayPaymentStrategy', () => {
             jest.spyOn(store.getState().config, 'getStoreConfig')
                 .mockReturnValue(undefined);
             try {
-                await strategy.initialize(chasePayOptions);
+                await strategy.initialize(initializeOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(MissingDataError);
                 expect(chasePayScriptLoader.load).not.toHaveBeenCalled();
@@ -246,31 +248,29 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('adds the event listener to the wallet button', async () => {
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
             expect(walletButton.addEventListener).toHaveBeenCalled();
         });
 
         it('insert the brandings if initialized', async () => {
-            if (chasePayOptions.chasepay) {
-                await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
-                expect(JPMC.ChasePay.insertBrandings).toHaveBeenCalledWith({
-                    color: 'white',
-                    containers: [chasePayOptions.chasepay.logoContainer],
-                });
-            }
+            expect(JPMC.ChasePay.insertBrandings).toHaveBeenCalledWith({
+                color: 'white',
+                containers: [chasePayInitializeOptions.logoContainer],
+            });
         });
 
         it('does not insert the branding if logo container does not exist', async () => {
-            chasePayOptions = { methodId: 'chasepay', chasepay: { logoContainer: '' } };
-            await strategy.initialize(chasePayOptions);
+            initializeOptions = { methodId: 'chasepay', chasepay: { logoContainer: '' } };
+            await strategy.initialize(initializeOptions);
 
             expect(JPMC.ChasePay.insertBrandings).not.toHaveBeenCalled();
         });
 
         it('configure chasepay lightbox', async () => {
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
             expect(JPMC.ChasePay.configure).toHaveBeenCalled();
         });
@@ -279,7 +279,7 @@ describe('ChasePayPaymentStrategy', () => {
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod')
                 .mockReturnValue(undefined);
             try {
-                await strategy.initialize(chasePayOptions);
+                await strategy.initialize(initializeOptions);
             } catch (error) {
 
                 expect(error).toBeInstanceOf(Error);
@@ -288,45 +288,38 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('check if element exist in the DOM', async () => {
-            if (chasePayOptions.chasepay) {
-                await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
-                expect(document.getElementById).toHaveBeenCalledWith(chasePayOptions.chasepay.logoContainer);
-            }
-
+            expect(document.getElementById).toHaveBeenCalledWith(chasePayInitializeOptions.logoContainer);
         });
 
         it('dispatch widget interaction when wallet button is clicked', async () => {
-            if (chasePayOptions.chasepay) {
-                await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
-                const chasepayButton = document.getElementById(chasePayOptions.chasepay.walletButton || '');
+            const chasepayButton = document.getElementById(chasePayInitializeOptions.walletButton || '');
 
-                if (chasepayButton) {
-                    await chasepayButton.click();
-                }
-
-                expect(store.dispatch).toBeCalledWith(expect.any(Function), { queueId: 'widgetInteraction' });
+            if (chasepayButton) {
+                await chasepayButton.click();
             }
+
+            expect(store.dispatch).toBeCalledWith(expect.any(Observable), { queueId: 'widgetInteraction' });
         });
 
         it('triggers widget interaction when wallet button is clicked', async () => {
-            if (chasePayOptions.chasepay) {
-                await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
 
-                const chasepayButton = document.getElementById(chasePayOptions.chasepay.walletButton || '');
+            const chasepayButton = document.getElementById(chasePayInitializeOptions.walletButton || '');
 
-                if (chasepayButton) {
-                    await chasepayButton.click();
-                }
-
-                expect(paymentStrategyActionCreator.widgetInteraction).toHaveBeenCalled();
+            if (chasepayButton) {
+                await chasepayButton.click();
             }
+
+            expect(paymentStrategyActionCreator.widgetInteraction).toHaveBeenCalled();
         });
     });
 
     describe('#execute()', () => {
-        let chasePayOptions: PaymentInitializeOptions;
+        let initializeOptions: PaymentInitializeOptions;
         let orderRequestBody: OrderRequestBody;
         let submitOrderAction: Observable<Action>;
         let submitPaymentAction: Observable<Action>;
@@ -335,7 +328,7 @@ describe('ChasePayPaymentStrategy', () => {
             orderRequestBody = getOrderRequestBody();
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
-            chasePayOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
+            initializeOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
             paymentMethodMock.initializationData = {
                 paymentCryptogram: '11111111111111',
                 eci: '11111111111',
@@ -348,11 +341,11 @@ describe('ChasePayPaymentStrategy', () => {
 
             paymentActionCreator.submitPayment = jest.fn(() => submitPaymentAction);
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
         });
 
         it('calls submit order with the order request information', async () => {
-            await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
             const { payment, ...order } = orderRequestBody;
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(order, expect.any(Object));
@@ -360,19 +353,19 @@ describe('ChasePayPaymentStrategy', () => {
         });
 
         it('calls submit payment with the payment information', async () => {
-            await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
             expect(store.dispatch).toHaveBeenCalled();
         });
 
         it('calls payment method actioncreator and loads the payment method', async () => {
-            await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
-            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(chasePayOptions.methodId);
+            expect(paymentMethodActionCreator.loadPaymentMethod).toHaveBeenCalledWith(initializeOptions.methodId);
         });
 
         it('returns the payment information', async () => {
-            await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
             expect(store.getState).toHaveBeenCalled();
         });
@@ -380,82 +373,76 @@ describe('ChasePayPaymentStrategy', () => {
         it('does not execute the payment if initialization data is not provided', async () => {
             paymentMethodMock.initializationData = {};
             try {
-                await strategy.execute(orderRequestBody, chasePayOptions);
+                await strategy.execute(orderRequestBody, initializeOptions);
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);
             }
         });
 
         it('pass the options to submitOrder', async () => {
-            await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), chasePayOptions);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(expect.any(Object), initializeOptions);
         });
 
         it('expect the wepayRiskClient not to be called', async () => {
-            await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
             expect(wepayRiskClient.initialize).not.toHaveBeenCalled();
         });
 
         it('expect the not to obtain the risk token', async () => {
-            await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
             expect(wepayRiskClient.getRiskToken).not.toHaveBeenCalled();
         });
 
         it('expect to get the payment method', async () => {
-            await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
-            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalledWith(chasePayOptions.methodId);
+            expect(store.getState().paymentMethods.getPaymentMethod).toHaveBeenCalledWith(initializeOptions.methodId);
         });
 
         it('initialize wepayRiskClient', async () => {
-            if (chasePayOptions.chasepay) {
-                chasePayOptions = { methodId: 'wepay', chasepay: { logoContainer: 'login' } };
-                await strategy.initialize(chasePayOptions);
+            initializeOptions = { methodId: 'wepay', chasepay: { logoContainer: 'login' } };
+            await strategy.initialize(initializeOptions);
 
-                await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
-                expect(wepayRiskClient.initialize).toHaveBeenCalled();
-            }
+            expect(wepayRiskClient.initialize).toHaveBeenCalled();
         });
 
         it('calls get risk token function', async () => {
-            if (chasePayOptions.chasepay) {
-                chasePayOptions = { methodId: 'wepay', chasepay: { logoContainer: 'login' } };
-                await strategy.initialize(chasePayOptions);
+            initializeOptions = { methodId: 'wepay', chasepay: { logoContainer: 'login' } };
+            await strategy.initialize(initializeOptions);
 
-                await strategy.execute(orderRequestBody, chasePayOptions);
+            await strategy.execute(orderRequestBody, initializeOptions);
 
-                expect(wepayRiskClient.getRiskToken).toHaveBeenCalled();
-            }
+            expect(wepayRiskClient.getRiskToken).toHaveBeenCalled();
         });
 
     });
 
     describe('#deinitialize()', () => {
-        let chasePayOptions: PaymentInitializeOptions;
+        let initializeOptions: PaymentInitializeOptions;
         let submitOrderAction: Observable<Action>;
 
         beforeEach(async () => {
-            chasePayOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
+            initializeOptions = { methodId: 'chasepay', chasepay: { logoContainer: 'login', walletButton: 'mockButton' } };
             submitOrderAction = of(createAction(OrderActionType.SubmitOrderRequested));
             orderActionCreator.submitOrder = jest.fn(() => submitOrderAction);
 
-            await strategy.initialize(chasePayOptions);
+            await strategy.initialize(initializeOptions);
         });
 
         it('deinitializes wallet button', async () => {
-            if (chasePayOptions.chasepay) {
-                await strategy.deinitialize();
+            await strategy.deinitialize();
 
-                expect(walletButton.removeEventListener).toHaveBeenCalled();
-            }
+            expect(walletButton.removeEventListener).toHaveBeenCalled();
         });
 
         it('expect to not call the orderActionCreator', async () => {
-            await strategy.deinitialize(chasePayOptions);
+            await strategy.deinitialize(initializeOptions);
 
             expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
         });
