@@ -13,6 +13,7 @@ describe('StoreCredit Request Sender', () => {
         'cart.lineItems.physicalItems.options',
         'cart.lineItems.digitalItems.options',
         'customer',
+        'customer.customerGroup',
         'payments',
         'promotions.banners',
     ].join(',');
