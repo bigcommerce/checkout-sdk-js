@@ -105,12 +105,14 @@ export default class LoadingIndicator {
         document.head.appendChild(style);
 
         if (style.sheet instanceof CSSStyleSheet) {
+            // We need to provide the 2nd parameter for IE11, even though it is
+            // 0 by default for all other browsers.
             style.sheet.insertRule(`
                 @keyframes ${ROTATION_ANIMATION} {
                     0% { transform: translateY(-50%) rotate(0deg); }
                     100% { transform: translateY(-50%) rotate(360deg); }
                 }
-            `);
+            `, 0);
         }
     }
 }
