@@ -1,7 +1,7 @@
 import { InternalAddress } from '../address';
 
 export default interface InternalCustomer {
-    addresses: InternalAddress[];
+    addresses: Array<InternalAddress<number>>;
     customerId: number;
     isGuest: boolean;
     storeCredit: number;

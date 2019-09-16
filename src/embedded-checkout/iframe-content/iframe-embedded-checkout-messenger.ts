@@ -113,7 +113,7 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
                 const handler = this._messageHandlers[key as keyof EmbeddedCheckoutEventMap];
 
                 if (handler) {
-                    handler.call(null, message);
+                    (handler as (event: EmbeddedCheckoutEvent) => void).call(null, message);
                 }
             });
     }

@@ -19,7 +19,7 @@ describe('mergeOrPush()', () => {
         const array = [{ id: 1, item: { name: 'ONE', message: 'foobar' } }, { id: 2, item: { name: 'TWO', message: 'hello' } }];
         const expected = [{ id: 1, item: { name: 'FOO', message: 'foobar' } }, { id: 2, item: { name: 'TWO', message: 'hello' } }];
 
-        expect(mergeOrPush(array, { id: 1, item: { name: 'FOO' } } as any, { id: 1 })).toEqual(expected);
+        expect(mergeOrPush(array, { id: 1, item: { name: 'FOO' } } as any, { id: 1 } as any)).toEqual(expected);
     });
 
     it('replaces input array in target array if found in array', () => {

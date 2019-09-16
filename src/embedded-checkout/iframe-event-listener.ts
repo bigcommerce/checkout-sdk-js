@@ -73,7 +73,9 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
 
     @bind
     private _handleMessage(event: MessageEvent): void {
-        if ((event.origin !== this._sourceOrigin) || !isIframeEvent(event.data, event.data.type)) {
+        if ((event.origin !== this._sourceOrigin) ||
+            !isIframeEvent(event.data as TEventMap[keyof TEventMap], event.data.type)
+        ) {
             return;
         }
 
@@ -82,5 +84,5 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
 }
 
 type EventListeners<TEventMap> = {
-    [key in keyof TEventMap]?: Array<(event: TEventMap[keyof TEventMap]) => void>;
+    [key in keyof TEventMap]?: Array<(event: TEventMap[key]) => void>;
 };

@@ -9,13 +9,13 @@ export default function createFreezeProxy<T extends object>(target: T): T {
     );
 }
 
-export function createFreezeProxies<T extends { [key: string]: object }>(map: T): T {
+export function createFreezeProxies<T extends object, TMap extends { [key: string]: T }>(map: TMap): TMap {
     return Object.keys(map)
         .reduce((result, key) => {
             result[key] = createFreezeProxy(map[key]);
 
             return result;
-        }, {} as T);
+        }, {} as { [key: string]: T }) as TMap;
 }
 
 function createProxy<T extends object>(target: T, trap: (target: FunctionProperties<T>, name: keyof FunctionProperties<T>, proxy: T) => any): T {

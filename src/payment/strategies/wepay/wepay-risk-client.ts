@@ -17,7 +17,7 @@ export default class WepayRiskClient {
     initialize(): Promise<WepayRiskClient> {
         return this._scriptLoader
             .loadScript(SCRIPT_SRC)
-            .then(() => this._riskClient = (window as WepayWindow).WePay.risk)
+            .then(() => this._riskClient = (window as unknown as WepayWindow).WePay.risk)
             .then(() => this);
     }
 

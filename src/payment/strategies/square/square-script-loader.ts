@@ -13,7 +13,7 @@ export default class SquareScriptLoader {
 
         return this._scriptLoader.loadScript(scriptURI)
             .then(() => (options: SquareFormOptions) =>
-                new (window as SquareWindow).SqPaymentForm(options)
+                new (window as unknown as SquareWindow).SqPaymentForm(options)
             );
     }
 }

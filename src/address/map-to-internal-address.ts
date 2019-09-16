@@ -10,7 +10,10 @@ import InternalAddress from './internal-address';
  * the transition period as we are moving to adopt the new storefront API object
  * schema.
  */
-export default function mapToInternalAddress(address: Address | BillingAddress, consignments?: Consignment[]): InternalAddress {
+export default function mapToInternalAddress(
+    address: Address | BillingAddress,
+    consignments?: Consignment[]
+): InternalAddress<any> {
     let addressId;
 
     if (isBillingAddressLike(address)) {
