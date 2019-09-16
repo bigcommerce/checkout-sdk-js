@@ -153,7 +153,7 @@ function mapToInternalSocialData(lineItem: LineItem): InternalSocialDataList {
     const codes = ['fb', 'tw', 'gp'];
 
     return codes.reduce((socialData, code) => {
-        const item = lineItem.socialMedia && lineItem.socialMedia.find(item => item.code === code);
+        const item = lineItem.socialMedia && find(lineItem.socialMedia, item => item.code === code);
 
         if (!item) {
             return socialData;
