@@ -1,4 +1,5 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
+import { find } from 'lodash';
 import { Observable, Observer } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
@@ -332,7 +333,7 @@ export default class ConsignmentActionCreator {
         }
 
         return this._hydrateLineItems(consignment.lineItemIds, cart).map(existingItem => {
-            const sharedItem = lineItems.find(lineItem => lineItem.itemId === existingItem.itemId);
+            const sharedItem = find(lineItems, lineItem => lineItem.itemId === existingItem.itemId);
 
             return {
                 ...existingItem,
@@ -361,7 +362,7 @@ export default class ConsignmentActionCreator {
 
     private _hydrateLineItems(lineItemIds: string[], cart: Cart): ConsignmentLineItem[] {
         return lineItemIds.map(itemId => {
-            const item = cart.lineItems.physicalItems.find(lineItem => lineItem.id === itemId );
+            const item = find(cart.lineItems.physicalItems, lineItem => lineItem.id === itemId);
 
             return {
                 itemId,
