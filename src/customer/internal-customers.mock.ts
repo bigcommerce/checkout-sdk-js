@@ -8,6 +8,7 @@ export function getGuestCustomer(): InternalCustomer {
     return {
         addresses: [],
         customerId: 0,
+        customerGroupName: '',
         email: 'test@bigcommerce.com',
         firstName: 'Test',
         lastName: 'Tester',
@@ -27,6 +28,7 @@ export function getCustomer(): InternalCustomer {
             },
         ],
         customerId: 4,
+        customerGroupName: 'vip',
         isGuest: false,
         email: 'test@bigcommerce.com',
         firstName: 'Foo',

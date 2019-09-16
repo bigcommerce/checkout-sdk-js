@@ -12,6 +12,10 @@ export function getGuestCustomer(): Customer {
         isGuest: true,
         lastName: '',
         storeCredit: 0,
+        customerGroup: {
+            id: 0,
+            name: '',
+        },
     };
 }
 
@@ -31,6 +35,10 @@ export function getCustomer(): Customer {
             },
         ],
         isGuest: false,
+        customerGroup: {
+            id: 1,
+            name: 'vip',
+        },
     };
 }
 

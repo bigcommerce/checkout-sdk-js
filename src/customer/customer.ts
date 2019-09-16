@@ -9,9 +9,15 @@ export default interface Customer {
     fullName: string;
     isGuest: boolean;
     lastName: string;
+    customerGroup: CustomerGroup;
 }
 
 export interface CustomerAddress extends Address {
     id: number;
     type: string;
+}
+
+export interface CustomerGroup  {
+    id: number;
+    name: string;
 }
