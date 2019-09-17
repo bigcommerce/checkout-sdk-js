@@ -2347,6 +2347,7 @@ declare interface Customer {
     fullName: string;
     isGuest: boolean;
     lastName: string;
+    customerGroup: CustomerGroup;
 }
 
 declare interface CustomerAddress extends Address {
@@ -2357,6 +2358,11 @@ declare interface CustomerAddress extends Address {
 declare interface CustomerCredentials {
     email: string;
     password: string;
+}
+
+declare interface CustomerGroup {
+    id: number;
+    name: string;
 }
 
 /**

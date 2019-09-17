@@ -11,6 +11,7 @@
 ### Properties
 
 * [addresses](customer.md#addresses)
+* [customerGroup](customer.md#customergroup)
 * [email](customer.md#email)
 * [firstName](customer.md#firstname)
 * [fullName](customer.md#fullname)
@@ -28,6 +29,13 @@
 ###  addresses
 
 **● addresses**: *[CustomerAddress](customeraddress.md)[]*
+
+___
+<a id="customergroup"></a>
+
+###  customerGroup
+
+**● customerGroup**: *[CustomerGroup](customergroup.md)*
 
 ___
 <a id="email"></a>

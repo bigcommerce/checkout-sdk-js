@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.35.1"></a>
+## [1.35.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.35.0...v1.35.1) (2019-09-17)
+
+
+### Bug Fixes
+
+* **common:** 681 Use Lodash find ([a1ea70b](https://github.com/bigcommerce/checkout-sdk-js/commit/a1ea70b))
+* **embedded-checkout:** CHECKOUT-4427 Fix IE11 not returning origin of URL ([7d772bb](https://github.com/bigcommerce/checkout-sdk-js/commit/7d772bb))
+* **embedded-checkout:** CHECKOUT-4427 Provide index position when inserting CSS rule for IE11 ([7cfddc7](https://github.com/bigcommerce/checkout-sdk-js/commit/7cfddc7))
+* **payment:** CHECKOUT-4418 Upgrade bigpay-client version ([48d65f1](https://github.com/bigcommerce/checkout-sdk-js/commit/48d65f1))
+* **payment:** INT-1759 Emit error action when strategy throws error ([cc3084c](https://github.com/bigcommerce/checkout-sdk-js/commit/cc3084c))
+* **shopper:** CHECKOUT-4415 Add Customer Group to Customer object in payments payload ([8fad4ea](https://github.com/bigcommerce/checkout-sdk-js/commit/8fad4ea))
+
+
+
 <a name="1.35.0"></a>
 # [1.35.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.34.3...v1.35.0) (2019-09-12)
 

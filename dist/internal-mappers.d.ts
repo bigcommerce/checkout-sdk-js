@@ -146,11 +146,17 @@ declare interface Customer {
     fullName: string;
     isGuest: boolean;
     lastName: string;
+    customerGroup: CustomerGroup;
 }
 
 declare interface CustomerAddress extends Address {
     id: number;
     type: string;
+}
+
+declare interface CustomerGroup {
+    id: number;
+    name: string;
 }
 
 declare interface DigitalItem extends LineItem {
