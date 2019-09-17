@@ -34,7 +34,7 @@ export default class PaymentRequestSender {
 
     private _transformResponse(response: any): Response {
         return {
-            headers: {},
+            headers: response.headers,
             body: response.data,
             status: response.status,
             statusText: response.statusText,
