@@ -10,6 +10,7 @@ describe('PaymentRequestSender', () => {
             bigpayClient = {
                 submitPayment: jest.fn((_, callback) => callback(null, {
                     data: getPaymentResponseBody(),
+                    headers: { 'content-type': 'application/json' },
                     status: 200,
                     statusText: 'OK',
                 })),
@@ -30,7 +31,7 @@ describe('PaymentRequestSender', () => {
 
             expect(output).toEqual({
                 body: getPaymentResponseBody(),
-                headers: {},
+                headers: { 'content-type': 'application/json' },
                 status: 200,
                 statusText: 'OK',
             });
@@ -39,6 +40,7 @@ describe('PaymentRequestSender', () => {
         it('returns error response if submission is unsuccessful', async () => {
             bigpayClient.submitPayment = jest.fn((_, callback) => callback({
                 data: getErrorPaymentResponseBody(),
+                headers: { 'content-type': 'application/json' },
                 status: 400,
                 statusText: 'Bad Request',
             }));
@@ -48,7 +50,7 @@ describe('PaymentRequestSender', () => {
             } catch (error) {
                 expect(error).toEqual({
                     body: getErrorPaymentResponseBody(),
-                    headers: {},
+                    headers: { 'content-type': 'application/json' },
                     status: 400,
                     statusText: 'Bad Request',
                 });
