@@ -33,7 +33,7 @@
 ___
 <a id="customergroup"></a>
 
-###  customerGroup
+### `<Optional>` customerGroup
 
 **● customerGroup**: *[CustomerGroup](customergroup.md)*
 

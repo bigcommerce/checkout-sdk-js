@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.35.2"></a>
+## [1.35.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.35.1...v1.35.2) (2019-09-18)
+
+
+### Bug Fixes
+
+* **shopper:** CHECKOUT-4415 Check if `customerGroup` is defined before accessing it ([bbd43ee](https://github.com/bigcommerce/checkout-sdk-js/commit/bbd43ee))
+
+
+
 <a name="1.35.1"></a>
 ## [1.35.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.35.0...v1.35.1) (2019-09-17)
 
