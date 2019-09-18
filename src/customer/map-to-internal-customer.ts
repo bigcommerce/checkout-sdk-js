@@ -22,6 +22,6 @@ export default function mapToInternalCustomer(customer: Customer, billingAddress
         firstName,
         lastName,
         name: customer.fullName || [firstName, lastName].join(' '),
-        customerGroupName: customer.customerGroup.name,
+        customerGroupName: customer.customerGroup && customer.customerGroup.name,
     };
 }
