@@ -9,7 +9,7 @@ export default interface Customer {
     fullName: string;
     isGuest: boolean;
     lastName: string;
-    customerGroup: CustomerGroup;
+    customerGroup?: CustomerGroup;
 }
 
 export interface CustomerAddress extends Address {
