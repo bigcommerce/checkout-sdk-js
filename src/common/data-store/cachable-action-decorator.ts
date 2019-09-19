@@ -34,7 +34,7 @@ export default function cachableActionDecorator<TMethod extends (...args: any[])
     return {
         get() {
             if (typeof descriptor.value !== 'function') {
-                return descriptor.value;
+                throw new Error('Decorator should be used in functions');
             }
 
             const value = decorateMethod.call(this, descriptor.value);

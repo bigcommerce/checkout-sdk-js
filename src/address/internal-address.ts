@@ -1,5 +1,5 @@
-export default interface InternalAddress {
-    id?: string | number;
+export default interface InternalAddress<T = string> {
+    id?: T;
     firstName: string;
     lastName: string;
     company: string;

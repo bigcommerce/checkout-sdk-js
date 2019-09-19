@@ -35,7 +35,7 @@ export default class AfterpayScriptLoader {
         const scriptURI = this._getScriptURI(countryCode, testMode);
 
         return this._scriptLoader.loadScript(scriptURI)
-            .then(() => (window as AfterpayWindow).AfterPay);
+            .then(() => (window as unknown as AfterpayWindow).AfterPay);
     }
 
     private _getScriptURI(countryCode: string, testMode: boolean): string {

@@ -12,6 +12,6 @@ export default class KlarnaScriptLoader {
 
     load(): Promise<KlarnaCredit> {
         return this._scriptLoader.loadScript(SDK_URL)
-            .then(() => (window as KlarnaWindow).Klarna.Credit);
+            .then(() => (window as unknown as KlarnaWindow).Klarna.Credit);
     }
 }

@@ -49,7 +49,7 @@ export function bindMethodDecorator<T extends Method>(_: object, key: string, de
 
     return {
         get() {
-            const boundMethod = method.bind(this);
+            const boundMethod = method.bind(this) as T;
 
             Object.defineProperty(this, key, {
                 ...descriptor,
