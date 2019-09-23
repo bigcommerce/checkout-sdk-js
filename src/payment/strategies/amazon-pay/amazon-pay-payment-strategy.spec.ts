@@ -295,9 +295,10 @@ describe('AmazonPayPaymentStrategy', () => {
 
     it('passes error to callback if unable to synchronize address data', async () => {
         const onError = jest.fn();
+        const disableSubmit = jest.fn();
         const element = document.getElementById('wallet');
 
-        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError } });
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', onError, disableSubmit } });
 
         jest.spyOn(remoteCheckoutActionCreator, 'initializeBilling')
             .mockReturnValue(of(createErrorAction(RemoteCheckoutActionType.InitializeRemoteBillingFailed, new Error())));
@@ -309,6 +310,7 @@ describe('AmazonPayPaymentStrategy', () => {
         await new Promise(resolve => process.nextTick(resolve));
 
         expect(onError).toHaveBeenCalledWith(expect.any(Error));
+        expect(disableSubmit).toHaveBeenCalledWith(paymentMethod, true);
     });
 
     it('reinitializes payment method before submitting order', async () => {
@@ -371,9 +373,10 @@ describe('AmazonPayPaymentStrategy', () => {
     it('synchronizes billing address when selecting new payment method', async () => {
         jest.spyOn(store, 'dispatch');
 
-        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet' } });
-
+        const disableSubmit = jest.fn();
         const element = document.getElementById('wallet');
+
+        await strategy.initialize({ methodId: paymentMethod.id, amazon: { container: 'wallet', disableSubmit } });
 
         if (element) {
             element.dispatchEvent(new CustomEvent('paymentSelect'));
@@ -391,6 +394,7 @@ describe('AmazonPayPaymentStrategy', () => {
         expect(billingAddressActionCreator.updateAddress).toHaveBeenCalledWith(address);
         expect(store.dispatch).toHaveBeenCalledWith(initializeBillingAction);
         expect(store.dispatch).toHaveBeenCalledWith(updateAddressAction);
+        expect(disableSubmit).toHaveBeenCalledWith(paymentMethod, false);
     });
 
     it('does not synchronize billing addresses if they are the same', async () => {

@@ -1,4 +1,5 @@
 import { StandardError } from '../../../common/error/errors';
+import PaymentMethod from '../../payment-method';
 
 import AmazonPayOrderReference from './amazon-pay-order-reference';
 import AmazonPayWidgetError from './amazon-pay-widget-error';
@@ -15,6 +16,14 @@ export default interface AmazonPayPaymentInitializeOptions {
      * The ID of a container which the payment widget should insert into.
      */
     container: string;
+
+    /**
+     * A method used to disable/enable the checkout button
+     *
+     * @param {PaymentMethod} method
+     * @param {boolean} disabled
+     */
+    disableSubmit?(method: PaymentMethod, disabled: boolean): void;
 
     /**
      * A callback that gets called if unable to initialize the widget or select

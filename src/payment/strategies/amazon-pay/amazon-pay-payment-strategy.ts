@@ -150,7 +150,7 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
 
     private _createWallet(options: AmazonPayPaymentInitializeOptions): Promise<AmazonPayWallet> {
         return new Promise((resolve, reject) => {
-            const { container, onError = noop, onPaymentSelect = noop, onReady = noop } = options;
+            const { container, onError = noop, onPaymentSelect = noop, onReady = noop, disableSubmit = noop } = options;
             const referenceId = this._getOrderReferenceId() || this._getOrderReferenceIdFromInitializationData();
             const merchantId = this._getMerchantId();
 
@@ -180,8 +180,12 @@ export default class AmazonPayPaymentStrategy implements PaymentStrategy {
                         .then(() => {
                             this._isPaymentMethodSelected = true;
                             onPaymentSelect(orderReference);
+                            disableSubmit(this._paymentMethod, false);
                         })
-                        .catch(onError);
+                        .catch(error => {
+                            onError(error);
+                            disableSubmit(this._paymentMethod, true);
+                        });
                 },
                 onReady: orderReference => {
                     resolve();
