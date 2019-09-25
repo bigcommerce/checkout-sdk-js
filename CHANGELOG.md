@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.37.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.36.0...v1.37.0) (2019-09-25)
+
+
+### Features
+
+* **payment:** ISSUE-640 Add shippingAddress initial param for Braintree PayPal ([09326b5](https://github.com/bigcommerce/checkout-sdk-js/commit/09326b5))
+
 ## [1.36.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.35.2...v1.36.0) (2019-09-25)
 
 

@@ -11,6 +11,7 @@
 ### Properties
 
 * [allowCredit](braintreepaypalbuttoninitializeoptions.md#allowcredit)
+* [shippingAddress](braintreepaypalbuttoninitializeoptions.md#shippingaddress)
 * [style](braintreepaypalbuttoninitializeoptions.md#style)
 
 ### Methods
@@ -30,6 +31,16 @@
 *
 
 Whether or not to show a credit button.
+
+___
+<a id="shippingaddress"></a>
+
+### `<Optional>` shippingAddress
+
+**● shippingAddress**: * [Address](address.md) &#124; `null`
+*
+
+Address to be used for shipping. If not provided, it will use the first saved address from the active customer.
 
 ___
 <a id="style"></a>

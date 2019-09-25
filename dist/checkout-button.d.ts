@@ -1,6 +1,28 @@
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
 
+declare interface Address extends AddressRequestBody {
+    country: string;
+}
+
+declare interface AddressRequestBody {
+    firstName: string;
+    lastName: string;
+    company: string;
+    address1: string;
+    address2: string;
+    city: string;
+    stateOrProvince: string;
+    stateOrProvinceCode: string;
+    countryCode: string;
+    postalCode: string;
+    phone: string;
+    customFields: Array<{
+        fieldId: string;
+        fieldValue: string | number | string[];
+    }>;
+}
+
 declare interface BraintreeError extends Error {
     type: 'CUSTOMER' | 'MERCHANT' | 'NETWORK' | 'INTERNAL' | 'UNKNOWN';
     code: string;
@@ -17,6 +39,11 @@ declare interface BraintreePaypalButtonInitializeOptions {
      * Whether or not to show a credit button.
      */
     allowCredit?: boolean;
+    /**
+     * Address to be used for shipping.
+     * If not provided, it will use the first saved address from the active customer.
+     */
+    shippingAddress?: Address | null;
     /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *

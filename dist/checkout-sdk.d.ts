@@ -264,6 +264,11 @@ declare interface BraintreePaypalButtonInitializeOptions {
      */
     allowCredit?: boolean;
     /**
+     * Address to be used for shipping.
+     * If not provided, it will use the first saved address from the active customer.
+     */
+    shippingAddress?: Address | null;
+    /**
      * A callback that gets called if unable to authorize and tokenize payment.
      *
      * @param error - The error object describing the failure.
