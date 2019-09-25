@@ -1,6 +1,4 @@
-import { findIndex, pick, pickBy } from 'lodash';
-
-import { PartialDeep } from '../types';
+import { findIndex, pick, pickBy, ValueKeyIteratee } from 'lodash';
 
 import isPlainObject from './is-plain-object';
 import objectMerge from './object-merge';
@@ -12,7 +10,7 @@ import objectMerge from './object-merge';
 export default function mergeOrPush<T>(
     array: T[],
     item?: T,
-    predicate?: ((item: T) => boolean) | PartialDeep<T>
+    predicate?: ValueKeyIteratee<T>
 ): T[] {
     if (!item) {
         return array;

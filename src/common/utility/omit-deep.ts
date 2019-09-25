@@ -8,7 +8,7 @@ export default function omitDeep(object: any, predicate: (value: any, key: strin
     if (isPlainObject(object)) {
         return transform(omitBy(object, predicate), (result, value, key) => {
             result[key] = omitDeep(value, predicate);
-        }, {});
+        }, {} as { [key: string]: any });
     }
 
     return object;

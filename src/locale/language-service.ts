@@ -139,7 +139,7 @@ export default class LanguageService {
                 const resultKey = parentKey ? `${parentKey}.${key}` : key;
 
                 if (isObject(value)) {
-                    return this._flattenObject(value as Translations, result, resultKey);
+                    return this._flattenObject(value, result, resultKey);
                 }
 
                 result[resultKey] = value;
