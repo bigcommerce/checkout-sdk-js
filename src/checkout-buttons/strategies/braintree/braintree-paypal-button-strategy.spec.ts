@@ -15,6 +15,7 @@ import { BraintreeDataCollector, BraintreePaypalCheckout, BraintreeScriptLoader,
 import { getDataCollectorMock, getPaypalCheckoutMock } from '../../../payment/strategies/braintree/braintree.mock';
 import { PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
 import { getPaypalMock } from '../../../payment/strategies/paypal/paypal.mock';
+import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
@@ -236,6 +237,62 @@ describe('BraintreePaypalButtonStrategy', () => {
 
         expect(checkoutActionCreator.loadDefaultCheckout).toHaveBeenCalled();
         expect(store.dispatch).toHaveBeenCalledWith(checkoutActionCreator.loadDefaultCheckout());
+    });
+
+    it('sets up PayPal payment flow with provided address', async () => {
+        await strategy.initialize({
+            ...options,
+            braintreepaypal: {
+                ...options.braintreepaypal,
+                shippingAddress: {
+                    ...getShippingAddress(),
+                    address1: 'a1',
+                    address2: 'a2',
+                    city: 'c',
+                    countryCode: 'AU',
+                    phone: '0123456',
+                    postalCode: '2000',
+                    stateOrProvinceCode: 'NSW',
+                    firstName: 'foo',
+                    lastName: 'bar',
+                },
+            },
+        });
+
+        eventEmitter.emit('payment');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(paypalCheckout.createPayment).toHaveBeenCalledWith(expect.objectContaining({
+            shippingAddressOverride: {
+                city: 'c',
+                countryCode: 'AU',
+                line1: 'a1',
+                line2: 'a2',
+                phone: '0123456',
+                postalCode: '2000',
+                recipientName: 'foo bar',
+                state: 'NSW',
+            },
+        }));
+    });
+
+    it('sets up PayPal payment flow with no address when null is passed', async () => {
+        await strategy.initialize({
+            ...options,
+            braintreepaypal: {
+                ...options.braintreepaypal,
+                shippingAddress: null,
+            },
+        });
+
+        eventEmitter.emit('payment');
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(paypalCheckout.createPayment).toHaveBeenCalledWith(expect.objectContaining({
+            shippingAddressOverride: undefined,
+        }));
     });
 
     it('sets up PayPal payment flow with current checkout details when customer is ready to pay', async () => {

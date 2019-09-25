@@ -62,7 +62,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                         label: this._offerCredit ? 'credit' : undefined,
                         ...pick(paypalOptions.style, 'layout', 'size', 'color', 'label', 'shape', 'tagline', 'fundingicons'),
                     },
-                    payment: () => this._setupPayment(paypalOptions.onPaymentError),
+                    payment: () => this._setupPayment(paypalOptions.shippingAddress, paypalOptions.onPaymentError),
                     onAuthorize: data => this._tokenizePayment(data, paypalOptions.shouldProcessPayment, paypalOptions.onAuthorizeError),
                 }, options.containerId);
             });
@@ -77,13 +77,18 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         return Promise.resolve();
     }
 
-    private _setupPayment(onError?: (error: BraintreeError | StandardError) => void): Promise<string> {
+    private _setupPayment(
+        address?: Address | null,
+        onError?: (error: BraintreeError | StandardError) => void
+    ): Promise<string> {
         return this._store.dispatch(this._checkoutActionCreator.loadDefaultCheckout())
             .then(state => {
                 const checkout = state.checkout.getCheckout();
                 const config = state.config.getStoreConfig();
                 const customer = state.customer.getCustomer();
-                const address = customer && customer.addresses && customer.addresses[0];
+                const shippingAddress = address === undefined ?
+                    customer && customer.addresses && customer.addresses[0] :
+                    address;
 
                 if (!this._paypalCheckout) {
                     throw new NotInitializedError(NotInitializedErrorType.CheckoutButtonNotInitialized);
@@ -101,7 +106,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
                     flow: 'checkout',
                     enableShippingAddress: true,
                     shippingAddressEditable: false,
-                    shippingAddressOverride: address ? this._mapToBraintreeAddress(address) : undefined,
+                    shippingAddressOverride: shippingAddress ? this._mapToBraintreeAddress(shippingAddress) : undefined,
                     amount: checkout.outstandingBalance,
                     currency: config.currency.code,
                     offerCredit: this._offerCredit,

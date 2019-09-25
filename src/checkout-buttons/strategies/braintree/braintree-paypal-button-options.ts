@@ -1,3 +1,4 @@
+import { Address } from '../../../address';
 import { StandardError } from '../../../common/error/errors';
 import { BraintreeError } from '../../../payment/strategies/braintree';
 import { PaypalButtonStyleOptions } from '../../../payment/strategies/paypal';
@@ -18,6 +19,12 @@ export interface BraintreePaypalButtonInitializeOptions {
      * Whether or not to show a credit button.
      */
     allowCredit?: boolean;
+
+    /**
+     * Address to be used for shipping.
+     * If not provided, it will use the first saved address from the active customer.
+     */
+    shippingAddress?: Address | null;
 
     /**
      * A callback that gets called if unable to authorize and tokenize payment.
