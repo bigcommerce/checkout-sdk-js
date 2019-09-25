@@ -216,8 +216,8 @@ declare interface GiftCertificateOrderPayment extends OrderPayment {
     };
 }
 
-declare interface InternalAddress {
-    id?: string | number;
+declare interface InternalAddress<T = string> {
+    id?: T;
     firstName: string;
     lastName: string;
     company: string;
@@ -299,7 +299,7 @@ declare interface InternalCoupon {
 }
 
 declare interface InternalCustomer {
-    addresses: InternalAddress[];
+    addresses: Array<InternalAddress<number>>;
     customerId: number;
     isGuest: boolean;
     storeCredit: number;
@@ -524,7 +524,7 @@ declare interface LineItemOption {
     name: string;
     nameId: number;
     value: string;
-    valueId: number;
+    valueId: number | null;
 }
 
 declare interface LineItemSocialData {
@@ -544,6 +544,7 @@ declare interface Order {
     customerId: number;
     customerMessage: string;
     discountAmount: number;
+    handlingCostTotal: number;
     hasDigitalItems: boolean;
     isComplete: boolean;
     isDownloadable: boolean;
@@ -552,13 +553,12 @@ declare interface Order {
     orderAmount: number;
     orderAmountAsInteger: number;
     orderId: number;
+    payments?: OrderPayments;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
-    handlingCostTotal: number;
+    status: string;
     taxes: Tax[];
     taxTotal: number;
-    payments?: OrderPayments;
-    status: string;
 }
 
 declare interface OrderMetaState extends InternalOrderMeta {
@@ -611,7 +611,7 @@ declare interface Tax {
  * the transition period as we are moving to adopt the new storefront API object
  * schema.
  */
-export declare function mapToInternalAddress(address: Address | BillingAddress, consignments?: Consignment[]): InternalAddress;
+export declare function mapToInternalAddress(address: Address | BillingAddress, consignments?: Consignment[]): InternalAddress<any>;
 
 /**
  * @deprecated This mapper is only for internal use only. It is required during

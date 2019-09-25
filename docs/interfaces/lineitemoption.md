@@ -44,7 +44,8 @@ ___
 
 ###  valueId
 
-**● valueId**: *`number`*
+**● valueId**: * `number` &#124; `null`
+*
 
 ___
 

@@ -1,6 +1,14 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [1.36.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.35.2...v1.36.0) (2019-09-25)
+
+
+### Features
+
+* **common:** CHECKOUT-4403 Upgrade to latest Typescript ([65c0468](https://github.com/bigcommerce/checkout-sdk-js/commit/65c0468))
+* **payment:** INT-1759 Using same order reference ID when an error occurs ([1a25fb8](https://github.com/bigcommerce/checkout-sdk-js/commit/1a25fb8))
 
 <a name="1.35.2"></a>
 ## [1.35.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.35.1...v1.35.2) (2019-09-18)
