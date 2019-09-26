@@ -166,4 +166,6 @@ Please do not raise a Github issue if you just need general support or advice on
 
 
 ## Release version
-We follow semantic versioning convention when making releases. This means breaking changes can only be introduced in a major version. When we release a new version, we use a tool to automatically determine the version number based on the commit messages made since the last release. This way we can minimise the likelihood of making a mistake. If there is a special reason to override the version, you can do so by using `--release-as` flag.
+Everytime a PR is merged to the master branch, CircleCI will trigger a build automatically. However, it won't create a new Git release until it is approved by a person with write access to the repository. If you have write access, you can approve a release job by going to [CircleCI](https://circleci.com/gh/bigcommerce/workflows/checkout-sdk-js/tree/master) and look for the job you wish to approve. You can also navigate directly to the release job by clicking on the yellow dot next to the merged commit.
+
+We follow semantic versioning convention when making releases. This means breaking changes can only be introduced in a major version. When we release a new version, we use a tool to automatically determine the version number based on the commit messages made since the last release. This way we can minimise the likelihood of making a mistake. If there is a special reason to override the version, you can do so by running the release command manually and using the `--release-as` flag to specify the version you want.
