@@ -29,7 +29,11 @@ export default class PaypalButtonStrategy implements CheckoutButtonStrategy {
             throw new InvalidArgumentError();
         }
 
-        return this._paypalScriptLoader.loadPaypal()
+        if (!paymentMethod) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        }
+
+        return this._paypalScriptLoader.loadPaypal(paymentMethod.config.merchantId)
             .then(paypal => {
                 if (!paymentMethod || !paymentMethod.config.merchantId) {
                     throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
