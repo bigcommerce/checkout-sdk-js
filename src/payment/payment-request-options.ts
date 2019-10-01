@@ -7,6 +7,7 @@ import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
 import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
+import { ModalPaymentInitializeOptions } from './strategies/modal';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { SquarePaymentInitializeOptions } from './strategies/square';
 import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
@@ -70,6 +71,13 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Masterpass.
      */
     masterpass?: MasterpassPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize a hosted modal payment method.
+     * They can be omitted unless you need the provider to be displayed in a modal
+     * window instead of a full redirect.
+     */
+    modal?: ModalPaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the PayPal Express payment method.
