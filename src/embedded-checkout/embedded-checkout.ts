@@ -15,8 +15,9 @@ import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
-const CAN_RETRY_ALLOW_COOKIE = 'canRetryAllowCookie';
-const IS_COOKIE_ALLOWED_KEY = 'isCookieAllowed';
+export const ALLOW_COOKIE_ATTEMPT_INTERVAL = 10 * 60 * 1000;
+export const IS_COOKIE_ALLOWED_KEY = 'isCookieAllowed';
+export const LAST_ALLOW_COOKIE_ATTEMPT_KEY = 'lastAllowCookieAttempt';
 
 @bind
 export default class EmbeddedCheckout {
@@ -143,16 +144,18 @@ export default class EmbeddedCheckout {
      */
     private _allowCookie(): Promise<void> {
         if (this._storage.getItem(IS_COOKIE_ALLOWED_KEY)) {
-            // It could be possible that the flag is set to true but the browser
-            // has already removed the permission to store cookie. In that case,
-            // we should try to redirect the user again.
-            this._storage.setItem(CAN_RETRY_ALLOW_COOKIE, true);
-
             return Promise.resolve();
         }
 
-        this._storage.removeItem(CAN_RETRY_ALLOW_COOKIE);
         this._storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
+
+        // It could be possible that the flag is set to true but the browser has
+        // already removed the permission to store third-party cookies. In that
+        // case, we should try to redirect the user again. But we only want to
+        // do it once within a fixed interval. This is to avoid getting into a
+        // redirect loop if the shopper actually doesn't have a valid card
+        // session.
+        this._storage.setItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY, Date.now());
 
         const { origin } = parseUrl(this._options.url);
         const redirectUrl = `${origin}/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(this._location.href)}`;
@@ -164,8 +167,9 @@ export default class EmbeddedCheckout {
     }
 
     private _retryAllowCookie(error: EmbeddedCheckoutError): Promise<void> {
+        const lastAttempt = Number(this._storage.getItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY));
         const canRetry = (
-            this._storage.getItem(CAN_RETRY_ALLOW_COOKIE) &&
+            (!lastAttempt || Date.now() - lastAttempt > ALLOW_COOKIE_ATTEMPT_INTERVAL) &&
             error instanceof NotEmbeddableError &&
             error.subtype === NotEmbeddableErrorType.MissingContent
         );
@@ -174,7 +178,7 @@ export default class EmbeddedCheckout {
             return Promise.reject();
         }
 
-        this._storage.removeItem(CAN_RETRY_ALLOW_COOKIE);
+        this._storage.removeItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY);
         this._storage.removeItem(IS_COOKIE_ALLOWED_KEY);
 
         return this._allowCookie();

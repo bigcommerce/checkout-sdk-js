@@ -4,7 +4,7 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import { iframeResizer, IFrameComponent } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 
-import EmbeddedCheckout from './embedded-checkout';
+import EmbeddedCheckout, { ALLOW_COOKIE_ATTEMPT_INTERVAL, IS_COOKIE_ALLOWED_KEY, LAST_ALLOW_COOKIE_ATTEMPT_KEY } from './embedded-checkout';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import EmbeddedCheckoutStyles from './embedded-checkout-styles';
@@ -62,7 +62,7 @@ describe('EmbeddedCheckout', () => {
             .mockImplementation(() => {});
 
         jest.spyOn(storage, 'getItem')
-            .mockImplementation(key => key === 'isCookieAllowed' ? true : null);
+            .mockImplementation(key => key === IS_COOKIE_ALLOWED_KEY ? true : null);
 
         embeddedCheckout = new EmbeddedCheckout(
             iframeCreator,
@@ -78,6 +78,8 @@ describe('EmbeddedCheckout', () => {
 
     afterEach(() => {
         (location.replace as jest.Mock).mockRestore();
+        storage.removeItem(IS_COOKIE_ALLOWED_KEY);
+        storage.removeItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY);
     });
 
     it('creates iframe element', async () => {
@@ -264,7 +266,7 @@ describe('EmbeddedCheckout', () => {
 
     it('redirects user to allow third party cookie to be set', () => {
         jest.spyOn(storage, 'getItem')
-            .mockImplementation(key => key === 'isCookieAllowed' ? null : true);
+            .mockImplementation(key => key === IS_COOKIE_ALLOWED_KEY ? null : true);
 
         embeddedCheckout.attach();
 
@@ -281,7 +283,7 @@ describe('EmbeddedCheckout', () => {
 
     it('retries once if cookie is flagged as allowed yet unable to load frame', async () => {
         (storage.getItem as jest.Mock).mockRestore();
-        storage.setItem('isCookieAllowed', true);
+        storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
 
         jest.spyOn(iframeCreator, 'createFrame')
             .mockRejectedValue(new NotEmbeddableError('Empty cart', NotEmbeddableErrorType.MissingContent));
@@ -294,9 +296,25 @@ describe('EmbeddedCheckout', () => {
             .toHaveBeenCalledWith(`https://mybigcommerce.com/embedded-checkout/allow-cookie?returnUrl=${encodeURIComponent(location.href)}`);
     });
 
+    it('does not retry renew cookie allowance if already retried recently', async () => {
+        (storage.getItem as jest.Mock).mockRestore();
+        storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
+        storage.setItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY, Date.now() - ALLOW_COOKIE_ATTEMPT_INTERVAL);
+
+        jest.spyOn(iframeCreator, 'createFrame')
+            .mockRejectedValue(new NotEmbeddableError('Empty cart', NotEmbeddableErrorType.MissingContent));
+
+        embeddedCheckout.attach();
+
+        await new Promise(resolve => process.nextTick(resolve));
+
+        expect(location.replace)
+            .toHaveBeenCalledTimes(1);
+    });
+
     it('does not retry to renew cookie allowance if error is due to other issues', async () => {
         (storage.getItem as jest.Mock).mockRestore();
-        storage.setItem('isCookieAllowed', true);
+        storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
 
         jest.spyOn(iframeCreator, 'createFrame')
             .mockRejectedValue(new NotEmbeddableError('Invalid container', NotEmbeddableErrorType.MissingContainer));
