@@ -125,6 +125,22 @@ describe('EmbeddedCheckoutMessenger', () => {
         });
     });
 
+    it('does not invoke message callback if it does not match with type of event', () => {
+        const handler = jest.fn();
+
+        messenger = new IframeEmbeddedCheckoutMessenger(
+            messageListener,
+            messagePoster,
+            untargetedMessagePoster,
+            { [EmbeddedCheckoutEventType.FrameLoaded]: handler }
+        );
+
+        messenger.postFrameError(new Error('Unexpected error'));
+
+        expect(handler)
+            .not.toHaveBeenCalled();
+    });
+
     it('has methods that can be destructed', () => {
         const { postComplete } = messenger;
 

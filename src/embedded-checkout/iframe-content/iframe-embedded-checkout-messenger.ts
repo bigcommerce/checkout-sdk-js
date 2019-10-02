@@ -110,7 +110,11 @@ export default class IframeEmbeddedCheckoutMessenger implements EmbeddedCheckout
     private _notifyMessageHandlers(message: EmbeddedCheckoutEvent): void {
         Object.keys(this._messageHandlers)
             .forEach(key => {
-                const handler = this._messageHandlers[key as keyof EmbeddedCheckoutEventMap];
+                if (message.type !== key) {
+                    return;
+                }
+
+                const handler = this._messageHandlers[key];
 
                 if (handler) {
                     (handler as (event: EmbeddedCheckoutEvent) => void).call(null, message);
