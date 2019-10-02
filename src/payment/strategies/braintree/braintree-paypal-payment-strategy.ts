@@ -1,8 +1,9 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
+import isVaultedInstrument from '../../is-vaulted-instrument';
 import Payment, { FormattedPayload, PaypalInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
@@ -103,10 +104,19 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         const { currency, storeProfile: { storeLanguage } } = config;
-        const { nonce } = this._paymentMethod;
+        const { nonce, config: { isVaultingEnabled } } = this._paymentMethod;
+        const { paymentData = {} } = payment;
 
         if (nonce) {
             return Promise.resolve({ ...payment, paymentData: this._formattedPayload(nonce) });
+        }
+
+        if (isVaultedInstrument(paymentData)) {
+            if (!isVaultingEnabled) {
+                throw new InvalidArgumentError('Vaulting is disabled but a vaulted instrument was being used for this transaction');
+            }
+
+            return Promise.resolve(payment);
         }
 
         return Promise.all([

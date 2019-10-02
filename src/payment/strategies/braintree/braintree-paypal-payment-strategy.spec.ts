@@ -4,7 +4,7 @@ import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError, StandardError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, StandardError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -259,6 +259,49 @@ describe('BraintreePaypalPaymentStrategy', () => {
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentMethodCancelledError);
             }
+        });
+
+        describe('when paying with a vaulted instrument', () => {
+            beforeEach(() => {
+                orderRequestBody = {
+                    payment: {
+                        methodId: 'braintreepaypal',
+                        paymentData: {
+                            instrumentId: 'fake-instrument-id',
+                        },
+                    },
+                };
+            });
+
+            it('calls submit payment with the right payload', async () => {
+                paymentMethodMock.config.isVaultingEnabled = true;
+
+                await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
+                await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+
+                expect(braintreePaymentProcessorMock.paypal).not.toHaveBeenCalled();
+                expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
+                    methodId: 'braintreepaypal',
+                    paymentData: {
+                        instrumentId: 'fake-instrument-id',
+                    },
+                });
+            });
+
+            it('throws if vaulting is disabled and trying to pay with a vaulted instrument', async () => {
+                await braintreePaypalPaymentStrategy.initialize({ methodId: paymentMethodMock.id });
+
+                try {
+                    await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
+                } catch (error) {
+                    expect(braintreePaymentProcessorMock.paypal).not.toHaveBeenCalled();
+                    expect(paymentActionCreator.submitPayment).not.toHaveBeenCalled();
+                    expect(orderActionCreator.submitOrder).not.toHaveBeenCalled();
+
+                    expect(error).toBeInstanceOf(InvalidArgumentError);
+                    expect(error.message).toEqual('Vaulting is disabled but a vaulted instrument was being used for this transaction');
+                }
+            });
         });
 
         describe('if paypal credit', () => {
