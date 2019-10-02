@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.37.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.37.0...v1.37.1) (2019-10-02)
+
+
+### Bug Fixes
+
+* **embedded-checkout:** CHECKOUT-4462 Only retry again if sufficient time has passed ([b7567ad](https://github.com/bigcommerce/checkout-sdk-js/commit/b7567ad))
+* **embedded-checkout:** CHECKOUT-4462 Only trigger event handler if type matches ([b5263c5](https://github.com/bigcommerce/checkout-sdk-js/commit/b5263c5))
+
 ## [1.37.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.36.0...v1.37.0) (2019-09-25)
 
 
