@@ -59,7 +59,7 @@ export default class GoogleRecaptcha {
     }
 
     private _watchRecaptchaChallengeWindow(event: Subject<RecaptchaResult>) {
-        const iframeElement = document.querySelector('iframe[title="recaptcha challenge"]');
+        const iframeElement = document.querySelector('iframe[src*="bframe"]');
 
         if (!iframeElement) {
             throw new Error('Recaptcha challenge iframe not found.');
