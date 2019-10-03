@@ -28,6 +28,7 @@ export interface OrderErrorsState {
 
 export interface OrderStatusesState {
     isLoading?: boolean;
+    isSpamProtectionExecuting?: boolean;
     isSubmitting?: boolean;
     isFinalizing?: boolean;
 }

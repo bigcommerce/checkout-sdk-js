@@ -12,6 +12,7 @@ export default interface OrderSelector {
     getOrderMeta(): OrderMetaState | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
+    isSpamProtectionExecuting(): boolean;
 }
 
 export type OrderSelectorFactory = (
@@ -58,6 +59,11 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
         status => () => status
     );
 
+    const isSpamProtectionExecuting = createSelector(
+        (state: OrderState) => !!state.statuses.isSpamProtectionExecuting,
+        status => () => status
+    );
+
     return memoizeOne((
         state: OrderState = DEFAULT_STATE,
         billingAddress: BillingAddressSelector,
@@ -68,6 +74,7 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
             getOrderMeta: getOrderMeta(state),
             getLoadError: getLoadError(state),
             isLoading: isLoading(state),
+            isSpamProtectionExecuting: isSpamProtectionExecuting(state),
         };
     });
 }

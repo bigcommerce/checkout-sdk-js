@@ -109,6 +109,36 @@ describe('orderReducer()', () => {
         }));
     });
 
+    it('returns new status while executing spam protection', () => {
+        const action: SpamProtectionAction = {
+            type: SpamProtectionActionType.ExecuteRequested,
+        };
+
+        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
+            statuses: { isSpamProtectionExecuting: true },
+        }));
+    });
+
+    it('returns new status if spam protection completed', () => {
+        const action: SpamProtectionAction = {
+            type: SpamProtectionActionType.Completed,
+        };
+
+        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
+            statuses: { isSpamProtectionExecuting: false },
+        }));
+    });
+
+    it('returns new status if submitting spam protection failed', () => {
+        const action: SpamProtectionAction = {
+            type: SpamProtectionActionType.SubmitFailed,
+        };
+
+        expect(orderReducer(initialState, action)).toEqual(expect.objectContaining({
+            statuses: { isSpamProtectionExecuting: false },
+        }));
+    });
+
     describe('loadOrderPayments', () => {
         it('returns new status while fetching order', () => {
             const action: LoadOrderPaymentsAction = {

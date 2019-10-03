@@ -1,8 +1,11 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
+import { from } from 'rxjs';
+import { TestScheduler } from 'rxjs/testing';
 
 import { MutationObserverFactory } from '../../common/dom/mutation-observer';
 import { NotInitializedError } from '../../common/error/errors';
 
+import { SpamProtectionNotLoadedError } from './errors';
 import GoogleRecaptcha from './google-recaptcha';
 import GoogleRecaptchaScriptLoader, { GoogleRecaptchaWindow } from './google-recaptcha-script-loader';
 import { getGoogleRecaptchaMock } from './google-recaptcha.mock';
@@ -62,6 +65,7 @@ describe('GoogleRecaptcha', () => {
 
     describe('#execute()', () => {
         let googleRecaptchaMock: ReCaptchaV2.ReCaptcha;
+        let recaptchaChallengeContainer: HTMLElement;
 
         beforeEach(() => {
             jest.spyOn(mutationObserverFactory, 'create')
@@ -75,8 +79,19 @@ describe('GoogleRecaptcha', () => {
 
             googleRecaptchaMock.render = jest.fn((_containerId, { callback }) => callback());
 
+            recaptchaChallengeContainer = new DOMParser().parseFromString(
+                '<div style="visibility: hidden"><div><iframe src="https://google.com/recaptcha/api2/bframe?query=1"></div></div>',
+                'text/html'
+            ).body;
+
             jest.spyOn(googleRecaptchaScriptLoader, 'load')
                 .mockResolvedValue(googleRecaptchaMock);
+        });
+
+        afterEach(() => {
+            if (document.body.contains(recaptchaChallengeContainer)) {
+                document.body.removeChild(recaptchaChallengeContainer);
+            }
         });
 
         it('throws an error if google recaptcha is not initialized', () => {
@@ -87,22 +102,43 @@ describe('GoogleRecaptcha', () => {
             const containerId = 'spamProtection';
             const sitekey = 'sitekey';
 
-            const recaptchaChallengeContainer = new DOMParser().parseFromString(
-                '<div style="visibility: hidden"><div><iframe src="https://google.com/recaptcha/api2/bframe?query=1"></div></div>',
-                'text/html'
-            ).body;
-
             document.body.appendChild(recaptchaChallengeContainer);
 
             await googleRecaptcha.load(containerId, sitekey);
 
-            googleRecaptcha.execute();
-
-            await new Promise(resolve => process.nextTick(resolve));
+            from(googleRecaptcha.execute())
+                .toPromise();
 
             expect(googleRecaptchaMock.getResponse).toHaveBeenCalled();
             expect(googleRecaptchaMock.reset).toHaveBeenCalled();
             expect(googleRecaptchaMock.execute).toHaveBeenCalled();
+
+        });
+
+        it('throws an error if google recaptcha window is not loaded after a specific timeframe', async () => {
+            const containerId = 'spamProtection';
+            const sitekey = 'sitekey';
+
+            await googleRecaptcha.load(containerId, sitekey);
+
+            const scheduler = new TestScheduler((expected, result) => {
+                expect(expected).toEqual(result);
+            });
+
+            await googleRecaptcha.load(containerId, sitekey);
+
+            scheduler.run(helpers => {
+                const { expectObservable } = helpers;
+
+                expectObservable(googleRecaptcha.execute())
+                    .toBe('7250ms (a|)', {
+                        a: {
+                            error: expect.any(SpamProtectionNotLoadedError),
+                        },
+                    });
+
+                expect(googleRecaptchaMock.execute).not.toHaveBeenCalled();
+            });
         });
     });
 });

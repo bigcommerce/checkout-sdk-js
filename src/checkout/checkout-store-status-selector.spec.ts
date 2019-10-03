@@ -70,6 +70,24 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(statuses.isSubmittingOrder()).toEqual(false);
             expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
         });
+
+        it('returns true if executing spam protection', () => {
+            jest.spyOn(selectors.order, 'isSpamProtectionExecuting').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isSubmittingOrder()).toEqual(true);
+            expect(selectors.order.isSpamProtectionExecuting).toHaveBeenCalled();
+        });
+
+        it('returns false if executing spam protection', () => {
+            jest.spyOn(selectors.order, 'isSpamProtectionExecuting').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isSubmittingOrder()).toEqual(false);
+            expect(selectors.order.isSpamProtectionExecuting).toHaveBeenCalled();
+        });
     });
 
     describe('#isFinalizingOrder()', () => {
