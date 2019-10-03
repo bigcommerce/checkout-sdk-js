@@ -88,7 +88,7 @@ describe('GoogleRecaptcha', () => {
             const sitekey = 'sitekey';
 
             const recaptchaChallengeContainer = new DOMParser().parseFromString(
-                '<div style="visibility: hidden"><div><iframe title="recaptcha challenge"></div></div>',
+                '<div style="visibility: hidden"><div><iframe src="https://google.com/recaptcha/api2/bframe?query=1"></div></div>',
                 'text/html'
             ).body;
 
