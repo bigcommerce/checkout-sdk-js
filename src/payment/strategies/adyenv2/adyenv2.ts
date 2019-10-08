@@ -162,6 +162,24 @@ export interface InputDetail {
     value?: string;
 }
 
+export interface AdyenThreeDS2Options {
+    /**
+     * Specify Three3DS2Challenge Widget Size
+     */
+    widgetSize?: string;
+
+    /**
+     * A callback that gets called when adyen component is mounted
+     */
+    onLoad(cancel: () => void): void;
+
+    /**
+     * A callback that gets called when adyen component verification
+     * is completed
+     */
+    onComplete(): void;
+}
+
 export enum ThreeDS2ComponentType {
     ThreeDS2DeviceFingerprint = 'threeDS2DeviceFingerprint',
     ThreeDS2Challenge = 'threeDS2Challenge',
@@ -452,15 +470,11 @@ export interface AdyenComponent {
 }
 
 export interface AdyenCheckout {
-    create(type: string, componentOptions?: CreditCardComponentOptions |
+    create(type: string, componentOptions?: AdyenCreditCardComponentOptions |
         ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions): AdyenComponent;
 }
 
-export interface ThreeDS2ComponentOptions {
-    threeDS2ChallengeWidgetSize?: string;
-}
-
-export interface CreditCardComponentOptions {
+export interface AdyenCreditCardComponentOptions {
     /**
      * Set an object containing the details array for type: scheme from
      * the /paymentMethods response.
