@@ -1,27 +1,27 @@
-[@bigcommerce/checkout-sdk](../README.md) > [CreditCardComponentOptions](../interfaces/creditcardcomponentoptions.md)
+[@bigcommerce/checkout-sdk](../README.md) > [AdyenCreditCardComponentOptions](../interfaces/adyencreditcardcomponentoptions.md)
 
-# CreditCardComponentOptions
+# AdyenCreditCardComponentOptions
 
 ## Hierarchy
 
-**CreditCardComponentOptions**
+**AdyenCreditCardComponentOptions**
 
 ## Index
 
 ### Properties
 
-* [details](creditcardcomponentoptions.md#details)
-* [enableStoreDetails](creditcardcomponentoptions.md#enablestoredetails)
-* [groupTypes](creditcardcomponentoptions.md#grouptypes)
-* [hasHolderName](creditcardcomponentoptions.md#hasholdername)
-* [holderName](creditcardcomponentoptions.md#holdername)
-* [holderNameRequired](creditcardcomponentoptions.md#holdernamerequired)
-* [placeholders](creditcardcomponentoptions.md#placeholders)
-* [styles](creditcardcomponentoptions.md#styles)
+* [details](adyencreditcardcomponentoptions.md#details)
+* [enableStoreDetails](adyencreditcardcomponentoptions.md#enablestoredetails)
+* [groupTypes](adyencreditcardcomponentoptions.md#grouptypes)
+* [hasHolderName](adyencreditcardcomponentoptions.md#hasholdername)
+* [holderName](adyencreditcardcomponentoptions.md#holdername)
+* [holderNameRequired](adyencreditcardcomponentoptions.md#holdernamerequired)
+* [placeholders](adyencreditcardcomponentoptions.md#placeholders)
+* [styles](adyencreditcardcomponentoptions.md#styles)
 
 ### Methods
 
-* [onChange](creditcardcomponentoptions.md#onchange)
+* [onChange](adyencreditcardcomponentoptions.md#onchange)
 
 ---
 

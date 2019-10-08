@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.38.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.37.2...v1.38.0) (2019-10-08)
+
+
+### Bug Fixes
+
+* **order:** CHECKOUT-4450 Handle recaptcha challenge not finish loading on slow connection ([62c3f73](https://github.com/bigcommerce/checkout-sdk-js/commit/62c3f73))
+
+
+### Features
+
+* **payment:** INT-1901 Use modal to handle 3DS for Adyen ([038836f](https://github.com/bigcommerce/checkout-sdk-js/commit/038836f))
+
 ### [1.37.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.37.1...v1.37.2) (2019-10-03)
 
 

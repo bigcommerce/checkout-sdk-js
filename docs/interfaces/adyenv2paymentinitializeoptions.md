@@ -36,7 +36,7 @@ ___
 
 ### `<Optional>` options
 
-**● options**: *[Omit](../#omit)<[CreditCardComponentOptions](creditcardcomponentoptions.md), "onChange">*
+**● options**: *[Omit](../#omit)<[AdyenCreditCardComponentOptions](adyencreditcardcomponentoptions.md), "onChange">*
 
 Optional. Overwriting the default options
 
@@ -52,11 +52,11 @@ The location to insert the Adyen 3DS V2 component.
 ___
 <a id="threeds2options"></a>
 
-### `<Optional>` threeDS2Options
+###  threeDS2Options
 
-**● threeDS2Options**: *[ThreeDS2ComponentOptions](threeds2componentoptions.md)*
+**● threeDS2Options**: *[AdyenThreeDS2Options](adyenthreeds2options.md)*
 
-Optional. Contains all three ds 2 options
+ThreeDS2Options
 
 ___
 

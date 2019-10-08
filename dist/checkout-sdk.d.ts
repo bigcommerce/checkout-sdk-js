@@ -50,6 +50,51 @@ declare interface AdyenComponent {
     unmount(): void;
 }
 
+declare interface AdyenCreditCardComponentOptions {
+    /**
+     * Set an object containing the details array for type: scheme from
+     * the /paymentMethods response.
+     */
+    details?: InputDetail[];
+    /**
+     * Set to true to show the checkbox to save card details for the next payment.
+     */
+    enableStoreDetails?: boolean;
+    /**
+     * Set to true to request the name of the card holder.
+     */
+    hasHolderName?: boolean;
+    /**
+     * Set to true to require the card holder name.
+     */
+    holderNameRequired?: boolean;
+    /**
+     * Prefill the card holder name field. Supported from Card component
+     */
+    holderName?: string;
+    /**
+     * Defaults to ['mc','visa','amex']. Configure supported card types to
+     * facilitate brand recognition used in the Secured Fields onBrand callback.
+     * See list of available card types. If a shopper enters a card type not
+     * specified in the GroupTypes configuration, the onBrand callback will not be invoked.
+     */
+    groupTypes?: string[];
+    /**
+     * Set a style object to customize the input fields. See Styling Secured Fields
+     * for a list of supported properties.
+     */
+    styles?: AdyenStyleOptions;
+    /**
+     * Specify the sample values you want to appear for card detail input fields.
+     */
+    placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
+    /**
+     * Called when the shopper enters data in the card input fields.
+     * Here you have the option to override your main Adyen Checkout configuration.
+     */
+    onChange?(state: AdyenCardState, component: AdyenComponent): void;
+}
+
 declare interface AdyenStyleOptions {
     /**
      * Base styling applied to the iframe. All styling extends from this style.
@@ -69,6 +114,22 @@ declare interface AdyenStyleOptions {
     validated?: CssProperties;
 }
 
+declare interface AdyenThreeDS2Options {
+    /**
+     * Specify Three3DS2Challenge Widget Size
+     */
+    widgetSize?: string;
+    /**
+     * A callback that gets called when adyen component is mounted
+     */
+    onLoad(cancel: () => void): void;
+    /**
+     * A callback that gets called when adyen component verification
+     * is completed
+     */
+    onComplete(): void;
+}
+
 /**
  * A set of options that are required to initialize the AdyenV2 payment method.
  *
@@ -86,13 +147,13 @@ declare interface AdyenV2PaymentInitializeOptions {
      */
     threeDS2ContainerId: string;
     /**
+     * ThreeDS2Options
+     */
+    threeDS2Options: AdyenThreeDS2Options;
+    /**
      * Optional. Overwriting the default options
      */
-    options?: Omit<CreditCardComponentOptions, 'onChange'>;
-    /**
-     * Optional. Contains all three ds 2 options
-     */
-    threeDS2Options?: ThreeDS2ComponentOptions;
+    options?: Omit<AdyenCreditCardComponentOptions, 'onChange'>;
 }
 
 /**
@@ -2213,51 +2274,6 @@ declare interface Coupon {
     discountedAmount: number;
 }
 
-declare interface CreditCardComponentOptions {
-    /**
-     * Set an object containing the details array for type: scheme from
-     * the /paymentMethods response.
-     */
-    details?: InputDetail[];
-    /**
-     * Set to true to show the checkbox to save card details for the next payment.
-     */
-    enableStoreDetails?: boolean;
-    /**
-     * Set to true to request the name of the card holder.
-     */
-    hasHolderName?: boolean;
-    /**
-     * Set to true to require the card holder name.
-     */
-    holderNameRequired?: boolean;
-    /**
-     * Prefill the card holder name field. Supported from Card component
-     */
-    holderName?: string;
-    /**
-     * Defaults to ['mc','visa','amex']. Configure supported card types to
-     * facilitate brand recognition used in the Secured Fields onBrand callback.
-     * See list of available card types. If a shopper enters a card type not
-     * specified in the GroupTypes configuration, the onBrand callback will not be invoked.
-     */
-    groupTypes?: string[];
-    /**
-     * Set a style object to customize the input fields. See Styling Secured Fields
-     * for a list of supported properties.
-     */
-    styles?: AdyenStyleOptions;
-    /**
-     * Specify the sample values you want to appear for card detail input fields.
-     */
-    placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
-    /**
-     * Called when the shopper enters data in the card input fields.
-     * Here you have the option to override your main Adyen Checkout configuration.
-     */
-    onChange?(state: AdyenCardState, component: AdyenComponent): void;
-}
-
 declare interface CreditCardInstrument {
     ccCustomerCode?: string;
     ccExpiry: {
@@ -3558,10 +3574,6 @@ declare interface Tax {
 
 declare interface TextInputStyles extends InputStyles {
     placeholder?: InlineElementStyles;
-}
-
-declare interface ThreeDS2ComponentOptions {
-    threeDS2ChallengeWidgetSize?: string;
 }
 
 declare interface ThreeDSecure {
