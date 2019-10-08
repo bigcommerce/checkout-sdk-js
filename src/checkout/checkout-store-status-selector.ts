@@ -357,13 +357,24 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
         }
     );
 
+    const isSubmittingOrder = createSelector(
+        ({ paymentStrategies }: InternalCheckoutSelectors) => paymentStrategies.isExecuting,
+        ({ order }: InternalCheckoutSelectors) => order.isSpamProtectionExecuting,
+        (isExecuting, isSpamProtectionExecuting) => (methodId?: string) => {
+            return (
+                isExecuting(methodId) ||
+                isSpamProtectionExecuting()
+            );
+        }
+    );
+
     return memoizeOne((
         state: InternalCheckoutSelectors
     ): CheckoutStoreStatusSelector => {
         const selector = {
             isLoadingCheckout: state.checkout.isLoading,
             isUpdatingCheckout: state.checkout.isUpdating,
-            isSubmittingOrder: state.paymentStrategies.isExecuting,
+            isSubmittingOrder: isSubmittingOrder(state),
             isFinalizingOrder: state.paymentStrategies.isFinalizing,
             isLoadingOrder: state.order.isLoading,
             isLoadingCart: state.cart.isLoading,

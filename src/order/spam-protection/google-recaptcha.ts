@@ -1,9 +1,14 @@
-import { Observable, Subject } from 'rxjs';
+import { defer, of, throwError, Observable, Subject } from 'rxjs';
+import { catchError, delay, retryWhen, switchMap } from 'rxjs/operators';
 
 import { MutationObserverFactory } from '../../common/dom/mutation-observer';
 import { NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
 
-import { SpamProtectionFailedError, SpamProtectionNotCompletedError } from './errors';
+import {
+    SpamProtectionFailedError,
+    SpamProtectionNotCompletedError,
+    SpamProtectionNotLoadedError,
+} from './errors';
 import GoogleRecaptchaScriptLoader from './google-recaptcha-script-loader';
 
 export interface RecaptchaResult {
@@ -47,34 +52,52 @@ export default class GoogleRecaptcha {
     }
 
     execute(): Observable<RecaptchaResult> {
-        if (!this._event$ || !this._recaptcha) {
+        const event$ = this._event$;
+        const recaptcha = this._recaptcha;
+
+        if (!event$ || !recaptcha) {
             throw new NotInitializedError(NotInitializedErrorType.SpamProtectionNotInitialized);
         }
 
-        this._watchRecaptchaChallengeWindow(this._event$);
+        const timeout = 7000;
+        const retryInterval = 250;
+        const maxRetries = timeout / retryInterval;
 
-        this._recaptcha.execute();
+        return defer(() => {
+            const element = document.querySelector('iframe[src*="bframe"]');
 
-        return this._event$;
+            return element ?
+                of(element) :
+                throwError(new SpamProtectionNotLoadedError());
+        })
+            .pipe(
+                retryWhen(errors => errors.pipe(
+                    delay(retryInterval),
+                    switchMap((error, index) =>
+                        index < maxRetries ? of(error) : throwError(error)
+                    )
+                )),
+                switchMap(element => {
+                    this._watchRecaptchaChallengeWindow(event$, element);
+                    recaptcha.execute();
+
+                    return event$;
+                }),
+                catchError(error => of({ error }))
+            );
     }
 
-    private _watchRecaptchaChallengeWindow(event: Subject<RecaptchaResult>) {
-        const iframeElement = document.querySelector('iframe[src*="bframe"]');
-
-        if (!iframeElement) {
-            throw new Error('Recaptcha challenge iframe not found.');
-        }
-
-        const iframeContainer = iframeElement.parentElement;
+    private _watchRecaptchaChallengeWindow(event: Subject<RecaptchaResult>, element: Element) {
+        const iframeContainer = element.parentElement;
 
         if (!iframeContainer) {
-            throw new Error('Recaptcha challenge iframe container not found.');
+            throw new SpamProtectionNotLoadedError();
         }
 
         const container = iframeContainer.parentElement;
 
         if (!container) {
-            throw new Error('Recaptcha challenge container not found.');
+            throw new SpamProtectionNotLoadedError();
         }
 
         this.mutationObserverFactory.create(() => {

@@ -73,4 +73,21 @@ describe('OrderSelector', () => {
             expect(orderSelector.isLoading()).toEqual(false);
         });
     });
+
+    describe('#isSpamProtectionExecuting()', () => {
+        it('returns true if executing spam protection', () => {
+            orderSelector = createOrderSelector({
+                ...state.order,
+                statuses: { isSpamProtectionExecuting: true },
+            }, selectors.billingAddress, selectors.coupons);
+
+            expect(orderSelector.isSpamProtectionExecuting()).toEqual(true);
+        });
+
+        it('returns false if not executing spam protection', () => {
+            orderSelector = createOrderSelector(state.order, selectors.billingAddress, selectors.coupons);
+
+            expect(orderSelector.isSpamProtectionExecuting()).toEqual(false);
+        });
+    });
 });

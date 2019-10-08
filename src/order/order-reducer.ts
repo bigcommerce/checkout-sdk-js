@@ -80,7 +80,7 @@ function errorsReducer(
 
 function statusesReducer(
     statuses: OrderStatusesState = DEFAULT_STATE.statuses,
-    action: OrderAction
+    action: OrderAction | SpamProtectionAction
 ): OrderStatusesState {
     switch (action.type) {
     case OrderActionType.LoadOrderRequested:
@@ -92,6 +92,13 @@ function statusesReducer(
     case OrderActionType.LoadOrderPaymentsSucceeded:
     case OrderActionType.LoadOrderPaymentsFailed:
         return objectSet(statuses, 'isLoading', false);
+
+    case SpamProtectionActionType.ExecuteRequested:
+        return objectSet(statuses, 'isSpamProtectionExecuting', true);
+
+    case SpamProtectionActionType.Completed:
+    case SpamProtectionActionType.SubmitFailed:
+        return objectSet(statuses, 'isSpamProtectionExecuting', false);
 
     default:
         return statuses;
