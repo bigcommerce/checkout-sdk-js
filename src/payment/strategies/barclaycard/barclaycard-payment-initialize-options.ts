@@ -1,5 +1,5 @@
-export default interface ModalPaymentInitializeOptions {
-    iframeName: string;
+export default interface BarclaycardPaymentInitializeOptions {
+    iframeContainerId: string;
 
     closureEventName: string;
 

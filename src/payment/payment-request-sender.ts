@@ -27,12 +27,8 @@ export default class PaymentRequestSender {
     }
 
     initializeOffsitePayment(payload: PaymentRequestBody, target?: string): Promise<void> {
-        return new Promise(resolve => {
+        return new Promise(() => {
             this._client.initializeOffsitePayment(payload, undefined, target);
-            // if the provider is a modal, resolve the promise.
-            if (target) {
-                resolve();
-            }
         });
     }
 
