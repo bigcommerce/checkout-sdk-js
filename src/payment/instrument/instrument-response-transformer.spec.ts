@@ -15,18 +15,14 @@ describe('InstrumentResponseTransformer', () => {
             const response = getPaymentResponse(getInternalInstrumentsResponseBody());
             const result = instrumentResponseTransformer.transformResponse(response);
 
-            expect(result).toEqual(
-                expect.objectContaining({ body: getLoadInstrumentsResponseBody() })
-            );
+            expect(result.body).toEqual(getLoadInstrumentsResponseBody());
         });
 
         it('transforms an empty loadInstruments response', () => {
             const response = getPaymentResponse({ vaulted_instruments: [] });
             const result = instrumentResponseTransformer.transformResponse(response);
 
-            expect(result).toEqual(expect.objectContaining({
-                body: { vaultedInstruments: [] },
-            }));
+            expect(result.body).toEqual({ vaultedInstruments: [] });
         });
     });
 
@@ -35,9 +31,7 @@ describe('InstrumentResponseTransformer', () => {
             const response = getResponse(getVaultAccessTokenResponseBody());
             const result = instrumentResponseTransformer.transformVaultAccessResponse(response);
 
-            expect(result).toEqual(
-                expect.objectContaining({ body: getVaultAccessToken() })
-            );
+            expect(result.body).toEqual(getVaultAccessToken());
         });
     });
 
@@ -46,9 +40,7 @@ describe('InstrumentResponseTransformer', () => {
             const response = getPaymentResponse(getErrorInstrumentResponseBody());
             const result = instrumentResponseTransformer.transformErrorResponse(response);
 
-            expect(result).toEqual(
-                expect.objectContaining({ body: getErrorInstrumentResponseBody() })
-            );
+            expect(result.body).toEqual(getErrorInstrumentResponseBody());
         });
     });
 });

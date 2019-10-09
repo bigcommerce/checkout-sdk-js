@@ -2,6 +2,7 @@ import { find, some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
+import { PaymentInstrumentNotValidError } from '../../errors';
 import isCreditCardLike from '../../is-credit-card-like';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import Payment from '../../payment';
@@ -97,17 +98,20 @@ export default class CardinalThreeDSecureFlow {
     }
 
     private _getBinNumber(payment: CardinalSupportedPaymentInstrument): string {
-        if (isVaultedInstrument(payment)) {
-            const instruments = this._store.getState().instruments.getInstruments();
-
-            const { instrumentId } = payment;
-
-            const entry = find(instruments, { bigpayToken: instrumentId });
-
-            return entry && entry.iin || '';
+        if (!isVaultedInstrument(payment)) {
+            return payment.ccNumber;
         }
 
-        return payment.ccNumber;
+        const instruments = this._store.getState().instruments.getInstruments(this._paymentMethod);
+        const { instrumentId: bigpayToken } = payment;
+
+        const entry = find(instruments, { bigpayToken });
+
+        if (!entry || entry.type !== 'card') {
+            throw new PaymentInstrumentNotValidError();
+        }
+
+        return entry.iin;
     }
 
     private _getOrderData(paymentData: CardinalSupportedPaymentInstrument): CardinalOrderData {

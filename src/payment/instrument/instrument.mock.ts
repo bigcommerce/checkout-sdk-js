@@ -25,6 +25,8 @@ export function getInstruments(): Instrument[] {
             brand: 'test',
             trustedShippingAddress: true,
             defaultInstrument: true,
+            method: 'card',
+            type: 'card',
         },
         {
             bigpayToken: '111',
@@ -36,6 +38,17 @@ export function getInstruments(): Instrument[] {
             brand: 'test',
             trustedShippingAddress: false,
             defaultInstrument: false,
+            method: 'card',
+            type: 'card',
+        },
+        {
+            bigpayToken: '31415',
+            provider: 'braintree',
+            trustedShippingAddress: false,
+            defaultInstrument: false,
+            method: 'paypal',
+            externalId: 'test@external-id.com',
+            type: 'account',
         },
     ];
 }
@@ -95,6 +108,7 @@ export function getInternalInstrumentsResponseBody(): InternalInstrumentsRespons
                 brand: 'test',
                 trusted_shipping_address: true,
                 default_instrument: true,
+                method_type: 'card',
             },
             {
                 bigpay_token: '111',
@@ -106,6 +120,15 @@ export function getInternalInstrumentsResponseBody(): InternalInstrumentsRespons
                 brand: 'test',
                 trusted_shipping_address: false,
                 default_instrument: false,
+                method_type: 'card',
+            },
+            {
+                bigpay_token: '31415',
+                provider: 'braintree',
+                trusted_shipping_address: false,
+                default_instrument: false,
+                method_type: 'paypal',
+                external_id: 'test@external-id.com',
             },
         ],
     };
