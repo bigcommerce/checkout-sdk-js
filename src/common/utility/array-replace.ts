@@ -12,7 +12,7 @@ export default function arrayReplace<T>(currentArray: T[] | undefined, newArray:
 export default function arrayReplace<T>(currentArray: T[], newArray?: T[], options?: ArrayReplaceOptions): undefined;
 export default function arrayReplace<T>(currentArray?: T[], newArray?: T[], options?: ArrayReplaceOptions): T[] | undefined;
 export default function arrayReplace<T>(currentArray?: T[], newArray?: T[], options?: ArrayReplaceOptions): T[] | undefined {
-    const { matchObject = (a: any, b: any) => a.id === b.id } = options || {};
+    const { matchObject = (a: any, b: any) => a.id !== undefined && a.id === b.id } = options || {};
 
     // Return the new array if the current array does not exist
     if (!currentArray) {
