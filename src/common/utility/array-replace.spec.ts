@@ -68,6 +68,15 @@ describe('arrayReplace()', () => {
             .toBe(newArray[1]);
     });
 
+    it('does not assume objects are equal if `id` is undefined', () => {
+        const currentArray = [{ id: undefined, altId: 'a', oldKey: 'oldA' }];
+        const newArray = [{ id: undefined, altId: 'c' }];
+
+        const result = arrayReplace(currentArray, newArray);
+
+        expect(result).toBe(newArray);
+    });
+
     it('handles nested collections of objects', () => {
         const currentArray = [
             {
