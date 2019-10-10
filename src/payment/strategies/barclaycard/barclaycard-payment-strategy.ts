@@ -36,8 +36,8 @@ export default class BarclaycardPaymentStrategy implements PaymentStrategy {
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        const { payment, ...order } = payload;
-        const orderPayload = order;
+        const { payment} = payload;
+        const orderPayload = payload;
 
         if (!this._initializationOptions) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.modal" argument is not provided.');
