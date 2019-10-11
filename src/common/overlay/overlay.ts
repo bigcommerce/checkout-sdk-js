@@ -2,6 +2,7 @@ export interface OverlayOptions {
     background?: string;
     id?: string;
     transitionDuration?: number;
+    zIndex?: number;
 }
 
 export interface OverlayShowOptions {
@@ -49,6 +50,7 @@ export default class Overlay {
             background = 'rgba(0, 0, 0, 0.8)',
             id = null,
             transitionDuration = 400,
+            zIndex = 2147483647,
         } = options || {};
 
         element.style.background = background;
@@ -60,7 +62,7 @@ export default class Overlay {
         element.style.top = '0px';
         element.style.transition = `opacity ${transitionDuration}ms ease-out`;
         element.style.width = '100%';
-        element.style.zIndex = '2147483647';
+        element.style.zIndex = zIndex.toString();
 
         if (id) {
             element.id = id;

@@ -1,5 +1,6 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
+import { Modal } from '../../../common/modal/';
 import LoadingIndicator from '../../../embedded-checkout/loading-indicator';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -15,20 +16,27 @@ export default class BarclaycardPaymentStrategy implements PaymentStrategy {
     private _initializationOptions?: BarclaycardPaymentInitializeOptions;
     private _methodId!: string;
     private _iframe!: HTMLIFrameElement;
+    private modal!: Modal;
 
     constructor(
         private _store: CheckoutStore,
         private _orderActionCreator: OrderActionCreator,
         private _loadingIndicator: LoadingIndicator,
         private _paymentActionCreator: PaymentActionCreator
-    ) {}
+    ) { }
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
         this._methodId = options.methodId;
         const { barclaycard } = options;
+
         if (!barclaycard) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.modal" argument is not provided.');
         }
+
+        this.modal = new Modal({
+            style: { },
+            contentsId: barclaycard.iframeContainerId,
+        });
 
         this._initializationOptions = barclaycard;
 
@@ -42,27 +50,30 @@ export default class BarclaycardPaymentStrategy implements PaymentStrategy {
         if (!this._initializationOptions) {
             throw new InvalidArgumentError('Unable to initialize payment because "options.modal" argument is not provided.');
         }
-        const { iframeContainerId, setModalStatus } = this._initializationOptions;
-
-
-
-        setModalStatus(true);
-
-        const container = document.getElementById(iframeContainerId);
-
-        if (!container) {
-            throw new Error('Need a container to insert the iframe');
-        }
+        const { iframeContainerId } = this._initializationOptions;
 
         this._loadingIndicator.show(iframeContainerId);
 
         return this._createPaymentIframe(iframeContainerId)
         .then(() => {
+
             if (!payment) {
                 throw new PaymentArgumentInvalidError([this._methodId]);
             }
 
-            return new Promise<InternalCheckoutSelectors>((_resolve, _reject) => {
+            return new Promise<InternalCheckoutSelectors>((resolve, reject) => {
+                this.modal.open({
+                    closeCallback: reject,
+                });
+                this.modal.hideCloseButton();
+
+                // to be changed later
+                window.addEventListener('message', event => {
+                    if (event.data === 'closeModal') {
+                        this.modal.close();
+                        resolve();
+                    }
+                });
 
                 this._store.dispatch(this._orderActionCreator.submitOrder(orderPayload, options))
                 .then(() =>
@@ -78,15 +89,8 @@ export default class BarclaycardPaymentStrategy implements PaymentStrategy {
 
     deinitialize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
         if (options) {
-            const { methodId } = options;
-            /**
-             * Check if the method we are trying to deinitialize is the same as the initialized one,
-             * by checking this, we prevent the deinitialization of a different method that may have
-             * been already initialized by this strategy.
-             */
-            if (methodId === this._methodId) {
-                this._initializationOptions = undefined;
-            }
+            // const { methodId } = options;
+            // TODO
         }
 
         return Promise.resolve(this._store.getState());
@@ -104,15 +108,17 @@ export default class BarclaycardPaymentStrategy implements PaymentStrategy {
 
             iframe.style.border = 'none';
             iframe.style.display = 'none';
-            iframe.style.width = '100%';
+            iframe.style.minWidth = '500px';
+            iframe.style.minHeight = '450px';
             iframe.name = `${this._methodId}${iframeSuffix}`;
             this._iframe = iframe;
             frameContainer.appendChild(this._iframe);
 
-            this._iframe.onload = () => {
+            this._iframe.addEventListener('load', () => {
                 this._iframe.style.display = 'block';
                 this._loadingIndicator.hide();
-            };
+                this.modal.showCloseButton();
+            });
 
             return resolve();
         });

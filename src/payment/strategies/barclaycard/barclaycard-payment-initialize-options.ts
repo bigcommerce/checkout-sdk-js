@@ -11,6 +11,9 @@ export default interface BarclaycardPaymentInitializeOptions {
      */
     setModalStatus(isOpen: boolean, callback?: void): void;
 
+    /**
+     * A function that sets the modal loading status
+     */
     setModalLoadingStatus(isLoading: boolean): void;
 
 }
