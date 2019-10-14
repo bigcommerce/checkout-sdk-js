@@ -5,40 +5,15 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
-import {
-    createCheckoutStore,
-    CheckoutRequestSender,
-    CheckoutStore,
-    CheckoutValidator
-} from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    NotInitializedError,
-    RequestError
-} from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { getCustomer } from '../../../customer/customers.mock';
-import {
-    FinalizeOrderAction,
-    OrderActionCreator,
-    OrderActionType,
-    OrderRequestSender,
-    SubmitOrderAction
-} from '../../../order';
+import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import {
-    createSpamProtection,
-    SpamProtectionActionCreator
-} from '../../../order/spam-protection';
-import {
-    LoadPaymentMethodAction,
-    PaymentInitializeOptions,
-    PaymentMethodActionType,
-    PaymentMethodRequestSender,
-    PaymentRequestSender
-} from '../../../payment';
+import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
+import { LoadPaymentMethodAction, PaymentInitializeOptions, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -51,18 +26,7 @@ import { getErrorPaymentResponseBody } from '../../payments.mock';
 
 import StripeV3PaymentStrategy from './stripev3-payment-strategy';
 import StripeV3ScriptLoader from './stripev3-script-loader';
-import {
-    getStripeCardPaymentOptionsWithGuestUser,
-    getStripeCardPaymentOptionsWithGuestUserWithoutAddress,
-    getStripeCardPaymentOptionsWithSignedUser,
-    getStripePaymentMethodOptionsWithGuestUser,
-    getStripePaymentMethodOptionsWithGuestUserWithoutAddress,
-    getStripePaymentMethodOptionsWithSignedUser,
-    getStripeV3HandleCardResponse,
-    getStripeV3InitializeOptionsMock,
-    getStripeV3JsMock,
-    getStripeV3OrderRequestBodyMock,
-} from './stripev3.mock';
+import { getStripeCardPaymentOptionsWithGuestUser, getStripeCardPaymentOptionsWithGuestUserWithoutAddress, getStripeCardPaymentOptionsWithSignedUser, getStripePaymentMethodOptionsWithGuestUser, getStripePaymentMethodOptionsWithGuestUserWithoutAddress, getStripePaymentMethodOptionsWithSignedUser, getStripeV3HandleCardResponse, getStripeV3InitializeOptionsMock, getStripeV3JsMock, getStripeV3OrderRequestBodyMock } from './stripev3.mock';
 
 describe('StripeV3PaymentStrategy', () => {
     let errorResponse: RequestError;

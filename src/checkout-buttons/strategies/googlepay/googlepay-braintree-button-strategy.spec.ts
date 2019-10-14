@@ -12,12 +12,7 @@ import { getCustomerState } from '../../../customer/customers.mock';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
-import {
-    createGooglePayPaymentProcessor,
-    GooglePaymentData,
-    GooglePayBraintreeInitializer,
-    GooglePayPaymentProcessor
-} from '../../../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePaymentData, GooglePayBraintreeInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 

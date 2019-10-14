@@ -8,23 +8,8 @@ import { CheckoutIncludes, CheckoutRequestSender, InternalCheckoutSelectors, Rea
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import Consignment, {
-    ConsignmentsRequestBody,
-    ConsignmentAssignmentRequestBody,
-    ConsignmentCreateRequestBody,
-    ConsignmentLineItem,
-    ConsignmentRequestBody,
-    ConsignmentShippingOptionRequestBody,
-    ConsignmentUpdateRequestBody
-} from './consignment';
-import {
-    ConsignmentActionType,
-    CreateConsignmentsAction,
-    DeleteConsignmentAction,
-    LoadShippingOptionsAction,
-    UpdateConsignmentAction,
-    UpdateShippingOptionAction,
-} from './consignment-actions';
+import Consignment, { ConsignmentsRequestBody, ConsignmentAssignmentRequestBody, ConsignmentCreateRequestBody, ConsignmentLineItem, ConsignmentRequestBody, ConsignmentShippingOptionRequestBody, ConsignmentUpdateRequestBody } from './consignment';
+import { ConsignmentActionType, CreateConsignmentsAction, DeleteConsignmentAction, LoadShippingOptionsAction, UpdateConsignmentAction, UpdateShippingOptionAction } from './consignment-actions';
 import ConsignmentRequestSender from './consignment-request-sender';
 
 export default class ConsignmentActionCreator {

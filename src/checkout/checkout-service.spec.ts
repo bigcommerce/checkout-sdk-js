@@ -10,12 +10,7 @@ import { ErrorActionCreator } from '../common/error';
 import { getResponse } from '../common/http-request/responses.mock';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
-import {
-    CouponActionCreator,
-    CouponRequestSender,
-    GiftCertificateActionCreator,
-    GiftCertificateRequestSender,
-} from '../coupon';
+import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
@@ -24,31 +19,14 @@ import { OrderActionCreator, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionOptions } from '../order/spam-protection';
-import {
-    createPaymentClient,
-    PaymentMethodActionCreator,
-    PaymentMethodRequestSender,
-    PaymentStrategyActionCreator,
-    PaymentStrategyRegistry,
-} from '../payment';
+import { createPaymentClient, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator, PaymentStrategyRegistry } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
-import {
-    deleteInstrumentResponseBody,
-    getLoadInstrumentsResponseBody,
-    getVaultAccessTokenResponseBody,
-} from '../payment/instrument/instrument.mock';
+import { deleteInstrumentResponseBody, getLoadInstrumentsResponseBody, getVaultAccessTokenResponseBody } from '../payment/instrument/instrument.mock';
 import { getAuthorizenet, getPaymentMethod, getPaymentMethods } from '../payment/payment-methods.mock';
 import { PaymentStrategy } from '../payment/strategies';
 import { NoPaymentDataRequiredPaymentStrategy } from '../payment/strategies/no-payment';
 import { OfflinePaymentStrategy } from '../payment/strategies/offline';
-import {
-    createShippingStrategyRegistry,
-    ConsignmentActionCreator,
-    ConsignmentRequestSender,
-    ShippingCountryActionCreator,
-    ShippingCountryRequestSender,
-    ShippingStrategyActionCreator,
-} from '../shipping';
+import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';

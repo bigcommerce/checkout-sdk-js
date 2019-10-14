@@ -10,12 +10,7 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { PaymentMethod } from '../../../payment';
 import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
-import {
-    createGooglePayPaymentProcessor,
-    GooglePaymentData,
-    GooglePayPaymentProcessor,
-    GooglePayStripeInitializer
-} from '../../../payment/strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePaymentData, GooglePayPaymentProcessor, GooglePayStripeInitializer } from '../../../payment/strategies/googlepay';
 import { getGooglePaymentDataMock } from '../../../payment/strategies/googlepay/googlepay.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 

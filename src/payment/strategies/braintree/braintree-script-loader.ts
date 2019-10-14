@@ -3,15 +3,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { PaymentMethodClientUnavailableError } from '../../errors';
 import { GooglePayCreator } from '../googlepay';
 
-import {
-    BraintreeClientCreator,
-    BraintreeDataCollectorCreator,
-    BraintreeHostWindow,
-    BraintreePaypalCheckoutCreator,
-    BraintreePaypalCreator,
-    BraintreeThreeDSecureCreator,
-    BraintreeVisaCheckoutCreator,
-} from './braintree';
+import { BraintreeClientCreator, BraintreeDataCollectorCreator, BraintreeHostWindow, BraintreePaypalCheckoutCreator, BraintreePaypalCreator, BraintreeThreeDSecureCreator, BraintreeVisaCheckoutCreator } from './braintree';
 
 export default class BraintreeScriptLoader {
     constructor(

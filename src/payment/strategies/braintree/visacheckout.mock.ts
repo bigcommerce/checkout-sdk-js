@@ -1,10 +1,4 @@
-import {
-    VisaCheckoutAddress,
-    VisaCheckoutPaymentSuccessPayload,
-    VisaCheckoutSDK,
-    VisaCheckoutTokenizedPayload,
-    VisaCheckoutUserData,
-} from './visacheckout';
+import { VisaCheckoutAddress, VisaCheckoutPaymentSuccessPayload, VisaCheckoutSDK, VisaCheckoutTokenizedPayload, VisaCheckoutUserData } from './visacheckout';
 
 export function getVisaCheckoutSDKMock(): VisaCheckoutSDK {
     return {

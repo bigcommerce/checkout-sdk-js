@@ -3,14 +3,7 @@ import { Response } from '@bigcommerce/request-sender';
 import PaymentResponse from '../payment-response';
 
 import Instrument, { VaultAccessToken } from './instrument';
-import {
-    InstrumentsResponseBody,
-    InstrumentErrorResponseBody,
-    InternalInstrument,
-    InternalInstrumentsResponseBody,
-    InternalInstrumentErrorResponseBody,
-    InternalVaultAccessTokenResponseBody,
-} from './instrument-response-body';
+import { InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrument, InternalInstrumentsResponseBody, InternalInstrumentErrorResponseBody, InternalVaultAccessTokenResponseBody } from './instrument-response-body';
 
 export default class InstrumentResponseTransformer {
     transformResponse(

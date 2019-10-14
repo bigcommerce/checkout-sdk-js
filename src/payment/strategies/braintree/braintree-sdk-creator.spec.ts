@@ -1,25 +1,10 @@
 import { NotInitializedError } from '../../../common/error/errors';
 import { getGooglePayBraintreeMock } from '../googlepay/googlepay.mock';
 
-import {
-    BraintreeClient,
-    BraintreeDataCollector,
-    BraintreeModuleCreator,
-    BraintreeThreeDSecure,
-    BraintreeVisaCheckout,
-    GooglePayBraintreeSDK,
-} from './braintree';
+import { BraintreeClient, BraintreeDataCollector, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 import BraintreeSDKCreator from './braintree-sdk-creator';
-import {
-    getClientMock,
-    getDataCollectorMock,
-    getDeviceDataMock,
-    getModuleCreatorMock,
-    getModuleCreatorNewMock,
-    getThreeDSecureMock,
-    getVisaCheckoutMock,
-} from './braintree.mock';
+import { getClientMock, getDataCollectorMock, getDeviceDataMock, getModuleCreatorMock, getModuleCreatorNewMock, getThreeDSecureMock, getVisaCheckoutMock } from './braintree.mock';
 
 describe('Braintree SDK Creator', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;

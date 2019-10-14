@@ -10,13 +10,7 @@ import PaymentMethod from '../../payment-method';
 import PaymentMethodConfig from '../../payment-method-config';
 import { GooglePayBraintreeSDK } from '../braintree';
 
-import {
-    GooglePaymentData,
-    GooglePayAddress,
-    GooglePayPaymentDataRequestV2,
-    GooglePaySDK,
-    TokenizePayload,
-} from './googlepay';
+import { GooglePaymentData, GooglePayAddress, GooglePayPaymentDataRequestV2, GooglePaySDK, TokenizePayload } from './googlepay';
 import { GooglePayBraintreePaymentDataRequestV1 } from './googlepay-braintree';
 
 export function getGooglePaySDKMock(): GooglePaySDK {

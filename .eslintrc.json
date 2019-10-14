@@ -35,6 +35,12 @@
                     "rxjs/**"
                 ]
             }
+        ],
+        "object-curly-newline": [
+            "error",
+            {
+                "ImportDeclaration": "never"
+            }
         ]
     }
 }

@@ -2,11 +2,7 @@ import { ScriptLoader, StylesheetLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
-import {
-    AdyenCheckout,
-    AdyenConfiguration,
-    AdyenHostWindow
-} from './adyenv2';
+import { AdyenCheckout, AdyenConfiguration, AdyenHostWindow } from './adyenv2';
 
 export default class AdyenV2ScriptLoader {
     constructor(

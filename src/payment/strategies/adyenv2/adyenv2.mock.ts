@@ -1,17 +1,10 @@
-
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderRequestBody } from '../../../order';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
 
-import {
-    AdyenCardState,
-    AdyenCheckout,
-    AdyenConfiguration,
-    ResultCode,
-    ThreeDSRequiredErrorResponse
-} from './adyenv2';
+import { AdyenCardState, AdyenCheckout, AdyenConfiguration, ResultCode, ThreeDSRequiredErrorResponse } from './adyenv2';
 
 export function getAdyenCheckout(): AdyenCheckout {
     return {

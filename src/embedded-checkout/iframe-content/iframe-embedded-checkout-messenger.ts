@@ -1,17 +1,7 @@
 import { isCustomError, CustomError } from '../../common/error/errors';
 import { bindDecorator as bind } from '../../common/utility';
 import EmbeddedCheckoutError from '../embedded-checkout-error';
-import {
-    EmbeddedCheckoutCompleteEvent,
-    EmbeddedCheckoutErrorEvent,
-    EmbeddedCheckoutEvent,
-    EmbeddedCheckoutEventMap,
-    EmbeddedCheckoutEventType,
-    EmbeddedCheckoutFrameErrorEvent,
-    EmbeddedCheckoutFrameLoadedEvent,
-    EmbeddedCheckoutLoadedEvent,
-    EmbeddedCheckoutSignedOutEvent,
-} from '../embedded-checkout-events';
+import { EmbeddedCheckoutCompleteEvent, EmbeddedCheckoutErrorEvent, EmbeddedCheckoutEvent, EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType, EmbeddedCheckoutFrameErrorEvent, EmbeddedCheckoutFrameLoadedEvent, EmbeddedCheckoutLoadedEvent, EmbeddedCheckoutSignedOutEvent } from '../embedded-checkout-events';
 import EmbeddedCheckoutStyles from '../embedded-checkout-styles';
 import IframeEventListener from '../iframe-event-listener';
 import IframeEventPoster from '../iframe-event-poster';

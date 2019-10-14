@@ -5,20 +5,10 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import {
-    createCheckoutStore,
-    CheckoutRequestSender,
-    CheckoutStore,
-    CheckoutValidator,
-} from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
-import {
-    OrderActionCreator,
-    OrderActionType,
-    OrderRequestBody,
-    OrderRequestSender,
-} from '../../../order';
+import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
@@ -28,11 +18,7 @@ import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import { getCybersource } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
-import {
-    CardinalClient,
-    CardinalScriptLoader,
-    CardinalThreeDSecureFlow
-} from '../cardinal';
+import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from '../cardinal';
 
 import { CyberSourcePaymentStrategy } from './index';
 

@@ -4,12 +4,7 @@ import { Address, LegacyAddress } from '../../../address';
 
 import { BraintreeDataCollector } from './braintree';
 import BraintreeSDKCreator from './braintree-sdk-creator';
-import {
-    VisaCheckoutAddress,
-    VisaCheckoutInitOptions,
-    VisaCheckoutPaymentSuccessPayload,
-    VisaCheckoutTokenizedPayload,
-} from './visacheckout';
+import { VisaCheckoutAddress, VisaCheckoutInitOptions, VisaCheckoutPaymentSuccessPayload, VisaCheckoutTokenizedPayload } from './visacheckout';
 
 export default class BraintreeVisaCheckoutPaymentProcessor {
     constructor(

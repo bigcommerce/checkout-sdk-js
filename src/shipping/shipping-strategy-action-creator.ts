@@ -6,13 +6,7 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { Registry } from '../common/registry';
 
 import { ShippingInitializeOptions, ShippingRequestOptions } from './shipping-request-options';
-import {
-    ShippingStrategyActionType,
-    ShippingStrategyDeinitializeAction,
-    ShippingStrategyInitializeAction,
-    ShippingStrategySelectOptionAction,
-    ShippingStrategyUpdateAddressAction,
-} from './shipping-strategy-actions';
+import { ShippingStrategyActionType, ShippingStrategyDeinitializeAction, ShippingStrategyInitializeAction, ShippingStrategySelectOptionAction, ShippingStrategyUpdateAddressAction } from './shipping-strategy-actions';
 import { ShippingStrategy } from './strategies';
 
 export default class ShippingStrategyActionCreator {

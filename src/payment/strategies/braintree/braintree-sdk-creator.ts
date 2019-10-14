@@ -1,15 +1,6 @@
 import { NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 
-import {
-    BraintreeClient,
-    BraintreeDataCollector,
-    BraintreeModule,
-    BraintreePaypal,
-    BraintreePaypalCheckout,
-    BraintreeThreeDSecure,
-    BraintreeVisaCheckout,
-    GooglePayBraintreeSDK,
-} from './braintree';
+import { BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreePaypal, BraintreePaypalCheckout, BraintreeThreeDSecure, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
 
 export default class BraintreeSDKCreator {

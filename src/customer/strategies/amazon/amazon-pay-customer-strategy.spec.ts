@@ -9,14 +9,7 @@ import { MissingDataError } from '../../../common/error/errors';
 import { getErrorResponse, getResponse } from '../../../common/http-request/responses.mock';
 import { HOSTED, INITIALIZE, PaymentMethod, PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../../payment';
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
-import {
-    AmazonPayLogin,
-    AmazonPayLoginButton,
-    AmazonPayLoginButtonOptions,
-    AmazonPayLoginOptions,
-    AmazonPayScriptLoader,
-    AmazonPayWindow,
-} from '../../../payment/strategies/amazon-pay';
+import { AmazonPayLogin, AmazonPayLoginButton, AmazonPayLoginButtonOptions, AmazonPayLoginOptions, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import { getRemoteTokenResponseBody } from '../../../remote-checkout/remote-checkout.mock';
 import CustomerStrategy from '../customer-strategy';

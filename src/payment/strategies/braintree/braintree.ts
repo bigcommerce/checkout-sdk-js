@@ -1,11 +1,7 @@
 import { GooglePaymentData, GooglePayBraintreeDataRequest, GooglePayBraintreePaymentDataRequestV1, GooglePayCreator, TokenizePayload } from '../googlepay';
 import { PaypalAuthorizeData, PaypalSDK } from '../paypal';
 
-import {
-    VisaCheckoutInitOptions,
-    VisaCheckoutPaymentSuccessPayload,
-    VisaCheckoutTokenizedPayload
-} from './visacheckout';
+import { VisaCheckoutInitOptions, VisaCheckoutPaymentSuccessPayload, VisaCheckoutTokenizedPayload } from './visacheckout';
 
 export interface BraintreeSDK {
     client?: BraintreeClientCreator;

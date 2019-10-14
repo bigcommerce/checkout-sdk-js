@@ -2,24 +2,9 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { StandardError } from '../../../common/error/errors';
 
-import {
-    BraintreeClientCreator,
-    BraintreeDataCollector,
-    BraintreeHostWindow,
-    BraintreeModuleCreator,
-    BraintreeThreeDSecure,
-    BraintreeVisaCheckout,
-    GooglePayBraintreeSDK,
-} from './braintree';
+import { BraintreeClientCreator, BraintreeDataCollector, BraintreeHostWindow, BraintreeModuleCreator, BraintreeThreeDSecure, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import BraintreeScriptLoader from './braintree-script-loader';
-import {
-    getClientMock,
-    getDataCollectorMock,
-    getGooglePayMock,
-    getModuleCreatorMock,
-    getThreeDSecureMock,
-    getVisaCheckoutMock,
-} from './braintree.mock';
+import { getClientMock, getDataCollectorMock, getGooglePayMock, getModuleCreatorMock, getThreeDSecureMock, getVisaCheckoutMock } from './braintree.mock';
 
 describe('BraintreeScriptLoader', () => {
     let braintreeScriptLoader: BraintreeScriptLoader;

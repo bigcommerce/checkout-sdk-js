@@ -2,25 +2,8 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { MissingDataError, NotInitializedError, StandardError } from '../../../common/error/errors';
 
-import {
-    getCardinalBinProcessResponse,
-    getCardinalOrderData,
-    getCardinalSDK,
-    getCardinalThreeDSResult,
-    getCardinalValidatedData
-} from './cardinal.mock';
-import {
-    CardinalClient,
-    CardinalEventType,
-    CardinalInitializationType,
-    CardinalPaymentType,
-    CardinalScriptLoader,
-    CardinalSignatureVerification,
-    CardinalSDK,
-    CardinalTriggerEvents,
-    CardinalValidatedAction,
-    CardinalValidatedData
-} from './index';
+import { getCardinalBinProcessResponse, getCardinalOrderData, getCardinalSDK, getCardinalThreeDSResult, getCardinalValidatedData } from './cardinal.mock';
+import { CardinalClient, CardinalEventType, CardinalInitializationType, CardinalPaymentType, CardinalScriptLoader, CardinalSignatureVerification, CardinalSDK, CardinalTriggerEvents, CardinalValidatedAction, CardinalValidatedData } from './index';
 
 describe('CardinalClient', () => {
     let client: CardinalClient;
