@@ -29,8 +29,7 @@ import {
     TimeoutError,
     UnsupportedBrowserError
 } from '../../../common/error/errors';
-import ConfigActionCreator from '../../../config/config-action-creator';
-import ConfigRequestSender from '../../../config/config-request-sender';
+import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';

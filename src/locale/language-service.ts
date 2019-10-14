@@ -1,7 +1,7 @@
 import { isObject, union } from 'lodash';
 import * as MessageFormat from 'messageformat';
 
-import Logger from '../common/log/logger';
+import { Logger } from '../common/log';
 import { bindDecorator as bind } from '../common/utility';
 
 import LanguageConfig, { Locales, Translations } from './language-config';

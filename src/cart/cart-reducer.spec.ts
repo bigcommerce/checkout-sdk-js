@@ -1,8 +1,7 @@
-import { BillingAddressActionType } from '../billing/billing-address-actions';
+import { BillingAddressActionType } from '../billing';
 import { CheckoutActionType } from '../checkout';
 import { getCheckout } from '../checkout/checkouts.mock';
-import { CouponActionType } from '../coupon/coupon-actions';
-import { GiftCertificateActionType } from '../coupon/gift-certificate-actions';
+import { CouponActionType, GiftCertificateActionType } from '../coupon';
 import { ConsignmentActionType } from '../shipping';
 
 import cartReducer from './cart-reducer';

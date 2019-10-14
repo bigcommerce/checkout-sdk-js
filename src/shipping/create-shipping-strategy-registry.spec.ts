@@ -1,11 +1,11 @@
 import { createRequestSender } from '@bigcommerce/request-sender';
 
-import createCheckoutStore from '../checkout/create-checkout-store';
-import Registry from '../common/registry/registry';
+import { createCheckoutStore } from '../checkout';
+import { Registry } from '../common/registry';
 
 import createShippingStrategyRegistry from './create-shipping-strategy-registry';
-import AmazonPayShippingStrategy from './strategies/amazon/amazon-pay-shipping-strategy';
-import ShippingStrategy from './strategies/shipping-strategy';
+import { ShippingStrategy } from './strategies';
+import { AmazonPayShippingStrategy } from './strategies/amazon';
 
 describe('CreateShippingStrategyRegistry', () => {
     let registry: Registry<ShippingStrategy>;

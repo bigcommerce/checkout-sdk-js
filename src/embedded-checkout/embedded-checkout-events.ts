@@ -1,5 +1,5 @@
 import EmbeddedCheckoutError from './embedded-checkout-error';
-import EmbeddedContentOptions from './iframe-content/embedded-content-options';
+import { EmbeddedContentOptions } from './iframe-content';
 
 export enum EmbeddedCheckoutEventType {
     CheckoutComplete = 'CHECKOUT_COMPLETE',

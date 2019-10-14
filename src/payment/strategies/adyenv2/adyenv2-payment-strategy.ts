@@ -6,10 +6,10 @@ import {
     InvalidArgumentError,
     MissingDataError,
     MissingDataErrorType,
+    NotInitializedError,
     NotInitializedErrorType,
     RequestError
 } from '../../../common/error/errors';
-import NotInitializedError from '../../../common/error/errors/not-initialized-error';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';

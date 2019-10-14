@@ -1,5 +1,4 @@
-
-import PaymentMethod from '../../../payment/payment-method';
+import { PaymentMethod } from '../../../payment';
 import { getGooglePay } from '../../../payment/payment-methods.mock';
 import { CustomerInitializeOptions } from '../../customer-request-options';
 

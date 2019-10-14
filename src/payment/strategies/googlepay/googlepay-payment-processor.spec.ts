@@ -13,8 +13,7 @@ import {
 } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
-import ConsignmentActionCreator from '../../../shipping/consignment-action-creator';
-import ConsignmentRequestSender from '../../../shipping/consignment-request-sender';
+import { ConsignmentActionCreator, ConsignmentRequestSender } from '../../../shipping';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';

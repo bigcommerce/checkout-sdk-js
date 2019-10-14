@@ -11,7 +11,7 @@ import {
 } from '../../../common/error/errors';
 import { RemoteCheckoutSynchronizationError } from '../../../remote-checkout/errors';
 import { ConsignmentActionCreator } from '../../../shipping';
-import PaymentMethodInvalidError from '../../errors/payment-method-invalid-error';
+import { PaymentMethodInvalidError } from '../../errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 
 import {

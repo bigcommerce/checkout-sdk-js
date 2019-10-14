@@ -2,7 +2,7 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { from } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 
-import { MutationObserverFactory } from '../../common/dom/mutation-observer';
+import { MutationObserverFactory } from '../../common/dom';
 import { NotInitializedError } from '../../common/error/errors';
 
 import { SpamProtectionNotLoadedError } from './errors';

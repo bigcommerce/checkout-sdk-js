@@ -2,15 +2,17 @@
  * Decorates a class or a method by binding all its prototype methods or itself
  * to the calling instance respectively.
  */
-export default function bindDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T>;
-export default function bindDecorator<T extends Constructor<object>>(target: T): T;
-export default function bindDecorator(target: any, key?: any, descriptor?: any): any {
+function bindDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T>;
+function bindDecorator<T extends Constructor<object>>(target: T): T;
+function bindDecorator(target: any, key?: any, descriptor?: any): any {
     if (!key || !descriptor) {
         return bindClassDecorator(target);
     }
 
     return bindMethodDecorator(target, key, descriptor);
 }
+
+export default bindDecorator;
 
 /**
  * Decorates a class by binding all its prototype methods to the calling

@@ -1,7 +1,7 @@
 import { includes } from 'lodash';
 
 import { Address } from '../../../address';
-import BillingAddress from '../../../billing/billing-address';
+import { BillingAddress } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import {
     InvalidArgumentError,
@@ -13,8 +13,7 @@ import {
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { RemoteCheckoutActionCreator } from '../../../remote-checkout';
-import { PaymentMethodCancelledError } from '../../errors';
-import PaymentMethodInvalidError from '../../errors/payment-method-invalid-error';
+import { PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';

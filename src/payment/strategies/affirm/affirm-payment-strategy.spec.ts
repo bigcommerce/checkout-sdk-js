@@ -16,7 +16,7 @@ import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrderState } from '../../../order/orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
-import { getPaymentMethodsState } from '../../../payment/payment-methods.mock';
+import { getAffirm, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -24,7 +24,6 @@ import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
-import { getAffirm } from '../../payment-methods.mock';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 

@@ -7,7 +7,7 @@ import { objectMerge, objectSet } from '../common/utility';
 import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateActionType } from '../coupon';
 import { OrderAction, OrderActionType } from '../order';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
-import { StoreCreditAction, StoreCreditActionType } from '../store-credit/store-credit-actions';
+import { StoreCreditAction, StoreCreditActionType } from '../store-credit';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
 import CheckoutState, { CheckoutDataState, CheckoutErrorsState, CheckoutStatusesState, DEFAULT_STATE } from './checkout-state';

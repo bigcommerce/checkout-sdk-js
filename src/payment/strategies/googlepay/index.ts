@@ -1,4 +1,5 @@
 export * from './googlepay';
+export * from './googlepay-braintree';
 
 export { default as GooglePayScriptLoader } from './googlepay-script-loader';
 export { default as GooglePayPaymentStrategy } from './googlepay-payment-strategy';

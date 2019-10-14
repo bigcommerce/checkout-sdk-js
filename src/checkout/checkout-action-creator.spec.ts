@@ -1,4 +1,3 @@
-
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { concat, from, of, throwError } from 'rxjs';
@@ -6,8 +5,7 @@ import { catchError, toArray } from 'rxjs/operators';
 
 import { MissingDataError, StandardError } from '../common/error/errors';
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { ConfigActionCreator, ConfigRequestSender } from '../config';
-import { ConfigActionType } from '../config/config-actions';
+import { ConfigActionCreator, ConfigActionType, ConfigRequestSender } from '../config';
 import { getConfig } from '../config/configs.mock';
 
 import CheckoutActionCreator from './checkout-action-creator';

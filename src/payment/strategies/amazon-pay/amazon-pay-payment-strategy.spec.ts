@@ -4,8 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import { BillingAddressActionCreator, BillingAddressRequestSender } from '../../../billing';
-import { BillingAddressActionType } from '../../../billing/billing-address-actions';
+import { BillingAddressActionCreator, BillingAddressActionType, BillingAddressRequestSender } from '../../../billing';
 import { getBillingAddress, getBillingAddressState } from '../../../billing/billing-addresses.mock';
 import {
     createCheckoutStore,

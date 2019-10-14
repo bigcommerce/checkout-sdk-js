@@ -6,6 +6,7 @@ export { default as InternalOrder, InternalIncompleteOrder, InternalOrderPayment
 export { default as InternalOrderRequestBody } from './internal-order-request-body';
 
 export { default as OrderActionCreator } from './order-action-creator';
+export { default as OrderParams, OrderIncludes } from './order-params';
 export { default as orderReducer } from './order-reducer';
 export { default as OrderRequestBody, OrderPaymentRequestBody } from './order-request-body';
 export { default as OrderRequestSender } from './order-request-sender';

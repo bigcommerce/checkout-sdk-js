@@ -14,12 +14,11 @@ import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
-import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
+import { PaymentMethod, PaymentMethodActionCreator, PaymentRequestSender } from '../../../payment';
 import { getPaymentMethodsState, getZip } from '../../../payment/payment-methods.mock';
 import { getZipScriptMock } from '../../../payment/strategies/zip/zip.mock';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import { PaymentMethodCancelledError, PaymentMethodDeclinedError, PaymentMethodInvalidError } from '../../errors';
-import { PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';

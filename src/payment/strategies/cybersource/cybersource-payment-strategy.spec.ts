@@ -19,7 +19,7 @@ import {
     OrderRequestBody,
     OrderRequestSender,
 } from '../../../order';
-import OrderFinalizationNotRequiredError from '../../../order/errors/order-finalization-not-required-error';
+import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender } from '../../index';

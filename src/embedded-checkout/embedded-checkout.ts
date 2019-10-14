@@ -9,7 +9,7 @@ import EmbeddedCheckoutError from './embedded-checkout-error';
 import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import { InvalidLoginTokenError, NotEmbeddableError, NotEmbeddableErrorType } from './errors';
-import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content/embedded-content-events';
+import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';

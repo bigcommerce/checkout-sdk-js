@@ -1,6 +1,5 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
-import createErrorAction from '@bigcommerce/data-store/lib/create-error-action';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';

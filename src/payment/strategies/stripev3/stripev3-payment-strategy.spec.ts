@@ -8,9 +8,9 @@ import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import {
     createCheckoutStore,
     CheckoutRequestSender,
+    CheckoutStore,
     CheckoutValidator
 } from '../../../checkout';
-import CheckoutStore from '../../../checkout/checkout-store';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import {
     InvalidArgumentError,
@@ -22,12 +22,12 @@ import { getResponse } from '../../../common/http-request/responses.mock';
 import { getCustomer } from '../../../customer/customers.mock';
 import {
     FinalizeOrderAction,
+    OrderActionCreator,
     OrderActionType,
     OrderRequestSender,
     SubmitOrderAction
 } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import OrderActionCreator from '../../../order/order-action-creator';
 import {
     createSpamProtection,
     SpamProtectionActionCreator

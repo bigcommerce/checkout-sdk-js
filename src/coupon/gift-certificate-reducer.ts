@@ -3,7 +3,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { arrayReplace, objectSet } from '../common/utility';
-import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
+import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 
 import { CouponAction, CouponActionType } from './coupon-actions';
 import GiftCertificate from './gift-certificate';

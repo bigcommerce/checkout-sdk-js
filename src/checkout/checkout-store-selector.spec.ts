@@ -1,7 +1,7 @@
 import { find, reject } from 'lodash';
 
 import { FormField } from '../form';
-import { getFormFields } from '../form/form.mocks';
+import { getFormFields } from '../form/form.mock';
 import { getUnitedStates } from '../geography/countries.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';

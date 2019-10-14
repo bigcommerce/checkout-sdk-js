@@ -15,9 +15,8 @@ import { OrderActionCreator, OrderRequestBody } from '../order';
 import { SpamProtectionActionCreator, SpamProtectionOptions } from '../order/spam-protection';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
-import { ConsignmentsRequestBody, ConsignmentActionCreator, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
-import { ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody } from '../shipping/consignment';
-import StoreCreditActionCreator from '../store-credit/store-credit-action-creator';
+import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
+import { StoreCreditActionCreator } from '../store-credit';
 
 import { CheckoutRequestBody } from './checkout';
 import CheckoutActionCreator from './checkout-action-creator';

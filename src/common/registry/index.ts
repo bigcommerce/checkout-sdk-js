@@ -1,1 +1,1 @@
-export { default as Registry, Factory } from './registry';
+export { default as Registry, RegistryOptions, Factory } from './registry';

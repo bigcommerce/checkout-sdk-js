@@ -6,7 +6,7 @@ import { parseUrl } from '../common/url';
 import EmbeddedCheckout from './embedded-checkout';
 import { EmbeddedCheckoutEventMap } from './embedded-checkout-events';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
-import { EmbeddedContentEvent } from './iframe-content/embedded-content-events';
+import { EmbeddedContentEvent } from './iframe-content';
 import IframeEventListener from './iframe-event-listener';
 import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';

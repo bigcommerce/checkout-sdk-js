@@ -4,7 +4,7 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
-import CreditCardPaymentStrategy from '../credit-card/credit-card-payment-strategy';
+import { CreditCardPaymentStrategy } from '../credit-card';
 
 import WepayRiskClient from './wepay-risk-client';
 

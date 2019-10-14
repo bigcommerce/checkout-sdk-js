@@ -1,4 +1,4 @@
-import { ButtonColor, ButtonType } from '../../../payment/strategies/googlepay/googlepay';
+import { ButtonColor, ButtonType } from '../../../payment/strategies/googlepay';
 
 export interface GooglePayButtonInitializeOptions {
     /**

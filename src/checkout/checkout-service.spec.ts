@@ -17,7 +17,7 @@ import {
     GiftCertificateRequestSender,
 } from '../coupon';
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
-import { getFormFields } from '../form/form.mocks';
+import { getFormFields } from '../form/form.mock';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator, OrderRequestSender } from '../order';

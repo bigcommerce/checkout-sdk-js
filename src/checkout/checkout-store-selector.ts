@@ -5,7 +5,7 @@ import { BillingAddress } from '../billing';
 import { Cart } from '../cart';
 import { createSelector } from '../common/selector';
 import { cloneResult as clone } from '../common/utility';
-import { StoreConfig } from '../config/config';
+import { StoreConfig } from '../config';
 import { Coupon, GiftCertificate } from '../coupon';
 import { Customer } from '../customer';
 import { FormField } from '../form';

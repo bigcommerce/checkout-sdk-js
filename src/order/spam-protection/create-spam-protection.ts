@@ -1,6 +1,6 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
-import { MutationObserverFactory } from '../../common/dom/mutation-observer';
+import { MutationObserverFactory } from '../../common/dom';
 
 import GoogleRecaptcha from './google-recaptcha';
 import GoogleRecaptchaScriptLoader from './google-recaptcha-script-loader';

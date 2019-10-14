@@ -6,8 +6,7 @@ import { BillingAddressActionCreator, BillingAddressRequestSender } from '../bil
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator, OrderRequestSender } from '../order';
-import { SpamProtectionActionCreator } from '../order/spam-protection';
-import GoogleRecaptcha from '../order/spam-protection/google-recaptcha';
+import { GoogleRecaptcha, SpamProtectionActionCreator } from '../order/spam-protection';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
