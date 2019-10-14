@@ -1,14 +1,10 @@
 import { defer, of, throwError, Observable, Subject } from 'rxjs';
 import { catchError, delay, retryWhen, switchMap } from 'rxjs/operators';
 
-import { MutationObserverFactory } from '../../common/dom/mutation-observer';
+import { MutationObserverFactory } from '../../common/dom';
 import { NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
 
-import {
-    SpamProtectionFailedError,
-    SpamProtectionNotCompletedError,
-    SpamProtectionNotLoadedError,
-} from './errors';
+import { SpamProtectionFailedError, SpamProtectionNotCompletedError, SpamProtectionNotLoadedError } from './errors';
 import GoogleRecaptchaScriptLoader from './google-recaptcha-script-loader';
 
 export interface RecaptchaResult {

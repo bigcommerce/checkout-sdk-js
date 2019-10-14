@@ -27,6 +27,7 @@ export { default as PaymentMethodSelector, PaymentMethodSelectorFactory, createP
 export { default as PaymentMethodState } from './payment-method-state';
 export { default as paymentReducer } from './payment-reducer';
 export { default as PaymentRequestSender } from './payment-request-sender';
+export { default as PaymentResponse } from './payment-response';
 export { default as PaymentSelector, PaymentSelectorFactory, createPaymentSelectorFactory } from './payment-selector';
 export { default as PaymentState } from './payment-state';
 export { default as PaymentStrategyActionCreator } from './payment-strategy-action-creator';

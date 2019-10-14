@@ -1,14 +1,16 @@
 import { cloneDeep, memoize } from 'lodash';
 
-export default function cloneDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T>;
-export default function cloneDecorator<T extends Constructor<object>>(target: T): T;
-export default function cloneDecorator(target: any, key?: any, descriptor?: any): any {
+function cloneDecorator<T extends Method>(target: object, key: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T>;
+function cloneDecorator<T extends Constructor<object>>(target: T): T;
+function cloneDecorator(target: any, key?: any, descriptor?: any): any {
     if (!key || !descriptor) {
         return cloneClassDecorator(target);
     }
 
     return cloneMethodDecorator(target, key, descriptor);
 }
+
+export default cloneDecorator;
 
 export function cloneClassDecorator<T extends Constructor<object>>(target: T): T {
     const decoratedTarget = class extends target {};

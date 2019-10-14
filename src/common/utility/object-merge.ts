@@ -4,10 +4,10 @@ import arrayReplace from './array-replace';
 import isPlainObject from './is-plain-object';
 import objectSet from './object-set';
 
-export default function objectMerge<T extends object>(currentObject: T, newObject?: Partial<T>): T;
-export default function objectMerge<T extends object>(currentObject: T | undefined, newObject: Partial<T>): Partial<T>;
-export default function objectMerge<T extends object>(currentObject?: T, newObject?: Partial<T>): T | undefined;
-export default function objectMerge<T extends object>(currentObject?: T, newObject?: Partial<T>): T | Partial<T> | undefined {
+function objectMerge<T extends object>(currentObject: T, newObject?: Partial<T>): T;
+function objectMerge<T extends object>(currentObject: T | undefined, newObject: Partial<T>): Partial<T>;
+function objectMerge<T extends object>(currentObject?: T, newObject?: Partial<T>): T | undefined;
+function objectMerge<T extends object>(currentObject?: T, newObject?: Partial<T>): T | Partial<T> | undefined {
     if (!currentObject) {
         return newObject;
     }
@@ -37,3 +37,5 @@ export default function objectMerge<T extends object>(currentObject?: T, newObje
             return objectSet(result, key, newValue as any);
         }, currentObject);
 }
+
+export default objectMerge;

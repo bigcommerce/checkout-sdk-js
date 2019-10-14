@@ -1,20 +1,7 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
-import {
-    BraintreeClient,
-    BraintreeDataCollector,
-    BraintreeModule,
-    BraintreeModuleCreator,
-    BraintreePaypalCheckout,
-    BraintreeRequestData,
-    BraintreeThreeDSecure,
-    BraintreeTokenizePayload,
-    BraintreeTokenizeResponse,
-    BraintreeVerifyPayload,
-    BraintreeVisaCheckout,
-    GooglePayBraintreeSDK,
-} from './braintree';
+import { BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
 export function getClientMock(): BraintreeClient {

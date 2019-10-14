@@ -1,10 +1,9 @@
-import { LineItemCategory } from '../../../cart/line-item';
+import { LineItemCategory } from '../../../cart';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { AmountTransformer } from '../../../common/utility';
-import { Order, OrderActionCreator, OrderRequestBody } from '../../../order';
+import { Order, OrderActionCreator, OrderIncludes, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { OrderIncludes } from '../../../order/order-params';
 import { Consignment } from '../../../shipping';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';

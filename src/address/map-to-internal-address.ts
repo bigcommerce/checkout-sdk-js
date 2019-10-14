@@ -1,5 +1,4 @@
-import { isBillingAddressLike } from '../billing';
-import BillingAddress from '../billing/billing-address';
+import { isBillingAddressLike, BillingAddress } from '../billing';
 import { Consignment } from '../shipping';
 
 import Address from './address';

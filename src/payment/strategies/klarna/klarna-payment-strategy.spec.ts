@@ -4,12 +4,7 @@ import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
-import {
-    createCheckoutStore,
-    CheckoutRequestSender,
-    CheckoutStore,
-    CheckoutValidator
-} from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
@@ -27,12 +22,7 @@ import { getKlarna } from '../../payment-methods.mock';
 import KlarnaCredit from './klarna-credit';
 import KlarnaPaymentStrategy from './klarna-payment-strategy';
 import KlarnaScriptLoader from './klarna-script-loader';
-import {
-    getEUBillingAddress,
-    getEUBillingAddressWithNoPhone,
-    getKlarnaUpdateSessionParams,
-    getKlarnaUpdateSessionParamsPhone
-} from './klarna.mock';
+import { getEUBillingAddress, getEUBillingAddressWithNoPhone, getKlarnaUpdateSessionParams, getKlarnaUpdateSessionParamsPhone } from './klarna.mock';
 
 describe('KlarnaPaymentStrategy', () => {
     let initializePaymentAction: Observable<Action>;

@@ -1,23 +1,14 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, Action } from '@bigcommerce/data-store';
-import createErrorAction from '@bigcommerce/data-store/lib/create-error-action';
+import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 import { of, Observable } from 'rxjs';
 
-import {
-    createCheckoutStore,
-    CheckoutRequestSender,
-    CheckoutStore,
-    CheckoutValidator,
-} from '../../../checkout';
+import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
 import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
-import {
-    OrderActionCreator,
-    OrderRequestSender,
-} from '../../../order';
+import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection/index';
 import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../index';
 import Payment from '../../payment';
@@ -27,11 +18,7 @@ import PaymentMethod from '../../payment-method';
 import { getCybersource } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody, getPayment, getVaultedInstrument } from '../../payments.mock';
-import {
-    CardinalClient,
-    CardinalScriptLoader,
-    CardinalThreeDSecureFlow
-} from '../cardinal';
+import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from '../cardinal';
 
 describe('CardinalThreeDSecureFlow', () => {
     let loadPaymentMethodAction: Observable<Action>;

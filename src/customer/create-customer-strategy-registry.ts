@@ -7,12 +7,7 @@ import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
-import {
-    createBraintreeVisaCheckoutPaymentProcessor,
-    BraintreeScriptLoader,
-    BraintreeSDKCreator,
-    VisaCheckoutScriptLoader
-} from '../payment/strategies/braintree';
+import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
 import { ChasePayScriptLoader } from '../payment/strategies/chasepay';
 import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';

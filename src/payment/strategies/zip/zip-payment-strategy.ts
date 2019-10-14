@@ -1,13 +1,7 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
-    NotInitializedError,
-    NotInitializedErrorType,
-} from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { ContentType, INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';

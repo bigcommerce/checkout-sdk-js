@@ -6,8 +6,7 @@ import { BillingAddressActionCreator, BillingAddressRequestSender } from '../bil
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { OrderActionCreator, OrderRequestSender } from '../order';
-import { SpamProtectionActionCreator } from '../order/spam-protection';
-import GoogleRecaptcha from '../order/spam-protection/google-recaptcha';
+import { GoogleRecaptcha, SpamProtectionActionCreator } from '../order/spam-protection';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
@@ -23,31 +22,13 @@ import { AdyenV2PaymentStrategy, AdyenV2ScriptLoader } from './strategies/adyenv
 import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
-import {
-    createBraintreePaymentProcessor,
-    createBraintreeVisaCheckoutPaymentProcessor,
-    BraintreeCreditCardPaymentStrategy,
-    BraintreePaypalPaymentStrategy,
-    BraintreeScriptLoader,
-    BraintreeSDKCreator,
-    BraintreeVisaCheckoutPaymentStrategy,
-    VisaCheckoutScriptLoader
-} from './strategies/braintree';
-import {
-    CardinalClient,
-    CardinalScriptLoader,
-    CardinalThreeDSecureFlow,
-} from './strategies/cardinal';
+import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
+import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
-import {
-    createGooglePayPaymentProcessor,
-    GooglePayBraintreeInitializer,
-    GooglePayPaymentStrategy,
-    GooglePayStripeInitializer
-} from './strategies/googlepay';
+import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
 import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';

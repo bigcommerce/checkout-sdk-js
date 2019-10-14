@@ -3,15 +3,7 @@ import { omit } from 'lodash';
 import { noop } from 'rxjs';
 
 import { CheckoutActionCreator, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
-    NotInitializedError,
-    NotInitializedErrorType,
-    TimeoutError,
-    UnsupportedBrowserError,
-} from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, TimeoutError, UnsupportedBrowserError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { NonceInstrument } from '../../payment';
@@ -22,15 +14,7 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
 
-import SquarePaymentForm, {
-    CardData,
-    Contact,
-    DigitalWalletType,
-    NonceGenerationError,
-    SquareFormElement,
-    SquareFormOptions,
-    SquarePaymentRequest
-} from './square-form';
+import SquarePaymentForm, { CardData, Contact, DigitalWalletType, NonceGenerationError, SquareFormElement, SquareFormOptions, SquarePaymentRequest } from './square-form';
 import SquarePaymentInitializeOptions from './square-payment-initialize-options';
 import SquareScriptLoader from './square-script-loader';
 

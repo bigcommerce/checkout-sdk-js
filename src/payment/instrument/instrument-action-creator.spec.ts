@@ -15,13 +15,7 @@ import InstrumentActionCreator from './instrument-action-creator';
 import { InstrumentActionType } from './instrument-actions';
 import InstrumentRequestSender from './instrument-request-sender';
 import { InstrumentsResponseBody } from './instrument-response-body';
-import {
-    deleteInstrumentResponseBody,
-    getInstrumentsMeta,
-    getInstrumentsState,
-    getLoadInstrumentsResponseBody,
-    getVaultAccessToken,
-} from './instrument.mock';
+import { deleteInstrumentResponseBody, getInstrumentsMeta, getInstrumentsState, getLoadInstrumentsResponseBody, getVaultAccessToken } from './instrument.mock';
 
 describe('InstrumentActionCreator', () => {
     const bigpayClient: any = {};

@@ -1,15 +1,10 @@
 import { getBillingAddress } from '../../../billing/billing-addresses.mock';
 import { getCustomer } from '../../../customer/customers.mock';
-import OrderRequestBody from '../../../order/order-request-body';
+import { OrderRequestBody } from '../../../order';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentInitializeOptions } from '../../payment-request-options';
 
-import {
-    StripeHandleCardPaymentOptions,
-    StripePaymentIntentResponse,
-    StripePaymentMethodData,
-    StripeV3Client
-} from './stripev3';
+import { StripeHandleCardPaymentOptions, StripePaymentIntentResponse, StripePaymentMethodData, StripeV3Client } from './stripev3';
 
 export function getStripeV3JsMock(): StripeV3Client {
     return {

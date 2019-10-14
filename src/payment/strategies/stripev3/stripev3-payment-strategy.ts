@@ -3,14 +3,7 @@ import { some } from 'lodash';
 import { Address } from '../../../address';
 import { BillingAddress } from '../../../billing';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
-    NotInitializedError,
-    NotInitializedErrorType,
-    RequestError
-} from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { Customer } from '../../../customer';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -22,15 +15,7 @@ import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
 import PaymentStrategy from '../payment-strategy';
 
-import {
-    StripeAddress,
-    StripeBillingDetails,
-    StripeCardElement,
-    StripeHandleCardPaymentOptions,
-    StripePaymentMethodData,
-    StripeShippingDetails,
-    StripeV3Client
-} from './stripev3';
+import { StripeAddress, StripeBillingDetails, StripeCardElement, StripeHandleCardPaymentOptions, StripePaymentMethodData, StripeShippingDetails, StripeV3Client } from './stripev3';
 import StripeV3ScriptLoader from './stripev3-script-loader';
 
 export default class StripeV3PaymentStrategy implements PaymentStrategy {

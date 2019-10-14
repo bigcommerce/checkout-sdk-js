@@ -1,16 +1,9 @@
-
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { CheckoutButtonInitializeOptions } from '../..';
 import { getCartState } from '../../../cart/carts.mock';
-import {
-    createCheckoutStore,
-    Checkout,
-    CheckoutActionCreator,
-    CheckoutRequestSender,
-    CheckoutStore
-} from '../../../checkout';
+import { createCheckoutStore, Checkout, CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';

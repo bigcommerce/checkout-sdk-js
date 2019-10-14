@@ -1,14 +1,7 @@
 import { InvalidArgumentError } from '../../../common/error/errors';
 
 import GooglePayStripeInitializer from './googlepay-stripe-initializer';
-import {
-    getCheckoutMock,
-    getGooglePaymentDataMock,
-    getGooglePaymentStripeDataMock,
-    getGooglePayStripePaymentDataRequestMock,
-    getGooglePayTokenizePayloadStripe,
-    getPaymentMethodMock,
-} from './googlepay.mock';
+import { getCheckoutMock, getGooglePaymentDataMock, getGooglePaymentStripeDataMock, getGooglePayStripePaymentDataRequestMock, getGooglePayTokenizePayloadStripe, getPaymentMethodMock } from './googlepay.mock';
 
 describe('GooglePayStripeInitializer', () => {
     it('creates an instance of GooglePayStripeInitializer', () => {

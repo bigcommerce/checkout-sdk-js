@@ -4,29 +4,12 @@ import { Observable, Observer } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
 import { Cart } from '../cart';
-import { InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
-import { CheckoutIncludes } from '../checkout/checkout-params';
-import CheckoutRequestSender from '../checkout/checkout-request-sender';
+import { CheckoutIncludes, CheckoutRequestSender, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
-import Consignment, {
-    ConsignmentsRequestBody,
-    ConsignmentAssignmentRequestBody,
-    ConsignmentCreateRequestBody,
-    ConsignmentLineItem,
-    ConsignmentRequestBody,
-    ConsignmentShippingOptionRequestBody,
-    ConsignmentUpdateRequestBody
-} from './consignment';
-import {
-    ConsignmentActionType,
-    CreateConsignmentsAction,
-    DeleteConsignmentAction,
-    LoadShippingOptionsAction,
-    UpdateConsignmentAction,
-    UpdateShippingOptionAction,
-} from './consignment-actions';
+import Consignment, { ConsignmentsRequestBody, ConsignmentAssignmentRequestBody, ConsignmentCreateRequestBody, ConsignmentLineItem, ConsignmentRequestBody, ConsignmentShippingOptionRequestBody, ConsignmentUpdateRequestBody } from './consignment';
+import { ConsignmentActionType, CreateConsignmentsAction, DeleteConsignmentAction, LoadShippingOptionsAction, UpdateConsignmentAction, UpdateShippingOptionAction } from './consignment-actions';
 import ConsignmentRequestSender from './consignment-request-sender';
 
 export default class ConsignmentActionCreator {

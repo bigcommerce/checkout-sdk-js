@@ -25,7 +25,7 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import PaymentStrategyActionCreator from '../../payment-strategy-action-creator';
 import PaymentStrategy from '../payment-strategy';
-import WepayRiskClient from '../wepay/wepay-risk-client';
+import { WepayRiskClient } from '../wepay';
 
 import ChasePayInitializeOptions from './chasepay-initialize-options';
 import ChasePayPaymentStrategy from './chasepay-payment-strategy';

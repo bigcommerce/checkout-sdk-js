@@ -14,8 +14,7 @@ import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../orde
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrderState } from '../order/orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType } from '../order/spam-protection';
-import GoogleRecaptcha from '../order/spam-protection/google-recaptcha';
+import { createSpamProtection, GoogleRecaptcha, SpamProtectionActionCreator, SpamProtectionActionType } from '../order/spam-protection';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentActionCreator from './payment-action-creator';

@@ -5,13 +5,7 @@ import PaymentMethod from '../../payment-method';
 import { BraintreeScriptLoader, BraintreeSDKCreator, GooglePayBraintreeSDK } from '../braintree';
 
 import GooglePayBraintreeInitializer from './googlepay-braintree-initializer';
-import {
-    getCheckoutMock,
-    getGooglePaymentDataMock,
-    getGooglePaymentDataPayload,
-    getGooglePayBraintreeMock,
-    getPaymentMethodMock,
-} from './googlepay.mock';
+import { getCheckoutMock, getGooglePaymentDataMock, getGooglePaymentDataPayload, getGooglePayBraintreeMock, getPaymentMethodMock } from './googlepay.mock';
 
 describe('GooglePayBraintreeInitializer', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;

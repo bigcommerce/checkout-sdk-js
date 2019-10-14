@@ -1,6 +1,6 @@
 import { Action } from '@bigcommerce/data-store';
 
-import { LoadConfigAction } from '../config/config-actions';
+import { LoadConfigAction } from '../config';
 
 import Checkout from './checkout';
 

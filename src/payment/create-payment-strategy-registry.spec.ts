@@ -12,11 +12,7 @@ import { AdyenV2PaymentStrategy } from './strategies/adyenv2';
 import { AffirmPaymentStrategy } from './strategies/affirm';
 import { AfterpayPaymentStrategy } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy } from './strategies/amazon-pay';
-import {
-    BraintreeCreditCardPaymentStrategy,
-    BraintreePaypalPaymentStrategy,
-    BraintreeVisaCheckoutPaymentStrategy
-} from './strategies/braintree';
+import { BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeVisaCheckoutPaymentStrategy } from './strategies/braintree';
 import { ChasepayPaymentStrategy } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';

@@ -4,12 +4,7 @@ import { Checkout } from '../../../checkout';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import PaymentMethod from '../../payment-method';
 
-import {
-    GooglePaymentData,
-    GooglePayInitializer,
-    GooglePayPaymentDataRequestV2,
-    TokenizePayload
-} from './googlepay';
+import { GooglePaymentData, GooglePayInitializer, GooglePayPaymentDataRequestV2, TokenizePayload } from './googlepay';
 
 export default class GooglePayStripeInitializer implements GooglePayInitializer {
     initialize(

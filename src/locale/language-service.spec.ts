@@ -1,5 +1,4 @@
-import { Logger } from '../common/log';
-import NoopLogger from '../common/log/noop-logger';
+import { Logger, NoopLogger } from '../common/log';
 
 import LanguageService from './language-service';
 

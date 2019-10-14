@@ -1,7 +1,7 @@
 export { default as Cart } from './cart';
 export { default as InternalCart } from './internal-cart';
 export { default as InternalLineItem } from './internal-line-item';
-export { DigitalItem, GiftCertificateItem, LineItem, PhysicalItem } from './line-item';
+export { DigitalItem, GiftCertificateItem, LineItem, LineItemCategory, PhysicalItem } from './line-item';
 export { default as LineItemMap } from './line-item-map';
 
 export { default as CartComparator } from './cart-comparator';

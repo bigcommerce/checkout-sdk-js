@@ -1,7 +1,8 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
-import { ChasePayHostWindow, JPMC } from '../chasepay/chasepay';
+
+import { ChasePayHostWindow, JPMC } from './chasepay';
 
 export default class ChasePayScriptLoader {
     constructor(

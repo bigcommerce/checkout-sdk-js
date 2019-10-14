@@ -36,5 +36,6 @@ export function iframeResizer(options: IFrameOptions, target: string | HTMLEleme
 // considered as "unused", unless we explicitly mark it as a package that
 // produces side effects.
 export function setupContentWindowForIframeResizer(): void {
+    /* eslint-disable-next-line import/no-internal-modules */
     require('iframe-resizer/js/iframeResizer.contentWindow');
 }

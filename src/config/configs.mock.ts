@@ -1,4 +1,4 @@
-import { getFormFields } from '../form/form.mocks';
+import { getFormFields } from '../form/form.mock';
 
 import Config from './config';
 import ConfigState from './config-state';

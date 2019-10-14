@@ -7,22 +7,8 @@ import { PaymentMethodFailedError } from '../../errors';
 import { CreditCardInstrument, ThreeDSecureToken, VaultedInstrument } from '../../payment';
 import { ThreeDsResult } from '../../payment-response-body';
 
-import {
-    CardinalAccount,
-    CardinalAddress,
-    CardinalConsumer,
-    CardinalEventType,
-    CardinalInitializationType,
-    CardinalPartialOrder,
-    CardinalPaymentBrand,
-    CardinalScriptLoader,
-    CardinalSignatureValidationErrors,
-    CardinalSignatureVerification,
-    CardinalSDK,
-    CardinalTriggerEvents,
-    CardinalValidatedAction,
-    CardinalValidatedData
-} from './index';
+import { CardinalAccount, CardinalAddress, CardinalConsumer, CardinalEventType, CardinalInitializationType, CardinalPartialOrder, CardinalPaymentBrand, CardinalSignatureValidationErrors, CardinalSignatureVerification, CardinalSDK, CardinalTriggerEvents, CardinalValidatedAction, CardinalValidatedData } from './cardinal';
+import CardinalScriptLoader from './cardinal-script-loader';
 
 export type CardinalSupportedPaymentInstrument = CreditCardInstrument | VaultedInstrument;
 

@@ -1,12 +1,11 @@
 import { combineReducers, composeReducers, Action } from '@bigcommerce/data-store';
 
-import { BillingAddressAction, BillingAddressActionType } from '../billing/billing-address-actions';
+import { BillingAddressAction, BillingAddressActionType } from '../billing';
 import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { objectMerge, objectSet } from '../common/utility';
-import { CouponAction, CouponActionType } from '../coupon/coupon-actions';
-import { GiftCertificateAction, GiftCertificateActionType } from '../coupon/gift-certificate-actions';
-import { ConsignmentAction, ConsignmentActionType } from '../shipping/consignment-actions';
+import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateActionType } from '../coupon';
+import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 
 import Cart from './cart';
 import CartState, { CartErrorsState, CartStatusesState, DEFAULT_STATE } from './cart-state';

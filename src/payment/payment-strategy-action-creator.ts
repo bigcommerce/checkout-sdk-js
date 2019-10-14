@@ -11,14 +11,7 @@ import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { SpamProtectionAction } from '../order/spam-protection';
 
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
-import {
-    PaymentStrategyActionType,
-    PaymentStrategyDeinitializeAction,
-    PaymentStrategyExecuteAction,
-    PaymentStrategyFinalizeAction,
-    PaymentStrategyInitializeAction,
-    PaymentStrategyWidgetAction,
-} from './payment-strategy-actions';
+import { PaymentStrategyActionType, PaymentStrategyDeinitializeAction, PaymentStrategyExecuteAction, PaymentStrategyFinalizeAction, PaymentStrategyInitializeAction, PaymentStrategyWidgetAction } from './payment-strategy-actions';
 import PaymentStrategyRegistry from './payment-strategy-registry';
 import PaymentStrategyType from './payment-strategy-type';
 import { PaymentStrategy } from './strategies';

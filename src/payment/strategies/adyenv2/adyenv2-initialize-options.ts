@@ -1,4 +1,4 @@
-import Omit from '../../../common/types/omit';
+import { Omit } from '../../../common/types';
 
 import { AdyenCreditCardComponentOptions, AdyenThreeDS2Options } from './adyenv2';
 

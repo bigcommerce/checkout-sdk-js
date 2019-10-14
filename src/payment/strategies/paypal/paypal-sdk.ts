@@ -107,9 +107,6 @@ export interface PaypalAddress {
 export interface PaypalPaymentPayload {
     payment: PaypalPaymentPayload;
     payer: PaypalPayer;
-}
-
-export interface PaypalPaymentPayload {
     transactions?: PaypalTransaction[];
 }
 

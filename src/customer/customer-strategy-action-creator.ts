@@ -6,14 +6,7 @@ import { Registry } from '../common/registry';
 
 import CustomerCredentials from './customer-credentials';
 import { CustomerInitializeOptions, CustomerRequestOptions } from './customer-request-options';
-import {
-    CustomerStrategyActionType,
-    CustomerStrategyDeinitializeAction,
-    CustomerStrategyInitializeAction,
-    CustomerStrategySignInAction,
-    CustomerStrategySignOutAction,
-    CustomerStrategyWidgetAction,
-} from './customer-strategy-actions';
+import { CustomerStrategyActionType, CustomerStrategyDeinitializeAction, CustomerStrategyInitializeAction, CustomerStrategySignInAction, CustomerStrategySignOutAction, CustomerStrategyWidgetAction } from './customer-strategy-actions';
 import { CustomerStrategy } from './strategies';
 
 export default class CustomerStrategyActionCreator {

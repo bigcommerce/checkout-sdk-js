@@ -1,7 +1,7 @@
 import { ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
-import { Zip, ZipHostWindow } from '../zip/zip';
+import { Zip, ZipHostWindow } from '../zip';
 
 export default class ZipScriptLoader {
     constructor(

@@ -9,13 +9,7 @@ import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../../../payment';
 import { getAmazonPay } from '../../../payment/payment-methods.mock';
-import {
-    AmazonPayAddressBook,
-    AmazonPayAddressBookOptions,
-    AmazonPayOrderReference,
-    AmazonPayScriptLoader,
-    AmazonPayWindow,
-} from '../../../payment/strategies/amazon-pay';
+import { AmazonPayAddressBook, AmazonPayAddressBookOptions, AmazonPayOrderReference, AmazonPayScriptLoader, AmazonPayWindow } from '../../../payment/strategies/amazon-pay';
 import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRequestSender } from '../../../remote-checkout';
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ConsignmentActionType } from '../../consignment-actions';

@@ -1,10 +1,4 @@
-import {
-    createCheckoutStoreErrorSelectorFactory,
-    createCheckoutStoreSelectorFactory,
-    createCheckoutStoreStatusSelectorFactory,
-    CheckoutSelectors,
-    InternalCheckoutSelectors,
-} from '../checkout';
+import { createCheckoutStoreErrorSelectorFactory, createCheckoutStoreSelectorFactory, createCheckoutStoreStatusSelectorFactory, CheckoutSelectors, InternalCheckoutSelectors } from '../checkout';
 
 export type CheckoutSelectorsFactory = (selectors: InternalCheckoutSelectors) => CheckoutSelectors;
 

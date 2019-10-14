@@ -1,5 +1,5 @@
 import { createBillingAddressSelectorFactory } from '../billing';
-import { createCartSelectorFactory } from '../cart/cart-selector';
+import { createCartSelectorFactory } from '../cart';
 import { createCheckoutButtonSelectorFactory } from '../checkout-buttons';
 import { createFreezeProxies } from '../common/utility';
 import { createConfigSelectorFactory } from '../config';
@@ -12,7 +12,7 @@ import { createPaymentMethodSelectorFactory, createPaymentSelectorFactory, creat
 import { createInstrumentSelectorFactory } from '../payment/instrument';
 import { createRemoteCheckoutSelectorFactory } from '../remote-checkout';
 import { createConsignmentSelectorFactory, createShippingAddressSelectorFactory, createShippingCountrySelectorFactory, createShippingStrategySelectorFactory } from '../shipping';
-import { createStoreCreditSelectorFactory } from '../store-credit/store-credit-selector';
+import { createStoreCreditSelectorFactory } from '../store-credit';
 
 import { createCheckoutSelectorFactory } from './checkout-selector';
 import { CheckoutStoreOptions } from './checkout-store';

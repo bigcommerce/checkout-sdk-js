@@ -1,12 +1,7 @@
 import { find, some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
-    RequestError
-} from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
 import isCreditCardLike from '../../is-credit-card-like';
 import isVaultedInstrument from '../../is-vaulted-instrument';
 import Payment from '../../payment';
@@ -14,11 +9,7 @@ import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 
-import {
-    CardinalClient,
-    CardinalOrderData,
-    CardinalSupportedPaymentInstrument
-} from './index';
+import { CardinalClient, CardinalOrderData, CardinalSupportedPaymentInstrument } from './index';
 
 export default class CardinalThreeDSecureFlow {
     private _paymentMethod?: PaymentMethod;

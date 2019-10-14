@@ -15,13 +15,7 @@ import { getErrorResponse, getResponse } from '../common/http-request/responses.
 import { getConfig, getConfigState } from '../config/configs.mock';
 
 import { InternalOrderResponseBody } from './internal-order-responses';
-import {
-    getCompleteOrderResponseBody,
-    getInternalOrderRequestBody,
-    getOrderRequestBody,
-    getSubmitOrderResponseBody,
-    getSubmitOrderResponseHeaders,
-} from './internal-orders.mock';
+import { getCompleteOrderResponseBody, getInternalOrderRequestBody, getOrderRequestBody, getSubmitOrderResponseBody, getSubmitOrderResponseHeaders } from './internal-orders.mock';
 import Order from './order';
 import OrderActionCreator from './order-action-creator';
 import { OrderActionType } from './order-actions';
@@ -39,7 +33,8 @@ describe('OrderActionCreator', () => {
     let store: CheckoutStore;
 
     beforeEach(() => {
-        state = { ...getCheckoutStoreState(),
+        state = {
+            ...getCheckoutStoreState(),
             order: {
                 errors: {},
                 meta: {
@@ -290,7 +285,8 @@ describe('OrderActionCreator', () => {
         });
 
         it('throws error if spam protection is enabled but no token is provided', async () => {
-            state = { ...getCheckoutStoreState(),
+            state = {
+                ...getCheckoutStoreState(),
                 order: {
                     errors: {},
                     meta: {},
@@ -410,10 +406,12 @@ describe('OrderActionCreator', () => {
         it('does not emit actions if spam protection is disabled', async () => {
             const config = getConfig();
             config.storeConfig.checkoutSettings.isSpamProtectionEnabled = false;
-            const configState = { ...getConfigState(),
+            const configState = {
+                ...getConfigState(),
                 data: config,
             };
-            const state = { ...getCheckoutStoreState(),
+            const state = {
+                ...getCheckoutStoreState(),
                 config: configState,
             };
 

@@ -1,11 +1,5 @@
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
-import {
-    InvalidArgumentError,
-    MissingDataError,
-    MissingDataErrorType,
-    NotInitializedError,
-    NotInitializedErrorType
-} from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { bindDecorator as bind } from '../../../common/utility';
 import { getCallbackUrl, Masterpass, MasterpassCheckoutOptions, MasterpassScriptLoader } from '../../../payment/strategies/masterpass';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';

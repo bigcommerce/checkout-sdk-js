@@ -2,8 +2,7 @@ import { memoizeOne } from '@bigcommerce/memoize';
 import { find } from 'lodash';
 
 import { createSelector } from '../common/selector';
-import { ConfigState } from '../config';
-import { DEFAULT_STATE } from '../config/config-state';
+import { ConfigState, DEFAULT_STATE } from '../config';
 import { Country } from '../geography';
 
 import FormField from './form-field';

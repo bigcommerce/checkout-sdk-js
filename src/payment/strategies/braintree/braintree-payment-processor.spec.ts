@@ -6,15 +6,7 @@ import { NonceInstrument } from '../../payment';
 import { BraintreeClient, BraintreePaypal, BraintreeThreeDSecure } from './braintree';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreeSDKCreator from './braintree-sdk-creator';
-import {
-    getBraintreePaymentData,
-    getBraintreeRequestData,
-    getClientMock,
-    getThreeDSecureMock,
-    getThreeDSecureOptionsMock,
-    getTokenizeResponseBody,
-    getVerifyPayload,
-} from './braintree.mock';
+import { getBraintreePaymentData, getBraintreeRequestData, getClientMock, getThreeDSecureMock, getThreeDSecureOptionsMock, getTokenizeResponseBody, getVerifyPayload } from './braintree.mock';
 
 describe('BraintreePaymentProcessor', () => {
     let braintreeSDKCreator: BraintreeSDKCreator;

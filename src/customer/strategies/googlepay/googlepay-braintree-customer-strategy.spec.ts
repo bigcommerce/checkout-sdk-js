@@ -7,7 +7,7 @@ import { createCheckoutStore, CheckoutStore } from '../../../checkout';
 import { getCheckoutState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../../../common/error/errors';
 import { getConfigState } from '../../../config/configs.mock';
-import PaymentMethod from '../../../payment/payment-method';
+import { PaymentMethod } from '../../../payment';
 import { getPaymentMethod, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { BraintreeScriptLoader, BraintreeSDKCreator } from '../../../payment/strategies/braintree';
 import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentProcessor } from '../../../payment/strategies/googlepay';

@@ -7,7 +7,7 @@ import { getCountries } from '../geography/countries.mock';
 import { getShippingCountries } from '../shipping/shipping-countries.mock';
 
 import FormSelector, { createFormSelectorFactory, FormSelectorFactory } from './form-selector';
-import { getFormFields } from './form.mocks';
+import { getFormFields } from './form.mock';
 
 // tslint:disable:no-non-null-assertion
 

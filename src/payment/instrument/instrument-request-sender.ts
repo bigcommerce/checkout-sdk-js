@@ -5,11 +5,7 @@ import { RequestOptions } from '../../common/http-request';
 import PaymentResponse from '../payment-response';
 
 import { InstrumentRequestContext, VaultAccessToken } from './instrument';
-import {
-    InstrumentsResponseBody,
-    InternalInstrumentsResponseBody,
-    InternalInstrumentErrorResponseBody,
-} from './instrument-response-body';
+import { InstrumentsResponseBody, InternalInstrumentsResponseBody, InternalInstrumentErrorResponseBody } from './instrument-response-body';
 import InstrumentResponseTransformer from './instrument-response-transformer';
 
 export default class InstrumentRequestSender {

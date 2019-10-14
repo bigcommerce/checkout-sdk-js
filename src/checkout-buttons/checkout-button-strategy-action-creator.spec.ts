@@ -1,13 +1,11 @@
-
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
 import { merge } from 'lodash';
 import { from, of, throwError } from 'rxjs';
 import { catchError, toArray } from 'rxjs/operators';
 
-import { CheckoutStore } from '../checkout';
+import { createCheckoutStore, CheckoutStore } from '../checkout';
 import { getCheckoutStoreState } from '../checkout/checkouts.mock';
-import createCheckoutStore from '../checkout/create-checkout-store';
 import { Registry } from '../common/registry';
 import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender } from '../payment';
 import { getPaymentMethod } from '../payment/payment-methods.mock';
