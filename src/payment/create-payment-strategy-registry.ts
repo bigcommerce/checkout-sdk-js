@@ -1,6 +1,6 @@
 import { createFormPoster } from '@bigcommerce/form-poster';
 import { RequestSender } from '@bigcommerce/request-sender';
-import { getScriptLoader } from '@bigcommerce/script-loader';
+import { getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader';
 
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
@@ -92,7 +92,7 @@ export default function createPaymentStrategyRegistry(
             store,
             paymentActionCreator,
             orderActionCreator,
-            new AdyenV2ScriptLoader(scriptLoader),
+            new AdyenV2ScriptLoader(scriptLoader, getStylesheetLoader()),
             formPoster,
             locale
         )

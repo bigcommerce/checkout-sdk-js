@@ -2,7 +2,7 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
+import { createScriptLoader, createStylesheetLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -77,6 +77,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
     beforeEach(() => {
         const scriptLoader = createScriptLoader();
+        const stylesheetLoader = createStylesheetLoader();
         const requestSender = createRequestSender();
         orderRequestSender = new OrderRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
@@ -91,7 +92,7 @@ describe('AdyenV2PaymentStrategy', () => {
             new PaymentRequestTransformer()
         );
 
-        adyenV2ScriptLoader = new AdyenV2ScriptLoader(scriptLoader);
+        adyenV2ScriptLoader = new AdyenV2ScriptLoader(scriptLoader, stylesheetLoader);
 
         formPoster = createFormPoster();
         store = createCheckoutStore(getCheckoutStoreState());
