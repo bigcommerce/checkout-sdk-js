@@ -13,7 +13,7 @@ export default class AmazonPayScriptLoader {
         this._window = window;
     }
 
-    loadWidget(method: PaymentMethod, onPaymentReady?: () => void): Promise<Event> {
+    loadWidget(method: PaymentMethod, onPaymentReady?: () => void): Promise<void> {
         const {
             config: { merchantId, testMode },
             initializationData: { region = 'us' } = {},
