@@ -10,6 +10,7 @@
 
 ### Properties
 
+* [additionalDescription](shippingoption.md#additionaldescription)
 * [cost](shippingoption.md#cost)
 * [description](shippingoption.md#description)
 * [id](shippingoption.md#id)
@@ -22,6 +23,13 @@
 
 ## Properties
 
+<a id="additionaldescription"></a>
+
+###  additionalDescription
+
+**● additionalDescription**: *`string`*
+
+___
 <a id="cost"></a>
 
 ###  cost

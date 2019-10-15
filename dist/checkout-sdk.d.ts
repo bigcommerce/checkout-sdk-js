@@ -3325,6 +3325,7 @@ declare interface ShippingInitializeOptions extends ShippingRequestOptions {
 }
 
 declare interface ShippingOption {
+    additionalDescription: string;
     description: string;
     id: string;
     isRecommended: boolean;

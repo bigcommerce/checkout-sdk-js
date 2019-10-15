@@ -592,6 +592,7 @@ declare interface Promotion {
 }
 
 declare interface ShippingOption {
+    additionalDescription: string;
     description: string;
     id: string;
     isRecommended: boolean;

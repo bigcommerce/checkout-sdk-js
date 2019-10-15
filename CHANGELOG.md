@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.38.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.38.0...v1.38.1) (2019-10-15)
+
+
+### Bug Fixes
+
+* **common:** PAYMENTS-4802 Fix ArrayReplace default comparison ([c4f2b19](https://github.com/bigcommerce/checkout-sdk-js/commit/c4f2b19))
+* **shipping:** SHIPPING-1384 Extend shipping option interface ([a6a850a](https://github.com/bigcommerce/checkout-sdk-js/commit/a6a850a))
+
+
+### Code Refactoring
+
+* **common:** CHECKOUT-4455 Upgrade `script-loader` version ([dc5b3e5](https://github.com/bigcommerce/checkout-sdk-js/commit/dc5b3e5))
+* **common:** CHECKOUT-4485 Fix inconsistency in import statements by using `eslint-plugin-import` plugin ([71980ef](https://github.com/bigcommerce/checkout-sdk-js/commit/71980ef))
+* **common:** CHECKOUT-4485 Use ESLint to enforce use of newline in import statements ([3da456b](https://github.com/bigcommerce/checkout-sdk-js/commit/3da456b))
+
 ## [1.38.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.37.2...v1.38.0) (2019-10-08)
 
 
