@@ -1,4 +1,5 @@
 export default interface ShippingOption {
+    additionalDescription: string;
     description: string;
     id: string;
     isRecommended: boolean;
