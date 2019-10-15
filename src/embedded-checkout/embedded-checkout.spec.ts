@@ -299,7 +299,7 @@ describe('EmbeddedCheckout', () => {
     it('does not retry renew cookie allowance if already retried recently', async () => {
         (storage.getItem as jest.Mock).mockRestore();
         storage.setItem(IS_COOKIE_ALLOWED_KEY, true);
-        storage.setItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY, Date.now() - ALLOW_COOKIE_ATTEMPT_INTERVAL);
+        storage.setItem(LAST_ALLOW_COOKIE_ATTEMPT_KEY, Date.now() - ALLOW_COOKIE_ATTEMPT_INTERVAL - 1000); // Add 1 second buffer time
 
         jest.spyOn(iframeCreator, 'createFrame')
             .mockRejectedValue(new NotEmbeddableError('Empty cart', NotEmbeddableErrorType.MissingContent));
