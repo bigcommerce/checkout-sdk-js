@@ -41,6 +41,7 @@ function dataReducer(
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
+    case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
         return objectMerge(data, omit(action.payload, [
