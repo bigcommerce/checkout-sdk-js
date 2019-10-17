@@ -11,12 +11,10 @@ export interface ModalOptions {
 
 export interface ModalStyleOptions {
     className?: string;
-    headerClassName?: string;
-    // width?: string;
 }
 
 export interface ModalShowOptions {
-    onClick?(event: MouseEvent): void;
+    showCloseButton?: boolean;
     openCallback?(): void;
     closeCallback?(): void;
 }
@@ -33,10 +31,11 @@ export default class Modal {
     }
 
     open(options?: ModalShowOptions): void {
-        // if (this._element.parentElement) {
-        //     return;
-        // }
-        const { openCallback, closeCallback } = options || {};
+        const { closeCallback, openCallback, showCloseButton  } = options || {};
+
+        if (!showCloseButton) {
+            this.hideCloseButton();
+        }
 
         this._closeCallback = closeCallback || noop ;
 
@@ -51,19 +50,14 @@ export default class Modal {
     }
 
     close(): void {
-        if (!this._element.parentElement) {
-            return;
-        }
-
         if (this._closeCallback) {
             this._closeCallback();
         }
 
         this.overlay.remove();
 
-        this._removeAfterTransition();
-
         setTimeout(() => this._element.style.opacity = '0');
+        setTimeout(() => this._element.style.display = 'none');
     }
 
     showCloseButton(): void {
@@ -72,6 +66,25 @@ export default class Modal {
 
     hideCloseButton(): void {
         this._closeButton.style.display = 'none';
+    }
+
+    unmount(): void {
+        if (this._closeButton && this._closeButton.parentElement) {
+            this._closeButton.removeEventListener('click', () => this.close());
+            this._closeButton.parentElement.removeChild(this._closeButton);
+        }
+
+        if (this._element.parentElement) {
+            this._element.parentElement.removeChild(this._element);
+        }
+
+        if (this._closeCallback) {
+            this._closeCallback = undefined;
+        }
+
+        if (this.overlay) {
+            this.overlay.remove();
+        }
     }
 
     private _createElement(options?: ModalOptions): HTMLElement {
@@ -107,15 +120,17 @@ export default class Modal {
             element.id = id;
         }
 
-        this._createCloseButton(element);
-        this._createContents(element, contentsId);
+        this._closeButton = this._createCloseButton();
+        const contents = this._createContents(contentsId);
 
+        element.appendChild(this._closeButton);
+        element.appendChild(contents);
         document.body.appendChild(element);
 
         return element;
     }
 
-    private _createCloseButton(parent: HTMLElement): void {
+    private _createCloseButton(): HTMLElement {
         const element = document.createElement('button');
         element.style.width = '32px';
         element.style.height = '32px';
@@ -125,54 +140,19 @@ export default class Modal {
         element.innerText = 'close';
         element.addEventListener('click', () => this.close());
 
-        this._closeButton = element;
-        parent.appendChild(this._closeButton);
+        return element;
     }
 
-    private _createContents(parent: HTMLElement, id?: string): void {
+    private _createContents(id?: string): HTMLElement {
         const element = document.createElement('div');
         element.style.display = 'block';
         element.style.width = '100%';
         element.style.height = '100%';
-        element.style.top = '0px';
 
         if (id) {
             element.id = id;
         }
-        parent.appendChild(element);
-    }
 
-    // private _registerClick(options?: ModalShowOptions): void {
-    //     if (this._unregisterClick) {
-    //         this._unregisterClick();
-    //     }
-
-    //     if (options && options.onClick) {
-    //         const { onClick } = options;
-
-    //         this._element.addEventListener('click', onClick);
-
-    //         this._unregisterClick = () => {
-    //             this._element.removeEventListener('click', onClick);
-    //             this._unregisterClick = undefined;
-    //         };
-    //     }
-    // }
-
-    private _removeAfterTransition(): void {
-        const handeTransition: (event: Event) => void = event => {
-            // NOTE: `event` is not correctly typed in this version of TS
-            if ((event as TransitionEvent).propertyName !== 'opacity') {
-                return;
-            }
-
-            if (this._element.parentElement) {
-                this._element.parentElement.removeChild(this._element);
-            }
-
-            this._element.removeEventListener('transitionend', handeTransition);
-        };
-
-        this._element.addEventListener('transitionend', handeTransition);
+        return element;
     }
 }

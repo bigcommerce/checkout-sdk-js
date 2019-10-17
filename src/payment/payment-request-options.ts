@@ -2,7 +2,6 @@ import { RequestOptions } from '../common/http-request';
 
 import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
-import { BarclaycardPaymentInitializeOptions } from './strategies/barclaycard';
 import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
@@ -107,10 +106,4 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support StripeV3.
      */
     stripev3?: StripeV3PaymentInitializeOptions;
-
-    /**
-     * The options that are required to initialize the Barclaycard payment method.
-     * They can be omitted unless you need to support Barclaycard.
-     */
-    barclaycard?: BarclaycardPaymentInitializeOptions;
 }

@@ -3,7 +3,7 @@ enum PaymentStrategyType {
     AFFIRM = 'affirm',
     AFTERPAY = 'afterpay',
     AMAZON = 'amazon',
-    BARCLAYCARD = 'barclaycard',
+    BARCLAYCARD = 'barclaycard_credit_card',
     CREDIT_CARD = 'creditcard',
     CYBERSOURCE = 'cybersource',
     KLARNA = 'klarna',

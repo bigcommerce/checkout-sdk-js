@@ -55,6 +55,6 @@ export default class OffsitePaymentStrategy implements PaymentStrategy {
             return false;
         }
 
-        return payment.gatewayId === 'adyen' || payment.methodId === 'ccavenuemars';
+        return payment.gatewayId === 'adyen' || payment.gatewayId === 'barclaycard' || payment.methodId === 'ccavenuemars';
     }
 }
