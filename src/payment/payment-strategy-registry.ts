@@ -69,7 +69,7 @@ export default class PaymentStrategyRegistry extends Registry<PaymentStrategy, P
 
         const { clientSidePaymentProviders } = config.paymentSettings;
 
-        if (!clientSidePaymentProviders || paymentMethod.gateway === 'adyen') {
+        if (!clientSidePaymentProviders || paymentMethod.gateway === 'adyen' || paymentMethod.gateway === 'barclaycard') {
             return false;
         }
 
