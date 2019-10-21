@@ -5,7 +5,6 @@ import { getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
-import LoadingIndicator from '../embedded-checkout/loading-indicator';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { GoogleRecaptcha, SpamProtectionActionCreator } from '../order/spam-protection';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
@@ -24,21 +23,8 @@ import { AffirmPaymentStrategy, AffirmScriptLoader } from './strategies/affirm';
 import { AfterpayPaymentStrategy, AfterpayScriptLoader } from './strategies/afterpay';
 import { AmazonPayPaymentStrategy, AmazonPayScriptLoader } from './strategies/amazon-pay';
 import { BarclaycardPaymentStrategy } from './strategies/barclaycard';
-import {
-    createBraintreePaymentProcessor,
-    createBraintreeVisaCheckoutPaymentProcessor,
-    BraintreeCreditCardPaymentStrategy,
-    BraintreePaypalPaymentStrategy,
-    BraintreeScriptLoader,
-    BraintreeSDKCreator,
-    BraintreeVisaCheckoutPaymentStrategy,
-    VisaCheckoutScriptLoader
-} from './strategies/braintree';
-import {
-    CardinalClient,
-    CardinalScriptLoader,
-    CardinalThreeDSecureFlow,
-} from './strategies/cardinal';
+import { createBraintreePaymentProcessor, createBraintreeVisaCheckoutPaymentProcessor, BraintreeCreditCardPaymentStrategy, BraintreePaypalPaymentStrategy, BraintreeScriptLoader, BraintreeSDKCreator, BraintreeVisaCheckoutPaymentStrategy, VisaCheckoutScriptLoader } from './strategies/braintree';
+import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from './strategies/cardinal';
 import { ChasePayPaymentStrategy, ChasePayScriptLoader } from './strategies/chasepay';
 import { ConvergePaymentStrategy } from './strategies/converge';
 import { CreditCardPaymentStrategy } from './strategies/credit-card';
@@ -384,7 +370,6 @@ export default function createPaymentStrategyRegistry(
         new BarclaycardPaymentStrategy(
             store,
             orderActionCreator,
-            new LoadingIndicator(),
             paymentActionCreator
         )
     );

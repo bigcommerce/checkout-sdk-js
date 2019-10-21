@@ -26,10 +26,25 @@ export default class PaymentRequestSender {
         });
     }
 
-    initializeOffsitePayment(payload: PaymentRequestBody, target?: string): Promise<void> {
+    initializeOffsitePayment(payload: PaymentRequestBody): Promise<void> {
         return new Promise(() => {
-            this._client.initializeOffsitePayment(payload, undefined, target);
+            this._client.initializeOffsitePayment(payload);
         });
+    }
+
+    initializeOffsiteModalPayment(payload: PaymentRequestBody, target: string): Promise<void> {
+        const iframe = document.getElementById(target);
+        if (iframe) {
+            return new Promise(resolve => {
+                iframe.onload = () => {
+                    // resolve makes selecting the same method consecutively possible
+                    resolve();
+                };
+                this._client.initializeOffsitePayment(payload, undefined, target);
+            });
+        }
+
+        return Promise.reject();
     }
 
     private _transformResponse(response: any): Response {

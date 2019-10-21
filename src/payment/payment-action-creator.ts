@@ -38,14 +38,25 @@ export default class PaymentActionCreator {
     initializeOffsitePayment(
         methodId: string,
         gatewayId?: string,
-        target?: string
+        target?: string,
+        isModal?: boolean
     ): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
         return store => {
             const payload = this._paymentRequestTransformer.transform({ gatewayId, methodId }, store.getState());
 
+            if (isModal) {
+                return concat(
+                    of(createAction(PaymentActionType.InitializeOffsitePaymentRequested)),
+                    this._paymentRequestSender.initializeOffsiteModalPayment(payload, target || '')
+                        .then(() => createAction(PaymentActionType.InitializeOffsitePaymentSucceeded))
+                ).pipe(
+                    catchError(error => throwErrorAction(PaymentActionType.InitializeOffsitePaymentFailed, error))
+                );
+            }
+
             return concat(
                 of(createAction(PaymentActionType.InitializeOffsitePaymentRequested)),
-                this._paymentRequestSender.initializeOffsitePayment(payload, target)
+                this._paymentRequestSender.initializeOffsitePayment(payload)
                     .then(() => createAction(PaymentActionType.InitializeOffsitePaymentSucceeded))
             ).pipe(
                 catchError(error => throwErrorAction(PaymentActionType.InitializeOffsitePaymentFailed, error))

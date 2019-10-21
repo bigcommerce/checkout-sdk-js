@@ -24,6 +24,7 @@ export default class Modal {
     private _closeCallback?: () => void;
     private overlay: Overlay;
     private _closeButton!: HTMLElement;
+    private _contents!: HTMLElement;
 
     constructor(options?: ModalOptions) {
         this._element = this._createElement(options);
@@ -53,6 +54,9 @@ export default class Modal {
         if (this._closeCallback) {
             this._closeCallback();
         }
+        if (this._contents) {
+            this._contents.innerHTML = '';
+        }
 
         this.overlay.remove();
 
@@ -71,7 +75,7 @@ export default class Modal {
     unmount(): void {
         if (this._closeButton && this._closeButton.parentElement) {
             this._closeButton.removeEventListener('click', () => this.close());
-            this._closeButton.parentElement.removeChild(this._closeButton);
+            this._element.removeChild(this._closeButton);
         }
 
         if (this._element.parentElement) {
@@ -152,6 +156,8 @@ export default class Modal {
         if (id) {
             element.id = id;
         }
+
+        this._contents = element;
 
         return element;
     }
