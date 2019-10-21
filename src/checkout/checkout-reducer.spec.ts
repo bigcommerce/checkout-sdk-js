@@ -77,6 +77,15 @@ describe('checkoutReducer', () => {
         }));
     });
 
+    it('returns new state when Load Shipping options succeeded', () => {
+        const action = createAction(ConsignmentActionType.LoadShippingOptionsSucceeded, getCheckout());
+        const output = checkoutReducer(initialState, action);
+
+        expect(output).toEqual(expect.objectContaining({
+            data: omit(action.payload, ['billingAddress', 'cart', 'customer', 'consignments', 'coupons', 'giftCertificates']),
+        }));
+    });
+
     it('returns new state when consignment gets deleted', () => {
         const action = createAction(ConsignmentActionType.DeleteConsignmentSucceeded, getCheckout(), { id: '123' });
         const output = checkoutReducer(initialState, action);

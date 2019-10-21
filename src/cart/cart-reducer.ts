@@ -34,6 +34,7 @@ function dataReducer(
     case ConsignmentActionType.DeleteConsignmentSucceeded:
     case ConsignmentActionType.UpdateConsignmentSucceeded:
     case ConsignmentActionType.UpdateShippingOptionSucceeded:
+    case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case CouponActionType.ApplyCouponSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
