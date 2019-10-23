@@ -71,7 +71,15 @@ describe('PaymentRequestSender', () => {
 
             paymentRequestSender.initializeOffsitePayment(payload);
 
-            expect(bigpayClient.initializeOffsitePayment).toHaveBeenCalledWith(payload);
+            expect(bigpayClient.initializeOffsitePayment).toHaveBeenCalledWith(payload, null, undefined);
+        });
+
+        it('submits payment data to BigPay with custom target', () => {
+            const payload = getPaymentRequestBody();
+
+            paymentRequestSender.initializeOffsitePayment(payload, 'iframename');
+
+            expect(bigpayClient.initializeOffsitePayment).toHaveBeenCalledWith(payload, null, 'iframename');
         });
     });
 });
