@@ -4,6 +4,8 @@ import PaymentResponse from '../payment-response';
 
 import Instrument, { VaultAccessToken } from './instrument';
 import { InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrument, InternalInstrumentsResponseBody, InternalInstrumentErrorResponseBody, InternalVaultAccessTokenResponseBody } from './instrument-response-body';
+import { mapToAccountInstrument } from './map-to-account-instrument';
+import { mapToCardInstrument } from './map-to-card-instrument';
 
 export default class InstrumentResponseTransformer {
     transformResponse(
@@ -38,17 +40,15 @@ export default class InstrumentResponseTransformer {
     }
 
     private _transformVaultedInstruments(vaultedInstruments: InternalInstrument[] = []): Instrument[] {
-        return vaultedInstruments.map(instrument => ({
-            bigpayToken: instrument.bigpay_token,
-            defaultInstrument: instrument.default_instrument,
-            provider: instrument.provider,
-            iin: instrument.iin,
-            last4: instrument.last_4,
-            expiryMonth: instrument.expiry_month,
-            expiryYear: instrument.expiry_year,
-            brand: instrument.brand,
-            trustedShippingAddress: instrument.trusted_shipping_address,
-        }));
+        return vaultedInstruments
+            .map(instrument => {
+                switch (instrument.method_type) {
+                    case 'paypal':
+                        return mapToAccountInstrument(instrument);
+                    default:
+                        return mapToCardInstrument(instrument);
+                }
+            });
     }
 
     private _transformResponse<T>(response: PaymentResponse<T>): Response<T> {

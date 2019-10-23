@@ -10,6 +10,7 @@ import { InvalidArgumentError, MissingDataError, RequestError } from '../../../c
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection/index';
+import { PaymentInstrumentNotValidError } from '../../errors';
 import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../index';
 import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -120,7 +121,7 @@ describe('CardinalThreeDSecureFlow', () => {
         });
     });
 
-    describe('#start', () => {
+    describe('#start()', () => {
         beforeEach(async () => {
             requestError = new RequestError(getResponse({
                 ...getErrorPaymentResponseBody(),
@@ -289,19 +290,56 @@ describe('CardinalThreeDSecureFlow', () => {
         });
 
         it('uses vaulted instrument as payment Data', async () => {
+            const instrument = getVaultedInstrument();
+
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
             jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
+            jest.spyOn(store.getState().instruments, 'getInstruments').mockReturnValue([{
+                bigpayToken: instrument.instrumentId,
+                type: 'card',
+                method: 'card',
+                provider: 'cybersource',
+                externalId: 'some@external-id.com',
+            }]);
 
-            payment = {
+            await cardinalFlow.start({
                 methodId: paymentMethodMock.id,
                 gatewayId: paymentMethodMock.gateway,
-                paymentData: getVaultedInstrument(),
-            };
+                paymentData: instrument,
+            });
 
-            await cardinalFlow.start(payment);
+            expect(store.getState().instruments.getInstruments)
+                .toHaveBeenCalledWith(expect.objectContaining({
+                    id: 'cybersource',
+                }));
 
             expect(cardinalClient.getThreeDSecureData).toHaveBeenCalled();
+        });
+
+        it('throws if the instrument type selected is not a credit card', async () => {
+            const instrument = getVaultedInstrument();
+
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
+            jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
+            jest.spyOn(store.getState().instruments, 'getInstruments').mockReturnValue([{
+                bigpayToken: instrument.instrumentId,
+                type: 'account',
+                method: 'some-method',
+                provider: 'cybersource',
+                externalId: 'some@external-id.com',
+            }]);
+
+            try {
+                await cardinalFlow.start({
+                    methodId: paymentMethodMock.id,
+                    gatewayId: paymentMethodMock.gateway,
+                    paymentData: instrument,
+                });
+            } catch (error) {
+                expect(error).toBeInstanceOf(PaymentInstrumentNotValidError);
+            }
         });
     });
 });

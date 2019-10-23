@@ -1,5 +1,8 @@
+import { filter, set } from 'lodash';
+
 import { CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
+import { getBraintree } from '../payment-methods.mock';
 
 import InstrumentSelector, { createInstrumentSelectorFactory, InstrumentSelectorFactory } from './instrument-selector';
 import { getInstrumentsMeta } from './instrument.mock';
@@ -15,10 +18,36 @@ describe('InstrumentSelector', () => {
     });
 
     describe('#loadInstruments()', () => {
-        it('returns a list of instruments', () => {
+        it('returns only card instruments if no method is passed', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
-            expect(instrumentSelector.getInstruments()).toEqual(state.instruments.data);
+            expect(instrumentSelector.getInstruments())
+                .toEqual(filter(state.instruments.data, { method: 'card' }));
+        });
+
+        it('returns only card instruments if no method is passed', () => {
+            set(state, 'instruments.data[0].provider', 'invalid');
+            set(state, 'instruments.data[0].method', 'card');
+
+            instrumentSelector = createInstrumentSelector(state.instruments);
+            const result = instrumentSelector.getInstruments();
+
+            expect(result).toContainEqual(expect.objectContaining({ provider: 'authorizenet', method: 'card' }));
+            expect(result).not.toContainEqual(expect.objectContaining({ provider: 'invalid' }));
+        });
+
+        it('returns the instruments for a particular method', () => {
+            instrumentSelector = createInstrumentSelector(state.instruments);
+
+            expect(instrumentSelector.getInstruments(getBraintree()))
+                .toEqual([ expect.objectContaining({ provider: 'braintree', method: 'card' }) ]);
+        });
+
+        it('returns an empty array if the method is not supported', () => {
+            instrumentSelector = createInstrumentSelector(state.instruments);
+
+            expect(instrumentSelector.getInstruments({ ...getBraintree(), id: 'nonexistent' }))
+                .toEqual([]);
         });
 
         it('returns an empty array if there are no instruments', () => {

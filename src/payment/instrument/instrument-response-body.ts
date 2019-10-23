@@ -5,16 +5,27 @@ export interface InstrumentError {
     message: string;
 }
 
-export interface InternalInstrument {
+export type InternalInstrument = CardInternalInstrument | AccountInternalInstrument;
+
+export interface BaseInternalInstrument {
     bigpay_token: string;
     default_instrument: boolean;
     provider: string;
-    iin: string;
-    last_4: string;
+    trusted_shipping_address: boolean;
+}
+
+export interface CardInternalInstrument extends BaseInternalInstrument {
+    brand: string;
     expiry_month: string;
     expiry_year: string;
-    brand: string;
-    trusted_shipping_address: boolean;
+    iin: string;
+    last_4: string;
+    method_type: 'card';
+}
+
+export interface AccountInternalInstrument extends BaseInternalInstrument {
+    external_id: string;
+    method_type: 'paypal';
 }
 
 export interface InstrumentsResponseBody {

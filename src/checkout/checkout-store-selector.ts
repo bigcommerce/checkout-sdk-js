@@ -203,7 +203,7 @@ export default interface CheckoutStoreSelector {
      *
      * @returns The list of payment instruments if it is loaded, otherwise undefined.
      */
-    getInstruments(): Instrument[] | undefined;
+    getInstruments(paymentMethod?: PaymentMethod): Instrument[] | undefined;
 
     /**
      * Gets a set of form fields that should be presented to customers in order
