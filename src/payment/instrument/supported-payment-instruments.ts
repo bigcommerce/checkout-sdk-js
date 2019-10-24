@@ -1,7 +1,7 @@
-import Instrument from './instrument';
+import PaymentInstrument from './instrument';
 
 interface SupportedInstruments {
-    [key: string]: Pick<Instrument, 'method' | 'provider'>;
+    [key: string]: Pick<PaymentInstrument, 'method' | 'provider'>;
 }
 
 const supportedInstruments: SupportedInstruments = {

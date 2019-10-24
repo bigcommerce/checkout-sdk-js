@@ -3,6 +3,7 @@ import { find, reject } from 'lodash';
 import { FormField } from '../form';
 import { getFormFields } from '../form/form.mock';
 import { getUnitedStates } from '../geography/countries.mock';
+import { getBraintree } from '../payment/payment-methods.mock';
 import { getAustralia } from '../shipping/shipping-countries.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
 
@@ -116,6 +117,12 @@ describe('CheckoutStoreSelector', () => {
 
     it('returns instruments', () => {
         expect(selector.getInstruments()).toEqual(internalSelectors.instruments.getInstruments());
+    });
+
+    it('returns instruments for a particular payment method', () => {
+        const paymentMethodMock = getBraintree();
+
+        expect(selector.getInstruments(paymentMethodMock)).toEqual(internalSelectors.instruments.getInstrumentsByPaymentMethod(paymentMethodMock));
     });
 
     it('returns flag indicating if payment is submitted', () => {

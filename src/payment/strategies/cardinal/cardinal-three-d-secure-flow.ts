@@ -102,12 +102,12 @@ export default class CardinalThreeDSecureFlow {
             return payment.ccNumber;
         }
 
-        const instruments = this._store.getState().instruments.getInstruments(this._paymentMethod);
+        const instruments = this._store.getState().instruments.getInstruments();
         const { instrumentId: bigpayToken } = payment;
 
         const entry = find(instruments, { bigpayToken });
 
-        if (!entry || entry.type !== 'card') {
+        if (!entry) {
             throw new PaymentInstrumentNotValidError();
         }
 

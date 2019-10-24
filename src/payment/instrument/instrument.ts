@@ -1,6 +1,6 @@
-type Instrument = CardInstrument | AccountInstrument;
+type PaymentInstrument = CardInstrument | AccountInstrument;
 
-export default Instrument;
+export default PaymentInstrument;
 
 interface BaseInstrument {
     bigpayToken: string;
