@@ -8,7 +8,7 @@ import { from } from 'rxjs';
 
 import { createCheckoutStore, CheckoutActionCreator, CheckoutActionType, CheckoutRequestSender, CheckoutStore } from '../../../checkout';
 import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.mock';
-import { MissingDataError } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getPaypalExpress } from '../../../payment/payment-methods.mock';
 import { PaypalActions, PaypalButtonOptions, PaypalScriptLoader, PaypalSDK } from '../../../payment/strategies/paypal';
@@ -108,7 +108,7 @@ describe('PaypalButtonStrategy', () => {
         );
     });
 
-    it('throws error if required data is not loaded', async () => {
+    it('throws error if paypal options is not loaded', async () => {
         try {
             store = createCheckoutStore();
             strategy = new PaypalButtonStrategy(
@@ -117,6 +117,32 @@ describe('PaypalButtonStrategy', () => {
                 paypalScriptLoader,
                 formPoster
             );
+
+            options = {
+                containerId: 'checkout-button',
+                methodId: CheckoutButtonMethodType.PAYPALEXPRESS,
+            };
+
+            await strategy.initialize(options);
+        } catch (error) {
+            expect(error).toBeInstanceOf(InvalidArgumentError);
+        }
+    });
+
+    it('throws error if payment method is not loaded', async () => {
+        try {
+            store = createCheckoutStore();
+            strategy = new PaypalButtonStrategy(
+                store,
+                checkoutActionCreator,
+                paypalScriptLoader,
+                formPoster
+            );
+
+            options = {
+                containerId: 'checkout-button',
+                paypal: paypalOptions,
+            } as CheckoutButtonInitializeOptions;
 
             await strategy.initialize(options);
         } catch (error) {

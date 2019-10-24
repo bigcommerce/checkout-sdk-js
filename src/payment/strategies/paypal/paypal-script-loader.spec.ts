@@ -16,7 +16,7 @@ describe('PaypalScriptLoader', () => {
         paypalLoader = new PaypalScriptLoader(loader);
     });
 
-    it('loads PayPal script', async () => {
+    it('loads PayPal script without Merchant Id', async () => {
         jest.spyOn(loader, 'loadScript')
             .mockImplementation(() => {
                 (window as PaypalHostWindow).paypal = paypal;
@@ -27,6 +27,20 @@ describe('PaypalScriptLoader', () => {
         const output = await paypalLoader.loadPaypal();
 
         expect(loader.loadScript).toHaveBeenCalledWith('//www.paypalobjects.com/api/checkout.min.js');
+        expect(output).toEqual(paypal);
+    });
+
+    it('loads PayPal script with Merchant Id', async () => {
+        jest.spyOn(loader, 'loadScript')
+            .mockImplementation(() => {
+                (window as PaypalHostWindow).paypal = paypal;
+
+                return Promise.resolve();
+            });
+
+        const output = await paypalLoader.loadPaypal('ABC');
+
+        expect(loader.loadScript).toHaveBeenCalledWith('//www.paypalobjects.com/api/checkout.min.js', {async: true, attributes: { 'data-merchant-id': 'ABC'}});
         expect(output).toEqual(paypal);
     });
 
