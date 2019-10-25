@@ -5,5 +5,9 @@ export enum CheckoutIncludes {
 }
 
 export default interface CheckoutParams {
-    include?: CheckoutIncludes[];
+    include?: CheckoutIncludes[] | CheckoutIncludeParam;
 }
+
+export type CheckoutIncludeParam = {
+    [key in CheckoutIncludes]?: boolean;
+};

@@ -4,7 +4,7 @@ import { Observable, Observer } from 'rxjs';
 
 import { AddressRequestBody } from '../address';
 import { Cart } from '../cart';
-import { CheckoutIncludes, CheckoutRequestSender, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
+import { CheckoutIncludes, CheckoutParams, CheckoutRequestSender, InternalCheckoutSelectors, ReadableCheckoutStore } from '../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 
@@ -150,7 +150,7 @@ export default class ConsignmentActionCreator {
 
     updateAddress(
         address: AddressRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions<CheckoutParams>
     ): ThunkAction<CreateConsignmentsAction | UpdateConsignmentAction, InternalCheckoutSelectors> {
         return store => {
             const consignment = this._getConsignmentRequestBody(address, store);
@@ -166,7 +166,7 @@ export default class ConsignmentActionCreator {
 
     createConsignments(
         consignments: ConsignmentsRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions<CheckoutParams>
     ): ThunkAction<CreateConsignmentsAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<CreateConsignmentsAction>) => {
             const checkout = store.getState().checkout.getCheckout();
@@ -190,7 +190,7 @@ export default class ConsignmentActionCreator {
 
     updateConsignment(
         consignment: ConsignmentUpdateRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions<CheckoutParams>
     ): ThunkAction<UpdateConsignmentAction, InternalCheckoutSelectors> {
         return store => Observable.create((observer: Observer<UpdateConsignmentAction>) => {
             const checkout = store.getState().checkout.getCheckout();
@@ -267,7 +267,7 @@ export default class ConsignmentActionCreator {
 
     private _createOrUpdateConsignment(
         consignment: ConsignmentCreateRequestBody | ConsignmentUpdateRequestBody,
-        options?: RequestOptions
+        options?: RequestOptions<CheckoutParams>
     ): ThunkAction<UpdateConsignmentAction | CreateConsignmentsAction, InternalCheckoutSelectors> {
         return store => {
             const checkout = store.getState().checkout.getCheckout();

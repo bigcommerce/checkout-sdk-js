@@ -703,7 +703,10 @@ export default class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: Partial<AddressRequestBody>, options?: ShippingRequestOptions): Promise<CheckoutSelectors> {
+    updateShippingAddress(
+        address: Partial<AddressRequestBody>,
+        options?: ShippingRequestOptions<CheckoutParams>
+    ): Promise<CheckoutSelectors> {
         const action = this._shippingStrategyActionCreator.updateAddress(address, options);
 
         return this._dispatch(action, { queueId: 'shippingStrategy' });

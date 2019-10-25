@@ -1,5 +1,5 @@
 import { uniq } from 'lodash';
 
-export default function joinIncludes(includes: string[]): string {
+export default function joinIncludes<T>(includes: T[]): string {
     return uniq(includes).join(',');
 }
