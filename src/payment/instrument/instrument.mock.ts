@@ -1,4 +1,4 @@
-import Instrument, { InstrumentRequestContext, VaultAccessToken } from './instrument';
+import PaymentInstrument, { CardInstrument, InstrumentRequestContext, VaultAccessToken } from './instrument';
 import { InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrumentsResponseBody, InternalVaultAccessTokenResponseBody } from './instrument-response-body';
 import InstrumentState, { InstrumentMeta } from './instrument-state';
 
@@ -13,7 +13,7 @@ export function getVaultAccessToken(): VaultAccessToken {
     };
 }
 
-export function getInstruments(): Instrument[] {
+export function getInstruments(): PaymentInstrument[] {
     return [
         {
             bigpayToken: '123',
@@ -51,6 +51,22 @@ export function getInstruments(): Instrument[] {
             type: 'account',
         },
     ];
+}
+
+export function getCardInstrument(): CardInstrument {
+    return {
+        bigpayToken: '123',
+        provider: 'braintree',
+        iin: '11111111',
+        last4: '4321',
+        expiryMonth: '02',
+        expiryYear: '2020',
+        brand: 'test',
+        trustedShippingAddress: true,
+        defaultInstrument: true,
+        method: 'card',
+        type: 'card',
+    };
 }
 
 export function getInstrumentsState(): InstrumentState {

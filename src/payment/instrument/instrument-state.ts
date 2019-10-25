@@ -1,7 +1,7 @@
-import Instrument, { VaultAccessToken } from './instrument';
+import PaymentInstrument, { VaultAccessToken } from './instrument';
 
 export default interface InstrumentState {
-    data?: Instrument[];
+    data?: PaymentInstrument[];
     meta?: InstrumentMeta;
     errors: InstrumentErrorState;
     statuses: InstrumentStatusState;

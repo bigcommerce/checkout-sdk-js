@@ -18,7 +18,7 @@ import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import { getCybersource } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
-import { getErrorPaymentResponseBody, getPayment, getVaultedInstrument } from '../../payments.mock';
+import { getCreditCardInstrument, getErrorPaymentResponseBody, getPayment, getVaultedInstrument } from '../../payments.mock';
 import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from '../cardinal';
 
 describe('CardinalThreeDSecureFlow', () => {
@@ -310,32 +310,24 @@ describe('CardinalThreeDSecureFlow', () => {
             });
 
             expect(store.getState().instruments.getInstruments)
-                .toHaveBeenCalledWith(expect.objectContaining({
-                    id: 'cybersource',
-                }));
+                .toHaveBeenCalledWith();
 
             expect(cardinalClient.getThreeDSecureData).toHaveBeenCalled();
         });
 
-        it('throws if the instrument type selected is not a credit card', async () => {
-            const instrument = getVaultedInstrument();
-
+        it('throws if it can not find the instrument selected', async () => {
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
             jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
-            jest.spyOn(store.getState().instruments, 'getInstruments').mockReturnValue([{
-                bigpayToken: instrument.instrumentId,
-                type: 'account',
-                method: 'some-method',
-                provider: 'cybersource',
-                externalId: 'some@external-id.com',
-            }]);
 
             try {
                 await cardinalFlow.start({
                     methodId: paymentMethodMock.id,
                     gatewayId: paymentMethodMock.gateway,
-                    paymentData: instrument,
+                    paymentData: {
+                        ...getCreditCardInstrument(),
+                        instrumentId: 'non-existing-instrument',
+                    },
                 });
             } catch (error) {
                 expect(error).toBeInstanceOf(PaymentInstrumentNotValidError);

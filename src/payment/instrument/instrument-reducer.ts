@@ -3,7 +3,7 @@ import { combineReducers, composeReducers, Action } from '@bigcommerce/data-stor
 import { clearErrorReducer } from '../../common/error';
 import { arrayReplace, objectMerge, objectSet } from '../../common/utility';
 
-import Instrument from './instrument';
+import PaymentInstrument from './instrument';
 import { InstrumentAction, InstrumentActionType } from './instrument-actions';
 import InstrumentState, { DEFAULT_STATE, InstrumentErrorState, InstrumentMeta, InstrumentStatusState } from './instrument-state';
 
@@ -22,9 +22,9 @@ export default function instrumentReducer(
 }
 
 function dataReducer(
-    data: Instrument[] = DEFAULT_STATE.data,
+    data: PaymentInstrument[] = DEFAULT_STATE.data,
     action: InstrumentAction
-): Instrument[] {
+): PaymentInstrument[] {
     switch (action.type) {
     case InstrumentActionType.LoadInstrumentsSucceeded:
         return arrayReplace(data, action.payload && action.payload.vaultedInstruments || []);

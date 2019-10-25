@@ -2,7 +2,7 @@ import { Response } from '@bigcommerce/request-sender';
 
 import PaymentResponse from '../payment-response';
 
-import Instrument, { VaultAccessToken } from './instrument';
+import PaymentInstrument, { VaultAccessToken } from './instrument';
 import { InstrumentsResponseBody, InstrumentErrorResponseBody, InternalInstrument, InternalInstrumentsResponseBody, InternalInstrumentErrorResponseBody, InternalVaultAccessTokenResponseBody } from './instrument-response-body';
 import { mapToAccountInstrument } from './map-to-account-instrument';
 import { mapToCardInstrument } from './map-to-card-instrument';
@@ -39,7 +39,7 @@ export default class InstrumentResponseTransformer {
         };
     }
 
-    private _transformVaultedInstruments(vaultedInstruments: InternalInstrument[] = []): Instrument[] {
+    private _transformVaultedInstruments(vaultedInstruments: InternalInstrument[] = []): PaymentInstrument[] {
         return vaultedInstruments
             .map(instrument => {
                 switch (instrument.method_type) {

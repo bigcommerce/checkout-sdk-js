@@ -12,11 +12,13 @@ import { FormField } from '../form';
 import { Country } from '../geography';
 import { Order } from '../order';
 import { PaymentMethod } from '../payment';
-import { Instrument } from '../payment/instrument';
+import { CardInstrument, PaymentInstrument } from '../payment/instrument';
 import { Consignment, ShippingOption } from '../shipping';
 
 import Checkout from './checkout';
 import InternalCheckoutSelectors from './internal-checkout-selectors';
+
+export type Instrument = CardInstrument;
 
 /**
  * Responsible for getting the state of the current checkout.
@@ -203,7 +205,8 @@ export default interface CheckoutStoreSelector {
      *
      * @returns The list of payment instruments if it is loaded, otherwise undefined.
      */
-    getInstruments(paymentMethod?: PaymentMethod): Instrument[] | undefined;
+    getInstruments(): Instrument[] | undefined;
+    getInstruments(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
 
     /**
      * Gets a set of form fields that should be presented to customers in order
@@ -376,7 +379,16 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
 
     const getInstruments = createSelector(
         ({ instruments }: InternalCheckoutSelectors) => instruments.getInstruments,
-        getInstruments => clone(getInstruments)
+        ({ instruments }: InternalCheckoutSelectors) => instruments.getInstrumentsByPaymentMethod,
+        (getInstruments, getInstrumentsByPaymentMethod) => {
+            function getInstrumentsSelector(): Instrument[] | undefined;
+            function getInstrumentsSelector(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
+            function getInstrumentsSelector(paymentMethod?: PaymentMethod): PaymentInstrument[] | undefined {
+                return paymentMethod ? getInstrumentsByPaymentMethod(paymentMethod) : getInstruments();
+            }
+
+            return clone(getInstrumentsSelector);
+        }
     );
 
     const getBillingAddressFields = createSelector(

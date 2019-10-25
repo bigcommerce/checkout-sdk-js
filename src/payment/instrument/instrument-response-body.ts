@@ -1,4 +1,4 @@
-import Instrument from './instrument';
+import PaymentInstrument from './instrument';
 
 export interface InstrumentError {
     code: number;
@@ -29,7 +29,7 @@ export interface AccountInternalInstrument extends BaseInternalInstrument {
 }
 
 export interface InstrumentsResponseBody {
-    vaultedInstruments: Instrument[];
+    vaultedInstruments: PaymentInstrument[];
 }
 
 export interface InstrumentErrorResponseBody {
