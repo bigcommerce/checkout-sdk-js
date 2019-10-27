@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.40.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.39.0...v1.40.0) (2019-10-27)
+
+
+### Code Refactoring
+
+* **payment:** PAYMENTS-4616 Use an object for paypal configuration ([b743c39](https://github.com/bigcommerce/checkout-sdk-js/commit/b743c39))
+* **payment:** PAYMENTS-4616 Use paypal_account for sending paypal information to bigpay ([cd1abbe](https://github.com/bigcommerce/checkout-sdk-js/commit/cd1abbe))
+
+
+### Features
+
+* **payment:** PAYMENTS-4616 Add support for paying with a vaulted paypal account ([4f98f39](https://github.com/bigcommerce/checkout-sdk-js/commit/4f98f39))
+* **payment:** PAYMENTS-4616 Add support for vaulting Paypal Accounts ([6b578ea](https://github.com/bigcommerce/checkout-sdk-js/commit/6b578ea))
+
 ## [1.39.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.38.1...v1.39.0) (2019-10-27)
 
 
