@@ -1,24 +1,28 @@
-[@bigcommerce/checkout-sdk](../README.md) > [Instrument](../interfaces/instrument.md)
+[@bigcommerce/checkout-sdk](../README.md) > [CardInstrument](../interfaces/cardinstrument.md)
 
-# Instrument
+# CardInstrument
 
 ## Hierarchy
 
-**Instrument**
+ [BaseInstrument](baseinstrument.md)
+
+**↳ CardInstrument**
 
 ## Index
 
 ### Properties
 
-* [bigpayToken](instrument.md#bigpaytoken)
-* [brand](instrument.md#brand)
-* [defaultInstrument](instrument.md#defaultinstrument)
-* [expiryMonth](instrument.md#expirymonth)
-* [expiryYear](instrument.md#expiryyear)
-* [iin](instrument.md#iin)
-* [last4](instrument.md#last4)
-* [provider](instrument.md#provider)
-* [trustedShippingAddress](instrument.md#trustedshippingaddress)
+* [bigpayToken](cardinstrument.md#bigpaytoken)
+* [brand](cardinstrument.md#brand)
+* [defaultInstrument](cardinstrument.md#defaultinstrument)
+* [expiryMonth](cardinstrument.md#expirymonth)
+* [expiryYear](cardinstrument.md#expiryyear)
+* [iin](cardinstrument.md#iin)
+* [last4](cardinstrument.md#last4)
+* [method](cardinstrument.md#method)
+* [provider](cardinstrument.md#provider)
+* [trustedShippingAddress](cardinstrument.md#trustedshippingaddress)
+* [type](cardinstrument.md#type)
 
 ---
 
@@ -73,6 +77,13 @@ ___
 **● last4**: *`string`*
 
 ___
+<a id="method"></a>
+
+###  method
+
+**● method**: *"card"*
+
+___
 <a id="provider"></a>
 
 ###  provider
@@ -85,6 +96,13 @@ ___
 ###  trustedShippingAddress
 
 **● trustedShippingAddress**: *`boolean`*
+
+___
+<a id="type"></a>
+
+###  type
+
+**● type**: *"card"*
 
 ___
 

@@ -46,6 +46,13 @@ ___
 *
 
 ___
+<a id="instrument"></a>
+
+###  Instrument
+
+**ΤInstrument**: *[CardInstrument](interfaces/cardinstrument.md)*
+
+___
 <a id="omit"></a>
 
 ###  Omit
@@ -58,6 +65,14 @@ ___
 ###  OrderPayments
 
 **ΤOrderPayments**: *`Array`< [GatewayOrderPayment](interfaces/gatewayorderpayment.md) &#124; [GiftCertificateOrderPayment](interfaces/giftcertificateorderpayment.md)>*
+
+___
+<a id="paymentinstrument"></a>
+
+###  PaymentInstrument
+
+**ΤPaymentInstrument**: * [CardInstrument](interfaces/cardinstrument.md) &#124; [AccountInstrument](interfaces/accountinstrument.md)
+*
 
 ___
 

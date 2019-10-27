@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.39.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.38.1...v1.39.0) (2019-10-27)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-3365 Update cart and checkout state when shipping options are loaded ([05c80bf](https://github.com/bigcommerce/checkout-sdk-js/commit/05c80bf))
+* **payment:** PAYMENTS-4759 Make Instrument types backward compatible ([f700b45](https://github.com/bigcommerce/checkout-sdk-js/commit/f700b45))
+
+
+### Features
+
+* **payment:** PAYMENTS-4759 Add support for filtering instruments ([5dfa155](https://github.com/bigcommerce/checkout-sdk-js/commit/5dfa155))
+* **payment:** PAYMENTS-4759 Support for account Instruments ([9fc0e73](https://github.com/bigcommerce/checkout-sdk-js/commit/9fc0e73))
+
 ### [1.38.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.38.0...v1.38.1) (2019-10-15)
 
 

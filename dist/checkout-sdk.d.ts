@@ -3,6 +3,12 @@ import { Response } from '@bigcommerce/request-sender';
 import { Timeout } from '@bigcommerce/request-sender';
 import { createTimeout } from '@bigcommerce/request-sender';
 
+declare interface AccountInstrument extends BaseInstrument {
+    externalId: string;
+    method: 'paypal';
+    type: 'account';
+}
+
 declare interface Address extends AddressRequestBody {
     country: string;
 }
@@ -269,6 +275,15 @@ declare interface Banner {
     text: string;
 }
 
+declare interface BaseInstrument {
+    bigpayToken: string;
+    defaultInstrument: boolean;
+    provider: string;
+    trustedShippingAddress: boolean;
+    method: string;
+    type: string;
+}
+
 declare interface BaseProps extends Properties {
     ':hover'?: Properties;
     ':focus'?: Properties;
@@ -434,6 +449,16 @@ declare interface CardElementProps extends BaseProps {
     iconStyle?: string;
     hideIcon?: boolean;
     disabled?: boolean;
+}
+
+declare interface CardInstrument extends BaseInstrument {
+    brand: string;
+    expiryMonth: string;
+    expiryYear: string;
+    iin: string;
+    last4: string;
+    method: 'card';
+    type: 'card';
 }
 
 declare interface Cart {
@@ -1939,6 +1964,7 @@ declare interface CheckoutStoreSelector {
      * @returns The list of payment instruments if it is loaded, otherwise undefined.
      */
     getInstruments(): Instrument[] | undefined;
+    getInstruments(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
     /**
      * Gets a set of form fields that should be presented to customers in order
      * to capture their billing address for a specific country.
@@ -2760,17 +2786,7 @@ declare interface InputStyles extends BlockElementStyles {
     disabled?: BlockElementStyles;
 }
 
-declare interface Instrument {
-    bigpayToken: string;
-    defaultInstrument: boolean;
-    provider: string;
-    iin: string;
-    last4: string;
-    expiryMonth: string;
-    expiryYear: string;
-    brand: string;
-    trustedShippingAddress: boolean;
-}
+declare type Instrument = CardInstrument;
 
 declare interface Item {
     /**
@@ -3132,6 +3148,8 @@ declare interface PaymentInitializeOptions extends PaymentRequestOptions {
      */
     stripev3?: StripeV3PaymentInitializeOptions;
 }
+
+declare type PaymentInstrument = CardInstrument | AccountInstrument;
 
 declare interface PaymentMethod {
     id: string;

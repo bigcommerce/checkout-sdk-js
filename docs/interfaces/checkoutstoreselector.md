@@ -184,13 +184,23 @@ ___
 
 ###  getInstruments
 
-▸ **getInstruments**():  [Instrument](instrument.md)[] &#124; `undefined`
+▸ **getInstruments**():  [Instrument](../#instrument)[] &#124; `undefined`
+
+▸ **getInstruments**(paymentMethod: *[PaymentMethod](paymentmethod.md)*):  [PaymentInstrument](../#paymentinstrument)[] &#124; `undefined`
 
 Gets a list of payment instruments associated with the current customer.
 
-**Returns:**  [Instrument](instrument.md)[] &#124; `undefined`
+**Returns:**  [Instrument](../#instrument)[] &#124; `undefined`
 
 The list of payment instruments if it is loaded, otherwise undefined.
+
+**Parameters:**
+
+| Param | Type |
+| ------ | ------ |
+| paymentMethod | [PaymentMethod](paymentmethod.md) |
+
+**Returns:**  [PaymentInstrument](../#paymentinstrument)[] &#124; `undefined`
 
 ___
 <a id="getorder"></a>
