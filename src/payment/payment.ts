@@ -4,7 +4,7 @@ export default interface Payment {
     paymentData?: PaymentInstrument & PaymentInstrumentMeta;
 }
 
-export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument | CryptogramInstrument | HostedInstrument | ThreeDSVaultedInstrument;
+export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument | CryptogramInstrument | HostedInstrument | ThreeDSVaultedInstrument | FormattedPayload<PaypalInstrument>;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -26,6 +26,7 @@ export interface CreditCardInstrument {
 
 export interface NonceInstrument {
     nonce: string;
+    shouldSaveInstrument?: boolean;
     deviceSessionId?: string;
 }
 
@@ -68,4 +69,17 @@ export interface ThreeDSecureToken {
 
 export interface HostedInstrument {
     shouldSaveInstrument?: boolean;
+}
+
+export interface PaypalInstrument {
+    vault_payment_instrument: boolean | null;
+    device_info: string | null;
+    paypal_account: {
+        token: string;
+        email: string | null;
+    };
+}
+
+export interface FormattedPayload<T> {
+    formattedPayload: T;
 }

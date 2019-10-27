@@ -1,9 +1,10 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodFailedError } from '../../errors';
-import Payment from '../../payment';
+import isVaultedInstrument from '../../is-vaulted-instrument';
+import Payment, { FormattedPayload, PaypalInstrument } from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
@@ -103,16 +104,53 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
         }
 
         const { currency, storeProfile: { storeLanguage } } = config;
-        const { method, nonce } = this._paymentMethod;
+        const { nonce, config: { isVaultingEnabled } } = this._paymentMethod;
+        const { paymentData = {} } = payment;
 
         if (nonce) {
-            return Promise.resolve({ ...payment, paymentData: { nonce, method } });
+            return Promise.resolve({ ...payment, paymentData: this._formattedPayload(nonce) });
         }
 
-        const tokenizedCard = this._braintreePaymentProcessor
-            .paypal(grandTotal, storeLanguage, currency.code, this._credit);
+        if (isVaultedInstrument(paymentData)) {
+            if (!isVaultingEnabled) {
+                throw new InvalidArgumentError('Vaulting is disabled but a vaulted instrument was being used for this transaction');
+            }
 
-        return this._braintreePaymentProcessor.appendSessionId(tokenizedCard)
-            .then(paymentData => ({ ...payment, paymentData: { ...paymentData, method } }));
+            return Promise.resolve(payment);
+        }
+
+        if (paymentData.shouldSaveInstrument && !isVaultingEnabled) {
+            throw new InvalidArgumentError('Vaulting is disabled but shouldSaveInstrument is set to true');
+        }
+
+        return Promise.all([
+            this._braintreePaymentProcessor.paypal({
+                amount: grandTotal,
+                locale: storeLanguage,
+                currency: currency.code,
+                offerCredit: this._credit,
+                shouldSaveInstrument: paymentData.shouldSaveInstrument || false,
+            }),
+            this._braintreePaymentProcessor.getSessionId(),
+        ]).then(([
+            { nonce, details },
+            sessionId,
+        ]) => ({
+            ...payment,
+            paymentData: this._formattedPayload(nonce, details.email, sessionId, paymentData.shouldSaveInstrument),
+        }));
+    }
+
+    private _formattedPayload(token: string, email?: string, sessionId?: string, vaultPaymentInstrument?: boolean): FormattedPayload<PaypalInstrument> {
+        return {
+            formattedPayload: {
+                vault_payment_instrument: vaultPaymentInstrument || null,
+                device_info: sessionId || null,
+                paypal_account: {
+                    token,
+                    email: email || null,
+                },
+            },
+        };
     }
 }

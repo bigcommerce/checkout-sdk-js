@@ -6,9 +6,17 @@ import { OrderPaymentRequestBody } from '../../../order';
 import { PaymentMethodCancelledError } from '../../errors';
 import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
-import { BraintreePaypal, BraintreeRequestData } from './braintree';
+import { BraintreePaypal, BraintreeRequestData, BraintreeTokenizePayload, BraintreeVerifyPayload } from './braintree';
 import { BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
+
+export interface PaypalConfig {
+    amount: number;
+    currency: string;
+    locale: string;
+    offerCredit?: boolean;
+    shouldSaveInstrument?: boolean;
+}
 
 export default class BraintreePaymentProcessor {
     private _threeDSecureOptions?: BraintreeThreeDSecureOptions;
@@ -38,7 +46,7 @@ export default class BraintreePaymentProcessor {
             }));
     }
 
-    paypal(amount: number, storeLanguage: string, currency: string, offerCredit: boolean): Promise<NonceInstrument> {
+    paypal({ shouldSaveInstrument, ...config }: PaypalConfig): Promise<BraintreeTokenizePayload> {
         return this._braintreeSDKCreator.getPaypal()
             .then(paypal => {
                 this._overlay.show({
@@ -46,13 +54,10 @@ export default class BraintreePaymentProcessor {
                 });
 
                 return paypal.tokenize({
-                    amount,
-                    currency,
                     enableShippingAddress: true,
-                    flow: 'checkout',
-                    locale: storeLanguage,
-                    offerCredit,
+                    flow: shouldSaveInstrument ? 'vault' : 'checkout',
                     useraction: 'commit',
+                    ...config,
                 });
             })
             .then(response => {
@@ -67,7 +72,7 @@ export default class BraintreePaymentProcessor {
             });
     }
 
-    verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<NonceInstrument> {
+    verifyCard(payment: OrderPaymentRequestBody, billingAddress: Address, amount: number): Promise<BraintreeVerifyPayload> {
         if (!this._threeDSecureOptions) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
@@ -101,6 +106,14 @@ export default class BraintreePaymentProcessor {
         });
     }
 
+    getSessionId(): Promise<string | undefined> {
+        return this._braintreeSDKCreator.getDataCollector()
+            .then(({ deviceData }) => deviceData);
+    }
+
+    /**
+     * @deprecated Use getSessionId() and combine them in the consumer.
+     */
     appendSessionId(processedPayment: Promise<NonceInstrument>): Promise<NonceInstrument> {
         return processedPayment
             .then(paymentData => Promise.all([paymentData, this._braintreeSDKCreator.getDataCollector()]))
