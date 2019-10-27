@@ -9,6 +9,10 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'braintree',
         method: 'card',
     },
+    braintreepaypal: {
+        provider: 'braintree',
+        method: 'paypal',
+    },
     authorizenet: {
         provider: 'authorizenet',
         method: 'card',
