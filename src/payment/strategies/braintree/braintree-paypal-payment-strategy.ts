@@ -14,6 +14,7 @@ import PaymentStrategy from '../payment-strategy';
 import { BraintreeError } from './braintree';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import isBraintreeError from './is-braintree-error';
+import mapToBraintreeAddress from './map-to-braintree-address';
 
 export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
@@ -123,12 +124,17 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
             throw new InvalidArgumentError('Vaulting is disabled but shouldSaveInstrument is set to true');
         }
 
+        const shippingAddress = state.shippingAddress.getShippingAddress();
+
+        const braintreeAddress = shippingAddress ? mapToBraintreeAddress(shippingAddress) : undefined;
+
         return Promise.all([
             this._braintreePaymentProcessor.paypal({
                 amount: grandTotal,
                 locale: storeLanguage,
                 currency: currency.code,
                 offerCredit: this._credit,
+                shippingAddressOverride: braintreeAddress,
                 shouldSaveInstrument: paymentData.shouldSaveInstrument || false,
             }),
             this._braintreePaymentProcessor.getSessionId(),
