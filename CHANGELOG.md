@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.41.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.40.0...v1.41.0) (2019-10-28)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-4616 Add braintree.paypal as a supported instrument ([e532a19](https://github.com/bigcommerce/checkout-sdk-js/commit/e532a19))
+
+
+### Features
+
+* **shipping:** CHECKOUT-4509 Optional param to include shippings options when updating shipping address ([132075c](https://github.com/bigcommerce/checkout-sdk-js/commit/132075c))
+
 ## [1.40.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.39.0...v1.40.0) (2019-10-27)
 
 

@@ -8,10 +8,10 @@ Some payment methods have specific requirements for setting the shipping details
 
 ## Type parameters
 
-#### TParams 
+#### T 
 ## Hierarchy
 
-↳  [ShippingRequestOptions](shippingrequestoptions.md)
+↳  [ShippingRequestOptions](shippingrequestoptions.md)<`T`>
 
 **↳ ShippingInitializeOptions**
 

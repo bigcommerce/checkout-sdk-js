@@ -1142,7 +1142,7 @@ ___
 
 ###  updateShippingAddress
 
-▸ **updateShippingAddress**(address: *`Partial`<[AddressRequestBody](../interfaces/addressrequestbody.md)>*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+▸ **updateShippingAddress**(address: *`Partial`<[AddressRequestBody](../interfaces/addressrequestbody.md)>*, options?: *[ShippingRequestOptions](../interfaces/shippingrequestoptions.md)<[CheckoutParams](../interfaces/checkoutparams.md)>*): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 
 Updates the shipping address for the current checkout.
 
@@ -1163,7 +1163,7 @@ console.log(state.data.getShippingAddress());
 | Param | Type | Description |
 | ------ | ------ | ------ |
 | address | `Partial`<[AddressRequestBody](../interfaces/addressrequestbody.md)> |  The address to be used for shipping. |
-| `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md) |  Options for updating the shipping address. |
+| `Optional` options | [ShippingRequestOptions](../interfaces/shippingrequestoptions.md)<[CheckoutParams](../interfaces/checkoutparams.md)> |  Options for updating the shipping address. |
 
 **Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
 A promise that resolves to the current state.

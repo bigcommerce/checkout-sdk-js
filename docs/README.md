@@ -23,6 +23,15 @@
 **ΤAddressKey**: *`keyof Address`*
 
 ___
+<a id="checkoutincludeparam"></a>
+
+###  CheckoutIncludeParam
+
+**ΤCheckoutIncludeParam**: *`object`*
+
+#### Type declaration
+
+___
 <a id="consignmentsrequestbody"></a>
 
 ###  ConsignmentsRequestBody

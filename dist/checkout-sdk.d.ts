@@ -697,6 +697,10 @@ declare class CheckoutButtonStatusSelector {
     isDeinitializingButton(methodId?: CheckoutButtonMethodType): boolean;
 }
 
+declare type CheckoutIncludeParam = {
+    [key in CheckoutIncludes]?: boolean;
+};
+
 declare enum CheckoutIncludes {
     AvailableShippingOptions = "consignments.availableShippingOptions",
     PhysicalItemsCategoryNames = "cart.lineItems.physicalItems.categoryNames",
@@ -704,7 +708,7 @@ declare enum CheckoutIncludes {
 }
 
 declare interface CheckoutParams {
-    include?: CheckoutIncludes[];
+    include?: CheckoutIncludes[] | CheckoutIncludeParam;
 }
 
 declare interface CheckoutPayment {
@@ -1254,7 +1258,7 @@ declare class CheckoutService {
      * @param options - Options for updating the shipping address.
      * @returns A promise that resolves to the current state.
      */
-    updateShippingAddress(address: Partial<AddressRequestBody>, options?: ShippingRequestOptions): Promise<CheckoutSelectors>;
+    updateShippingAddress(address: Partial<AddressRequestBody>, options?: ShippingRequestOptions<CheckoutParams>): Promise<CheckoutSelectors>;
     /**
      * Creates consignments given a list.
      *
@@ -3334,7 +3338,7 @@ declare interface SepaPlaceHolder {
  * need to provide additional information in order to initialize the shipping
  * step of checkout.
  */
-declare interface ShippingInitializeOptions extends ShippingRequestOptions {
+declare interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptions<T> {
     /**
      * The options that are required to initialize the shipping step of checkout
      * when using Amazon Pay.
@@ -3362,7 +3366,7 @@ declare interface ShippingOption {
  * specific flow for setting the shipping address or option. Otherwise, these
  * options are not required.
  */
-declare interface ShippingRequestOptions extends RequestOptions {
+declare interface ShippingRequestOptions<T = {}> extends RequestOptions<T> {
     methodId?: string;
 }
 

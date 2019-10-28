@@ -8,10 +8,10 @@ Some payment methods have their own shipping configuration flow. Therefore, you 
 
 ## Type parameters
 
-#### TParams 
+#### T 
 ## Hierarchy
 
- [RequestOptions](requestoptions.md)
+ [RequestOptions](requestoptions.md)<`T`>
 
 **↳ ShippingRequestOptions**
 

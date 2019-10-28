@@ -20,7 +20,8 @@
 
 ### `<Optional>` include
 
-**● include**: *[CheckoutIncludes](../enums/checkoutincludes.md)[]*
+**● include**: * [CheckoutIncludes](../enums/checkoutincludes.md)[] &#124; [CheckoutIncludeParam](../#checkoutincludeparam)
+*
 
 ___
 
