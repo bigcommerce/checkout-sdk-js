@@ -8,6 +8,7 @@ import { InvalidArgumentError, MissingDataError, StandardError } from '../../../
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentMethodCancelledError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
@@ -20,6 +21,7 @@ import PaymentStrategy from '../payment-strategy';
 
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import BraintreePaypalPaymentStrategy from './braintree-paypal-payment-strategy';
+import mapToBraintreeAddress from './map-to-braintree-address';
 
 describe('BraintreePaypalPaymentStrategy', () => {
     let orderActionCreator: OrderActionCreator;
@@ -125,6 +127,8 @@ describe('BraintreePaypalPaymentStrategy', () => {
         let orderRequestBody: OrderRequestBody;
         let options: PaymentInitializeOptions;
 
+        const shippingAddress = mapToBraintreeAddress(getShippingAddress());
+
         beforeEach(() => {
             orderRequestBody = getOrderRequestBody();
             options = { methodId: getBraintreePaypal().id };
@@ -169,6 +173,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 currency: 'USD',
                 shouldSaveInstrument: false,
                 offerCredit: false,
+                shippingAddressOverride: shippingAddress,
             });
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
@@ -192,6 +197,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 currency: 'USD',
                 shouldSaveInstrument: false,
                 offerCredit: false,
+                shippingAddressOverride: shippingAddress,
             });
 
             await braintreePaypalPaymentStrategy.execute(orderRequestBody, options);
@@ -203,6 +209,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                 currency: 'USD',
                 shouldSaveInstrument: false,
                 offerCredit: false,
+                shippingAddressOverride: shippingAddress,
             });
         });
 
@@ -345,6 +352,7 @@ describe('BraintreePaypalPaymentStrategy', () => {
                     currency: 'USD',
                     shouldSaveInstrument: false,
                     offerCredit: true,
+                    shippingAddressOverride: shippingAddress,
                 });
                 expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith(expected);
                 expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);

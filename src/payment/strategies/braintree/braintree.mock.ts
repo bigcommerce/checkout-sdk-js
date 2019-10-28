@@ -1,7 +1,7 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
-import { BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
+import { BraintreeAddress, BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
 export function getClientMock(): BraintreeClient {
@@ -147,6 +147,21 @@ export function getBraintreePaymentData(): OrderPaymentRequestBody {
     return {
         ...getOrderRequestBody().payment,
         methodId: 'braintree',
+    };
+}
+
+export function getBraintreeAddress(): BraintreeAddress {
+    return {
+        line1: '12345 Testing Way',
+        line2: '',
+        city: 'Some City',
+        state: 'CA',
+        countryCode: 'US',
+        postalCode: '95555',
+        phone: '555-555-5555',
+        recipientName: 'Test Tester',
+        firstName: 'Test',
+        lastName: 'Tester',
     };
 }
 
