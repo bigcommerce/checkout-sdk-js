@@ -32,6 +32,7 @@ export function getAustralia(): Country {
             { code: 'NSW', name: 'New South Wales' },
         ],
         hasPostalCodes: true,
+        requiresState: true,
     };
 }
 
@@ -41,5 +42,6 @@ export function getJapan(): Country {
         name: 'Japan',
         hasPostalCodes: false,
         subdivisions: [],
+        requiresState: false,
     };
 }

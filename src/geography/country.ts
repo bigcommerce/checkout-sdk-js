@@ -3,6 +3,7 @@ export default interface Country {
     name: string;
     hasPostalCodes: boolean;
     subdivisions: Region[];
+    requiresState: boolean;
 }
 
 export interface Region {

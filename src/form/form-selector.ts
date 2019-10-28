@@ -73,12 +73,12 @@ export function createFormSelectorFactory(): FormSelectorFactory {
     }
 
     function processProvince(field: FormField, country?: Country): FormField {
-        const { subdivisions = [] } = country || {};
+        const { subdivisions = [], requiresState } = country || {};
 
         if (!subdivisions.length) {
             return {
                 ...field,
-                required: false,
+                required: requiresState == null ? false : requiresState,
             };
         }
 
@@ -91,7 +91,7 @@ export function createFormSelectorFactory(): FormSelectorFactory {
             ...field,
             name: 'stateOrProvinceCode',
             options: { items },
-            required: true,
+            required: requiresState == null ? true : requiresState,
             type: 'array',
             fieldType: 'dropdown',
             itemtype: 'string',
