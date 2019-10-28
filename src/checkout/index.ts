@@ -3,7 +3,7 @@ export * from './checkout-actions';
 export { default as Checkout, CheckoutPayment } from './checkout';
 export { default as CHECKOUT_DEFAULT_INCLUDES } from './checkout-default-includes';
 export { default as CheckoutActionCreator } from './checkout-action-creator';
-export { default as CheckoutParams, CheckoutIncludes } from './checkout-params';
+export { default as CheckoutParams, CheckoutIncludes, CheckoutIncludeParam } from './checkout-params';
 export { default as checkoutReducer } from './checkout-reducer';
 export { default as CheckoutRequestSender } from './checkout-request-sender';
 export { default as CheckoutSelector, CheckoutSelectorFactory, createCheckoutSelectorFactory } from './checkout-selector';

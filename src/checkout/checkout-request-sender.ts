@@ -1,6 +1,6 @@
 import { RequestSender, Response } from '@bigcommerce/request-sender';
 
-import { joinIncludes, ContentType, RequestOptions } from '../common/http-request';
+import { joinOrMergeIncludes, ContentType, RequestOptions } from '../common/http-request';
 
 import Checkout, { CheckoutRequestBody } from './checkout';
 import CHECKOUT_DEFAULT_INCLUDES from './checkout-default-includes';
@@ -12,16 +12,13 @@ export default class CheckoutRequestSender {
         private _requestSender: RequestSender
     ) {}
 
-    loadCheckout(id: string, { params, timeout }: RequestOptions<CheckoutParams> = {}): Promise<Response<Checkout>> {
+    loadCheckout(id: string, { params: { include } = {}, timeout }: RequestOptions<CheckoutParams> = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkout/${id}`;
         const headers = { Accept: ContentType.JsonV1 };
 
         return this._requestSender.get(url, {
             params: {
-                include: joinIncludes([
-                    ...CHECKOUT_DEFAULT_INCLUDES,
-                    ...(params && params.include || []),
-                ]),
+                include: joinOrMergeIncludes(CHECKOUT_DEFAULT_INCLUDES, include),
             },
             headers,
             timeout,
@@ -34,16 +31,13 @@ export default class CheckoutRequestSender {
         });
     }
 
-    updateCheckout(id: string, body: CheckoutRequestBody, { params, timeout }: RequestOptions<CheckoutParams> = {}): Promise<Response<Checkout>> {
+    updateCheckout(id: string, body: CheckoutRequestBody, { params: { include } = {}, timeout }: RequestOptions<CheckoutParams> = {}): Promise<Response<Checkout>> {
         const url = `/api/storefront/checkout/${id}`;
         const headers = { Accept: ContentType.JsonV1 };
 
         return this._requestSender.put(url, {
             params: {
-                include: joinIncludes([
-                    ...CHECKOUT_DEFAULT_INCLUDES,
-                    ...(params && params.include || []),
-                ]),
+                include: joinOrMergeIncludes(CHECKOUT_DEFAULT_INCLUDES, include),
             },
             body,
             headers,

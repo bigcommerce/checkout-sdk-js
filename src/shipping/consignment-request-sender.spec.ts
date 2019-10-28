@@ -19,13 +19,14 @@ describe('ConsignmentRequestSender', () => {
         lineItems: consignment.lineItems!,
     }];
     const options = { timeout: createTimeout() };
-    const include = [
-        'consignments.availableShippingOptions',
+    const shippingInclude = 'consignments.availableShippingOptions';
+    const baseInclude = [
         'cart.lineItems.physicalItems.options',
         'cart.lineItems.digitalItems.options',
         'customer',
         'promotions.banners',
     ].join(',');
+    const include = [ shippingInclude, baseInclude ].join(',');
 
     beforeEach(() => {
         jest.spyOn(requestSender, 'post').mockReturnValue(Promise.resolve({ body: getCheckout() }));
@@ -64,6 +65,26 @@ describe('ConsignmentRequestSender', () => {
                 },
             });
         });
+
+        it('creates consignments without including shipping options', async () => {
+            await consignmentRequestSender.createConsignments(checkoutId, consignments, {
+                ...options,
+                params: { include: {
+                    'consignments.availableShippingOptions': false,
+                } },
+            });
+
+            expect(requestSender.post).toHaveBeenCalledWith('/api/storefront/checkouts/foo/consignments', {
+                ...options,
+                body: consignments,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: {
+                    include: baseInclude,
+                },
+            });
+        });
     });
 
     describe('#updateConsignment()', () => {
@@ -94,6 +115,26 @@ describe('ConsignmentRequestSender', () => {
                 },
                 params: {
                     include,
+                },
+            });
+        });
+
+        it('updates a consignment without requesting shipping options', async () => {
+            await consignmentRequestSender.updateConsignment(checkoutId, consignment, {
+                ...options,
+                params: { include: {
+                    'consignments.availableShippingOptions': false,
+                } },
+            });
+
+            expect(requestSender.put).toHaveBeenCalledWith(`/api/storefront/checkouts/foo/consignments/${id}`, {
+                ...options,
+                body,
+                headers: {
+                    Accept: ContentType.JsonV1,
+                },
+                params: {
+                    include: baseInclude,
                 },
             });
         });

@@ -11,7 +11,7 @@ import { AmazonPayShippingInitializeOptions } from './strategies/amazon';
  * specific flow for setting the shipping address or option. Otherwise, these
  * options are not required.
  */
-export interface ShippingRequestOptions extends RequestOptions {
+export interface ShippingRequestOptions<T = {}> extends RequestOptions<T> {
     methodId?: string;
 }
 
@@ -25,7 +25,7 @@ export interface ShippingRequestOptions extends RequestOptions {
  * need to provide additional information in order to initialize the shipping
  * step of checkout.
  */
-export interface ShippingInitializeOptions extends ShippingRequestOptions {
+export interface ShippingInitializeOptions<T = {}> extends ShippingRequestOptions<T> {
     /**
      * The options that are required to initialize the shipping step of checkout
      * when using Amazon Pay.
