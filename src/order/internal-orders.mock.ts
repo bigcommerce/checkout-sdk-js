@@ -75,6 +75,7 @@ export function getCompleteOrder(): InternalOrder {
                 imageUrl: '/images/canvas-laundry-cart.jpg',
                 quantity: 1,
                 brand: 'OFS',
+                sku: 'CLC',
                 amount: 200,
                 discount: 0,
                 amountAfterDiscount: 200,
