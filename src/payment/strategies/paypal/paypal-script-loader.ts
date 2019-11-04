@@ -13,7 +13,7 @@ export default class PaypalScriptLoader {
         this._window = window;
     }
 
-    loadPaypal = async (merchantId: string = ''): Promise<PaypalSDK> => {
+    async loadPaypal(merchantId: string = ''): Promise<PaypalSDK> {
         const scriptSrc = '//www.paypalobjects.com/api/checkout.min.js';
         const options: LoadScriptOptions = { async: true, attributes: { 'data-merchant-id': merchantId } };
 
@@ -26,5 +26,5 @@ export default class PaypalScriptLoader {
         }
 
         return this._window.paypal;
-    };
+    }
 }
