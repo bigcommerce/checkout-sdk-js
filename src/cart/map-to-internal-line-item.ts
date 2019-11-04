@@ -29,6 +29,7 @@ export default function mapToInternalLineItem(
         name: item.name,
         quantity: item.quantity,
         brand: item.brand,
+        sku: item.sku,
         categoryNames: item.categoryNames,
         variantId: item.variantId,
         productId: item.productId,
