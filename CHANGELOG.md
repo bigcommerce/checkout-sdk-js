@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.42.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.41.0...v1.42.0) (2019-11-04)
+
+
+### Bug Fixes
+
+* **payment:** INT-1928 map sku in internal line item ([fcb32dd](https://github.com/bigcommerce/checkout-sdk-js/commit/fcb32dd))
+* **payment:** PAYMENTS-4704 Send shipping address when checking out using Braintree PayPal ([b047cfe](https://github.com/bigcommerce/checkout-sdk-js/commit/b047cfe))
+
+
+### Features
+
+* **checkout:** INT-1916 Make barclaycard compatible with offsite strategy ([cdf578b](https://github.com/bigcommerce/checkout-sdk-js/commit/cdf578b))
+
 ## [1.41.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.40.0...v1.41.0) (2019-10-28)
 
 

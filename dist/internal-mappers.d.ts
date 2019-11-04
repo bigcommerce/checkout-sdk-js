@@ -357,6 +357,7 @@ declare interface InternalLineItem {
     name?: string;
     quantity: number;
     brand?: string;
+    sku?: string;
     categoryNames?: string[];
     type: string;
     variantId: number | null;
