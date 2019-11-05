@@ -73,6 +73,16 @@ describe('FormSelector', () => {
             expect(province!.fieldType).not.toEqual('dropdown');
         });
 
+        it('make provinces required if requireState flag is on', () => {
+            const forms = formSelector.getShippingAddressFields(countries, 'AU');
+            const province = find(forms, { name: 'stateOrProvinceCode' });
+            expect(province!.required).toBe(true);
+            expect(province!.fieldType).toEqual('dropdown');
+            expect(province!.options!.items).toEqual([
+                { value: 'NSW', label: 'New South Wales' },
+            ]);
+        });
+
         it('makes postcode required for countries that require it', () => {
             const forms = formSelector.getShippingAddressFields(countries, 'AU');
             const postCode = find(forms, { name: 'postalCode' });
@@ -132,6 +142,17 @@ describe('FormSelector', () => {
             expect(province!.options!.items).toEqual([
                 { value: 'NSW', label: 'New South Wales' },
                 { value: 'VIC', label: 'Victoria' },
+            ]);
+        });
+
+        it('make provinces optional when requireState flag is off', () => {
+            const forms = formSelector.getShippingAddressFields(countries, 'US');
+            const province = find(forms, { name: 'stateOrProvinceCode' });
+            expect(province!.required).toBe(false);
+            expect(province!.fieldType).toEqual('dropdown');
+            expect(province!.options!.items).toEqual([
+                { value: 'CA', label: 'California' },
+                { value: 'TX', label: 'Texas' },
             ]);
         });
 

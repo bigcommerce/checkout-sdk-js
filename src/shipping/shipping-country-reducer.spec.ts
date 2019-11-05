@@ -35,7 +35,7 @@ describe('shippingCountryReducer()', () => {
         const action: LoadShippingCountriesAction = {
             type: ShippingCountryActionType.LoadShippingCountriesSucceeded,
             payload: [
-                { code: 'JP', name: 'Japan', hasPostalCodes: false, subdivisions: [] },
+                { code: 'JP', name: 'Japan', hasPostalCodes: false, subdivisions: [], requiresState: false },
             ],
         };
 

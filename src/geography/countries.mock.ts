@@ -34,6 +34,7 @@ export function getAustralia(): Country {
             { code: 'VIC', name: 'Victoria' },
         ],
         hasPostalCodes: true,
+        requiresState: true,
     };
 }
 
@@ -46,6 +47,7 @@ export function getUnitedStates(): Country {
             { code: 'CA', name: 'California' },
             { code: 'TX', name: 'Texas' },
         ],
+        requiresState: false,
     };
 }
 
@@ -55,5 +57,6 @@ export function getJapan(): Country {
         name: 'Japan',
         hasPostalCodes: false,
         subdivisions: [],
+        requiresState: false,
     };
 }
