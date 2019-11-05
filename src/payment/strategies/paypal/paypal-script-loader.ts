@@ -1,4 +1,4 @@
-import { ScriptLoader } from '@bigcommerce/script-loader';
+import { LoadScriptOptions, ScriptLoader } from '@bigcommerce/script-loader';
 
 import { PaymentMethodClientUnavailableError } from '../../errors';
 
@@ -13,15 +13,18 @@ export default class PaypalScriptLoader {
         this._window = window;
     }
 
-    loadPaypal(): Promise<PaypalSDK> {
-        return this._scriptLoader
-            .loadScript('//www.paypalobjects.com/api/checkout.min.js')
-            .then(() => {
-                if (!this._window.paypal) {
-                    throw new PaymentMethodClientUnavailableError();
-                }
+    async loadPaypal(merchantId: string = ''): Promise<PaypalSDK> {
+        const scriptSrc = '//www.paypalobjects.com/api/checkout.min.js';
+        const options: LoadScriptOptions = { async: true, attributes: { 'data-merchant-id': merchantId } };
 
-                return this._window.paypal;
-            });
+        merchantId
+            ? await this._scriptLoader.loadScript(scriptSrc, options)
+            : await this._scriptLoader.loadScript(scriptSrc);
+
+        if (!this._window.paypal) {
+            throw new PaymentMethodClientUnavailableError();
+        }
+
+        return this._window.paypal;
     }
 }
