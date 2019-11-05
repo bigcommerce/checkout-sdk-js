@@ -13,6 +13,7 @@
 * [code](country.md#code)
 * [hasPostalCodes](country.md#haspostalcodes)
 * [name](country.md#name)
+* [requiresState](country.md#requiresstate)
 * [subdivisions](country.md#subdivisions)
 
 ---
@@ -38,6 +39,13 @@ ___
 ###  name
 
 **● name**: *`string`*
+
+___
+<a id="requiresstate"></a>
+
+###  requiresState
+
+**● requiresState**: *`boolean`*
 
 ___
 <a id="subdivisions"></a>

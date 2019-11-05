@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.43.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.42.0...v1.43.0) (2019-11-05)
+
+
+### Features
+
+* **checkout:** CHECKOUT-4465 Make state/province optional for certain countries based on requireState flag ([d177113](https://github.com/bigcommerce/checkout-sdk-js/commit/d177113))
+* **common:** PAYPAL-7 Pass in merchant ID on PayPal button script for PayPal Express Checkout ([dee37aa](https://github.com/bigcommerce/checkout-sdk-js/commit/dee37aa))
+* **common:** PAYPAL-7 Pass in merchant ID on PayPal button script for PayPal Express Checkout ([99d4142](https://github.com/bigcommerce/checkout-sdk-js/commit/99d4142))
+* **payment:** PAYPAL-7 Pass in merchant ID on PayPal button script for PayPal Express Checkout ([8044df2](https://github.com/bigcommerce/checkout-sdk-js/commit/8044df2))
+
 ## [1.42.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.41.0...v1.42.0) (2019-11-04)
 
 

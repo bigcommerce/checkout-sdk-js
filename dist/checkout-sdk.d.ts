@@ -2294,6 +2294,7 @@ declare interface Country {
     name: string;
     hasPostalCodes: boolean;
     subdivisions: Region[];
+    requiresState: boolean;
 }
 
 declare interface Coupon {
