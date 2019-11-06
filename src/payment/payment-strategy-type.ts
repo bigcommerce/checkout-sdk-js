@@ -27,6 +27,7 @@ enum PaymentStrategyType {
     STRIPE_GOOGLE_PAY = 'googlepaystripe',
     ZIP = 'zip',
     CONVERGE = 'converge',
+    BARCLAYCARD = 'barclaycard',
 }
 
 export default PaymentStrategyType;

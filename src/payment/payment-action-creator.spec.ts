@@ -106,7 +106,7 @@ describe('PaymentActionCreator', () => {
     describe('#initializeOffsitePayment()', () => {
         it('dispatches actions to data store', async () => {
             const payment = getPayment();
-            const actions = await from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId)(store))
+            const actions = await from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId, payment.paymentData)(store))
                 .pipe(toArray())
                 .toPromise();
 
@@ -124,7 +124,7 @@ describe('PaymentActionCreator', () => {
 
             const errorHandler = jest.fn(action => of(action));
             const payment = getPayment();
-            const actions = await from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId)(store))
+            const actions = await from(paymentActionCreator.initializeOffsitePayment(payment.methodId, payment.gatewayId, payment.paymentData)(store))
                 .pipe(
                     catchError(errorHandler),
                     toArray()

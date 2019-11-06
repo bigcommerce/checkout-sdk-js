@@ -6,7 +6,7 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { OrderActionCreator } from '../order';
 
-import Payment from './payment';
+import Payment, { PaymentInstrument } from './payment';
 import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction } from './payment-actions';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
@@ -37,10 +37,11 @@ export default class PaymentActionCreator {
 
     initializeOffsitePayment(
         methodId: string,
-        gatewayId?: string
+        gatewayId?: string,
+        paymentData: PaymentInstrument = {}
     ): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
         return store => {
-            const payload = this._paymentRequestTransformer.transform({ gatewayId, methodId }, store.getState());
+            const payload = this._paymentRequestTransformer.transform({ gatewayId, methodId, paymentData }, store.getState());
 
             return concat(
                 of(createAction(PaymentActionType.InitializeOffsitePaymentRequested)),
