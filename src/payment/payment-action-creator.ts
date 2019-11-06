@@ -1,12 +1,14 @@
 import { createAction, ThunkAction } from '@bigcommerce/data-store';
+import { merge } from 'lodash';
 import { concat, from, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 import { InternalCheckoutSelectors } from '../checkout';
+import { BrowserInfo } from '../common/browser-info';
 import { throwErrorAction } from '../common/error';
 import { OrderActionCreator } from '../order';
 
-import Payment, { FormattedHostedInstrument, FormattedPayload, FormattedVaultedInstrument } from './payment';
+import Payment, { FormattedBrowserInfo, FormattedHostedInstrument, FormattedPayload, FormattedVaultedInstrument } from './payment';
 import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction } from './payment-actions';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
@@ -39,15 +41,20 @@ export default class PaymentActionCreator {
         methodId: string,
         gatewayId?: string,
         instrumentId?: string,
-        shouldSaveInstrument?: boolean
+        shouldSaveInstrument?: boolean,
+        browserInfo?: BrowserInfo
     ): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
         return store => {
-            let paymentData: FormattedPayload<FormattedHostedInstrument | FormattedVaultedInstrument> | undefined;
+            let paymentData: FormattedPayload<FormattedBrowserInfo | FormattedHostedInstrument | FormattedVaultedInstrument> | undefined;
 
             if (instrumentId) {
                 paymentData = { formattedPayload: { bigpay_token: instrumentId } };
             } else if (shouldSaveInstrument) {
                 paymentData = { formattedPayload: { vault_payment_instrument: shouldSaveInstrument } };
+            }
+
+            if (browserInfo) {
+                paymentData = merge(paymentData, { formattedPayload: { browser_info: browserInfo }});
             }
 
             const payload = this._paymentRequestTransformer.transform({ gatewayId, methodId, paymentData }, store.getState());

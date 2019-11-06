@@ -10,7 +10,7 @@ export default interface Payment {
 export type PaymentInstrument = (
     CreditCardInstrument |
     CryptogramInstrument |
-    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
+    FormattedPayload<AdyenV2Instrument | FormattedBrowserInfo | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
     HostedCreditCardInstrument |
     HostedInstrument |
     NonceInstrument |
@@ -109,6 +109,10 @@ interface AdyenV2Card {
         token: string;
     };
     bigpay_token?: void;
+}
+
+export interface FormattedBrowserInfo {
+    browser_info: BrowserInfo | null;
 }
 
 export interface FormattedHostedInstrument {

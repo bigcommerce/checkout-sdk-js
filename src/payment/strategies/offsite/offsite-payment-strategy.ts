@@ -1,4 +1,5 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { getBrowserInfo } from '../../../common/browser-info';
 import { OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
@@ -32,8 +33,12 @@ export default class OffsitePaymentStrategy implements PaymentStrategy {
                     payment.methodId,
                     payment.gatewayId,
                     instrumentId,
-                    shouldSaveInstrument))
-            );
+                    shouldSaveInstrument,
+                    {
+                        ...getBrowserInfo(),
+                        time_zone: new Date().toLocaleTimeString('en-us', {timeZoneName: 'short'}).split(' ')[2],
+                    }
+                )));
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

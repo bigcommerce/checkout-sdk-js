@@ -102,7 +102,21 @@ describe('OffsitePaymentStrategy', () => {
     it('initializes offsite payment flow', async () => {
         await strategy.execute(payload, options);
 
-        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(options.methodId, options.gatewayId, null, null);
+        expect(paymentActionCreator.initializeOffsitePayment).toHaveBeenCalledWith(
+            options.methodId,
+            options.gatewayId,
+            null,
+            null,
+            expect.objectContaining({
+                color_depth: expect.any(Number),
+                java_enabled: expect.any(Boolean),
+                language: expect.any(String),
+                screen_height: expect.any(Number),
+                screen_width: expect.any(Number),
+                time_zone: expect.any(String),
+                time_zone_offset: expect.any(String),
+            })
+        );
         expect(store.dispatch).toHaveBeenCalledWith(initializeOffsitePaymentAction);
     });
 

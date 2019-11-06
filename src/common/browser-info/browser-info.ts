@@ -4,5 +4,6 @@ export default interface BrowserInfo {
     language: string;
     screen_height: number;
     screen_width: number;
+    time_zone?: string;
     time_zone_offset: string;
 }
