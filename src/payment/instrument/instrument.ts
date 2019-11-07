@@ -17,7 +17,6 @@ export interface CardInstrument extends BaseInstrument {
     expiryYear: string;
     iin: string;
     last4: string;
-    method: 'card';
     type: 'card';
 }
 

@@ -5,6 +5,14 @@ interface SupportedInstruments {
 }
 
 const supportedInstruments: SupportedInstruments = {
+    scheme_adyenv2: {
+        provider: 'adyenv2',
+        method: 'scheme',
+    },
+    bcmc_adyenv2: {
+        provider: 'adyenv2',
+        method: 'bcmc',
+    },
     braintree: {
         provider: 'braintree',
         method: 'card',
