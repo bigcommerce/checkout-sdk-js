@@ -187,7 +187,7 @@ export enum ThreeDS2ComponentType {
 
 export interface ThreeDS2Result {
     payment_data: string;
-    result_code: string;
+    code: string;
     token: string;
 }
 
@@ -642,7 +642,7 @@ export interface ThreeDSRequiredErrorResponse {
         { code: string }
     ];
     three_ds_result: {
-        result_code: ResultCode;
+        code: ResultCode;
         token?: string;
         payment_data?: string;
         acs_url?: string;

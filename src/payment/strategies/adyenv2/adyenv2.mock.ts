@@ -93,7 +93,7 @@ function getChallengeShopperErrorResponse(): ThreeDSRequiredErrorResponse {
             { code: 'three_d_secure_required' },
         ],
         three_ds_result: {
-            result_code: ResultCode.ChallengeShopper,
+            code: ResultCode.ChallengeShopper,
             token: 'token',
             payment_data: 'paymentData',
         },
@@ -114,7 +114,7 @@ export function getIdentifyShopperErrorResponse(): ThreeDSRequiredErrorResponse 
             { code: 'three_d_secure_required' },
         ],
         three_ds_result: {
-            result_code: ResultCode.IdentifyShopper,
+            code: ResultCode.IdentifyShopper,
             token: 'token',
             payment_data: 'paymentData',
         },
@@ -134,7 +134,7 @@ function getRedirectShopperErrorResponse(): ThreeDSRequiredErrorResponse {
             { code: 'three_d_secure_required' },
         ],
         three_ds_result: {
-            result_code: ResultCode.RedirectShopper,
+            code: ResultCode.RedirectShopper,
             acs_url: 'https://acs/url',
             callback_url: 'https://callback/url',
             payer_auth_request: 'payer_auth_request',
