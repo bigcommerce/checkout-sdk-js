@@ -7,6 +7,7 @@ describe('mapToAccountInstrument', () => {
             trusted_shipping_address: true,
             provider: 'braintree',
             method_type: 'paypal',
+            method: 'paypal',
             default_instrument: false,
             external_id: 'test@external-id.com',
         });
