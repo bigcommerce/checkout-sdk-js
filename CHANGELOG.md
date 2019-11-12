@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.44.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.43.0...v1.44.0) (2019-11-12)
+
+
+### Features
+
+* **payment:** INT-1902 Support vaulting with instrument_type ([6f77be9](https://github.com/bigcommerce/checkout-sdk-js/commit/6f77be9))
+
 ## [1.43.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.42.0...v1.43.0) (2019-11-05)
 
 

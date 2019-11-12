@@ -81,7 +81,7 @@ ___
 
 ###  method
 
-**● method**: *"card"*
+**● method**: *`string`*
 
 ___
 <a id="provider"></a>
