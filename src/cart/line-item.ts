@@ -60,6 +60,7 @@ export interface LineItem {
     comparisonPrice: number;
     extendedListPrice: number;
     extendedSalePrice: number;
+    extendedComparisonPrice: number;
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
     addedByPromotion: boolean;
