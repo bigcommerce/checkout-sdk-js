@@ -5,7 +5,7 @@ import { Address, LegacyAddress } from '../../../address';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, StandardError } from '../../../common/error/errors';
 import { PaymentMethod } from '../../../payment';
-import { BraintreeAddress, BraintreeError, BraintreePaypalCheckout, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../../payment/strategies/braintree';
+import { BraintreeError, BraintreePaypalCheckout, BraintreeShippingAddressOverride, BraintreeSDKCreator, BraintreeTokenizePayload } from '../../../payment/strategies/braintree';
 import { PaypalAuthorizeData, PaypalScriptLoader } from '../../../payment/strategies/paypal';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -167,7 +167,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
             email: payload.details.email,
             first_name: firstName,
             last_name: lastName,
-            phone_number: shippingAddress && shippingAddress.phone || payload.details.phone,
+            phone_number: payload.details.phone,
             address_line_1: shippingAddress && shippingAddress.line1,
             address_line_2: shippingAddress && shippingAddress.line2,
             city: shippingAddress && shippingAddress.city,
@@ -184,9 +184,9 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         if (billingAddress) {
             return {
                 email: payload.details.email,
-                first_name: billingAddress.firstName || payload.details.firstName,
-                last_name: billingAddress.lastName || payload.details.lastName,
-                phone_number: billingAddress.phone || payload.details.phone,
+                first_name: payload.details.firstName,
+                last_name: payload.details.lastName,
+                phone_number: payload.details.phone,
                 address_line_1: billingAddress.line1,
                 address_line_2: billingAddress.line2,
                 city: billingAddress.city,
@@ -210,7 +210,7 @@ export default class BraintreePaypalButtonStrategy implements CheckoutButtonStra
         };
     }
 
-    private _mapToBraintreeAddress(address: Address): BraintreeAddress {
+    private _mapToBraintreeAddress(address: Address): BraintreeShippingAddressOverride {
         return {
             line1: address.address1,
             line2: address.address2,
