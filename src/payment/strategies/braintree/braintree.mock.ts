@@ -1,7 +1,7 @@
 import { OrderPaymentRequestBody } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 
-import { BraintreeAddress, BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
+import { BraintreeClient, BraintreeDataCollector, BraintreeModule, BraintreeModuleCreator, BraintreePaypalCheckout, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeThreeDSecure, BraintreeTokenizePayload, BraintreeTokenizeResponse, BraintreeVerifyPayload, BraintreeVisaCheckout, GooglePayBraintreeSDK } from './braintree';
 import { BraintreeThreeDSecureOptions } from './braintree-payment-options';
 
 export function getClientMock(): BraintreeClient {
@@ -104,7 +104,6 @@ export function getTokenizePayload(): BraintreeTokenizePayload {
                 state: 'Arizona',
                 countryCode: 'US',
                 postalCode: '96666',
-                phone: '123456789',
             },
             shippingAddress: {
                 recipientName: 'Hello World',
@@ -114,7 +113,6 @@ export function getTokenizePayload(): BraintreeTokenizePayload {
                 state: 'California',
                 countryCode: 'US',
                 postalCode: '95555',
-                phone: '987654321',
             },
         },
     };
@@ -150,7 +148,7 @@ export function getBraintreePaymentData(): OrderPaymentRequestBody {
     };
 }
 
-export function getBraintreeAddress(): BraintreeAddress {
+export function getBraintreeAddress(): BraintreeShippingAddressOverride {
     return {
         line1: '12345 Testing Way',
         line2: '',
@@ -160,8 +158,6 @@ export function getBraintreeAddress(): BraintreeAddress {
         postalCode: '95555',
         phone: '555-555-5555',
         recipientName: 'Test Tester',
-        firstName: 'Test',
-        lastName: 'Tester',
     };
 }
 
