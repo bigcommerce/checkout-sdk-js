@@ -49,7 +49,7 @@ const supportedInstruments: SupportedInstruments = {
         provider: 'paymetric',
         method: 'card',
     },
-    barclaycard: {
+    card: {
         provider: 'barclaycard',
         method: 'card',
     },
