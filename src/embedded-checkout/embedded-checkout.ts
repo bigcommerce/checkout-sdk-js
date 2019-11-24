@@ -1,6 +1,6 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
-import { IFrameComponent } from '../common/iframe';
+import { IframeEventListener, IframeEventPoster, IFrameComponent } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
 import { bindDecorator as bind } from '../common/utility';
@@ -10,8 +10,6 @@ import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import { InvalidLoginTokenError, NotEmbeddableError, NotEmbeddableErrorType } from './errors';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content';
-import IframeEventListener from './iframe-event-listener';
-import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
