@@ -1,11 +1,9 @@
 import { Address } from '../../../address';
 
-import { BraintreeAddress } from './braintree';
+import { BraintreeShippingAddressOverride } from './braintree';
 
-export default function mapToBraintreeAddress(address: Address): BraintreeAddress {
+export default function mapToBraintreeShippingAddressOverride(address: Address): BraintreeShippingAddressOverride {
     return {
-        firstName: address.firstName,
-        lastName: address.lastName,
         recipientName: `${address.firstName} ${address.lastName}`,
         line1: address.address1,
         line2: address.address2,
