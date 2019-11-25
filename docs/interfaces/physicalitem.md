@@ -20,6 +20,7 @@
 * [couponAmount](physicalitem.md#couponamount)
 * [discountAmount](physicalitem.md#discountamount)
 * [discounts](physicalitem.md#discounts)
+* [extendedComparisonPrice](physicalitem.md#extendedcomparisonprice)
 * [extendedListPrice](physicalitem.md#extendedlistprice)
 * [extendedSalePrice](physicalitem.md#extendedsaleprice)
 * [giftWrapping](physicalitem.md#giftwrapping)
@@ -97,6 +98,13 @@ ___
 ###  discounts
 
 **● discounts**: *`Array`<`object`>*
+
+___
+<a id="extendedcomparisonprice"></a>
+
+###  extendedComparisonPrice
+
+**● extendedComparisonPrice**: *`number`*
 
 ___
 <a id="extendedlistprice"></a>

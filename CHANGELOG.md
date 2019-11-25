@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.45.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.44.1...v1.45.0) (2019-11-25)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-4513 Add extendedComparisonPrice from API ([a3f56d9](https://github.com/bigcommerce/checkout-sdk-js/commit/a3f56d9))
+* **payment:** PAYMENTS-4971 Remove extra keys from Braintree PayPal Tokenize call ([33ef094](https://github.com/bigcommerce/checkout-sdk-js/commit/33ef094))
+
+
+### Features
+
+* **payment:** INT-1902 Update payment method id and instrument selector to support gateway ([7709c45](https://github.com/bigcommerce/checkout-sdk-js/commit/7709c45))
+
 ### [1.44.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.44.0...v1.44.1) (2019-11-25)
 
 
