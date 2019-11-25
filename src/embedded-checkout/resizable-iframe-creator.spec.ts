@@ -12,6 +12,7 @@ jest.mock('../common/iframe', () => ({
 
         return [element];
     }),
+    isIframeEvent: jest.fn((object, type) => object.type === type),
 }));
 
 describe('ResizableIframeCreator', () => {

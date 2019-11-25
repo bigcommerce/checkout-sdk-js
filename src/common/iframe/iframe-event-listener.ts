@@ -1,5 +1,5 @@
-import { parseUrl } from '../common/url';
-import { bindDecorator as bind } from '../common/utility';
+import { parseUrl } from '../url';
+import { bindDecorator as bind } from '../utility';
 
 import { IframeEventMap } from './iframe-event';
 import isIframeEvent from './is-iframe-event';
@@ -44,7 +44,9 @@ export default class IframeEventListener<TEventMap extends IframeEventMap<keyof 
             this._listeners[type] = listeners = [];
         }
 
-        listeners.push(listener);
+        if (listeners.indexOf(listener) === -1) {
+            listeners.push(listener);
+        }
     }
 
     removeListener<TType extends keyof TEventMap>(type: TType, listener: (event: TEventMap[TType]) => void): void {

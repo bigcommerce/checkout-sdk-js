@@ -1,7 +1,7 @@
 import { createRequestSender, RequestSender } from '@bigcommerce/request-sender';
 
 import { getErrorResponse, getResponse } from '../common/http-request/responses.mock';
-import { iframeResizer, IFrameComponent } from '../common/iframe';
+import { iframeResizer, IframeEventListener, IframeEventPoster, IFrameComponent } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 
 import EmbeddedCheckout, { ALLOW_COOKIE_ATTEMPT_INTERVAL, IS_COOKIE_ALLOWED_KEY, LAST_ALLOW_COOKIE_ATTEMPT_KEY } from './embedded-checkout';
@@ -10,8 +10,6 @@ import EmbeddedCheckoutOptions from './embedded-checkout-options';
 import EmbeddedCheckoutStyles from './embedded-checkout-styles';
 import { InvalidLoginTokenError, NotEmbeddableError, NotEmbeddableErrorType } from './errors';
 import { EmbeddedContentEvent, EmbeddedContentEventType } from './iframe-content';
-import IframeEventListener from './iframe-event-listener';
-import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 

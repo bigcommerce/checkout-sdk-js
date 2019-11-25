@@ -1,7 +1,5 @@
-import { setupContentWindowForIframeResizer } from '../../common/iframe';
+import { setupContentWindowForIframeResizer, IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-checkout-events';
-import IframeEventListener from '../iframe-event-listener';
-import IframeEventPoster from '../iframe-event-poster';
 
 import EmbeddedCheckoutMessenger from './embedded-checkout-messenger';
 import EmbeddedCheckoutMessengerOptions from './embedded-checkout-messenger-options';
