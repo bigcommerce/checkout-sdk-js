@@ -5,17 +5,17 @@ interface SupportedInstruments {
 }
 
 const supportedInstruments: SupportedInstruments = {
-    scheme_adyenv2: {
+    'adyenv2.scheme': {
         provider: 'adyenv2',
         method: 'scheme',
     },
-    bcmc_adyenv2: {
+    'adyenv2.bcmc': {
         provider: 'adyenv2',
         method: 'bcmc',
     },
     braintree: {
         provider: 'braintree',
-        method: 'card',
+        method: 'credit_card',
     },
     braintreepaypal: {
         provider: 'braintree',
@@ -23,31 +23,31 @@ const supportedInstruments: SupportedInstruments = {
     },
     authorizenet: {
         provider: 'authorizenet',
-        method: 'card',
+        method: 'credit_card',
     },
     stripe: {
         provider: 'stripe',
-        method: 'card',
+        method: 'credit_card',
     },
     stripev3: {
         provider: 'stripev3',
-        method: 'card',
+        method: 'credit_card',
     },
     cybersource: {
         provider: 'cybersource',
-        method: 'card',
+        method: 'credit_card',
     },
     converge: {
         provider: 'converge',
-        method: 'card',
+        method: 'credit_card',
     },
     bluesnapv2: {
         provider: 'bluesnapv2',
-        method: 'card',
+        method: 'credit_card',
     },
     paymetric: {
         provider: 'paymetric',
-        method: 'card',
+        method: 'credit_card',
     },
 };
 

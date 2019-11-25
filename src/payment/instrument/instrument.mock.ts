@@ -25,7 +25,7 @@ export function getInstruments(): PaymentInstrument[] {
             brand: 'test',
             trustedShippingAddress: true,
             defaultInstrument: true,
-            method: 'card',
+            method: 'credit_card',
             type: 'card',
         },
         {
@@ -38,7 +38,7 @@ export function getInstruments(): PaymentInstrument[] {
             brand: 'test',
             trustedShippingAddress: false,
             defaultInstrument: false,
-            method: 'card',
+            method: 'credit_card',
             type: 'card',
         },
         {
@@ -125,6 +125,7 @@ export function getInternalInstrumentsResponseBody(): InternalInstrumentsRespons
                 trusted_shipping_address: true,
                 default_instrument: true,
                 method_type: 'card',
+                method: 'credit_card',
             },
             {
                 bigpay_token: '111',
@@ -137,6 +138,7 @@ export function getInternalInstrumentsResponseBody(): InternalInstrumentsRespons
                 trusted_shipping_address: false,
                 default_instrument: false,
                 method_type: 'card',
+                method: 'credit_card',
             },
             {
                 bigpay_token: '31415',
@@ -144,6 +146,7 @@ export function getInternalInstrumentsResponseBody(): InternalInstrumentsRespons
                 trusted_shipping_address: false,
                 default_instrument: false,
                 method_type: 'paypal',
+                method: 'paypal',
                 external_id: 'test@external-id.com',
             },
         ],

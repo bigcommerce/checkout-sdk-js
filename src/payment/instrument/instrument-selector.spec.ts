@@ -48,7 +48,7 @@ describe('InstrumentSelector', () => {
             instrumentSelector = createInstrumentSelector(state.instruments);
 
             expect(instrumentSelector.getInstrumentsByPaymentMethod(getBraintree()))
-                .toEqual([ expect.objectContaining({ provider: 'braintree', method: 'card' }) ]);
+                .toEqual([ expect.objectContaining({ provider: 'braintree', method: 'credit_card' }) ]);
         });
 
         it('returns an empty array if the method is not supported', () => {

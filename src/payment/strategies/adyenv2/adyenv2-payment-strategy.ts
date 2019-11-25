@@ -58,7 +58,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 this._adyenCheckout = adyenCheckout;
 
                 const adyenComponent = this._adyenCheckout.create(
-                    paymentMethod.method,
+                    paymentMethod.id,
                     {
                         ...adyenv2.options,
                         onChange: (state: AdyenCardState) => {

@@ -12,7 +12,7 @@ export interface BaseInternalInstrument {
     default_instrument: boolean;
     provider: string;
     trusted_shipping_address: boolean;
-    method?: string;
+    method: string;
 }
 
 export interface CardInternalInstrument extends BaseInternalInstrument {
