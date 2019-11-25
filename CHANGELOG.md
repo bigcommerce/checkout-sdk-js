@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.44.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.44.0...v1.44.1) (2019-11-25)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-4971 Remove extra keys from Braintree PayPal Tokenize call ([90755fb](https://github.com/bigcommerce/checkout-sdk-js/commit/90755fb))
+
 ## [1.44.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.43.0...v1.44.0) (2019-11-12)
 
 
