@@ -11,15 +11,13 @@ import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 jest.mock('./embedded-checkout', () => {
-    return {
-        default: jest.fn(() => {
-            const instance: Partial<EmbeddedCheckout> = {
-                attach: jest.fn(() => Promise.resolve(instance)),
-            };
+    return jest.fn(() => {
+        const instance: Partial<EmbeddedCheckout> = {
+            attach: jest.fn(() => Promise.resolve(instance)),
+        };
 
-            return instance;
-        }),
-    };
+        return instance;
+    });
 });
 
 describe('embedCheckout()', () => {

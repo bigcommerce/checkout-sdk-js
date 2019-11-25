@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import * as shallowEqual from 'shallowequal';
+import shallowEqual from 'shallowequal';
 
 import { isRootCacheKeyMap, isTerminalCacheKeyMap, ChildCacheKeyMap, IntermediateCacheKeyMap, RootCacheKeyMap, TerminalCacheKeyMap } from './cache-key-maps';
 

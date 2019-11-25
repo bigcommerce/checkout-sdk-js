@@ -1,5 +1,5 @@
 import { createSelectorCreator, defaultMemoize } from 'reselect';
-import * as shallowEqual from 'shallowequal';
+import shallowEqual from 'shallowequal';
 
 import withMemoizedCombiner from './with-memoized-combiner';
 

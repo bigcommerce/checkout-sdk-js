@@ -1,5 +1,5 @@
 import { isObject, union } from 'lodash';
-import * as MessageFormat from 'messageformat';
+import MessageFormat from 'messageformat';
 
 import { Logger } from '../common/log';
 import { bindDecorator as bind } from '../common/utility';
