@@ -4,6 +4,8 @@ import { Coupon } from '../coupon';
 import { Currency } from '../currency';
 import { Tax } from '../tax';
 
+import { OrderMetaState } from './order-state';
+
 export default interface Order {
     baseAmount: number;
     billingAddress: BillingAddress;
@@ -32,6 +34,8 @@ export default interface Order {
 }
 
 export type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
+
+export type OrderMeta = OrderMetaState;
 
 export interface OrderPayment {
     providerId: string;

@@ -10,9 +10,12 @@ export { default as PaymentActionCreator } from './payment-action-creator';
 export {
     default as Payment,
     CreditCardInstrument,
+    HostedCreditCardInstrument,
     HostedInstrument,
+    HostedVaultedInstrument,
     VaultedInstrument,
     PaymentInstrument,
+    PaymentInstrumentMeta,
     NonceInstrument,
     ThreeDSecure,
     ThreeDSecureToken
@@ -26,8 +29,11 @@ export { default as PaymentMethodRequestSender } from './payment-method-request-
 export { default as PaymentMethodSelector, PaymentMethodSelectorFactory, createPaymentMethodSelectorFactory } from './payment-method-selector';
 export { default as PaymentMethodState } from './payment-method-state';
 export { default as paymentReducer } from './payment-reducer';
+export { default as PaymentRequestBody } from './payment-request-body';
 export { default as PaymentRequestSender } from './payment-request-sender';
+export { default as PaymentRequestTransformer } from './payment-request-transformer';
 export { default as PaymentResponse } from './payment-response';
+export { default as PaymentResponseBody } from './payment-response-body';
 export { default as PaymentSelector, PaymentSelectorFactory, createPaymentSelectorFactory } from './payment-selector';
 export { default as PaymentState } from './payment-state';
 export { default as PaymentStrategyActionCreator } from './payment-strategy-action-creator';
