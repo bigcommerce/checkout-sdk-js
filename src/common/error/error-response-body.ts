@@ -23,7 +23,12 @@ export interface InternalErrorResponseBody {
 
 export interface PaymentErrorResponseBody {
     status: string;
-    errors: Array<{ code: string; message?: string }>;
+    errors: PaymentErrorData[];
+}
+
+export interface PaymentErrorData {
+    code: string;
+    message?: string;
 }
 
 export default ErrorResponseBody;

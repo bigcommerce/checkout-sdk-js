@@ -8,6 +8,7 @@ export { default as ErrorMessageTransformer } from './error-message-transformer'
 export {
     default as ErrorResponseBody,
     StorefrontErrorResponseBody,
+    PaymentErrorData,
     PaymentErrorResponseBody,
     InternalErrorResponseBody
 } from './error-response-body';

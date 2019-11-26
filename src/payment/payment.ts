@@ -1,10 +1,21 @@
+import { Omit } from '../common/types';
+
 export default interface Payment {
     methodId: string;
     gatewayId?: string;
     paymentData?: PaymentInstrument & PaymentInstrumentMeta;
 }
 
-export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument | CryptogramInstrument | HostedInstrument | ThreeDSVaultedInstrument | FormattedPayload<PaypalInstrument>;
+export type PaymentInstrument = (
+    CreditCardInstrument |
+    CryptogramInstrument |
+    FormattedPayload<PaypalInstrument> |
+    HostedCreditCardInstrument |
+    HostedInstrument |
+    NonceInstrument |
+    ThreeDSVaultedInstrument |
+    VaultedInstrument
+);
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -23,6 +34,10 @@ export interface CreditCardInstrument {
     extraData?: any;
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
 }
+
+export type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
+
+export type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
 export interface NonceInstrument {
     nonce: string;
