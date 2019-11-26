@@ -80,15 +80,6 @@ export interface PaypalInstrument {
     };
 }
 
-export interface BarclaycardInstrument {
-    vault_payment_instrument: boolean | null;
-    instrumentId: string | null;
-    paypal_account: {
-        token: string;
-        email: string | null;
-    };
-}
-
 export interface FormattedPayload<T> {
     formattedPayload: T;
 }
