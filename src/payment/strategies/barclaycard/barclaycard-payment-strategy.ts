@@ -2,7 +2,6 @@ import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { OrderActionCreator,  OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { PaymentArgumentInvalidError } from '../../errors';
-import isVaultedInstrument from '../../is-vaulted-instrument';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentRequestOptions } from '../../payment-request-options';
 import * as paymentStatusTypes from '../../payment-status-types';
@@ -24,10 +23,6 @@ export default class BarclaycardPaymentStrategy implements PaymentStrategy {
         }
 
         await this._store.dispatch(this._orderActionCreator.submitOrder(payload, options));
-
-        if (paymentData && isVaultedInstrument(paymentData)) {
-            return this._store.dispatch(this._paymentActionCreator.submitPayment({ ...payment, paymentData }));
-        }
 
         return await this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(
             payment.methodId,

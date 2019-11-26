@@ -93,24 +93,6 @@ describe('BarclaycardPaymentStrategy', () => {
         expect(store.dispatch).toHaveBeenCalledWith(initializeOffsitePaymentAction);
     });
 
-    it('submits payment with a vaulted instrument', async () => {
-        const payload = {
-            ...getOrderRequestBody(),
-            payment: {
-                methodId: 'card',
-                gatewayId: 'barclaycard',
-                paymentData: getVaultedInstrument(),
-            },
-        };
-
-        await strategy.execute(payload, options);
-
-        expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(payload, options);
-        expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
-        expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-        expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
-    });
-
     it('finalizes order if order is created and payment is acknowledged', async () => {
         const state = store.getState();
 
