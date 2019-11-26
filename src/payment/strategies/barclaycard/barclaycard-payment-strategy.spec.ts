@@ -18,7 +18,6 @@ import { PaymentRequestOptions } from '../../payment-request-options';
 import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import * as paymentStatusTypes from '../../payment-status-types';
-import { getVaultedInstrument } from '../../payments.mock';
 
 import BarclaycardPaymentStrategy from './barclaycard-payment-strategy';
 
