@@ -84,7 +84,7 @@ export default class HostedInput {
         this._eventListener.stopListen();
     }
 
-    protected _formatChange(value: string): void {
+    protected _formatValue(value: string): void {
         this._input.value = value;
     }
 
@@ -166,7 +166,7 @@ export default class HostedInput {
         this._isTouched = true;
 
         this._validateChange(value);
-        this._formatChange(value);
+        this._formatValue(value);
         this._notifyChange(value);
 
         this._previousValue = value;

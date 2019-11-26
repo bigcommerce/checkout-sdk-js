@@ -1,6 +1,6 @@
 export * from './config-actions';
 
-export { default as Config, StoreConfig } from './config';
+export { default as Config, StoreConfig, StoreProfile } from './config';
 export { default as ConfigActionCreator } from './config-action-creator';
 export { default as ConfigSelector, ConfigSelectorFactory, createConfigSelectorFactory } from './config-selector';
 export { default as configReducer } from './config-reducer';
