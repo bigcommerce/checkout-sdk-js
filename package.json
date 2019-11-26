@@ -47,11 +47,16 @@
     "@bigcommerce/memoize": "^1.0.0",
     "@bigcommerce/request-sender": "^0.3.0",
     "@bigcommerce/script-loader": "^2.1.0",
+    "@types/card-validator": "^4.1.0",
+    "@types/credit-card-type": "^7.0.0",
     "@types/iframe-resizer": "^3.5.6",
     "@types/lodash": "^4.14.139",
     "@types/reselect": "^2.2.0",
     "@types/shallowequal": "^1.1.1",
+    "@types/yup": "^0.26.24",
+    "card-validator": "^6.2.0",
     "core-js": "^3.1.2",
+    "credit-card-type": "^8.3.0",
     "iframe-resizer": "^3.6.2",
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.15",
@@ -59,7 +64,8 @@
     "reselect": "^4.0.0",
     "rxjs": "^6.5.3",
     "shallowequal": "^1.1.0",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
