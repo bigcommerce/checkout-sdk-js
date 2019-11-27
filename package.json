@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
-    "@bigcommerce/bigpay-client": "^5.0.0",
+    "@bigcommerce/bigpay-client": "^5.2.0",
     "@bigcommerce/data-store": "^1.0.1",
     "@bigcommerce/form-poster": "^1.3.0",
     "@bigcommerce/memoize": "^1.0.0",
