@@ -89,6 +89,7 @@ export interface CheckoutSettings {
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
+    isHostedPaymentFormEnabled: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
     isSpamProtectionEnabled: boolean;
@@ -110,6 +111,7 @@ export interface ContextConfig {
     geoCountryCode: string;
     flashMessages: any[];
     payment: {
+        formId?: string;
         token?: string;
     };
 }

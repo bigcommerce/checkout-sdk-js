@@ -131,7 +131,7 @@ export function getBraintreeRequestData(): BraintreeRequestData {
                 },
                 cardholderName: 'BigCommerce',
                 cvv: '123',
-                expirationDate: '10/20',
+                expirationDate: '10/2020',
                 number: '4111111111111111',
                 options: {
                     validate: false,

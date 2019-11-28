@@ -4,6 +4,8 @@ import { getCheckoutStoreStateWithOrder, getCheckoutWithGiftCertificates } from 
 import { MissingDataError } from '../common/error/errors';
 import { getConfig } from '../config/configs.mock';
 import { getCustomer } from '../customer/customers.mock';
+import { HostedFieldType } from '../hosted-form';
+import { getHostedFormOrderData } from '../hosted-form/hosted-form-order-data.mock';
 import { getOrder, getOrderMeta } from '../order/orders.mock';
 import { getConsignments } from '../shipping/consignments.mock';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
@@ -116,5 +118,20 @@ describe('PaymentRequestTransformer', () => {
         const paymentRequestBodyResponse = paymentRequestTransformer.transform(payment, selectors);
 
         expect(paymentRequestBodyResponse.paymentMethod).toEqual(expectedPaymentRequestBody.paymentMethod);
+    });
+
+    it('transforms from hosted form data', () => {
+        const result = paymentRequestTransformer.transformWithHostedFormData(
+            {
+                [HostedFieldType.CardNumber]: '4111 1111 1111 1111',
+                [HostedFieldType.CardCode]: '123',
+                [HostedFieldType.CardName]: 'BigCommerce',
+                [HostedFieldType.CardExpiry]: '10 / 20',
+            },
+            getHostedFormOrderData()
+        );
+
+        expect(result)
+            .toEqual(getPaymentRequestBody());
     });
 });

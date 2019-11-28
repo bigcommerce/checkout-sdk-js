@@ -11,6 +11,7 @@ const assetConfig = {
         'checkout-sdk': './src/index.ts',
         'checkout-button': './src/bundles/checkout-button.ts',
         'embedded-checkout': './src/bundles/embedded-checkout.ts',
+        'hosted-form': './src/bundles/hosted-form.ts',
         'internal-mappers': './src/bundles/internal-mappers.ts',
     },
 

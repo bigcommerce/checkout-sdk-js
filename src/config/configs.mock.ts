@@ -9,7 +9,9 @@ export function getConfig(): Config {
             checkoutId: '6a6071cc-82ba-45aa-adb0-ebec42d6ff6f',
             flashMessages: [],
             geoCountryCode: 'AU',
-            payment: {},
+            payment: {
+                formId: 'dc030783-6129-4ee3-8e06-6f4270df1527',
+            },
         },
         customization: {
             languageData: [],
@@ -26,6 +28,7 @@ export function getConfig(): Config {
                 googleRecaptchaSitekey: 'sitekey',
                 isAnalyticsEnabled: false,
                 isCardVaultingEnabled: true,
+                isHostedPaymentFormEnabled: false,
                 isPaymentRequestEnabled: false,
                 isPaymentRequestCanMakePaymentEnabled: false,
                 isCouponCodeCollapsed: true,
