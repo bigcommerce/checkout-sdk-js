@@ -27,9 +27,7 @@ export default class BarclaycardPaymentStrategy implements PaymentStrategy {
         return await this._store.dispatch(this._paymentActionCreator.initializeOffsitePayment(
             payment.methodId,
             payment.gatewayId,
-            {
-                ...paymentData,
-            }));
+            paymentData));
     }
 
     finalize(options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
