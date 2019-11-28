@@ -5,6 +5,7 @@ import { getScriptLoader, getStylesheetLoader } from '@bigcommerce/script-loader
 import { BillingAddressActionCreator, BillingAddressRequestSender } from '../billing';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../checkout';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { GoogleRecaptcha, SpamProtectionActionCreator } from '../order/spam-protection';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
@@ -67,6 +68,7 @@ export default function createPaymentStrategyRegistry(
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
     const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
     const formPoster = createFormPoster();
+    const hostedFormFactory = new HostedFormFactory(store);
 
     registry.register(PaymentStrategyType.ADYENV2, () =>
         new AdyenV2PaymentStrategy(
@@ -115,7 +117,8 @@ export default function createPaymentStrategyRegistry(
         new CreditCardPaymentStrategy(
             store,
             orderActionCreator,
-            paymentActionCreator
+            paymentActionCreator,
+            hostedFormFactory
         )
     );
 
@@ -306,6 +309,7 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
+            hostedFormFactory,
             new WepayRiskClient(scriptLoader)
         )
     );

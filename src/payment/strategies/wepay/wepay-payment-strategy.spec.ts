@@ -6,6 +6,7 @@ import { merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
 import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
+import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
@@ -55,6 +56,7 @@ describe('WepayPaymentStrategy', () => {
             store,
             orderActionCreator,
             paymentActionCreator,
+            new HostedFormFactory(store),
             wepayRiskClient
         );
 

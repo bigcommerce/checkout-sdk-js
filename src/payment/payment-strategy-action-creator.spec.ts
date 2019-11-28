@@ -10,6 +10,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStor
 import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { MissingDataError } from '../common/error/errors';
 import { getCustomerState } from '../customer/customers.mock';
+import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getOrderRequestBody } from '../order/internal-orders.mock';
@@ -59,7 +60,8 @@ describe('PaymentStrategyActionCreator', () => {
                 new PaymentRequestSender(createPaymentClient()),
                 orderActionCreator,
                 new PaymentRequestTransformer()
-            )
+            ),
+            new HostedFormFactory(store)
         );
         noPaymentDataStrategy = new NoPaymentDataRequiredPaymentStrategy(
             store,
