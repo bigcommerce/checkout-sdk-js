@@ -10,7 +10,7 @@ import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 
-type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onValidateError'>;
+type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onValidate'>;
 
 export default class HostedForm {
     constructor(
@@ -19,12 +19,12 @@ export default class HostedForm {
         private _payloadTransformer: HostedFormOrderDataTransformer,
         eventCallbacks: HostedFormEventCallbacks
     ) {
-        const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidateError: onValidateError = noop } = eventCallbacks;
+        const { onBlur = noop, onCardTypeChange = noop, onFocus = noop, onValidate = noop } = eventCallbacks;
 
         this._eventListener.addListener(HostedInputEventType.Blurred, ({ payload }) => onBlur(payload));
         this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => onCardTypeChange(payload));
         this._eventListener.addListener(HostedInputEventType.Focused, ({ payload }) => onFocus(payload));
-        this._eventListener.addListener(HostedInputEventType.ValidateFailed, ({ payload }) => onValidateError(payload));
+        this._eventListener.addListener(HostedInputEventType.Validated, ({ payload }) => onValidate(payload));
     }
 
     async attach(): Promise<void> {
@@ -50,6 +50,10 @@ export default class HostedForm {
             this._fields.map(field => field.getType()),
             this._payloadTransformer.transform(payload)
         );
+    }
+
+    async validate(): Promise<void> {
+        return await this._getNumberField().validate();
     }
 
     private _getNumberField(): HostedField {

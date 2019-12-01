@@ -9,7 +9,7 @@ import { getHostedFormOrderData } from './hosted-form-order-data.mock';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 
 describe('HostedForm', () => {
-    let callbacks: Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onValidateError'>;
+    let callbacks: Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onValidate'>;
     let eventListener: IframeEventListener<HostedInputEventMap>;
     let fields: HostedField[];
     let form: HostedForm;
@@ -27,7 +27,7 @@ describe('HostedForm', () => {
             onBlur: jest.fn(),
             onFocus: jest.fn(),
             onCardTypeChange: jest.fn(),
-            onValidateError: jest.fn(),
+            onValidate: jest.fn(),
         };
 
         fields = [
@@ -118,16 +118,23 @@ describe('HostedForm', () => {
             .toHaveBeenCalledWith({ cardType: 'visa' });
     });
 
-    it('notifies when validation fails', () => {
-        eventListener.trigger({
-            type: HostedInputEventType.ValidateFailed,
-            payload: { errors: [{ fieldType: HostedFieldType.CardCode, message: 'Missing required data' }] },
-        });
+    it('notifies when validation happens', () => {
+        const payload = {
+            isValid: false,
+            errors: {
+                cardCode: [
+                    { fieldType: HostedFieldType.CardCode, type: 'required', message: 'Missing required data' },
+                ],
+                cardExpiry: [],
+                cardName: [],
+                cardNumber: [],
+            },
+        };
 
-        expect(callbacks.onValidateError)
-            .toHaveBeenCalledWith({
-                errors: [{ fieldType: HostedFieldType.CardCode, message: 'Missing required data' }],
-            });
+        eventListener.trigger({ type: HostedInputEventType.Validated, payload });
+
+        expect(callbacks.onValidate)
+            .toHaveBeenCalledWith(payload);
     });
 
     it('notifies when input receives focus event', () => {

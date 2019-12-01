@@ -1,9 +1,10 @@
 import HostedFieldType from '../hosted-field-type';
 
-export default interface HostedInputValidateErrorData {
-    fieldType: string;
-    message: string;
-    type: string;
+import HostedInputValidateErrorData from './hosted-input-validate-error-data';
+
+export default interface HostedInputValidateResults {
+    errors: HostedInputValidateErrorDataMap;
+    isValid: boolean;
 }
 
 export interface HostedInputValidateErrorDataMap {

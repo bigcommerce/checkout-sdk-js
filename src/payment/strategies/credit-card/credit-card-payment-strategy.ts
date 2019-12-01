@@ -86,7 +86,8 @@ export default class CreditCardPaymentStrategy implements PaymentStrategy {
             throw new PaymentArgumentInvalidError(['payment.methodId']);
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
+        return form.validate()
+            .then(() => this._store.dispatch(this._orderActionCreator.submitOrder(order, options)))
             .then(() => form.submit(payment))
             .then(() => this._store.dispatch(this._orderActionCreator.loadCurrentOrder()));
     }

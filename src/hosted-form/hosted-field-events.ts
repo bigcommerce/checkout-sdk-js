@@ -5,16 +5,19 @@ import HostedFormOrderData from './hosted-form-order-data';
 export enum HostedFieldEventType {
     AttachRequested = 'HOSTED_FIELD:ATTACH_REQUESTED',
     SubmitRequested = 'HOSTED_FIELD:SUBMITTED_REQUESTED',
+    ValidateRequested = 'HOSTED_FIELD:VALIDATE_REQUESTED',
 }
 
 export interface HostedFieldEventMap {
     [HostedFieldEventType.AttachRequested]: HostedFieldAttachEvent;
     [HostedFieldEventType.SubmitRequested]: HostedFieldSubmitRequestEvent;
+    [HostedFieldEventType.ValidateRequested]: HostedFieldValidateRequestEvent;
 }
 
 export type HostedFieldEvent = (
     HostedFieldAttachEvent |
-    HostedFieldSubmitRequestEvent
+    HostedFieldSubmitRequestEvent |
+    HostedFieldValidateRequestEvent
 );
 
 export interface HostedFieldAttachEvent {
@@ -33,4 +36,8 @@ export interface HostedFieldSubmitRequestEvent {
         data: HostedFormOrderData;
         fields: HostedFieldType[];
     };
+}
+
+export interface HostedFieldValidateRequestEvent {
+    type: HostedFieldEventType.ValidateRequested;
 }

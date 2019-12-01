@@ -22,11 +22,11 @@ export default class IframeEventPoster<TEvent> {
     }
 
     post(event: TEvent): void;
-    post<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent>(
+    post<TSuccessEvent extends IframeEvent = IframeEvent, TErrorEvent extends IframeEvent = IframeEvent>(
         event: TEvent,
         options: IframeEventPostOptions<TSuccessEvent, TErrorEvent>
     ): Promise<TSuccessEvent>;
-    post<TSuccessEvent extends IframeEvent, TErrorEvent extends IframeEvent>(
+    post<TSuccessEvent extends IframeEvent = IframeEvent, TErrorEvent extends IframeEvent = IframeEvent>(
         event: TEvent,
         options?: IframeEventPostOptions<TSuccessEvent, TErrorEvent>
     ): Promise<TSuccessEvent> | void {

@@ -2,7 +2,7 @@ import { kebabCase } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { InvalidHostedFormConfigError } from '../errors';
-import { HostedFieldEventMap, HostedFieldEventType, HostedFieldSubmitRequestEvent } from '../hosted-field-events';
+import { HostedFieldEventMap, HostedFieldEventType, HostedFieldValidateRequestEvent } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
 import HostedInputAggregator from './hosted-input-aggregator';
@@ -14,7 +14,6 @@ import HostedInputWindow from './hosted-input-window';
 export default class HostedInput {
     protected _input: HTMLInputElement;
     protected _previousValue?: string;
-    private _isSubmitted: boolean = false;
     private _isTouched: boolean = false;
 
     /**
@@ -37,7 +36,7 @@ export default class HostedInput {
         this._input.addEventListener('input', this._handleInput);
         this._input.addEventListener('blur', this._handleBlur);
         this._input.addEventListener('focus', this._handleFocus);
-        this._eventListener.addListener(HostedFieldEventType.SubmitRequested, this._handleSubmit);
+        this._eventListener.addListener(HostedFieldEventType.ValidateRequested, this._handleValidate);
 
         this._configureInput();
     }
@@ -133,28 +132,21 @@ export default class HostedInput {
         });
     }
 
-    private async _validateChange(value: string): Promise<void> {
-        if (!this._isSubmitted) {
-            return;
-        }
+    private async _validateForm(): Promise<void> {
+        const values = this._inputAggregator.getInputValues();
+        const results = await this._inputValidator.validate(values, {
+            isCardCodeRequired: HostedFieldType.CardCode in values,
+        });
 
-        const values = {
-            ...this._inputAggregator.getInputValues(field => field.isTouched()),
-            [this._type]: value,
-        };
-        const errors = await this._inputValidator.validate(values, { isCardCodeRequired: HostedFieldType.CardCode in values });
-
-        if (!errors.length) {
+        if (results.isValid) {
             this._applyStyles(this._styles.default);
-
-            return;
+        } else {
+            this._applyStyles(this._styles.error);
         }
-
-        this._applyStyles(this._styles.error);
 
         this._eventPoster.post({
-            type: HostedInputEventType.ValidateFailed,
-            payload: { errors },
+            type: HostedInputEventType.Validated,
+            payload: results,
         });
     }
 
@@ -165,7 +157,7 @@ export default class HostedInput {
 
         this._isTouched = true;
 
-        this._validateChange(value);
+        this._validateForm();
         this._formatValue(value);
         this._notifyChange(value);
 
@@ -180,6 +172,7 @@ export default class HostedInput {
 
     private _handleBlur: (event: Event) => void = () => {
         this._applyStyles(this._styles.default);
+        this._validateForm();
 
         this._eventPoster.post({
             type: HostedInputEventType.Blurred,
@@ -200,7 +193,7 @@ export default class HostedInput {
         });
     };
 
-    private _handleSubmit: (event: HostedFieldSubmitRequestEvent) => void = () => {
-        this._isSubmitted = true;
+    private _handleValidate: (event: HostedFieldValidateRequestEvent) => void = () => {
+        this._validateForm();
     };
 }

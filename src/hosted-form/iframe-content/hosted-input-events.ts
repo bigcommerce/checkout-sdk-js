@@ -2,7 +2,7 @@ import { PaymentErrorData } from '../../common/error';
 import HostedFieldType from '../hosted-field-type';
 
 import HostedInputInitializeErrorData from './hosted-input-initialize-error-data';
-import HostedInputValidateErrorData from './hosted-input-validate-error-data';
+import HostedInputValidateResults from './hosted-input-validate-results';
 
 // Event types
 export enum HostedInputEventType {
@@ -14,7 +14,7 @@ export enum HostedInputEventType {
     Focused = 'HOSTED_INPUT:FOCUSED',
     SubmitSucceeded = 'HOSTED_INPUT:SUBMIT_SUCCEEDED',
     SubmitFailed = 'HOSTED_INPUT:SUBMIT_FAILED',
-    ValidateFailed = 'HOSTED_INPUT:VALIDATE_FAILED',
+    Validated = 'HOSTED_INPUT:VALIDATED',
 }
 
 // Event mapping
@@ -27,7 +27,7 @@ export interface HostedInputEventMap {
     [HostedInputEventType.Focused]: HostedInputFocusEvent;
     [HostedInputEventType.SubmitSucceeded]: HostedInputSubmitSuccessEvent;
     [HostedInputEventType.SubmitFailed]: HostedInputSubmitErrorEvent;
-    [HostedInputEventType.ValidateFailed]: HostedInputValidateErrorEvent;
+    [HostedInputEventType.Validated]: HostedInputValidateEvent;
 }
 
 // Events
@@ -40,7 +40,7 @@ export type HostedInputEvent = (
     HostedInputFocusEvent |
     HostedInputSubmitSuccessEvent |
     HostedInputSubmitErrorEvent |
-    HostedInputValidateErrorEvent
+    HostedInputValidateEvent
 );
 
 export interface HostedInputAttachSuccessEvent {
@@ -93,9 +93,7 @@ export interface HostedInputSubmitErrorEvent {
     };
 }
 
-export interface HostedInputValidateErrorEvent {
-    type: HostedInputEventType.ValidateFailed;
-    payload: {
-        errors: HostedInputValidateErrorData[];
-    };
+export interface HostedInputValidateEvent {
+    type: HostedInputEventType.Validated;
+    payload: HostedInputValidateResults;
 }

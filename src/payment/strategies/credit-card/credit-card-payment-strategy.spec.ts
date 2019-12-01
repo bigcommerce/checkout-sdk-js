@@ -100,7 +100,7 @@ describe('CreditCardPaymentStrategy', () => {
     });
 
     describe('when hosted form is enabled', () => {
-        let form: Pick<HostedForm, 'attach' | 'submit'>;
+        let form: Pick<HostedForm, 'attach' | 'submit' | 'validate'>;
         let initializeOptions: PaymentInitializeOptions;
         let loadOrderAction: Observable<LoadOrderSucceededAction>;
         let state: InternalCheckoutSelectors;
@@ -109,6 +109,7 @@ describe('CreditCardPaymentStrategy', () => {
             form = {
                 attach: jest.fn(() => Promise.resolve()),
                 submit: jest.fn(() => Promise.resolve()),
+                validate: jest.fn(() => Promise.resolve()),
             };
             initializeOptions = {
                 creditCard: {
@@ -163,7 +164,29 @@ describe('CreditCardPaymentStrategy', () => {
             await strategy.initialize(initializeOptions);
             await strategy.execute(payload);
 
-            expect(form.submit).toHaveBeenCalledWith(payload.payment);
+            expect(form.submit)
+                .toHaveBeenCalledWith(payload.payment);
+        });
+
+        it('validates user input before submitting data', async () => {
+            await strategy.initialize(initializeOptions);
+            await strategy.execute(getOrderRequestBody());
+
+            expect(form.validate)
+                .toHaveBeenCalled();
+        });
+
+        it('does not submit payment data with hosted form if validation fails', async () => {
+            jest.spyOn(form, 'validate')
+                .mockRejectedValue(new Error());
+
+            try {
+                await strategy.initialize(initializeOptions);
+                await strategy.execute(getOrderRequestBody());
+            } catch (error) {
+                expect(form.submit)
+                    .not.toHaveBeenCalled();
+            }
         });
 
         it('loads current order after payment submission', async () => {

@@ -10,6 +10,7 @@ import { getHostedFormOrderData } from '../hosted-form-order-data.mock';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import HostedInputPaymentHandler from './hosted-input-payment-handler';
+import HostedInputValidateResults from './hosted-input-validate-results';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
 
@@ -23,6 +24,7 @@ describe('HostedInputPaymentHandler', () => {
     let requestSender: Pick<PaymentRequestSender, 'submitPayment'>;
     let requestTransformer: Pick<PaymentRequestTransformer, 'transformWithHostedFormData'>;
     let values: HostedInputValues;
+    let validationResults: HostedInputValidateResults;
 
     beforeEach(() => {
         inputAggregator = { getInputValues: jest.fn() };
@@ -55,8 +57,21 @@ describe('HostedInputPaymentHandler', () => {
             [HostedFieldType.CardNumber]: '4111 1111 1111 1111',
         };
 
+        validationResults = {
+            isValid: true,
+            errors: {
+                cardCode: [],
+                cardExpiry: [],
+                cardName: [],
+                cardNumber: [],
+            },
+        };
+
         jest.spyOn(inputAggregator, 'getInputValues')
             .mockReturnValue(values);
+
+        jest.spyOn(inputValidator, 'validate')
+            .mockReturnValue(validationResults);
 
         jest.spyOn(requestSender, 'submitPayment')
             .mockResolvedValue(getResponse(getPaymentResponseBody()));
@@ -74,11 +89,19 @@ describe('HostedInputPaymentHandler', () => {
             .toHaveBeenCalledWith(values, { isCardCodeRequired: false });
     });
 
-    it('posts event if validation fails', async () => {
+    it('posts event when validation happens', async () => {
+        const results = {
+            isValid: false,
+            errors: {
+                ...validationResults.errors,
+                cardNumber: [
+                    { fieldType: HostedFieldType.CardNumber, message: 'Card number is required' },
+                ],
+            },
+        };
+
         jest.spyOn(inputValidator, 'validate')
-            .mockResolvedValue([
-                { fieldType: HostedFieldType.CardNumber, message: 'Card number is required' },
-            ]);
+            .mockResolvedValue(results);
 
         jest.spyOn(eventPoster, 'post');
 
@@ -89,12 +112,8 @@ describe('HostedInputPaymentHandler', () => {
 
         expect(eventPoster.post)
             .toHaveBeenCalledWith({
-                type: HostedInputEventType.ValidateFailed,
-                payload: {
-                    errors: [
-                        { fieldType: HostedFieldType.CardNumber, message: 'Card number is required' },
-                    ],
-                },
+                type: HostedInputEventType.Validated,
+                payload: results,
             });
     });
 
