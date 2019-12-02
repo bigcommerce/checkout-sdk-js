@@ -1,7 +1,5 @@
 # @bigcommerce/checkout-sdk
 
-[![CircleCI](https://circleci.com/gh/bigcommerce/checkout-sdk-js/tree/master.svg?style=svg)](https://circleci.com/gh/bigcommerce/checkout-sdk-js/tree/master)
-
 Checkout JS SDK provides you with the tools you need to build your own checkout solution for a BigCommerce store.
 
 The SDK has a convenient application interface for starting and completing a checkout flow. Behind the interface, it handles all the necessary interactions with our Storefront APIs and other payment SDKs. So you can focus on creating a checkout experience that is unique to your business.
