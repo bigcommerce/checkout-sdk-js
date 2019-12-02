@@ -53,6 +53,7 @@ export default class HostedInputInitializer {
 
                 node.style.height = '100%';
                 node.style.width = '100%';
+                node.style.overflow = 'hidden';
                 node.style.padding = '0';
                 node.style.margin = '0';
             });

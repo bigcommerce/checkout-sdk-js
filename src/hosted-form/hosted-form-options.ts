@@ -1,5 +1,5 @@
 import HostedFieldType from './hosted-field-type';
-import { HostedInputBlurEvent, HostedInputCardTypeChangeEvent, HostedInputFocusEvent, HostedInputStyles, HostedInputValidateErrorEvent } from './iframe-content';
+import { HostedInputBlurEvent, HostedInputCardTypeChangeEvent, HostedInputFocusEvent, HostedInputStyles, HostedInputValidateEvent } from './iframe-content';
 
 export default interface HostedFormOptions {
     fields: HostedFieldOptionsMap;
@@ -7,13 +7,13 @@ export default interface HostedFormOptions {
     onBlur?(data: HostedFieldBlurEventData): void;
     onCardTypeChange?(data: HostedFieldCardTypeChangeEventData): void;
     onFocus?(data: HostedFieldFocusEventData): void;
-    onValidateError?(data: HostedFieldValidateErrorEventData): void;
+    onValidate?(data: HostedFieldValidateEventData): void;
 }
 
 export type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
 export type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent['payload'];
 export type HostedFieldFocusEventData = HostedInputFocusEvent['payload'];
-export type HostedFieldValidateErrorEventData = HostedInputValidateErrorEvent['payload'];
+export type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
 export interface HostedFieldOptionsMap {
     [HostedFieldType.CardCode]?: HostedFieldOptions;

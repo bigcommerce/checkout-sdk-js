@@ -4,6 +4,7 @@ import { snakeCase } from 'lodash';
 import { PaymentErrorResponseBody } from '../../common/error';
 import { IframeEventPoster } from '../../common/iframe';
 import { PaymentRequestSender, PaymentRequestTransformer } from '../../payment';
+import { InvalidHostedFormValueError } from '../errors';
 import { HostedFieldSubmitRequestEvent } from '../hosted-field-events';
 
 import HostedInputAggregator from './hosted-input-aggregator';
@@ -21,14 +22,23 @@ export default class HostedInputPaymentHandler {
 
     handle: (event: HostedFieldSubmitRequestEvent) => Promise<void> = async ({ payload: { data, fields } }) => {
         const values = this._inputAggregator.getInputValues(field => fields.indexOf(field.getType()) !== -1);
-        const errors = await this._inputValidator.validate(values, {
+        const results = await this._inputValidator.validate(values, {
             isCardCodeRequired: data.paymentMethod && data.paymentMethod.config.cardCode === true,
         });
 
-        if (errors.length > 0) {
+        this._eventPoster.post({
+            type: HostedInputEventType.Validated,
+            payload: results,
+        });
+
+        if (!results.isValid) {
+            const error = new InvalidHostedFormValueError(results.errors);
+
             return this._eventPoster.post({
-                type: HostedInputEventType.ValidateFailed,
-                payload: { errors },
+                type: HostedInputEventType.SubmitFailed,
+                payload: {
+                    error: { code: snakeCase(error.name), message: error.message },
+                },
             });
         }
 

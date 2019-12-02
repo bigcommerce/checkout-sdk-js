@@ -1,6 +1,8 @@
+import { EventEmitter } from 'events';
+
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { InvalidHostedFormConfigError } from '../errors';
-import { HostedFieldEventMap } from '../hosted-field-events';
+import { HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
 import HostedInput from './hosted-input';
@@ -8,33 +10,62 @@ import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
+import HostedInputValues from './hosted-input-values';
 
 describe('HostedInput', () => {
     let container: HTMLDivElement;
+    let eventEmitter: EventEmitter;
     let eventListener: Pick<IframeEventListener<HostedFieldEventMap>, 'addListener' | 'listen' | 'stopListen'>;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'setTarget' | 'post'>;
     let input: HostedInput;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
     let styles: HostedInputStylesMap;
+    let values: HostedInputValues;
 
     beforeEach(() => {
-        eventListener = {
-            addListener: jest.fn(),
-            listen: jest.fn(),
-            stopListen: jest.fn(),
+        values = {
+            cardCode: '123',
+            cardExpiry: '10 / 20',
+            cardName: 'Good Shopper',
+            cardNumber: '4111 1111 1111 1111',
         };
-        eventPoster = {
-            post: jest.fn(),
-            setTarget: jest.fn(),
-        };
-        inputAggregator = { getInputValues: jest.fn() };
-        inputValidator = { validate: jest.fn() };
+
         styles = {
             default: {
                 color: 'rgb(255, 255, 255)',
                 fontSize: '15px',
             },
+        };
+
+        eventEmitter = new EventEmitter();
+
+        eventListener = {
+            addListener: jest.fn((type, listener) => {
+                eventEmitter.on(type, listener);
+            }),
+            listen: jest.fn(),
+            stopListen: jest.fn(),
+        };
+
+        eventPoster = {
+            post: jest.fn(),
+            setTarget: jest.fn(),
+        };
+
+        inputAggregator = {
+            getInputValues: jest.fn(() => values),
+        };
+
+        inputValidator = {
+            validate: jest.fn(() => Promise.resolve({
+                isValid: true,
+                errors: {
+                    cardExpiry: [],
+                    cardName: [],
+                    cardNumber: [],
+                },
+            })),
         };
 
         input = new HostedInput(
@@ -191,6 +222,31 @@ describe('HostedInput', () => {
                 payload: {
                     fieldType: HostedFieldType.CardName,
                 },
+            });
+    });
+
+    it('validates form when input loses focus', () => {
+        input.attach();
+
+        // tslint:disable-next-line:no-non-null-assertion
+        const element = container.querySelector('input')!;
+
+        element.dispatchEvent(new Event('blur', { bubbles: true }));
+
+        expect(inputValidator.validate)
+            .toHaveBeenCalledWith(values, {
+                isCardCodeRequired: true,
+            });
+    });
+
+    it('validates form when requested by parent frame', () => {
+        input.attach();
+
+        eventEmitter.emit(HostedFieldEventType.ValidateRequested);
+
+        expect(inputValidator.validate)
+            .toHaveBeenCalledWith(values, {
+                isCardCodeRequired: true,
             });
     });
 

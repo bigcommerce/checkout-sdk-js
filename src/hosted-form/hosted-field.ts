@@ -3,12 +3,12 @@ import { catchError, switchMap, take } from 'rxjs/operators';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 
-import { InvalidHostedFormConfigError, InvalidHostedFormError } from './errors';
+import { InvalidHostedFormConfigError, InvalidHostedFormError, InvalidHostedFormValueError } from './errors';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
-import { HostedInputAttachErrorEvent, HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent } from './iframe-content';
+import { HostedInputAttachErrorEvent, HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent, HostedInputValidateEvent } from './iframe-content';
 
 export default class HostedField {
     private _iframe: HTMLIFrameElement;
@@ -109,6 +109,18 @@ export default class HostedField {
             }
 
             throw event;
+        }
+    }
+
+    async validate(): Promise<void> {
+        const { payload } = await this._eventPoster.post<HostedInputValidateEvent>({
+            type: HostedFieldEventType.ValidateRequested,
+        }, {
+            successType: HostedInputEventType.Validated,
+        });
+
+        if (!payload.isValid) {
+            throw new InvalidHostedFormValueError(payload.errors);
         }
     }
 
