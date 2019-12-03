@@ -12,10 +12,10 @@ import { CouponActionCreator, GiftCertificateActionCreator } from '../coupon';
 import { CustomerCredentials, CustomerInitializeOptions, CustomerRequestOptions, CustomerStrategyActionCreator, GuestCredentials } from '../customer';
 import { CountryActionCreator } from '../geography';
 import { OrderActionCreator, OrderRequestBody } from '../order';
-import { SpamProtectionActionCreator, SpamProtectionOptions } from '../order/spam-protection';
 import { PaymentInitializeOptions, PaymentMethodActionCreator, PaymentRequestOptions, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator } from '../payment/instrument';
 import { ConsignmentsRequestBody, ConsignmentActionCreator, ConsignmentAssignmentRequestBody, ConsignmentUpdateRequestBody, ShippingCountryActionCreator, ShippingInitializeOptions, ShippingRequestOptions, ShippingStrategyActionCreator } from '../shipping';
+import { SpamProtectionActionCreator, SpamProtectionOptions } from '../spam-protection';
 import { StoreCreditActionCreator } from '../store-credit';
 
 import { CheckoutRequestBody } from './checkout';
@@ -858,7 +858,7 @@ export default class CheckoutService {
      * Selects a shipping option for a given consignment.
      *
      * Note: this is used when items need to be shipped to multiple addresses,
-     * for single shipping address, use `CheckoutService#updateShippingAddres`.
+     * for single shipping address, use `CheckoutService#updateShippingAddress`.
      *
      * If a shipping option has an additional cost, the quote for the current
      * order will be adjusted once the option is selected.
@@ -1078,23 +1078,54 @@ export default class CheckoutService {
     /**
      * Initializes the spam protection for order creation.
      *
+     * Note: Use `CheckoutService#executeSpamCheck` instead.
+     * You do not need to call this method before calling
+     * `CheckoutService#executeSpamCheck`.
+     *
      * With spam protection enabled, the customer has to be verified as
      * a human. The order creation will fail if spam protection
      * is enabled but verification fails.
      *
      * ```js
-     * await service.initializeSpamProtection({
-     *     containerId: 'spamProtectionContainer',
-     * });
+     * await service.initializeSpamProtection();
      * ```
      *
      * @param options - Options for initializing spam protection.
      * @returns A promise that resolves to the current state.
+     * @deprecated - Use CheckoutService#executeSpamCheck instead.
      */
     initializeSpamProtection(options: SpamProtectionOptions): Promise<CheckoutSelectors> {
         const action = this._spamProtectionActionCreator.initialize(options);
 
         return this._dispatch(action, { queueId: 'spamProtection' });
+    }
+
+    /**
+     * Verifies whether the current checkout is created by a human.
+     *
+     * Note: this method will do the initialization, therefore you do not
+     * need to call `CheckoutService#initializeSpamProtection`
+     * before calling this method.
+     *
+     * With spam protection enabled, the customer has to be verified as
+     * a human. The order creation will fail if spam protection
+     * is enabled but verification fails.
+     *
+     * ```js
+     * await service.executeSpamCheck();
+     * ```
+     *
+     * @returns A promise that resolves to the current state.
+     */
+    executeSpamCheck(): Promise<CheckoutSelectors> {
+        const action = this._spamProtectionActionCreator.initialize();
+
+        return this._dispatch(action, { queueId: 'spamProtection' })
+            .then(() => {
+                const action = this._spamProtectionActionCreator.execute();
+
+                return this._dispatch(action, { queueId: 'spamProtection' });
+            });
     }
 
     /**

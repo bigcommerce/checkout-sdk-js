@@ -14,7 +14,7 @@ import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../orde
 import { OrderFinalizationNotRequiredError } from '../order/errors';
 import { getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrderState } from '../order/orders.mock';
-import { createSpamProtection, GoogleRecaptcha, SpamProtectionActionCreator, SpamProtectionActionType } from '../order/spam-protection';
+import { createSpamProtection, GoogleRecaptcha, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionRequestSender } from '../spam-protection';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentActionCreator from './payment-action-creator';
@@ -39,6 +39,8 @@ describe('PaymentStrategyActionCreator', () => {
     let store: CheckoutStore;
     let strategy: PaymentStrategy;
     let noPaymentDataStrategy: PaymentStrategy;
+    let spamProtectionActionCreator: SpamProtectionActionCreator;
+    let actionCreator: PaymentStrategyActionCreator;
 
     beforeEach(() => {
         state = getCheckoutStoreState();
@@ -49,8 +51,7 @@ describe('PaymentStrategyActionCreator', () => {
         registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(requestSender),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(spamProtection)
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         strategy = new CreditCardPaymentStrategy(
             store,
@@ -65,6 +66,11 @@ describe('PaymentStrategyActionCreator', () => {
             store,
             orderActionCreator
         );
+        spamProtectionActionCreator = new SpamProtectionActionCreator(
+            spamProtection,
+            new SpamProtectionRequestSender(requestSender)
+        );
+        actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
 
         jest.spyOn(registry, 'getByMethod')
             .mockReturnValue(strategy);
@@ -77,7 +83,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('finds payment strategy by method', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
@@ -87,7 +92,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('initializes payment strategy', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
@@ -101,7 +105,6 @@ describe('PaymentStrategyActionCreator', () => {
                 paymentStrategies: { data: { amazon: { isInitialized: true } } },
             }));
 
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const strategy = registry.get(PaymentStrategyType.AMAZON);
 
             jest.spyOn(strategy, 'initialize')
@@ -116,7 +119,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits action to notify initialization progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const actions = await from(actionCreator.initialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .pipe(toArray())
@@ -129,7 +131,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to initialize', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const initializeError = new Error();
             const errorHandler = jest.fn(action => of(action));
@@ -152,8 +153,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('throws error if payment method has not been loaded', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-
             try {
                 await from(actionCreator.initialize({ methodId: 'unknown' })(store)).toPromise();
             } catch (action) {
@@ -175,8 +174,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('finds payment strategy by method', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-
             await from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toPromise();
 
@@ -184,8 +181,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('deinitializes payment strategy', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-
             await from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .toPromise();
 
@@ -193,7 +188,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('does not deinitialize if strategy is not initialized', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const strategy = registry.get(PaymentStrategyType.AMAZON);
 
             jest.spyOn(strategy, 'deinitialize')
@@ -206,7 +200,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits action to notify deinitialization progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const actions = await from(actionCreator.deinitialize({ methodId: method.id, gatewayId: method.gateway })(store))
                 .pipe(toArray())
                 .toPromise();
@@ -218,7 +211,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to deinitialize', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const deinitializeError = new Error();
             const errorHandler = jest.fn(action => of(action));
 
@@ -240,8 +232,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('throws error if payment method has not been loaded', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-
             try {
                 await from(actionCreator.deinitialize({ methodId: 'unknown' })(store)).toPromise();
             } catch (action) {
@@ -252,10 +242,10 @@ describe('PaymentStrategyActionCreator', () => {
 
     describe('#execute()', () => {
         beforeEach(() => {
-            jest.spyOn(orderActionCreator, 'executeSpamProtection')
+            jest.spyOn(spamProtectionActionCreator, 'execute')
                 .mockReturnValue(() => from([
                     createAction(SpamProtectionActionType.ExecuteRequested),
-                    createAction(SpamProtectionActionType.Completed, { token: 'spamProtectionToken' }),
+                    createAction(SpamProtectionActionType.ExecuteSucceeded),
                 ]));
 
             jest.spyOn(strategy, 'execute')
@@ -266,7 +256,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('finds payment strategy by method', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await from(actionCreator.execute(getOrderRequestBody())(store))
@@ -276,7 +265,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('executes payment strategy', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
 
             await from(actionCreator.execute(payload)(store))
@@ -292,7 +280,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits action to load order and notify execution progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
             const methodId = payload.payment && payload.payment.methodId;
             const actions = await from(actionCreator.execute(payload)(store))
@@ -301,14 +288,13 @@ describe('PaymentStrategyActionCreator', () => {
 
             expect(actions).toEqual([
                 { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
+                { type: SpamProtectionActionType.ExecuteSucceeded },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteSucceeded, meta: { methodId } },
             ]);
         });
 
         it('emits error action if unable to execute', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const payload = getOrderRequestBody();
             const methodId = payload.payment && payload.payment.methodId;
             const executeError = new Error();
@@ -327,7 +313,7 @@ describe('PaymentStrategyActionCreator', () => {
             expect(errorHandler).toHaveBeenCalled();
             expect(actions).toEqual([
                 { type: SpamProtectionActionType.ExecuteRequested },
-                { type: SpamProtectionActionType.Completed, payload: { token: 'spamProtectionToken' } },
+                { type: SpamProtectionActionType.ExecuteSucceeded },
                 { type: PaymentStrategyActionType.ExecuteRequested, meta: { methodId } },
                 { type: PaymentStrategyActionType.ExecuteFailed, error: true, payload: executeError, meta: { methodId } },
             ]);
@@ -340,7 +326,7 @@ describe('PaymentStrategyActionCreator', () => {
             });
             registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
 
             try {
                 await from(actionCreator.execute(getOrderRequestBody())(store)).toPromise();
@@ -364,7 +350,7 @@ describe('PaymentStrategyActionCreator', () => {
             jest.spyOn(registry, 'get')
                 .mockReturnValue(noPaymentDataStrategy);
 
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
             const payload = { ...getOrderRequestBody(), useStoreCredit: true };
 
             await from(actionCreator.execute(payload)(store))
@@ -394,7 +380,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('finds payment strategy by method', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
 
             await from(actionCreator.finalize()(store))
@@ -404,8 +389,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('finalizes order using payment strategy', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-
             await from(actionCreator.finalize()(store))
                 .toPromise();
 
@@ -413,8 +396,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('loads payment data for current order', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
-
             await from(actionCreator.finalize()(store))
                 .toPromise();
 
@@ -422,7 +403,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits action to load order and notify finalization progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const actions = await from(actionCreator.finalize()(store))
                 .pipe(toArray())
@@ -436,7 +416,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits error action if unable to finalize', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const method = getPaymentMethod();
             const finalizeError = new Error();
             const errorHandler = jest.fn(action => of(action));
@@ -466,7 +445,7 @@ describe('PaymentStrategyActionCreator', () => {
             });
             registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
 
             try {
                 await from(actionCreator.finalize()(store)).toPromise();
@@ -486,7 +465,7 @@ describe('PaymentStrategyActionCreator', () => {
             });
             registry = createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, 'en_US');
 
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
 
             try {
                 await from(actionCreator.finalize()(store)).toPromise();
@@ -498,7 +477,6 @@ describe('PaymentStrategyActionCreator', () => {
 
     describe('#widgetInteraction()', () => {
         it('executes widget interaction callback', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const options = { methodId: 'default' };
             const fakeMethod = jest.fn(() => Promise.resolve());
             await from(actionCreator.widgetInteraction(fakeMethod, options))
@@ -509,7 +487,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits action to notify widget interaction in progress', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const actions = await from(actionCreator.widgetInteraction(jest.fn(() => Promise.resolve()), { methodId: 'default' }))
                 .pipe(toArray())
                 .toPromise();
@@ -521,7 +498,6 @@ describe('PaymentStrategyActionCreator', () => {
         });
 
         it('emits error action if widget interaction fails', async () => {
-            const actionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
             const signInError = new Error();
             const errorHandler = jest.fn(action => of(action));
 

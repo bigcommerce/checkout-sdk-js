@@ -1,7 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction, Action } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -15,7 +14,6 @@ import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSend
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrderState } from '../../../order/orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { getAffirm, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { getConsignmentsState } from '../../../shipping/consignments.mock';
 import { PaymentArgumentInvalidError, PaymentMethodCancelledError, PaymentMethodInvalidError } from '../../errors';
@@ -67,8 +65,7 @@ describe('AffirmPaymentStrategy', () => {
         checkoutRequestSender = new CheckoutRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(checkoutRequestSender),
-            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
+            new CheckoutValidator(checkoutRequestSender)
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),

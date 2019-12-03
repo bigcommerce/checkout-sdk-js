@@ -88,6 +88,7 @@ export function getCheckoutMock(): Checkout {
         isStoreCreditApplied: false,
         shippingCostTotal: 0,
         shippingCostBeforeDiscount: 0,
+        shouldExecuteSpamCheck: false,
         handlingCostTotal: 0,
         outstandingBalance: 1,
         taxTotal: 0,

@@ -25,7 +25,6 @@ export function getInternalOrderRequestBody(): InternalOrderRequestBody {
             gateway: payment.gatewayId,
             paymentData: payment.paymentData,
         },
-        spamProtectionToken: 'spamProtectionToken',
     };
 }
 

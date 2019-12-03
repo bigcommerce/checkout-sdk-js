@@ -39,6 +39,7 @@ export function getCheckout(): Checkout {
         discounts: [],
         coupons: [],
         isStoreCreditApplied: false,
+        shouldExecuteSpamCheck: false,
         orderId: 295,
         shippingCostTotal: 15,
         shippingCostBeforeDiscount: 20,

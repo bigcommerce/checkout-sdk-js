@@ -16,6 +16,7 @@ export interface CheckoutErrorsState {
 }
 
 export interface CheckoutStatusesState {
+    isExecutingSpamCheck?: boolean;
     isLoading?: boolean;
     isUpdating?: boolean;
 }

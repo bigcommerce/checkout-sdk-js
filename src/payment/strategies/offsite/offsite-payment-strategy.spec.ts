@@ -1,7 +1,6 @@
 import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
 import { createAction } from '@bigcommerce/data-store';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
 import { merge, omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -11,7 +10,6 @@ import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestB
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getIncompleteOrder, getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import PaymentActionCreator from '../../payment-action-creator';
 import { InitializeOffsitePaymentAction, PaymentActionType } from '../../payment-actions';
 import { PaymentRequestOptions } from '../../payment-request-options';
@@ -36,8 +34,7 @@ describe('OffsitePaymentStrategy', () => {
         store = createCheckoutStore(getCheckoutStoreState());
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),

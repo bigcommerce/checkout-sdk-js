@@ -15,6 +15,7 @@ export default interface CheckoutSelector {
     getOutstandingBalance(useStoreCredit?: boolean): number | undefined;
     getLoadError(): Error | undefined;
     getUpdateError(): Error | undefined;
+    isExecutingSpamCheck(): boolean;
     isLoading(): boolean;
     isUpdating(): boolean;
 }
@@ -97,6 +98,11 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
         error => () => error
     );
 
+    const isExecutingSpamCheck = createSelector(
+        (state: CheckoutState) => state.statuses.isExecutingSpamCheck,
+        isExecutingSpamCheck => () => isExecutingSpamCheck === true
+    );
+
     const isLoading = createSelector(
         (state: CheckoutState) => state.statuses.isLoading,
         isLoading => () => isLoading === true
@@ -135,6 +141,7 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
             }),
             getLoadError: getLoadError(state),
             getUpdateError: getUpdateError(state),
+            isExecutingSpamCheck: isExecutingSpamCheck(state),
             isLoading: isLoading(state),
             isUpdating: isUpdating(state),
         };

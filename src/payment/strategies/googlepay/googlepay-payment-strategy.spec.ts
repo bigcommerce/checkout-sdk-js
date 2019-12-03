@@ -10,8 +10,8 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { getGooglePay, getPaymentMethodsState } from '../../payment-methods.mock';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 
@@ -54,7 +54,11 @@ describe('GooglePayPaymentStrategy', () => {
 
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
-        paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+        paymentStrategyActionCreator = new PaymentStrategyActionCreator(
+            registry,
+            orderActionCreator,
+            new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
+        );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(paymentClient),
             orderActionCreator,
@@ -64,8 +68,7 @@ describe('GooglePayPaymentStrategy', () => {
             paymentClient,
             new CheckoutValidator(
                 new CheckoutRequestSender(requestSender)
-            ),
-            new SpamProtectionActionCreator(spamProtection)
+            )
         );
 
         googlePayPaymentProcessor = createGooglePayPaymentProcessor(

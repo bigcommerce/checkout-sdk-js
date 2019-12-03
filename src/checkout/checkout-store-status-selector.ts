@@ -36,6 +36,13 @@ export default interface CheckoutStoreStatusSelector {
     isUpdatingCheckout(): boolean;
 
     /**
+     * Checks whether spam check is executing.
+     *
+     * @returns True if the current checkout is being updated, otherwise false.
+     */
+    isExecutingSpamCheck(): boolean;
+
+    /**
      * Checks whether the current order is submitting.
      *
      * @returns True if the current order is submitting, otherwise false.
@@ -359,11 +366,11 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
 
     const isSubmittingOrder = createSelector(
         ({ paymentStrategies }: InternalCheckoutSelectors) => paymentStrategies.isExecuting,
-        ({ order }: InternalCheckoutSelectors) => order.isSpamProtectionExecuting,
-        (isExecuting, isSpamProtectionExecuting) => (methodId?: string) => {
+        ({ checkout }: InternalCheckoutSelectors) => checkout.isExecutingSpamCheck, // Remove this when CheckoutService#initializeSpamProtection is deprecated
+        (isExecuting, isExecutingSpamCheck) => (methodId?: string) => {
             return (
                 isExecuting(methodId) ||
-                isSpamProtectionExecuting()
+                isExecutingSpamCheck()
             );
         }
     );
@@ -374,6 +381,7 @@ export function createCheckoutStoreStatusSelectorFactory(): CheckoutStoreStatusS
         const selector = {
             isLoadingCheckout: state.checkout.isLoading,
             isUpdatingCheckout: state.checkout.isUpdating,
+            isExecutingSpamCheck: state.checkout.isExecutingSpamCheck,
             isSubmittingOrder: isSubmittingOrder(state),
             isFinalizingOrder: state.paymentStrategies.isFinalizing,
             isLoadingOrder: state.order.isLoading,

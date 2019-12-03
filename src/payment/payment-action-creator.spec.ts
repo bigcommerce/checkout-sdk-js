@@ -7,7 +7,6 @@ import { getCheckoutStoreStateWithOrder } from '../checkout/checkouts.mock';
 import { getResponse } from '../common/http-request/responses.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../order';
 import { getOrder } from '../order/orders.mock';
-import { SpamProtectionActionCreator } from '../order/spam-protection';
 
 import createPaymentClient from './create-payment-client';
 import PaymentActionCreator from './payment-action-creator';
@@ -39,7 +38,7 @@ describe('PaymentActionCreator', () => {
         jest.spyOn(paymentRequestSender, 'submitPayment')
             .mockReturnValue(Promise.resolve(getResponse(getPaymentResponseBody())));
 
-        orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator, {} as SpamProtectionActionCreator);
+        orderActionCreator = new OrderActionCreator(orderRequestSender, {} as CheckoutValidator);
         paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
     });
 

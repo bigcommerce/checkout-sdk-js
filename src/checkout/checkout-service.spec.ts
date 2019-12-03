@@ -18,7 +18,6 @@ import { getCountriesResponseBody } from '../geography/countries.mock';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { getCompleteOrderResponseBody, getOrderRequestBody } from '../order/internal-orders.mock';
 import { getOrder } from '../order/orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionOptions } from '../order/spam-protection';
 import { createPaymentClient, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator, PaymentStrategyRegistry } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { deleteInstrumentResponseBody, getLoadInstrumentsResponseBody, getVaultAccessTokenResponseBody } from '../payment/instrument/instrument.mock';
@@ -29,6 +28,7 @@ import { OfflinePaymentStrategy } from '../payment/strategies/offline';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
 import { getShippingAddress } from '../shipping/shipping-addresses.mock';
 import { getShippingOptions } from '../shipping/shipping-options.mock';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionActionType, SpamProtectionOptions, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
 import CheckoutActionCreator from './checkout-action-creator';
@@ -192,16 +192,18 @@ describe('CheckoutService', () => {
         instrumentActionCreator = new InstrumentActionCreator(instrumentRequestSender);
 
         spamProtectionActionCreator = new SpamProtectionActionCreator(
-            createSpamProtection(createScriptLoader())
+            createSpamProtection(createScriptLoader()),
+            new SpamProtectionRequestSender(requestSender)
         );
 
-        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator, spamProtectionActionCreator);
+        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
 
         paymentMethodActionCreator = new PaymentMethodActionCreator(paymentMethodRequestSender);
 
         paymentStrategyActionCreator = new PaymentStrategyActionCreator(
             paymentStrategyRegistry,
-            orderActionCreator
+            orderActionCreator,
+            spamProtectionActionCreator
         );
 
         shippingStrategyActionCreator = new ShippingStrategyActionCreator(
@@ -440,10 +442,10 @@ describe('CheckoutService', () => {
 
             paymentStrategyRegistry.get = jest.fn(() => noPaymentDataRequiredPaymentStrategy);
 
-            jest.spyOn(orderActionCreator, 'executeSpamProtection')
+            jest.spyOn(spamProtectionActionCreator, 'execute')
                 .mockReturnValue(() => from([
                     createAction(SpamProtectionActionType.ExecuteRequested),
-                    createAction(SpamProtectionActionType.Completed, { token: 'spamProtectionToken' }),
+                    createAction(SpamProtectionActionType.ExecuteSucceeded),
                 ]));
         });
 
@@ -1034,11 +1036,33 @@ describe('CheckoutService', () => {
             jest.spyOn(store, 'dispatch');
         });
 
-        it('initialize spam protection', async () => {
+        it('initializes spam protection', async () => {
             await checkoutService.initializeSpamProtection(options);
 
             expect(spamProtectionActionCreator.initialize)
                 .toHaveBeenCalledWith(options);
+        });
+    });
+
+    describe('#executeSpamCheck()', () => {
+        beforeEach(() => {
+            jest.spyOn(spamProtectionActionCreator, 'initialize')
+                .mockReturnValue(of(createAction(SpamProtectionActionType.InitializeSucceeded)));
+
+            jest.spyOn(spamProtectionActionCreator, 'execute')
+                .mockReturnValue(() => from([
+                    createAction(SpamProtectionActionType.ExecuteRequested),
+                    createAction(SpamProtectionActionType.ExecuteSucceeded),
+                ]));
+        });
+
+        it('executes spam check', async () => {
+            await checkoutService.executeSpamCheck();
+
+            expect(spamProtectionActionCreator.initialize)
+                .toHaveBeenCalled();
+            expect(spamProtectionActionCreator.execute)
+                .toHaveBeenCalled();
         });
     });
 });

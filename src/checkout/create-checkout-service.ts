@@ -10,10 +10,10 @@ import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator,
 import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
-import { createSpamProtection, SpamProtectionActionCreator } from '../order/spam-protection';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
 import { InstrumentActionCreator, InstrumentRequestSender } from '../payment/instrument';
 import { createShippingStrategyRegistry, ConsignmentActionCreator, ConsignmentRequestSender, ShippingCountryActionCreator, ShippingCountryRequestSender, ShippingStrategyActionCreator } from '../shipping';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
 import CheckoutActionCreator from './checkout-action-creator';
@@ -63,11 +63,11 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const spamProtection = createSpamProtection(createScriptLoader());
-    const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection);
+    const spamProtectionRequestSender = new SpamProtectionRequestSender(requestSender);
+    const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection, spamProtectionRequestSender);
     const orderActionCreator = new OrderActionCreator(
         orderRequestSender,
-        new CheckoutValidator(checkoutRequestSender),
-        spamProtectionActionCreator
+        new CheckoutValidator(checkoutRequestSender)
     );
 
     return new CheckoutService(
@@ -86,7 +86,8 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
         new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender)),
         new PaymentStrategyActionCreator(
             createPaymentStrategyRegistry(store, paymentClient, requestSender, spamProtection, locale),
-            orderActionCreator
+            orderActionCreator,
+            spamProtectionActionCreator
         ),
         new ShippingCountryActionCreator(new ShippingCountryRequestSender(requestSender, { locale })),
         new ShippingStrategyActionCreator(createShippingStrategyRegistry(store, requestSender)),

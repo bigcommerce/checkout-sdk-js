@@ -10,6 +10,7 @@
         "order",
         "payment",
         "shipping",
-        "shopper"
+        "shopper",
+        "spam-protection"
     ]
 }
