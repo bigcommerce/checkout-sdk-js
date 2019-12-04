@@ -6,7 +6,7 @@ import { InternalCheckoutSelectors } from '../checkout';
 import { throwErrorAction } from '../common/error';
 import { OrderActionCreator } from '../order';
 
-import Payment, { PaymentInstrument } from './payment';
+import Payment from './payment';
 import { InitializeOffsitePaymentAction, PaymentActionType, SubmitPaymentAction } from './payment-actions';
 import PaymentRequestSender from './payment-request-sender';
 import PaymentRequestTransformer from './payment-request-transformer';
@@ -38,9 +38,16 @@ export default class PaymentActionCreator {
     initializeOffsitePayment(
         methodId: string,
         gatewayId?: string,
-        paymentData: PaymentInstrument = {}
+        instrumentId?: string,
+        shouldSaveInstrument?: boolean
     ): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
         return store => {
+            const paymentData = {
+                formattedPayload: {
+                    bigpay_token: instrumentId ? instrumentId : null,
+                    vault_payment_instrument: shouldSaveInstrument ? shouldSaveInstrument : null,
+                },
+            };
             const payload = this._paymentRequestTransformer.transform({ gatewayId, methodId, paymentData }, store.getState());
 
             return concat(

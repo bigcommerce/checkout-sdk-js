@@ -4,7 +4,7 @@ export default interface Payment {
     paymentData?: PaymentInstrument & PaymentInstrumentMeta;
 }
 
-export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument | CryptogramInstrument | HostedInstrument | ThreeDSVaultedInstrument | FormattedPayload<PaypalInstrument>;
+export type PaymentInstrument = CreditCardInstrument | NonceInstrument | VaultedInstrument | CryptogramInstrument | HostedInstrument | ThreeDSVaultedInstrument | FormattedPayload<PaypalInstrument | BarclaycardInstrument>;
 
 export interface PaymentInstrumentMeta {
     deviceSessionId?: string;
@@ -78,6 +78,11 @@ export interface PaypalInstrument {
         token: string;
         email: string | null;
     };
+}
+
+export interface BarclaycardInstrument {
+    bigpay_token: string | null;
+    vault_payment_instrument: boolean | null;
 }
 
 export interface FormattedPayload<T> {
