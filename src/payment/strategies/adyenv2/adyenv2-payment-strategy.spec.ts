@@ -194,13 +194,33 @@ describe('AdyenV2PaymentStrategy', () => {
         const identifyShopperError = getIdentifyShopperError();
         const challengeShopperError = getChallengeShopperError();
         const redirectShopperError = getRedirectShopperError();
-        let adyenComponent: AdyenComponent;
+        let adyenPaymentComponent: AdyenComponent;
+        let adyenCardVerificationComponent: AdyenComponent;
         let componentOptions: ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions;
         let options: PaymentInitializeOptions;
         let threeDS2Component: AdyenComponent;
 
         beforeEach(() => {
+            let handleOnChange: (state: AdyenCardState) => {};
             options = getAdyenInitializeOptions();
+
+            adyenPaymentComponent = {
+                mount: jest.fn(() => {
+                    handleOnChange(getValidCardState());
+
+                    return;
+                }),
+                unmount: jest.fn(),
+            };
+
+            adyenCardVerificationComponent = {
+                mount: jest.fn(() => {
+                    handleOnChange(getValidCardState());
+
+                    return;
+                }),
+                unmount: jest.fn(),
+            };
 
             threeDS2Component = {
                 mount: jest.fn(() => {
@@ -214,39 +234,8 @@ describe('AdyenV2PaymentStrategy', () => {
                 }),
                 unmount: jest.fn(),
             };
-            adyenComponent = {
-                mount: jest.fn(),
-                unmount: jest.fn(),
-            };
 
             jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(getAdyenV2());
-        });
-
-        afterEach(() => {
-            jest.resetAllMocks();
-        });
-
-        it('submits order without payment data', async () => {
-            const payload = getOrderRequestBody();
-            const options = { methodId: 'adyenv2' };
-
-            await strategy.execute(payload, options);
-
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
-            expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
-        });
-
-        it('submits payment with adyen state', async () => {
-            let handleOnChange: (state: AdyenCardState) => {};
-
-            adyenComponent = {
-                mount: jest.fn(() => {
-                    handleOnChange(getValidCardState());
-
-                    return;
-                }),
-                unmount: jest.fn(),
-            };
 
             jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
 
@@ -255,16 +244,26 @@ describe('AdyenV2PaymentStrategy', () => {
                     const { onChange } = options;
                     handleOnChange = onChange;
 
-                    return adyenComponent;
+                    return adyenPaymentComponent;
+                }))
+                .mockImplementationOnce(jest.fn((_method, options) => {
+                    const { onChange } = options;
+                    handleOnChange = onChange;
+
+                    return adyenCardVerificationComponent;
                 }))
                 .mockImplementationOnce(jest.fn((_type, options) => {
                     componentOptions = options;
 
                     return threeDS2Component;
                 }));
+        });
 
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
+        afterEach(() => {
+            jest.resetAllMocks();
+        });
 
+        it('submits payment with adyen state', async () => {
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, challengeShopperError)))
                 .mockReturnValueOnce(submitPaymentAction);
@@ -290,20 +289,6 @@ describe('AdyenV2PaymentStrategy', () => {
                 .toThrow(PaymentArgumentInvalidError);
         });
 
-        it('does not post 3ds data to Adyen if 3ds is not enabled', async () => {
-            const response = new RequestError(getResponse(getErrorPaymentResponseBody()));
-
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, response)));
-
-            try {
-                await strategy.execute(getOrderRequestBody());
-            } catch (error) {
-                expect(error).toBeInstanceOf(RequestError);
-                expect(formPoster.postForm).not.toHaveBeenCalled();
-            }
-        });
-
         it('throws error if order is missing', async () => {
             const state = store.getState();
 
@@ -318,16 +303,6 @@ describe('AdyenV2PaymentStrategy', () => {
         });
 
         it('returns 3DS2 IdentifyShopper flow', async () => {
-            jest.spyOn(adyenCheckout, 'create')
-                .mockImplementationOnce(jest.fn(() => adyenComponent))
-                .mockImplementationOnce(jest.fn((_type, options) => {
-                    componentOptions = options;
-
-                    return threeDS2Component;
-                }));
-
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
-
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, identifyShopperError)))
                 .mockReturnValueOnce(submitPaymentAction);
@@ -349,7 +324,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 ThreeDS2ComponentType.ThreeDS2DeviceFingerprint,
                 componentOptions
             );
-            expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
+            expect(adyenCheckout.create).toHaveBeenCalledTimes(3);
         });
 
         it('returns 3DS2 IdentifyShopper flow and Adyen response onError', async () => {
@@ -364,14 +339,6 @@ describe('AdyenV2PaymentStrategy', () => {
                 }),
                 unmount: jest.fn(),
             };
-
-            jest.spyOn(adyenCheckout, 'create')
-                .mockImplementationOnce(jest.fn(() => adyenComponent))
-                .mockImplementationOnce(jest.fn((_type, options) => {
-                    componentOptions = options;
-
-                    return threeDS2Component;
-                }));
 
             jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
 
@@ -405,12 +372,6 @@ describe('AdyenV2PaymentStrategy', () => {
             };
 
             jest.spyOn(adyenCheckout, 'create')
-                .mockImplementationOnce(jest.fn(() => adyenComponent))
-                .mockImplementationOnce(jest.fn((_type, options) => {
-                    componentOptions = options;
-
-                    return threeDS2Component;
-                }))
                 .mockImplementationOnce(jest.fn((_type, options) => {
                     componentOptions = options;
 
@@ -441,20 +402,10 @@ describe('AdyenV2PaymentStrategy', () => {
                 ThreeDS2ComponentType.ThreeDS2Challenge,
                 componentOptions
             );
-            expect(adyenCheckout.create).toHaveBeenCalledTimes(3);
+            expect(adyenCheckout.create).toHaveBeenCalledTimes(4);
         });
 
         it('returns 3DS2 IdentifyShopper flow and after that throws an error when submit payment', async () => {
-            jest.spyOn(adyenCheckout, 'create')
-                .mockImplementationOnce(jest.fn(() => adyenComponent))
-                .mockImplementationOnce(jest.fn((_type, options) => {
-                    componentOptions = options;
-
-                    return threeDS2Component;
-                }));
-
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
-
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, identifyShopperError)))
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, {
@@ -483,16 +434,6 @@ describe('AdyenV2PaymentStrategy', () => {
                 ...getIdentifyShopperErrorResponse(),
             }));
 
-            jest.spyOn(adyenCheckout, 'create')
-                .mockImplementationOnce(jest.fn(() => adyenComponent))
-                .mockImplementationOnce(jest.fn((_type, options) => {
-                    componentOptions = options;
-
-                    return threeDS2Component;
-                }));
-
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
-
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, identifyShopperError)))
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, errorUnexpected)));
@@ -505,28 +446,7 @@ describe('AdyenV2PaymentStrategy', () => {
             }
         });
 
-        it('throws when Adyen JS is not loaded and submitPayment retrieves IdentifyShopper', async () => {
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
-
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, identifyShopperError)));
-
-            const response = strategy.execute(getOrderRequestBody());
-
-            return expect(response).rejects.toThrow(NotInitializedError);
-        });
-
         it('returns 3DS2 ChallengeShopper flow', async () => {
-            jest.spyOn(adyenCheckout, 'create')
-                .mockImplementationOnce(jest.fn(() => adyenComponent))
-                .mockImplementationOnce(jest.fn((_type, options) => {
-                    componentOptions = options;
-
-                    return threeDS2Component;
-                }));
-
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
-
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, challengeShopperError)))
                 .mockReturnValueOnce(submitPaymentAction);
@@ -548,7 +468,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 ThreeDS2ComponentType.ThreeDS2Challenge,
                 componentOptions
             );
-            expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
+            expect(adyenCheckout.create).toHaveBeenCalledTimes(3);
         });
 
         it('returns 3DS2 ChallengeShopper flow and Adyen response onError', async () => {
@@ -563,16 +483,6 @@ describe('AdyenV2PaymentStrategy', () => {
                 }),
                 unmount: jest.fn(),
             };
-
-            jest.spyOn(adyenCheckout, 'create')
-                .mockImplementationOnce(jest.fn(() => adyenComponent))
-                .mockImplementationOnce(jest.fn((_type, options) => {
-                    componentOptions = options;
-
-                    return threeDS2Component;
-                }));
-
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
 
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, challengeShopperError)))
@@ -590,7 +500,7 @@ describe('AdyenV2PaymentStrategy', () => {
         });
 
         it('throws when Adyen JS is not loaded and submitPayment retrieves ChallengeShopper', async () => {
-            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(adyenCheckout));
+            jest.spyOn(adyenV2ScriptLoader, 'load').mockReturnValue(Promise.resolve(undefined));
 
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, challengeShopperError)));
@@ -604,6 +514,7 @@ describe('AdyenV2PaymentStrategy', () => {
             jest.spyOn(paymentActionCreator, 'submitPayment')
                 .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, redirectShopperError)));
 
+            await strategy.initialize(options);
             strategy.execute(getOrderRequestBody());
 
             await new Promise(resolve => process.nextTick(resolve));
@@ -623,11 +534,12 @@ describe('AdyenV2PaymentStrategy', () => {
                     paymentData: getVaultedInstrument(),
                 },
             };
-            const options = { methodId: 'adyenv2' };
+            const executeOptions = { methodId: 'adyenv2' };
 
-            await strategy.execute(payload, options);
+            await strategy.initialize(options);
+            await strategy.execute(payload, executeOptions);
 
-            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), options);
+            expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), executeOptions);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);

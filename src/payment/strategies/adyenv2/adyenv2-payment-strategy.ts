@@ -18,9 +18,10 @@ import AdyenV2ScriptLoader from './adyenv2-script-loader';
 
 export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     private _adyenCheckout?: AdyenCheckout;
-    private _stateContainer?: string;
     private _adyenv2?: AdyenV2PaymentInitializeOptions;
-    private _adyenComponent?: AdyenComponent;
+    private _adyenPaymentComponent?: AdyenComponent;
+    private _adyenCardVerificationComponent?: AdyenComponent;
+    private _adyenComponentState?: AdyenCardState;
 
     constructor(
         private _store: CheckoutStore,
@@ -57,19 +58,31 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             .then(adyenCheckout => {
                 this._adyenCheckout = adyenCheckout;
 
-                const adyenComponent = this._adyenCheckout.create(
+                const adyenPaymentComponent = this._adyenCheckout.create(
                     paymentMethod.id,
                     {
                         ...adyenv2.options,
                         onChange: (state: AdyenCardState) => {
-                            this._updateStateContainer(state);
+                            this._updateAdyenComponentState(state);
                         },
                     }
                 );
 
-                adyenComponent.mount(`#${adyenv2.containerId}`);
+                adyenPaymentComponent.mount(`#${adyenv2.containerId}`);
 
-                this._adyenComponent = adyenComponent;
+                this._adyenPaymentComponent = adyenPaymentComponent;
+
+                if (adyenv2.cardVerificationContainerId) {
+                    const adyenCardVerificationComponent = this._adyenCheckout.create('securedfields', {
+                        onChange: (state: AdyenCardState) => {
+                            this._updateAdyenComponentState(state);
+                        },
+                    });
+
+                    adyenCardVerificationComponent.mount(`#${adyenv2.cardVerificationContainerId}`);
+
+                    this._adyenCardVerificationComponent = adyenCardVerificationComponent;
+                }
 
                 return Promise.resolve(this._store.getState());
             });
@@ -86,14 +99,32 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
         return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
             .then(() => {
+                const adyenComponentState = this._adyenComponentState;
+
+                if (!adyenComponentState) {
+                    throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+                }
                 if (paymentData && isVaultedInstrument(paymentData)) {
-                    return this._store.dispatch(this._paymentActionCreator.submitPayment({...payment, paymentData}));
+
+                    const { encryptedCardNumber, encryptedSecurityCode } = adyenComponentState.data.paymentMethod;
+
+                    return this._store.dispatch(this._paymentActionCreator.submitPayment({
+                        ...payment,
+                        paymentData: {
+                            instrumentId: paymentData.instrumentId,
+                            ccCvv: encryptedSecurityCode,
+                            ccNumber: encryptedCardNumber,
+                        },
+                    }));
                 }
 
                 const paymentPayload = {
                     methodId: payment.methodId,
                     paymentData: {
-                        nonce: this._getStateContainer(),
+                        nonce: JSON.stringify({
+                            ...adyenComponentState.data.paymentMethod,
+                            origin: window.location.origin,
+                        }),
                         shouldSaveInstrument,
                     },
                 };
@@ -165,9 +196,14 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
     }
 
     deinitialize(): Promise<InternalCheckoutSelectors> {
-        if (this._adyenComponent) {
-            this._adyenComponent.unmount();
-            this._adyenComponent = undefined;
+        if (this._adyenPaymentComponent) {
+            this._adyenPaymentComponent.unmount();
+            this._adyenPaymentComponent = undefined;
+        }
+
+        if (this._adyenCardVerificationComponent) {
+            this._adyenCardVerificationComponent.unmount();
+            this._adyenCardVerificationComponent = undefined;
         }
 
         return Promise.resolve(this._store.getState());
@@ -179,14 +215,6 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
         }
 
         return this._adyenv2;
-    }
-
-    private _getStateContainer(): string {
-        if (!this._stateContainer) {
-            return '{}';
-        }
-
-        return this._stateContainer;
     }
 
     private _getThreeDS2ChallengeWidgetSize(): string {
@@ -207,7 +235,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
             const { onComplete, onLoad } = this._getAdyenV2PaymentInitializeOptions().threeDS2Options;
 
-            const threeDS2Component = this._adyenCheckout
+            const challengeComponent = this._adyenCheckout
                 .create(ThreeDS2ComponentType.ThreeDS2Challenge, {
                     challengeToken: resultObject.token,
                     onComplete: (challengeData: ThreeDS2OnComplete) => {
@@ -234,11 +262,11 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             const threeDS2Container = this._getAdyenV2PaymentInitializeOptions().threeDS2ContainerId;
 
             onLoad(() => {
-                threeDS2Component.unmount();
+                challengeComponent.unmount();
                 reject();
             });
 
-            threeDS2Component.mount(`#${threeDS2Container}`);
+            challengeComponent.mount(`#${threeDS2Container}`);
         });
     }
 
@@ -250,7 +278,7 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
 
             const { onComplete, onLoad } = this._getAdyenV2PaymentInitializeOptions().threeDS2Options;
 
-            const threeDS2Component = this._adyenCheckout
+            const fingerprintComponent = this._adyenCheckout
                 .create(ThreeDS2ComponentType.ThreeDS2DeviceFingerprint, {
                     fingerprintToken: resultObject.token,
                     onComplete: (fingerprintData: ThreeDS2OnComplete) => {
@@ -276,22 +304,15 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
             const threeDS2Container = this._getAdyenV2PaymentInitializeOptions().threeDS2ContainerId;
 
             onLoad(() => {
-                threeDS2Component.unmount();
+                fingerprintComponent.unmount();
                 reject();
             });
 
-            threeDS2Component.mount(`#${threeDS2Container}`);
+            fingerprintComponent.mount(`#${threeDS2Container}`);
         });
     }
 
-    private _updateStateContainer(newState: AdyenCardState) {
-        if (newState.isValid) {
-            const state = {
-                ...newState.data.paymentMethod,
-                origin: window.location.origin,
-            };
-
-            this._stateContainer = JSON.stringify(state);
-        }
+    private _updateAdyenComponentState(newState: AdyenCardState) {
+        this._adyenComponentState = newState;
     }
 }
