@@ -12,7 +12,6 @@ import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestErr
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { PaymentInitializeOptions } from '../../../payment';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -22,9 +21,9 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import { getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
 
-import { AdyenV2PaymentStrategy, AdyenV2ScriptLoader, ThreeDS2ChallengeComponentOptions, ThreeDS2ComponentType, ThreeDS2DeviceFingerprintComponentOptions } from '.';
+import { AdyenComponentType, AdyenPaymentMethodType, AdyenV2PaymentStrategy, AdyenV2ScriptLoader, ThreeDS2ChallengeComponentOptions, ThreeDS2DeviceFingerprintComponentOptions } from '.';
 import { AdyenCardState, AdyenCheckout, AdyenComponent } from './adyenv2';
-import { getAdyenCheckout, getAdyenInitializeOptions, getChallengeShopperError, getIdentifyShopperError, getIdentifyShopperErrorResponse, getInvalidCardState, getRedirectShopperError, getValidCardState, getValidChallengeResponse } from './adyenv2.mock';
+import { getAdyenCheckout, getAdyenInitializeOptions, getBankTransferError, getChallengeShopperError, getIdentifyShopperError, getIdentifyShopperErrorResponse, getInvalidCardState, getOrderRequestBody, getRedirectShopperError, getValidCardState, getValidChallengeResponse } from './adyenv2.mock';
 
 describe('AdyenV2PaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
@@ -192,11 +191,12 @@ describe('AdyenV2PaymentStrategy', () => {
         const identifyShopperError = getIdentifyShopperError();
         const challengeShopperError = getChallengeShopperError();
         const redirectShopperError = getRedirectShopperError();
+        const bankTransferError = getBankTransferError();
         let adyenPaymentComponent: AdyenComponent;
         let adyenCardVerificationComponent: AdyenComponent;
         let componentOptions: ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions;
         let options: PaymentInitializeOptions;
-        let threeDS2Component: AdyenComponent;
+        let additionalActionComponent: AdyenComponent;
 
         beforeEach(() => {
             let handleOnChange: (state: AdyenCardState) => {};
@@ -220,7 +220,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 unmount: jest.fn(),
             };
 
-            threeDS2Component = {
+            additionalActionComponent = {
                 mount: jest.fn(() => {
                     componentOptions.onComplete({
                         data: {
@@ -253,7 +253,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 .mockImplementationOnce(jest.fn((_type, options) => {
                     componentOptions = options;
 
-                    return threeDS2Component;
+                    return additionalActionComponent;
                 }));
         });
 
@@ -271,7 +271,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledWith({
-                methodId: 'authorizenet',
+                methodId: 'scheme',
                 paymentData: {
                     nonce: JSON.stringify(getValidChallengeResponse()),
                 },
@@ -310,7 +310,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
             expect(paymentActionCreator.submitPayment).toHaveBeenLastCalledWith({
-                methodId: 'authorizenet',
+                methodId: 'scheme',
                 paymentData: {
                     nonce: JSON.stringify({
                         threeDS2Token: 'token',
@@ -319,14 +319,14 @@ describe('AdyenV2PaymentStrategy', () => {
                 },
             });
             expect(adyenCheckout.create).toHaveBeenLastCalledWith(
-                ThreeDS2ComponentType.ThreeDS2DeviceFingerprint,
+                AdyenComponentType.ThreeDS2DeviceFingerprint,
                 componentOptions
             );
             expect(adyenCheckout.create).toHaveBeenCalledTimes(3);
         });
 
         it('returns 3DS2 IdentifyShopper flow and Adyen response onError', async () => {
-            threeDS2Component = {
+            additionalActionComponent = {
                 mount: jest.fn(() => {
                     componentOptions.onError({
                         errorCode: 'errorCode',
@@ -388,7 +388,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(3);
             expect(paymentActionCreator.submitPayment).toHaveBeenLastCalledWith({
-                methodId: 'authorizenet',
+                methodId: 'scheme',
                 paymentData: {
                     nonce: JSON.stringify({
                         threeDS2Token: 'challengeToken',
@@ -397,7 +397,7 @@ describe('AdyenV2PaymentStrategy', () => {
                 },
             });
             expect(adyenCheckout.create).toHaveBeenLastCalledWith(
-                ThreeDS2ComponentType.ThreeDS2Challenge,
+                AdyenComponentType.ThreeDS2Challenge,
                 componentOptions
             );
             expect(adyenCheckout.create).toHaveBeenCalledTimes(4);
@@ -454,7 +454,7 @@ describe('AdyenV2PaymentStrategy', () => {
 
             expect(paymentActionCreator.submitPayment).toHaveBeenCalledTimes(2);
             expect(paymentActionCreator.submitPayment).toHaveBeenLastCalledWith({
-                methodId: 'authorizenet',
+                methodId: 'scheme',
                 paymentData: {
                     nonce: JSON.stringify({
                         threeDS2Token: 'token',
@@ -463,14 +463,14 @@ describe('AdyenV2PaymentStrategy', () => {
                 },
             });
             expect(adyenCheckout.create).toHaveBeenLastCalledWith(
-                ThreeDS2ComponentType.ThreeDS2Challenge,
+                AdyenComponentType.ThreeDS2Challenge,
                 componentOptions
             );
             expect(adyenCheckout.create).toHaveBeenCalledTimes(3);
         });
 
         it('returns 3DS2 ChallengeShopper flow and Adyen response onError', async () => {
-            threeDS2Component = {
+            additionalActionComponent = {
                 mount: jest.fn(() => {
                     componentOptions.onError({
                         errorCode: 'errorCode',
@@ -524,6 +524,18 @@ describe('AdyenV2PaymentStrategy', () => {
             });
         });
 
+        it('returns RedirectShopper with iDEAL', async () => {
+            jest.spyOn(paymentActionCreator, 'submitPayment')
+                .mockReturnValue(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, bankTransferError)));
+
+            await strategy.initialize(options);
+            strategy.execute(getOrderRequestBody(AdyenPaymentMethodType.IDEAL));
+
+            await new Promise(resolve => process.nextTick(resolve));
+
+            expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
+        });
+
         it('submits payment with a vaulted instrument', async () => {
             const payload = {
                 ...getOrderRequestBody(),
@@ -538,6 +550,7 @@ describe('AdyenV2PaymentStrategy', () => {
             await strategy.execute(payload, executeOptions);
 
             expect(orderActionCreator.submitOrder).toHaveBeenCalledWith(omit(payload, 'payment'), executeOptions);
+            expect(adyenCheckout.create).toHaveBeenCalledTimes(2);
             expect(paymentActionCreator.submitPayment).toHaveBeenCalled();
             expect(store.dispatch).toHaveBeenCalledWith(submitOrderAction);
             expect(store.dispatch).toHaveBeenCalledWith(submitPaymentAction);
