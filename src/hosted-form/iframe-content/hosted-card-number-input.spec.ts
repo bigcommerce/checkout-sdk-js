@@ -40,7 +40,12 @@ describe('HostedCardNumberInput', () => {
             setTarget: jest.fn(),
         };
         inputAggregator = { getInputValues: jest.fn() };
-        inputValidator = { validate: jest.fn() };
+        inputValidator = {
+            validate: jest.fn(() => Promise.resolve({
+                isValid: true,
+                errors: {},
+            })),
+        };
         numberFormatter = { format: jest.fn() };
         paymentHandler = { handle: jest.fn() };
         styles = { default: { color: 'rgb(255, 255, 255)' } };
@@ -55,9 +60,9 @@ describe('HostedCardNumberInput', () => {
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
             inputValidator as HostedInputValidator,
+            paymentHandler as HostedInputPaymentHandler,
             autocompleteFieldset,
-            numberFormatter as CardNumberFormatter,
-            paymentHandler as HostedInputPaymentHandler
+            numberFormatter as CardNumberFormatter
         );
 
         container = document.createElement('div');

@@ -134,4 +134,26 @@ describe('PaymentRequestTransformer', () => {
         expect(result)
             .toEqual(getPaymentRequestBody());
     });
+
+    it('transforms from hosted form data for paying with stored card', () => {
+        const result = paymentRequestTransformer.transformWithHostedFormData(
+            {
+                [HostedFieldType.CardNumberVerification]: '4111 1111 1111 1111',
+                [HostedFieldType.CardCodeVerification]: '123',
+            },
+            {
+                ...getHostedFormOrderData(),
+                payment: {
+                    instrumentId: 'abcdefg',
+                },
+            }
+        );
+
+        expect(result.payment)
+            .toEqual({
+                ccNumber: '4111111111111111',
+                ccCvv: '123',
+                instrumentId: 'abcdefg',
+            });
+    });
 });

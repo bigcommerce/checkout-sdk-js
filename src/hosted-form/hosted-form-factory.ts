@@ -1,11 +1,14 @@
 import { pick } from 'lodash';
 
 import { ReadableCheckoutStore } from '../checkout';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
+import { CardInstrument } from '../payment/instrument';
 
 import HostedField from './hosted-field';
+import HostedFieldType from './hosted-field-type';
 import HostedForm from './hosted-form';
-import HostedFormOptions from './hosted-form-options';
+import HostedFormOptions, { HostedCardFieldOptionsMap, HostedStoredCardFieldOptionsMap } from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 
 export default class HostedFormFactory {
@@ -14,11 +17,12 @@ export default class HostedFormFactory {
     ) {}
 
     create(host: string, formId: string, options: HostedFormOptions): HostedForm {
-        const fieldTypes = Object.keys(options.fields) as Array<keyof HostedFormOptions['fields']>;
+        const fieldTypes = Object.keys(options.fields) as HostedFieldType[];
         const fields = fieldTypes.reduce<HostedField[]>((result, type) => {
-            const fieldOption = options.fields[type];
+            const fields = options.fields as HostedStoredCardFieldOptionsMap & HostedCardFieldOptionsMap;
+            const fieldOptions = fields[type];
 
-            if (!fieldOption) {
+            if (!fieldOptions) {
                 return result;
             }
 
@@ -28,12 +32,15 @@ export default class HostedFormFactory {
                     host,
                     formId,
                     type,
-                    fieldOption.containerId,
-                    fieldOption.placeholder || '',
-                    fieldOption.accessibilityLabel || '',
+                    fieldOptions.containerId,
+                    fieldOptions.placeholder || '',
+                    fieldOptions.accessibilityLabel || '',
                     options.styles || {},
                     new IframeEventPoster(host),
-                    new IframeEventListener(host)
+                    new IframeEventListener(host),
+                    'instrumentId' in fieldOptions ?
+                        this._getCardInstrument(fieldOptions.instrumentId) :
+                        undefined
                 ),
             ];
         }, []);
@@ -44,5 +51,16 @@ export default class HostedFormFactory {
             new HostedFormOrderDataTransformer(this._store),
             pick(options, 'onBlur', 'onFocus', 'onCardTypeChange', 'onValidate')
         );
+    }
+
+    private _getCardInstrument(instrumentId: string): CardInstrument {
+        const { instruments: { getCardInstrument } } = this._store.getState();
+        const instrument = getCardInstrument(instrumentId);
+
+        if (!instrument) {
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentInstrument);
+        }
+
+        return instrument;
     }
 }

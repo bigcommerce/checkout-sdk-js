@@ -1,3 +1,5 @@
+import { CardInstrument } from '../payment/instrument';
+
 import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
@@ -24,6 +26,7 @@ export interface HostedFieldAttachEvent {
     type: HostedFieldEventType.AttachRequested;
     payload: {
         accessibilityLabel?: string;
+        cardInstrument?: CardInstrument;
         placeholder?: string;
         styles?: HostedFieldStylesMap;
         type: HostedFieldType;

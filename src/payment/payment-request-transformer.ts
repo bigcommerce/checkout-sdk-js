@@ -11,7 +11,7 @@ import { mapToInternalOrder } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
 
 import isVaultedInstrument from './is-vaulted-instrument';
-import Payment from './payment';
+import Payment, { CreditCardInstrument, HostedCreditCardInstrument, HostedVaultedInstrument, VaultedInstrument } from './payment';
 import PaymentMethod from './payment-method';
 import PaymentRequestBody from './payment-request-body';
 
@@ -71,7 +71,7 @@ export default class PaymentRequestTransformer {
     }
 
     transformWithHostedFormData(values: HostedInputValues, data: HostedFormOrderData): PaymentRequestBody {
-        const { authToken, checkout, config, order, orderMeta, payment, paymentMethod, paymentMethodMeta } = data;
+        const { authToken, checkout, config, order, orderMeta, payment = {}, paymentMethod, paymentMethodMeta } = data;
         const consignment = checkout && checkout.consignments[0];
         const shippingAddress = consignment && consignment.shippingAddress;
         const shippingOption = consignment && consignment.selectedShippingOption;
@@ -86,13 +86,7 @@ export default class PaymentRequestTransformer {
             cart: checkout && mapToInternalCart(checkout),
             order: order && mapToInternalOrder(order, orderMeta),
             orderMeta,
-            payment: {
-                ...payment,
-                ccCvv: values.cardCode,
-                ccExpiry: this._cardExpiryFormatter.toObject(values.cardExpiry),
-                ccName: values.cardName,
-                ccNumber: this._cardNumberFormatter.unformat(values.cardNumber),
-            },
+            payment: this._transformHostedInputValues(values, payment),
             quoteMeta: {
                 request: {
                     ...paymentMethodMeta,
@@ -119,5 +113,21 @@ export default class PaymentRequestTransformer {
         }
 
         return paymentMethod;
+    }
+
+    private _transformHostedInputValues(values: HostedInputValues, payment: HostedCreditCardInstrument | HostedVaultedInstrument): CreditCardInstrument | VaultedInstrument {
+        return 'instrumentId' in payment ?
+            {
+                ...payment,
+                ccCvv: values.cardCodeVerification,
+                ccNumber: values.cardNumberVerification && this._cardNumberFormatter.unformat(values.cardNumberVerification),
+            } :
+            {
+                ...payment,
+                ccCvv: values.cardCode,
+                ccExpiry: this._cardExpiryFormatter.toObject(values.cardExpiry || ''),
+                ccName: values.cardName || '',
+                ccNumber: this._cardNumberFormatter.unformat(values.cardNumber || ''),
+            };
     }
 }

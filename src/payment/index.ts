@@ -6,6 +6,7 @@ export * from './payment-status-types';
 export { default as createPaymentClient } from './create-payment-client';
 export { default as createPaymentStrategyRegistry } from './create-payment-strategy-registry';
 export { default as isNonceLike } from './is-nonce-like';
+export { default as isVaultedInstrument } from './is-vaulted-instrument';
 export { default as PaymentActionCreator } from './payment-action-creator';
 export {
     default as Payment,
