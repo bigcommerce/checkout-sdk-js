@@ -33,28 +33,28 @@ export function getCart(): InternalCart {
             {
                 id: '667',
                 type: 'ItemDigitalEntity',
-                name: 'Canvas Laundry Cart',
+                name: 'Digital Book',
                 downloadsPageUrl: 'url.php',
-                imageUrl: '/images/canvas-laundry-cart.jpg',
+                imageUrl: '/images/digital-book.jpg',
                 quantity: 1,
-                brand: 'OFS',
-                sku: 'CLC',
+                brand: 'Digitalia',
+                sku: 'CLX',
                 amount: 200,
                 discount: 0,
                 amountAfterDiscount: 200,
                 attributes: [
                     {
-                        name: 'n',
-                        value: 'v',
+                        name: 'm',
+                        value: 'l',
                     },
                 ],
                 integerAmount: 20000,
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
-                variantId: 71,
+                variantId: 72,
                 addedByPromotion: false,
-                productId: 103,
-                categoryNames: ['Cat 1'],
+                productId: 104,
+                categoryNames: ['Ebooks', 'Audio Books'],
             },
             {
                 id: 'bd391ead-8c58-4105-b00e-d75d233b429a',
@@ -148,8 +148,8 @@ export function getCart(): InternalCart {
             amount: 0,
         },
         taxSubtotal: {
-            amount: 0,
-            integerAmount: 0,
+            amount: 3,
+            integerAmount: 300,
         },
         taxes: [
             {
@@ -158,8 +158,8 @@ export function getCart(): InternalCart {
             },
         ],
         taxTotal: {
-            amount: 0,
-            integerAmount: 0,
+            amount: 3,
+            integerAmount: 300,
         },
         handling: {
             amount: 8,
