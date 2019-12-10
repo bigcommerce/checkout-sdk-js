@@ -1,4 +1,5 @@
 import { memoizeOne } from '@bigcommerce/memoize';
+import { omit, values } from 'lodash';
 
 import { Address } from '../address';
 import { BillingAddress } from '../billing';
@@ -316,7 +317,39 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
 
     const getBillingAddress = createSelector(
         ({ billingAddress }: InternalCheckoutSelectors) => billingAddress.getBillingAddress,
-        getBillingAddress => clone(getBillingAddress)
+        ({ config }: InternalCheckoutSelectors) => config.getContextConfig,
+        (getBillingAddress, getContextConfig) => clone(() => {
+            const billingAddress = getBillingAddress();
+            const context = getContextConfig();
+            const isEmptyBillingAddress = !billingAddress ||
+                values(omit(billingAddress, 'email', 'id')).every(val => !val || !val.length);
+
+            if (isEmptyBillingAddress) {
+                if (!context || !context.geoCountryCode) {
+                    return;
+                }
+
+                return {
+                    id: billingAddress ? billingAddress.id : '',
+                    firstName: '',
+                    lastName: '',
+                    company: '',
+                    address1: '',
+                    address2: '',
+                    city: '',
+                    email: billingAddress ? billingAddress.email : '',
+                    stateOrProvince: '',
+                    stateOrProvinceCode: '',
+                    postalCode: '',
+                    country: '',
+                    phone: '',
+                    customFields: [],
+                    countryCode: context.geoCountryCode,
+                };
+            }
+
+            return billingAddress;
+        })
     );
 
     const getBillingCountries = createSelector(
