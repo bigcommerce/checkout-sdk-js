@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.46.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.45.1...v1.46.0) (2019-12-11)
+
+
+### Features
+
+* **billing:** CHECKOUT-4421 Preselect billing country when no billing address has been set ([1583373](https://github.com/bigcommerce/checkout-sdk-js/commit/1583373))
+* **checkout:** INT-1780 Add supported intruments ([8eadd11](https://github.com/bigcommerce/checkout-sdk-js/commit/8eadd11))
+* **checkout:** INT-1780 Enable card vaulting for barclaycard ([ee87641](https://github.com/bigcommerce/checkout-sdk-js/commit/ee87641))
+* **checkout:** INT-1780 Remove provider specific strategy ([a2d0cbb](https://github.com/bigcommerce/checkout-sdk-js/commit/a2d0cbb))
+* **checkout:** INT-1780 Remove unnecessary decosntruction ([6cfbcc2](https://github.com/bigcommerce/checkout-sdk-js/commit/6cfbcc2))
+* **checkout:** INT-1780 Remove unused import ([209909e](https://github.com/bigcommerce/checkout-sdk-js/commit/209909e))
+* **checkout:** INT-1780 Remove unused interface ([1f7507f](https://github.com/bigcommerce/checkout-sdk-js/commit/1f7507f))
+* **checkout:** INT-1780 Send only one param ([2579c84](https://github.com/bigcommerce/checkout-sdk-js/commit/2579c84))
+* **checkout:** INT-1780 Send params separately ([c77d4cc](https://github.com/bigcommerce/checkout-sdk-js/commit/c77d4cc))
+* **checkout:** INT-1780 Use offsite to pay with instrument ([04315ee](https://github.com/bigcommerce/checkout-sdk-js/commit/04315ee))
+* **common:** CHECKOUT-4571 Add StepTracker service ([f4b1dd4](https://github.com/bigcommerce/checkout-sdk-js/commit/f4b1dd4))
+
 ### [1.45.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.45.0...v1.45.1) (2019-11-27)
 
 ## [1.45.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.44.1...v1.45.0) (2019-11-25)

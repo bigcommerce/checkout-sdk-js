@@ -10,6 +10,7 @@
 * [createCurrencyService](#createcurrencyservice)
 * [createEmbeddedCheckoutMessenger](#createembeddedcheckoutmessenger)
 * [createLanguageService](#createlanguageservice)
+* [createStepTracker](#createsteptracker)
 * [embedCheckout](#embedcheckout)
 
 ---
@@ -21,6 +22,14 @@
 ###  AddressKey
 
 **ΤAddressKey**: *`keyof Address`*
+
+___
+<a id="analyticsteptype"></a>
+
+###  AnalyticStepType
+
+**ΤAnalyticStepType**: * "customer" &#124; "shipping" &#124; "billing" &#124; "payment"
+*
 
 ___
 <a id="checkoutincludeparam"></a>
@@ -231,6 +240,35 @@ console.log(service.translate('address.city_label'));
 
 **Returns:** [LanguageService](classes/languageservice.md)
 An instance of `LanguageService`.
+
+___
+<a id="createsteptracker"></a>
+
+###  createStepTracker
+
+▸ **createStepTracker**(checkoutService: *[CheckoutService](classes/checkoutservice.md)*, stepTrackerConfig?: *[StepTrackerConfig](interfaces/steptrackerconfig.md)*): [StepTracker](interfaces/steptracker.md)
+
+Creates an instance of `StepTracker`.
+
+```js
+const checkoutService = createCheckoutService();
+await checkoutService.loadCheckout();
+const stepTracker = createStepTracker(checkoutService);
+
+stepTracker.trackCheckoutStarted();
+```
+
+*__alpha__*: Please note that `StepTracker` is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
+
+**Parameters:**
+
+| Param | Type |
+| ------ | ------ |
+| checkoutService | [CheckoutService](classes/checkoutservice.md) |
+| `Optional` stepTrackerConfig | [StepTrackerConfig](interfaces/steptrackerconfig.md) |
+
+**Returns:** [StepTracker](interfaces/steptracker.md)
+an instance of `StepTracker`.
 
 ___
 <a id="embedcheckout"></a>

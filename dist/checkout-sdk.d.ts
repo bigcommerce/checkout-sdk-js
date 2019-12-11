@@ -270,6 +270,8 @@ declare interface AmazonPayWidgetError extends Error {
     getErrorCode(): string;
 }
 
+declare type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
+
 declare interface Banner {
     type: string;
     text: string;
@@ -3468,6 +3470,17 @@ declare interface StepStyles extends BlockElementStyles {
     icon?: BlockElementStyles;
 }
 
+declare interface StepTracker {
+    trackOrderComplete(): void;
+    trackCheckoutStarted(): void;
+    trackStepViewed(step: string): void;
+    trackStepCompleted(step: string): void;
+}
+
+declare interface StepTrackerConfig {
+    checkoutSteps?: AnalyticStepType[];
+}
+
 declare interface StoreConfig {
     cdnPath: string;
     checkoutSettings: CheckoutSettings;
@@ -3737,6 +3750,29 @@ export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
  * @returns An instance of `LanguageService`.
  */
 export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
+
+/**
+ * Creates an instance of `StepTracker`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const stepTracker = createStepTracker(checkoutService);
+ *
+ * stepTracker.trackCheckoutStarted();
+ * ```
+ *
+ * @alpha
+ * Please note that `StepTracker` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @param CheckoutService - An instance of CheckoutService
+ * @param StepTrackerConfig - A step tracker config object
+ * @returns an instance of `StepTracker`.
+ */
+export declare function createStepTracker(checkoutService: CheckoutService, stepTrackerConfig?: StepTrackerConfig): StepTracker;
 
 /**
  * Embed the checkout form in an iframe.
