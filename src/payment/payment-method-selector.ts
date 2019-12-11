@@ -33,7 +33,7 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
     const getPaymentMethod = createSelector(
         (state: PaymentMethodState) => state.data,
         paymentMethods => (methodId: string, gatewayId?: string) => {
-            const lowerCaseMethod = methodId.toLowerCase();
+            const lowerCaseMethod = methodId ? methodId.toLowerCase() : '';
 
             return gatewayId ?
                 find(paymentMethods, paymentMethod => {
