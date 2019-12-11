@@ -1,11 +1,11 @@
-import { set } from 'lodash';
+import { find, set } from 'lodash';
 
 import { CheckoutStoreState } from '../../checkout';
 import { getCheckoutStoreState } from '../../checkout/checkouts.mock';
 import { getBraintree } from '../payment-methods.mock';
 
 import InstrumentSelector, { createInstrumentSelectorFactory, InstrumentSelectorFactory } from './instrument-selector';
-import { getInstrumentsMeta } from './instrument.mock';
+import { getInstruments, getInstrumentsMeta } from './instrument.mock';
 
 describe('InstrumentSelector', () => {
     let createInstrumentSelector: InstrumentSelectorFactory;
@@ -40,6 +40,30 @@ describe('InstrumentSelector', () => {
             instrumentSelector = createInstrumentSelector({ data: [], errors: {}, statuses: {} });
 
             expect(instrumentSelector.getInstruments()).toEqual([]);
+        });
+    });
+
+    describe('#getInstrument()', () => {
+        it('returns instrument with given ID', () => {
+            instrumentSelector = createInstrumentSelector(state.instruments);
+
+            expect(instrumentSelector.getCardInstrument('123'))
+                .toEqual(find(getInstruments(), { bigpayToken: '123' }));
+        });
+
+        it('returns nothing if instrument is not found', () => {
+            instrumentSelector = createInstrumentSelector(state.instruments);
+
+            expect(instrumentSelector.getCardInstrument('1123123312'))
+                .toBeUndefined();
+        });
+
+        it('only returns card instrument', () => {
+            instrumentSelector = createInstrumentSelector(state.instruments);
+
+            // tslint:disable-next-line:no-non-null-assertion
+            expect(instrumentSelector.getCardInstrument(find(getInstruments(), { method: 'paypal' })!.bigpayToken))
+                .toBeUndefined();
         });
     });
 

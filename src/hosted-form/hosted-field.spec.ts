@@ -126,7 +126,7 @@ describe('HostedField', () => {
         const fields = [HostedFieldType.CardExpiry, HostedFieldType.CardNumber];
         const data = getHostedFormOrderData();
 
-        await field.submit(fields, data);
+        await field.submitForm(fields, data);
 
         expect(eventPoster.post)
             .toHaveBeenCalledWith({
@@ -149,7 +149,7 @@ describe('HostedField', () => {
         const data = getHostedFormOrderData();
 
         try {
-            await field.submit(fields, data);
+            await field.submitForm(fields, data);
         } catch (error) {
             expect(error).toBeInstanceOf(InvalidHostedFormError);
         }
@@ -165,7 +165,7 @@ describe('HostedField', () => {
         const data = getHostedFormOrderData();
 
         try {
-            await field.submit(fields, data);
+            await field.submitForm(fields, data);
         } catch (error) {
             expect(error).toEqual(rejection);
         }

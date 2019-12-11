@@ -86,7 +86,7 @@ describe('HostedInputPaymentHandler', () => {
         });
 
         expect(inputValidator.validate)
-            .toHaveBeenCalledWith(values, { isCardCodeRequired: false });
+            .toHaveBeenCalledWith(values);
     });
 
     it('posts event when validation happens', async () => {

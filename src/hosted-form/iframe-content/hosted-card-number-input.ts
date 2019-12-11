@@ -2,7 +2,7 @@ import { number } from 'card-validator';
 import { get } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
-import { HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
+import { HostedFieldEventMap } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
 import CardNumberFormatter from './card-number-formatter';
@@ -28,9 +28,9 @@ export default class HostedCardNumberInput extends HostedInput {
         eventPoster: IframeEventPoster<HostedInputEvent>,
         inputAggregator: HostedInputAggregator,
         inputValidator: HostedInputValidator,
+        paymentHandler: HostedInputPaymentHandler,
         private _autocompleteFieldset: HostedAutocompleteFieldset,
-        private _formatter: CardNumberFormatter,
-        private _paymentHandler: HostedInputPaymentHandler
+        private _formatter: CardNumberFormatter
     ) {
         super(
             HostedFieldType.CardNumber,
@@ -42,10 +42,9 @@ export default class HostedCardNumberInput extends HostedInput {
             eventListener,
             eventPoster,
             inputAggregator,
-            inputValidator
+            inputValidator,
+            paymentHandler
         );
-
-        this._eventListener.addListener(HostedFieldEventType.SubmitRequested, this._paymentHandler.handle);
     }
 
     attach(): void {

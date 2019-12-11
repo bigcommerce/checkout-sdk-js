@@ -28,8 +28,8 @@ export default class HostedInputInitializer {
         )
             .pipe(
                 map(({ payload }) => {
-                    const { placeholder = '', styles = {}, type } = payload;
-                    const field = this._factory.create(containerId, type, styles, placeholder);
+                    const { accessibilityLabel, cardInstrument, placeholder, styles, type } = payload;
+                    const field = this._factory.create(containerId, type, styles, placeholder, accessibilityLabel, cardInstrument);
 
                     field.attach();
 

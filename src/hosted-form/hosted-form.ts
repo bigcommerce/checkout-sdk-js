@@ -5,7 +5,6 @@ import { OrderPaymentRequestBody } from '../order';
 
 import { InvalidHostedFormConfigError } from './errors';
 import HostedField from './hosted-field';
-import HostedFieldType from './hosted-field-type';
 import HostedFormOptions from './hosted-form-options';
 import HostedFormOrderDataTransformer from './hosted-form-order-data-transformer';
 import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
@@ -30,11 +29,11 @@ export default class HostedForm {
     async attach(): Promise<void> {
         this._eventListener.listen();
 
-        const numberField = this._getNumberField();
-        const otherFields = without(this._fields, numberField);
+        const field = this._getFirstField();
+        const otherFields = without(this._fields, field);
 
-        await numberField.attach();
-        await Promise.all(otherFields.map(field => field.attach()));
+        await field.attach();
+        await Promise.all(otherFields.map(otherField => otherField.attach()));
     }
 
     detach(): void {
@@ -46,25 +45,23 @@ export default class HostedForm {
     }
 
     async submit(payload: OrderPaymentRequestBody): Promise<void> {
-        return await this._getNumberField().submit(
+        return await this._getFirstField().submitForm(
             this._fields.map(field => field.getType()),
             this._payloadTransformer.transform(payload)
         );
     }
 
     async validate(): Promise<void> {
-        return await this._getNumberField().validate();
+        return await this._getFirstField().validateForm();
     }
 
-    private _getNumberField(): HostedField {
-        const numberField = this._fields.find(field =>
-            field.getType() === HostedFieldType.CardNumber
-        );
+    private _getFirstField(): HostedField {
+        const field = this._fields[0];
 
-        if (!numberField) {
-            throw new InvalidHostedFormConfigError('Unable to proceed because the credit card number field is not defined.');
+        if (!field) {
+            throw new InvalidHostedFormConfigError('Unable to proceed because the payment form has no field defined.');
         }
 
-        return numberField;
+        return field;
     }
 }

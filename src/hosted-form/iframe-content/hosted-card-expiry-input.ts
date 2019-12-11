@@ -6,6 +6,7 @@ import CardExpiryFormatter from './card-expiry-formatter';
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent } from './hosted-input-events';
+import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 
@@ -23,6 +24,7 @@ export default class HostedCardExpiryInput extends HostedInput {
         eventPoster: IframeEventPoster<HostedInputEvent>,
         inputAggregator: HostedInputAggregator,
         inputValidator: HostedInputValidator,
+        paymentHandler: HostedInputPaymentHandler,
         private _formatter: CardExpiryFormatter
     ) {
         super(
@@ -35,7 +37,8 @@ export default class HostedCardExpiryInput extends HostedInput {
             eventListener,
             eventPoster,
             inputAggregator,
-            inputValidator
+            inputValidator,
+            paymentHandler
         );
     }
 

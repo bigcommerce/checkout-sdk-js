@@ -19,7 +19,7 @@ describe('HostedForm', () => {
         attach: jest.fn(),
         detach: jest.fn(),
         getType: jest.fn(),
-        submit: jest.fn(),
+        submitForm: jest.fn(),
     };
 
     beforeEach(() => {
@@ -94,7 +94,7 @@ describe('HostedForm', () => {
             paymentData: { shouldSaveInstrument: true },
         };
 
-        jest.spyOn(field, 'submit')
+        jest.spyOn(field, 'submitForm')
             .mockResolvedValue(undefined);
 
         jest.spyOn(payloadTransformer, 'transform')
@@ -104,7 +104,7 @@ describe('HostedForm', () => {
 
         expect(payloadTransformer.transform)
             .toHaveBeenCalledWith(payload);
-        expect(field.submit)
+        expect(field.submitForm)
             .toHaveBeenCalledWith(fields.map(field => field.getType()), data);
     });
 

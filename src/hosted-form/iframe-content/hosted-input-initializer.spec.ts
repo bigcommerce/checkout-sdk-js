@@ -1,4 +1,5 @@
 import { IframeEventListener } from '../../common/iframe';
+import { getCardInstrument } from '../../payment/instrument/instrument.mock';
 import { HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
@@ -35,6 +36,8 @@ describe('HostedInputInitializer', () => {
                 type: HostedFieldEventType.AttachRequested,
                 payload: {
                     type: HostedFieldType.CardNumber,
+                    accessibilityLabel: 'Name',
+                    cardInstrument: getCardInstrument(),
                     placeholder: 'Card name',
                     styles: { default: { color: 'rgb(0, 0, 0)' } },
                 },
@@ -48,7 +51,9 @@ describe('HostedInputInitializer', () => {
                 'input-container',
                 HostedFieldType.CardNumber,
                 { default: { color: 'rgb(0, 0, 0)' } },
-                'Card name'
+                'Card name',
+                'Name',
+                getCardInstrument()
             );
     });
 

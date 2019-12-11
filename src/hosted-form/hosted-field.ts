@@ -2,6 +2,7 @@ import { fromEvent } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
+import { CardInstrument } from '../payment/instrument';
 
 import { InvalidHostedFormConfigError, InvalidHostedFormError, InvalidHostedFormValueError } from './errors';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
@@ -22,7 +23,8 @@ export default class HostedField {
         private _accessibilityLabel: string,
         private _styles: HostedFieldStylesMap,
         private _eventPoster: IframeEventPoster<HostedFieldEvent>,
-        private _eventListener: IframeEventListener<HostedInputEventMap>
+        private _eventListener: IframeEventListener<HostedInputEventMap>,
+        private _cardInstrument?: CardInstrument
     ) {
         this._iframe = document.createElement('iframe');
 
@@ -62,6 +64,7 @@ export default class HostedField {
                         type: HostedFieldEventType.AttachRequested,
                         payload: {
                             accessibilityLabel: this._accessibilityLabel,
+                            cardInstrument: this._cardInstrument,
                             placeholder: this._placeholder,
                             styles: this._styles,
                             type: this._type,
@@ -91,7 +94,7 @@ export default class HostedField {
         this._eventListener.stopListen();
     }
 
-    async submit(
+    async submitForm(
         fields: HostedFieldType[],
         data: HostedFormOrderData
     ): Promise<void> {
@@ -112,7 +115,7 @@ export default class HostedField {
         }
     }
 
-    async validate(): Promise<void> {
+    async validateForm(): Promise<void> {
         const { payload } = await this._eventPoster.post<HostedInputValidateEvent>({
             type: HostedFieldEventType.ValidateRequested,
         }, {

@@ -15,17 +15,28 @@ export type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent[
 export type HostedFieldFocusEventData = HostedInputFocusEvent['payload'];
 export type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
 
-export interface HostedFieldOptionsMap {
-    [HostedFieldType.CardCode]?: HostedFieldOptions;
-    [HostedFieldType.CardExpiry]: HostedFieldOptions;
-    [HostedFieldType.CardName]: HostedFieldOptions;
-    [HostedFieldType.CardNumber]: HostedFieldOptions;
+export type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
+
+export interface HostedCardFieldOptionsMap {
+    [HostedFieldType.CardCode]?: HostedCardFieldOptions;
+    [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
+    [HostedFieldType.CardName]: HostedCardFieldOptions;
+    [HostedFieldType.CardNumber]: HostedCardFieldOptions;
 }
 
-export interface HostedFieldOptions {
+export interface HostedStoredCardFieldOptionsMap {
+    [HostedFieldType.CardCodeVerification]?: HostedStoredCardFieldOptions;
+    [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
+}
+
+export interface HostedCardFieldOptions {
     accessibilityLabel?: string;
     containerId: string;
     placeholder?: string;
+}
+
+export interface HostedStoredCardFieldOptions extends HostedCardFieldOptions {
+    instrumentId: string;
 }
 
 export interface HostedFieldStylesMap {

@@ -8,7 +8,9 @@ export default interface HostedInputValidateErrorData {
 
 export interface HostedInputValidateErrorDataMap {
     [HostedFieldType.CardCode]?: HostedInputValidateErrorData[];
-    [HostedFieldType.CardExpiry]: HostedInputValidateErrorData[];
-    [HostedFieldType.CardName]: HostedInputValidateErrorData[];
-    [HostedFieldType.CardNumber]: HostedInputValidateErrorData[];
+    [HostedFieldType.CardCodeVerification]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardNumberVerification]?: HostedInputValidateErrorData[];
 }

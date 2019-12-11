@@ -7,6 +7,7 @@ import HostedFieldType from '../hosted-field-type';
 
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
+import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import HostedInputStyles, { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputWindow from './hosted-input-window';
@@ -29,7 +30,8 @@ export default class HostedInput {
         protected _eventListener: IframeEventListener<HostedFieldEventMap>,
         protected _eventPoster: IframeEventPoster<HostedInputEvent>,
         protected _inputAggregator: HostedInputAggregator,
-        protected _inputValidator: HostedInputValidator
+        protected _inputValidator: HostedInputValidator,
+        protected _paymentHandler: HostedInputPaymentHandler
     ) {
         this._input = document.createElement('input');
 
@@ -37,6 +39,7 @@ export default class HostedInput {
         this._input.addEventListener('blur', this._handleBlur);
         this._input.addEventListener('focus', this._handleFocus);
         this._eventListener.addListener(HostedFieldEventType.ValidateRequested, this._handleValidate);
+        this._eventListener.addListener(HostedFieldEventType.SubmitRequested, this._paymentHandler.handle);
 
         this._configureInput();
     }
@@ -134,9 +137,7 @@ export default class HostedInput {
 
     private async _validateForm(): Promise<void> {
         const values = this._inputAggregator.getInputValues();
-        const results = await this._inputValidator.validate(values, {
-            isCardCodeRequired: HostedFieldType.CardCode in values,
-        });
+        const results = await this._inputValidator.validate(values);
 
         if (results.isValid) {
             this._applyStyles(this._styles.default);

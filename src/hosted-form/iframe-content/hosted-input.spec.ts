@@ -2,12 +2,13 @@ import { EventEmitter } from 'events';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { InvalidHostedFormConfigError } from '../errors';
-import { HostedFieldEventMap, HostedFieldEventType } from '../hosted-field-events';
+import { HostedFieldEventMap, HostedFieldEventType, HostedFieldSubmitRequestEvent } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
 
 import HostedInput from './hosted-input';
 import HostedInputAggregator from './hosted-input-aggregator';
 import { HostedInputEvent, HostedInputEventType } from './hosted-input-events';
+import HostedInputPaymentHandler from './hosted-input-payment-handler';
 import { HostedInputStylesMap } from './hosted-input-styles';
 import HostedInputValidator from './hosted-input-validator';
 import HostedInputValues from './hosted-input-values';
@@ -20,6 +21,7 @@ describe('HostedInput', () => {
     let input: HostedInput;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
+    let paymentHandler: Pick<HostedInputPaymentHandler, 'handle'>;
     let styles: HostedInputStylesMap;
     let values: HostedInputValues;
 
@@ -53,6 +55,8 @@ describe('HostedInput', () => {
             setTarget: jest.fn(),
         };
 
+        paymentHandler = { handle: jest.fn() };
+
         inputAggregator = {
             getInputValues: jest.fn(() => values),
         };
@@ -78,7 +82,8 @@ describe('HostedInput', () => {
             eventListener as IframeEventListener<HostedFieldEventMap>,
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
-            inputValidator as HostedInputValidator
+            inputValidator as HostedInputValidator,
+            paymentHandler as HostedInputPaymentHandler
         );
 
         container = document.createElement('div');
@@ -234,9 +239,7 @@ describe('HostedInput', () => {
         element.dispatchEvent(new Event('blur', { bubbles: true }));
 
         expect(inputValidator.validate)
-            .toHaveBeenCalledWith(values, {
-                isCardCodeRequired: true,
-            });
+            .toHaveBeenCalledWith(values);
     });
 
     it('validates form when requested by parent frame', () => {
@@ -245,9 +248,18 @@ describe('HostedInput', () => {
         eventEmitter.emit(HostedFieldEventType.ValidateRequested);
 
         expect(inputValidator.validate)
-            .toHaveBeenCalledWith(values, {
-                isCardCodeRequired: true,
-            });
+            .toHaveBeenCalledWith(values);
+    });
+
+    it('submits form when requested by parent frame', () => {
+        const event = {} as HostedFieldSubmitRequestEvent;
+
+        input.attach();
+
+        eventEmitter.emit(HostedFieldEventType.SubmitRequested, event);
+
+        expect(paymentHandler.handle)
+            .toHaveBeenCalledWith(event);
     });
 
     it('cleans up when it detaches', () => {
