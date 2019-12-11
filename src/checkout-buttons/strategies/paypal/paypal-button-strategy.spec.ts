@@ -145,7 +145,7 @@ describe('PaypalButtonStrategy', () => {
             } as CheckoutButtonInitializeOptions;
 
             await strategy.initialize(options);
-        } catch (error) {        
+        } catch (error) {
             expect(error).toBeInstanceOf(MissingDataError);
         }
     });
