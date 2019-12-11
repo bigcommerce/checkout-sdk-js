@@ -43,7 +43,7 @@ export function getCheckout(): Checkout {
         shippingCostTotal: 15,
         shippingCostBeforeDiscount: 20,
         handlingCostTotal: 8,
-        taxTotal: 0,
+        taxTotal: 3,
         subtotal: 190,
         grandTotal: 190,
         outstandingBalance: 190,
