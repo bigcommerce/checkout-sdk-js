@@ -143,6 +143,17 @@ describe('CheckoutStoreSelector', () => {
 
             expect(selector.getBillingAddress()).toBeUndefined();
         });
+
+        it('returns address if address is partially defined but geo IP is not defined', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress').mockReturnValue({ email: 'foo@bar.com' });
+            jest.spyOn(internalSelectors.config, 'getContextConfig').mockReturnValue(undefined);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getBillingAddress()).toEqual({ email: 'foo@bar.com' });
+        });
     });
 
     describe('#getShippingAddress()', () => {
