@@ -326,7 +326,7 @@ export function createCheckoutStoreSelectorFactory(): CheckoutStoreSelectorFacto
 
             if (isEmptyBillingAddress) {
                 if (!context || !context.geoCountryCode) {
-                    return;
+                    return billingAddress;
                 }
 
                 return {
