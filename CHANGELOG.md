@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.46.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.46.1...v1.46.2) (2019-12-18)
+
+
+### Bug Fixes
+
+* **payment:** INT-2195 Fix barclaycard supported instrument mapping ([a37e8d7](https://github.com/bigcommerce/checkout-sdk-js/commit/a37e8d7))
+
 ### [1.46.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.46.0...v1.46.1) (2019-12-16)
 
 
