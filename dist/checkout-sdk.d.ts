@@ -33,6 +33,27 @@ declare interface AddressRequestBody {
     }>;
 }
 
+declare interface AdyenBaseCardComponentOptions {
+    /**
+     * Array of card brands that will be recognized by the component.
+     *
+     */
+    brands?: string[];
+    /**
+     * Set a style object to customize the input fields. See Styling Secured Fields
+     * for a list of supported properties.
+     */
+    styles?: AdyenStyleOptions;
+}
+
+declare interface AdyenCardComponentEvents {
+    /**
+     * Called when the shopper enters data in the card input fields.
+     * Here you have the option to override your main Adyen Checkout configuration.
+     */
+    onChange?(state: AdyenCardState, component: AdyenComponent): void;
+}
+
 declare interface AdyenCardDataPaymentMethodState {
     paymentMethod: AdyenCardPaymentMethodState;
 }
@@ -56,7 +77,7 @@ declare interface AdyenComponent {
     unmount(): void;
 }
 
-declare interface AdyenCreditCardComponentOptions {
+declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenCardComponentEvents {
     /**
      * Set an object containing the details array for type: scheme from
      * the /paymentMethods response.
@@ -86,19 +107,9 @@ declare interface AdyenCreditCardComponentOptions {
      */
     groupTypes?: string[];
     /**
-     * Set a style object to customize the input fields. See Styling Secured Fields
-     * for a list of supported properties.
-     */
-    styles?: AdyenStyleOptions;
-    /**
      * Specify the sample values you want to appear for card detail input fields.
      */
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
-    /**
-     * Called when the shopper enters data in the card input fields.
-     * Here you have the option to override your main Adyen Checkout configuration.
-     */
-    onChange?(state: AdyenCardState, component: AdyenComponent): void;
 }
 
 declare interface AdyenStyleOptions {
@@ -140,7 +151,7 @@ declare interface AdyenThreeDS2Options {
  * A set of options that are required to initialize the AdyenV2 payment method.
  *
  * Once AdyenV2 payment is initialized, credit card form fields, provided by the
- * payment provider as iframes, will be inserted into the current page. These
+ * payment provider as iFrames, will be inserted into the current page. These
  * options provide a location and styling for each of the form fields.
  */
 declare interface AdyenV2PaymentInitializeOptions {
@@ -152,6 +163,10 @@ declare interface AdyenV2PaymentInitializeOptions {
      * The location to insert the Adyen 3DS V2 component.
      */
     threeDS2ContainerId: string;
+    /**
+     * The location to insert the Adyen custom card component
+     */
+    cardVerificationContainerId?: string;
     /**
      * ThreeDS2Options
      */

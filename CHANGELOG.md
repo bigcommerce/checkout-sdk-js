@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.47.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.46.2...v1.47.0) (2019-12-30)
+
+
+### Features
+
+* **payment:** INT-2181 Utilize Adyen Custom Card Components in TSV ([ceebc4d](https://github.com/bigcommerce/checkout-sdk-js/commit/ceebc4d))
+
 ### [1.46.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.46.1...v1.46.2) (2019-12-18)
 
 

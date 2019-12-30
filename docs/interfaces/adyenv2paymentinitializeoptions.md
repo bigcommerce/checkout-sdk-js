@@ -4,7 +4,7 @@
 
 A set of options that are required to initialize the AdyenV2 payment method.
 
-Once AdyenV2 payment is initialized, credit card form fields, provided by the payment provider as iframes, will be inserted into the current page. These options provide a location and styling for each of the form fields.
+Once AdyenV2 payment is initialized, credit card form fields, provided by the payment provider as iFrames, will be inserted into the current page. These options provide a location and styling for each of the form fields.
 
 ## Hierarchy
 
@@ -14,6 +14,7 @@ Once AdyenV2 payment is initialized, credit card form fields, provided by the pa
 
 ### Properties
 
+* [cardVerificationContainerId](adyenv2paymentinitializeoptions.md#cardverificationcontainerid)
 * [containerId](adyenv2paymentinitializeoptions.md#containerid)
 * [options](adyenv2paymentinitializeoptions.md#options)
 * [threeDS2ContainerId](adyenv2paymentinitializeoptions.md#threeds2containerid)
@@ -23,6 +24,16 @@ Once AdyenV2 payment is initialized, credit card form fields, provided by the pa
 
 ## Properties
 
+<a id="cardverificationcontainerid"></a>
+
+### `<Optional>` cardVerificationContainerId
+
+**● cardVerificationContainerId**: * `undefined` &#124; `string`
+*
+
+The location to insert the Adyen custom card component
+
+___
 <a id="containerid"></a>
 
 ###  containerId
