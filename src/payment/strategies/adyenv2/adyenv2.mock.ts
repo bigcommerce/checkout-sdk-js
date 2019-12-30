@@ -30,6 +30,7 @@ export function getAdyenInitializeOptions(): PaymentInitializeOptions {
         adyenv2: {
             containerId: 'adyen-component-field',
             threeDS2ContainerId: 'adyen-component-field-3ds',
+            cardVerificationContainerId: 'adyen-custom-card-component-field',
             options: {
                 hasHolderName: true,
                 styles: {},

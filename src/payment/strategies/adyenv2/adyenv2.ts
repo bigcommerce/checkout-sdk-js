@@ -1,7 +1,3 @@
-export interface AdyenComponentCallbacks {
-    onChange?(state: AdyenCardState): void;
-}
-
 export interface AdyenHostWindow extends Window {
     AdyenCheckout?: new(configuration: AdyenConfiguration) => AdyenCheckout;
 }
@@ -445,7 +441,7 @@ export interface Card {
     /**
      * The month component of the start date (for some UK debit cards only).
      */
-    startNumnber?: string;
+    startNumber?: string;
 
     /**
      * The year component of the start date (for some UK debit cards only).
@@ -471,10 +467,32 @@ export interface AdyenComponent {
 
 export interface AdyenCheckout {
     create(type: string, componentOptions?: AdyenCreditCardComponentOptions |
-        ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions): AdyenComponent;
+        ThreeDS2DeviceFingerprintComponentOptions | ThreeDS2ChallengeComponentOptions | AdyenCustomCardComponentOptions): AdyenComponent;
 }
 
-export interface AdyenCreditCardComponentOptions {
+export interface AdyenBaseCardComponentOptions {
+    /**
+     * Array of card brands that will be recognized by the component.
+     *
+     */
+    brands?: string[];
+
+    /**
+     * Set a style object to customize the input fields. See Styling Secured Fields
+     * for a list of supported properties.
+     */
+    styles?: AdyenStyleOptions;
+}
+
+export interface AdyenCardComponentEvents {
+    /**
+     * Called when the shopper enters data in the card input fields.
+     * Here you have the option to override your main Adyen Checkout configuration.
+     */
+    onChange?(state: AdyenCardState, component: AdyenComponent): void;
+}
+
+export interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenCardComponentEvents {
     /**
      * Set an object containing the details array for type: scheme from
      * the /paymentMethods response.
@@ -508,22 +526,35 @@ export interface AdyenCreditCardComponentOptions {
      * specified in the GroupTypes configuration, the onBrand callback will not be invoked.
      */
     groupTypes?: string[];
-    /**
-     * Set a style object to customize the input fields. See Styling Secured Fields
-     * for a list of supported properties.
-     */
-    styles?: AdyenStyleOptions;
 
     /**
      * Specify the sample values you want to appear for card detail input fields.
      */
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
+}
+
+export interface CustomCardAriaLabel {
+    label?: string;
+    iframeTitle?: string;
+}
+
+export interface AdyenCustomCardAriaLabels {
+    lang?: string;
+    encryptedCardNumber?: CustomCardAriaLabel;
+    encryptedExpiryDate?: CustomCardAriaLabel;
+    encryptedSecurityCode?: CustomCardAriaLabel;
+}
+
+export interface AdyenCustomCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenCardComponentEvents {
+    /**
+     * Specify aria attributes for the input fields for web accessibility.
+     */
+    ariaLabels?: AdyenCustomCardAriaLabels;
 
     /**
-     * Called when the shopper enters data in the card input fields.
-     * Here you have the option to override your main Adyen Checkout configuration.
+     * Automatically shift the focus from date field to the CVC field.
      */
-    onChange?(state: AdyenCardState, component: AdyenComponent): void;
+    autofocus?: boolean;
 }
 
 export interface AdyenCardState {

@@ -13,8 +13,8 @@ export default class AdyenV2ScriptLoader {
 
     load(configuration: AdyenConfiguration): Promise<AdyenCheckout> {
         return Promise.all([
-            this._stylesheetLoader.loadStylesheet(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.0.0/adyen.css`),
-            this._scriptLoader.loadScript(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.0.0/adyen.js`),
+            this._stylesheetLoader.loadStylesheet(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.3.0/adyen.css`),
+            this._scriptLoader.loadScript(`https://checkoutshopper-${configuration.environment}.adyen.com/checkoutshopper/sdk/3.3.0/adyen.js`),
         ])
         .then(() => {
             if (!this._window.AdyenCheckout) {
