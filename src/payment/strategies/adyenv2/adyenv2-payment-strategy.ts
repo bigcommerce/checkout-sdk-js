@@ -2,6 +2,7 @@ import { FormPoster } from '@bigcommerce/form-poster';
 import { some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { getBrowserInfo } from '../../../common/browser-info';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType, RequestError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -111,9 +112,14 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                     return this._store.dispatch(this._paymentActionCreator.submitPayment({
                         ...payment,
                         paymentData: {
-                            instrumentId: paymentData.instrumentId,
-                            ccCvv: encryptedSecurityCode,
-                            ccNumber: encryptedCardNumber,
+                            formattedPayload: {
+                                bigpay_token: {
+                                    credit_card_number_confirmation: encryptedCardNumber,
+                                    token: paymentData.instrumentId,
+                                    verification_value: encryptedSecurityCode,
+                                },
+                                browser_info: getBrowserInfo(),
+                            },
                         },
                     }));
                 }
@@ -121,11 +127,16 @@ export default class AdyenV2PaymentStrategy implements PaymentStrategy {
                 const paymentPayload = {
                     methodId: payment.methodId,
                     paymentData: {
-                        nonce: JSON.stringify({
-                            ...adyenComponentState.data.paymentMethod,
-                            origin: window.location.origin,
-                        }),
-                        shouldSaveInstrument,
+                        formattedPayload: {
+                            credit_card_token: {
+                                token: JSON.stringify({
+                                    ...adyenComponentState.data.paymentMethod,
+                                    origin: window.location.origin,
+                                }),
+                            },
+                            browser_info: getBrowserInfo(),
+                            vault_payment_instrument: shouldSaveInstrument,
+                        },
                     },
                 };
 
