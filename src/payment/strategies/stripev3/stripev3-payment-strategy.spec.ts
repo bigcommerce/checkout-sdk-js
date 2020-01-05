@@ -12,7 +12,6 @@ import { getResponse } from '../../../common/http-request/responses.mock';
 import { getCustomer } from '../../../customer/customers.mock';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { LoadPaymentMethodAction, PaymentInitializeOptions, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../../payment';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import { PaymentArgumentInvalidError, PaymentMethodFailedError } from '../../errors';
@@ -54,8 +53,7 @@ describe('StripeV3PaymentStrategy', () => {
         orderRequestSender = new OrderRequestSender(createRequestSender());
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 
         paymentActionCreator = new PaymentActionCreator(

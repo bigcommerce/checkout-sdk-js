@@ -11,8 +11,8 @@ import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import createPaymentClient from '../../create-payment-client';
 import createPaymentStrategyRegistry from '../../create-payment-strategy-registry';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -79,11 +79,14 @@ describe('BraintreeVisaCheckoutPaymentStrategy', () => {
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            checkoutValidator,
-            new SpamProtectionActionCreator(spamProtection)
+            checkoutValidator
         );
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
-        paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+        paymentStrategyActionCreator = new PaymentStrategyActionCreator(
+            registry,
+            orderActionCreator,
+            new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
+        );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient(store)),
             orderActionCreator,

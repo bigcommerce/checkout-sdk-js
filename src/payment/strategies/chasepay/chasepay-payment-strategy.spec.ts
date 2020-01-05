@@ -13,11 +13,11 @@ import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentActionCreator, PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
 import { getChasePay, getPaymentMethodsState } from '../../../payment/payment-methods.mock';
 import { ChasePayEventType, ChasePayScriptLoader, JPMC } from '../../../payment/strategies/chasepay';
 import { getChasePayScriptMock } from '../../../payment/strategies/chasepay/chasepay.mock';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethodRequestSender from '../../payment-method-request-sender';
 import { PaymentInitializeOptions } from '../../payment-request-options';
@@ -100,8 +100,7 @@ describe('ChasePayPaymentStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(_requestSender);
         orderActionCreator = new OrderActionCreator(
             paymentClient,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(spamProtection)
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(paymentClient),
@@ -109,7 +108,11 @@ describe('ChasePayPaymentStrategy', () => {
             new PaymentRequestTransformer()
         );
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
-        paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+        paymentStrategyActionCreator = new PaymentStrategyActionCreator(
+            registry,
+            orderActionCreator,
+            new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
+        );
 
         jest.spyOn(paymentStrategyActionCreator, 'widgetInteraction');
         jest.spyOn(requestSender, 'post');

@@ -22,7 +22,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.checkout.isLoading).toHaveBeenCalled();
         });
 
-        it('returns false if loading checkout', () => {
+        it('returns false if not loading checkout', () => {
             jest.spyOn(selectors.checkout, 'isLoading').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -33,7 +33,7 @@ describe('CheckoutStoreStatusSelector', () => {
     });
 
     describe('#isUpdatingCheckout()', () => {
-        it('returns true if loading checkout', () => {
+        it('returns true if updating checkout', () => {
             jest.spyOn(selectors.checkout, 'isUpdating').mockReturnValue(true);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -42,13 +42,33 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.checkout.isUpdating).toHaveBeenCalled();
         });
 
-        it('returns false if loading checkout', () => {
+        it('returns false if not updating checkout', () => {
             jest.spyOn(selectors.checkout, 'isUpdating').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
             expect(statuses.isUpdatingCheckout()).toEqual(false);
             expect(selectors.checkout.isUpdating).toHaveBeenCalled();
+        });
+    });
+
+    describe('#isExecutingSpamCheck()', () => {
+        it('returns true if executing spam check', () => {
+            jest.spyOn(selectors.checkout, 'isExecutingSpamCheck').mockReturnValue(true);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isExecutingSpamCheck()).toEqual(true);
+            expect(selectors.checkout.isExecutingSpamCheck).toHaveBeenCalled();
+        });
+
+        it('returns false if not updating checkout', () => {
+            jest.spyOn(selectors.checkout, 'isExecutingSpamCheck').mockReturnValue(false);
+
+            const statuses = createCheckoutStoreStatusSelector(selectors);
+
+            expect(statuses.isExecutingSpamCheck()).toEqual(false);
+            expect(selectors.checkout.isExecutingSpamCheck).toHaveBeenCalled();
         });
     });
 
@@ -62,7 +82,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
         });
 
-        it('returns false if submitting order', () => {
+        it('returns false if not submitting order', () => {
             jest.spyOn(selectors.paymentStrategies, 'isExecuting').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -71,22 +91,22 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.paymentStrategies.isExecuting).toHaveBeenCalled();
         });
 
-        it('returns true if executing spam protection', () => {
-            jest.spyOn(selectors.order, 'isSpamProtectionExecuting').mockReturnValue(true);
+        it('returns true if executing spam check', () => {
+            jest.spyOn(selectors.checkout, 'isExecutingSpamCheck').mockReturnValue(true);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
             expect(statuses.isSubmittingOrder()).toEqual(true);
-            expect(selectors.order.isSpamProtectionExecuting).toHaveBeenCalled();
+            expect(selectors.checkout.isExecutingSpamCheck).toHaveBeenCalled();
         });
 
-        it('returns false if executing spam protection', () => {
-            jest.spyOn(selectors.order, 'isSpamProtectionExecuting').mockReturnValue(false);
+        it('returns false if not executing spam check', () => {
+            jest.spyOn(selectors.checkout, 'isExecutingSpamCheck').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
             expect(statuses.isSubmittingOrder()).toEqual(false);
-            expect(selectors.order.isSpamProtectionExecuting).toHaveBeenCalled();
+            expect(selectors.checkout.isExecutingSpamCheck).toHaveBeenCalled();
         });
     });
 
@@ -100,7 +120,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.paymentStrategies.isFinalizing).toHaveBeenCalled();
         });
 
-        it('returns false if finalizing order', () => {
+        it('returns false if not finalizing order', () => {
             jest.spyOn(selectors.paymentStrategies, 'isFinalizing').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -120,7 +140,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.order.isLoading).toHaveBeenCalled();
         });
 
-        it('returns false if loading order', () => {
+        it('returns false if not loading order', () => {
             jest.spyOn(selectors.order, 'isLoading').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -140,7 +160,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.cart.isLoading).toHaveBeenCalled();
         });
 
-        it('returns false if loading cart', () => {
+        it('returns false if not loading cart', () => {
             jest.spyOn(selectors.cart, 'isLoading').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -151,7 +171,7 @@ describe('CheckoutStoreStatusSelector', () => {
     });
 
     describe('#isLoadingBillingCountries()', () => {
-        it('returns true if loading countries', () => {
+        it('returns true if loading billing countries', () => {
             jest.spyOn(selectors.countries, 'isLoading').mockReturnValue(true);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -160,7 +180,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.countries.isLoading).toHaveBeenCalled();
         });
 
-        it('returns false if loading countries', () => {
+        it('returns false if not loading billing countries', () => {
             jest.spyOn(selectors.countries, 'isLoading').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -180,7 +200,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.shippingCountries.isLoading).toHaveBeenCalled();
         });
 
-        it('returns false if loading shipping countries', () => {
+        it('returns false if not loading shipping countries', () => {
             jest.spyOn(selectors.shippingCountries, 'isLoading').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -200,7 +220,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.paymentMethods.isLoading).toHaveBeenCalled();
         });
 
-        it('returns false if loading payment methods', () => {
+        it('returns false if not loading payment methods', () => {
             jest.spyOn(selectors.paymentMethods, 'isLoading').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -220,7 +240,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.paymentMethods.isLoadingMethod).toHaveBeenCalledWith('braintree');
         });
 
-        it('returns false if loading payment methods', () => {
+        it('returns false if not loading payment methods', () => {
             jest.spyOn(selectors.paymentMethods, 'isLoadingMethod').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -262,7 +282,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.customerStrategies.isSigningIn).toHaveBeenCalled();
         });
 
-        it('returns false if signing in', () => {
+        it('returns false if not signing in', () => {
             jest.spyOn(selectors.customerStrategies, 'isSigningIn').mockReturnValue(false);
 
             const statuses = createCheckoutStoreStatusSelector(selectors);
@@ -286,7 +306,7 @@ describe('CheckoutStoreStatusSelector', () => {
             expect(selectors.customerStrategies.isSigningOut).toHaveBeenCalled();
         });
 
-        it('returns false if signing out', () => {
+        it('returns false if not signing out', () => {
             const statuses = createCheckoutStoreStatusSelector(selectors);
 
             expect(statuses.isSigningOut()).toEqual(false);

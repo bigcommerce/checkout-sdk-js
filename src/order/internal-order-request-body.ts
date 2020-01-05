@@ -5,7 +5,6 @@ export default interface InternalOrderRequestBody {
     useStoreCredit?: boolean;
     customerMessage?: string;
     externalSource?: string;
-    spamProtectionToken?: string;
     shouldSaveInstrument?: boolean;
 }
 

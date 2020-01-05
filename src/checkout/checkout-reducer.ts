@@ -7,6 +7,7 @@ import { objectMerge, objectSet } from '../common/utility';
 import { CouponAction, CouponActionType, GiftCertificateAction, GiftCertificateActionType } from '../coupon';
 import { OrderAction, OrderActionType } from '../order';
 import { ConsignmentAction, ConsignmentActionType } from '../shipping';
+import { SpamProtectionAction, SpamProtectionActionType } from '../spam-protection';
 import { StoreCreditAction, StoreCreditActionType } from '../store-credit';
 
 import { CheckoutAction, CheckoutActionType } from './checkout-actions';
@@ -28,7 +29,7 @@ export default function checkoutReducer(
 function dataReducer(
     data: CheckoutDataState | undefined,
     action: CheckoutAction | BillingAddressAction | ConsignmentAction | CouponAction |
-        GiftCertificateAction | OrderAction | StoreCreditAction
+        GiftCertificateAction | OrderAction | SpamProtectionAction | StoreCreditAction
 ): CheckoutDataState | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
@@ -44,6 +45,7 @@ function dataReducer(
     case ConsignmentActionType.LoadShippingOptionsSucceeded:
     case GiftCertificateActionType.ApplyGiftCertificateSucceeded:
     case GiftCertificateActionType.RemoveGiftCertificateSucceeded:
+    case SpamProtectionActionType.ExecuteSucceeded:
         return objectMerge(data, omit(action.payload, [
             'billingAddress',
             'cart',
@@ -87,7 +89,7 @@ function errorsReducer(
 
 function statusesReducer(
     statuses: CheckoutStatusesState = DEFAULT_STATE.statuses,
-    action: CheckoutAction | OrderAction
+    action: CheckoutAction | OrderAction | SpamProtectionAction
 ): CheckoutStatusesState {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutRequested:
@@ -103,6 +105,13 @@ function statusesReducer(
     case CheckoutActionType.UpdateCheckoutFailed:
     case CheckoutActionType.UpdateCheckoutSucceeded:
         return objectSet(statuses, 'isUpdating', false);
+
+    case SpamProtectionActionType.ExecuteRequested:
+        return objectSet(statuses, 'isExecutingSpamCheck', true);
+
+    case SpamProtectionActionType.ExecuteFailed:
+    case SpamProtectionActionType.ExecuteSucceeded:
+        return objectSet(statuses, 'isExecutingSpamCheck', false);
 
     default:
         return statuses;

@@ -1,12 +1,14 @@
 import { Action } from '@bigcommerce/data-store';
 
+import { Checkout } from '../checkout';
+
 export enum SpamProtectionActionType {
     InitializeFailed = 'SPAM_PROTECTION_INITIALIZE_FAILED',
     InitializeSucceeded = 'SPAM_PROTECTION_INITIALIZE_SUCCEEDED',
     InitializeRequested = 'SPAM_PROTECTION_INITIALIZE_REQUESTED',
     ExecuteRequested = 'SPAM_PROTECTION_EXECUTE_REQUESTED',
-    Completed = 'SPAM_PROTECTION_COMPLETED',
-    SubmitFailed = 'SPAM_PROTECTION_SUBMIT_FAILED',
+    ExecuteSucceeded = 'SPAM_PROTECTION_EXECUTE_SUCCEEDED',
+    ExecuteFailed = 'SPAM_PROTECTION_EXECUTE_FAILED',
 }
 
 export type SpamProtectionAction =
@@ -14,8 +16,8 @@ export type SpamProtectionAction =
     InitializeSucceededAction |
     InitializeFailedAction |
     ExecuteRequestedAction |
-    CompletedAction |
-    SubmitFailedAction;
+    ExecuteSucceededAction |
+    ExecuteFailedAction;
 
 export interface InitializeRequestedAction extends Action {
     type: SpamProtectionActionType.InitializeRequested;
@@ -33,10 +35,10 @@ export interface ExecuteRequestedAction extends Action {
     type: SpamProtectionActionType.ExecuteRequested;
 }
 
-export interface CompletedAction extends Action<string> {
-    type: SpamProtectionActionType.Completed;
+export interface ExecuteSucceededAction extends Action<Checkout> {
+    type: SpamProtectionActionType.ExecuteSucceeded;
 }
 
-export interface SubmitFailedAction extends Action {
-    type: SpamProtectionActionType.SubmitFailed;
+export interface ExecuteFailedAction extends Action {
+    type: SpamProtectionActionType.ExecuteFailed;
 }

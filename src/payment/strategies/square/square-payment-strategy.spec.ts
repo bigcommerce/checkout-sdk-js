@@ -11,9 +11,9 @@ import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
 import { getConfigState } from '../../../config/configs.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { createPaymentStrategyRegistry, PaymentActionCreator, PaymentInitializeOptions, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender, PaymentStrategyActionCreator } from '../../../payment';
 import { getPaymentMethodsState, getSquare } from '../../../payment/payment-methods.mock';
+import { createSpamProtection, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../../../spam-protection';
 import { PaymentActionType } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
 import PaymentRequestTransformer from '../../payment-request-transformer';
@@ -82,8 +82,7 @@ describe('SquarePaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(spamProtection)
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
@@ -93,7 +92,11 @@ describe('SquarePaymentStrategy', () => {
         initOptions = getSquarePaymentInitializeOptions();
         paymentMethodActionCreator = new PaymentMethodActionCreator(
             new PaymentMethodRequestSender(requestSender));
-        paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+        paymentStrategyActionCreator = new PaymentStrategyActionCreator(
+            registry,
+            orderActionCreator,
+            new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender))
+        );
         scriptLoader = new SquareScriptLoader(createScriptLoader());
         checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
         strategy = new SquarePaymentStrategy(

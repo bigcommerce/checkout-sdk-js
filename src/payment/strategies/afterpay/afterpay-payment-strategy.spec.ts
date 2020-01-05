@@ -10,7 +10,6 @@ import { getCheckout, getCheckoutPayment, getCheckoutStoreState } from '../../..
 import { MissingDataError, NotInitializedError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { StoreCreditActionCreator, StoreCreditActionType, StoreCreditRequestSender } from '../../../store-credit';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType } from '../../payment-actions';
@@ -36,7 +35,6 @@ describe('AfterpayPaymentStrategy', () => {
     let paymentMethod: PaymentMethod;
     let paymentMethodActionCreator: PaymentMethodActionCreator;
     let storeCreditActionCreator: StoreCreditActionCreator;
-    let spamProtectionActionCreator: SpamProtectionActionCreator;
     let scriptLoader: AfterpayScriptLoader;
     let submitOrderAction: Observable<Action>;
     let submitPaymentAction: Observable<Action>;
@@ -54,8 +52,7 @@ describe('AfterpayPaymentStrategy', () => {
         paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
         checkoutRequestSender = new CheckoutRequestSender(createRequestSender());
         checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-        spamProtectionActionCreator = new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()));
-        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator, spamProtectionActionCreator);
+        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
         paymentActionCreator = new PaymentActionCreator(
             new PaymentRequestSender(createPaymentClient()),
             orderActionCreator,

@@ -13,7 +13,6 @@ import { getResponse } from '../../../common/http-request/responses.mock';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { PaymentInitializeOptions } from '../../../payment';
 import { PaymentArgumentInvalidError } from '../../errors';
 import PaymentActionCreator from '../../payment-action-creator';
@@ -46,8 +45,7 @@ describe('AdyenV2PaymentStrategy', () => {
         orderRequestSender = new OrderRequestSender(requestSender);
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(requestSender)),
-            new SpamProtectionActionCreator(createSpamProtection(scriptLoader))
+            new CheckoutValidator(new CheckoutRequestSender(requestSender))
         );
 
         paymentActionCreator = new PaymentActionCreator(

@@ -13,7 +13,6 @@ import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { PaymentMethod, PaymentMethodActionCreator, PaymentRequestSender } from '../../../payment';
 import { getPaymentMethodsState, getZip } from '../../../payment/payment-methods.mock';
 import { getZipScriptMock } from '../../../payment/strategies/zip/zip.mock';
@@ -69,8 +68,7 @@ describe('ZipPaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             paymentClient,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,
