@@ -26,6 +26,7 @@ This object can be used to collect all information that is required for checkout
 * [deinitializeShipping](checkoutservice.md#deinitializeshipping)
 * [deleteConsignment](checkoutservice.md#deleteconsignment)
 * [deleteInstrument](checkoutservice.md#deleteinstrument)
+* [executeSpamCheck](checkoutservice.md#executespamcheck)
 * [finalizeOrderIfNeeded](checkoutservice.md#finalizeorderifneeded)
 * [getState](checkoutservice.md#getstate)
 * [initializeCustomer](checkoutservice.md#initializecustomer)
@@ -365,6 +366,26 @@ console.log(state.data.getInstruments());
 A promise that resolves to the current state.
 
 ___
+<a id="executespamcheck"></a>
+
+###  executeSpamCheck
+
+▸ **executeSpamCheck**(): `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+
+Verifies whether the current checkout is created by a human.
+
+Note: this method will do the initialization, therefore you do not need to call `CheckoutService#initializeSpamProtection` before calling this method.
+
+With spam protection enabled, the customer has to be verified as a human. The order creation will fail if spam protection is enabled but verification fails.
+
+```js
+await service.executeSpamCheck();
+```
+
+**Returns:** `Promise`<[CheckoutSelectors](../interfaces/checkoutselectors.md)>
+A promise that resolves to the current state.
+
+___
 <a id="finalizeorderifneeded"></a>
 
 ###  finalizeOrderIfNeeded
@@ -517,13 +538,14 @@ ___
 
 Initializes the spam protection for order creation.
 
+Note: Use `CheckoutService#executeSpamCheck` instead. You do not need to call this method before calling `CheckoutService#executeSpamCheck`.
+
 With spam protection enabled, the customer has to be verified as a human. The order creation will fail if spam protection is enabled but verification fails.
 
 ```js
-await service.initializeSpamProtection({
-    containerId: 'spamProtectionContainer',
-});
+await service.initializeSpamProtection();
 ```
+*__deprecated__*: *   Use CheckoutService#executeSpamCheck instead.
 
 **Parameters:**
 
@@ -838,7 +860,7 @@ ___
 
 Selects a shipping option for a given consignment.
 
-Note: this is used when items need to be shipped to multiple addresses, for single shipping address, use `CheckoutService#updateShippingAddres`.
+Note: this is used when items need to be shipped to multiple addresses, for single shipping address, use `CheckoutService#updateShippingAddress`.
 
 If a shipping option has an additional cost, the quote for the current order will be adjusted once the option is selected.
 

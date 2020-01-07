@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.47.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.0...v1.47.1) (2020-01-07)
+
+
+### Bug Fixes
+
+* **spam-protection:** CHECKOUT-4560 Fix spam protection not working for braintree in non-chrome browsers ([4c2c8ac](https://github.com/bigcommerce/checkout-sdk-js/commit/4c2c8ac))
+
 ## [1.47.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.46.2...v1.47.0) (2019-12-30)
 
 
