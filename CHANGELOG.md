@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.47.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.1...v1.47.2) (2020-01-08)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-5037 Add Item Unit Price to Line Item object in order payment payload ([1919da1](https://github.com/bigcommerce/checkout-sdk-js/commit/1919da1))
+
 ### [1.47.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.0...v1.47.1) (2020-01-07)
 
 
