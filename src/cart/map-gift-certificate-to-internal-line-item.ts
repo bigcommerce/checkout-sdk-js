@@ -18,6 +18,8 @@ export default function mapGiftCertificateToInternalLineItem(
         discount: 0,
         integerAmount: amountTransformer.toInteger(item.amount),
         integerAmountAfterDiscount: amountTransformer.toInteger(item.amount),
+        integerUnitPrice: amountTransformer.toInteger(item.amount),
+        integerUnitPriceAfterDiscount: amountTransformer.toInteger(item.amount),
         integerDiscount: 0,
         quantity: 1,
         sender: item.sender,
