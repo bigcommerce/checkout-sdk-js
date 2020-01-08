@@ -7,6 +7,8 @@ export default interface InternalLineItem {
     downloadsPageUrl?: string;
     integerAmountAfterDiscount: number;
     integerDiscount: number;
+    integerUnitPrice: number;
+    integerUnitPriceAfterDiscount: number;
     id: string | number;
     imageUrl: string;
     name?: string;

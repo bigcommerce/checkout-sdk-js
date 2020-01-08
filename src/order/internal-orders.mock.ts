@@ -81,6 +81,8 @@ export function getCompleteOrder(): InternalOrder {
                 integerAmount: 20000,
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 20000,
+                integerUnitPrice: 20000,
+                integerUnitPriceAfterDiscount: 20000,
                 variantId: 71,
                 addedByPromotion: false,
                 attributes: [
@@ -113,6 +115,8 @@ export function getCompleteOrder(): InternalOrder {
                 integerAmount: 10000,
                 integerDiscount: 0,
                 integerAmountAfterDiscount: 10000,
+                integerUnitPrice: 10000,
+                integerUnitPriceAfterDiscount: 10000,
                 variantId: null,
             },
         ],

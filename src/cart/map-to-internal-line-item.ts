@@ -25,6 +25,8 @@ export default function mapToInternalLineItem(
         integerAmount: amountTransformer.toInteger(item.extendedListPrice),
         integerAmountAfterDiscount: amountTransformer.toInteger(item.extendedSalePrice),
         integerDiscount: amountTransformer.toInteger(item.discountAmount),
+        integerUnitPrice: amountTransformer.toInteger(item.listPrice),
+        integerUnitPriceAfterDiscount: amountTransformer.toInteger(item.salePrice),
         downloadsPageUrl: (item as DigitalItem).downloadPageUrl,
         name: item.name,
         quantity: item.quantity,
