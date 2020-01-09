@@ -1,5 +1,3 @@
-import { reject } from 'lodash';
-
 import { createRequestErrorFactory } from '../../common/error';
 import { getErrorResponse } from '../../common/http-request/responses.mock';
 
@@ -92,7 +90,7 @@ describe('instrumentReducer()', () => {
 
         expect(instrumentReducer(initialState, action)).toEqual({
             ...initialState,
-            data: reject(initialInstruments, initialInstruments[0]),
+            data: initialInstruments,
             meta: action.meta,
             errors: { deleteError: undefined },
             statuses: {
