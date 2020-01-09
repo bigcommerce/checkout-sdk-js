@@ -1,7 +1,8 @@
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
+import { BrowserStorage } from '../common/storage';
 
 import { InvalidHostedFormConfigError, InvalidHostedFormError } from './errors';
-import HostedField from './hosted-field';
+import HostedField, { LAST_RETRY_KEY } from './hosted-field';
 import { HostedFieldEvent, HostedFieldEventType } from './hosted-field-events';
 import HostedFieldType from './hosted-field-type';
 import { getHostedFormOrderData } from './hosted-form-order-data.mock';
@@ -12,11 +13,15 @@ describe('HostedField', () => {
     let field: HostedField;
     let eventPoster: Pick<IframeEventPoster<HostedFieldEvent>, 'post' | 'setTarget'>;
     let eventListener: Pick<IframeEventListener<HostedInputEventMap>, 'listen'>;
+    let location: Pick<Location, 'replace'>;
+    let storage: Pick<BrowserStorage, 'getItem' | 'setItem'>;
 
     beforeEach(() => {
         container = document.createElement('div');
         eventPoster = { post: jest.fn(), setTarget: jest.fn() };
         eventListener = { listen: jest.fn() };
+        location = { replace: jest.fn() };
+        storage = { getItem: jest.fn(), setItem: jest.fn() };
 
         container.id = 'field-container-id';
         document.body.appendChild(container);
@@ -30,7 +35,9 @@ describe('HostedField', () => {
             'Card number',
             { default: { color: 'rgb(0, 0, 0)' } },
             eventPoster as IframeEventPoster<HostedFieldEvent>,
-            eventListener as IframeEventListener<HostedInputEventMap>
+            eventListener as IframeEventListener<HostedInputEventMap>,
+            storage as BrowserStorage,
+            location as Location
         );
     });
 
@@ -85,7 +92,7 @@ describe('HostedField', () => {
             });
     });
 
-    it('throws error if unable to attach', async () => {
+    it('retries if unable to attach', async () => {
         jest.spyOn(eventPoster, 'post')
             .mockRejectedValue({
                 type: HostedInputEventType.AttachFailed,
@@ -93,6 +100,33 @@ describe('HostedField', () => {
                     error: { message: 'Invalid form', redirectUrl: 'https://store.foobar.com/checkout' },
                 },
             });
+
+        process.nextTick(() => {
+            // tslint:disable-next-line:no-non-null-assertion
+            document.querySelector('#field-container-id iframe')!
+                .dispatchEvent(new Event('load'));
+        });
+
+        field.attach();
+
+        // Wait for a timeout because `attach` never resolves in this scenario
+        await new Promise(resolve => setTimeout(resolve, 1));
+
+        expect(location.replace)
+            .toHaveBeenCalled();
+    });
+
+    it('throws error if unable to attach or retry', async () => {
+        jest.spyOn(eventPoster, 'post')
+            .mockRejectedValue({
+                type: HostedInputEventType.AttachFailed,
+                payload: {
+                    error: { message: 'Invalid form', redirectUrl: 'https://store.foobar.com/checkout' },
+                },
+            });
+
+        jest.spyOn(storage, 'getItem')
+            .mockImplementation(key => key.includes(LAST_RETRY_KEY) ? `${Date.now()}` : undefined);
 
         process.nextTick(() => {
             // tslint:disable-next-line:no-non-null-assertion
