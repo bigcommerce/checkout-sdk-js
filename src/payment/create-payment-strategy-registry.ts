@@ -40,6 +40,7 @@ import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
 import { OfflinePaymentStrategy } from './strategies/offline';
 import { OffsitePaymentStrategy } from './strategies/offsite';
 import { PaypalExpressPaymentStrategy, PaypalProPaymentStrategy, PaypalScriptLoader } from './strategies/paypal';
+import { PaypalCommercePaymentProcessor, PaypalCommercePaymentStrategy, PaypalCommerceRequestSender } from './strategies/paypal-commerce';
 import { SagePayPaymentStrategy } from './strategies/sage-pay';
 import { SquarePaymentStrategy, SquareScriptLoader } from './strategies/square';
 import { StripeScriptLoader, StripeV3PaymentStrategy } from './strategies/stripev3';
@@ -235,6 +236,16 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             new PaypalScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.PAYPAL_COMMERCE, () =>
+        new PaypalCommercePaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            new PaypalCommerceRequestSender(requestSender),
+            new PaypalCommercePaymentProcessor()
         )
     );
 

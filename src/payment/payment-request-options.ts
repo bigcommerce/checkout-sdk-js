@@ -11,6 +11,7 @@ import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
 import { KlarnaV2PaymentInitializeOptions } from './strategies/klarnav2';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
+import { PaypalCommercePaymentInitializeOptions } from './strategies/paypal-commerce';
 import { SquarePaymentInitializeOptions } from './strategies/square';
 import { StripeV3PaymentInitializeOptions } from './strategies/stripev3';
 
@@ -99,6 +100,13 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support PayPal Express.
      */
     paypalexpress?: PaypalExpressPaymentInitializeOptions;
+
+    /**
+     * @internal
+     * The options that are required to initialize the PayPal Commerce payment method.
+     * They can be omitted unless you need to support PayPal Commerce.
+     */
+    paypalcommerce?: PaypalCommercePaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Square payment method.

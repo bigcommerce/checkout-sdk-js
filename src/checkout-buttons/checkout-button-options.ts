@@ -4,6 +4,7 @@ import { CheckoutButtonMethodType } from './strategies';
 import { BraintreePaypalButtonInitializeOptions } from './strategies/braintree';
 import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
+import { PaypalCommerceButtonInitializeOptions } from './strategies/paypal-commerce';
 
 /**
  * The set of options for configuring the checkout button.
@@ -33,6 +34,13 @@ export interface CheckoutButtonInitializeOptions extends CheckoutButtonOptions {
      * unless you need to support Paypal.
      */
     paypal?: PaypalButtonInitializeOptions;
+
+    /**
+     * @internal
+     * The options that are required to facilitate PayPal Commerce. They can be omitted
+     * unless you need to support Paypal.
+     */
+    paypalCommerce?: PaypalCommerceButtonInitializeOptions;
 
     /**
      * The ID of a container which the checkout button should be inserted.
