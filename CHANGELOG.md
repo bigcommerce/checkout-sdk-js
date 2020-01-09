@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.47.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.2...v1.47.3) (2020-01-09)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-5037 Bump bigpay-client version to 5.4.1 ([af98270](https://github.com/bigcommerce/checkout-sdk-js/commit/af98270))
+
 ### [1.47.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.1...v1.47.2) (2020-01-08)
 
 
