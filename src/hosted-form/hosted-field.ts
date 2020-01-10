@@ -2,6 +2,7 @@ import { fromEvent } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
+import { BrowserStorage } from '../common/storage';
 import { CardInstrument } from '../payment/instrument';
 
 import { InvalidHostedFormConfigError, InvalidHostedFormError, InvalidHostedFormValueError } from './errors';
@@ -10,6 +11,9 @@ import HostedFieldType from './hosted-field-type';
 import { HostedFieldStylesMap } from './hosted-form-options';
 import HostedFormOrderData from './hosted-form-order-data';
 import { HostedInputAttachErrorEvent, HostedInputEventMap, HostedInputEventType, HostedInputSubmitErrorEvent, HostedInputValidateEvent } from './iframe-content';
+
+export const RETRY_INTERVAL = 60 * 1000;
+export const LAST_RETRY_KEY = 'lastRetry';
 
 export default class HostedField {
     private _iframe: HTMLIFrameElement;
@@ -24,6 +28,8 @@ export default class HostedField {
         private _styles: HostedFieldStylesMap,
         private _eventPoster: IframeEventPoster<HostedFieldEvent>,
         private _eventListener: IframeEventListener<HostedInputEventMap>,
+        private _storage: BrowserStorage,
+        private _location: Location,
         private _cardInstrument?: CardInstrument
     ) {
         this._iframe = document.createElement('iframe');
@@ -76,7 +82,7 @@ export default class HostedField {
                 }),
                 catchError(error => {
                     if (this._isAttachErrorEvent(error)) {
-                        throw new InvalidHostedFormError(error.payload.error.message);
+                        return this._handleAttachErrorEvent(error);
                     }
 
                     throw error;
@@ -125,6 +131,22 @@ export default class HostedField {
         if (!payload.isValid) {
             throw new InvalidHostedFormValueError(payload.errors);
         }
+    }
+
+    private async _handleAttachErrorEvent(event: HostedInputAttachErrorEvent): Promise<void> {
+        const lastRetry = Number(this._storage.getItem(LAST_RETRY_KEY));
+
+        // This is to prevent the possibility of getting into a retry loop, in
+        // case there is something unexpected that prevents the shopper from
+        // being able to recover from an invalid hosted payment form error.
+        if (!lastRetry || Date.now() - lastRetry > RETRY_INTERVAL) {
+            this._storage.setItem(LAST_RETRY_KEY, Date.now());
+            this._location.replace(event.payload.error.redirectUrl);
+
+            return new Promise(() => {});
+        }
+
+        throw new InvalidHostedFormError(event.payload.error.message);
     }
 
     private _isSubmitErrorEvent(event: any): event is HostedInputSubmitErrorEvent {
