@@ -12,7 +12,7 @@ export function mapToCardInstrument(instrument: CardInternalInstrument): CardIns
         expiryYear: instrument.expiry_year,
         brand: instrument.brand,
         trustedShippingAddress: instrument.trusted_shipping_address,
-        method:  instrument.method === 'card' ? 'credit_card' : instrument.method, // This is a temporary change for the rollout of some changes in bigpay. It is meant to be removed when the changes in bigpay are fully rolled out
+        method:  instrument.method,
         type: 'card',
     };
 }
