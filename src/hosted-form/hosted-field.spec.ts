@@ -33,7 +33,7 @@ describe('HostedField', () => {
             'field-container-id',
             'Enter your card number here',
             'Card number',
-            { default: { color: 'rgb(0, 0, 0)' } },
+            { default: { color: 'rgb(0, 0, 0)', fontFamily: 'Open Sans, Arial' } },
             eventPoster as IframeEventPoster<HostedFieldEvent>,
             eventListener as IframeEventListener<HostedInputEventMap>,
             storage as BrowserStorage,
@@ -82,14 +82,43 @@ describe('HostedField', () => {
                 type: HostedFieldEventType.AttachRequested,
                 payload: {
                     accessibilityLabel: 'Card number',
+                    fontUrls: [],
                     placeholder: 'Enter your card number here',
-                    styles: { default: { color: 'rgb(0, 0, 0)' } },
+                    styles: { default: { color: 'rgb(0, 0, 0)', fontFamily: 'Open Sans, Arial' } },
                     type: HostedFieldType.CardNumber,
                 },
             }, {
                 successType: HostedInputEventType.AttachSucceeded,
                 errorType: HostedInputEventType.AttachFailed,
             });
+    });
+
+    it('notifies with font URLs if available', async () => {
+        const linkElement = document.createElement('link');
+        linkElement.href = 'https://fonts.googleapis.com/css?family=Open+Sans&display=swap';
+        linkElement.rel = 'stylesheet';
+
+        document.head.appendChild(linkElement);
+
+        jest.spyOn(eventPoster, 'post')
+            .mockResolvedValue({ type: HostedInputEventType.AttachSucceeded });
+
+        process.nextTick(() => {
+            // tslint:disable-next-line:no-non-null-assertion
+            document.querySelector('#field-container-id iframe')!
+                .dispatchEvent(new Event('load'));
+        });
+
+        await field.attach();
+
+        expect(eventPoster.post)
+            .toHaveBeenCalledWith({
+                type: HostedFieldEventType.AttachRequested,
+                payload: expect.objectContaining({
+                    type: HostedFieldType.CardNumber,
+                    fontUrls: ['https://fonts.googleapis.com/css?family=Open+Sans&display=swap'],
+                }),
+            }, expect.any(Object));
     });
 
     it('retries if unable to attach', async () => {

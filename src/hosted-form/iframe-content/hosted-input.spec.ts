@@ -18,6 +18,7 @@ describe('HostedInput', () => {
     let eventEmitter: EventEmitter;
     let eventListener: Pick<IframeEventListener<HostedFieldEventMap>, 'addListener' | 'listen' | 'stopListen'>;
     let eventPoster: Pick<IframeEventPoster<HostedInputEvent>, 'setTarget' | 'post'>;
+    let fontUrls: string[];
     let input: HostedInput;
     let inputAggregator: Pick<HostedInputAggregator, 'getInputValues'>;
     let inputValidator: Pick<HostedInputValidator, 'validate'>;
@@ -55,6 +56,10 @@ describe('HostedInput', () => {
             setTarget: jest.fn(),
         };
 
+        fontUrls = [
+            'https://fonts.googleapis.com/css?family=Open+Sans&display=swap',
+        ];
+
         paymentHandler = { handle: jest.fn() };
 
         inputAggregator = {
@@ -79,6 +84,7 @@ describe('HostedInput', () => {
             'Cardholder name',
             'cc-name',
             styles,
+            fontUrls,
             eventListener as IframeEventListener<HostedFieldEventMap>,
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
@@ -92,6 +98,7 @@ describe('HostedInput', () => {
     });
 
     afterEach(() => {
+        input.detach();
         container.remove();
     });
 
@@ -163,6 +170,15 @@ describe('HostedInput', () => {
 
         expect(eventPoster.post)
             .toHaveBeenCalledWith({ type: HostedInputEventType.AttachSucceeded });
+    });
+
+    it('loads required fonts when input is attached', () => {
+        input.attach();
+
+        const links = Array.from<HTMLLinkElement>(document.querySelectorAll('link[href*="fonts.googleapis.com"][rel="stylesheet"]'));
+
+        expect(links.map(link => link.href))
+            .toEqual(fontUrls);
     });
 
     it('throws error if container cannot be found', () => {
@@ -271,6 +287,8 @@ describe('HostedInput', () => {
         expect(eventListener.stopListen)
             .toHaveBeenCalled();
         expect(container.querySelector('input'))
+            .toBeFalsy();
+        expect(document.querySelector('link[href*="fonts.googleapis.com"][rel="stylesheet"]'))
             .toBeFalsy();
     });
 });

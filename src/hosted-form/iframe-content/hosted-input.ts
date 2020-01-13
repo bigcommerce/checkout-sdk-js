@@ -1,6 +1,7 @@
 import { kebabCase } from 'lodash';
 
 import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
+import { parseUrl } from '../../common/url';
 import { InvalidHostedFormConfigError } from '../errors';
 import { HostedFieldEventMap, HostedFieldEventType, HostedFieldValidateRequestEvent } from '../hosted-field-events';
 import HostedFieldType from '../hosted-field-type';
@@ -15,6 +16,7 @@ import HostedInputWindow from './hosted-input-window';
 export default class HostedInput {
     protected _input: HTMLInputElement;
     protected _previousValue?: string;
+    private _fontLinks?: HTMLLinkElement[];
     private _isTouched: boolean = false;
 
     /**
@@ -27,6 +29,7 @@ export default class HostedInput {
         protected _accessibilityLabel: string,
         protected _autocomplete: string,
         protected _styles: HostedInputStylesMap,
+        protected _fontUrls: string[],
         protected _eventListener: IframeEventListener<HostedFieldEventMap>,
         protected _eventPoster: IframeEventPoster<HostedInputEvent>,
         protected _inputAggregator: HostedInputAggregator,
@@ -69,6 +72,8 @@ export default class HostedInput {
 
         container.appendChild(this._input);
 
+        this._loadFonts();
+
         this._eventPoster.setTarget(window.parent);
         this._eventListener.listen();
 
@@ -82,6 +87,8 @@ export default class HostedInput {
         if (this._input.parentElement) {
             this._input.parentElement.removeChild(this._input);
         }
+
+        this._unloadFonts();
 
         this._eventListener.stopListen();
     }
@@ -133,6 +140,42 @@ export default class HostedInput {
 
             this._input.style[key] = allowedStyles[key] || '';
         });
+    }
+
+    private _loadFonts(): void {
+        if (this._fontLinks) {
+            return;
+        }
+
+        this._fontLinks = this._fontUrls
+            .filter(url => parseUrl(url).hostname === 'fonts.googleapis.com')
+            .filter(url => !document.querySelector(`link[href='${url}'][rel='stylesheet']`))
+            .map(url => {
+                const link = document.createElement('link');
+
+                link.rel = 'stylesheet';
+                link.href = url;
+
+                document.head.appendChild(link);
+
+                return link;
+            });
+    }
+
+    private _unloadFonts(): void {
+        if (!this._fontLinks) {
+            return;
+        }
+
+        this._fontLinks.forEach(link => {
+            if (!link.parentElement) {
+                return;
+            }
+
+            link.parentElement.removeChild(link);
+        });
+
+        this._fontLinks = undefined;
     }
 
     private async _validateForm(): Promise<void> {
