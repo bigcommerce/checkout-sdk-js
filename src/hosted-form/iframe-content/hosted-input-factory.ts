@@ -27,6 +27,7 @@ export default class HostedInputFactory {
         containerId: string,
         type: HostedFieldType,
         styles: HostedInputStylesMap = {},
+        fontUrls: string[] = [],
         placeholder: string = '',
         accessibilityLabel: string = mapToAccessibilityLabel(type),
         cardInstrument?: CardInstrument
@@ -34,28 +35,29 @@ export default class HostedInputFactory {
         const autocomplete = mapToAutocompleteType(type);
 
         if (type === HostedFieldType.CardNumber) {
-            return this._createNumberInput(containerId, styles, placeholder, accessibilityLabel, autocomplete);
+            return this._createNumberInput(containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
         }
 
         if (type === HostedFieldType.CardNumberVerification) {
-            return this._createNumberInput(containerId, styles, placeholder, accessibilityLabel, autocomplete, cardInstrument);
+            return this._createNumberInput(containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
         }
 
         if (type === HostedFieldType.CardExpiry) {
-            return this._createExpiryInput(containerId, styles, placeholder, accessibilityLabel, autocomplete);
+            return this._createExpiryInput(containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
         }
 
         if (type === HostedFieldType.CardCodeVerification) {
-            return this._createInput(type, containerId, styles, placeholder, accessibilityLabel, autocomplete, cardInstrument);
+            return this._createInput(type, containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete, cardInstrument);
         }
 
-        return this._createInput(type, containerId, styles, placeholder, accessibilityLabel, autocomplete);
+        return this._createInput(type, containerId, styles, fontUrls, placeholder, accessibilityLabel, autocomplete);
     }
 
     private _createExpiryInput(
         containerId:
         string,
         styles: HostedInputStylesMap,
+        fontUrls: string[],
         placeholder: string,
         accessibilityLabel: string = '',
         autocomplete: string = ''
@@ -66,6 +68,7 @@ export default class HostedInputFactory {
             accessibilityLabel,
             autocomplete,
             styles,
+            fontUrls,
             new IframeEventListener(this._parentOrigin),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),
@@ -78,6 +81,7 @@ export default class HostedInputFactory {
     private _createNumberInput(
         containerId: string,
         styles: HostedInputStylesMap,
+        fontUrls: string[],
         placeholder: string,
         accessibilityLabel: string = '',
         autocomplete: string = '',
@@ -89,6 +93,7 @@ export default class HostedInputFactory {
             accessibilityLabel,
             autocomplete,
             styles,
+            fontUrls,
             new IframeEventListener(this._parentOrigin),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),
@@ -107,6 +112,7 @@ export default class HostedInputFactory {
         type: HostedFieldType,
         containerId: string,
         styles: HostedInputStylesMap,
+        fontUrls: string[],
         placeholder: string,
         accessibilityLabel: string = '',
         autocomplete: string = '',
@@ -119,6 +125,7 @@ export default class HostedInputFactory {
             accessibilityLabel,
             autocomplete,
             styles,
+            fontUrls,
             new IframeEventListener(this._parentOrigin),
             new IframeEventPoster(this._parentOrigin, window.parent),
             new HostedInputAggregator(window.parent),

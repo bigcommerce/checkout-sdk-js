@@ -1,8 +1,10 @@
+import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
 
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
+import { parseUrl } from '../common/url';
 import { CardInstrument } from '../payment/instrument';
 
 import { InvalidHostedFormConfigError, InvalidHostedFormError, InvalidHostedFormValueError } from './errors';
@@ -71,6 +73,7 @@ export default class HostedField {
                         payload: {
                             accessibilityLabel: this._accessibilityLabel,
                             cardInstrument: this._cardInstrument,
+                            fontUrls: this._getFontUrls(),
                             placeholder: this._placeholder,
                             styles: this._styles,
                             type: this._type,
@@ -147,6 +150,20 @@ export default class HostedField {
         }
 
         throw new InvalidHostedFormError(event.payload.error.message);
+    }
+
+    private _getFontUrls(): string[] {
+        const hostname = 'fonts.googleapis.com';
+        const links = document.querySelectorAll(`link[href*='${hostname}'][rel='stylesheet']`);
+
+        return Array.prototype.slice.call(links)
+            .filter(link => parseUrl(link.href).hostname === hostname)
+            .filter(link => values(this._styles)
+                .map(style => style && style.fontFamily)
+                .filter((family): family is string => typeof family === 'string')
+                .some(family => family.split(/,\s/).some(name => link.href.indexOf(name.replace(' ', '+')) !== -1))
+            )
+            .map(link => link.href);
     }
 
     private _isSubmitErrorEvent(event: any): event is HostedInputSubmitErrorEvent {

@@ -48,6 +48,7 @@ describe('HostedCardExpiryInput', () => {
             'Card expiration',
             'cc-expiry',
             styles,
+            [],
             eventListener as IframeEventListener<HostedFieldEventMap>,
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,

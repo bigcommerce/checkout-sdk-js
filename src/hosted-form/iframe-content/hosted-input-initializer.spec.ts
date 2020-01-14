@@ -38,6 +38,7 @@ describe('HostedInputInitializer', () => {
                     type: HostedFieldType.CardNumber,
                     accessibilityLabel: 'Name',
                     cardInstrument: getCardInstrument(),
+                    fontUrls: [],
                     placeholder: 'Card name',
                     styles: { default: { color: 'rgb(0, 0, 0)' } },
                 },
@@ -51,6 +52,7 @@ describe('HostedInputInitializer', () => {
                 'input-container',
                 HostedFieldType.CardNumber,
                 { default: { color: 'rgb(0, 0, 0)' } },
+                [],
                 'Card name',
                 'Name',
                 getCardInstrument()

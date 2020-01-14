@@ -27,6 +27,7 @@ export interface HostedFieldAttachEvent {
     payload: {
         accessibilityLabel?: string;
         cardInstrument?: CardInstrument;
+        fontUrls?: string[];
         placeholder?: string;
         styles?: HostedFieldStylesMap;
         type: HostedFieldType;

@@ -56,6 +56,7 @@ describe('HostedCardNumberInput', () => {
             'Cardholder name',
             'cc-name',
             styles,
+            [],
             eventListener as IframeEventListener<HostedFieldEventMap>,
             eventPoster as IframeEventPoster<HostedInputEvent>,
             inputAggregator as HostedInputAggregator,
