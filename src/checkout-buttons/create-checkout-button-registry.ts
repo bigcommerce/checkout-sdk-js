@@ -100,7 +100,10 @@ export default function createCheckoutButtonRegistry(
     registry.register(CheckoutButtonMethodType.PAYPALCOMMERCE, () =>
         new PaypalCommerceButtonStrategy(
             store,
-            new PaypalCommerceScriptLoader(scriptLoader)
+            checkoutActionCreator,
+            new PaypalCommerceScriptLoader(scriptLoader),
+            formPoster,
+            requestSender
         )
     );
 
