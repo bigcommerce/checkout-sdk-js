@@ -11,7 +11,6 @@ import { MissingDataError } from '../../../common/error/errors';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentRequestSender } from '../../index';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
@@ -45,10 +44,7 @@ describe('CyberSourcePaymentStrategy', () => {
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(
-                createSpamProtection(createScriptLoader())
-            )
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 
         paymentActionCreator = new PaymentActionCreator(

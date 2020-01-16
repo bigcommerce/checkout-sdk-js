@@ -39,15 +39,15 @@ export function getPhysicalItem(): PhysicalItem {
 export function getDigitalItem(): DigitalItem {
     return {
         id: '667',
-        variantId: 71,
-        productId: 103,
-        sku: 'CLC',
-        name: 'Canvas Laundry Cart',
-        url: '/canvas-laundry-cart/',
+        variantId: 72,
+        productId: 104,
+        sku: 'CLX',
+        name: 'Digital Book',
+        url: '/digital-book/',
         quantity: 1,
-        brand: 'OFS',
+        brand: 'Digitalia',
         isTaxable: true,
-        imageUrl: '/images/canvas-laundry-cart.jpg',
+        imageUrl: '/images/digital-book.jpg',
         discounts: [],
         discountAmount: 0,
         couponAmount: 0,
@@ -63,14 +63,14 @@ export function getDigitalItem(): DigitalItem {
         addedByPromotion: false,
         options: [
             {
-                name: 'n',
+                name: 'm',
                 nameId: 1,
-                value: 'v',
+                value: 'l',
                 valueId: 3,
             },
         ],
         categories: [[{name: 'Cat 1'}], [{name: 'Cat 2'}], [{name: 'Cat 3'}]],
-        categoryNames: ['Cat 1'],
+        categoryNames: ['Ebooks', 'Audio Books'],
     };
 }
 

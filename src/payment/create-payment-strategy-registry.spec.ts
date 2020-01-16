@@ -3,7 +3,7 @@ import { createRequestSender } from '@bigcommerce/request-sender';
 import { createScriptLoader } from '@bigcommerce/script-loader';
 
 import { createCheckoutStore } from '../checkout';
-import { createSpamProtection } from '../order/spam-protection';
+import { createSpamProtection } from '../spam-protection';
 
 import createPaymentStrategyRegistry from './create-payment-strategy-registry';
 import PaymentStrategyRegistry from './payment-strategy-registry';

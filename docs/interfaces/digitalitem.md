@@ -23,6 +23,7 @@
 * [downloadFileUrls](digitalitem.md#downloadfileurls)
 * [downloadPageUrl](digitalitem.md#downloadpageurl)
 * [downloadSize](digitalitem.md#downloadsize)
+* [extendedComparisonPrice](digitalitem.md#extendedcomparisonprice)
 * [extendedListPrice](digitalitem.md#extendedlistprice)
 * [extendedSalePrice](digitalitem.md#extendedsaleprice)
 * [id](digitalitem.md#id)
@@ -119,6 +120,13 @@ ___
 ###  downloadSize
 
 **● downloadSize**: *`string`*
+
+___
+<a id="extendedcomparisonprice"></a>
+
+###  extendedComparisonPrice
+
+**● extendedComparisonPrice**: *`number`*
 
 ___
 <a id="extendedlistprice"></a>

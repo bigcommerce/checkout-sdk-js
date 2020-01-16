@@ -4,12 +4,17 @@
 
 ## Hierarchy
 
-**AdyenCreditCardComponentOptions**
+ [AdyenBaseCardComponentOptions](adyenbasecardcomponentoptions.md)
+
+ [AdyenCardComponentEvents](adyencardcomponentevents.md)
+
+**↳ AdyenCreditCardComponentOptions**
 
 ## Index
 
 ### Properties
 
+* [brands](adyencreditcardcomponentoptions.md#brands)
 * [details](adyencreditcardcomponentoptions.md#details)
 * [enableStoreDetails](adyencreditcardcomponentoptions.md#enablestoredetails)
 * [groupTypes](adyencreditcardcomponentoptions.md#grouptypes)
@@ -27,6 +32,15 @@
 
 ## Properties
 
+<a id="brands"></a>
+
+### `<Optional>` brands
+
+**● brands**: *`string`[]*
+
+Array of card brands that will be recognized by the component.
+
+___
 <a id="details"></a>
 
 ### `<Optional>` details

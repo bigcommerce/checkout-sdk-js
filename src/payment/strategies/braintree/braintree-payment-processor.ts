@@ -6,7 +6,7 @@ import { OrderPaymentRequestBody } from '../../../order';
 import { PaymentMethodCancelledError } from '../../errors';
 import { CreditCardInstrument, NonceInstrument } from '../../payment';
 
-import { BraintreeAddress, BraintreePaypal, BraintreeRequestData, BraintreeTokenizePayload, BraintreeVerifyPayload } from './braintree';
+import { BraintreePaypal, BraintreeRequestData, BraintreeShippingAddressOverride, BraintreeTokenizePayload, BraintreeVerifyPayload } from './braintree';
 import { BraintreePaymentInitializeOptions, BraintreeThreeDSecureOptions } from './braintree-payment-options';
 import BraintreeSDKCreator from './braintree-sdk-creator';
 
@@ -15,7 +15,7 @@ export interface PaypalConfig {
     currency: string;
     locale: string;
     offerCredit?: boolean;
-    shippingAddressOverride?: BraintreeAddress;
+    shippingAddressOverride?: BraintreeShippingAddressOverride;
     shouldSaveInstrument?: boolean;
 }
 

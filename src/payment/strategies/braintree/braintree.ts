@@ -126,11 +126,11 @@ export interface BraintreePaypalRequest {
     locale?: string;
     offerCredit?: boolean;
     shippingAddressEditable?: boolean;
-    shippingAddressOverride?: BraintreeAddress;
+    shippingAddressOverride?: BraintreeShippingAddressOverride;
     useraction?: 'commit';
 }
 
-export interface BraintreeAddress {
+export interface BraintreeShippingAddressOverride {
     line1: string;
     line2?: string;
     city: string;
@@ -139,8 +139,18 @@ export interface BraintreeAddress {
     countryCode: string;
     phone?: string;
     recipientName?: string;
-    firstName?: string;
-    lastName?: string;
+}
+export interface BraintreeAddress {
+    line1: string;
+    line2: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    countryCode: string;
+}
+
+export interface BraintreeShippingAddress extends BraintreeAddress {
+    recipientName: string;
 }
 
 export interface BraintreeTokenizePayload {
@@ -153,7 +163,7 @@ export interface BraintreeTokenizePayload {
         lastName: string;
         countryCode?: string;
         phone?: string;
-        shippingAddress?: BraintreeAddress;
+        shippingAddress?: BraintreeShippingAddress;
         billingAddress?: BraintreeAddress;
     };
     creditFinancingOffered?: {

@@ -10,7 +10,6 @@ import { getCustomer } from '../../../customer/internal-customers.mock';
 import { FinalizeOrderAction, InternalOrder, OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody, getSubmittedOrder } from '../../../order/internal-orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import PaymentMethod from '../../payment-method';
 import { getPaypalExpress } from '../../payment-methods.mock';
 import * as paymentStatusTypes from '../../payment-status-types';
@@ -35,8 +34,7 @@ describe('PaypalExpressPaymentStrategy', () => {
     beforeEach(() => {
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 
         paypalSdk = {

@@ -11,7 +11,6 @@ import { getConfigState } from '../../../config/configs.mock';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestBody, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import { PaymentActionCreator, PaymentInitializeOptions, PaymentMethod, PaymentRequestSender } from '../../../payment';
 import { PaymentActionType } from '../../payment-actions';
 import { getMasterpass, getPaymentMethodsState } from '../../payment-methods.mock';
@@ -57,8 +56,7 @@ describe('MasterpassPaymentStrategy', () => {
         jest.spyOn(store.getState().paymentMethods, 'getPaymentMethod').mockReturnValue(paymentMethodMock);
 
         const checkoutValidator = new CheckoutValidator(new CheckoutRequestSender(createRequestSender()));
-        const spamProtectionActionCreator = new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()));
-        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator, spamProtectionActionCreator);
+        orderActionCreator = new OrderActionCreator(orderRequestSender, checkoutValidator);
         const paymentRequestSender = new PaymentRequestSender(createPaymentClient());
         paymentActionCreator = new PaymentActionCreator(
             paymentRequestSender,

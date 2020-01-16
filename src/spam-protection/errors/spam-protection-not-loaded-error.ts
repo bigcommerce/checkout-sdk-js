@@ -1,4 +1,4 @@
-import { StandardError } from '../../../common/error/errors';
+import { StandardError } from '../../common/error/errors';
 
 /**
  * Throw this error if spam protection is not loaded when trying to

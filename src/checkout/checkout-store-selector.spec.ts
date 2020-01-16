@@ -70,8 +70,90 @@ describe('CheckoutStoreSelector', () => {
         expect(selector.getCustomer()).toEqual(internalSelectors.customer.getCustomer());
     });
 
-    it('returns billing address', () => {
-        expect(selector.getBillingAddress()).toEqual(internalSelectors.billingAddress.getBillingAddress());
+    describe('#getBillingAddress()', () => {
+        it('returns billing address', () => {
+            expect(selector.getBillingAddress()).toEqual(internalSelectors.billingAddress.getBillingAddress());
+        });
+
+        it('returns geo-ip dummy billing address when billing address is undefined', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress').mockReturnValue(undefined);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getBillingAddress()).toEqual({
+                id: '',
+                address1: '',
+                address2: '',
+                city: '',
+                company: '',
+                country: '',
+                customFields: [],
+                email: '',
+                firstName: '',
+                lastName: '',
+                phone: '',
+                postalCode: '',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+                countryCode: 'AU',
+            });
+        });
+
+        it('returns geo-ip dummy billing address when only email is defined in billing address', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress')
+                .mockReturnValue({
+                    email: 'foo@bar.com',
+                    id: '2',
+                    address1: '',
+                    customFields: [],
+                });
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getBillingAddress()).toEqual({
+                id: '2',
+                address1: '',
+                address2: '',
+                city: '',
+                company: '',
+                country: '',
+                customFields: [],
+                email: 'foo@bar.com',
+                firstName: '',
+                lastName: '',
+                phone: '',
+                postalCode: '',
+                stateOrProvince: '',
+                stateOrProvinceCode: '',
+                countryCode: 'AU',
+            });
+        });
+
+        it('returns undefined if getBillingAddress & geoIp are not present', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress').mockReturnValue(undefined);
+            jest.spyOn(internalSelectors.config, 'getContextConfig').mockReturnValue(undefined);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getBillingAddress()).toBeUndefined();
+        });
+
+        it('returns address if address is partially defined but geo IP is not defined', () => {
+            internalSelectors = createInternalCheckoutSelectors(state);
+
+            jest.spyOn(internalSelectors.billingAddress, 'getBillingAddress').mockReturnValue({ email: 'foo@bar.com' });
+            jest.spyOn(internalSelectors.config, 'getContextConfig').mockReturnValue(undefined);
+
+            selector = createCheckoutStoreSelector(internalSelectors);
+
+            expect(selector.getBillingAddress()).toEqual({ email: 'foo@bar.com' });
+        });
     });
 
     describe('#getShippingAddress()', () => {

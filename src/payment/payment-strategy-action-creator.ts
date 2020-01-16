@@ -8,7 +8,7 @@ import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
 import { LoadOrderPaymentsAction, OrderActionCreator, OrderPaymentRequestBody, OrderRequestBody } from '../order';
 import { OrderFinalizationNotRequiredError } from '../order/errors';
-import { SpamProtectionAction } from '../order/spam-protection';
+import { SpamProtectionAction, SpamProtectionActionCreator } from '../spam-protection';
 
 import { PaymentInitializeOptions, PaymentRequestOptions } from './payment-request-options';
 import { PaymentStrategyActionType, PaymentStrategyDeinitializeAction, PaymentStrategyExecuteAction, PaymentStrategyFinalizeAction, PaymentStrategyInitializeAction, PaymentStrategyWidgetAction } from './payment-strategy-actions';
@@ -19,7 +19,8 @@ import { PaymentStrategy } from './strategies';
 export default class PaymentStrategyActionCreator {
     constructor(
         private _strategyRegistry: PaymentStrategyRegistry,
-        private _orderActionCreator: OrderActionCreator
+        private _orderActionCreator: OrderActionCreator,
+        private _spamProtectionActionCreator: SpamProtectionActionCreator
     ) {}
 
     execute(payload: OrderRequestBody, options?: RequestOptions): ThunkAction<PaymentStrategyExecuteAction | SpamProtectionAction, InternalCheckoutSelectors> {
@@ -27,7 +28,7 @@ export default class PaymentStrategyActionCreator {
         const meta = { methodId: payment.methodId };
 
         return store => concat(
-            this._orderActionCreator.executeSpamProtection()(store),
+            this._spamProtectionActionCreator.execute()(store),
             of(createAction(PaymentStrategyActionType.ExecuteRequested, undefined, meta)),
             defer(() => {
                 const state = store.getState();

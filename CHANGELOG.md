@@ -2,6 +2,87 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.47.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.2...v1.47.3) (2020-01-09)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-5037 Bump bigpay-client version to 5.4.1 ([af98270](https://github.com/bigcommerce/checkout-sdk-js/commit/af98270))
+
+### [1.47.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.1...v1.47.2) (2020-01-08)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-5037 Add Item Unit Price to Line Item object in order payment payload ([1919da1](https://github.com/bigcommerce/checkout-sdk-js/commit/1919da1))
+
+### [1.47.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.0...v1.47.1) (2020-01-07)
+
+
+### Bug Fixes
+
+* **spam-protection:** CHECKOUT-4560 Fix spam protection not working for braintree in non-chrome browsers ([4c2c8ac](https://github.com/bigcommerce/checkout-sdk-js/commit/4c2c8ac))
+
+## [1.47.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.46.2...v1.47.0) (2019-12-30)
+
+
+### Features
+
+* **payment:** INT-2181 Utilize Adyen Custom Card Components in TSV ([ceebc4d](https://github.com/bigcommerce/checkout-sdk-js/commit/ceebc4d))
+
+### [1.46.2](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.46.1...v1.46.2) (2019-12-18)
+
+
+### Bug Fixes
+
+* **payment:** INT-2195 Fix barclaycard supported instrument mapping ([a37e8d7](https://github.com/bigcommerce/checkout-sdk-js/commit/a37e8d7))
+
+### [1.46.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.46.0...v1.46.1) (2019-12-16)
+
+
+### Bug Fixes
+
+* **billing:** CHECKOUT-4421 Return billing address if it is partially complete ([dd99533](https://github.com/bigcommerce/checkout-sdk-js/commit/dd99533))
+
+## [1.46.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.45.1...v1.46.0) (2019-12-11)
+
+
+### Features
+
+* **billing:** CHECKOUT-4421 Preselect billing country when no billing address has been set ([1583373](https://github.com/bigcommerce/checkout-sdk-js/commit/1583373))
+* **checkout:** INT-1780 Add supported intruments ([8eadd11](https://github.com/bigcommerce/checkout-sdk-js/commit/8eadd11))
+* **checkout:** INT-1780 Enable card vaulting for barclaycard ([ee87641](https://github.com/bigcommerce/checkout-sdk-js/commit/ee87641))
+* **checkout:** INT-1780 Remove provider specific strategy ([a2d0cbb](https://github.com/bigcommerce/checkout-sdk-js/commit/a2d0cbb))
+* **checkout:** INT-1780 Remove unnecessary decosntruction ([6cfbcc2](https://github.com/bigcommerce/checkout-sdk-js/commit/6cfbcc2))
+* **checkout:** INT-1780 Remove unused import ([209909e](https://github.com/bigcommerce/checkout-sdk-js/commit/209909e))
+* **checkout:** INT-1780 Remove unused interface ([1f7507f](https://github.com/bigcommerce/checkout-sdk-js/commit/1f7507f))
+* **checkout:** INT-1780 Send only one param ([2579c84](https://github.com/bigcommerce/checkout-sdk-js/commit/2579c84))
+* **checkout:** INT-1780 Send params separately ([c77d4cc](https://github.com/bigcommerce/checkout-sdk-js/commit/c77d4cc))
+* **checkout:** INT-1780 Use offsite to pay with instrument ([04315ee](https://github.com/bigcommerce/checkout-sdk-js/commit/04315ee))
+* **common:** CHECKOUT-4571 Add StepTracker service ([f4b1dd4](https://github.com/bigcommerce/checkout-sdk-js/commit/f4b1dd4))
+
+### [1.45.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.45.0...v1.45.1) (2019-11-27)
+
+## [1.45.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.44.1...v1.45.0) (2019-11-25)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-4513 Add extendedComparisonPrice from API ([a3f56d9](https://github.com/bigcommerce/checkout-sdk-js/commit/a3f56d9))
+* **payment:** PAYMENTS-4971 Remove extra keys from Braintree PayPal Tokenize call ([33ef094](https://github.com/bigcommerce/checkout-sdk-js/commit/33ef094))
+
+
+### Features
+
+* **payment:** INT-1902 Update payment method id and instrument selector to support gateway ([7709c45](https://github.com/bigcommerce/checkout-sdk-js/commit/7709c45))
+
+### [1.44.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.44.0...v1.44.1) (2019-11-25)
+
+
+### Bug Fixes
+
+* **payment:** PAYMENTS-4971 Remove extra keys from Braintree PayPal Tokenize call ([90755fb](https://github.com/bigcommerce/checkout-sdk-js/commit/90755fb))
+
 ## [1.44.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.43.0...v1.44.0) (2019-11-12)
 
 

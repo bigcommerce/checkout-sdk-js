@@ -33,6 +33,27 @@ declare interface AddressRequestBody {
     }>;
 }
 
+declare interface AdyenBaseCardComponentOptions {
+    /**
+     * Array of card brands that will be recognized by the component.
+     *
+     */
+    brands?: string[];
+    /**
+     * Set a style object to customize the input fields. See Styling Secured Fields
+     * for a list of supported properties.
+     */
+    styles?: AdyenStyleOptions;
+}
+
+declare interface AdyenCardComponentEvents {
+    /**
+     * Called when the shopper enters data in the card input fields.
+     * Here you have the option to override your main Adyen Checkout configuration.
+     */
+    onChange?(state: AdyenCardState, component: AdyenComponent): void;
+}
+
 declare interface AdyenCardDataPaymentMethodState {
     paymentMethod: AdyenCardPaymentMethodState;
 }
@@ -56,7 +77,7 @@ declare interface AdyenComponent {
     unmount(): void;
 }
 
-declare interface AdyenCreditCardComponentOptions {
+declare interface AdyenCreditCardComponentOptions extends AdyenBaseCardComponentOptions, AdyenCardComponentEvents {
     /**
      * Set an object containing the details array for type: scheme from
      * the /paymentMethods response.
@@ -86,19 +107,9 @@ declare interface AdyenCreditCardComponentOptions {
      */
     groupTypes?: string[];
     /**
-     * Set a style object to customize the input fields. See Styling Secured Fields
-     * for a list of supported properties.
-     */
-    styles?: AdyenStyleOptions;
-    /**
      * Specify the sample values you want to appear for card detail input fields.
      */
     placeholders?: CreditCardPlaceHolder | SepaPlaceHolder;
-    /**
-     * Called when the shopper enters data in the card input fields.
-     * Here you have the option to override your main Adyen Checkout configuration.
-     */
-    onChange?(state: AdyenCardState, component: AdyenComponent): void;
 }
 
 declare interface AdyenStyleOptions {
@@ -140,7 +151,7 @@ declare interface AdyenThreeDS2Options {
  * A set of options that are required to initialize the AdyenV2 payment method.
  *
  * Once AdyenV2 payment is initialized, credit card form fields, provided by the
- * payment provider as iframes, will be inserted into the current page. These
+ * payment provider as iFrames, will be inserted into the current page. These
  * options provide a location and styling for each of the form fields.
  */
 declare interface AdyenV2PaymentInitializeOptions {
@@ -152,6 +163,10 @@ declare interface AdyenV2PaymentInitializeOptions {
      * The location to insert the Adyen 3DS V2 component.
      */
     threeDS2ContainerId: string;
+    /**
+     * The location to insert the Adyen custom card component
+     */
+    cardVerificationContainerId?: string;
     /**
      * ThreeDS2Options
      */
@@ -269,6 +284,8 @@ declare interface AmazonPayShippingInitializeOptions {
 declare interface AmazonPayWidgetError extends Error {
     getErrorCode(): string;
 }
+
+declare type AnalyticStepType = 'customer' | 'shipping' | 'billing' | 'payment';
 
 declare interface Banner {
     type: string;
@@ -526,6 +543,7 @@ declare interface Checkout {
     orderId?: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
+    shouldExecuteSpamCheck: boolean;
     handlingCostTotal: number;
     taxTotal: number;
     subtotal: number;
@@ -1364,7 +1382,7 @@ declare class CheckoutService {
      * Selects a shipping option for a given consignment.
      *
      * Note: this is used when items need to be shipped to multiple addresses,
-     * for single shipping address, use `CheckoutService#updateShippingAddres`.
+     * for single shipping address, use `CheckoutService#updateShippingAddress`.
      *
      * If a shipping option has an additional cost, the quote for the current
      * order will be adjusted once the option is selected.
@@ -1527,20 +1545,41 @@ declare class CheckoutService {
     /**
      * Initializes the spam protection for order creation.
      *
+     * Note: Use `CheckoutService#executeSpamCheck` instead.
+     * You do not need to call this method before calling
+     * `CheckoutService#executeSpamCheck`.
+     *
      * With spam protection enabled, the customer has to be verified as
      * a human. The order creation will fail if spam protection
      * is enabled but verification fails.
      *
      * ```js
-     * await service.initializeSpamProtection({
-     *     containerId: 'spamProtectionContainer',
-     * });
+     * await service.initializeSpamProtection();
      * ```
      *
      * @param options - Options for initializing spam protection.
      * @returns A promise that resolves to the current state.
+     * @deprecated - Use CheckoutService#executeSpamCheck instead.
      */
     initializeSpamProtection(options: SpamProtectionOptions): Promise<CheckoutSelectors>;
+    /**
+     * Verifies whether the current checkout is created by a human.
+     *
+     * Note: this method will do the initialization, therefore you do not
+     * need to call `CheckoutService#initializeSpamProtection`
+     * before calling this method.
+     *
+     * With spam protection enabled, the customer has to be verified as
+     * a human. The order creation will fail if spam protection
+     * is enabled but verification fails.
+     *
+     * ```js
+     * await service.executeSpamCheck();
+     * ```
+     *
+     * @returns A promise that resolves to the current state.
+     */
+    executeSpamCheck(): Promise<CheckoutSelectors>;
     /**
      * Dispatches an action through the data store and returns the current state
      * once the action is dispatched.
@@ -2015,6 +2054,12 @@ declare interface CheckoutStoreStatusSelector {
      * @returns True if the current checkout is being updated, otherwise false.
      */
     isUpdatingCheckout(): boolean;
+    /**
+     * Checks whether spam check is executing.
+     *
+     * @returns True if the current checkout is being updated, otherwise false.
+     */
+    isExecutingSpamCheck(): boolean;
     /**
      * Checks whether the current order is submitting.
      *
@@ -2928,6 +2973,7 @@ declare interface LineItem {
     comparisonPrice: number;
     extendedListPrice: number;
     extendedSalePrice: number;
+    extendedComparisonPrice: number;
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
     addedByPromotion: boolean;
@@ -3467,6 +3513,17 @@ declare interface StepStyles extends BlockElementStyles {
     icon?: BlockElementStyles;
 }
 
+declare interface StepTracker {
+    trackOrderComplete(): void;
+    trackCheckoutStarted(): void;
+    trackStepViewed(step: string): void;
+    trackStepCompleted(step: string): void;
+}
+
+declare interface StepTrackerConfig {
+    checkoutSteps?: AnalyticStepType[];
+}
+
 declare interface StoreConfig {
     cdnPath: string;
     checkoutSettings: CheckoutSettings;
@@ -3736,6 +3793,29 @@ export declare function createEmbeddedCheckoutMessenger(options: EmbeddedCheckou
  * @returns An instance of `LanguageService`.
  */
 export declare function createLanguageService(config?: Partial<LanguageConfig>): LanguageService;
+
+/**
+ * Creates an instance of `StepTracker`.
+ *
+ * @remarks
+ * ```js
+ * const checkoutService = createCheckoutService();
+ * await checkoutService.loadCheckout();
+ * const stepTracker = createStepTracker(checkoutService);
+ *
+ * stepTracker.trackCheckoutStarted();
+ * ```
+ *
+ * @alpha
+ * Please note that `StepTracker` is currently in an early stage
+ * of development. Therefore the API is unstable and not ready for public
+ * consumption.
+ *
+ * @param CheckoutService - An instance of CheckoutService
+ * @param StepTrackerConfig - A step tracker config object
+ * @returns an instance of `StepTracker`.
+ */
+export declare function createStepTracker(checkoutService: CheckoutService, stepTrackerConfig?: StepTrackerConfig): StepTracker;
 
 /**
  * Embed the checkout form in an iframe.

@@ -2,8 +2,8 @@ import { ScriptLoader } from '@bigcommerce/script-loader';
 import { from } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 
-import { MutationObserverFactory } from '../../common/dom';
-import { NotInitializedError } from '../../common/error/errors';
+import { MutationObserverFactory } from '../common/dom';
+import { NotInitializedError } from '../common/error/errors';
 
 import { SpamProtectionNotLoadedError } from './errors';
 import GoogleRecaptcha from './google-recaptcha';
@@ -11,6 +11,8 @@ import GoogleRecaptchaScriptLoader, { GoogleRecaptchaWindow } from './google-rec
 import { getGoogleRecaptchaMock } from './google-recaptcha.mock';
 
 describe('GoogleRecaptcha', () => {
+    let container: HTMLDivElement;
+    let containerId: string;
     let googleRecaptcha: GoogleRecaptcha;
     let googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader;
     let scriptLoader: ScriptLoader;
@@ -23,6 +25,14 @@ describe('GoogleRecaptcha', () => {
         googleRecaptchaScriptLoader = new GoogleRecaptchaScriptLoader(scriptLoader, mockWindow);
         mutationObserverFactory = new MutationObserverFactory();
         googleRecaptcha = new GoogleRecaptcha(googleRecaptchaScriptLoader, mutationObserverFactory);
+        containerId = 'spamProtectionContainer';
+        container = document.createElement('div');
+        container.setAttribute('id', containerId);
+        document.body.append(container);
+    });
+
+    afterEach(() => {
+        document.body.removeChild(container);
     });
 
     describe('#load()', () => {
@@ -38,7 +48,6 @@ describe('GoogleRecaptcha', () => {
         });
 
         it('loads the google recaptcha script', async () => {
-            const containerId = 'spamProtection';
             const sitekey = 'sitekey';
 
             await googleRecaptcha.load(containerId, sitekey);
@@ -47,7 +56,6 @@ describe('GoogleRecaptcha', () => {
         });
 
         it('returns a promise', async () => {
-            const containerId = 'spamProtection';
             const sitekey = 'sitekey';
             const size = 'invisible';
 
@@ -99,7 +107,6 @@ describe('GoogleRecaptcha', () => {
         });
 
         it('execute google recaptcha', async () => {
-            const containerId = 'spamProtection';
             const sitekey = 'sitekey';
 
             document.body.appendChild(recaptchaChallengeContainer);
@@ -116,7 +123,6 @@ describe('GoogleRecaptcha', () => {
         });
 
         it('throws an error if google recaptcha window is not loaded after a specific timeframe', async () => {
-            const containerId = 'spamProtection';
             const sitekey = 'sitekey';
 
             await googleRecaptcha.load(containerId, sitekey);

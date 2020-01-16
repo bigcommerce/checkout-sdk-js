@@ -81,6 +81,7 @@ declare interface Checkout {
     orderId?: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
+    shouldExecuteSpamCheck: boolean;
     handlingCostTotal: number;
     taxTotal: number;
     subtotal: number;
@@ -352,6 +353,8 @@ declare interface InternalLineItem {
     downloadsPageUrl?: string;
     integerAmountAfterDiscount: number;
     integerDiscount: number;
+    integerUnitPrice: number;
+    integerUnitPriceAfterDiscount: number;
     id: string | number;
     imageUrl: string;
     name?: string;
@@ -504,6 +507,7 @@ declare interface LineItem {
     comparisonPrice: number;
     extendedListPrice: number;
     extendedSalePrice: number;
+    extendedComparisonPrice: number;
     socialMedia?: LineItemSocialData[];
     options?: LineItemOption[];
     addedByPromotion: boolean;
@@ -567,7 +571,6 @@ declare interface OrderMetaState extends InternalOrderMeta {
     orderToken?: string;
     callbackUrl?: string;
     payment?: InternalOrderPayment;
-    spamProtectionToken?: string;
 }
 
 declare interface OrderPayment {

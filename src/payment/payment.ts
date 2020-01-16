@@ -9,7 +9,7 @@ export default interface Payment {
 export type PaymentInstrument = (
     CreditCardInstrument |
     CryptogramInstrument |
-    FormattedPayload<PaypalInstrument> |
+    FormattedPayload<PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
     HostedCreditCardInstrument |
     HostedInstrument |
     NonceInstrument |
@@ -93,6 +93,14 @@ export interface PaypalInstrument {
         token: string;
         email: string | null;
     };
+}
+
+export interface FormattedHostedInstrument {
+    vault_payment_instrument: boolean | null;
+}
+
+export interface FormattedVaultedInstrument {
+    bigpay_token: string | null;
 }
 
 export interface FormattedPayload<T> {

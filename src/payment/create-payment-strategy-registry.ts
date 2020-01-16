@@ -7,8 +7,8 @@ import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore, CheckoutVa
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
 import { HostedFormFactory } from '../hosted-form';
 import { OrderActionCreator, OrderRequestSender } from '../order';
-import { GoogleRecaptcha, SpamProtectionActionCreator } from '../order/spam-protection';
 import { RemoteCheckoutActionCreator, RemoteCheckoutRequestSender } from '../remote-checkout';
+import { GoogleRecaptcha, SpamProtectionActionCreator, SpamProtectionRequestSender } from '../spam-protection';
 import { StoreCreditActionCreator, StoreCreditRequestSender } from '../store-credit';
 
 import PaymentActionCreator from './payment-action-creator';
@@ -58,15 +58,15 @@ export default function createPaymentStrategyRegistry(
     const braintreePaymentProcessor = createBraintreePaymentProcessor(scriptLoader);
     const checkoutRequestSender = new CheckoutRequestSender(requestSender);
     const checkoutValidator = new CheckoutValidator(checkoutRequestSender);
-    const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection);
-    const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator, spamProtectionActionCreator);
+    const spamProtectionActionCreator = new SpamProtectionActionCreator(spamProtection, new SpamProtectionRequestSender(requestSender));
+    const orderActionCreator = new OrderActionCreator(new OrderRequestSender(requestSender), checkoutValidator);
     const storeCreditActionCreator = new StoreCreditActionCreator(new StoreCreditRequestSender(requestSender));
     const paymentActionCreator = new PaymentActionCreator(paymentRequestSender, orderActionCreator, paymentRequestTransformer);
     const paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(requestSender));
     const remoteCheckoutActionCreator = new RemoteCheckoutActionCreator(new RemoteCheckoutRequestSender(requestSender));
     const configActionCreator = new ConfigActionCreator(new ConfigRequestSender(requestSender));
     const checkoutActionCreator = new CheckoutActionCreator(checkoutRequestSender, configActionCreator);
-    const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator);
+    const paymentStrategyActionCreator = new PaymentStrategyActionCreator(registry, orderActionCreator, spamProtectionActionCreator);
     const formPoster = createFormPoster();
     const hostedFormFactory = new HostedFormFactory(store);
 

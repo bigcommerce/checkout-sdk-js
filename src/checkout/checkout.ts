@@ -21,6 +21,7 @@ export default interface Checkout {
     orderId?: number;
     shippingCostTotal: number;
     shippingCostBeforeDiscount: number;
+    shouldExecuteSpamCheck: boolean;
     handlingCostTotal: number;
     taxTotal: number;
     subtotal: number;

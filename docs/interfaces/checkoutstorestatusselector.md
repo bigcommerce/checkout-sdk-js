@@ -22,6 +22,7 @@ This object has a set of getters that return true if an action is in progress. F
 * [isCustomerStepPending](checkoutstorestatusselector.md#iscustomersteppending)
 * [isDeletingConsignment](checkoutstorestatusselector.md#isdeletingconsignment)
 * [isDeletingInstrument](checkoutstorestatusselector.md#isdeletinginstrument)
+* [isExecutingSpamCheck](checkoutstorestatusselector.md#isexecutingspamcheck)
 * [isFinalizingOrder](checkoutstorestatusselector.md#isfinalizingorder)
 * [isInitializingCustomer](checkoutstorestatusselector.md#isinitializingcustomer)
 * [isInitializingPayment](checkoutstorestatusselector.md#isinitializingpayment)
@@ -165,6 +166,18 @@ Checks whether the current customer is deleting a payment instrument.
 
 **Returns:** `boolean`
 True if deleting a payment instrument, otherwise false.
+
+___
+<a id="isexecutingspamcheck"></a>
+
+###  isExecutingSpamCheck
+
+▸ **isExecutingSpamCheck**(): `boolean`
+
+Checks whether spam check is executing.
+
+**Returns:** `boolean`
+True if the current checkout is being updated, otherwise false.
 
 ___
 <a id="isfinalizingorder"></a>

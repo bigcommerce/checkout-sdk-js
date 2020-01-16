@@ -14,7 +14,7 @@ import PaymentStrategy from '../payment-strategy';
 import { BraintreeError } from './braintree';
 import BraintreePaymentProcessor from './braintree-payment-processor';
 import isBraintreeError from './is-braintree-error';
-import mapToBraintreeAddress from './map-to-braintree-address';
+import mapToBraintreeShippingAddressOverride from './map-to-braintree-shipping-address-override';
 
 export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
     private _paymentMethod?: PaymentMethod;
@@ -126,7 +126,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
 
         const shippingAddress = state.shippingAddress.getShippingAddress();
 
-        const braintreeAddress = shippingAddress ? mapToBraintreeAddress(shippingAddress) : undefined;
+        const shippingAddressOverride = shippingAddress ? mapToBraintreeShippingAddressOverride(shippingAddress) : undefined;
 
         return Promise.all([
             this._braintreePaymentProcessor.paypal({
@@ -134,7 +134,7 @@ export default class BraintreePaypalPaymentStrategy implements PaymentStrategy {
                 locale: storeLanguage,
                 currency: currency.code,
                 offerCredit: this._credit,
-                shippingAddressOverride: braintreeAddress,
+                shippingAddressOverride,
                 shouldSaveInstrument: paymentData.shouldSaveInstrument || false,
             }),
             this._braintreePaymentProcessor.getSessionId(),

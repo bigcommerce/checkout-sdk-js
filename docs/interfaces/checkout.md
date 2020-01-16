@@ -30,6 +30,7 @@
 * [promotions](checkout.md#promotions)
 * [shippingCostBeforeDiscount](checkout.md#shippingcostbeforediscount)
 * [shippingCostTotal](checkout.md#shippingcosttotal)
+* [shouldExecuteSpamCheck](checkout.md#shouldexecutespamcheck)
 * [subtotal](checkout.md#subtotal)
 * [taxTotal](checkout.md#taxtotal)
 * [taxes](checkout.md#taxes)
@@ -178,6 +179,13 @@ ___
 ###  shippingCostTotal
 
 **● shippingCostTotal**: *`number`*
+
+___
+<a id="shouldexecutespamcheck"></a>
+
+###  shouldExecuteSpamCheck
+
+**● shouldExecuteSpamCheck**: *`boolean`*
 
 ___
 <a id="subtotal"></a>

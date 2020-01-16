@@ -1,10 +1,11 @@
+import { memoize } from '@bigcommerce/memoize';
 import { defer, of, throwError, Observable, Subject } from 'rxjs';
 import { catchError, delay, retryWhen, switchMap } from 'rxjs/operators';
 
-import { MutationObserverFactory } from '../../common/dom';
-import { NotInitializedError, NotInitializedErrorType } from '../../common/error/errors';
+import { MutationObserverFactory } from '../common/dom';
+import { NotInitializedError, NotInitializedErrorType } from '../common/error/errors';
 
-import { SpamProtectionFailedError, SpamProtectionNotCompletedError, SpamProtectionNotLoadedError } from './errors';
+import { SpamProtectionChallengeNotCompletedError, SpamProtectionFailedError, SpamProtectionNotLoadedError } from './errors';
 import GoogleRecaptchaScriptLoader from './google-recaptcha-script-loader';
 
 export interface RecaptchaResult {
@@ -15,33 +16,43 @@ export interface RecaptchaResult {
 export default class GoogleRecaptcha {
     private _event$?: Subject<RecaptchaResult>;
     private _recaptcha?: ReCaptchaV2.ReCaptcha;
+    private _memoized: (recaptcha: ReCaptchaV2.ReCaptcha, sitekey: string, container: HTMLElement | null) => Subject<RecaptchaResult>;
 
     constructor(
         private googleRecaptchaScriptLoader: GoogleRecaptchaScriptLoader,
         private mutationObserverFactory: MutationObserverFactory
-    ) {}
+    ) {
+        this._memoized = memoize((recaptcha: ReCaptchaV2.ReCaptcha, sitekey: string, container: HTMLElement | null) => {
+            const event$ = new Subject<RecaptchaResult>();
+
+            if (!container) {
+                throw new Error();
+            }
+
+            recaptcha.render(container.id, {
+                sitekey,
+                size: 'invisible',
+                callback: () => {
+                    event$.next({
+                        token: recaptcha.getResponse(),
+                    });
+                    recaptcha.reset();
+                },
+                'error-callback': () => {
+                    event$.next({
+                        error: new SpamProtectionFailedError(),
+                    });
+                },
+            });
+
+            return event$;
+        }, { isEqual: (a, b) => a === b });
+    }
 
     load(containerId: string, sitekey: string): Promise<void> {
-        const event$ = new Subject<RecaptchaResult>();
-        this._event$ = event$;
-
         return this.googleRecaptchaScriptLoader.load()
             .then(recaptcha => {
-                recaptcha.render(containerId, {
-                    sitekey,
-                    size: 'invisible',
-                    callback: () => {
-                        event$.next({
-                            token: recaptcha.getResponse(),
-                        });
-                        recaptcha.reset();
-                    },
-                    'error-callback': () => {
-                        event$.next({
-                            error: new SpamProtectionFailedError(),
-                        });
-                    },
-                });
+                this._event$ = this._memoized(recaptcha, sitekey, document.getElementById(containerId));
 
                 this._recaptcha = recaptcha;
             });
@@ -100,7 +111,7 @@ export default class GoogleRecaptcha {
             // When customer closes the Google ReCaptcha challenge window, throw SpamProtectionNotCompletedError
             if (container.style.visibility === 'hidden') {
                 event.next({
-                    error: new SpamProtectionNotCompletedError(),
+                    error: new SpamProtectionChallengeNotCompletedError(),
                 });
             }
         }).observe(container, { attributes: true, attributeFilter: ['style'] });

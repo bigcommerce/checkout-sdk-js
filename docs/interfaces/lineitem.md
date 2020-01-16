@@ -22,6 +22,7 @@
 * [couponAmount](lineitem.md#couponamount)
 * [discountAmount](lineitem.md#discountamount)
 * [discounts](lineitem.md#discounts)
+* [extendedComparisonPrice](lineitem.md#extendedcomparisonprice)
 * [extendedListPrice](lineitem.md#extendedlistprice)
 * [extendedSalePrice](lineitem.md#extendedsaleprice)
 * [id](lineitem.md#id)
@@ -97,6 +98,13 @@ ___
 ###  discounts
 
 **● discounts**: *`Array`<`object`>*
+
+___
+<a id="extendedcomparisonprice"></a>
+
+###  extendedComparisonPrice
+
+**● extendedComparisonPrice**: *`number`*
 
 ___
 <a id="extendedlistprice"></a>

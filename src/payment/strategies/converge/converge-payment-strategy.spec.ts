@@ -2,7 +2,6 @@ import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client'
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 import { createFormPoster, FormPoster } from '@bigcommerce/form-poster';
 import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
 import { omit } from 'lodash';
 import { of, Observable } from 'rxjs';
 
@@ -14,7 +13,6 @@ import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestS
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
 import { getOrder } from '../../../order/orders.mock';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentRequestSender from '../../payment-request-sender';
@@ -39,8 +37,7 @@ describe('ConvergeaymentStrategy', () => {
         orderRequestSender = new OrderRequestSender(createRequestSender());
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(createSpamProtection(createScriptLoader()))
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 
         paymentActionCreator = new PaymentActionCreator(

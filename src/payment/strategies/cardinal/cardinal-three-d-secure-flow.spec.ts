@@ -9,7 +9,6 @@ import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../../
 import { InvalidArgumentError, MissingDataError, RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderActionCreator, OrderRequestSender } from '../../../order';
-import { createSpamProtection, SpamProtectionActionCreator } from '../../../order/spam-protection/index';
 import { PaymentInstrumentNotValidError } from '../../errors';
 import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../index';
 import Payment from '../../payment';
@@ -44,10 +43,7 @@ describe('CardinalThreeDSecureFlow', () => {
 
         orderActionCreator = new OrderActionCreator(
             new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender())),
-            new SpamProtectionActionCreator(
-                createSpamProtection(createScriptLoader())
-            )
+            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
         );
 
         paymentActionCreator = new PaymentActionCreator(

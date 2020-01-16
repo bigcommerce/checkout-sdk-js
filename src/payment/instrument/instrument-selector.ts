@@ -30,7 +30,9 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
                 return;
             }
 
-            const currentMethod = supportedInstruments[paymentMethod.id];
+            const paymentMethodKey = paymentMethod.gateway ? `${paymentMethod.gateway}.${paymentMethod.id}` : paymentMethod.id;
+
+            const currentMethod = supportedInstruments[paymentMethodKey];
 
             if (!currentMethod) {
                 return [];
@@ -47,7 +49,7 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
 
             return instruments.find((instrument): instrument is CardInstrument =>
                 instrument.bigpayToken === instrumentId &&
-                instrument.method === 'card' &&
+                instrument.method === 'credit_card' &&
                 cards.some(card => isMatch(instrument, card))
             );
         }
@@ -62,7 +64,7 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
 
             const cardInstruments = flatMap(supportedInstruments, card =>
                 filter(instruments, (instrument: PaymentInstrument): instrument is CardInstrument => {
-                    return card.method === 'card' && isMatch(instrument, card);
+                    return card.method === 'credit_card' && isMatch(instrument, card);
                 })
             );
 

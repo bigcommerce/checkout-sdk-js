@@ -67,6 +67,15 @@ describe('CheckoutSelector', () => {
         expect(selector.isUpdating()).toEqual(true);
     });
 
+    it('returns executing spam check status', () => {
+        const selector = createCheckoutSelector({
+            ...getCheckoutState(),
+            statuses: { isExecutingSpamCheck: true },
+        }, selectors.billingAddress, selectors.cart, selectors.consignments, selectors.coupons, selectors.customer, selectors.giftCertificates);
+
+        expect(selector.isExecutingSpamCheck()).toEqual(true);
+    });
+
     it('returns outstanding balance total with store credit if flag is passed', () => {
         state = merge(getCheckoutStoreState(), {
             customer: { data: { storeCredit: 50 } },

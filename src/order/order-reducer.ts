@@ -6,7 +6,6 @@ import { objectMerge, objectSet } from '../common/utility';
 
 import { OrderAction, OrderActionType } from './order-actions';
 import OrderState, { DEFAULT_STATE, OrderDataState, OrderErrorsState, OrderMetaState, OrderStatusesState } from './order-state';
-import { SpamProtectionAction, SpamProtectionActionType } from './spam-protection';
 
 export default function orderReducer(
     state: OrderState = DEFAULT_STATE,
@@ -38,7 +37,7 @@ function dataReducer(
 
 function metaReducer(
     meta: OrderMetaState | undefined,
-    action: OrderAction | SpamProtectionAction
+    action: OrderAction
 ): OrderMetaState | undefined {
     switch (action.type) {
     case OrderActionType.FinalizeOrderSucceeded:
@@ -49,9 +48,6 @@ function metaReducer(
             orderToken: action.payload && action.payload.order.token,
             payment: action.payload && action.payload.order && action.payload.order.payment,
         });
-
-    case SpamProtectionActionType.Completed:
-        return objectSet(meta, 'spamProtectionToken', action.payload);
 
     default:
         return meta;
@@ -80,7 +76,7 @@ function errorsReducer(
 
 function statusesReducer(
     statuses: OrderStatusesState = DEFAULT_STATE.statuses,
-    action: OrderAction | SpamProtectionAction
+    action: OrderAction
 ): OrderStatusesState {
     switch (action.type) {
     case OrderActionType.LoadOrderRequested:
@@ -92,13 +88,6 @@ function statusesReducer(
     case OrderActionType.LoadOrderPaymentsSucceeded:
     case OrderActionType.LoadOrderPaymentsFailed:
         return objectSet(statuses, 'isLoading', false);
-
-    case SpamProtectionActionType.ExecuteRequested:
-        return objectSet(statuses, 'isSpamProtectionExecuting', true);
-
-    case SpamProtectionActionType.Completed:
-    case SpamProtectionActionType.SubmitFailed:
-        return objectSet(statuses, 'isSpamProtectionExecuting', false);
 
     default:
         return statuses;
