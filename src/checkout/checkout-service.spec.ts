@@ -996,17 +996,21 @@ describe('CheckoutService', () => {
     describe('#deleteInstrument()', () => {
         it('deletes an instrument', async () => {
             const instrumentId = '456';
-            const action = of(createAction('DELETE_INSTRUMENT'));
-
+            const deleteAction = of(createAction('DELETE_INSTRUMENT'));
             jest.spyOn(instrumentActionCreator, 'deleteInstrument')
-                .mockReturnValue(action);
+                .mockReturnValue(deleteAction);
 
             jest.spyOn(store, 'dispatch');
+
+            const loadAction = of(createAction('LOAD_INSTRUMENTS'));
+            jest.spyOn(instrumentActionCreator, 'loadInstruments')
+                .mockReturnValue(loadAction);
 
             await checkoutService.deleteInstrument(instrumentId);
 
             expect(instrumentActionCreator.deleteInstrument).toHaveBeenCalledWith(instrumentId);
-            expect(store.dispatch).toHaveBeenCalledWith(action, undefined);
+            expect(store.dispatch).toHaveBeenCalledWith(deleteAction, undefined);
+            expect(instrumentActionCreator.loadInstruments).toHaveBeenCalled();
         });
     });
 
