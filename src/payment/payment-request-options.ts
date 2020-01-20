@@ -35,6 +35,12 @@ export interface PaymentRequestOptions extends RequestOptions {
  * current checkout flow.
  */
 export interface PaymentInitializeOptions extends PaymentRequestOptions {
+    /**
+     * @alpha
+     * Please note that this option is currently in an early stage of
+     * development. Therefore the API is unstable and not ready for public
+     * consumption.
+     */
     creditCard?: CreditCardPaymentInitializeOptions;
 
     /**
