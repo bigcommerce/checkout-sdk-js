@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.48.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.4...v1.48.0) (2020-01-21)
+
+
+### Features
+
+* **common:** CHECKOUT-4187 Build distribution files for static server ([e84da54](https://github.com/bigcommerce/checkout-sdk-js/commit/e84da54))
+
 ### [1.47.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.3...v1.47.4) (2020-01-20)
 
 
