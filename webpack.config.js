@@ -1,90 +1,57 @@
-const { DefinePlugin } = require('webpack');
 const path = require('path');
+const { DefinePlugin } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
-const assetConfig = {
-    devtool: 'source-map',
-    mode: 'production',
-    target: 'web',
+const { babelLoaderRule, baseConfig, libraryEntries, libraryName } = require('./webpack-common.config');
 
-    entry: {
-        'checkout-sdk': './src/index.ts',
-        'checkout-button': './src/bundles/checkout-button.ts',
-        'embedded-checkout': './src/bundles/embedded-checkout.ts',
-        'hosted-form': './src/bundles/hosted-form.ts',
-        'internal-mappers': './src/bundles/internal-mappers.ts',
-    },
+const outputPath = path.join(__dirname, 'dist');
 
-    output: {
-        filename: '[name].js',
-        library: 'checkoutKit',
-        libraryTarget: 'commonjs2',
-        path: path.resolve(__dirname, 'dist'),
-    },
-
-    resolve: {
-        extensions: ['.ts', '.js'],
-    },
-
-    module: {
-        rules: [
-            {
-                parser: {
-                    amd: false,
-                },
-            },
-            {
-                test: /\.(js|ts)$/,
-                include: path.resolve(__dirname, 'src'),
-                loader: 'ts-loader',
-            },
-        ],
-    },
-};
-
-module.exports = [
-    Object.assign({}, assetConfig, {
+function getUmdConfig() {
+    return {
+        ...baseConfig,
         name: 'umd',
-        output: Object.assign({}, assetConfig.output, {
-            libraryTarget: 'umd',
+        entry: libraryEntries,
+        output: {
             filename: '[name].umd.js',
-        }),
-        module: Object.assign({}, assetConfig.module, {
+            library: libraryName,
+            libraryTarget: 'umd',
+            path: outputPath,
+        },
+        module: {
             rules: [
-                {
-                    test: /\.(js|ts)$/,
-                    include: path.resolve(__dirname, 'src'),
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            [
-                                '@babel/preset-env',
-                                {
-                                    corejs: 3,
-                                    targets: [
-                                        'defaults',
-                                        'ie 11',
-                                    ],
-                                    useBuiltIns: 'usage',
-                                },
-                            ]
-                        ],
-                    },
-                },
-                ...assetConfig.module.rules,
+                babelLoaderRule,
+                ...baseConfig.module.rules,
             ],
-        }),
-    }),
+        },
+    };
+}
 
-    Object.assign({}, assetConfig, {
+function getCjsConfig() {
+    return {
+        ...baseConfig,
         name: 'cjs',
+        entry: libraryEntries,
         externals: [
             nodeExternals()
         ],
+        output: {
+            filename: '[name].js',
+            libraryTarget: 'commonjs2',
+            path: outputPath,
+        },
         plugins: [
             new DefinePlugin({
                 'process.env.NODE_ENV': 'process.env.NODE_ENV',
             }),
         ],
-    }),
-];
+    };
+}
+
+function getConfigs(options, argv) {
+    return [
+        getCjsConfig(options, argv),
+        getUmdConfig(options, argv),
+    ];
+}
+
+module.exports = getConfigs;

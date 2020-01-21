@@ -29,11 +29,6 @@ function dataReducer(
     case InstrumentActionType.LoadInstrumentsSucceeded:
         return arrayReplace(data, action.payload && action.payload.vaultedInstruments || []);
 
-    case InstrumentActionType.DeleteInstrumentSucceeded:
-        return arrayReplace(data, data.filter(instrument =>
-            instrument.bigpayToken !== (action.meta && action.meta.instrumentId)
-        ));
-
     default:
         return data;
     }

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.47.4](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.3...v1.47.4) (2020-01-20)
+
+
+### Bug Fixes
+
+* **payment:** INT-2140 Unpatch mapToCardInstrument ([dcc5a04](https://github.com/bigcommerce/checkout-sdk-js/commit/dcc5a04))
+* **payment:** PAYMENTS-4997 After deleting a PP account from checkout, all accounts with same email are deleted but not removed from available vaulted accounts list unless page is refreshed ([6cc92e0](https://github.com/bigcommerce/checkout-sdk-js/commit/6cc92e0))
+
 ### [1.47.3](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.2...v1.47.3) (2020-01-09)
 
 

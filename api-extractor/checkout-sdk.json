@@ -4,7 +4,7 @@
         "rootFolder": "."
     },
     "project": {
-        "entryPointSourceFile": "temp/index.d.ts"
+        "entryPointSourceFile": "temp/bundles/checkout-sdk.d.ts"
     },
     "validationRules": {
         "missingReleaseTags": "allow"

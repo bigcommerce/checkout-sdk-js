@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "1.47.3",
+  "version": "1.47.4",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "main": "dist/checkout-sdk.js",
@@ -22,6 +22,8 @@
   "scripts": {
     "prepare": "check-node-version --node '>=6' --npm '>=6'",
     "build": "npm run bundle && npm run bundle-dts",
+    "prebuild-server": "rm -rf dist-server",
+    "build-server": "webpack --config webpack-server.config.js --config-name umd && webpack --config webpack-server.config.js --config-name umd-loader",
     "prebundle": "rm -rf dist",
     "bundle": "webpack --config webpack.config.js",
     "bundle:analyze": "npm run --silent bundle -- --config-name umd --profile --json > webpack-stats.json && webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip",
@@ -85,6 +87,8 @@
     "eslint-plugin-import": "^2.18.2",
     "jest": "^24.9.0",
     "request": "^2.83.0",
+    "semver": "^7.1.1",
+    "source-map-loader": "^0.2.4",
     "standard-version": "^7.0.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.1.2",
@@ -92,6 +96,7 @@
     "typedoc": "^0.13.0",
     "typescript": "^3.6.3",
     "webpack": "^4.41.0",
+    "webpack-assets-manifest": "^3.1.1",
     "webpack-bundle-analyzer": "^3.5.1",
     "webpack-cli": "^3.3.9",
     "webpack-node-externals": "^1.7.2"
