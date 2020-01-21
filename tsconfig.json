@@ -21,5 +21,8 @@
     },
     "include": [
         "src/**/*.ts"
+    ],
+    "files": [
+        "src/common/types/webpack.d.ts"
     ]
 }

@@ -1,5 +1,4 @@
-import { createCheckoutService } from '..';
-import { CheckoutService } from '../checkout';
+import { createCheckoutService, CheckoutService } from '../checkout';
 import { getCheckoutWithCoupons } from '../checkout/checkouts.mock';
 import { InvalidArgumentError } from '../common/error/errors';
 import { ShopperCurrency } from '../config';

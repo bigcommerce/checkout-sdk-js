@@ -96,10 +96,30 @@ jobs:
           command: |
             git push --follow-tags origin $CIRCLE_BRANCH
       - run:
+          name: "Export release version to file"
+          command: echo "export RELEASE_VERSION=$(git describe --abbrev=0)" > /tmp/release_version.txt
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - release_version.txt
+      - run:
           name: "Publish release to NPM"
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > .npmrc
             npm publish
+
+  update_server:
+    <<: *node_executor
+    steps:
+      - ci/pre-setup
+      - checkout-sdk-js/install_dependencies
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: "Build and push distribution files to static server repository"
+          command: |
+            source /tmp/release_version.txt
+            scripts/circleci/update-server.sh
 
 workflows:
   version: 2
@@ -136,3 +156,9 @@ workflows:
             <<: *release_filter
           requires:
             - approve
+      - update_server:
+          filters:
+            <<: *release_filter
+          requires:
+            - approve
+            - release
