@@ -4,6 +4,7 @@ import { CheckoutAction, CheckoutActionType } from '../checkout';
 import { clearErrorReducer } from '../common/error';
 import { arrayReplace, objectSet } from '../common/utility';
 import { OrderAction, OrderActionType } from '../order';
+import { ConsignmentAction, ConsignmentActionType } from '../shipping';
 
 import Coupon from './coupon';
 import { CouponAction, CouponActionType } from './coupon-actions';
@@ -24,11 +25,12 @@ export default function couponReducer(
 
 function dataReducer(
     data: Coupon[] | undefined,
-    action: CouponAction | CheckoutAction | OrderAction
+    action: CouponAction | CheckoutAction | OrderAction | ConsignmentAction
 ): Coupon[] | undefined {
     switch (action.type) {
     case CheckoutActionType.LoadCheckoutSucceeded:
     case CouponActionType.ApplyCouponSucceeded:
+    case ConsignmentActionType.UpdateShippingOptionSucceeded:
     case CouponActionType.RemoveCouponSucceeded:
     case OrderActionType.LoadOrderSucceeded:
         return arrayReplace(data, action.payload && action.payload.coupons);
