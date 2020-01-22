@@ -8,6 +8,7 @@ const libraryEntries = {
     'checkout-sdk': path.join(srcPath, 'bundles', 'checkout-sdk.ts'),
     'checkout-button': path.join(srcPath, 'bundles', 'checkout-button.ts'),
     'embedded-checkout': path.join(srcPath, 'bundles', 'embedded-checkout.ts'),
+    'hosted-form': path.join(srcPath, 'bundles', 'hosted-form.ts'),
     'internal-mappers': path.join(srcPath, 'bundles', 'internal-mappers.ts'),
 };
 

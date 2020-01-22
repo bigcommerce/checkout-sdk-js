@@ -1,9 +1,8 @@
-import { iframeResizer, IFrameComponent } from '../common/iframe';
+import { iframeResizer, isIframeEvent, IFrameComponent } from '../common/iframe';
 import { parseUrl } from '../common/url';
 
 import { EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import { NotEmbeddableError, NotEmbeddableErrorType } from './errors';
-import isIframeEvent from './is-iframe-event';
 
 export default class ResizableIframeCreator {
     constructor(

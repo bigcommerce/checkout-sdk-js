@@ -1,25 +1,22 @@
 import { RequestSender } from '@bigcommerce/request-sender';
 
+import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 
 import embedCheckout from './embed-checkout';
 import EmbeddedCheckout from './embedded-checkout';
 import EmbeddedCheckoutOptions from './embedded-checkout-options';
-import IframeEventListener from './iframe-event-listener';
-import IframeEventPoster from './iframe-event-poster';
 import LoadingIndicator from './loading-indicator';
 import ResizableIframeCreator from './resizable-iframe-creator';
 
 jest.mock('./embedded-checkout', () => {
-    return {
-        default: jest.fn(() => {
-            const instance: Partial<EmbeddedCheckout> = {
-                attach: jest.fn(() => Promise.resolve(instance)),
-            };
+    return jest.fn(() => {
+        const instance: Partial<EmbeddedCheckout> = {
+            attach: jest.fn(() => Promise.resolve(instance)),
+        };
 
-            return instance;
-        }),
-    };
+        return instance;
+    });
 });
 
 describe('embedCheckout()', () => {

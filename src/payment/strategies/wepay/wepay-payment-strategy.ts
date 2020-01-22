@@ -1,6 +1,7 @@
 import { merge } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
 import PaymentActionCreator from '../../payment-action-creator';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
@@ -13,9 +14,10 @@ export default class WepayPaymentStrategy extends CreditCardPaymentStrategy {
         store: CheckoutStore,
         orderActionCreator: OrderActionCreator,
         paymentActionCreator: PaymentActionCreator,
+        hostedFormFactory: HostedFormFactory,
         private _wepayRiskClient: WepayRiskClient
     ) {
-        super(store, orderActionCreator, paymentActionCreator);
+        super(store, orderActionCreator, paymentActionCreator, hostedFormFactory);
     }
 
     initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {

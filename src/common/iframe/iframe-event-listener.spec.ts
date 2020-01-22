@@ -1,12 +1,23 @@
 import { EventEmitter } from 'events';
 
-import { EmbeddedCheckoutEventMap, EmbeddedCheckoutEventType } from './embedded-checkout-events';
 import IframeEventListener from './iframe-event-listener';
+
+enum TestEventType {
+    Loaded = 'LOADED',
+    Complete = 'COMPLETE',
+    Error = 'ERROR',
+}
+
+interface TestEventMap {
+    [TestEventType.Loaded]: { type: TestEventType.Loaded };
+    [TestEventType.Complete]: { type: TestEventType.Complete };
+    [TestEventType.Error]: { type: TestEventType.Error };
+}
 
 describe('IframeEventListener', () => {
     let origin: string;
     let eventEmitter: EventEmitter;
-    let listener: IframeEventListener<EmbeddedCheckoutEventMap>;
+    let listener: IframeEventListener<TestEventMap>;
     let handleLoaded: () => void;
     let handleComplete: () => void;
 
@@ -28,12 +39,12 @@ describe('IframeEventListener', () => {
             });
 
         listener.listen();
-        listener.addListener(EmbeddedCheckoutEventType.CheckoutLoaded, handleLoaded);
-        listener.addListener(EmbeddedCheckoutEventType.CheckoutComplete, handleComplete);
+        listener.addListener(TestEventType.Loaded, handleLoaded);
+        listener.addListener(TestEventType.Complete, handleComplete);
     });
 
     it('triggers relevant listeners after receiving `message` event', () => {
-        eventEmitter.emit('message', { origin, data: { type: EmbeddedCheckoutEventType.CheckoutLoaded } });
+        eventEmitter.emit('message', { origin, data: { type: TestEventType.Loaded } });
 
         expect(handleLoaded).toHaveBeenCalled();
         expect(handleComplete).not.toHaveBeenCalled();
@@ -43,7 +54,7 @@ describe('IframeEventListener', () => {
         eventEmitter.emit('message', {
             origin: 'https://foobar.com',
             data: {
-                type: EmbeddedCheckoutEventType.CheckoutLoaded,
+                type: TestEventType.Loaded,
             },
         });
 
@@ -53,9 +64,9 @@ describe('IframeEventListener', () => {
     it('triggers relevant listeners when origin URL has trailing slash', () => {
         listener = new IframeEventListener(`${origin}/`);
         listener.listen();
-        listener.addListener(EmbeddedCheckoutEventType.CheckoutLoaded, handleLoaded);
+        listener.addListener(TestEventType.Loaded, handleLoaded);
 
-        eventEmitter.emit('message', { origin, data: { type: EmbeddedCheckoutEventType.CheckoutLoaded } });
+        eventEmitter.emit('message', { origin, data: { type: TestEventType.Loaded } });
 
         expect(handleLoaded).toHaveBeenCalled();
     });
@@ -70,25 +81,25 @@ describe('IframeEventListener', () => {
     it('stops listening to `message` event', () => {
         listener.stopListen();
 
-        eventEmitter.emit('message', { origin, data: { type: EmbeddedCheckoutEventType.CheckoutLoaded } });
-        eventEmitter.emit('message', { origin, data: { type: EmbeddedCheckoutEventType.CheckoutComplete } });
+        eventEmitter.emit('message', { origin, data: { type: TestEventType.Loaded } });
+        eventEmitter.emit('message', { origin, data: { type: TestEventType.Complete } });
 
         expect(handleLoaded).not.toHaveBeenCalled();
         expect(handleComplete).not.toHaveBeenCalled();
     });
 
     it('removes specific event listener', () => {
-        listener.removeListener(EmbeddedCheckoutEventType.CheckoutLoaded, handleLoaded);
+        listener.removeListener(TestEventType.Loaded, handleLoaded);
 
-        eventEmitter.emit('message', { origin, data: { type: EmbeddedCheckoutEventType.CheckoutLoaded } });
-        eventEmitter.emit('message', { origin, data: { type: EmbeddedCheckoutEventType.CheckoutComplete } });
+        eventEmitter.emit('message', { origin, data: { type: TestEventType.Loaded } });
+        eventEmitter.emit('message', { origin, data: { type: TestEventType.Complete } });
 
         expect(handleLoaded).not.toHaveBeenCalled();
         expect(handleComplete).toHaveBeenCalled();
     });
 
     it('does nothing if trying to remove non-existent listener', () => {
-        expect(() => listener.removeListener(EmbeddedCheckoutEventType.CheckoutError, () => {}))
+        expect(() => listener.removeListener(TestEventType.Error, () => {}))
             .not.toThrow();
     });
 });
