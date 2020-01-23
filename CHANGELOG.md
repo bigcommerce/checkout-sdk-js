@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.49.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.48.0...v1.49.0) (2020-01-23)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-4205 Reload checkout page if for some reason form expires after initial page load ([444a006](https://github.com/bigcommerce/checkout-sdk-js/commit/444a006))
+* **payment:** CHECKOUT-4627 Load fonts required for hosted fields ([5261968](https://github.com/bigcommerce/checkout-sdk-js/commit/5261968))
+* **shipping:** CHECKOUT-3818 Update coupon state when shipping option is updated ([e0a9786](https://github.com/bigcommerce/checkout-sdk-js/commit/e0a9786))
+
+
+### Code Refactoring
+
+* **common:** CHECKOUT-4203 Allow synthetic default imports ([f446753](https://github.com/bigcommerce/checkout-sdk-js/commit/f446753))
+* **common:** CHECKOUT-4203 Move iframe event listener and poster to `common` module and add ability to wait for feedback when posting messages ([6d571ce](https://github.com/bigcommerce/checkout-sdk-js/commit/6d571ce))
+* **payment:** CHECKOUT-4203 Remove duplicate code ([df03c1b](https://github.com/bigcommerce/checkout-sdk-js/commit/df03c1b))
+
+
+### Features
+
+* **payment:** CHECKOUT-4203 Add card number and expiry inputs ([8403202](https://github.com/bigcommerce/checkout-sdk-js/commit/8403202))
+* **payment:** CHECKOUT-4203 Add factory for creating hosted payment form ([a8b35f5](https://github.com/bigcommerce/checkout-sdk-js/commit/a8b35f5))
+* **payment:** CHECKOUT-4203 Add functions for creating hosted inputs ([e42046a](https://github.com/bigcommerce/checkout-sdk-js/commit/e42046a))
+* **payment:** CHECKOUT-4203 Add text input element responsible for accepting user input inside iframe ([b460e97](https://github.com/bigcommerce/checkout-sdk-js/commit/b460e97))
+* **payment:** CHECKOUT-4203 Export hosted input initializer as separate file ([74b2676](https://github.com/bigcommerce/checkout-sdk-js/commit/74b2676))
+* **payment:** CHECKOUT-4203 Submit card details via hosted fields for stored instrument verification ([58cf2d8](https://github.com/bigcommerce/checkout-sdk-js/commit/58cf2d8))
+* **payment:** CHECKOUT-4203 Use hosted payment form for credit card payment if feature is enabled ([a0512a1](https://github.com/bigcommerce/checkout-sdk-js/commit/a0512a1))
+* **payment:** CHECKOUT-4204 Format credit card field values ([69e717a](https://github.com/bigcommerce/checkout-sdk-js/commit/69e717a))
+* **payment:** CHECKOUT-4205 Improve the way validation errors are returned to the caller ([d3701d8](https://github.com/bigcommerce/checkout-sdk-js/commit/d3701d8))
+* **payment:** CHECKOUT-4627 Add hosted form to loader ([f0fe47a](https://github.com/bigcommerce/checkout-sdk-js/commit/f0fe47a))
+
 ## [1.48.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.47.4...v1.48.0) (2020-01-21)
 
 

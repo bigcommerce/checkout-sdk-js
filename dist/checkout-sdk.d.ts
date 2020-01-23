@@ -1610,6 +1610,7 @@ declare interface CheckoutSettings {
     isAnalyticsEnabled: boolean;
     isCardVaultingEnabled: boolean;
     isCouponCodeCollapsed: boolean;
+    isHostedPaymentFormEnabled: boolean;
     isPaymentRequestEnabled: boolean;
     isPaymentRequestCanMakePaymentEnabled: boolean;
     isSpamProtectionEnabled: boolean;
@@ -2363,6 +2364,10 @@ declare interface CreditCardInstrument {
     threeDSecure?: ThreeDSecure | ThreeDSecureToken;
 }
 
+declare interface CreditCardPaymentInitializeOptions {
+    form: HostedFormOptions;
+}
+
 declare interface CreditCardPlaceHolder {
     encryptedCardNumber?: string;
     encryptedExpiryDate?: string;
@@ -2780,9 +2785,131 @@ declare interface GuestCredentials {
     email: string;
 }
 
+declare interface HostedCardFieldOptions {
+    accessibilityLabel?: string;
+    containerId: string;
+    placeholder?: string;
+}
+
+declare interface HostedCardFieldOptionsMap {
+    [HostedFieldType.CardCode]?: HostedCardFieldOptions;
+    [HostedFieldType.CardExpiry]: HostedCardFieldOptions;
+    [HostedFieldType.CardName]: HostedCardFieldOptions;
+    [HostedFieldType.CardNumber]: HostedCardFieldOptions;
+}
+
+declare type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
+
+declare type HostedFieldBlurEventData = HostedInputBlurEvent['payload'];
+
+declare type HostedFieldCardTypeChangeEventData = HostedInputCardTypeChangeEvent['payload'];
+
+declare type HostedFieldFocusEventData = HostedInputFocusEvent['payload'];
+
+declare type HostedFieldOptionsMap = HostedCardFieldOptionsMap | HostedStoredCardFieldOptionsMap;
+
+declare type HostedFieldStyles = HostedInputStyles;
+
+declare interface HostedFieldStylesMap {
+    default?: HostedFieldStyles;
+    error?: HostedFieldStyles;
+    focus?: HostedFieldStyles;
+}
+
+declare enum HostedFieldType {
+    CardCode = "cardCode",
+    CardCodeVerification = "cardCodeVerification",
+    CardExpiry = "cardExpiry",
+    CardName = "cardName",
+    CardNumber = "cardNumber",
+    CardNumberVerification = "cardNumberVerification"
+}
+
+declare type HostedFieldValidateEventData = HostedInputValidateEvent['payload'];
+
+declare interface HostedFormOptions {
+    fields: HostedFieldOptionsMap;
+    styles?: HostedFieldStylesMap;
+    onBlur?(data: HostedFieldBlurEventData): void;
+    onCardTypeChange?(data: HostedFieldCardTypeChangeEventData): void;
+    onFocus?(data: HostedFieldFocusEventData): void;
+    onValidate?(data: HostedFieldValidateEventData): void;
+}
+
+declare interface HostedInputBlurEvent {
+    type: HostedInputEventType.Blurred;
+    payload: {
+        fieldType: HostedFieldType;
+    };
+}
+
+declare interface HostedInputCardTypeChangeEvent {
+    type: HostedInputEventType.CardTypeChanged;
+    payload: {
+        cardType?: string;
+    };
+}
+
+declare enum HostedInputEventType {
+    AttachSucceeded = "HOSTED_INPUT:ATTACH_SUCCEEDED",
+    AttachFailed = "HOSTED_INPUT:ATTACH_FAILED",
+    Blurred = "HOSTED_INPUT:BLURRED",
+    Changed = "HOSTED_INPUT:CHANGED",
+    CardTypeChanged = "HOSTED_INPUT:CARD_TYPE_CHANGED",
+    Focused = "HOSTED_INPUT:FOCUSED",
+    SubmitSucceeded = "HOSTED_INPUT:SUBMIT_SUCCEEDED",
+    SubmitFailed = "HOSTED_INPUT:SUBMIT_FAILED",
+    Validated = "HOSTED_INPUT:VALIDATED"
+}
+
+declare interface HostedInputFocusEvent {
+    type: HostedInputEventType.Focused;
+    payload: {
+        fieldType: HostedFieldType;
+    };
+}
+
+declare type HostedInputStyles = Partial<Pick<CSSStyleDeclaration, 'color' | 'fontFamily' | 'fontSize' | 'fontWeight'>>;
+
+declare interface HostedInputValidateErrorData {
+    fieldType: string;
+    message: string;
+    type: string;
+}
+
+declare interface HostedInputValidateErrorDataMap {
+    [HostedFieldType.CardCode]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardCodeVerification]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardExpiry]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardName]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardNumber]?: HostedInputValidateErrorData[];
+    [HostedFieldType.CardNumberVerification]?: HostedInputValidateErrorData[];
+}
+
+declare interface HostedInputValidateEvent {
+    type: HostedInputEventType.Validated;
+    payload: HostedInputValidateResults;
+}
+
+declare interface HostedInputValidateResults {
+    errors: HostedInputValidateErrorDataMap;
+    isValid: boolean;
+}
+
 declare interface HostedInstrument {
     shouldSaveInstrument?: boolean;
 }
+
+declare interface HostedStoredCardFieldOptions extends HostedCardFieldOptions {
+    instrumentId: string;
+}
+
+declare interface HostedStoredCardFieldOptionsMap {
+    [HostedFieldType.CardCodeVerification]?: HostedStoredCardFieldOptions;
+    [HostedFieldType.CardNumberVerification]?: HostedStoredCardFieldOptions;
+}
+
+declare type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
 
 declare interface InlineElementStyles {
     color?: string;
@@ -3100,7 +3227,7 @@ declare interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card or vaulted payment
      * instrument.
      */
-    paymentData?: CreditCardInstrument | VaultedInstrument | HostedInstrument;
+    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | VaultedInstrument;
 }
 
 declare type OrderPayments = Array<GatewayOrderPayment | GiftCertificateOrderPayment>;
@@ -3136,6 +3263,13 @@ declare interface PasswordRequirements {
  * current checkout flow.
  */
 declare interface PaymentInitializeOptions extends PaymentRequestOptions {
+    /**
+     * @alpha
+     * Please note that this option is currently in an early stage of
+     * development. Therefore the API is unstable and not ready for public
+     * consumption.
+     */
+    creditCard?: CreditCardPaymentInitializeOptions;
     /**
      * The options that are required to initialize the AdyenV2 payment
      * method. They can be omitted unless you need to support AdyenV2.
