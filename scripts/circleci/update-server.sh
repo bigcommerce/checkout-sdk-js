@@ -19,6 +19,7 @@ cp -r dist-server/$RELEASE_VERSION_DIR /tmp/repo-server/public
 cd /tmp/repo-server
 git config user.email $GIT_USER_EMAIL
 git config user.name $GIT_USER_NAME
+git checkout -b $RELEASE_VERSION
 git add public
 git commit -m "chore(release): $RELEASE_VERSION"
-git push --follow-tags origin master
+git push --follow-tags origin $RELEASE_VERSION
