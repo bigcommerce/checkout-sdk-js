@@ -10,7 +10,7 @@ import { CardExpiryFormatter, CardNumberFormatter, HostedInputValues } from '../
 import { mapToInternalOrder } from '../order';
 import { mapToInternalShippingOption } from '../shipping';
 
-import isVaultedInstrument from './is-vaulted-instrument';
+import isVaultedInstrument, { isFormattedVaultedInstrument } from './is-vaulted-instrument';
 import Payment, { CreditCardInstrument, HostedCreditCardInstrument, HostedVaultedInstrument, VaultedInstrument } from './payment';
 import PaymentMethod from './payment-method';
 import PaymentRequestBody from './payment-request-body';
@@ -35,7 +35,8 @@ export default class PaymentRequestTransformer {
         const orderMeta = checkoutState.order.getOrderMeta();
         const internalCustomer = customer && billingAddress && mapToInternalCustomer(customer, billingAddress);
 
-        const authToken = instrumentMeta && payment.paymentData && isVaultedInstrument(payment.paymentData) ?
+        const authToken = instrumentMeta && payment.paymentData &&
+            (isVaultedInstrument(payment.paymentData) || isFormattedVaultedInstrument(payment.paymentData)) ?
             `${checkoutState.payment.getPaymentToken()}, ${instrumentMeta.vaultAccessToken}` :
             checkoutState.payment.getPaymentToken();
 

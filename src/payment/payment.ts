@@ -1,3 +1,4 @@
+import { BrowserInfo } from '../common/browser-info';
 import { Omit } from '../common/types';
 
 export default interface Payment {
@@ -9,7 +10,7 @@ export default interface Payment {
 export type PaymentInstrument = (
     CreditCardInstrument |
     CryptogramInstrument |
-    FormattedPayload<PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
+    FormattedPayload<AdyenV2Instrument | PaypalInstrument | FormattedHostedInstrument | FormattedVaultedInstrument> |
     HostedCreditCardInstrument |
     HostedInstrument |
     NonceInstrument |
@@ -38,6 +39,8 @@ export interface CreditCardInstrument {
 export type HostedCreditCardInstrument = Omit<CreditCardInstrument, 'ccExpiry' | 'ccName' | 'ccNumber' | 'ccCvv'>;
 
 export type HostedVaultedInstrument = Omit<VaultedInstrument, 'ccNumber' | 'ccCvv'>;
+
+export type AdyenV2Instrument = AdyenV2Token | AdyenV2Card;
 
 export interface NonceInstrument {
     nonce: string;
@@ -95,12 +98,29 @@ export interface PaypalInstrument {
     };
 }
 
+interface AdyenV2Token extends FormattedVaultedInstrument {
+    browser_info: BrowserInfo;
+    credit_card_token?: void;
+}
+
+interface AdyenV2Card {
+    browser_info: BrowserInfo;
+    credit_card_token: {
+        token: string;
+    };
+    bigpay_token?: void;
+}
+
 export interface FormattedHostedInstrument {
     vault_payment_instrument: boolean | null;
 }
 
 export interface FormattedVaultedInstrument {
-    bigpay_token: string | null;
+    bigpay_token: {
+        credit_card_number_confirmation?: string;
+        verification_value?: string;
+        token: string;
+    } | string | null;
 }
 
 export interface FormattedPayload<T> {
