@@ -1,5 +1,4 @@
-import { number } from 'card-validator';
-import creditCardType from 'credit-card-type';
+import { creditCardType, number } from 'card-validator';
 import { max } from 'lodash';
 
 const NUMBER_SEPARATOR = ' ';

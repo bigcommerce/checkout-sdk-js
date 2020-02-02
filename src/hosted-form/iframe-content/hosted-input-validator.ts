@@ -1,5 +1,4 @@
-import { cvv, expirationDate, number } from 'card-validator';
-import { getTypeInfo } from 'credit-card-type';
+import { creditCardType, cvv, expirationDate, number } from 'card-validator';
 import { includes } from 'lodash';
 import { object, string, StringSchema, ValidationError } from 'yup';
 
@@ -13,7 +12,9 @@ import HostedInputValues from './hosted-input-values';
 export default class HostedInputValidator {
     constructor(
         private _cardInstrument?: CardInstrument
-    ) {}
+    ) {
+        this._configureCardValidator();
+    }
 
     async validate(values: HostedInputValues): Promise<HostedInputValidateResults> {
         const requiredFields = Object.keys(values);
@@ -80,6 +81,24 @@ export default class HostedInputValidator {
         }
     }
 
+    private _configureCardValidator(): void {
+        const discoverInfo = creditCardType.getTypeInfo('discover');
+        const visaInfo = creditCardType.getTypeInfo('visa');
+
+        // Need to support 13 digit PAN because some gateways only provide test credit card numbers in this format.
+        creditCardType.updateCard('visa', {
+            lengths: [13, ...(visaInfo.lengths || [])],
+        });
+
+        // Add support for 8-BIN Discover Cards.
+        creditCardType.updateCard('discover', {
+            patterns: [
+                ...(discoverInfo.patterns || []),
+                [810, 817],
+            ],
+        });
+    }
+
     private _getCardCodeSchema(): StringSchema {
         return string()
             .required('CVV is required')
@@ -102,7 +121,7 @@ export default class HostedInputValidator {
                 name: 'invalid_card_code',
                 test: (value = '') => {
                     const cardType = this._cardInstrument && this._mapFromInstrumentCardType(this._cardInstrument.brand);
-                    const cardInfo = cardType && getTypeInfo(cardType);
+                    const cardInfo = cardType && creditCardType.getTypeInfo(cardType);
 
                     return cvv(value, cardInfo && cardInfo.code ? cardInfo.code.size : undefined).isValid;
                 },

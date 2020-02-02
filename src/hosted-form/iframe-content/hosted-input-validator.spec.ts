@@ -38,6 +38,16 @@ describe('HostedInputValidator', () => {
             .toEqual(validResults);
     });
 
+    it('does not throw error if card number is valid 13-digit visa card number', async () => {
+        expect(await validator.validate({ ...validData, cardNumber: '4929 0000 0555 9' }))
+            .toEqual(validResults);
+    });
+
+    it('does not throw error if card number is valid 8-BIN discover card number', async () => {
+        expect(await validator.validate({ ...validData, cardNumber: '8171 9999 2766 0000' }))
+            .toEqual(validResults);
+    });
+
     it('returns error if card number is missing', async () => {
         expect(await validator.validate({ ...validData, cardNumber: '' }))
             .toEqual({
