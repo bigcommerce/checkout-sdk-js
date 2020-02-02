@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.50.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.49.0...v1.50.0) (2020-02-02)
+
+
+### Features
+
+* **payment:** INT-1990 Add browser info as part of payload to Adyen V2 ([0a91d66](https://github.com/bigcommerce/checkout-sdk-js/commit/0a91d66))
+
 ## [1.49.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.48.0...v1.49.0) (2020-01-23)
 
 
