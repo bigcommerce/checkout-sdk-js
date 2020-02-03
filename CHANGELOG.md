@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.50.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.50.0...v1.50.1) (2020-02-03)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-4655 Add support for additional card types when validating hosted payment form ([1253191](https://github.com/bigcommerce/checkout-sdk-js/commit/1253191))
+* **payment:** CHECKOUT-4655 Rethrow payment request error when paying with hosted payment form ([05ce3fc](https://github.com/bigcommerce/checkout-sdk-js/commit/05ce3fc))
+* **payment:** CHECKOUT-4655 Use hosted payment form when paying with SagePay ([08a151e](https://github.com/bigcommerce/checkout-sdk-js/commit/08a151e))
+
 ## [1.50.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.49.0...v1.50.0) (2020-02-02)
 
 
