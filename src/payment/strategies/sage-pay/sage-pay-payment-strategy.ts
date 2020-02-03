@@ -33,7 +33,7 @@ export default class SagePayPaymentStrategy extends CreditCardPaymentStrategy {
                         PaReq: error.body.three_ds_result.payer_auth_request,
                         TermUrl: error.body.three_ds_result.callback_url,
                         MD: error.body.three_ds_result.merchant_data,
-                    }, undefined, 'top');
+                    }, undefined, '_top');
                 });
             });
     }
