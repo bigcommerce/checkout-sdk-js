@@ -145,10 +145,12 @@ describe('HostedInputPaymentHandler', () => {
     });
 
     it('posts event if payment submission fails', async () => {
+        const response = getResponse(getErrorPaymentResponseBody());
+
         jest.spyOn(eventPoster, 'post');
 
         jest.spyOn(requestSender, 'submitPayment')
-            .mockRejectedValue(getResponse(getErrorPaymentResponseBody()));
+            .mockRejectedValue(response);
 
         await handler.handle({
             type: HostedFieldEventType.SubmitRequested,
@@ -160,6 +162,7 @@ describe('HostedInputPaymentHandler', () => {
                 type: HostedInputEventType.SubmitFailed,
                 payload: {
                     error: { code: 'insufficient_funds', message: 'Insufficient funds' },
+                    response,
                 },
             });
     });
