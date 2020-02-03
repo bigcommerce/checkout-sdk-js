@@ -47,11 +47,9 @@ export default class HostedInputPaymentHandler {
         } catch (error) {
             this._eventPoster.post({
                 type: HostedInputEventType.SubmitFailed,
-                payload: {
-                    error: this._isPaymentErrorResponse(error) ?
-                        error.body.errors[0] :
-                        { code: snakeCase(error.name), message: error.message },
-                },
+                payload: this._isPaymentErrorResponse(error) ?
+                    { error: error.body.errors[0], response: error } :
+                    { error: { code: snakeCase(error.name), message: error.message } },
             });
         }
     };

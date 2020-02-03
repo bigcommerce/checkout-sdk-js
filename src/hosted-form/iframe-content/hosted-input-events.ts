@@ -1,4 +1,6 @@
-import { PaymentErrorData } from '../../common/error';
+import { Response } from '@bigcommerce/request-sender';
+
+import { PaymentErrorData, PaymentErrorResponseBody } from '../../common/error';
 import HostedFieldType from '../hosted-field-type';
 
 import HostedInputInitializeErrorData from './hosted-input-initialize-error-data';
@@ -90,6 +92,7 @@ export interface HostedInputSubmitErrorEvent {
     type: HostedInputEventType.SubmitFailed;
     payload: {
         error: PaymentErrorData;
+        response?: Response<PaymentErrorResponseBody>;
     };
 }
 

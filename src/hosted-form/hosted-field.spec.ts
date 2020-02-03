@@ -1,5 +1,8 @@
+import { RequestError } from '../common/error/errors';
+import { getResponse } from '../common/http-request/responses.mock';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
+import { getErrorPaymentResponseBody } from '../payment/payments.mock';
 
 import { InvalidHostedFormConfigError, InvalidHostedFormError } from './errors';
 import HostedField, { LAST_RETRY_KEY } from './hosted-field';
@@ -215,6 +218,27 @@ describe('HostedField', () => {
             await field.submitForm(fields, data);
         } catch (error) {
             expect(error).toBeInstanceOf(InvalidHostedFormError);
+        }
+    });
+
+    it('forwards error if submission fails because of server error', async () => {
+        jest.spyOn(eventPoster, 'post')
+            .mockRejectedValue({
+                type: HostedInputEventType.SubmitFailed,
+                payload: {
+                    // tslint:disable-next-line:no-non-null-assertion
+                    error: getErrorPaymentResponseBody().errors![0],
+                    response: getResponse(getErrorPaymentResponseBody()),
+                },
+            });
+
+        const fields = [HostedFieldType.CardExpiry, HostedFieldType.CardNumber];
+        const data = getHostedFormOrderData();
+
+        try {
+            await field.submitForm(fields, data);
+        } catch (error) {
+            expect(error).toBeInstanceOf(RequestError);
         }
     });
 

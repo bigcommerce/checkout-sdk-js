@@ -9,13 +9,13 @@ import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-r
 import PaymentStrategy from '../payment-strategy';
 
 export default class CreditCardPaymentStrategy implements PaymentStrategy {
-    private _hostedForm?: HostedForm;
+    protected _hostedForm?: HostedForm;
 
     constructor(
-        private _store: CheckoutStore,
-        private _orderActionCreator: OrderActionCreator,
-        private _paymentActionCreator: PaymentActionCreator,
-        private _hostedFormFactory: HostedFormFactory
+        protected _store: CheckoutStore,
+        protected _orderActionCreator: OrderActionCreator,
+        protected _paymentActionCreator: PaymentActionCreator,
+        protected _hostedFormFactory: HostedFormFactory
     ) {}
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {

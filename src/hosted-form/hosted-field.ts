@@ -2,6 +2,7 @@ import { values } from 'lodash';
 import { fromEvent } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
 
+import { mapFromPaymentErrorResponse } from '../common/error/errors';
 import { IframeEventListener, IframeEventPoster } from '../common/iframe';
 import { BrowserStorage } from '../common/storage';
 import { parseUrl } from '../common/url';
@@ -116,8 +117,16 @@ export default class HostedField {
                 errorType: HostedInputEventType.SubmitFailed,
             });
         } catch (event) {
-            if (this._isSubmitErrorEvent(event) && event.payload.error.code === 'hosted_form_error') {
-                throw new InvalidHostedFormError(event.payload.error.message);
+            if (this._isSubmitErrorEvent(event)) {
+                if (event.payload.error.code === 'hosted_form_error') {
+                    throw new InvalidHostedFormError(event.payload.error.message);
+                }
+
+                if (event.payload.response) {
+                    throw mapFromPaymentErrorResponse(event.payload.response);
+                }
+
+                throw new Error(event.payload.error.message);
             }
 
             throw event;

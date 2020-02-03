@@ -20,6 +20,7 @@
         "target": "es5"
     },
     "include": [
+        "src/common/types/card-validator.d.ts",
         "src/**/*.ts"
     ]
 }
