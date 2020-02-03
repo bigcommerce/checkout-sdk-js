@@ -132,7 +132,7 @@ describe('SagePayPaymentStrategy', () => {
             PaReq: 'payer_auth_request',
             TermUrl: 'https://callback/url',
             MD: 'merchant_data',
-        }, undefined, 'top');
+        }, undefined, '_top');
     });
 
     it('does not post 3ds data to Sage if 3ds is not enabled', async () => {
