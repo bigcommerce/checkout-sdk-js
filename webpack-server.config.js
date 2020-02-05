@@ -1,16 +1,20 @@
+const { execSync } = require('child_process');
 const path = require('path');
-const semver = require('semver');
+const { major } = require('semver');
 const { DefinePlugin } = require('webpack');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
-const { transformManifest } = require('./scripts/webpack');
-const { babelLoaderRule, baseConfig, libraryEntries, libraryName, srcPath } = require('./webpack-common.config');
+const { getNextVersion, transformManifest } = require('./scripts/webpack');
+const { babelLoaderRule, getBaseConfig, libraryEntries, libraryName, srcPath } = require('./webpack-common.config');
 
-const version = require('./package.json').version;
-const versionDir = `v${semver.major(version)}`;
-const outputPath = path.join(__dirname, 'dist-server', versionDir);
+const baseOutputPath = path.join(__dirname, 'dist-server');
 
-function getServerConfig() {
+async function getServerConfig(options, argv) {
+    const baseConfig = await getBaseConfig(options, argv);
+    const version = await getNextVersion();
+    const versionDir = `v${major(version)}`;
+    const outputPath = path.join(baseOutputPath, versionDir);
+
     return {
         ...baseConfig,
         name: 'umd',
@@ -28,6 +32,7 @@ function getServerConfig() {
             ],
         },
         plugins: [
+            ...baseConfig.plugins,
             new WebpackAssetsManifest({
                 entrypoints: true,
                 output: path.join(outputPath, 'manifest.json'),
@@ -38,7 +43,11 @@ function getServerConfig() {
     };
 }
 
-function getServerLoaderConfig() {
+async function getServerLoaderConfig(options, argv) {
+    const baseConfig = await getBaseConfig(options, argv);
+    const version = await getNextVersion();
+    const outputPath = path.join(baseOutputPath, `v${major(version)}`);
+
     return {
         ...baseConfig,
         name: 'umd-loader',
@@ -46,7 +55,7 @@ function getServerLoaderConfig() {
             loader: path.join(srcPath, 'loader.ts'),
         },
         output: {
-            filename: '[name].js',
+            filename: `[name]-v${version}.js`,
             library: `${libraryName}Loader`,
             libraryTarget: 'umd',
             path: outputPath,
@@ -58,22 +67,30 @@ function getServerLoaderConfig() {
             ],
         },
         plugins: [
+            ...baseConfig.plugins,
             new DefinePlugin({
                 LIBRARY_NAME: JSON.stringify(libraryName),
                 MANIFEST_JSON: JSON.stringify(require(path.join(outputPath, 'manifest.json'))),
             }),
+            {
+                apply(compiler) {
+                    compiler.hooks.done.tap('DuplicateLoader', () => {
+                        execSync(`cp ${path.join(outputPath, `loader-v${version}.js`)} ${path.join(outputPath, `loader.js`)}`);
+                    });
+                },
+            },
         ],
     };
 }
 
 // This configuration is for building distribution files for the static server
 // instead of the NPM package.
-function getConfigs(options, argv) {
+async function getConfigs(options, argv) {
     if (argv.configName === 'umd-loader') {
-        return getServerLoaderConfig(options, argv);
+        return await getServerLoaderConfig(options, argv);
     }
 
-    return getServerConfig(options, argv);
+    return await getServerConfig(options, argv);
 }
 
 module.exports = getConfigs;

@@ -1,4 +1,7 @@
 const path = require('path');
+const { DefinePlugin } = require('webpack');
+
+const { getNextVersion } = require('./scripts/webpack');
 
 const srcPath = path.join(__dirname, 'src');
 
@@ -12,31 +15,38 @@ const libraryEntries = {
     'internal-mappers': path.join(srcPath, 'bundles', 'internal-mappers.ts'),
 };
 
-const baseConfig = {
-    devtool: 'source-map',
-    mode: 'production',
-    resolve: {
-        extensions: ['.ts', '.js'],
-    },
-    module: {
-        rules: [
-            {
-                parser: {
-                    amd: false,
+async function getBaseConfig() {
+    return {
+        devtool: 'source-map',
+        mode: 'production',
+        resolve: {
+            extensions: ['.ts', '.js'],
+        },
+        module: {
+            rules: [
+                {
+                    parser: {
+                        amd: false,
+                    },
                 },
-            },
-            {
-                test: /\.[tj]s$/,
-                enforce: 'pre',
-                loader: require.resolve('source-map-loader'),
-            },
-            {
-                test: /\.[tj]s$/,
-                include: srcPath,
-                loader: 'ts-loader',
-            },
+                {
+                    test: /\.[tj]s$/,
+                    enforce: 'pre',
+                    loader: require.resolve('source-map-loader'),
+                },
+                {
+                    test: /\.[tj]s$/,
+                    include: srcPath,
+                    loader: 'ts-loader',
+                },
+            ],
+        },
+        plugins: [
+            new DefinePlugin({
+                'LIBRARY_VERSION': JSON.stringify(await getNextVersion()),
+            }),
         ],
-    },
+    };
 };
 
 const babelLoaderRule = {
@@ -62,7 +72,7 @@ const babelLoaderRule = {
 
 module.exports = {
     babelLoaderRule,
-    baseConfig,
+    getBaseConfig,
     libraryEntries,
     libraryName,
     srcPath,

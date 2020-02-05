@@ -55,6 +55,14 @@ describe('HostedField', () => {
             .toBeDefined();
     });
 
+    it('sets iframe URL with version param', () => {
+        field.attach();
+
+        // tslint:disable-next-line:no-non-null-assertion
+        expect(document.querySelector<HTMLIFrameElement>('#field-container-id iframe')!.src)
+            .toEqual('https://payment.bigcommerce.com/pay/hosted_forms/dc030783-6129-4ee3-8e06-6f4270df1527/field?version=1.0.0');
+    });
+
     it('sets target for event poster', async () => {
         process.nextTick(() => {
             // tslint:disable-next-line:no-non-null-assertion
