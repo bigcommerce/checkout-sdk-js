@@ -1,7 +1,9 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 
 import { BillingAddressSelector } from '../billing';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
+import { guard } from '../common/utility';
 import { CouponSelector } from '../coupon';
 
 import Order from './order';
@@ -9,6 +11,7 @@ import OrderState, { DEFAULT_STATE, OrderMetaState } from './order-state';
 
 export default interface OrderSelector {
     getOrder(): Order | undefined;
+    getOrderOrThrow(): Order;
     getOrderMeta(): OrderMetaState | undefined;
     getLoadError(): Error | undefined;
     isLoading(): boolean;
@@ -43,6 +46,13 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
         }
     );
 
+    const getOrderOrThrow = createSelector(
+        getOrder,
+        getOrder => () => {
+            return guard(getOrder(), () => new MissingDataError(MissingDataErrorType.MissingOrder));
+        }
+    );
+
     const getOrderMeta = createSelector(
         (state: OrderState) => state.meta,
         meta => () => meta
@@ -65,6 +75,7 @@ export function createOrderSelectorFactory(): OrderSelectorFactory {
     ): OrderSelector => {
         return {
             getOrder: getOrder(state, { billingAddress, coupons }),
+            getOrderOrThrow: getOrderOrThrow(state, { billingAddress, coupons }),
             getOrderMeta: getOrderMeta(state),
             getLoadError: getLoadError(state),
             isLoading: isLoading(state),

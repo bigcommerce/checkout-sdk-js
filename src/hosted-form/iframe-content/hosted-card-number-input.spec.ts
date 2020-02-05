@@ -80,7 +80,7 @@ describe('HostedCardNumberInput', () => {
             .toEqual(HostedFieldType.CardNumber);
     });
 
-    it('notifies input change', () => {
+    it('notifies card type change', () => {
         jest.spyOn(numberFormatter, 'format')
             .mockReturnValue('4111');
 
@@ -101,6 +101,75 @@ describe('HostedCardNumberInput', () => {
                     cardType: 'visa',
                 },
             });
+    });
+
+    it('notifies bin number change', () => {
+        jest.spyOn(numberFormatter, 'format')
+            .mockReturnValue('4111 1111 1111 1111');
+
+        jest.spyOn(eventPoster, 'post');
+
+        input.attach();
+
+        // tslint:disable-next-line:no-non-null-assertion
+        const element = container.querySelector('input')!;
+
+        element.value = '4111111111111111';
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+
+        expect(eventPoster.post)
+            .toHaveBeenCalledWith({
+                type: HostedInputEventType.BinChanged,
+                payload: {
+                    bin: '411111',
+                },
+            });
+    });
+
+    it('notifies when bin number can no longer be detected', () => {
+        jest.spyOn(numberFormatter, 'format')
+            .mockImplementation(value => value === '4111111111111111' ? '4111 1111 1111 1111' : value);
+
+        jest.spyOn(eventPoster, 'post');
+
+        input.attach();
+
+        // tslint:disable-next-line:no-non-null-assertion
+        const element = container.querySelector('input')!;
+
+        element.value = '4111111111111111';
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+
+        element.value = '41';
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+
+        expect(eventPoster.post)
+            .toHaveBeenCalledWith({
+                type: HostedInputEventType.BinChanged,
+                payload: {
+                    bin: '',
+                },
+            });
+    });
+
+    it('does not notify if bin number is invalid', () => {
+        jest.spyOn(numberFormatter, 'format')
+            .mockReturnValue('0000 0000 0000 0000');
+
+        jest.spyOn(eventPoster, 'post');
+
+        input.attach();
+
+        // tslint:disable-next-line:no-non-null-assertion
+        const element = container.querySelector('input')!;
+
+        element.value = '0000000000000000';
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+
+        expect(eventPoster.post)
+            .not.toHaveBeenCalledWith(expect.objectContaining({
+                type: HostedInputEventType.BinChanged,
+            }));
     });
 
     it('formats input on change', () => {

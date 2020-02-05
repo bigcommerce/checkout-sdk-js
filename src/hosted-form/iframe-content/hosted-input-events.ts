@@ -10,6 +10,7 @@ import HostedInputValidateResults from './hosted-input-validate-results';
 export enum HostedInputEventType {
     AttachSucceeded = 'HOSTED_INPUT:ATTACH_SUCCEEDED',
     AttachFailed = 'HOSTED_INPUT:ATTACH_FAILED',
+    BinChanged = 'HOSTED_INPUT:BIN_CHANGED',
     Blurred = 'HOSTED_INPUT:BLURRED',
     Changed = 'HOSTED_INPUT:CHANGED',
     CardTypeChanged = 'HOSTED_INPUT:CARD_TYPE_CHANGED',
@@ -23,6 +24,7 @@ export enum HostedInputEventType {
 export interface HostedInputEventMap {
     [HostedInputEventType.AttachSucceeded]: HostedInputAttachSuccessEvent;
     [HostedInputEventType.AttachFailed]: HostedInputAttachErrorEvent;
+    [HostedInputEventType.BinChanged]: HostedInputBinChangeEvent;
     [HostedInputEventType.Blurred]: HostedInputBlurEvent;
     [HostedInputEventType.Changed]: HostedInputChangeEvent;
     [HostedInputEventType.CardTypeChanged]: HostedInputCardTypeChangeEvent;
@@ -36,6 +38,7 @@ export interface HostedInputEventMap {
 export type HostedInputEvent = (
     HostedInputAttachSuccessEvent |
     HostedInputAttachErrorEvent |
+    HostedInputBinChangeEvent |
     HostedInputBlurEvent |
     HostedInputChangeEvent |
     HostedInputCardTypeChangeEvent |
@@ -53,6 +56,13 @@ export interface HostedInputAttachErrorEvent {
     type: HostedInputEventType.AttachFailed;
     payload: {
         error: HostedInputInitializeErrorData;
+    };
+}
+
+export interface HostedInputBinChangeEvent {
+    type: HostedInputEventType.BinChanged;
+    payload: {
+        bin?: string;
     };
 }
 

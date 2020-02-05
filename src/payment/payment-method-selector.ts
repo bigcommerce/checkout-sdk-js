@@ -1,7 +1,9 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 import { find } from 'lodash';
 
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
+import { guard } from '../common/utility';
 
 import PaymentMethod from './payment-method';
 import PaymentMethodMeta from './payment-method-meta';
@@ -11,6 +13,7 @@ export default interface PaymentMethodSelector {
     getPaymentMethods(): PaymentMethod[] | undefined;
     getPaymentMethodsMeta(): PaymentMethodMeta | undefined;
     getPaymentMethod(methodId: string, gatewayId?: string): PaymentMethod | undefined;
+    getPaymentMethodOrThrow(methodId: string, gatewayId ?: string): PaymentMethod;
     getLoadError(): Error | undefined;
     getLoadMethodError(methodId?: string): Error | undefined;
     isLoading(): boolean;
@@ -36,6 +39,13 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
             return gatewayId ?
                 find(paymentMethods, { id: methodId, gateway: gatewayId }) :
                 find(paymentMethods, { id: methodId });
+        }
+    );
+
+    const getPaymentMethodOrThrow = createSelector(
+        getPaymentMethod,
+        getPaymentMethod => (methodId: string, gatewayId?: string) => {
+            return guard(getPaymentMethod(methodId, gatewayId), () => new MissingDataError(MissingDataErrorType.MissingPaymentMethod));
         }
     );
 
@@ -80,6 +90,7 @@ export function createPaymentMethodSelectorFactory(): PaymentMethodSelectorFacto
             getPaymentMethods: getPaymentMethods(state),
             getPaymentMethodsMeta: getPaymentMethodsMeta(state),
             getPaymentMethod: getPaymentMethod(state),
+            getPaymentMethodOrThrow: getPaymentMethodOrThrow(state),
             getLoadError: getLoadError(state),
             getLoadMethodError: getLoadMethodError(state),
             isLoading: isLoading(state),

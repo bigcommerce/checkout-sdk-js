@@ -59,16 +59,24 @@ export default class HostedCardNumberInput extends HostedInput {
         const cardInfo = number(value).card;
         const prevCardInfo = this._previousValue && number(this._previousValue).card;
 
-        if (get(prevCardInfo, 'type') === get(cardInfo, 'type')) {
-            return;
+        if (get(prevCardInfo, 'type') !== get(cardInfo, 'type')) {
+            this._eventPoster.post({
+                type: HostedInputEventType.CardTypeChanged,
+                payload: {
+                    cardType: cardInfo ? cardInfo.type : undefined,
+                },
+            });
         }
 
-        this._eventPoster.post({
-            type: HostedInputEventType.CardTypeChanged,
-            payload: {
-                cardType: cardInfo ? cardInfo.type : undefined,
-            },
-        });
+        const bin = value.length >= 6 && number(value).isPotentiallyValid ? value.substr(0, 6) : '';
+        const prevBin = this._previousValue && this._previousValue.length >= 6 ? this._previousValue.substr(0, 6) : '';
+
+        if (bin !== prevBin) {
+            this._eventPoster.post({
+                type: HostedInputEventType.BinChanged,
+                payload: { bin },
+            });
+        }
     }
 
     protected _formatValue(value: string): void {

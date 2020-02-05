@@ -1,21 +1,19 @@
-import { find, some } from 'lodash';
+import { merge, some } from 'lodash';
 
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, RequestError } from '../../../common/error/errors';
-import { PaymentInstrumentNotValidError } from '../../errors';
-import isCreditCardLike from '../../is-credit-card-like';
+import { RequestError } from '../../../common/error/errors';
+import { HostedForm } from '../../../hosted-form';
+import { OrderRequestBody } from '../../../order';
 import isVaultedInstrument from '../../is-vaulted-instrument';
-import Payment from '../../payment';
 import PaymentActionCreator from '../../payment-action-creator';
 import PaymentMethod from '../../payment-method';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
+import { PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategy from '../payment-strategy';
 
-import { CardinalClient, CardinalOrderData, CardinalSupportedPaymentInstrument } from './index';
+import CardinalClient, { CardinalOrderData } from './cardinal-client';
 
 export default class CardinalThreeDSecureFlow {
-    private _paymentMethod?: PaymentMethod;
-    private _clientToken?: string;
-
     constructor(
         private _store: CheckoutStore,
         private _paymentActionCreator: PaymentActionCreator,
@@ -23,128 +21,80 @@ export default class CardinalThreeDSecureFlow {
         private _cardinalClient: CardinalClient
     ) {}
 
-    prepare(methodId: string): Promise<void> {
-        if (this._clientToken) {
-            return Promise.resolve();
-        }
-
-        return this._store.dispatch(this._paymentMethodActionCreator.loadPaymentMethod(methodId))
-            .then(state => {
-                this._paymentMethod = state.paymentMethods.getPaymentMethod(methodId);
-
-                if (!this._paymentMethod || !this._paymentMethod.config) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
-                return this._cardinalClient.initialize(methodId, this._paymentMethod.config.testMode);
-            })
-            .then(() => {
-                if (!this._paymentMethod || !this._paymentMethod.clientToken) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
-                this._clientToken = this._paymentMethod.clientToken;
-
-                return this._cardinalClient.configure(this._clientToken);
-            });
+    async prepare(method: PaymentMethod): Promise<void> {
+        await this._cardinalClient.load(method.id, method.config.testMode);
+        await this._cardinalClient.configure(await this._getClientToken(method));
     }
 
-    start(payment: Payment): Promise<InternalCheckoutSelectors> {
-        if (!payment.paymentData) {
-            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+    async start(
+        execute: PaymentStrategy['execute'],
+        payload: OrderRequestBody,
+        options?: PaymentRequestOptions,
+        hostedForm?: HostedForm
+    ): Promise<InternalCheckoutSelectors> {
+        const { instruments: { getCardInstrument }, paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const { payment: { methodId = '', paymentData = {} } = {} } = payload;
+        const instrument = isVaultedInstrument(paymentData) && getCardInstrument(paymentData.instrumentId);
+        const bin = instrument ? instrument.iin : hostedForm && hostedForm.getBin();
+
+        if (bin) {
+            await this._cardinalClient.runBinProcess(bin);
         }
 
-        if (!isCreditCardLike(payment.paymentData) && !isVaultedInstrument(payment.paymentData)) {
-            throw new InvalidArgumentError();
-        }
-
-        const paymentData = payment.paymentData;
-
-        return this._cardinalClient.runBinProcess(this._getBinNumber(paymentData))
-            .then(() => {
-                if (!this._clientToken) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
-                payment = {
-                    ...payment,
+        try {
+            return await execute(merge(payload, {
+                payment: {
                     paymentData: {
-                        ...paymentData,
-                        threeDSecure: { token: this._clientToken },
+                        threeDSecure: { token: getPaymentMethodOrThrow(methodId).clientToken },
                     },
-                };
+                },
+            }), options);
+        } catch (error) {
+            if (!(error instanceof RequestError) || !some(error.body.errors, { code: 'three_d_secure_required' })) {
+                throw error;
+            }
 
-                return this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
-            })
-            .catch(error => {
-                if (!(error instanceof RequestError) || !some(error.body.errors, {code: 'three_d_secure_required'})) {
-                    return Promise.reject(error);
-                }
+            const threeDSecure = await this._cardinalClient.getThreeDSecureData(error.body.three_ds_result, this._getOrderData());
 
-                return this._cardinalClient.getThreeDSecureData(
-                    error.body.three_ds_result,
-                    this._getOrderData(paymentData)
-                )
-                .then(threeDSecure =>
-                    this._store.dispatch(this._paymentActionCreator.submitPayment({
-                        ...payment,
-                        paymentData: {
-                            ...paymentData,
-                            threeDSecure,
-                        },
-                    }))
-                );
-            });
+            if (!hostedForm) {
+                return await this._store.dispatch(this._paymentActionCreator.submitPayment(merge(payload.payment, {
+                    paymentData: { threeDSecure },
+                })));
+            }
+
+            await hostedForm.submit(merge(payload.payment, {
+                paymentData: { threeDSecure },
+            }));
+
+            return this._store.getState();
+        }
     }
 
-    private _getBinNumber(payment: CardinalSupportedPaymentInstrument): string {
-        if (!isVaultedInstrument(payment)) {
-            return payment.ccNumber;
+    private async _getClientToken(method: PaymentMethod): Promise<string> {
+        if (method.clientToken) {
+            return method.clientToken;
         }
 
-        const instruments = this._store.getState().instruments.getInstruments();
-        const { instrumentId: bigpayToken } = payment;
+        const { paymentMethods: { getPaymentMethodOrThrow } } = await this._store.dispatch(
+            this._paymentMethodActionCreator.loadPaymentMethod(method.id)
+        );
 
-        const entry = find(instruments, { bigpayToken });
-
-        if (!entry) {
-            throw new PaymentInstrumentNotValidError();
-        }
-
-        return entry.iin;
+        return getPaymentMethodOrThrow(method.id).clientToken || '';
     }
 
-    private _getOrderData(paymentData: CardinalSupportedPaymentInstrument): CardinalOrderData {
+    private _getOrderData(): CardinalOrderData {
         const state = this._store.getState();
-        const billingAddress = state.billingAddress.getBillingAddress();
+        const billingAddress = state.billingAddress.getBillingAddressOrThrow();
         const shippingAddress = state.shippingAddress.getShippingAddress();
-        const checkout = state.checkout.getCheckout();
-        const order = state.order.getOrder();
+        const checkout = state.checkout.getCheckoutOrThrow();
+        const order = state.order.getOrderOrThrow();
 
-        if (!billingAddress || !billingAddress.email) {
-            throw new MissingDataError(MissingDataErrorType.MissingBillingAddress);
-        }
-
-        if (!checkout) {
-            throw new MissingDataError(MissingDataErrorType.MissingCheckout);
-        }
-
-        if (!order) {
-            throw new MissingDataError(MissingDataErrorType.MissingOrder);
-        }
-
-        const payment: CardinalOrderData = {
+        return {
             billingAddress,
             shippingAddress,
             currencyCode: checkout.cart.currency.code,
             id: order.orderId.toString(),
             amount: checkout.cart.cartAmount,
         };
-
-        if (isCreditCardLike(paymentData)) {
-            payment.paymentData = paymentData;
-        }
-
-        return payment;
     }
 }

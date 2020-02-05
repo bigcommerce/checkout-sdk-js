@@ -12,6 +12,9 @@ import { HostedInputEventMap, HostedInputEventType } from './iframe-content';
 type HostedFormEventCallbacks = Pick<HostedFormOptions, 'onBlur' | 'onCardTypeChange' | 'onFocus' | 'onValidate'>;
 
 export default class HostedForm {
+    private _bin?: string;
+    private _cardType?: string;
+
     constructor(
         private _fields: HostedField[],
         private _eventListener: IframeEventListener<HostedInputEventMap>,
@@ -24,6 +27,17 @@ export default class HostedForm {
         this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => onCardTypeChange(payload));
         this._eventListener.addListener(HostedInputEventType.Focused, ({ payload }) => onFocus(payload));
         this._eventListener.addListener(HostedInputEventType.Validated, ({ payload }) => onValidate(payload));
+
+        this._eventListener.addListener(HostedInputEventType.CardTypeChanged, ({ payload }) => this._cardType = payload.cardType);
+        this._eventListener.addListener(HostedInputEventType.BinChanged, ({ payload }) => this._bin = payload.bin);
+    }
+
+    getBin(): string | undefined {
+        return this._bin;
+    }
+
+    getCardType(): string | undefined {
+        return this._cardType;
     }
 
     async attach(): Promise<void> {

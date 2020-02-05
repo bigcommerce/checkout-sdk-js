@@ -1,12 +1,15 @@
 import { memoizeOne } from '@bigcommerce/memoize';
 
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
+import { guard } from '../common/utility';
 
 import BillingAddress from './billing-address';
 import BillingAddressState, { DEFAULT_STATE } from './billing-address-state';
 
 export default interface BillingAddressSelector {
     getBillingAddress(): BillingAddress | undefined;
+    getBillingAddressOrThrow(): BillingAddress;
     getUpdateError(): Error | undefined;
     getContinueAsGuestError(): Error | undefined;
     getLoadError(): Error | undefined;
@@ -21,6 +24,13 @@ export function createBillingAddressSelectorFactory(): BillingAddressSelectorFac
     const getBillingAddress = createSelector(
         (state: BillingAddressState) => state.data,
         data => () => data
+    );
+
+    const getBillingAddressOrThrow = createSelector(
+        getBillingAddress,
+        getBillingAddress => () => {
+            return guard(getBillingAddress(), () => new MissingDataError(MissingDataErrorType.MissingBillingAddress));
+        }
     );
 
     const getUpdateError = createSelector(
@@ -58,6 +68,7 @@ export function createBillingAddressSelectorFactory(): BillingAddressSelectorFac
     ): BillingAddressSelector => {
         return {
             getBillingAddress: getBillingAddress(state),
+            getBillingAddressOrThrow: getBillingAddressOrThrow(state),
             getUpdateError: getUpdateError(state),
             getContinueAsGuestError: getContinueAsGuestError(state),
             getLoadError: getLoadError(state),

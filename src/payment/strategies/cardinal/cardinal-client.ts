@@ -23,12 +23,13 @@ export interface CardinalOrderData {
 
 export default class CardinalClient {
     private _sdk?: Promise<CardinalSDK>;
+    private _isConfigured: boolean = false;
 
     constructor(
         private _scriptLoader: CardinalScriptLoader
     ) {}
 
-    initialize(provider: string, testMode?: boolean): Promise<void> {
+    load(provider: string, testMode?: boolean): Promise<void> {
         if (!this._sdk) {
             this._sdk = this._scriptLoader.load(provider, testMode);
         }
@@ -37,11 +38,17 @@ export default class CardinalClient {
     }
 
     configure(clientToken: string): Promise<void> {
+        if (this._isConfigured) {
+            return Promise.resolve();
+        }
+
         return this._getClientSDK()
             .then(client => new Promise<void>((resolve, reject) => {
                 client.on(CardinalEventType.SetupCompleted, () => {
                     client.off(CardinalEventType.SetupCompleted);
                     client.off(CardinalEventType.Validated);
+
+                    this._isConfigured = true;
 
                     resolve();
                 });
