@@ -1,7 +1,5 @@
-import { FormPoster } from '@bigcommerce/form-poster';
-
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
-import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
+import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { AmazonMaxoPaymentProcessor, AmazonMaxoPlacement } from '../../../payment/strategies/amazon-maxo';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
@@ -12,7 +10,7 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
 
     constructor(
         private _store: CheckoutStore,
-        private _formPoster: FormPoster,
+        //private _formPoster: FormPoster,
         private _checkoutActionCreator: CheckoutActionCreator,
         private _amazonMaxoPaymentProcessor: AmazonMaxoPaymentProcessor
     ) {}
@@ -20,9 +18,7 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
     initialize(options: CheckoutButtonInitializeOptions): Promise<void> {
         const { containerId, methodId } = options;
 
-        console.log(this._formPoster);
-
-        if (!containerId || !methodId) {
+        if (!containerId) {
             throw new InvalidArgumentError('Unable to proceed because "containerId" argument is not provided.');
         }
 
@@ -46,10 +42,10 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
     }
 
     private _createSignInButton(containerId: string): HTMLElement {
-        const container = document.getElementById(containerId);
+        const container = document.querySelector(`#${containerId}`);
 
         if (!this._methodId) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
         
         const state = this._store.getState();
@@ -82,12 +78,12 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
             throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
 
-        return this._amazonMaxoPaymentProcessor.createButton(container, amazonButtonOptions);
+        return this._amazonMaxoPaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
     }
 
     private _getMethodId(): string {
         if (!this._methodId) {
-            throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
+            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         return this._methodId;

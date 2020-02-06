@@ -14,7 +14,6 @@ export default class AmazonMaxoScriptLoader {
 
     //verify the url depending to the zone
     load(method: PaymentMethod): Promise<AmazonMaxoSDK> {
-        console.log('test');
         const {            
             initializationData: { region = 'us' } = {},
         } = method;      

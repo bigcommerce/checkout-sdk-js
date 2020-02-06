@@ -2,11 +2,12 @@ import { CheckoutStore } from '../../../checkout';
 import { MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import PaymentMethodActionCreator from '../../payment-method-action-creator';
 
-import { AmazonMaxoButtonParams, AmazonMaxoClient } from './amazon-maxo';
+import { AmazonMaxoButtonParams, AmazonMaxoSDK } from './amazon-maxo';
 import AmazonMaxoScriptLoader from './amazon-maxo-script-loader';
 
 export default class AmazonMaxoPaymentProcessor {
-    private _amazonMaxoClient?: AmazonMaxoClient;
+    //private _amazonMaxoClient?: AmazonMaxoClient;
+    private _amazonMaxoSDK?: AmazonMaxoSDK;
     private _methodId?: string;
 
     constructor(
@@ -22,17 +23,15 @@ export default class AmazonMaxoPaymentProcessor {
     }
 
     createButton(
-        containerId: HTMLElement,
+        containerId: string,
         params: AmazonMaxoButtonParams
     ): HTMLElement {
 
-        console.log(this._store)
-
-        if (!this._amazonMaxoClient) {
+        if (!this._amazonMaxoSDK) {
             throw new NotInitializedError(NotInitializedErrorType.PaymentNotInitialized);
         }
 
-        return this._amazonMaxoClient.renderButton(containerId, params);
+        return this._amazonMaxoSDK.Pay.renderButton(containerId, params);
     }
 
     deinitialize(): Promise<void> {
@@ -51,9 +50,9 @@ export default class AmazonMaxoPaymentProcessor {
                 }
 
                 return this._amazonMaxoScriptLoader.load(paymentMethod)
-                    .then(response => {
-                        if (response) {
-                            return;
+                    .then( (amazonMaxoClient) => {
+                        if (amazonMaxoClient) {
+                            this._amazonMaxoSDK = amazonMaxoClient;
                         }
                     })
             });

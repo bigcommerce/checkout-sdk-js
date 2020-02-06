@@ -5,6 +5,7 @@ import { getScriptLoader } from '@bigcommerce/script-loader';
 import { CheckoutActionCreator, CheckoutRequestSender, CheckoutStore } from '../checkout';
 import { Registry } from '../common/registry';
 import { ConfigActionCreator, ConfigRequestSender } from '../config';
+import { createAmazonMaxoPaymentProcessor } from '../payment/strategies/amazon-maxo'
 import { PaymentMethodActionCreator, PaymentMethodRequestSender } from '../payment';
 import { AmazonPayScriptLoader } from '../payment/strategies/amazon-pay';
 import { createBraintreeVisaCheckoutPaymentProcessor, BraintreeScriptLoader, BraintreeSDKCreator, VisaCheckoutScriptLoader } from '../payment/strategies/braintree';
@@ -18,6 +19,7 @@ import CustomerRequestSender from './customer-request-sender';
 import CustomerStrategyActionCreator from './customer-strategy-action-creator';
 import { CustomerStrategy } from './strategies';
 import { AmazonPayCustomerStrategy } from './strategies/amazon';
+import { AmazonMaxoCustomerStrategy } from './strategies/amazon-maxo'
 import { BraintreeVisaCheckoutCustomerStrategy } from './strategies/braintree';
 import { ChasePayCustomerStrategy } from './strategies/chasepay';
 import { DefaultCustomerStrategy } from './strategies/default';
@@ -49,6 +51,14 @@ export default function createCustomerStrategyRegistry(
             remoteCheckoutRequestSender,
             new AmazonPayScriptLoader(scriptLoader)
         )
+    );
+
+    registry.register('amazonmaxo', ()=>
+            new AmazonMaxoCustomerStrategy(
+                store,
+                remoteCheckoutActionCreator,
+                createAmazonMaxoPaymentProcessor(store)
+            )
     );
 
     registry.register('braintreevisacheckout', () =>

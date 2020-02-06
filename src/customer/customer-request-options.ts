@@ -5,6 +5,7 @@ import { BraintreeVisaCheckoutCustomerInitializeOptions } from './strategies/bra
 import { ChasePayCustomerInitializeOptions } from './strategies/chasepay';
 import { GooglePayCustomerInitializeOptions } from './strategies/googlepay';
 import { MasterpassCustomerInitializeOptions } from './strategies/masterpass';
+import { AmazonMaxoCustomerInitializeOptions } from './strategies/amazon-maxo';
 
 /**
  * A set of options for configuring any requests related to the customer step of
@@ -33,6 +34,12 @@ export interface CustomerInitializeOptions extends CustomerRequestOptions {
      * when using Amazon Pay.
      */
     amazon?: AmazonPayCustomerInitializeOptions;
+
+        /**
+     * The options that are required to initialize the customer step of checkout
+     * when using Amazon Maxo.
+     */
+    amazonmaxo?: AmazonMaxoCustomerInitializeOptions;
 
     /**
      * The options that are required to initialize the customer step of checkout
