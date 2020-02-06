@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "importHelpers": true,
@@ -21,5 +23,9 @@
     },
     "include": [
         "src/**/*.ts"
+    ],
+    "files": [
+        "src/common/types/card-validator.d.ts",
+        "src/common/types/webpack.d.ts"
     ]
 }

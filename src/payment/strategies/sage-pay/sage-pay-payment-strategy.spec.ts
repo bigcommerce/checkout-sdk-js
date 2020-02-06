@@ -9,6 +9,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutVali
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
+import { HostedFormFactory } from '../../../hosted-form';
 import { FinalizeOrderAction, OrderActionCreator, OrderActionType, OrderRequestSender, SubmitOrderAction } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import { getOrderRequestBody } from '../../../order/internal-orders.mock';
@@ -19,12 +20,14 @@ import PaymentRequestSender from '../../payment-request-sender';
 import PaymentRequestTransformer from '../../payment-request-transformer';
 import * as paymentStatusTypes from '../../payment-status-types';
 import { getErrorPaymentResponseBody } from '../../payments.mock';
+import { CreditCardPaymentStrategy } from '../credit-card';
 
 import SagePayPaymentStrategy from './sage-pay-payment-strategy';
 
 describe('SagePayPaymentStrategy', () => {
     let finalizeOrderAction: Observable<FinalizeOrderAction>;
     let formPoster: FormPoster;
+    let hostedFormFactory: HostedFormFactory;
     let orderActionCreator: OrderActionCreator;
     let paymentActionCreator: PaymentActionCreator;
     let store: CheckoutStore;
@@ -47,6 +50,7 @@ describe('SagePayPaymentStrategy', () => {
         );
 
         formPoster = createFormPoster();
+        hostedFormFactory = new HostedFormFactory(store);
         store = createCheckoutStore(getCheckoutStoreState());
 
         finalizeOrderAction = of(createAction(OrderActionType.FinalizeOrderRequested));
@@ -71,6 +75,7 @@ describe('SagePayPaymentStrategy', () => {
             store,
             orderActionCreator,
             paymentActionCreator,
+            hostedFormFactory,
             formPoster
         );
     });
@@ -127,7 +132,7 @@ describe('SagePayPaymentStrategy', () => {
             PaReq: 'payer_auth_request',
             TermUrl: 'https://callback/url',
             MD: 'merchant_data',
-        });
+        }, undefined, '_top');
     });
 
     it('does not post 3ds data to Sage if 3ds is not enabled', async () => {
@@ -199,5 +204,10 @@ describe('SagePayPaymentStrategy', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(OrderFinalizationNotRequiredError);
         }
+    });
+
+    it('is special type of credit card strategy', () => {
+        expect(strategy)
+            .toBeInstanceOf(CreditCardPaymentStrategy);
     });
 });

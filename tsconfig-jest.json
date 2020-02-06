@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
         "declaration": false,
+        "esModuleInterop": true,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "importHelpers": true,
@@ -18,6 +20,7 @@
         "target": "es5"
     },
     "include": [
+        "src/common/types/card-validator.d.ts",
         "src/**/*.ts"
     ]
 }

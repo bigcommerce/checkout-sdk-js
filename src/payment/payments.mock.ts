@@ -27,7 +27,7 @@ export function getCreditCardInstrument(): CreditCardInstrument {
     return {
         ccExpiry: {
             month: '10',
-            year: '20',
+            year: '2020',
         },
         ccName: 'BigCommerce',
         ccNumber: '4111111111111111',
@@ -43,7 +43,7 @@ export function getVaultedInstrument(): VaultedInstrument {
 
 export function getPaymentRequestBody(): PaymentRequestBody {
     return {
-        authToken: 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDcxODcxMzMsIm5iZiI6MTUwNzE4MzUzMywiaXNzIjoicGF5bWVudHMuYmlnY29tbWVyY2UuY29tIiwic3ViIjoiMTUwNDA5ODgyMSIsImp0aSI6IjNkOTA4ZDE5LTY4OTMtNGQzYi1iMWEwLWJjNWYzMjRhM2ZiZCIsImlhdCI6MTUwNzE4MzUzMywiZGF0YSI6eyJzdG9yZV9pZCI6IjE1MDQwOTg4MjEiLCJvcmRlcl9pZCI6IjExOSIsImFtb3VudCI6MjAwMDAsImN1cnJlbmN5IjoiVVNEIn19.FSfZpI98l3_p5rbQdlHNeCfKR5Dwwk8_fvPZvtb64-Q',
+        authToken: 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
         billingAddress: mapToInternalAddress(getBillingAddress()),
         cart: mapToInternalCart(getCheckoutWithGiftCertificates()),
         customer: mapToInternalCustomer(getCustomer(), getBillingAddress()),

@@ -7,6 +7,7 @@ import { RequestError } from '../common/error/errors';
 import { getErrorResponse } from '../common/http-request/responses.mock';
 import { OrderActionType } from '../order';
 import { getOrder } from '../order/orders.mock';
+import { ConsignmentActionType } from '../shipping';
 
 import { CouponActionType } from './coupon-actions';
 import couponReducer from './coupon-reducer';
@@ -25,6 +26,14 @@ describe('couponReducer()', () => {
 
     it('returns new state when coupon gets removed', () => {
         const action = createAction(CouponActionType.RemoveCouponSucceeded, getCheckout());
+
+        expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
+            data: [],
+        }));
+    });
+
+    it('returns new state when shipping option is updated', () => {
+        const action = createAction(ConsignmentActionType.UpdateShippingOptionSucceeded, getCheckout());
 
         expect(couponReducer(initialState, action)).toEqual(expect.objectContaining({
             data: [],

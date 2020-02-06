@@ -1054,7 +1054,8 @@ export default class CheckoutService {
     deleteInstrument(instrumentId: string): Promise<CheckoutSelectors> {
         const action = this._instrumentActionCreator.deleteInstrument(instrumentId);
 
-        return this._dispatch(action);
+        return this._dispatch(action)
+            .then(() => this.loadInstruments());
     }
 
     /**

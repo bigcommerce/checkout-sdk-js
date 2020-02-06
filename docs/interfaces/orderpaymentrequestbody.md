@@ -43,7 +43,7 @@ ___
 
 ### `<Optional>` paymentData
 
-**● paymentData**: * [CreditCardInstrument](creditcardinstrument.md) &#124; [VaultedInstrument](vaultedinstrument.md) &#124; [HostedInstrument](hostedinstrument.md)
+**● paymentData**: * [CreditCardInstrument](creditcardinstrument.md) &#124; [HostedInstrument](hostedinstrument.md) &#124; [HostedCreditCardInstrument](../#hostedcreditcardinstrument) &#124; [HostedVaultedInstrument](../#hostedvaultedinstrument) &#124; [VaultedInstrument](vaultedinstrument.md)
 *
 
 An object that contains the details of a credit card or vaulted payment instrument.

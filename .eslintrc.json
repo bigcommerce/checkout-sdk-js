@@ -32,7 +32,10 @@
                 "allow": [
                     "**/*.{mock,scss}",
                     "**/index.ts",
-                    "rxjs/**"
+                    "**/bundles/**",
+                    "**/dist/**",
+                    "rxjs/**",
+                    "scripts/**"
                 ]
             }
         ],

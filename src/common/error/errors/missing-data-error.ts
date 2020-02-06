@@ -10,6 +10,7 @@ export enum MissingDataErrorType {
     MissingOrderConfig,
     MissingOrderId,
     MissingPayment,
+    MissingPaymentInstrument,
     MissingPaymentMethod,
     MissingPaymentToken,
     MissingShippingAddress,

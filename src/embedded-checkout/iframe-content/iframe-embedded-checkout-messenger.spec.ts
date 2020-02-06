@@ -1,7 +1,6 @@
 import { CartChangedError } from '../../cart/errors';
+import { IframeEventListener, IframeEventPoster } from '../../common/iframe';
 import { EmbeddedCheckoutEvent, EmbeddedCheckoutEventType } from '../embedded-checkout-events';
-import IframeEventListener from '../iframe-event-listener';
-import IframeEventPoster from '../iframe-event-poster';
 
 import { EmbeddedContentEventMap, EmbeddedContentEventType } from './embedded-content-events';
 import IframeEmbeddedCheckoutMessenger from './iframe-embedded-checkout-messenger';

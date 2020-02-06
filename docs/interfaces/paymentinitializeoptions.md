@@ -22,6 +22,7 @@ A set of options that are required to initialize the payment step of the current
 * [braintree](paymentinitializeoptions.md#braintree)
 * [braintreevisacheckout](paymentinitializeoptions.md#braintreevisacheckout)
 * [chasepay](paymentinitializeoptions.md#chasepay)
+* [creditCard](paymentinitializeoptions.md#creditcard)
 * [gatewayId](paymentinitializeoptions.md#gatewayid)
 * [googlepaybraintree](paymentinitializeoptions.md#googlepaybraintree)
 * [googlepaystripe](paymentinitializeoptions.md#googlepaystripe)
@@ -81,6 +82,15 @@ ___
 **● chasepay**: *[ChasePayInitializeOptions](chasepayinitializeoptions.md)*
 
 The options that are required to initialize the Chasepay payment method. They can be omitted unless you need to support Chasepay.
+
+___
+<a id="creditcard"></a>
+
+### `<Optional>` creditCard
+
+**● creditCard**: *[CreditCardPaymentInitializeOptions](creditcardpaymentinitializeoptions.md)*
+
+*__alpha__*: Please note that this option is currently in an early stage of development. Therefore the API is unstable and not ready for public consumption.
 
 ___
 <a id="gatewayid"></a>

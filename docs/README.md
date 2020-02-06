@@ -64,6 +64,82 @@ ___
 *
 
 ___
+<a id="hostedcreditcardinstrument"></a>
+
+###  HostedCreditCardInstrument
+
+**ΤHostedCreditCardInstrument**: *[Omit](#omit)<[CreditCardInstrument](interfaces/creditcardinstrument.md),  "ccExpiry" &#124; "ccName" &#124; "ccNumber" &#124; "ccCvv">*
+
+___
+<a id="hostedfieldblureventdata"></a>
+
+###  HostedFieldBlurEventData
+
+**ΤHostedFieldBlurEventData**: *`object`*
+
+#### Type declaration
+
+ fieldType: [HostedFieldType](enums/hostedfieldtype.md)
+
+___
+<a id="hostedfieldcardtypechangeeventdata"></a>
+
+###  HostedFieldCardTypeChangeEventData
+
+**ΤHostedFieldCardTypeChangeEventData**: *`object`*
+
+#### Type declaration
+
+`Optional`  cardType:  `undefined` &#124; `string`
+
+___
+<a id="hostedfieldfocuseventdata"></a>
+
+###  HostedFieldFocusEventData
+
+**ΤHostedFieldFocusEventData**: *`object`*
+
+#### Type declaration
+
+ fieldType: [HostedFieldType](enums/hostedfieldtype.md)
+
+___
+<a id="hostedfieldoptionsmap"></a>
+
+###  HostedFieldOptionsMap
+
+**ΤHostedFieldOptionsMap**: * [HostedCardFieldOptionsMap](interfaces/hostedcardfieldoptionsmap.md) &#124; [HostedStoredCardFieldOptionsMap](interfaces/hostedstoredcardfieldoptionsmap.md)
+*
+
+___
+<a id="hostedfieldstyles"></a>
+
+###  HostedFieldStyles
+
+**ΤHostedFieldStyles**: *[HostedInputStyles](#hostedinputstyles)*
+
+___
+<a id="hostedfieldvalidateeventdata"></a>
+
+###  HostedFieldValidateEventData
+
+**ΤHostedFieldValidateEventData**: *[HostedInputValidateResults](interfaces/hostedinputvalidateresults.md)*
+
+___
+<a id="hostedinputstyles"></a>
+
+###  HostedInputStyles
+
+**ΤHostedInputStyles**: *`Partial`<`Pick`<`CSSStyleDeclaration`,  "color" &#124; "fontFamily" &#124; "fontSize" &#124; "fontWeight">>*
+
+___
+<a id="hostedvaultedinstrument"></a>
+
+###  HostedVaultedInstrument
+
+**ΤHostedVaultedInstrument**: *[Omit](#omit)<[VaultedInstrument](interfaces/vaultedinstrument.md),  "ccNumber" &#124; "ccCvv">*
+
+___
 <a id="instrument"></a>
 
 ###  Instrument

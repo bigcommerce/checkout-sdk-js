@@ -1,6 +1,6 @@
 {
   "name": "@bigcommerce/checkout-sdk",
-  "version": "1.47.1",
+  "version": "1.50.2",
   "description": "BigCommerce Checkout JavaScript SDK",
   "license": "MIT",
   "main": "dist/checkout-sdk.js",
@@ -22,6 +22,8 @@
   "scripts": {
     "prepare": "check-node-version --node '>=6' --npm '>=6'",
     "build": "npm run bundle && npm run bundle-dts",
+    "prebuild-server": "rm -rf dist-server",
+    "build-server": "webpack --config webpack-server.config.js --config-name umd && webpack --config webpack-server.config.js --config-name umd-loader",
     "prebundle": "rm -rf dist",
     "bundle": "webpack --config webpack.config.js",
     "bundle:analyze": "npm run --silent bundle -- --config-name umd --profile --json > webpack-stats.json && webpack-bundle-analyzer webpack-stats.json dist --default-sizes gzip",
@@ -41,16 +43,19 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
-    "@bigcommerce/bigpay-client": "^5.2.0",
+    "@bigcommerce/bigpay-client": "^5.4.1",
     "@bigcommerce/data-store": "^1.0.1",
-    "@bigcommerce/form-poster": "^1.3.0",
+    "@bigcommerce/form-poster": "^1.4.0",
     "@bigcommerce/memoize": "^1.0.0",
     "@bigcommerce/request-sender": "^0.3.0",
     "@bigcommerce/script-loader": "^2.1.0",
+    "@types/card-validator": "^4.1.0",
     "@types/iframe-resizer": "^3.5.6",
     "@types/lodash": "^4.14.139",
     "@types/reselect": "^2.2.0",
     "@types/shallowequal": "^1.1.1",
+    "@types/yup": "^0.26.24",
+    "card-validator": "^6.2.0",
     "core-js": "^3.1.2",
     "iframe-resizer": "^3.6.2",
     "local-storage-fallback": "^4.1.1",
@@ -59,7 +64,8 @@
     "reselect": "^4.0.0",
     "rxjs": "^6.5.3",
     "shallowequal": "^1.1.0",
-    "tslib": "^1.10.0"
+    "tslib": "^1.10.0",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
@@ -79,6 +85,8 @@
     "eslint-plugin-import": "^2.18.2",
     "jest": "^24.9.0",
     "request": "^2.83.0",
+    "semver": "^7.1.1",
+    "source-map-loader": "^0.2.4",
     "standard-version": "^7.0.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.1.2",
@@ -86,6 +94,7 @@
     "typedoc": "^0.13.0",
     "typescript": "^3.6.3",
     "webpack": "^4.41.0",
+    "webpack-assets-manifest": "^3.1.1",
     "webpack-bundle-analyzer": "^3.5.1",
     "webpack-cli": "^3.3.9",
     "webpack-node-externals": "^1.7.2"

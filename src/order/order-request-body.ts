@@ -1,4 +1,4 @@
-import { CreditCardInstrument, HostedInstrument, VaultedInstrument } from '../payment';
+import { CreditCardInstrument, HostedCreditCardInstrument, HostedInstrument, HostedVaultedInstrument, VaultedInstrument } from '../payment';
 
 /**
  * An object that contains the information required for submitting an order.
@@ -39,5 +39,5 @@ export interface OrderPaymentRequestBody {
      * An object that contains the details of a credit card or vaulted payment
      * instrument.
      */
-    paymentData?: CreditCardInstrument | VaultedInstrument | HostedInstrument;
+    paymentData?: CreditCardInstrument | HostedInstrument | HostedCreditCardInstrument | HostedVaultedInstrument | VaultedInstrument;
 }

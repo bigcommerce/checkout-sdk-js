@@ -1,14 +1,16 @@
 import { memoizeOne } from '@bigcommerce/memoize';
-import { filter, flatMap, isMatch } from 'lodash';
+import { filter, flatMap, isMatch, values } from 'lodash';
 
-import { PaymentMethod } from '..';
 import { createSelector } from '../../common/selector';
+import PaymentMethod from '../payment-method';
 
 import PaymentInstrument, { CardInstrument } from './instrument';
 import InstrumentState, { DEFAULT_STATE, InstrumentMeta } from './instrument-state';
 import supportedInstruments from './supported-payment-instruments';
 
 export default interface InstrumentSelector {
+    getCardInstrument(instrumentId: string): CardInstrument | undefined;
+    // TODO: Rename to `getCardInstruments`
     getInstruments(): CardInstrument[] | undefined;
     getInstrumentsByPaymentMethod(paymentMethod: PaymentMethod): PaymentInstrument[] | undefined;
     getInstrumentsMeta(): InstrumentMeta | undefined;
@@ -37,6 +39,19 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
             }
 
             return filter<PaymentInstrument>(instruments, currentMethod);
+        }
+    );
+
+    const getCardInstrument = createSelector(
+        (state: InstrumentState) => state.data,
+        (instruments = []) => (instrumentId: string) => {
+            const cards = values(supportedInstruments);
+
+            return instruments.find((instrument): instrument is CardInstrument =>
+                instrument.bigpayToken === instrumentId &&
+                instrument.method === 'credit_card' &&
+                cards.some(card => isMatch(instrument, card))
+            );
         }
     );
 
@@ -100,6 +115,7 @@ export function createInstrumentSelectorFactory(): InstrumentSelectorFactory {
         state: InstrumentState = DEFAULT_STATE
     ): InstrumentSelector => {
         return {
+            getCardInstrument: getCardInstrument(state),
             getInstruments: getInstruments(state),
             getInstrumentsByPaymentMethod: getInstrumentsByPaymentMethod(state),
             getInstrumentsMeta: getInstrumentsMeta(state),
