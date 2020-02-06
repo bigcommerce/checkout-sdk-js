@@ -44,12 +44,18 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
     private _createSignInButton(containerId: string): HTMLElement {
         const container = document.querySelector(`#${containerId}`);
 
-        if (!this._methodId) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        if (!container) {
+            throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
         }
-        
+
         const state = this._store.getState();
-        const paymentMethod =  state.paymentMethods.getPaymentMethod(this._methodId);
+        const paymentMethod =  state.paymentMethods.getPaymentMethod(this._getMethodId());
+
+        const config = state.config.getStoreConfig();
+
+        if (!config) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
 
         if(! paymentMethod ){
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
@@ -69,14 +75,10 @@ export default class AmazonMaxoButtonStrategy implements CheckoutButtonStrategy 
             region,
             productType: 'PayAndShip',
             createCheckoutSession: {
-                url:  '',
+                url: `${config.links.siteLink}/remote-checkout-token/${this._getMethodId()}`,
             },
             placement: AmazonMaxoPlacement.Cart,
         };
-
-        if (!container) {
-            throw new InvalidArgumentError('Unable to create sign-in button without valid container ID.');
-        }
 
         return this._amazonMaxoPaymentProcessor.createButton(`#${containerId}`, amazonButtonOptions);
     }

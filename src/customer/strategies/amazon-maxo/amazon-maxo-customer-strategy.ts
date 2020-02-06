@@ -46,7 +46,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
 
     signIn(): Promise<InternalCheckoutSelectors> {
         throw new NotImplementedError(
-            'In order to sign in via Amazon, the shopper must click on "Google Pay" button.'
+            'In order to sign in via Amazon, the shopper must click on "Amazon Maxo" button.'
         );
     }
 
@@ -73,6 +73,12 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
         const state = this._store.getState();
         const paymentMethod =  state.paymentMethods.getPaymentMethod(this._getMethodId());
 
+        const config = state.config.getStoreConfig();
+
+        if (!config) {
+            throw new MissingDataError(MissingDataErrorType.MissingCheckoutConfig);
+        }
+
         if(! paymentMethod ){
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
@@ -91,7 +97,7 @@ export default class AmazonMaxoCustomerStrategy implements CustomerStrategy {
             region,
             productType: 'PayAndShip',
             createCheckoutSession: {
-                url:  '',
+                url: `${config.links.siteLink}/remote-checkout-token/${this._getMethodId()}`,
             },
             placement: AmazonMaxoPlacement.Checkout,
         };
