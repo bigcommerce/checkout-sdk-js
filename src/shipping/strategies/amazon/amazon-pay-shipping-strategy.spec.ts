@@ -14,7 +14,7 @@ import { RemoteCheckoutActionCreator, RemoteCheckoutActionType, RemoteCheckoutRe
 import ConsignmentActionCreator from '../../consignment-action-creator';
 import { ConsignmentActionType } from '../../consignment-actions';
 import { getFlatRateOption } from '../../internal-shipping-options.mock';
-import { getShippingAddress } from '../../shipping-addresses.mock';
+import { getShippingAddress, getShippingAddressWithCustomFields } from '../../shipping-addresses.mock';
 import { ShippingStrategyActionType } from '../../shipping-strategy-actions';
 
 import AmazonPayShippingStrategy from './amazon-pay-shipping-strategy';
@@ -266,6 +266,28 @@ describe('AmazonPayShippingStrategy', () => {
         const output = await strategy.selectOption(method.id, options);
 
         expect(consignmentActionCreator.selectShippingOption).toHaveBeenCalledWith(method.id, options);
+        expect(store.dispatch).toHaveBeenCalledWith(action);
+        expect(output).toEqual(store.getState());
+    });
+
+    it('updates address with provided custom fields and existing address', async () => {
+        const strategy = new AmazonPayShippingStrategy(store, consignmentActionCreator, paymentMethodActionCreator, remoteCheckoutActionCreator, scriptLoader);
+        const options = {};
+        const amazonShippingAddress = getShippingAddress();
+        const address = getShippingAddressWithCustomFields();
+        const action = of(createAction(ConsignmentActionType.UpdateConsignmentRequested));
+
+        jest.spyOn(consignmentActionCreator, 'updateAddress')
+            .mockReturnValue(action);
+
+        jest.spyOn(store, 'dispatch');
+
+        const output = await strategy.updateAddress(address, options);
+
+        expect(consignmentActionCreator.updateAddress).toHaveBeenCalledWith({
+            ...amazonShippingAddress,
+            customFields: address.customFields,
+        }, options);
         expect(store.dispatch).toHaveBeenCalledWith(action);
         expect(output).toEqual(store.getState());
     });
