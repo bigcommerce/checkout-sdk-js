@@ -22,7 +22,7 @@ describe('CardinalClient', () => {
 
     describe('#initialize', () => {
         it('loads the cardinal sdk correctly', async () => {
-            await client.initialize('provider', false);
+            await client.load('provider', false);
 
             expect(cardinalScriptLoader.load).toHaveBeenCalled();
         });
@@ -52,7 +52,7 @@ describe('CardinalClient', () => {
                 call();
             });
 
-            await client.initialize('provider', true);
+            await client.load('provider', true);
             await client.configure('token');
 
             expect(sdk.on).toHaveBeenCalledWith(CardinalEventType.SetupCompleted, expect.any(Function));
@@ -74,7 +74,7 @@ describe('CardinalClient', () => {
                 call(getCardinalValidatedData(CardinalValidatedAction.Error, false, 1020), '');
             });
 
-            await client.initialize('provider', true);
+            await client.load('provider', true);
 
             try {
                 await client.configure('token');
@@ -96,7 +96,7 @@ describe('CardinalClient', () => {
                 setupCall();
             });
 
-            await client.initialize('provider', true);
+            await client.load('provider', true);
             await client.configure('token');
         });
 
@@ -145,7 +145,7 @@ describe('CardinalClient', () => {
                 setupCall();
             });
 
-            await client.initialize('provider', true);
+            await client.load('provider', true);
             await client.configure('token');
         });
 

@@ -1,79 +1,63 @@
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
-import { MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
+import { HostedFormFactory } from '../../../hosted-form';
 import { OrderActionCreator, OrderRequestBody } from '../../../order';
-import { OrderFinalizationNotRequiredError } from '../../../order/errors';
 import PaymentActionCreator from '../../payment-action-creator';
-import PaymentMethod from '../../payment-method';
 import { PaymentInitializeOptions, PaymentRequestOptions } from '../../payment-request-options';
-import * as paymentStatusTypes from '../../payment-status-types';
+import { ACKNOWLEDGE } from '../../payment-status-types';
 import { CardinalThreeDSecureFlow } from '../cardinal';
-import PaymentStrategy from '../payment-strategy';
+import { CreditCardPaymentStrategy } from '../credit-card';
 
-export default class PaypalProPaymentStrategy implements PaymentStrategy {
-    private _paymentMethod?: PaymentMethod;
-
+export default class PaypalProPaymentStrategy extends CreditCardPaymentStrategy {
     constructor(
-        private _store: CheckoutStore,
-        private _orderActionCreator: OrderActionCreator,
-        private _paymentActionCreator: PaymentActionCreator,
+        store: CheckoutStore,
+        orderActionCreator: OrderActionCreator,
+        paymentActionCreator: PaymentActionCreator,
+        hostedFormFactory: HostedFormFactory,
         private _threeDSecureFlow: CardinalThreeDSecureFlow
-    ) {}
+    ) {
+        super(
+            store,
+            orderActionCreator,
+            paymentActionCreator,
+            hostedFormFactory
+        );
+    }
 
-    initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
-        const { methodId } = options;
-        this._paymentMethod = this._store.getState().paymentMethods.getPaymentMethod(methodId);
+    async initialize(options: PaymentInitializeOptions): Promise<InternalCheckoutSelectors> {
+        await super.initialize(options);
 
-        if (!this._paymentMethod) {
-            throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
+        const { paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+        const paymentMethod = getPaymentMethodOrThrow(options.methodId);
+
+        if (paymentMethod.config.is3dsEnabled) {
+            await this._threeDSecureFlow.prepare(paymentMethod);
         }
 
-        if (!this._paymentMethod.config.is3dsEnabled) {
-            return Promise.resolve(this._store.getState());
-        }
-
-        return this._threeDSecureFlow.prepare(methodId)
-            .then(() => this._store.getState());
+        return this._store.getState();
     }
 
     execute(payload: OrderRequestBody, options?: PaymentRequestOptions): Promise<InternalCheckoutSelectors> {
-        if (this._isPaymentAcknowledged()) {
+        const { payment: { methodId = '' } = {} } = payload;
+        const { payment: { getPaymentStatus }, paymentMethods: { getPaymentMethodOrThrow } } = this._store.getState();
+
+        if (getPaymentStatus() === ACKNOWLEDGE) {
             return this._store.dispatch(
                 this._orderActionCreator.submitOrder({
                     ...payload,
-                    payment: payload.payment ? { methodId: payload.payment.methodId } : undefined,
+                    payment: { methodId },
                 }, options)
             );
         }
 
-        const { payment, ...order } = payload;
-
-        if (!payment) {
-            throw new MissingDataError(MissingDataErrorType.MissingPayment);
+        if (getPaymentMethodOrThrow(methodId).config.is3dsEnabled) {
+            return this._threeDSecureFlow.start(
+                super.execute.bind(this),
+                payload,
+                options,
+                this._hostedForm
+            );
         }
 
-        return this._store.dispatch(this._orderActionCreator.submitOrder(order, options))
-            .then(() => {
-                if (!this._paymentMethod) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
-                return this._paymentMethod.config.is3dsEnabled ?
-                    this._threeDSecureFlow.start(payment) :
-                    this._store.dispatch(this._paymentActionCreator.submitPayment(payment));
-            });
-    }
-
-    finalize(): Promise<InternalCheckoutSelectors> {
-        return Promise.reject(new OrderFinalizationNotRequiredError());
-    }
-
-    deinitialize(): Promise<InternalCheckoutSelectors> {
-        return Promise.resolve(this._store.getState());
-    }
-
-    private _isPaymentAcknowledged(): boolean {
-        const state = this._store.getState();
-
-        return state.payment.getPaymentStatus() === paymentStatusTypes.ACKNOWLEDGE;
+        return super.execute(payload, options);
     }
 }

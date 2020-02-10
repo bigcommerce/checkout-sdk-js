@@ -10,13 +10,21 @@ export default class HostedInputAggregator {
     getInputs(filter?: (field: HostedInput) => boolean): HostedInput[] {
         return Array.prototype.slice.call(this._parentWindow.frames)
             .reduce((result: Window[], frame: Window) => {
-                const input = (frame as HostedInputWindow).hostedInput;
+                try {
+                    const input = (frame as HostedInputWindow).hostedInput;
 
-                if (!input || (filter && !filter(input))) {
-                    return result;
+                    if (!input || (filter && !filter(input))) {
+                        return result;
+                    }
+
+                    return [...result, input];
+                } catch (error) {
+                    if (error instanceof DOMException) {
+                        return result;
+                    }
+
+                    throw error;
                 }
-
-                return [...result, input];
             }, []);
     }
 

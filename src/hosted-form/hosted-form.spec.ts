@@ -156,4 +156,24 @@ describe('HostedForm', () => {
         expect(callbacks.onBlur)
             .toHaveBeenCalledWith({ fieldType: HostedFieldType.CardCode });
     });
+
+    it('returns card type', () => {
+        eventListener.trigger({
+            type: HostedInputEventType.CardTypeChanged,
+            payload: { cardType: 'visa' },
+        });
+
+        expect(form.getCardType())
+            .toEqual('visa');
+    });
+
+    it('returns bin number', () => {
+        eventListener.trigger({
+            type: HostedInputEventType.BinChanged,
+            payload: { bin: '411111' },
+        });
+
+        expect(form.getBin())
+            .toEqual('411111');
+    });
 });

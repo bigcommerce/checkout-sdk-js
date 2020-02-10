@@ -127,6 +127,7 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
+            hostedFormFactory,
             new CardinalThreeDSecureFlow(
                 store,
                 paymentActionCreator,
@@ -173,6 +174,7 @@ export default function createPaymentStrategyRegistry(
             store,
             orderActionCreator,
             paymentActionCreator,
+            hostedFormFactory,
             new CardinalThreeDSecureFlow(
                 store,
                 paymentActionCreator,

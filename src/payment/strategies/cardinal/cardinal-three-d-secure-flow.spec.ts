@@ -1,333 +1,211 @@
-import { createClient as createPaymentClient } from '@bigcommerce/bigpay-client';
-import { createAction, createErrorAction, Action } from '@bigcommerce/data-store';
-import { createRequestSender } from '@bigcommerce/request-sender';
-import { createScriptLoader } from '@bigcommerce/script-loader';
-import { of, Observable } from 'rxjs';
+import { Response } from '@bigcommerce/request-sender';
+import { merge } from 'lodash';
+import { of } from 'rxjs';
 
-import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutValidator } from '../../../checkout';
-import { getCheckoutStoreState, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
-import { InvalidArgumentError, MissingDataError, RequestError } from '../../../common/error/errors';
+import { getBillingAddress } from '../../../billing/billing-addresses.mock';
+import { createCheckoutStore, CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
+import { getCheckout, getCheckoutStoreStateWithOrder } from '../../../checkout/checkouts.mock';
+import { RequestError } from '../../../common/error/errors';
 import { getResponse } from '../../../common/http-request/responses.mock';
-import { OrderActionCreator, OrderRequestSender } from '../../../order';
-import { PaymentInstrumentNotValidError } from '../../errors';
-import { PaymentMethodActionCreator, PaymentMethodActionType, PaymentMethodRequestSender, PaymentRequestSender } from '../../index';
-import Payment from '../../payment';
+import { HostedForm } from '../../../hosted-form';
+import { OrderRequestBody } from '../../../order';
+import { getOrderRequestBody } from '../../../order/internal-orders.mock';
+import { getOrder } from '../../../order/orders.mock';
+import { getShippingAddress } from '../../../shipping/shipping-addresses.mock';
 import PaymentActionCreator from '../../payment-action-creator';
-import { PaymentActionType, SubmitPaymentAction } from '../../payment-actions';
 import PaymentMethod from '../../payment-method';
+import PaymentMethodActionCreator from '../../payment-method-action-creator';
 import { getCybersource } from '../../payment-methods.mock';
-import PaymentRequestTransformer from '../../payment-request-transformer';
-import { getCreditCardInstrument, getErrorPaymentResponseBody, getPayment, getVaultedInstrument } from '../../payments.mock';
-import { CardinalClient, CardinalScriptLoader, CardinalThreeDSecureFlow } from '../cardinal';
+import { PaymentRequestOptions } from '../../payment-request-options';
+import PaymentStrategy from '../payment-strategy';
+
+import CardinalClient from './cardinal-client';
+import CardinalThreeDSecureFlow from './cardinal-three-d-secure-flow';
 
 describe('CardinalThreeDSecureFlow', () => {
-    let loadPaymentMethodAction: Observable<Action>;
-    let cardinalClient: CardinalClient;
-    let payment: Payment;
-    let orderActionCreator: OrderActionCreator;
-    let paymentMethodActionCreator: PaymentMethodActionCreator;
-    let paymentActionCreator: PaymentActionCreator;
-    let scriptLoader: CardinalScriptLoader;
-    let submitPaymentAction: Observable<SubmitPaymentAction>;
+    let state: InternalCheckoutSelectors;
     let store: CheckoutStore;
-    let paymentMethodMock: PaymentMethod;
-    let requestError: RequestError;
-    let cardinalFlow: CardinalThreeDSecureFlow;
+    let cardinalClient: Pick<CardinalClient, 'configure' | 'getThreeDSecureData' | 'load' | 'runBinProcess'>;
+    let threeDSecureFlow: CardinalThreeDSecureFlow;
+    let paymentMethod: PaymentMethod;
+    let paymentActionCreator: Pick<PaymentActionCreator, 'submitPayment'>;
+    let paymentMethodActionCreator: Pick<PaymentMethodActionCreator, 'loadPaymentMethod'>;
 
     beforeEach(() => {
-        paymentMethodMock = { ...getCybersource(), clientToken: 'foo' };
         store = createCheckoutStore(getCheckoutStoreStateWithOrder());
-        paymentMethodActionCreator = new PaymentMethodActionCreator(new PaymentMethodRequestSender(createRequestSender()));
-        scriptLoader = new CardinalScriptLoader(createScriptLoader());
-        cardinalClient = new CardinalClient(scriptLoader);
 
-        orderActionCreator = new OrderActionCreator(
-            new OrderRequestSender(createRequestSender()),
-            new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))
-        );
-
-        paymentActionCreator = new PaymentActionCreator(
-            new PaymentRequestSender(createPaymentClient()),
-            orderActionCreator,
-            new PaymentRequestTransformer()
-        );
-
-        cardinalFlow = new CardinalThreeDSecureFlow(
-            store,
-            paymentActionCreator,
-            paymentMethodActionCreator,
-            cardinalClient
-        );
-
-        payment = {
-            ...getPayment(),
-            methodId: paymentMethodMock.id,
-            gatewayId: paymentMethodMock.gateway,
+        paymentMethod = {
+            ...getCybersource(),
+            clientToken: 'foo',
         };
 
-        loadPaymentMethodAction = of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock, { methodId: paymentMethodMock.id }));
-        submitPaymentAction = of(createAction(PaymentActionType.SubmitPaymentRequested));
+        cardinalClient = {
+            configure: jest.fn(() => Promise.resolve()),
+            getThreeDSecureData: jest.fn(() => Promise.resolve()),
+            load: jest.fn(() => Promise.resolve()),
+            runBinProcess: jest.fn(() => Promise.resolve()),
+        };
 
-        jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-            .mockReturnValue(loadPaymentMethodAction);
+        paymentActionCreator = {
+            submitPayment: jest.fn(() => of()),
+        };
 
-        jest.spyOn(paymentActionCreator, 'submitPayment')
-            .mockReturnValue(submitPaymentAction);
+        paymentMethodActionCreator = {
+            loadPaymentMethod: jest.fn(() => of()),
+        };
 
-        jest.spyOn(cardinalClient, 'initialize').mockReturnValue(Promise.resolve());
-        jest.spyOn(cardinalClient, 'configure').mockReturnValue(Promise.resolve());
+        state = store.getState();
+
+        jest.spyOn(store, 'getState')
+            .mockReturnValue(state);
+
+        jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
+            .mockReturnValue(paymentMethod);
+
+        threeDSecureFlow = new CardinalThreeDSecureFlow(
+            store,
+            paymentActionCreator as PaymentActionCreator,
+            paymentMethodActionCreator as PaymentMethodActionCreator,
+            cardinalClient as CardinalClient
+        );
     });
 
     describe('#prepare', () => {
-        it('initializes Cardinal correctly', async () => {
-            await cardinalFlow.prepare(paymentMethodMock.id);
+        it('loads Cardinal client', async () => {
+            await threeDSecureFlow.prepare(paymentMethod);
 
-            expect(cardinalClient.initialize).toHaveBeenCalledWith('cybersource', true);
-            expect(cardinalClient.configure).toHaveBeenCalledWith(paymentMethodMock.clientToken);
+            expect(cardinalClient.load)
+                .toHaveBeenCalledWith(paymentMethod.id, paymentMethod.config.testMode);
         });
 
-        it('does not call loadPaymentMethod if already did', async () => {
-            await cardinalFlow.prepare(paymentMethodMock.id);
-            await cardinalFlow.prepare(paymentMethodMock.id);
+        it('configures Cardinal client', async () => {
+            await threeDSecureFlow.prepare(paymentMethod);
 
-            expect(paymentMethodActionCreator.loadPaymentMethod).toBeCalledTimes(1);
+            expect(cardinalClient.configure)
+                .toHaveBeenCalledWith(paymentMethod.clientToken);
         });
 
-        it('throws missing data error when payment method is not defined', async () => {
-            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-                .mockReturnValue(of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, undefined)));
+        it('configures Cardinal client', async () => {
+            await threeDSecureFlow.prepare(paymentMethod);
 
-            try {
-                await cardinalFlow.prepare(paymentMethodMock.id);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
+            expect(cardinalClient.configure)
+                .toHaveBeenCalledWith(paymentMethod.clientToken);
         });
 
-        it('throws missing data error when client token is not defined', async () => {
-            paymentMethodMock.clientToken = undefined;
-            jest.spyOn(paymentMethodActionCreator, 'loadPaymentMethod')
-                .mockReturnValue(of(createAction(PaymentMethodActionType.LoadPaymentMethodSucceeded, paymentMethodMock)));
+        it('reloads payment method if client token is undefined', async () => {
+            paymentMethod = {
+                ...getCybersource(),
+                clientToken: '',
+            };
 
-            try {
-                await cardinalFlow.prepare(paymentMethodMock.id);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
+            jest.spyOn(state.paymentMethods, 'getPaymentMethodOrThrow')
+                .mockReturnValue(paymentMethod);
+
+            await threeDSecureFlow.prepare(paymentMethod);
+
+            expect(paymentMethodActionCreator.loadPaymentMethod)
+                .toHaveBeenCalledWith(paymentMethod.id);
+        });
+
+        it('does not reload payment method if client token is defined', async () => {
+            await threeDSecureFlow.prepare(paymentMethod);
+
+            expect(paymentMethodActionCreator.loadPaymentMethod)
+                .not.toHaveBeenCalled();
         });
     });
 
-    describe('#start()', () => {
-        beforeEach(async () => {
-            requestError = new RequestError(getResponse({
-                ...getErrorPaymentResponseBody(),
-                errors: [
-                    { code: 'three_d_secure_required' },
-                ],
-                three_ds_result: {
-                    acs_url: 'https://acs/url',
-                    callback_url: '',
-                    payer_auth_request: '',
-                    merchant_data: 'merchant_data',
-                },
-                status: 'error',
-            }));
+    describe('#start', () => {
+        let execute: PaymentStrategy['execute'];
+        let form: Pick<HostedForm, 'getBin' | 'submit'>;
+        let options: PaymentRequestOptions;
+        let payload: OrderRequestBody;
 
-            jest.spyOn(cardinalClient, 'configure').mockReturnValue(Promise.resolve());
-            jest.spyOn(cardinalClient, 'runBinProcess').mockReturnValue(Promise.resolve());
+        beforeEach(() => {
+            execute = jest.fn(() => Promise.resolve(state));
+            options = { methodId: paymentMethod.id };
 
-            await cardinalFlow.prepare(paymentMethodMock.id);
-        });
-
-        it('completes the purchase correctly if card is not enrolled', async () => {
-            jest.spyOn(cardinalClient, 'getThreeDSecureData');
-
-            await cardinalFlow.start(payment);
-
-            expect(cardinalClient.getThreeDSecureData).not.toHaveBeenCalled();
-        });
-
-        it('completes the purchase correctly if card is enrolled', async () => {
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-            jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
-
-            await cardinalFlow.start(payment);
-
-            expect(cardinalClient.getThreeDSecureData).toHaveBeenCalled();
-        });
-
-        it('does not complete the purchase if there was an error', async () => {
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, new Error('Custom Error'))));
-
-            try {
-                await cardinalFlow.start(payment);
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-                expect(error.message).toBe('Custom Error');
-            }
-        });
-
-        it('throws data missing error when payment data is undefined', async () => {
-            payment = {
-                methodId: paymentMethodMock.id,
-                gatewayId: paymentMethodMock.gateway,
+            form = {
+                getBin: jest.fn(() => '411111'),
+                submit: jest.fn(),
             };
 
-            try {
-                await cardinalFlow.start(payment);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throws an error if payment data is not a credit card or vaulted instrument', async () => {
-            payment = {
-                methodId: paymentMethodMock.id,
-                gatewayId: paymentMethodMock.gateway,
-                paymentData: {
-                    nonce: 'string',
+            payload = merge({}, getOrderRequestBody(), {
+                payment: {
+                    methodId: paymentMethod.id,
+                    gatewayId: paymentMethod.gateway,
                 },
-            };
-
-            try {
-                await cardinalFlow.start(payment);
-            } catch (error) {
-                expect(error).toBeInstanceOf(InvalidArgumentError);
-            }
-        });
-
-        it('throws an error if client token is undefined', async () => {
-            cardinalFlow = new CardinalThreeDSecureFlow(
-                store,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                cardinalClient
-            );
-
-            try {
-                await cardinalFlow.start(payment);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throws an error if order data is undefined', async () => {
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-
-            store = createCheckoutStore(getCheckoutStoreState());
-
-            cardinalFlow = new CardinalThreeDSecureFlow(
-                store,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                cardinalClient
-            );
-
-            await cardinalFlow.prepare(paymentMethodMock.id);
-
-            try {
-                await cardinalFlow.start(payment);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
-        });
-
-        it('throws an error if billing data is undefined', async () => {
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
-                billingAddress: undefined,
             });
-
-            cardinalFlow = new CardinalThreeDSecureFlow(
-                store,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                cardinalClient
-            );
-
-            await cardinalFlow.prepare(paymentMethodMock.id);
-
-            try {
-                await cardinalFlow.start(payment);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
         });
 
-        it('throws an error if checkout data is undefined', async () => {
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
+        it('runs BIN detection process if defined', async () => {
+            await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
 
-            store = createCheckoutStore({
-                ...getCheckoutStoreState(),
-                checkout: undefined,
-            });
-
-            cardinalFlow = new CardinalThreeDSecureFlow(
-                store,
-                paymentActionCreator,
-                paymentMethodActionCreator,
-                cardinalClient
-            );
-
-            await cardinalFlow.prepare(paymentMethodMock.id);
-
-            try {
-                await cardinalFlow.start(payment);
-            } catch (error) {
-                expect(error).toBeInstanceOf(MissingDataError);
-            }
+            expect(cardinalClient.runBinProcess)
+                .toHaveBeenCalledWith(form.getBin());
         });
 
-        it('uses vaulted instrument as payment Data', async () => {
-            const instrument = getVaultedInstrument();
+        it('executes order submission with client token', async () => {
+            await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
 
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-            jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
-            jest.spyOn(store.getState().instruments, 'getInstruments').mockReturnValue([{
-                bigpayToken: instrument.instrumentId,
-                type: 'card',
-                method: 'card',
-                provider: 'cybersource',
-                externalId: 'some@external-id.com',
-            }]);
-
-            await cardinalFlow.start({
-                methodId: paymentMethodMock.id,
-                gatewayId: paymentMethodMock.gateway,
-                paymentData: instrument,
-            });
-
-            expect(store.getState().instruments.getInstruments)
-                .toHaveBeenCalledWith();
-
-            expect(cardinalClient.getThreeDSecureData).toHaveBeenCalled();
-        });
-
-        it('throws if it can not find the instrument selected', async () => {
-            jest.spyOn(paymentActionCreator, 'submitPayment')
-                .mockReturnValueOnce(of(createErrorAction(PaymentActionType.SubmitPaymentFailed, requestError)));
-            jest.spyOn(cardinalClient, 'getThreeDSecureData').mockReturnValue(Promise.resolve('token'));
-
-            try {
-                await cardinalFlow.start({
-                    methodId: paymentMethodMock.id,
-                    gatewayId: paymentMethodMock.gateway,
-                    paymentData: {
-                        ...getCreditCardInstrument(),
-                        instrumentId: 'non-existing-instrument',
+            expect(execute)
+                .toHaveBeenCalledWith(merge(payload, {
+                    payment: {
+                        paymentData: {
+                            threeDSecure: { token: paymentMethod.clientToken },
+                        },
                     },
+                }), options);
+        });
+
+        describe('if 3DS is required', () => {
+            let response: Response;
+
+            beforeEach(() => {
+                response = getResponse({
+                    errors: [{ code: 'three_d_secure_required' }],
+                    three_ds_result: {},
                 });
-            } catch (error) {
-                expect(error).toBeInstanceOf(PaymentInstrumentNotValidError);
-            }
+
+                execute = jest.fn(() => Promise.reject(new RequestError(response)));
+            });
+
+            it('handles 3DS error and prompts shopper to authenticate', async () => {
+                await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+
+                expect(cardinalClient.getThreeDSecureData)
+                    .toHaveBeenCalledWith(response.body.three_ds_result, {
+                        billingAddress: getBillingAddress(),
+                        shippingAddress: getShippingAddress(),
+                        currencyCode: getCheckout().cart.currency.code,
+                        id: getOrder().orderId.toString(),
+                        amount: getCheckout().cart.cartAmount,
+                    });
+            });
+
+            it('submits 3DS token using hosted form if provided', async () => {
+                jest.spyOn(cardinalClient, 'getThreeDSecureData')
+                    .mockResolvedValue('three_d_secure');
+
+                await threeDSecureFlow.start(execute, payload, options, form as HostedForm);
+
+                expect(form.submit)
+                    .toHaveBeenCalledWith(merge(payload.payment, {
+                        paymentData: { threeDSecure: 'three_d_secure' },
+                    }));
+            });
+
+            it('submits 3DS token directly if hosted form is not provided', async () => {
+                jest.spyOn(cardinalClient, 'getThreeDSecureData')
+                    .mockResolvedValue('three_d_secure');
+
+                await threeDSecureFlow.start(execute, payload, options);
+
+                expect(paymentActionCreator.submitPayment)
+                    .toHaveBeenCalledWith(merge(payload.payment, {
+                        paymentData: { threeDSecure: 'three_d_secure' },
+                    }));
+            });
         });
     });
 });

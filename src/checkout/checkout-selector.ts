@@ -2,7 +2,9 @@ import { memoizeOne } from '@bigcommerce/memoize';
 
 import { BillingAddressSelector } from '../billing';
 import { CartSelector } from '../cart';
+import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { createSelector } from '../common/selector';
+import { guard } from '../common/utility';
 import { CouponSelector, GiftCertificateSelector } from '../coupon';
 import { CustomerSelector } from '../customer';
 import { ConsignmentSelector } from '../shipping';
@@ -12,6 +14,7 @@ import CheckoutState, { DEFAULT_STATE } from './checkout-state';
 
 export default interface CheckoutSelector {
     getCheckout(): Checkout | undefined;
+    getCheckoutOrThrow(): Checkout;
     getOutstandingBalance(useStoreCredit?: boolean): number | undefined;
     getLoadError(): Error | undefined;
     getUpdateError(): Error | undefined;
@@ -72,6 +75,13 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
         }
     );
 
+    const getCheckoutOrThrow = createSelector(
+        getCheckout,
+        getCheckout => () => {
+            return guard(getCheckout(), () => new MissingDataError(MissingDataErrorType.MissingCheckout));
+        }
+    );
+
     const getOutstandingBalance = createSelector(
         getCheckout,
         getCheckout => (useStoreCredit?: boolean) => {
@@ -124,6 +134,14 @@ export function createCheckoutSelectorFactory(): CheckoutSelectorFactory {
     ): CheckoutSelector => {
         return {
             getCheckout: getCheckout(state, {
+                billingAddress,
+                cart,
+                consignments,
+                coupons,
+                customer,
+                giftCertificates,
+            }),
+            getCheckoutOrThrow: getCheckoutOrThrow(state, {
                 billingAddress,
                 cart,
                 consignments,
