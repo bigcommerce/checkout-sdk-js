@@ -10,6 +10,7 @@ import { createCheckoutStore, CheckoutRequestSender, CheckoutStore, CheckoutStor
 import { getCheckoutStoreState } from '../../../checkout/checkouts.mock';
 import { InvalidArgumentError, MissingDataError, NotInitializedError, RequestError } from '../../../common/error/errors';
 import { getErrorResponse } from '../../../common/http-request/responses.mock';
+import { CustomerRequestSender } from '../../../customer';
 import { getCustomerState } from '../../../customer/customers.mock';
 import { OrderActionCreator, OrderActionType, OrderRequestSender } from '../../../order';
 import { OrderFinalizationNotRequiredError } from '../../../order/errors';
@@ -95,7 +96,10 @@ describe('AmazonPayPaymentStrategy', () => {
                 data: undefined,
             },
         });
-        billingAddressActionCreator = new BillingAddressActionCreator(billingAddressRequestSender);
+        billingAddressActionCreator = new BillingAddressActionCreator(
+            billingAddressRequestSender,
+            new CustomerRequestSender(createRequestSender())
+        );
         orderActionCreator = new OrderActionCreator(
             orderRequestSender,
             new CheckoutValidator(new CheckoutRequestSender(createRequestSender()))

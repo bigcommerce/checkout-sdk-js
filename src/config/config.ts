@@ -97,8 +97,10 @@ export interface CheckoutSettings {
     orderTermsAndConditions: string;
     orderTermsAndConditionsLink: string;
     orderTermsAndConditionsType: string;
+    privacyPolicyUrl: string;
     shippingQuoteFailedMessage: string;
     realtimeShippingProviders: string[];
+    requiresMarketingConsent: boolean;
     remoteCheckoutProviders: any[];
 }
 
