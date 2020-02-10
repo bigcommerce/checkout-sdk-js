@@ -2853,6 +2853,7 @@ declare interface HostedInputCardTypeChangeEvent {
 declare enum HostedInputEventType {
     AttachSucceeded = "HOSTED_INPUT:ATTACH_SUCCEEDED",
     AttachFailed = "HOSTED_INPUT:ATTACH_FAILED",
+    BinChanged = "HOSTED_INPUT:BIN_CHANGED",
     Blurred = "HOSTED_INPUT:BLURRED",
     Changed = "HOSTED_INPUT:CHANGED",
     CardTypeChanged = "HOSTED_INPUT:CARD_TYPE_CHANGED",

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.51.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.51.0...v1.51.1) (2020-02-10)
+
+
+### Bug Fixes
+
+* **payment:** CHECKOUT-4655 Make Cardinal 3DS work with hosted payment form ([199f19c](https://github.com/bigcommerce/checkout-sdk-js/commit/199f19c))
+
 ## [1.51.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.50.2...v1.51.0) (2020-02-09)
 
 

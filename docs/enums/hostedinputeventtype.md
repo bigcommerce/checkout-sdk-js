@@ -22,6 +22,13 @@ ___
 **AttachSucceeded**:  = "HOSTED_INPUT:ATTACH_SUCCEEDED"
 
 ___
+<a id="binchanged"></a>
+
+###  BinChanged
+
+**BinChanged**:  = "HOSTED_INPUT:BIN_CHANGED"
+
+___
 <a id="blurred"></a>
 
 ###  Blurred
