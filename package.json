@@ -21,7 +21,7 @@
   "homepage": "https://github.com/bigcommerce/checkout-sdk-js",
   "scripts": {
     "prepare": "check-node-version --node '>=6' --npm '>=6'",
-    "build": "npm run bundle && npm run bundle-dts",
+    "build": "npm run bundle && npm run bundle-dts && npm run docs",
     "prebuild-server": "rm -rf dist-server",
     "build-server": "webpack --config webpack-server.config.js --config-name umd && webpack --config webpack-server.config.js --config-name umd-loader",
     "prebundle": "rm -rf dist",
@@ -33,9 +33,9 @@
     "postbundle-dts": "rm -rf temp",
     "docs": "typedoc --theme markdown --plugin @bigcommerce/typedoc-plugin-markdown --mode file --module commonjs --readme none --out docs --includeDeclarations --excludeExternals --excludePrivate --excludeProtected --mdEngine github --mdHideSources dist/checkout-sdk.d.ts",
     "lint": "eslint 'src/**/*.ts' && tsc --noEmit",
-    "prerelease": "npm run lint && npm test && npm run build && npm run docs",
-    "release": "npm run release:version",
+    "release": "echo 'Please do not release locally, use CircleCi'",
     "release:version": "git add dist docs && standard-version -a",
+    "release:alpha": "export PRERELEASE=alpha; npm run lint && npm test && npm run build && npm run release:version",
     "test": "jest --config jest-config.js",
     "test:coverage": "npm run test -- --coverage",
     "test:series": "npm run test -- --runInBand",
@@ -81,6 +81,7 @@
     "@typescript-eslint/parser": "^1.13.0",
     "babel-loader": "^8.0.6",
     "check-node-version": "^3.2.0",
+    "conventional-recommended-bump": "^6.0.5",
     "eslint": "^6.5.1",
     "eslint-plugin-import": "^2.18.2",
     "jest": "^24.9.0",
@@ -98,5 +99,10 @@
     "webpack-bundle-analyzer": "^3.5.1",
     "webpack-cli": "^3.3.9",
     "webpack-node-externals": "^1.7.2"
+  },
+  "standard-version": {
+    "scripts": {
+      "prebump": "./scripts/standard-version/prebump.js"
+    }
   }
 }

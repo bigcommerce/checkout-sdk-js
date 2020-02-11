@@ -37,7 +37,7 @@ export default class HostedField {
     ) {
         this._iframe = document.createElement('iframe');
 
-        this._iframe.src = `${host}/pay/hosted_forms/${formId}/field`;
+        this._iframe.src = `${host}/pay/hosted_forms/${formId}/field?version=${LIBRARY_VERSION}`;
         this._iframe.style.border = 'none';
         this._iframe.style.height = '100%';
         this._iframe.style.overflow = 'hidden';

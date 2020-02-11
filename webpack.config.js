@@ -2,11 +2,13 @@ const path = require('path');
 const { DefinePlugin } = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 
-const { babelLoaderRule, baseConfig, libraryEntries, libraryName } = require('./webpack-common.config');
+const { babelLoaderRule, getBaseConfig, libraryEntries, libraryName } = require('./webpack-common.config');
 
 const outputPath = path.join(__dirname, 'dist');
 
-function getUmdConfig() {
+async function getUmdConfig(options, argv) {
+    const baseConfig = await getBaseConfig(options, argv);
+
     return {
         ...baseConfig,
         name: 'umd',
@@ -26,7 +28,9 @@ function getUmdConfig() {
     };
 }
 
-function getCjsConfig() {
+async function getCjsConfig(options, argv) {
+    const baseConfig = await getBaseConfig(options, argv);
+
     return {
         ...baseConfig,
         name: 'cjs',
@@ -40,6 +44,7 @@ function getCjsConfig() {
             path: outputPath,
         },
         plugins: [
+            ...baseConfig.plugins,
             new DefinePlugin({
                 'process.env.NODE_ENV': 'process.env.NODE_ENV',
             }),
@@ -47,10 +52,10 @@ function getCjsConfig() {
     };
 }
 
-function getConfigs(options, argv) {
+async function getConfigs(options, argv) {
     return [
-        getCjsConfig(options, argv),
-        getUmdConfig(options, argv),
+        await getCjsConfig(options, argv),
+        await getUmdConfig(options, argv),
     ];
 }
 

@@ -12,8 +12,7 @@ mkdir -p /tmp/repo-server/public
 
 # Replace the existing dist files with new ones
 RELEASE_VERSION_DIR=$(echo $RELEASE_VERSION | cut -d . -f 1)
-rm -rf /tmp/repo-server/public/$RELEASE_VERSION_DIR
-cp -r dist-server/$RELEASE_VERSION_DIR /tmp/repo-server/public
+cp -rf dist-server/$RELEASE_VERSION_DIR /tmp/repo-server/public
 
 # Commit the new dist files and push to upstream
 cd /tmp/repo-server
