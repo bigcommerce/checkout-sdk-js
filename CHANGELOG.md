@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.52.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.51.1...v1.52.0) (2020-02-11)
+
+
+### Bug Fixes
+
+* **checkout:** CHECKOUT-4245 handle custom fields for amazon pay ([d7c7273](https://github.com/bigcommerce/checkout-sdk-js/commit/d7c7273))
+
+
+### Features
+
+* **payment:** CHECKOUT-4669 Create version-specific loader file and reference it in hosted payment form ([4d00281](https://github.com/bigcommerce/checkout-sdk-js/commit/4d00281))
+
 ### [1.51.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.51.0...v1.51.1) (2020-02-10)
 
 
