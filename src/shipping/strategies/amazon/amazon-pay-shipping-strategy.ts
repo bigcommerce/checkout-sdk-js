@@ -1,6 +1,6 @@
 import { createAction, createErrorAction } from '@bigcommerce/data-store';
 
-import { isInternalAddressEqual, mapFromInternalAddress } from '../../../address';
+import { isInternalAddressEqual, mapFromInternalAddress, AddressRequestBody } from '../../../address';
 import { CheckoutStore, InternalCheckoutSelectors } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType, NotInitializedError, NotInitializedErrorType } from '../../../common/error/errors';
 import { PaymentMethod, PaymentMethodActionCreator } from '../../../payment';
@@ -61,8 +61,15 @@ export default class AmazonPayShippingStrategy implements ShippingStrategy {
         return Promise.resolve(this._store.getState());
     }
 
-    updateAddress(): Promise<InternalCheckoutSelectors> {
-        return Promise.resolve(this._store.getState());
+    updateAddress(address: AddressRequestBody, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
+        const updateAddressRequestBody = {
+            ...this._store.getState().shippingAddress.getShippingAddress(),
+            customFields: address.customFields,
+        } as AddressRequestBody;
+
+        return this._store.dispatch(
+            this._consignmentActionCreator.updateAddress(updateAddressRequestBody, options)
+        );
     }
 
     selectOption(optionId: string, options?: ShippingRequestOptions): Promise<InternalCheckoutSelectors> {
