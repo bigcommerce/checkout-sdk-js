@@ -1,11 +1,11 @@
 
-interface ApproveDataOptions {
+export interface ApproveDataOptions {
     orderID: string;
 }
 
-interface ButtonsOptions {
+export interface ButtonsOptions {
     enableStandardCardFields?: boolean;
-    createOrder(data: any): void;
+    createOrder(): Promise<string>;
     onApprove(data: ApproveDataOptions): void;
 }
 

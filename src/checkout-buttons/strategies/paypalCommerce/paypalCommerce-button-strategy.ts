@@ -4,7 +4,7 @@ import { RequestSender } from '@bigcommerce/request-sender';
 import { CheckoutActionCreator, CheckoutStore } from '../../../checkout';
 import { InvalidArgumentError, MissingDataError, MissingDataErrorType } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY } from '../../../common/http-request';
-import { PaypalCommerceScriptLoader } from '../../../payment/strategies/paypalCommerce';
+import { ApproveDataOptions, PaypalCommerceScriptLoader } from '../../../payment/strategies/paypalCommerce';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonStrategy from '../checkout-button-strategy';
 
@@ -23,30 +23,19 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
         const paymentMethod = state.paymentMethods.getPaymentMethod(options.methodId);
         const paypalOptions = options.paypalCommerce;
 
-        if (!paypalOptions) {
+        if (!paypalOptions || !paypalOptions.clientId) {
             throw new InvalidArgumentError();
         }
 
-        if (!paymentMethod) {
+        if (!paymentMethod || !paymentMethod.id) {
             throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
         }
 
         return this._paypalScriptLoader.loadPaypalCommerce(paypalOptions.clientId)
             .then(paypal => {
-                if (!paymentMethod || !paymentMethod.config.merchantId) {
-                    throw new MissingDataError(MissingDataErrorType.MissingPaymentMethod);
-                }
-
                 return paypal.Buttons({
                     createOrder: () => this._setupPayment(),
-                    onApprove: data => {
-                        this._formPoster.postForm('/checkout.php', {
-                            payment_type: 'paypal',
-                            provider: paymentMethod.id,
-                            action: 'set_external_checkout',
-                            order_id: data.orderID,
-                        });
-                    },
+                    onApprove: data => this._tokenizePayment(paymentMethod.id, data),
                 }).render(`#${options.containerId}`);
             });
     }
@@ -76,5 +65,18 @@ export default class PaypalCommerceButtonStrategy implements CheckoutButtonStrat
             .catch(error => {
                 throw error;
             });
+    }
+
+    private _tokenizePayment(paymentId: string, data: ApproveDataOptions) {
+        if (!data.orderID) {
+            throw new MissingDataError(MissingDataErrorType.MissingOrderId);
+        }
+
+        return this._formPoster.postForm('/checkout.php', {
+            payment_type: 'paypal',
+            action: 'set_external_checkout',
+            provider: paymentId,
+            order_id: data.orderID,
+        });
     }
 }
