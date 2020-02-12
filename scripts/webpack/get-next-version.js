@@ -8,7 +8,7 @@ function getNextVersion() {
     return new Promise((resolve, reject) => {
         // If the current commit is the latest tagged commit, just return current
         // version because there is no new commit ahead of it.
-        if (execSync('git describe') === `v${packageJson.version}`) {
+        if (execSync('git describe').toString().trim() === `v${packageJson.version}`) {
             return resolve(packageJson.version);
         }
 
@@ -25,7 +25,7 @@ function getNextVersion() {
 
                 return resolve(
                     semver.inc(packageJson.version, 'prerelease', prereleaseType)
-                        .replace(/\.\d+$/, `.${execSync('git rev-parse HEAD')}`.trim())
+                        .replace(/\.\d+$/, '.' + execSync('git rev-parse HEAD').toString().trim())
                 );
             }
 
