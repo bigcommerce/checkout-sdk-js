@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.52.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.52.0...v1.52.1) (2020-02-12)
+
+
+### Bug Fixes
+
+* **common:** CHECKOUT-4669 Convert buffer to string before comparing with package version ([0f8f411](https://github.com/bigcommerce/checkout-sdk-js/commit/0f8f411))
+
 ## [1.52.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.51.1...v1.52.0) (2020-02-11)
 
 
