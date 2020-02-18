@@ -31,6 +31,7 @@ import { CreditCardPaymentStrategy } from './strategies/credit-card';
 import { CyberSourcePaymentStrategy } from './strategies/cybersource/index';
 import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayPaymentStrategy, GooglePayStripeInitializer } from './strategies/googlepay';
 import { KlarnaPaymentStrategy, KlarnaScriptLoader } from './strategies/klarna';
+import { KlarnaV2PaymentStrategy, KlarnaV2ScriptLoader } from './strategies/klarnav2';
 import { LegacyPaymentStrategy } from './strategies/legacy';
 import { MasterpassPaymentStrategy, MasterpassScriptLoader } from './strategies/masterpass';
 import { NoPaymentDataRequiredPaymentStrategy } from './strategies/no-payment';
@@ -144,6 +145,16 @@ export default function createPaymentStrategyRegistry(
             paymentMethodActionCreator,
             remoteCheckoutActionCreator,
             new KlarnaScriptLoader(scriptLoader)
+        )
+    );
+
+    registry.register(PaymentStrategyType.KLARNAV2, () =>
+        new KlarnaV2PaymentStrategy(
+            store,
+            orderActionCreator,
+            paymentMethodActionCreator,
+            remoteCheckoutActionCreator,
+            new KlarnaV2ScriptLoader(scriptLoader)
         )
     );
 

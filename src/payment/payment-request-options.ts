@@ -7,6 +7,7 @@ import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { CreditCardPaymentInitializeOptions } from './strategies/credit-card';
 import { GooglePayPaymentInitializeOptions } from './strategies/googlepay';
 import { KlarnaPaymentInitializeOptions } from './strategies/klarna';
+import { KlarnaV2PaymentInitializeOptions } from './strategies/klarnav2';
 import { MasterpassPaymentInitializeOptions } from './strategies/masterpass';
 import { PaypalExpressPaymentInitializeOptions } from './strategies/paypal';
 import { SquarePaymentInitializeOptions } from './strategies/square';
@@ -73,6 +74,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * They can be omitted unless you need to support Klarna.
      */
     klarna?: KlarnaPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the KlarnaV2 payment method.
+     * They can be omitted unless you need to support KlarnaV2.
+     */
+    klarnav2?: KlarnaV2PaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Masterpass payment method.

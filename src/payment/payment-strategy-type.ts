@@ -6,6 +6,7 @@ enum PaymentStrategyType {
     CREDIT_CARD = 'creditcard',
     CYBERSOURCE = 'cybersource',
     KLARNA = 'klarna',
+    KLARNAV2 = 'klarnav2',
     LEGACY = 'legacy',
     OFFLINE = 'offline',
     OFFSITE = 'offsite',
