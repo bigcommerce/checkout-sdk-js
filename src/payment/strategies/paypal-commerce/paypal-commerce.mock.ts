@@ -1,4 +1,4 @@
-import { PaypalCommerceSDK } from './paypalCommerce-sdk';
+import { PaypalCommerceSDK } from './paypal-commerce-sdk';
 
 export function getPaypalCommerceMock(): PaypalCommerceSDK {
     return {

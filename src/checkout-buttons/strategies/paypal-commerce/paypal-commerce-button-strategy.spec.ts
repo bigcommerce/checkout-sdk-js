@@ -10,13 +10,13 @@ import { getCheckout, getCheckoutStoreState } from '../../../checkout/checkouts.
 import { InvalidArgumentError, MissingDataError } from '../../../common/error/errors';
 import { INTERNAL_USE_ONLY } from '../../../common/http-request';
 import { ConfigActionCreator, ConfigRequestSender } from '../../../config';
-import { ButtonsOptions, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypalCommerce';
-import { getPaypalCommerceMock } from '../../../payment/strategies/paypalCommerce/paypalCommerce.mock';
+import { ButtonsOptions, PaypalCommerceScriptLoader, PaypalCommerceSDK } from '../../../payment/strategies/paypal-commerce';
+import { getPaypalCommerceMock } from '../../../payment/strategies/paypal-commerce/paypal-commerce.mock';
 import { CheckoutButtonInitializeOptions } from '../../checkout-button-options';
 import CheckoutButtonMethodType from '../checkout-button-method-type';
 
-import { PaypalCommerceButtonInitializeOptions } from './paypalCommerce-button-options';
-import PaypalCommerceButtonStrategy from './paypalCommerce-button-strategy';
+import { PaypalCommerceButtonInitializeOptions } from './paypal-commerce-button-options';
+import PaypalCommerceButtonStrategy from './paypal-commerce-button-strategy';
 
 describe('PaypalCommerceButtonStrategy', () => {
     let store: CheckoutStore;

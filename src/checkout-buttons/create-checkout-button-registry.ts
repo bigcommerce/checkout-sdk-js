@@ -9,14 +9,14 @@ import { BraintreeScriptLoader, BraintreeSDKCreator } from '../payment/strategie
 import { createGooglePayPaymentProcessor, GooglePayBraintreeInitializer, GooglePayStripeInitializer } from '../payment/strategies/googlepay';
 import { MasterpassScriptLoader } from '../payment/strategies/masterpass';
 import { PaypalScriptLoader } from '../payment/strategies/paypal';
-import { PaypalCommerceScriptLoader } from '../payment/strategies/paypalCommerce';
+import { PaypalCommerceScriptLoader } from '../payment/strategies/paypal-commerce';
 
 import { CheckoutButtonMethodType, CheckoutButtonStrategy } from './strategies';
 import { BraintreePaypalButtonStrategy } from './strategies/braintree';
 import { GooglePayButtonStrategy } from './strategies/googlepay';
 import { MasterpassButtonStrategy } from './strategies/masterpass';
 import { PaypalButtonStrategy } from './strategies/paypal';
-import { PaypalCommerceButtonStrategy } from './strategies/paypalCommerce';
+import { PaypalCommerceButtonStrategy } from './strategies/paypal-commerce';
 
 export default function createCheckoutButtonRegistry(
     store: CheckoutStore,

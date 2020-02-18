@@ -4,7 +4,7 @@ import { CheckoutButtonMethodType } from './strategies';
 import { BraintreePaypalButtonInitializeOptions } from './strategies/braintree';
 import { GooglePayButtonInitializeOptions } from './strategies/googlepay';
 import { PaypalButtonInitializeOptions } from './strategies/paypal';
-import { PaypalCommerceButtonInitializeOptions } from './strategies/paypalCommerce';
+import { PaypalCommerceButtonInitializeOptions } from './strategies/paypal-commerce';
 
 /**
  * The set of options for configuring the checkout button.
