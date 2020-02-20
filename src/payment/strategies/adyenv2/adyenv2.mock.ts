@@ -3,14 +3,21 @@ import { getResponse } from '../../../common/http-request/responses.mock';
 import { OrderPaymentRequestBody, OrderRequestBody } from '../../../order';
 import Payment from '../../payment';
 import { PaymentInitializeOptions } from '../../payment-request-options';
-import { getCreditCardInstrument, getErrorPaymentResponseBody } from '../../payments.mock';
+import { getCreditCardInstrument, getErrorPaymentResponseBody, getVaultedInstrument } from '../../payments.mock';
 
-import { AdyenCardState, AdyenCheckout, AdyenConfiguration, AdyenHTTPMethod, AdyenPaymentMethodType, ResultCode, ThreeDSRequiredErrorResponse } from './adyenv2';
+import { AdyenAdditionalActionErrorResponse, AdyenCheckout, AdyenComponentState, AdyenConfiguration, AdyenError, AdyenPaymentMethodType, ResultCode } from './adyenv2';
 
-export function getOrderRequestBody(paymentMethodType: AdyenPaymentMethodType = AdyenPaymentMethodType.Scheme): OrderRequestBody {
+function getAdditionalActionErrorResponse(resultCode: ResultCode): AdyenAdditionalActionErrorResponse {
     return {
-        useStoreCredit: false,
-        payment: getPayment(paymentMethodType) as OrderPaymentRequestBody,
+        provider_data: {
+            resultCode,
+            action: '{"paymentData":"ADYEN_PAYMENT_DATA","paymentMethodType":"scheme","token":"TOKEN","type":"threeDS2Fingerprint"}',
+        },
+        errors: [
+            {
+                code: 'additional_action_required',
+            },
+        ],
     };
 }
 
@@ -18,6 +25,37 @@ function getPayment(paymentMethodType: AdyenPaymentMethodType): Payment {
     return {
         methodId: paymentMethodType,
         paymentData: getCreditCardInstrument(),
+    };
+}
+
+function getUnknownErrorResponse(): any {
+    return {
+        errors: [
+            {
+                code: 'unknown_error',
+            },
+        ],
+    };
+}
+
+function getVaultedPayment(paymentMethodType: AdyenPaymentMethodType): Payment {
+    return {
+        methodId: paymentMethodType,
+        paymentData: getVaultedInstrument(),
+    };
+}
+
+export function getAdditionalActionError(resultCode: ResultCode): RequestError {
+    return new RequestError(getResponse({
+        ...getErrorPaymentResponseBody(),
+        ...getAdditionalActionErrorResponse(resultCode),
+    }));
+}
+
+export function getAdyenConfiguration(): AdyenConfiguration {
+    return {
+        environment: 'test',
+        originKey: 'YOUR_ORIGIN_KEY',
     };
 }
 
@@ -39,14 +77,29 @@ export function getAdyenCheckout(): AdyenCheckout {
     };
 }
 
-export function getAdyenConfiguration(): AdyenConfiguration {
+export function getAdyenError(): AdyenError {
     return {
-        environment: 'test',
-        originKey: 'YOUR_ORIGIN_KEY',
+        errorCode: 'CODE',
+        message: 'MESSAGE',
     };
 }
 
-export function getAdyenInitializeOptions(): PaymentInitializeOptions {
+export function getComponentState(isValid: boolean = true): AdyenComponentState {
+    return {
+        data: {
+            paymentMethod: {
+                encryptedCardNumber: 'ENCRYPTED_CARD_NUMBER',
+                encryptedExpiryMonth: 'ENCRYPTED_EXPIRY_MONTH',
+                encryptedExpiryYear: 'ENCRYPTED_EXPIRY_YEAR',
+                encryptedSecurityCode: 'ENCRYPTED_CVV',
+                type: AdyenPaymentMethodType.CreditCard,
+            },
+        },
+        isValid,
+    };
+}
+
+export function getInitializeOptions(): PaymentInitializeOptions {
     return {
         methodId: 'adyenv2',
         adyenv2: {
@@ -74,128 +127,79 @@ export function getAdyenInitializeOptions(): PaymentInitializeOptions {
     };
 }
 
-function getCardState() {
+export function getInitializeOptionsWithNoCallbacks(): PaymentInitializeOptions {
     return {
-        data: {
-            paymentMethod: {
-                encryptedCardNumber: 'CARD_NUMBER',
-                encryptedExpiryMonth: 'EXPIRY_MONTH',
-                encryptedExpiryYear: 'EXPIRY_YEAR',
-                encryptedSecurityCode: 'CVV',
-                type: AdyenPaymentMethodType.Scheme,
+        methodId: 'adyenv2',
+        adyenv2: {
+            containerId: 'adyen-scheme-component-field',
+            cardVerificationContainerId: 'adyen-custom-card-component-field',
+            threeDS2ContainerId: 'adyen-scheme-3ds-component-field',
+            options: {
+                hasHolderName: true,
+                styles: {},
+                placeholders: {},
+            },
+            threeDS2Options: {
+                widgetSize: '05',
+            },
+            additionalActionOptions: {
+                containerId: 'adyen-scheme-additional-action-component-field',
             },
         },
     };
 }
 
-export function getValidCardState(): AdyenCardState {
+export function getInitializeOptionsWithUndefinedWidgetSize(): PaymentInitializeOptions {
     return {
-        ...getCardState(),
-        isValid: true,
-    };
-}
-
-export function getInvalidCardState(): AdyenCardState {
-    return {
-        ...getCardState(),
-        isValid: false,
-    };
-}
-
-export function getValidChallengeResponse(): any {
-    return {
-        threeDS2Token: 'token',
-        paymentData: 'paymentData',
-    };
-}
-
-function getChallengeShopperErrorResponse(): ThreeDSRequiredErrorResponse {
-    return {
-        errors: [
-            { code: 'three_d_secure_required' },
-        ],
-        three_ds_result: {
-            code: ResultCode.ChallengeShopper,
-            token: 'token',
-            payment_data: 'paymentData',
-        },
-        status: 'error',
-    };
-}
-
-export function getChallengeShopperError(): RequestError {
-    return new RequestError(getResponse({
-        ...getErrorPaymentResponseBody(),
-        ...getChallengeShopperErrorResponse(),
-    }));
-}
-
-export function getIdentifyShopperErrorResponse(): ThreeDSRequiredErrorResponse {
-    return {
-        errors: [
-            { code: 'three_d_secure_required' },
-        ],
-        three_ds_result: {
-            code: ResultCode.IdentifyShopper,
-            token: 'token',
-            payment_data: 'paymentData',
-        },
-        status: 'error',
-    };
-}
-
-export function getIdentifyShopperError(): RequestError {
-    return new RequestError(getResponse({
-        ...getErrorPaymentResponseBody(),
-        ...getIdentifyShopperErrorResponse(),
-    }));
-}
-
-function getRedirectShopperErrorResponse(): ThreeDSRequiredErrorResponse {
-    return {
-        errors: [
-            { code: 'three_d_secure_required' },
-        ],
-        three_ds_result: {
-            code: ResultCode.RedirectShopper,
-            acs_url: 'https://acs/url',
-            callback_url: 'https://callback/url',
-            payer_auth_request: 'payer_auth_request',
-            merchant_data: 'merchant_data',
-        },
-        status: 'error',
-    };
-}
-
-export function getRedirectShopperError(): RequestError {
-    return new RequestError(getResponse({
-        ...getErrorPaymentResponseBody(),
-        ...getRedirectShopperErrorResponse(),
-    }));
-}
-
-function getBankTransferErrorResponse(): any {
-    return {
-        errors: [
-            {
-                code: 'bank_transfer_required',
-                message: {
-                    method: AdyenHTTPMethod.POST,
-                    paymentData: 'PAYMENT_DATA',
-                    paymentMethodType: AdyenPaymentMethodType.IDEAL,
-                    type: 'string',
-                    url: 'https://acs/url',
-                    action: 'REDIRECT',
-                },
+        methodId: 'adyenv2',
+        adyenv2: {
+            containerId: 'adyen-scheme-component-field',
+            cardVerificationContainerId: 'adyen-custom-card-component-field',
+            threeDS2ContainerId: 'adyen-scheme-3ds-component-field',
+            options: {
+                hasHolderName: true,
+                styles: {},
+                placeholders: {},
             },
-        ],
-        status: 'error',
+            threeDS2Options: {
+                onBeforeLoad: jest.fn(),
+                onComplete: jest.fn(),
+                onLoad: jest.fn(),
+            },
+            additionalActionOptions: {
+                containerId: 'adyen-scheme-additional-action-component-field',
+                onBeforeLoad: jest.fn(),
+                onComplete: jest.fn(),
+                onLoad: jest.fn(),
+            },
+        },
     };
 }
 
-export function getBankTransferError(): RequestError {
+export function getOrderRequestBody(paymentMethodType: AdyenPaymentMethodType = AdyenPaymentMethodType.CreditCard): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: getPayment(paymentMethodType) as OrderPaymentRequestBody,
+    };
+}
+
+export function getOrderRequestBodyWithVaultedInstrument(paymentMethodType: AdyenPaymentMethodType = AdyenPaymentMethodType.CreditCard): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: getVaultedPayment(paymentMethodType) as OrderPaymentRequestBody,
+    };
+}
+
+export function getOrderRequestBodyWithoutPayment(): OrderRequestBody {
+    return {
+        useStoreCredit: false,
+        payment: undefined,
+    };
+}
+
+export function getUnknownError(): RequestError {
     return new RequestError(getResponse({
+        ...getUnknownErrorResponse(),
         ...getErrorPaymentResponseBody(),
-        ...getBankTransferErrorResponse(),
     }));
 }

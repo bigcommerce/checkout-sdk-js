@@ -419,11 +419,11 @@ export function getStripeV3(): PaymentMethod {
     };
 }
 
-export function getAdyenV2(): PaymentMethod {
+export function getAdyenV2(method: string = 'scheme'): PaymentMethod {
     return {
         id: 'adyenv2',
         logoUrl: '',
-        method: 'adyenv2',
+        method,
         supportedCards: [],
         config: {
             displayName: 'Adyen',
