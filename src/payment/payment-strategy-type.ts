@@ -13,6 +13,7 @@ enum PaymentStrategyType {
     PAYPAL = 'paypal',
     PAYPAL_EXPRESS = 'paypalexpress',
     PAYPAL_EXPRESS_CREDIT = 'paypalexpresscredit',
+    PAYPAL_COMMERCE = 'paypalcommerce',
     SAGE_PAY = 'sagepay',
     SQUARE = 'squarev2',
     STRIPEV3 = 'stripev3',
