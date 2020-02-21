@@ -126,6 +126,21 @@ export function getAuthorizenet(): PaymentMethod {
     };
 }
 
+export function getBlueSnapV2(): PaymentMethod {
+    return {
+        id: 'cc',
+        gateway: 'bluesnapv2',
+        logoUrl: '',
+        method: 'multi-option',
+        supportedCards: [],
+        config: {
+            displayName: 'Credit Card',
+            testMode: false,
+        },
+        type: 'PAYMENT_TYPE_HOSTED',
+    };
+}
+
 export function getCybersource(): PaymentMethod {
     return {
         id: 'cybersource',
@@ -435,6 +450,7 @@ export function getPaymentMethods(): PaymentMethod[] {
         getAfterpay(),
         getAmazonPay(),
         getAuthorizenet(),
+        getBlueSnapV2(),
         getBraintree(),
         getBraintreePaypal(),
         getBraintreePaypalCredit(),

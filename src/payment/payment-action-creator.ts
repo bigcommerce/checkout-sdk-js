@@ -39,7 +39,9 @@ export default class PaymentActionCreator {
         methodId: string,
         gatewayId?: string,
         instrumentId?: string,
-        shouldSaveInstrument?: boolean
+        shouldSaveInstrument?: boolean,
+        target?: string,
+        promise?: Promise<undefined>
     ): ThunkAction<InitializeOffsitePaymentAction, InternalCheckoutSelectors> {
         return store => {
             let paymentData: FormattedPayload<FormattedHostedInstrument | FormattedVaultedInstrument> | undefined;
@@ -54,7 +56,7 @@ export default class PaymentActionCreator {
 
             return concat(
                 of(createAction(PaymentActionType.InitializeOffsitePaymentRequested)),
-                this._paymentRequestSender.initializeOffsitePayment(payload)
+                Promise.race([this._paymentRequestSender.initializeOffsitePayment(payload, target), promise].filter(Boolean))
                     .then(() => createAction(PaymentActionType.InitializeOffsitePaymentSucceeded))
             ).pipe(
                 catchError(error => throwErrorAction(PaymentActionType.InitializeOffsitePaymentFailed, error))

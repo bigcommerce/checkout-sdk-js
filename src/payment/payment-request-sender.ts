@@ -26,9 +26,9 @@ export default class PaymentRequestSender {
         });
     }
 
-    initializeOffsitePayment(payload: PaymentRequestBody): Promise<void> {
+    initializeOffsitePayment(payload: PaymentRequestBody, target?: string): Promise<void> {
         return new Promise(() => {
-            this._client.initializeOffsitePayment(payload);
+            this._client.initializeOffsitePayment(payload, null, target);
         });
     }
 

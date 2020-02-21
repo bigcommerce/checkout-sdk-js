@@ -2,6 +2,7 @@ import { RequestOptions } from '../common/http-request';
 
 import { AdyenV2PaymentInitializeOptions } from './strategies/adyenv2';
 import { AmazonPayPaymentInitializeOptions } from './strategies/amazon-pay';
+import { BlueSnapV2PaymentInitializeOptions } from './strategies/bluesnapv2';
 import { BraintreePaymentInitializeOptions, BraintreeVisaCheckoutPaymentInitializeOptions } from './strategies/braintree';
 import { ChasePayInitializeOptions } from './strategies/chasepay';
 import { CreditCardPaymentInitializeOptions } from './strategies/credit-card';
@@ -54,6 +55,12 @@ export interface PaymentInitializeOptions extends PaymentRequestOptions {
      * method. They can be omitted unless you need to support AmazonPay.
      */
     amazon?: AmazonPayPaymentInitializeOptions;
+
+    /**
+     * The options that are required to initialize the BlueSnapV2 payment method.
+     * They can be omitted unless you need to support BlueSnapV2.
+     */
+    bluesnapv2?: BlueSnapV2PaymentInitializeOptions;
 
     /**
      * The options that are required to initialize the Braintree payment method.

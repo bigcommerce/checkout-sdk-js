@@ -19,6 +19,7 @@ A set of options that are required to initialize the payment step of the current
 
 * [adyenv2](paymentinitializeoptions.md#adyenv2)
 * [amazon](paymentinitializeoptions.md#amazon)
+* [bluesnapv2](paymentinitializeoptions.md#bluesnapv2)
 * [braintree](paymentinitializeoptions.md#braintree)
 * [braintreevisacheckout](paymentinitializeoptions.md#braintreevisacheckout)
 * [chasepay](paymentinitializeoptions.md#chasepay)
@@ -55,6 +56,15 @@ ___
 **● amazon**: *[AmazonPayPaymentInitializeOptions](amazonpaypaymentinitializeoptions.md)*
 
 The options that are required to initialize the Amazon Pay payment method. They can be omitted unless you need to support AmazonPay.
+
+___
+<a id="bluesnapv2"></a>
+
+### `<Optional>` bluesnapv2
+
+**● bluesnapv2**: *[BlueSnapV2PaymentInitializeOptions](bluesnapv2paymentinitializeoptions.md)*
+
+The options that are required to initialize the BlueSnapV2 payment method. They can be omitted unless you need to support BlueSnapV2.
 
 ___
 <a id="braintree"></a>
