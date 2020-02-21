@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.53.0](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.52.1...v1.53.0) (2020-02-21)
+
+
+### Features
+
+* **payments:** INT-1997 Integrate BlueSnap V2 strategy ([#732](https://github.com/bigcommerce/checkout-sdk-js/issues/732)) ([d2cc31c](https://github.com/bigcommerce/checkout-sdk-js/commit/d2cc31c))
+
 ### [1.52.1](https://github.com/bigcommerce/checkout-sdk-js/compare/v1.52.0...v1.52.1) (2020-02-12)
 
 
