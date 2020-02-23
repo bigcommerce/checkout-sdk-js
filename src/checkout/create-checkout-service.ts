@@ -7,7 +7,7 @@ import { getDefaultLogger } from '../common/log';
 import { getEnvironment } from '../common/utility';
 import { ConfigActionCreator, ConfigRequestSender, ConfigState } from '../config';
 import { CouponActionCreator, CouponRequestSender, GiftCertificateActionCreator, GiftCertificateRequestSender } from '../coupon';
-import { createCustomerStrategyRegistry, CustomerStrategyActionCreator } from '../customer';
+import { createCustomerStrategyRegistry, CustomerRequestSender, CustomerStrategyActionCreator } from '../customer';
 import { CountryActionCreator, CountryRequestSender } from '../geography';
 import { OrderActionCreator, OrderRequestSender } from '../order';
 import { createPaymentClient, createPaymentStrategyRegistry, PaymentMethodActionCreator, PaymentMethodRequestSender, PaymentStrategyActionCreator } from '../payment';
@@ -72,7 +72,10 @@ export default function createCheckoutService(options?: CheckoutServiceOptions):
 
     return new CheckoutService(
         store,
-        new BillingAddressActionCreator(new BillingAddressRequestSender(requestSender)),
+        new BillingAddressActionCreator(
+            new BillingAddressRequestSender(requestSender),
+            new CustomerRequestSender(requestSender)
+        ),
         new CheckoutActionCreator(checkoutRequestSender, configActionCreator),
         configActionCreator,
         new ConsignmentActionCreator(new ConsignmentRequestSender(requestSender), checkoutRequestSender),

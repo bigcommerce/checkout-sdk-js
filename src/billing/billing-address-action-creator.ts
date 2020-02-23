@@ -1,27 +1,30 @@
 import { createAction, createErrorAction, ThunkAction } from '@bigcommerce/data-store';
 import { Response } from '@bigcommerce/request-sender';
-import { Observable, Observer } from 'rxjs';
+import { concat, defer, empty, merge, of, Observable, Observer } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { Checkout, InternalCheckoutSelectors } from '../checkout';
+import { throwErrorAction } from '../common/error';
 import { MissingDataError, MissingDataErrorType } from '../common/error/errors';
 import { RequestOptions } from '../common/http-request';
-import { GuestCredentials } from '../customer';
+import { CustomerAction, CustomerActionType, CustomerRequestSender, GuestCredentials } from '../customer';
 
 import { BillingAddressRequestSender } from '.';
 import { BillingAddressUpdateRequestBody } from './billing-address';
 import { BillingAddressActionType, ContinueAsGuestAction, UpdateBillingAddressAction } from './billing-address-actions';
-import { UnableToContinueAsGuestError } from './errors';
+import { UnableToContinueAsGuestError, UpdateCustomerError } from './errors';
 
 export default class BillingAddressActionCreator {
     constructor(
-        private _requestSender: BillingAddressRequestSender
+        private _requestSender: BillingAddressRequestSender,
+        private _customerRequestSender: CustomerRequestSender
     ) {}
 
     continueAsGuest(
         credentials: GuestCredentials,
         options?: RequestOptions
-    ): ThunkAction<ContinueAsGuestAction, InternalCheckoutSelectors> {
-        return store => Observable.create((observer: Observer<ContinueAsGuestAction>) => {
+    ): ThunkAction<ContinueAsGuestAction | CustomerAction, InternalCheckoutSelectors> {
+        return store => {
             const state = store.getState();
             const checkout = state.checkout.getCheckout();
 
@@ -37,7 +40,7 @@ export default class BillingAddressActionCreator {
 
             const billingAddress = state.billingAddress.getBillingAddress();
 
-            let billingAddressRequestBody;
+            let billingAddressRequestBody: Partial<BillingAddressUpdateRequestBody>;
 
             if (!billingAddress) {
                 billingAddressRequestBody = credentials;
@@ -50,17 +53,24 @@ export default class BillingAddressActionCreator {
                 };
             }
 
-            observer.next(createAction(BillingAddressActionType.ContinueAsGuestRequested));
+            return merge(
+                concat(
+                    of(createAction(BillingAddressActionType.ContinueAsGuestRequested)),
+                    defer(async () => {
+                        const { body } = await this._createOrUpdateBillingAddress(
+                            checkout.id,
+                            billingAddressRequestBody,
+                            options
+                        );
 
-            this._createOrUpdateBillingAddress(checkout.id, billingAddressRequestBody, options)
-                .then(({ body }) => {
-                    observer.next(createAction(BillingAddressActionType.ContinueAsGuestSucceeded, body));
-                    observer.complete();
-                })
-                .catch(response => {
-                    observer.error(createErrorAction(BillingAddressActionType.ContinueAsGuestFailed, response));
-                });
-        });
+                        return createAction(BillingAddressActionType.ContinueAsGuestSucceeded, body);
+                    })
+                ).pipe(
+                    catchError(error => throwErrorAction(BillingAddressActionType.ContinueAsGuestFailed, error))
+                ),
+                this._updateCustomerConsent(credentials, options)
+            );
+        };
     }
 
     updateAddress(
@@ -102,6 +112,35 @@ export default class BillingAddressActionCreator {
                     observer.error(createErrorAction(BillingAddressActionType.UpdateBillingAddressFailed, response));
                 });
         });
+    }
+
+    private _updateCustomerConsent(
+        {
+            email,
+            marketingEmailConsent,
+        }: GuestCredentials,
+        options?: RequestOptions
+    ): Observable<CustomerAction> {
+        if (marketingEmailConsent === undefined || marketingEmailConsent === null) {
+            return empty();
+        }
+
+        return concat(
+            of(createAction(CustomerActionType.UpdateCustomerRequested)),
+            defer(async () => {
+                const { body } = await this._customerRequestSender.updateCustomer({
+                    email,
+                    acceptsMarketing: marketingEmailConsent,
+                }, options);
+
+                return createAction(CustomerActionType.UpdateCustomerSucceeded, body);
+            })
+        ).pipe(
+            catchError(error => throwErrorAction(
+                CustomerActionType.UpdateCustomerFailed,
+                new UpdateCustomerError(error)
+            ))
+        );
     }
 
     private _createOrUpdateBillingAddress(
