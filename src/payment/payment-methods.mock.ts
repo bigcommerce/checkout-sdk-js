@@ -219,6 +219,33 @@ export function getAffirm(): PaymentMethod {
     };
 }
 
+export function getAmazonMaxo(): PaymentMethod {
+    return {
+        config: {
+            displayName: 'AMAZON MAXO',
+            helpText: '',
+            isVaultingEnabled: false,
+            merchantId: 'checkout_amazonmaxo',
+            requireCustomerCode: false,
+            testMode: true,
+        },
+        id: 'amazonmaxo',
+        initializationData: {
+            checkoutLanguage: 'en_US',
+            ledgerCurrency: 'USD',
+            region: 'us',
+        },
+        logoUrl: '',
+        method: 'credit-card',
+        supportedCards: [
+            'VISA' ,
+            'AMEX',
+            'MC',
+        ],
+        type: 'PAYMENT_TYPE_API',
+    };
+}
+
 export function getAmazonPay(): PaymentMethod {
     return {
         id: 'amazon',
